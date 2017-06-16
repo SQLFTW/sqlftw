@@ -1,0 +1,40 @@
+{
+    "name": "sqlftw/sqlftw",
+    "type": "library",
+    "description": "Complete MySQL SQL dialect representation and SQL lexer and parser in PHP",
+    "homepage": "http://github.com/sqlftw/sqlftw",
+    "license": ["proprietary"],
+    "authors": [
+        {
+            "name": "Vlasta Neubauer",
+            "homepage": "http://www.paranoiq.cz"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "dogma/dogma": "dev-master",
+        "tracy/tracy": "~2.3"
+    },
+    "require-dev": {
+        "consistence/coding-standard": "~0.13",
+        "jakub-onderka/php-console-highlighter": "~0.3",
+        "jakub-onderka/php-parallel-lint": "~0.9",
+        "nette/tester": "~1.4",
+        "phing/phing": "~2.16",
+        "phpstan/phpstan": "~0.5",
+        "slevomat/coding-standard": "dev-2.0-dev#856860a",
+        "squizlabs/php_codesniffer": "~2.7"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:slevomat/consistence.git"
+        }
+    ],
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "classmap": ["src", "tests"]
+    }
+}

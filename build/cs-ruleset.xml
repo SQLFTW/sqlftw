@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<ruleset name="Slevomat">
+    <rule ref="../vendor/consistence/coding-standard/Consistence/ruleset.xml">
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedIF"/><!-- allow empty if statements - usually with a comment -->
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedELSE"/><!-- allow empty else statements - usually with a comment -->
+        <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedELSEIF"/><!-- allow empty elseif statements - usually with a comment -->
+        <exclude name="PEAR.WhiteSpace.ObjectOperatorIndent.Incorrect"/><!-- je potřeba odsazení u formů a dibi fluent -->
+        <exclude name="PSR2.Methods.FunctionCallSignature.CloseBracketLine"/><!-- string rozdělený na více řádků, typicky SQL -->
+        <exclude name="PSR2.Methods.FunctionCallSignature.MultipleArguments"/><!-- dibi syntaxe využívá argumentů "v textu" -->
+        <exclude name="PSR2.Methods.FunctionCallSignature.SpaceBeforeCloseBracket"/><!-- conflicts with our way of writing multiline SQL queries -->
+        <exclude name="Squiz.Commenting.FunctionComment.IncorrectParamVarName"/><!-- throws error with short type hint for integer and boolean -->
+        <exclude name="Squiz.PHP.InnerFunctions.NotAllowed"/><!-- prevents implementing anonymous classes -->
+        <exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces.NonFullyQualified"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.UselessDocComment"/><!-- not taking @throws into account -->
+        <exclude name="SlevomatCodingStandard.Classes.UnusedPrivateElements.WriteOnlyProperty"/><!-- not taking traits into account -->
+        <exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed"/><!-- fuck tabulators -->
+        <exclude name="Generic.Functions.OpeningFunctionBraceBsdAllman.BraceOnSameLine"/><!-- "\n) {\n" -->
+        <exclude name="Generic.Commenting.Todo.TaskFound"/>
+    </rule>
+    <rule ref="../vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingTraversableParameterTypeHintSpecification"/><!-- false positive on array by reference -->
+        <exclude name="SlevomatCodingStandard.Exceptions.ReferenceThrowableOnly.ReferencedGeneralException"/><!-- conflicts with PhpStan and PhpException -->
+        <exclude name="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod"/><!-- false positive on private method used by static constructor -->
+        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing"/><!-- fuck strict types -->
+        <exclude name="SlevomatCodingStandard.Types.EmptyLinesAroundTypeBraces.NoEmptyLineAfterOpeningBrace"/><!-- "use" on first line of class -->
+    </rule>
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <properties>
+            <property name="rootNamespaces" type="array" value="src=>SqlFtw"/>
+            <property name="skipDirs" type="array" value="tests"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true" />
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameAfterKeyword">
+        <properties>
+            <property name="keywordsToCheck" type="array" value="T_EXTENDS,T_IMPLEMENTS"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
+        <properties>
+            <property name="namespacesRequiredToUse" type="array" value="Slevomat,SlevomatCsobGateway,Doctrine\ORM\Mapping"/>
+            <property name="fullyQualifiedKeywords" type="array" value="T_EXTENDS,T_IMPLEMENTS"/>
+            <property name="allowFullyQualifiedExceptions" value="true"/>
+            <property name="allowPartialUses" value="false"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements">
+        <properties>
+            <property name="alwaysUsedPropertiesAnnotations" type="array" value="@get,@set"/>
+            <property name="alwaysUsedPropertiesSuffixes" type="array" value="Value,Timestamp"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Typehints.TypeHintDeclaration">
+        <properties>
+            <property name="traversableTypeHints" type="array" value="Traversable"/>
+            <property name="usefulAnnotations" type="array" value="@dataProvider,@deprecated,@internal,@label,@see"/>
+        </properties>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.FunctionSpacing.After"/>
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <exclude-pattern>tests/</exclude-pattern><!-- @dataProvider etc. annotations trigger comments check -->
+        <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
+        <exclude name="Squiz.Arrays.ArrayDeclaration.ValueNoNewline"/>
+        <exclude name="Squiz.Commenting.FunctionComment.WrongStyle"/>
+    </rule>
+    <rule ref="Generic.Commenting.Todo">
+        <exclude name="Generic.Commenting.Todo.CommentFound"/>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <exclude-pattern>/exceptions/</exclude-pattern>
+        <exclude-pattern>/tests/</exclude-pattern>
+    </rule>
+</ruleset>

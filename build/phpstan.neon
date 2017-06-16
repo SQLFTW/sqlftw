@@ -1,0 +1,9 @@
+
+parameters:
+    ignoreErrors:
+        - '~should return string\|null but returns string\|bool\|null~'
+        - '~\(SqlFtw\\Sql\\Command\|SqlFtw\\Sql\\Ddl\\CompoundStatement\) does not accept SqlFtw\\Sql\\SqlSerializable~'
+        - '~Property SqlFtw\\Sql\\Ddl\\Type::\$size \(int\[\]\|int\|null\) does not accept int\|int\[\]\|string\[\]\|null~'
+        - '~Property SqlFtw\\Sql\\Time\\TimeExpression::\$intervals \(SqlFtw\\Sql\\Time\\TimeInterval\[\]\) does not accept Dogma\\Time\\DateTimeInterval\[\]\|DateInterval\[\]~'
+    universalObjectCratesClasses:
+        - Nette\Application\UI\ITemplate

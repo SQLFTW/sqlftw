@@ -1,0 +1,115 @@
+<?php
+/**
+ * This file is part of the SqlFtw library (https://github.com/sqlftw)
+ *
+ * Copyright (c) 2017 Vlasta Neubauer (@paranoiq)
+ *
+ * For the full copyright and license information read the file 'license.md', distributed with this source code
+ */
+
+namespace SqlFtw\Parser\Ddl;
+
+use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\BaseType;
+use SqlFtw\Sql\Ddl\DataType;
+use SqlFtw\Sql\Keyword;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
+
+class TypeParser
+{
+    use \Dogma\StrictBehaviorMixin;
+
+    /**
+     * data_type:
+     *     BIT[(length)]
+     *   | TINYINT[(length)] [UNSIGNED] [ZEROFILL]
+     *   | SMALLINT[(length)] [UNSIGNED] [ZEROFILL]
+     *   | MEDIUMINT[(length)] [UNSIGNED] [ZEROFILL]
+     *   | INT[(length)] [UNSIGNED] [ZEROFILL]
+     *   | INTEGER[(length)] [UNSIGNED] [ZEROFILL]
+     *   | BIGINT[(length)] [UNSIGNED] [ZEROFILL]
+     *   | REAL[(length,decimals)] [UNSIGNED] [ZEROFILL]
+     *   | DOUBLE[(length,decimals)] [UNSIGNED] [ZEROFILL]
+     *   | FLOAT[(length,decimals)] [UNSIGNED] [ZEROFILL]
+     *   | DECIMAL[(length[,decimals])] [UNSIGNED] [ZEROFILL]
+     *   | NUMERIC[(length[,decimals])] [UNSIGNED] [ZEROFILL]
+     *   | DATE
+     *   | TIME[(fsp)]
+     *   | TIMESTAMP[(fsp)]
+     *   | DATETIME[(fsp)]
+     *   | YEAR
+     *   | CHAR[(length)] [BINARY]
+     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | VARCHAR(length) [BINARY]
+     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | BINARY[(length)]
+     *   | VARBINARY(length)
+     *   | TINYBLOB
+     *   | BLOB
+     *   | MEDIUMBLOB
+     *   | LONGBLOB
+     *   | TINYTEXT [BINARY]
+     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | TEXT [BINARY]
+     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | MEDIUMTEXT [BINARY]
+     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | LONGTEXT [BINARY]
+     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | ENUM(value1,value2,value3,...)
+     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | SET(value1,value2,value3,...)
+     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | JSON
+     *   | spatial_type
+     */
+    public function parseType(TokenList $tokenList): DataType
+    {
+        /** @var \SqlFtw\Sql\BaseType $dataType */
+        $dataType = $tokenList->consumeEnum(BaseType::class);
+        $params = $charset = $collation = null;
+        $unsigned = $zerofill = false;
+
+        if ($dataType->hasLength()) {
+            $length = $decimals = null;
+            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                $length = $tokenList->consumeInt();
+                if ($dataType->hasDecimals()) {
+                    $tokenList->consume(TokenType::COMMA);
+                    $decimals = $tokenList->consumeInt();
+                }
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            }
+            if ($decimals !== null) {
+                $params = [$length, $decimals];
+            } else {
+                $params = $length;
+            }
+        } elseif ($dataType->hasValues()) {
+            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $params = [];
+            do {
+                $params[] = $tokenList->consumeString();
+            } while ($tokenList->mayConsumeComma());
+            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        }
+
+        if ($dataType->isNumber()) {
+            $unsigned = (bool) $tokenList->mayConsumeKeyword(Keyword::UNSIGNED);
+            $zerofill = (bool) $tokenList->mayConsumeKeyword(Keyword::ZEROFILL);
+        }
+
+        if ($dataType->hasCharset()) {
+            if ($tokenList->mayConsumeKeywords(Keyword::CHARACTER, Keyword::SET)) {
+                $charset = Charset::get($tokenList->consumeNameOrString());
+            }
+            if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
+                $collation = $tokenList->consumeNameOrString();
+            }
+        }
+
+        return new DataType($dataType, $params, $unsigned, $charset, $collation, $zerofill);
+    }
+
+}

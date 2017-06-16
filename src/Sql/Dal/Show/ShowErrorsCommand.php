@@ -1,0 +1,72 @@
+<?php
+/**
+ * This file is part of the SqlFtw library (https://github.com/sqlftw)
+ *
+ * Copyright (c) 2017 Vlasta Neubauer (@paranoiq)
+ *
+ * For the full copyright and license information read the file 'license.md', distributed with this source code
+ */
+
+namespace SqlFtw\Sql\Dal\Show;
+
+use SqlFtw\SqlFormatter\SqlFormatter;
+
+class ShowErrorsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+{
+
+    /** @var int|null */
+    private $limit;
+
+    /** @var int|null */
+    private $offset;
+
+    /** @var bool */
+    private $count = false;
+
+    public function __construct(?int $limit = null, ?int $offset = null)
+    {
+        $this->limit = $limit;
+        $this->offset = $offset;
+    }
+
+    public static function createCount(): self
+    {
+        $self = new self();
+        $self->count = true;
+        return $self;
+    }
+
+    public function isCount(): bool
+    {
+        return $this->count;
+    }
+
+    public function getLimit(): ?int
+    {
+        return $this->limit;
+    }
+
+    public function getOffset(): ?int
+    {
+        return $this->offset;
+    }
+
+    public function serialize(SqlFormatter $formatter): string
+    {
+        $result = 'SHOW';
+        if ($this->count) {
+            $result .= ' COUNT(*) ERRORS';
+            return $result;
+        }
+        $result .= ' ERRORS';
+        if ($this->limit) {
+            $result .= ' LIMIT ';
+            if ($this->offset) {
+                $result .= $this->offset . ', ';
+            }
+            $result .= $this->limit;
+        }
+        return $result;
+    }
+
+}
