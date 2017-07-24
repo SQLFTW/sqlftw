@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Select;
 
 use Dogma\Check;
 use SqlFtw\Sql\Dml\OrderByExpression;
-use SqlFtw\Sql\Dml\TableReference;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\SqlFormatter\SqlFormatter;
 
@@ -22,7 +22,7 @@ class SelectCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Dml\Select\SelectExpression[] */
     private $columns;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference[] */
+    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
     private $from;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
@@ -60,7 +60,7 @@ class SelectCommand implements \SqlFtw\Sql\Command
 
     /**
      * @param \SqlFtw\Sql\Dml\Select\SelectExpression[] $columns
-     * @param \SqlFtw\Sql\Dml\TableReference[] $from
+     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $from
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
      * @param \SqlFtw\Sql\Dml\Select\GroupByExpression[]|null $groupBy
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $having
@@ -75,7 +75,7 @@ class SelectCommand implements \SqlFtw\Sql\Command
      */
     public function __construct(
         array $columns,
-        array $from,
+        TableReferenceNode $from,
         ?ExpressionNode $where = null,
         ?array $groupBy = null,
         ?ExpressionNode $having = null,
@@ -89,7 +89,6 @@ class SelectCommand implements \SqlFtw\Sql\Command
         bool $withRollup = false
     ) {
         Check::itemsOfType($columns, SelectExpression::class);
-        Check::itemsOfType($from, TableReference::class);
         if ($groupBy !== null) {
             Check::itemsOfType($groupBy, GroupByExpression::class);
         } elseif ($withRollup === true) {
@@ -125,10 +124,7 @@ class SelectCommand implements \SqlFtw\Sql\Command
         return $this->columns;
     }
 
-    /**
-     * @return \SqlFtw\Sql\Dml\TableReference[]
-     */
-    public function getFrom(): array
+    public function getFrom(): TableReferenceNode
     {
         return $this->from;
     }
@@ -210,7 +206,7 @@ class SelectCommand implements \SqlFtw\Sql\Command
         }
 
         $result .= ' ' . $formatter->formatSerializablesList($this->columns);
-        $result .= ' FROM ' . $formatter->formatSerializablesList($this->from);
+        $result .= ' FROM ' . $this->from->serialize($formatter);
 
         if ($this->where !== null) {
             $result .= ' WHERE ' . $this->where->serialize($formatter);

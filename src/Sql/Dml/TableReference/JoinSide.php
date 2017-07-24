@@ -7,9 +7,14 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Names;
+namespace SqlFtw\Sql\Dml\TableReference;
 
-class TableName extends \SqlFtw\Sql\Names\QualifiedName
+use SqlFtw\Sql\Keyword;
+
+class JoinSide extends \SqlFtw\Sql\SqlEnum
 {
+
+    public const LEFT = Keyword::LEFT;
+    public const RIGHT = Keyword::RIGHT;
 
 }

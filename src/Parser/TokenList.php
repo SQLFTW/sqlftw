@@ -355,6 +355,12 @@ class TokenList
         return '';
     }
 
+    public function mayConsumeAtVariable(): ?string
+    {
+        ///
+        return null;
+    }
+
     /**
      * @return string[]|null[] (string $name, string|null $database)
      */

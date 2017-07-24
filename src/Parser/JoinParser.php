@@ -9,42 +9,89 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Sql\Dml\TableReference;
+use SqlFtw\Sql\Dml\TableReference\EscapedTableReference;
+use SqlFtw\Sql\Dml\TableReference\IndexHint;
+use SqlFtw\Sql\Dml\TableReference\IndexHintAction;
+use SqlFtw\Sql\Dml\TableReference\IndexHintTarget;
+use SqlFtw\Sql\Dml\TableReference\InnerJoin;
+use SqlFtw\Sql\Dml\TableReference\JoinSide;
+use SqlFtw\Sql\Dml\TableReference\NaturalJoin;
+use SqlFtw\Sql\Dml\TableReference\OuterJoin;
+use SqlFtw\Sql\Dml\TableReference\StraightJoin;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
+use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Names\TableName;
 
 class JoinParser
 {
     use \Dogma\StrictBehaviorMixin;
+
+    /** @var \SqlFtw\Parser\ParserFactory */
+    private $parserFactory;
+
+    /** @var \SqlFtw\Parser\ExpressionParser */
+    private $expressionParser;
+
+    public function __construct(
+        ParserFactory $parserFactory,
+        ExpressionParser $expressionParser
+    )
+    {
+        $this->parserFactory = $parserFactory;
+        $this->expressionParser = $expressionParser;
+    }
 
     /**
      * table_references:
      *     escaped_table_reference [, escaped_table_reference] ...
      *
      * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dml\TableReference[]
+     * @return \SqlFtw\Sql\Dml\TableReference\TableReferenceNode
      */
-    public function parseTableReferences(TokenList $tokenList): array
+    public function parseTableReferences(TokenList $tokenList): TableReferenceNode
     {
         $references = [];
         do {
             $references[] = $this->parseTableReference($tokenList);
         } while ($tokenList->mayConsumeComma());
 
-        return $references;
+        if (count($references) === 1) {
+            return $references[0];
+        } else {
+            return new TableReferenceList($references);
+        }
     }
 
     /**
      * escaped_table_reference:
      *     table_reference
      *   | { OJ table_reference }
-     *
+     */
+    public function parseTableReference(TokenList $tokenList): TableReferenceNode
+    {
+        if ($tokenList->mayConsume(TokenType::LEFT_CURLY_BRACKET)) {
+            $token = $tokenList->consumeName();
+            if ($token !== 'OJ') {
+                $tokenList->expected('Expected ODBC escaped table reference introducer "OJ".');
+                exit;
+            } else {
+                $reference = $this->parseTableReference($tokenList);
+                $tokenList->consume(TokenType::RIGHT_CURLY_BRACKET);
+                return new EscapedTableReference($reference);
+            }
+        } else {
+            return $this->parseTableReferenceInternal($tokenList);
+        }
+    }
+
+    /**
      * table_reference:
      *     table_factor
      *   | join_table
-     *
-     * table_factor:
-     *     tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
-     *   | table_subquery [AS] alias [(col_list)]
-     *   | ( table_references )
      *
      * join_table:
      *     table_reference [INNER | CROSS] JOIN table_factor [join_condition]
@@ -56,7 +103,144 @@ class JoinParser
      * join_condition:
      *     ON conditional_expr
      *   | USING (column_list)
-     *
+     */
+    private function parseTableReferenceInternal(TokenList $tokenList): TableReferenceNode
+    {
+        $left = $this->parseTableFactor($tokenList);
+
+        do {
+            if ($tokenList->mayConsumeKeyword(Keyword::STRAIGHT_JOIN)) {
+                // STRAIGHT_JOIN
+                $right = $this->parseTableFactor($tokenList);
+                $condition = null;
+                if ($tokenList->mayConsumeKeyword(Keyword::ON)) {
+                    $condition = $this->expressionParser->parseExpression($tokenList);
+                }
+
+                $left = new StraightJoin($left, $right, $condition);
+                continue;
+            }
+            if ($tokenList->mayConsumeKeyword(Keyword::NATURAL)) {
+                // NATURAL JOIN
+                $side = null;
+                if ($tokenList->mayConsumeKeyword(Keyword::INNER)) {
+                    //
+                } else {
+                    /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide $side */
+                    $side = $tokenList->mayConsumeEnum(JoinSide::class);
+                    if ($side !== null) {
+                        $tokenList->mayConsumeKeyword(Keyword::OUTER);
+                    }
+                }
+                $tokenList->consumeKeyword(Keyword::JOIN);
+                $right = $this->parseTableFactor($tokenList);
+
+                $left = new NaturalJoin($left, $right, $side);
+                continue;
+            }
+            $side = $tokenList->mayConsumeEnum(JoinSide::class);
+            if ($side !== null) {
+                // OUTER JOIN
+                $tokenList->mayConsumeKeyword(Keyword::OUTER);
+                $right = $this->parseTableReferenceInternal($tokenList);
+                [$on, $using] = $this->parseJoinCondition($tokenList);
+
+                $left = new OuterJoin($left, $right, $side, $on, $using);
+                continue;
+            }
+            $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::INNER, Keyword::CROSS, Keyword::JOIN);
+            if ($keyword !== null) {
+                // INNER JOIN
+                $cross = false;
+                if ($keyword === Keyword::INNER) {
+                    $tokenList->consumeKeyword(Keyword::JOIN);
+                } elseif ($keyword === Keyword::CROSS) {
+                    $tokenList->consumeKeyword(Keyword::JOIN);
+                    $cross = true;
+                }
+                $right = $this->parseTableFactor($tokenList);
+                [$on, $using] = $this->parseJoinCondition($tokenList);
+
+                $left = new InnerJoin($left, $right, $cross, $on, $using);
+                continue;
+            }
+
+            return $left;
+        } while (true);
+    }
+
+    private function parseJoinCondition(TokenList $tokenList): array
+    {
+        $on = $using = null;
+        if ($tokenList->mayConsumeKeyword(Keyword::ON)) {
+            $on = $this->expressionParser->parseExpression($tokenList);
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::USING)) {
+            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $using = [];
+            do {
+                $using[] = $tokenList->consumeName();
+            } while ($tokenList->mayConsumeComma());
+            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        }
+
+        return [$on, $using];
+    }
+
+    /**
+     * table_factor:
+     *     tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
+     *   | table_subquery [AS] alias [(col_list)]
+     *   | ( table_references )
+     */
+    private function parseTableFactor(TokenList $tokenList): TableReferenceNode
+    {
+        if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+            $references = $this->parseTableReferences($tokenList);
+            $tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS);
+
+            return new TableReferenceParentheses($references);
+
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::SELECT)) {
+            $query = $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList->resetPosition(-1));
+            $tokenList->mayConsumeKeyword(Keyword::AS);
+            $alias = $tokenList->consumeName();
+            $columns = null;
+            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                $columns = [];
+                do {
+                    $columns[] = $tokenList->consumeName();
+                } while ($tokenList->mayConsumeComma());
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            }
+
+            return new TableReferenceSubquery($query, $alias, $columns);
+
+        } else {
+            $table = new TableName(...$tokenList->consumeQualifiedName());
+            $partitions = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
+                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                $partitions = [];
+                do {
+                    $partitions[] = $tokenList->consumeName();
+                } while ($tokenList->mayConsumeComma());
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            }
+            if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
+                $alias = $tokenList->consumeName();
+            } else {
+                $alias = $tokenList->mayConsumeName();
+            }
+            $indexHints = null;
+            if ($tokenList->mayConsumeAnyKeyword(Keyword::USE, Keyword::IGNORE, Keyword::FORCE)) {
+                $indexHints = $this->parseIndexHints($tokenList->resetPosition(-1));
+            }
+
+            return new TableReferenceTable($table, $alias, $partitions, $indexHints);
+        }
+    }
+
+    /**
      * index_hint_list:
      *     index_hint [, index_hint] ...
      *
@@ -67,10 +251,39 @@ class JoinParser
      *
      * index_list:
      *     index_name [, index_name] ...
+     *
+     * @param \SqlFtw\Parser\TokenList
+     * @return \SqlFtw\Sql\Dml\TableReference\IndexHint[]
      */
-    public function parseTableReference(TokenList $tokenList): TableReference
+    private function parseIndexHints(TokenList $tokenList): array
     {
+        $hints = [];
+        do {
+            /** @var \SqlFtw\Sql\Dml\TableReference\IndexHintAction $action */
+            $action = $tokenList->mayConsumeEnum(IndexHintAction::class);
+            $tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY);
+            $target = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::FOR)) {
+                $keyword = $tokenList->consumeAnyKeyword(Keyword::JOIN, Keyword::ORDER, Keyword::GROUP);
+                if ($keyword === Keyword::JOIN) {
+                    $target = IndexHintTarget::get(IndexHintTarget::JOIN);
+                } else {
+                    $tokenList->consumeKeyword(Keyword::BY);
+                    $target = IndexHintTarget::get($keyword . ' ' . Keyword::BY);
+                }
+            }
 
+            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $indexes = [];
+            do {
+                $indexes[] = $tokenList->consumeName();
+            } while ($tokenList->mayConsumeComma());
+            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+
+            $hints[] = new IndexHint($action, $target, $indexes);
+        } while ($tokenList->mayConsumeComma());
+
+        return $hints;
     }
 
 }

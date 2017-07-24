@@ -7,9 +7,15 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Names;
+namespace SqlFtw\Sql\Dml\TableReference;
 
-class TableName extends \SqlFtw\Sql\Names\QualifiedName
+use SqlFtw\Sql\Keyword;
+
+class IndexHintAction extends \SqlFtw\Sql\SqlEnum
 {
+
+    public const USE = Keyword::USE;
+    public const IGNORE = Keyword::IGNORE;
+    public const FORCE = Keyword::FORCE;
 
 }

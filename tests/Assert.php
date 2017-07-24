@@ -20,9 +20,9 @@ class Assert extends \Tester\Assert
             parent::fail(sprintf(
                 'Type of token "%s" is %s (%d) and should be %s (%d).',
                 $token->value,
-                implode('|', array_keys(iterator_to_array(TokenType::get($token->type)->getIterator()))),
+                implode('|', TokenType::get($token->type)->getConstantNames()),
                 $token->type,
-                implode('|', array_keys(iterator_to_array(TokenType::get($type)->getIterator()))),
+                implode('|', TokenType::get($type)->getConstantNames()),
                 $type
             ));
         }

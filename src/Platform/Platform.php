@@ -45,13 +45,13 @@ class Platform
     /** @var string */
     private $name;
 
-    /** @var string|null */
+    /** @var \SqlFtw\Platform\Version */
     private $version;
 
-    final private function __construct(string $name, ?string $version = null)
+    final private function __construct(string $name, Version $version)
     {
         $this->name = $name;
-        $this->version = $version;
+        $this->setVersion($version);
     }
 
     public static function get(string $name, ?string $version = null): self
@@ -62,15 +62,20 @@ class Platform
         if ($version !== null && !in_array($version, self::$versions[$name])) {
             throw new \Dogma\InvalidArgumentException(sprintf('Unknown version %s for platform %s.', $version, $name));
         }
+        if ($version === null) {
+            $version = new Version(self::$defaultVersions[$name]);
+        } else {
+            $version = new Version($version);
+        }
 
-        $key = $name . ($version !== null ? $version : '');
+        $key = $name . $version->getId();
         if (!isset(self::$instances[$key])) {
             self::$instances[$key] = new self($name, $version);
         }
         return self::$instances[$key];
     }
 
-    public function is(string $name, ?string $version = null): bool
+    public function is(string $name, ?Version $version = null): bool
     {
         if ($this->name !== $name) {
             return false;
@@ -78,7 +83,7 @@ class Platform
         if ($version === null) {
             return true;
         }
-        if ($this->version !== $version) {
+        if ($this->version->getId() !== $version->getId()) {
             return false;
         }
         return true;
@@ -97,20 +102,38 @@ class Platform
         return self::$defaultVersions[$this->name];
     }
 
-    public function ansiQuotes(): bool
+    public function getVersion(): Version
     {
-        return $this->is(self::SQL);
+        return $this->version;
     }
 
-    public function pipesAsConcat(): bool
+    public function setVersion(Version $version): void
     {
-        return $this->is(self::SQL);
+        $this->version = $version;
     }
 
-    public function getKeywords(): PlatformFeatures
+    public function hasOptionalComments(): bool
     {
-        $version = str_replace('.', '', $this->version ?? self::$defaultVersions[$this->name]);
-        $class = __NAMESPACE__ . '\\Keywords\\Keywords' . ucfirst($this->name) . $version;
+        return $this->name === self::MYSQL || $this->name === self::MARIA;
+    }
+
+    public function hasUserDelimiter(): bool
+    {
+        return $this->name === self::MYSQL || $this->name === self::MARIA;
+    }
+
+    public function getDefaultMode(): Mode
+    {
+        if ($this->name === self::MYSQL || $this->name === self::MARIA) {
+            return Mode::get(0);
+        } else {
+            return Mode::getAnsi();
+        }
+    }
+
+    public function getFeatures(): PlatformFeatures
+    {
+        $class = __NAMESPACE__ . '\\Features\\Features' . ucfirst($this->name) . str_replace('.', '', $this->version->getMajorMinor());
 
         return new $class;
     }

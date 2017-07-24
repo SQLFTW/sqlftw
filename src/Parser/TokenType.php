@@ -15,7 +15,7 @@ namespace SqlFtw\Parser;
  * - WHITESPACE
  * - COMMENT
  *    - BLOCK_COMMENT - "/* ... * /"
- *        - OPTIONAL_COMMENT - "/*! ... * /"
+ *        ~ OPTIONAL_COMMENT - "/*! ... * /"
  *        - HINT_COMMENT - "/*+ ... * /"
  *    - DOUBLE_HYPHEN_COMMENT - "-- ..."
  *    - DOUBLE_SLASH_COMMENT - "// ..."
@@ -36,17 +36,18 @@ namespace SqlFtw\Parser;
  *        - SINGLE_QUOTED_STRING "'string'" (standard)
  *        - DOUBLE_QUOTED_STRING ""string"" (MySQL in default mode)
  *        * DOLLAR_QUOTED_STRING - "$foo$table1$foo$" (PostgreSQL)
- *         ~ BINARY_LITERAL
- *         ~ HEXADECIMAL
  *    - NUMBER
  *         ~ INTEGER
  *         ~ FLOAT
  *         ~ DECIMAL
- *    - UUID "3E11FA47-71CA-11E1-9E33-C80AA9429562"
+ *    - BINARY_LITERAL
+ *    - HEXADECIMAL_LITERAL
  *    * DATE, TIME, DATETIME, TIMESTAMP - { d 'str' }, { t 'str' }, { ts 'str' }
- *    - BOOLEAN (+- KEYWORD) - TRUE, FALSE, YES, NO, ON, OFF, 'T', 'F'
+ *    - UUID "3E11FA47-71CA-11E1-9E33-C80AA9429562"
+ *    ~ BOOLEAN (+- KEYWORD) - TRUE, FALSE, YES, NO, ON, OFF, 'T', 'F'
  *    ~ NULL (+ KEYWORD)
  *    ~ DEFAULT (+ KEYWORD)
+ *    * OBJECT - OLD, NEW, VALUES
  * - SYMBOL
  *    - LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, LEFT_CURLY_BRACKET, RIGHT_CURLY_BRACKET
  *    - DOT, COMMA, SEMICOLON
@@ -54,11 +55,6 @@ namespace SqlFtw\Parser;
  *    - DELIMITER_DEFINITION
  *    - PLACEHOLDER "?"
  *    - OPERATOR - everything else
- *
- * Other special cases:
- * - OLD
- * - NEW
- * - VALUES
  */
 class TokenType extends \Dogma\IntSet
 {
@@ -90,7 +86,7 @@ class TokenType extends \Dogma\IntSet
     /** Unquoted keyword recognized by given platform */
     public const KEYWORD = 0x100;
 
-    /** Unquoted keyword recognized by given platform */
+    /** Unquoted reserved keyword recognized by given platform */
     public const RESERVED = 0x200;
 
     /** Any name (quoted string or unquoted string other than a keyword) */
@@ -132,11 +128,11 @@ class TokenType extends \Dogma\IntSet
     /** Formatted UUID like "12345678-90AB-CDEF-1234-567890ABCDEF" */
     public const UUID = 0x400000;
 
-    /** TRUE or FALSE keyword */
-    public const BOOLEAN = 0x800000;
+    /** "0b0101" */
+    public const BINARY_LITERAL = 0x800000;
 
-    /** NULL keyword */
-    public const NULL = 0x1000000;
+    /** "0xDEADBEEF" */
+    public const HEXADECIMAL_LITERAL = 0x1000000;
 
     /** "(" */
     public const LEFT_PARENTHESIS = 0x2000000;

@@ -31,7 +31,7 @@ class Parser
     {
         $this->lexer = $lexer;
         $this->settings = $settings;
-        $this->factory = new ParserFactory($settings);
+        $this->factory = new ParserFactory($settings, $this);
     }
 
     /**
@@ -40,7 +40,7 @@ class Parser
      */
     public function parse(string $sql): array
     {
-        $tokens = $this->lexer->tokenize($sql, $this->settings);
+        $tokens = $this->lexer->tokenizeAll($sql);
         $tokenLists = $this->slice($tokens);
 
         $commands = [];
@@ -62,7 +62,7 @@ class Parser
         $n = 0;
         foreach ($tokens as $token) {
             if ($token->type & TokenType::DELIMITER) {
-                $lists[$n] = new TokenList($lists[$n]);
+                $lists[$n] = new TokenList($lists[$n], $this->settings);
                 $n++;
             } else {
                 $lists[$n][] = $token;

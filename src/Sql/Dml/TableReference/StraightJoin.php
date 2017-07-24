@@ -1,0 +1,49 @@
+<?php
+/**
+ * This file is part of the SqlFtw library (https://github.com/sqlftw)
+ *
+ * Copyright (c) 2017 Vlasta Neubauer (@paranoiq)
+ *
+ * For the full copyright and license information read the file 'license.md', distributed with this source code
+ */
+
+namespace SqlFtw\Sql\Dml\TableReference;
+
+use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\SqlFormatter\SqlFormatter;
+
+class StraightJoin extends \SqlFtw\Sql\Dml\TableReference\Join
+{
+    use \Dogma\StrictBehaviorMixin;
+
+    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    private $condition;
+
+    public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?ExpressionNode $condition)
+    {
+        parent::__construct($left, $right);
+
+        $this->condition = $condition;
+    }
+
+    public function getType(): TableReferenceNodeType
+    {
+        return TableReferenceNodeType::get(TableReferenceNodeType::STRAIGHT_JOIN);
+    }
+
+    public function getCondition(): ?ExpressionNode
+    {
+        return $this->condition;
+    }
+
+    public function serialize(SqlFormatter $formatter): string
+    {
+        $result = $this->left->serialize($formatter) . ' STRAIGHT_JOIN ' . $this->right->serialize($formatter);
+        if ($this->condition !== null) {
+            $result .= ' ON ' . $this->condition->serialize($formatter);
+        }
+
+        return $result;
+    }
+
+}

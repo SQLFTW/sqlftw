@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Delete;
 use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Sql\Dml\OrderByExpression;
-use SqlFtw\Sql\Dml\TableReference;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Names\TableName;
 use SqlFtw\SqlFormatter\SqlFormatter;
@@ -24,7 +24,7 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
     /** @var \SqlFtw\Sql\Names\TableName[] */
     private $tables;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference[]|null */
+    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null */
     private $references;
 
     /** @var string[]|null */
@@ -53,7 +53,7 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param int|null $limit
-     * @param \SqlFtw\Sql\Dml\TableReference[]|null $references
+     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null $references
      * @param string[]|null $partitions
      * @param bool $lowPriority
      * @param bool $quick
@@ -64,7 +64,7 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
         ?ExpressionNode $where = null,
         ?array $orderBy = null,
         ?int $limit = null,
-        ?array $references = null,
+        ?TableReferenceNode $references = null,
         ?array $partitions = null,
         bool $lowPriority = false,
         bool $quick = false,
@@ -77,7 +77,6 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
         if ($references !== null && $partitions !== null) {
             throw new \SqlFtw\Sql\InvalidDefinitionException('Either table references or partition may be set. Not both a once.');
         } elseif ($references !== null) {
-            Check::itemsOfType($references, TableReference::class);
             if ($orderBy !== null || $limit !== null) {
                 throw new \SqlFtw\Sql\InvalidDefinitionException('ORDER BY and LIMIT must not be set, when table references are used.');
             }
@@ -104,10 +103,7 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
         return $this->tables;
     }
 
-    /**
-     * @return \SqlFtw\Sql\Dml\TableReference[]|null
-     */
-    public function getReferences(): ?array
+    public function getReferences(): ?TableReferenceNode
     {
         return $this->references;
     }
@@ -168,7 +164,7 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
 
         $result .= 'FROM ' . $formatter->formatSerializablesList($this->tables);
         if ($this->references !== null) {
-            $result .= ' USING ' . $formatter->formatSerializablesList($this->references);
+            $result .= ' USING ' . $this->references->serialize($formatter);
         } elseif ($this->partitions !== null) {
             $result .= ' PARTITION (' . $formatter->formatNamesList($this->partitions) . ')';
         }

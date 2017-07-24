@@ -10,6 +10,7 @@
 namespace SqlFtw\Platform;
 
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\SqlMode;
 
 class Settings
 {
@@ -24,11 +25,8 @@ class Settings
     /** @var \SqlFtw\Sql\Charset */
     private $charset;
 
-    /** @var bool */
-    private $ansiQuotes;
-
-    /** @var bool */
-    private $pipesAsConcat;
+    /** @var \SqlFtw\Platform\Mode */
+    private $mode;
 
     /** @var bool */
     private $quoteAllNames;
@@ -37,15 +35,13 @@ class Settings
         Platform $platform,
         string $delimiter = ';',
         ?Charset $charset = null,
-        ?bool $ansiQuotes = null,
-        ?bool $pipesAsConcat = null,
+        ?Mode $mode = null,
         bool $quoteAllNames = true
     ) {
         $this->platform = $platform;
         $this->delimiter = $delimiter;
         $this->charset = $charset;
-        $this->ansiQuotes = $ansiQuotes !== null ? $ansiQuotes : $platform->ansiQuotes();
-        $this->pipesAsConcat = $pipesAsConcat !== null ? $pipesAsConcat : $platform->pipesAsConcat();
+        $this->mode = $mode !== null ? $mode : $platform->getDefaultMode();
         $this->quoteAllNames = $quoteAllNames;
     }
 
@@ -74,34 +70,19 @@ class Settings
         $this->charset = $charset;
     }
 
-    public function setSqlMode(): void
+    public function getMode(): Mode
     {
-        ///
+        return $this->mode;
     }
 
-    public function ansiQuotes(): bool
+    public function setMode(Mode $mode): void
     {
-        return $this->ansiQuotes;
+        $this->mode = $mode;
     }
 
-    public function setAnsiQuotes(bool $ansiQuotes): void
+    public function setSqlMode(SqlMode $sqlMode): void
     {
-        $this->ansiQuotes = $ansiQuotes;
-    }
-
-    public function pipesAsConcat(): bool
-    {
-        return $this->pipesAsConcat;
-    }
-
-    public function setPipesAsConcat(bool $pipesAsConcat): void
-    {
-        $this->pipesAsConcat = $pipesAsConcat;
-    }
-
-    public function quoteAllNames(): bool
-    {
-        return $this->quoteAllNames;
+        $this->mode = $sqlMode->getMode();
     }
 
 }

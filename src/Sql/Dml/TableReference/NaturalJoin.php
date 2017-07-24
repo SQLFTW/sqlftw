@@ -1,0 +1,49 @@
+<?php
+/**
+ * This file is part of the SqlFtw library (https://github.com/sqlftw)
+ *
+ * Copyright (c) 2017 Vlasta Neubauer (@paranoiq)
+ *
+ * For the full copyright and license information read the file 'license.md', distributed with this source code
+ */
+
+namespace SqlFtw\Sql\Dml\TableReference;
+
+use SqlFtw\SqlFormatter\SqlFormatter;
+
+class NaturalJoin extends \SqlFtw\Sql\Dml\TableReference\Join
+{
+    use \Dogma\StrictBehaviorMixin;
+
+    /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide|null */
+    private $joinSide;
+
+    public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?JoinSide $joinSide)
+    {
+        parent::__construct($left, $right);
+
+        $this->joinSide = $joinSide;
+    }
+
+    public function getType(): TableReferenceNodeType
+    {
+        return TableReferenceNodeType::get(TableReferenceNodeType::STRAIGHT_JOIN);
+    }
+
+    public function getJoinSide(): ?JoinSide
+    {
+        return $this->joinSide;
+    }
+
+    public function serialize(SqlFormatter $formatter): string
+    {
+        $result = $this->left->serialize($formatter) . ' NATURAL ';
+        if ($this->joinSide !== null) {
+            $result .= $this->joinSide->serialize($formatter) . ' ';
+        }
+        $result .= 'JOIN ' . $this->right->serialize($formatter);
+
+        return $result;
+    }
+
+}

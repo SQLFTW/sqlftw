@@ -66,7 +66,7 @@ class UpdateCommandParser
         }
 
         $orderBy = $limit = null;
-        if (count($tableReferences) === 1) {
+        if (!$tableReferences instanceof \Countable || $tableReferences->count() === 1) {
             if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
                 $orderBy = $this->expressionParser->parseOrderBy($orderBy);
             }

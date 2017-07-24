@@ -9,13 +9,16 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Platform\Mode;
 use SqlFtw\Sql\Dml\OrderByExpression;
+use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
 use SqlFtw\Sql\Expression\CaseExpression;
 use SqlFtw\Sql\Expression\CollateExpression;
 use SqlFtw\Sql\Expression\CurlyExpression;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalExpression;
 use SqlFtw\Sql\Expression\ListExpression;
@@ -26,7 +29,9 @@ use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\RowExpression;
 use SqlFtw\Sql\Expression\Subquery;
+use SqlFtw\Sql\Expression\TernaryOperator;
 use SqlFtw\Sql\Expression\UnaryOperator;
+use SqlFtw\Sql\Expression\Unknown;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Names\ColumnName;
 use SqlFtw\Sql\Operator;
@@ -61,13 +66,38 @@ class ExpressionParser
      */
     public function parseExpression(TokenList $tokenList): ExpressionNode
     {
-        if ($tokenList->mayConsumeOperator(Operator::NOT)) {
-
-        } elseif ($tokenList->mayConsumeOperator(Operator::EXCLAMATION)) {
-
+        $operators = [Operator::OR, Operator::XOR, Operator::AND, Operator::AMPERSANDS];
+        if (!$tokenList->getSettings()->getMode()->contains(Mode::PIPES_AS_CONCAT)) {
+            $operators[] = Operator::PIPES;
         }
 
-        return new ExpressionNode();
+        if ($tokenList->mayConsumeOperator(Operator::NOT)) {
+            $expr = $this->parseExpression($tokenList);
+
+            return new UnaryOperator(Operator::NOT, $expr);
+        } elseif ($tokenList->mayConsumeOperator(Operator::EXCLAMATION)) {
+            $expr = $this->parseExpression($tokenList);
+
+            return new UnaryOperator(Operator::EXCLAMATION, $expr);
+        }
+
+        $left = $this->parseBooleanPrimary($tokenList);
+        $operator = $tokenList->mayConsumeAnyOperator($operators);
+        if ($operator !== null) {
+            $right = $this->parseExpression($tokenList);
+
+            return new BinaryOperator($left, [$operator], $right);
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::IS)) {
+            $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
+            $keyword = $tokenList->consumeAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
+            $right = $keyword === Keyword::UNKNOWN
+                ? new Unknown()
+                : new Literal($keyword === Keyword::TRUE ? true : false);
+
+            return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IS] : [Operator::IS], $right);
+        } else {
+            return $left;
+        }
     }
 
     /**
@@ -96,7 +126,35 @@ class ExpressionParser
      */
     private function parseBooleanPrimary(TokenList $tokenList): ExpressionNode
     {
+        $operators = [
+            Operator::SAFE_EQUAL, Operator::EQUAL, Operator::GREATER_OR_EQUAL, Operator::GREATER,
+            Operator::LESS_OR_EQUAL, Operator::LESS, Operator::LESS_OR_GREATER, Operator::NON_EQUAL
+        ];
 
+        $left = $this->parsePredicate($tokenList);
+        $operator = $tokenList->mayConsumeAnyOperator($operators);
+        if ($operator !== null) {
+            $quantifier = $tokenList->mayConsumeAnyKeyword(Keyword::ALL, Keyword::ANY);
+            if ($quantifier !== null) {
+                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                $subquery = new Parentheses($this->parseSubquery($tokenList));
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+
+                return new BinaryOperator($left, [$operator, $quantifier], $subquery);
+            } else {
+                $right = $this->parsePredicate($tokenList);
+
+                return new BinaryOperator($left, [$operator], $right);
+            }
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::IS)) {
+            $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
+            $tokenList->consumeKeyword(Keyword::NULL);
+            $right = new Literal(null);
+
+            return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
+        } else {
+            return $left;
+        }
     }
 
     /**
@@ -111,7 +169,50 @@ class ExpressionParser
      */
     private function parsePredicate(TokenList $tokenList): ExpressionNode
     {
-        ///
+        $left = $this->parseBitExpression($tokenList);
+        if ($tokenList->mayConsumeKeywords(Keyword::SOUNDS, Keyword::LIKE)) {
+            $right = $this->parseBitExpression($tokenList);
+
+            return new BinaryOperator($left, [Operator::SOUNDS, Operator::LIKE], $right);
+        }
+
+        $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
+
+        if ($operator = $tokenList->mayConsumeAnyKeyword(Keyword::REGEXP, Keyword::RLIKE)) {
+            $right = $this->parseBitExpression($tokenList);
+
+            return new BinaryOperator($left, $not ? [Operator::NOT, $operator] : [$operator], $right);
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::BETWEEN)) {
+            $middle = $this->parseBitExpression($tokenList);
+            $tokenList->consumeKeyword(Keyword::AND);
+            $right = $this->parseBitExpression($tokenList);
+
+            return new TernaryOperator($left, $not ? [Operator::NOT, Operator::BETWEEN] : [Operator::BETWEEN], $middle, Operator::AND, $right);
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::IN)) {
+            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            if ($tokenList->mayConsumeKeyword(Keyword::SELECT)) {
+                $subquery = new Parentheses($this->parseSubquery($tokenList->resetPosition(-1)));
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+
+                return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IN] : [Operator::IN], $subquery);
+            } else {
+                $expressions = new Parentheses(new ListExpression($this->parseExpressionList($tokenList)));
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+
+                return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IN] : [Operator::IN], $expressions);
+            }
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
+            $second = $this->parseSimpleExpression($tokenList);
+            if ($tokenList->mayConsumeKeyword(Keyword::ESCAPE)) {
+                $third = $this->parseSimpleExpression($tokenList);
+
+                return new TernaryOperator($left, $not ? [Operator::NOT, Operator::LIKE] : [Operator::LIKE], $second, Operator::ESCAPE, $third);
+            } else {
+                return new BinaryOperator($left, $not ? [Operator::NOT, Operator::LIKE] : [Operator::LIKE], $second);
+            }
+        } else {
+            return $left;
+        }
     }
 
     /**
@@ -134,31 +235,52 @@ class ExpressionParser
      */
     private function parseBitExpression(TokenList $tokenList): ExpressionNode
     {
-        ///
+        $operators = [
+            Operator::BIT_OR, Operator::BIT_AND, Operator::LEFT_SHIFT, Operator::RIGHT_SHIFT, Operator::PLUS, Operator::MINUS,
+            Operator::MULTIPLY, Operator::DIVIDE, Operator::DIV, Operator::MOD, Operator::MODULO, Operator::BIT_XOR
+        ];
+
+        $left = $this->parseSimpleExpression($tokenList);
+        $operator = $tokenList->mayConsumeAnyOperator(...$operators);
+        if ($operator === null) {
+            return $left;
+        }
+
+        if (($operator === Operator::PLUS || $operator === Operator::MINUS) && $tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
+            $right = new IntervalExpression($this->parseInterval($tokenList));
+
+            return new BinaryOperator($left, [$operator], $right);
+        }
+        $right = $this->parseBitExpression($tokenList);
+
+        return new BinaryOperator($left, [$operator], $right);
     }
 
     /**
      * simple_expr:
-     *     literal
-     *   | identifier
-     *   | function_call
-     *   | simple_expr COLLATE collation_name
-     *   | param_marker
-     *   | variable
-     *   | simple_expr || simple_expr
-     *   | + simple_expr
+     *     + simple_expr
      *   | - simple_expr
      *   | ~ simple_expr
      *   | ! simple_expr
      *   | BINARY simple_expr
+     *   | EXISTS (subquery)
+     *   | (subquery)
      *   | (expr [, expr] ...)
      *   | ROW (expr, expr [, expr] ...)
-     *   | (subquery)
-     *   | EXISTS (subquery)
-     *   | {identifier expr}
-     *   | match_expr
-     *   | case_expr
      *   | interval_expr
+     *   | case_expr
+     *   | match_expr
+     *   | param_marker
+     *   | {identifier expr}
+     *
+     *   | variable
+     *   | identifier
+     *   | function_call
+     *
+     *   | literal
+     *
+     *   | simple_expr COLLATE collation_name
+     *   | simple_expr || simple_expr
      */
     private function parseSimpleExpression(TokenList $tokenList): ExpressionNode
     {
@@ -167,9 +289,15 @@ class ExpressionParser
             Operator::PLUS, Operator::MINUS, Operator::BIT_INVERT, Operator::EXCLAMATION, Operator::BINARY
         );
         if ($operator !== null) {
+            // + simple_expr
+            // - simple_expr
+            // ~ simple_expr
+            // ! simple_expr
+            // BINARY simple_expr
             $expression = new UnaryOperator($operator, $this->parseSimpleExpression($tokenList));
 
         } elseif ($tokenList->mayConsumeKeyword(Keyword::EXISTS)) {
+            // EXISTS (subquery)
             $tokenList->consume(TokenType::LEFT_PARENTHESIS);
             $subquery = $this->parseSubquery($tokenList);
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
@@ -177,61 +305,92 @@ class ExpressionParser
 
         } elseif ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
             if ($tokenList->mayConsumeAnyKeyword(Keyword::SELECT)) {
+                // (subquery)
                 $subquery = $this->parseSubquery($tokenList->resetPosition(-1));
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
                 $expression = new Parentheses($subquery);
             } else {
+                // (expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
                 $expression = new Parentheses(new ListExpression($expressions));
             }
         } elseif ($tokenList->mayConsumeKeyword(Keyword::ROW)) {
+            // ROW (expr, expr [, expr] ...)
             $tokenList->consume(TokenType::LEFT_PARENTHESIS);
             $expressions = $this->parseExpressionList($tokenList);
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             $expression = new RowExpression($expressions);
 
         } elseif ($tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
+            // interval_expr
             $interval = $this->parseInterval($tokenList);
             $expression = new IntervalExpression($interval);
 
         } elseif ($tokenList->mayConsumeKeyword(Keyword::CASE)) {
+            // case_expr
             $expression = $this->parseCase($tokenList);
 
         } elseif ($tokenList->mayConsumeKeyword(Keyword::MATCH)) {
+            // match_expr
             $expression = $this->parseMatch($tokenList);
 
         } elseif ($tokenList->mayConsumeKeyword(TokenType::PLACEHOLDER)) {
+            // param_marker
             $expression = new Placeholder();
 
         } elseif ($tokenList->mayConsume(TokenType::LEFT_CURLY_BRACKET)) {
+            // {identifier expr}
             $name = $tokenList->consumeName();
             $expression = $this->parseExpression($tokenList);
             $tokenList->consume(TokenType::RIGHT_CURLY_BRACKET);
             $expression = new CurlyExpression($name, $expression);
 
-        } elseif ($name = $tokenList->mayConsume(TokenType::AT_VARIABLE)) {
-            $expression = new Identifier($name);
-
-        } else {
-
-            $name = $tokenList->mayConsumeQualifiedName();
-            if ($name !== null) {
-                if ($name[0] === '@') {
-                    $expression = new Identifier($name);
-                } else {
-
-                }
-            } else {
-                $literal = $this->parseLiteralValue($tokenList);
-                $expression = new Literal($literal);
+        } elseif ($variable = $tokenList->mayConsume(TokenType::AT_VARIABLE)) {
+            // variable
+            if ($variable[1] === '@') {
+                // @@global.xyz
+                $tokenList->consume(TokenType::DOT);
+                $variable .= '.' . $tokenList->consumeName();
             }
+            $expression = new Identifier($variable);
+
+        } elseif ($name1 = $tokenList->mayConsumeName()) {
+            $name2 = $name3 = null;
+            if ($tokenList->mayConsume(TokenType::DOT)) {
+                $name2 = $tokenList->consumeName();
+                if ($tokenList->mayConsume(TokenType::DOT)) {
+                    $name3 = $tokenList->consumeName();
+                }
+            }
+            if ($name3 !== null) {
+                // identifier
+                $expression = new Identifier(new ColumnName($name1, $name2, $name3));
+
+            } elseif ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                // function_call
+                ///
+            } elseif ($name2 !== null) {
+                // identifier
+                $expression = new Identifier(new ColumnName(null, $name1, $name2));
+
+            } else {
+                // identifier
+                /// constant?
+                $expression = new Identifier(new ColumnName(null, null, $name1));
+            }
+        } else {
+            // literal
+            $literal = $this->parseLiteralValue($tokenList);
+            $expression = new Literal($literal);
         }
 
         if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
+            // simple_expr COLLATE collation_name
             $collation = $tokenList->consumeString();
 
             return new CollateExpression($expression, $collation);
-        } elseif ($tokenList->getSettings()->pipesAsConcat() && $tokenList->mayConsumeOperator(Operator::PIPES)) {
+        } elseif ($tokenList->getSettings()->getMode()->contains(Mode::PIPES_AS_CONCAT) && $tokenList->mayConsumeOperator(Operator::PIPES)) {
+            // simple_expr || simple_expr
             $right = $this->parseSimpleExpression($tokenList);
 
             return new BinaryOperator($expression, Operator::PIPES, $right);
@@ -308,13 +467,20 @@ class ExpressionParser
     /**
      * @param \SqlFtw\Parser\TokenList $tokenList
      * @param int|null $position
-     * @return string|int|float|bool|null
+     * @return string|int|float|bool|\SqlFtw\Sql\Expression\BinaryLiteral|\SqlFtw\Sql\Expression\HexadecimalLiteral|null
      */
     public function parseLiteralValue(TokenList $tokenList)
     {
+        $token = $tokenList->consume(TokenType::VALUE);
 
-        ///
-        return '';
+        $value = $token->value;
+        if ($token->type & TokenType::BINARY_LITERAL) {
+            $value = new BinaryLiteral($value);
+        } elseif ($token->type & TokenType::HEXADECIMAL_LITERAL) {
+            $value = new HexadecimalLiteral($value);
+        }
+
+        return $value;
     }
 
     /**

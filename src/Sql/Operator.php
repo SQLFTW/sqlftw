@@ -60,14 +60,11 @@ class Operator extends \SqlFtw\Sql\SqlEnum
     public const RLIKE = Keyword::RLIKE;
     public const SOUNDS = Keyword::SOUNDS;
 
-    /// case
-    /*
     public const CASE = Keyword::CASE;
     public const WHEN = Keyword::WHEN;
     public const THEN = Keyword::THEN;
     public const ELSE = Keyword::ELSE;
     public const END = Keyword::END;
-    */
 
     // quantifiers
     public const IN = Keyword::IN;
@@ -76,7 +73,7 @@ class Operator extends \SqlFtw\Sql\SqlEnum
     public const ALL = Keyword::ALL;
     public const EXISTS = Keyword::EXISTS;
 
-    // declarative
+    // collation
     public const BINARY = Keyword::BINARY;
 
     // JSON

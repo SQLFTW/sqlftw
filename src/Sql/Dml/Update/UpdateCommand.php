@@ -11,7 +11,8 @@ namespace SqlFtw\Sql\Dml\Update;
 
 use Dogma\Check;
 use SqlFtw\Sql\Dml\OrderByExpression;
-use SqlFtw\Sql\Dml\TableReference;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\SqlFormatter\SqlFormatter;
 
@@ -19,7 +20,7 @@ class UpdateCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference[] */
+    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
     private $tableReferences;
 
     /** @var \SqlFtw\Sql\Dml\Update\SetColumnExpression[] */
@@ -41,7 +42,7 @@ class UpdateCommand implements \SqlFtw\Sql\Command
     private $lowPriority;
 
     /**
-     * @param \SqlFtw\Sql\Dml\TableReference[] $tableReferences
+     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $tableReferences
      * @param \SqlFtw\Sql\Dml\Update\SetColumnExpression[] $values
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
@@ -50,7 +51,7 @@ class UpdateCommand implements \SqlFtw\Sql\Command
      * @param bool $lowPriority
      */
     public function __construct(
-        array $tableReferences,
+        TableReferenceNode $tableReferences,
         array $values,
         ?ExpressionNode $where = null,
         ?array $orderBy = null,
@@ -58,12 +59,11 @@ class UpdateCommand implements \SqlFtw\Sql\Command
         bool $ignore = false,
         bool $lowPriority = false
     ) {
-        Check::itemsOfType($tableReferences, TableReference::class);
         Check::itemsOfType($values, SetColumnExpression::class);
         if ($orderBy !== null) {
             Check::itemsOfType($orderBy, OrderByExpression::class);
         }
-        if (count($tableReferences) > 1 && ($orderBy !== null || $limit !== null)) {
+        if ($tableReferences instanceof TableReferenceList && count($tableReferences) > 1 && ($orderBy !== null || $limit !== null)) {
             throw new \SqlFtw\Sql\InvalidDefinitionException('ORDER BY and LIMIT must not be set, when more table references are used.');
         }
 
@@ -76,10 +76,7 @@ class UpdateCommand implements \SqlFtw\Sql\Command
         $this->lowPriority = $lowPriority;
     }
 
-    /**
-     * @return \SqlFtw\Sql\Dml\TableReference[]
-     */
-    public function getTableReferences(): array
+    public function getTableReferences(): TableReferenceNode
     {
         return $this->tableReferences;
     }
@@ -130,7 +127,7 @@ class UpdateCommand implements \SqlFtw\Sql\Command
             $result .= 'IGNORE ';
         }
 
-        $result .= $formatter->formatSerializablesList($this->tableReferences);
+        $result .= $this->tableReferences->serialize($formatter);
         $result .= ' SET ' . $formatter->formatSerializablesList($this->values);
 
         if ($this->where !== null) {

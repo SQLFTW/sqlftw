@@ -64,16 +64,25 @@ class ParserFactory
     /** @var \SqlFtw\Platform\Settings */
     private $settings;
 
-    public function __construct(Settings $settings)
+    /** @var \SqlFtw\Parser\Parser */
+    private $parser;
+
+    public function __construct(Settings $settings, Parser $parser)
     {
         $this->settings = $settings;
+        $this->parser = $parser;
     }
 
     // partial parsers -------------------------------------------------------------------------------------------------
 
     public function getCompoundStatementParser(): CompoundStatementParser
     {
-        return new CompoundStatementParser($this->getExpressionParser());
+        return new CompoundStatementParser(
+            $this->parser,
+            $this->getExpressionParser(),
+            $this->getTypeParser(),
+            $this->getSelectCommandParser()
+        );
     }
 
     public function getExpressionParser(): ExpressionParser
@@ -88,7 +97,7 @@ class ParserFactory
 
     public function getJoinParser(): JoinParser
     {
-        return new JoinParser();
+        return new JoinParser($this, $this->getExpressionParser());
     }
 
     public function getTypeParser(): TypeParser
@@ -140,7 +149,7 @@ class ParserFactory
 
     public function getDeleteCommandParser(): DeleteCommandParser
     {
-        return new DeleteCommandParser($this->getExpressionParser());
+        return new DeleteCommandParser($this->getExpressionParser(), $this->getJoinParser());
     }
 
     public function getDelimiterCommandParser(): DelimiterCommandParser
