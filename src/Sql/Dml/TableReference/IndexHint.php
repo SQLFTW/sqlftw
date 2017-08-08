@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class IndexHint implements \SqlFtw\Sql\SqlSerializable
 {
@@ -58,7 +58,7 @@ class IndexHint implements \SqlFtw\Sql\SqlSerializable
         return $this->indexes;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->action->serialize($formatter) . ' INDEX';
         if ($this->target !== null) {

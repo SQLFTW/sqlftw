@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class HelpCommand implements \SqlFtw\Sql\Command
 {
@@ -28,7 +28,7 @@ class HelpCommand implements \SqlFtw\Sql\Command
         return $this->term;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'HELP ' . $formatter->formatString($this->term);
     }

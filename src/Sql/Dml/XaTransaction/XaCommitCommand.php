@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class XaCommitCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class XaCommitCommand implements \SqlFtw\Sql\Command
         return $this->onePhase;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'XA COMMIT ' . $this->xid->serialize($formatter) . ($this->onePhase ? ' ONE PHASE' : '');
     }

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class AlterColumnAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -18,22 +18,17 @@ class AlterColumnAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
     /** @var string */
     private $name;
 
-    /** @var string|int|float|null */
+    /** @var string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null */
     private $default;
-
-    /** @var bool */
-    private $dropDefault;
 
     /**
      * @param string $name
-     * @param string|int|float|null $default
-     * @param bool $dropDefault
+     * @param string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null $default
      */
-    public function __construct(string $name, $default, bool $dropDefault = false)
+    public function __construct(string $name, $default)
     {
         $this->name = $name;
         $this->default = $default;
-        $this->dropDefault = $dropDefault;
     }
 
     public function getType(): AlterTableActionType
@@ -47,25 +42,20 @@ class AlterColumnAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
     }
 
     /**
-     * @return string|int|float|null
+     * @return string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null
      */
     public function getDefault()
     {
         return $this->default;
     }
 
-    public function dropDefault(): bool
-    {
-        return $this->dropDefault;
-    }
-
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER COLUMN ' . $formatter->formatName($this->name);
-        if ($this->dropDefault) {
+        if ($this->default === null) {
             $result .= ' DROP DEFAULT';
         } else {
-            $result .= ' SET DEFAULT' . $formatter->formatValue($this->default);
+            $result .= ' SET DEFAULT ' . $formatter->formatValue($this->default);
         }
 
         return $result;

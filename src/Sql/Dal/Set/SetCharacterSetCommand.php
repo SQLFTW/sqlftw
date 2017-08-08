@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SetCharacterSetCommand implements \SqlFtw\Sql\Command
 {
@@ -29,9 +29,9 @@ class SetCharacterSetCommand implements \SqlFtw\Sql\Command
         return $this->charset;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
-        return 'SET CHARACTER SET ' . ($this->charset ? $this->charset->serialize($formatter) : 'DEFAULT');
+        return 'SET CHARACTER SET ' . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT');
     }
 
 }

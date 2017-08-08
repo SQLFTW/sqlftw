@@ -9,8 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\Collation;
 
 class ConvertToCharsetAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -19,10 +20,10 @@ class ConvertToCharsetAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAc
     /** @var \SqlFtw\Sql\Charset */
     private $charset;
 
-    /** @var string|null */
+    /** @var \SqlFtw\Sql\Collation|null */
     private $collation;
 
-    public function __construct(Charset $charset, ?string $collation)
+    public function __construct(Charset $charset, ?Collation $collation)
     {
         $this->charset = $charset;
         $this->collation = $collation;
@@ -38,16 +39,16 @@ class ConvertToCharsetAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAc
         return $this->charset;
     }
 
-    public function getCollation(): ?string
+    public function getCollation(): ?Collation
     {
         return $this->collation;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CONVERT TO CHARACTER SET ' . $this->charset->serialize($formatter);
         if ($this->collation !== null) {
-            $result .= ' COLLATE ' . $formatter->formatString($this->collation);
+            $result .= ' COLLATE ' . $this->collation->serialize($formatter);
         }
 
         return $result;

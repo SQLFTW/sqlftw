@@ -10,11 +10,11 @@
 namespace SqlFtw\Sql\Dml\Load;
 
 use Dogma\Arr;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 abstract class LoadCommand implements \SqlFtw\Sql\Command
 {
@@ -23,7 +23,7 @@ abstract class LoadCommand implements \SqlFtw\Sql\Command
     /** @var string */
     private $file;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var \SqlFtw\Sql\Charset|null */
@@ -76,9 +76,9 @@ abstract class LoadCommand implements \SqlFtw\Sql\Command
 
     abstract protected function getWhat(): string;
 
-    abstract protected function serializeFormat(SqlFormatter $formatter): string;
+    abstract protected function serializeFormat(Formatter $formatter): string;
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'LOAD ' . $this->getWhat();
 

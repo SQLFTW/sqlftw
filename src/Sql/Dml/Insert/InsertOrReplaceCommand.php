@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
-abstract class InsertOrReplaceCommand implements \SqlFtw\Sql\TableCommand
+abstract class InsertOrReplaceCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     protected $table;
 
     /** @var string[]|null */
@@ -32,7 +32,7 @@ abstract class InsertOrReplaceCommand implements \SqlFtw\Sql\TableCommand
     protected $ignore;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param string[]|null $columns
      * @param string[]|null $partitions
      * @param \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority
@@ -84,7 +84,7 @@ abstract class InsertOrReplaceCommand implements \SqlFtw\Sql\TableCommand
         return $this->ignore;
     }
 
-    protected function serializeBody(SqlFormatter $formatter): string
+    protected function serializeBody(Formatter $formatter): string
     {
         $result = '';
         if ($this->priority !== null) {

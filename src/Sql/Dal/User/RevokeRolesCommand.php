@@ -9,21 +9,21 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class RevokeRolesCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $roles;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
     /**
-     * @param \SqlFtw\Sql\Names\UserName[] $roles
-     * @param \SqlFtw\Sql\Names\UserName[] $users
+     * @param \SqlFtw\Sql\UserName[] $roles
+     * @param \SqlFtw\Sql\UserName[] $users
      */
     public function __construct(array $roles, array $users)
     {
@@ -32,7 +32,7 @@ class RevokeRolesCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getRoles(): array
     {
@@ -40,14 +40,14 @@ class RevokeRolesCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getUsers(): array
     {
         return $this->users;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'REVOKE ' . $formatter->formatSerializablesList($this->roles)
             . ' FROM ' . $formatter->formatSerializablesList($this->users);

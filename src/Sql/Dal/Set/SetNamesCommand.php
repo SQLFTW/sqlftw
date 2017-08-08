@@ -9,8 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\Collation;
 
 class SetNamesCommand implements \SqlFtw\Sql\Command
 {
@@ -19,11 +20,14 @@ class SetNamesCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Charset|null */
     private $charset;
 
-    /** @var string|null */
+    /** @var \SqlFtw\Sql\Collation|null */
     private $collation;
 
-    public function __construct(?Charset $charset, ?string $collation)
+    public function __construct(?Charset $charset, ?Collation $collation)
     {
+        if ($charset === null && $collation !== null) {
+            throw new \SqlFtw\Sql\InvalidDefinitionException('Cannot set collation, when charset is not set.');
+        }
         $this->charset = $charset;
         $this->collation = $collation;
     }
@@ -33,15 +37,15 @@ class SetNamesCommand implements \SqlFtw\Sql\Command
         return $this->charset;
     }
 
-    public function getCollation(): ?string
+    public function getCollation(): ?Collation
     {
         return $this->collation;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
-        return 'SET NAMES ' . ($this->charset ? $this->charset->serialize($formatter) : 'DEFAULT')
-            . ($this->collation ? ' COLLATE ' . $this->collation : '');
+        return 'SET NAMES ' . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT')
+            . ($this->collation ? ' COLLATE ' . $this->collation->serialize($formatter) : '');
     }
 
 }

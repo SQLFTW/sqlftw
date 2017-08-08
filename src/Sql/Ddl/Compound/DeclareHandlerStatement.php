@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class DeclareHandlerStatement implements \SqlFtw\Sql\Statement
 {
@@ -55,7 +55,7 @@ class DeclareHandlerStatement implements \SqlFtw\Sql\Statement
         return $this->statement;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'DECLARE ' . $this->action->serialize($formatter) . ' HANDLER FOR '
             . $formatter->formatSerializablesList($this->conditions) . "\n" . $this->statement->serialize($formatter);

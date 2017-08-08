@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Statement;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class CaseStatement implements \SqlFtw\Sql\Statement
 {
@@ -68,7 +68,7 @@ class CaseStatement implements \SqlFtw\Sql\Statement
         return $this->statementLists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CASE';
         if ($this->condition !== null) {

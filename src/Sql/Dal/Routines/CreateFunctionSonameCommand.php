@@ -9,15 +9,15 @@
 
 namespace SqlFtw\Sql\Dal\Routines;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Routines\UdfReturnDataType;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\QualifiedName;
 
 class CreateFunctionSonameCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var string */
@@ -57,7 +57,7 @@ class CreateFunctionSonameCommand implements \SqlFtw\Sql\Command
         return $this->aggregate;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE ';
         if ($this->aggregate) {

@@ -19,6 +19,8 @@ abstract class PlatformFeatures
 
     public const OPERATOR_KEYWORDS = [];
 
+    public const FUNCTIONS = [];
+
     /**
      * @return string[]
      */
@@ -35,9 +37,30 @@ abstract class PlatformFeatures
         return static::NON_RESERVED_WORDS;
     }
 
+    /**
+     * @return string[]
+     */
     public function getOperatorKeywords(): array
     {
         return static::OPERATOR_KEYWORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getFunctions(): array
+    {
+        return static::FUNCTIONS;
+    }
+
+    public function isKeyword(string $word): bool
+    {
+        return in_array($word, $this->getReservedWords()) || in_array($word, $this->getNonReservedWords());
+    }
+
+    public function isReserved(string $word): bool
+    {
+        return in_array($word, $this->getReservedWords());
     }
 
 }

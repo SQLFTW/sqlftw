@@ -9,8 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ExistsExpression implements \SqlFtw\Sql\Expression\ExpressionNode
 {
@@ -34,7 +33,7 @@ class ExistsExpression implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->subquery;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'EXISTS (' . $this->subquery->serialize($formatter) . ')';
     }

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Flush;
 
 use Dogma\Arr;
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class FlushCommand implements \SqlFtw\Sql\Command
 {
@@ -59,11 +59,11 @@ class FlushCommand implements \SqlFtw\Sql\Command
         return $this->local;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'FLUSH ';
         if ($this->isLocal()) {
-            $result .= ' LOCAL ';
+            $result .= 'LOCAL ';
         }
         $result .= implode(', ', Arr::map($this->options, function (FlushOption $option) use ($formatter) {
             if ($option->equals(FlushOption::RELAY_LOGS) && $this->channel !== null) {

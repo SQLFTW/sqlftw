@@ -9,17 +9,17 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
-class ForeignKeyDefinition implements \SqlFtw\Sql\SqlSerializable
+class ForeignKeyDefinition implements \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody
 {
     use \Dogma\StrictBehaviorMixin;
 
     /** @var string[] */
     private $columns;
 
-    /** @var \SqlFtw\Sql\Names\TableName|null */
+    /** @var \SqlFtw\Sql\TableName|null */
     private $sourceTable;
 
     /** @var string[] */
@@ -39,7 +39,7 @@ class ForeignKeyDefinition implements \SqlFtw\Sql\SqlSerializable
 
     /**
      * @param string[] $columns
-     * @param \SqlFtw\Sql\Names\TableName $sourceTable
+     * @param \SqlFtw\Sql\TableName $sourceTable
      * @param string[] $sourceColumns
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onDelete
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onUpdate
@@ -141,7 +141,7 @@ class ForeignKeyDefinition implements \SqlFtw\Sql\SqlSerializable
         return $this->indexName;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'FOREIGN KEY';
         if ($this->indexName !== null) {

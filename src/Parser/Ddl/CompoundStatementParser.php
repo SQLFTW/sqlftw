@@ -15,7 +15,7 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Compound\CaseStatement;
-use SqlFtw\Sql\Ddl\Compound\CloseStatement;
+use SqlFtw\Sql\Ddl\Compound\CloseCursorStatement;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
 use SqlFtw\Sql\Ddl\Compound\Condition;
 use SqlFtw\Sql\Ddl\Compound\ConditionInformationItem;
@@ -33,15 +33,15 @@ use SqlFtw\Sql\Ddl\Compound\IfStatement;
 use SqlFtw\Sql\Ddl\Compound\IterateStatement;
 use SqlFtw\Sql\Ddl\Compound\LeaveStatement;
 use SqlFtw\Sql\Ddl\Compound\LoopStatement;
-use SqlFtw\Sql\Ddl\Compound\OpenStatement;
+use SqlFtw\Sql\Ddl\Compound\OpenCursorStatement;
 use SqlFtw\Sql\Ddl\Compound\RepeatStatement;
 use SqlFtw\Sql\Ddl\Compound\ResignalStatement;
 use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
 use SqlFtw\Sql\Ddl\Compound\SignalStatement;
 use SqlFtw\Sql\Ddl\Compound\StatementInformationItem;
 use SqlFtw\Sql\Ddl\Compound\WhileStatement;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Operator;
 use SqlFtw\Sql\Statement;
 
 class CompoundStatementParser
@@ -148,11 +148,11 @@ class CompoundStatementParser
             case Keyword::DECLARE:
                 return $this->parseDeclare($tokenList);
             case Keyword::OPEN:
-                return new OpenStatement($tokenList->consumeName());
+                return new OpenCursorStatement($tokenList->consumeName());
             case Keyword::FETCH:
                 return $this->parseFetch($tokenList);
             case Keyword::CLOSE:
-                return new CloseStatement($tokenList->consumeName());
+                return new CloseCursorStatement($tokenList->consumeName());
             case Keyword::GET:
                 return $this->parseGetDiagnostics($tokenList);
             case Keyword::SIGNAL:
@@ -165,7 +165,7 @@ class CompoundStatementParser
             case Keyword::ITERATE:
                 return new IterateStatement($tokenList->consumeName());
             default:
-                return $this->parser->parseCommand($tokenList);
+                return $this->parser->parseTokenList($tokenList);
         }
     }
 
@@ -176,7 +176,7 @@ class CompoundStatementParser
 
         $endLabel = $tokenList->mayConsumeName();
         if ($endLabel !== null && $endLabel !== $label) {
-            $tokenList->expectedValue($label);
+            $tokenList->expected($label);
         }
 
         return new CompoundStatement($statements, $label);
@@ -194,7 +194,7 @@ class CompoundStatementParser
 
         $endLabel = $tokenList->mayConsumeName();
         if ($endLabel !== null && $endLabel !== $label) {
-            $tokenList->expectedValue($label);
+            $tokenList->expected($label);
         }
 
         return new LoopStatement($statements, $label);
@@ -215,7 +215,7 @@ class CompoundStatementParser
 
         $endLabel = $tokenList->mayConsumeName();
         if ($endLabel !== null && $endLabel !== $label) {
-            $tokenList->expectedValue($label);
+            $tokenList->expected($label);
         }
 
         return new RepeatStatement($statements, $condition, $label);
@@ -235,7 +235,7 @@ class CompoundStatementParser
 
         $endLabel = $tokenList->mayConsumeName();
         if ($endLabel !== null && $endLabel !== $label) {
-            $tokenList->expectedValue($label);
+            $tokenList->expected($label);
         }
 
         return new WhileStatement($statements, $condition, $label);
@@ -341,7 +341,7 @@ class CompoundStatementParser
         $tokenList->consumeKeyword(Keyword::DECLARE);
 
         /** @var \SqlFtw\Sql\Ddl\Compound\HandlerAction|null $action */
-        $action = $tokenList->mayConsumeEnum(HandlerAction::class);
+        $action = $tokenList->mayConsumeKeywordEnum(HandlerAction::class);
         if ($action !== null) {
             $tokenList->consumeKeywords(Keyword::HANDLER, Keyword::FOR);
 
@@ -473,7 +473,7 @@ class CompoundStatementParser
     private function parseGetDiagnostics(TokenList $tokenList): GetDiagnosticsStatement
     {
         /** @var \SqlFtw\Sql\Ddl\Compound\DiagnosticsArea|null $area */
-        $area = $tokenList->mayConsumeEnum(DiagnosticsArea::class);
+        $area = $tokenList->mayConsumeKeywordEnum(DiagnosticsArea::class);
         $tokenList->consumeKeyword(Keyword::DIAGNOSTICS);
 
         $statementItems = $conditionItems = null;
@@ -483,7 +483,7 @@ class CompoundStatementParser
                 $target = $tokenList->consumeName();
                 $tokenList->consumeOperator(Operator::EQUAL);
                 /** @var \SqlFtw\Sql\Ddl\Compound\ConditionInformationItem $item */
-                $item = $tokenList->consumeEnum(ConditionInformationItem::class);
+                $item = $tokenList->consumeKeywordEnum(ConditionInformationItem::class);
                 $conditionItems[] = new DiagnosticsItem($target, $item);
             } while ($tokenList->mayConsumeComma());
         } else {
@@ -492,7 +492,7 @@ class CompoundStatementParser
                 $target = $tokenList->consumeName();
                 $tokenList->consumeOperator(Operator::EQUAL);
                 /** @var \SqlFtw\Sql\Ddl\Compound\StatementInformationItem $item */
-                $item = $tokenList->consumeEnum(StatementInformationItem::class);
+                $item = $tokenList->consumeKeywordEnum(StatementInformationItem::class);
                 $statementItems[] = new DiagnosticsItem($target, $item);
             } while ($tokenList->mayConsumeComma());
         }
@@ -548,7 +548,7 @@ class CompoundStatementParser
         if ($tokenList->mayConsumeKeyword(Keyword::SET)) {
             $items = [];
             do {
-                $item = $tokenList->consumeEnum(ConditionInformationItem::class)->getValue();
+                $item = $tokenList->consumeKeywordEnum(ConditionInformationItem::class)->getValue();
                 $tokenList->consumeOperator(Operator::EQUAL);
                 $value = $this->expressionParser->parseLiteralValue($tokenList);
                 $items[$item] = $value;

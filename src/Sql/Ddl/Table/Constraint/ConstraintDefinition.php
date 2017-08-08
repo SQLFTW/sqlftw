@@ -9,8 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ConstraintDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
 {
@@ -22,15 +21,15 @@ class ConstraintDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition|\SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition */
+    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody */
     private $body;
 
     /**
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType $type
      * @param string $name
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition|\SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition $body
+     * @param \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody $body
      */
-    public function __construct(ConstraintType $type, string $name, SqlSerializable $body)
+    public function __construct(ConstraintType $type, string $name, ConstraintBody $body)
     {
         $this->type = $type;
         $this->name = $name;
@@ -47,15 +46,12 @@ class ConstraintDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         return $this->name;
     }
 
-    /**
-     * @return \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition|\SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition
-     */
-    public function getBody()
+    public function getBody(): ConstraintBody
     {
         return $this->body;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'CONSTRAINT ' . $formatter->formatName($this->name) . ' ' . $this->body->serialize($formatter);
     }

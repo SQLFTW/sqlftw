@@ -10,15 +10,14 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\ColumnName;
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\ColumnName;
 
 class MatchExpression implements \SqlFtw\Sql\Expression\ExpressionNode
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\ColumnName[] */
+    /** @var \SqlFtw\Sql\ColumnName[] */
     private $columns;
 
     /** @var string */
@@ -27,10 +26,11 @@ class MatchExpression implements \SqlFtw\Sql\Expression\ExpressionNode
     /** @var \SqlFtw\Sql\Expression\MatchMode|null */
     private $mode;
 
+    /** @var bool */
     private $queryExpansion;
 
     /**
-     * @param \SqlFtw\Sql\Names\ColumnName[] $columns
+     * @param \SqlFtw\Sql\ColumnName[] $columns
      * @param string $query
      * @param \SqlFtw\Sql\Expression\MatchMode|null $mode
      */
@@ -50,7 +50,7 @@ class MatchExpression implements \SqlFtw\Sql\Expression\ExpressionNode
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\ColumnName[]
+     * @return \SqlFtw\Sql\ColumnName[]
      */
     public function getColumns(): array
     {
@@ -72,7 +72,7 @@ class MatchExpression implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->queryExpansion;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'MATCH(' . $formatter->formatSerializablesList($this->columns)
             . ') AGAINST(' . $formatter->formatString($this->query);

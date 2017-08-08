@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Import;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ImportCommand implements \SqlFtw\Sql\Command
 {
@@ -23,7 +23,7 @@ class ImportCommand implements \SqlFtw\Sql\Command
         $this->files = $files;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'IMPORT TABLES FROM ' . $formatter->formatStringList($this->files);
     }

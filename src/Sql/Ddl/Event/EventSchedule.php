@@ -9,31 +9,31 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
-use SqlFtw\Sql\Time\TimeExpression;
-use SqlFtw\Sql\Time\TimeInterval;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\TimeExpression;
+use SqlFtw\Sql\Expression\TimeInterval;
 
 class EventSchedule implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Time\TimeInterval|null */
+    /** @var \SqlFtw\Sql\Expression\TimeInterval|null */
     private $interval;
 
-    /** @var \SqlFtw\Sql\Time\TimeExpression|null */
+    /** @var \SqlFtw\Sql\Expression\TimeExpression|null */
     private $time;
 
-    /** @var \SqlFtw\Sql\Time\TimeExpression|null */
+    /** @var \SqlFtw\Sql\Expression\TimeExpression|null */
     private $startTime;
 
-    /** @var \SqlFtw\Sql\Time\TimeExpression|null */
+    /** @var \SqlFtw\Sql\Expression\TimeExpression|null */
     private $endTime;
 
     /**
-     * @param \SqlFtw\Sql\Time\TimeInterval|\DateInterval|\Dogma\Time\DateTimeInterval $interval
-     * @param \SqlFtw\Sql\Time\TimeExpression|null $time
-     * @param \SqlFtw\Sql\Time\TimeExpression|null $startTime
-     * @param \SqlFtw\Sql\Time\TimeExpression|null $endTime
+     * @param \SqlFtw\Sql\Expression\TimeInterval|\DateInterval|\Dogma\Time\DateTimeInterval $interval
+     * @param \SqlFtw\Sql\Expression\TimeExpression|null $time
+     * @param \SqlFtw\Sql\Expression\TimeExpression|null $startTime
+     * @param \SqlFtw\Sql\Expression\TimeExpression|null $endTime
      */
     public function __construct($interval, ?TimeExpression $time = null, ?TimeExpression $startTime = null, ?TimeExpression $endTime = null)
     {
@@ -47,7 +47,7 @@ class EventSchedule implements \SqlFtw\Sql\SqlSerializable
         $this->endTime = $endTime;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         if ($this->interval !== null) {
             $result = 'EVERY ' . $this->interval->serialize($formatter);

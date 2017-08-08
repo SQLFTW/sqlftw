@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class CommitCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class CommitCommand implements \SqlFtw\Sql\Command
         return $this->release;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'COMMIT';
         if ($this->chain !== null) {

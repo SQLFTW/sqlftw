@@ -10,8 +10,8 @@
 namespace SqlFtw\Sql\Dml\Select;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class SelectLocking implements \SqlFtw\Sql\SqlSerializable
 {
@@ -23,13 +23,13 @@ class SelectLocking implements \SqlFtw\Sql\SqlSerializable
     /** @var \SqlFtw\Sql\Dml\Select\SelectLockWaitOption */
     private $wait;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName[]|null */
+    /** @var \SqlFtw\Sql\TableName[]|null */
     private $tables;
 
     /**
      * @param \SqlFtw\Sql\Dml\Select\SelectLockOption $for
      * @param \SqlFtw\Sql\Dml\Select\SelectLockWaitOption[] $wait
-     * @param \SqlFtw\Sql\Names\QualifiedName[]|null $tables
+     * @param \SqlFtw\Sql\TableName[]|null $tables
      */
     public function __construct(SelectLockOption $for, ?SelectLockWaitOption $wait = null, ?array $tables = null)
     {
@@ -52,12 +52,15 @@ class SelectLocking implements \SqlFtw\Sql\SqlSerializable
         return $this->wait;
     }
 
+    /**
+     * @return \SqlFtw\Sql\TableName[]|null
+     */
     public function getTables(): ?array
     {
         return $this->tables;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'FOR ' . $this->wait->serialize($formatter);
         if ($this->tables !== null) {

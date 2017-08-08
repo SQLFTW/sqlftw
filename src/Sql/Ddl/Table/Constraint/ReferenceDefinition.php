@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class ReferenceDefinition implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName|null */
+    /** @var \SqlFtw\Sql\TableName|null */
     private $sourceTable;
 
     /** @var string[] */
@@ -32,7 +32,7 @@ class ReferenceDefinition implements \SqlFtw\Sql\SqlSerializable
     private $matchType;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $sourceTable
+     * @param \SqlFtw\Sql\TableName $sourceTable
      * @param string[] $sourceColumns
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onDelete
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onUpdate
@@ -65,7 +65,7 @@ class ReferenceDefinition implements \SqlFtw\Sql\SqlSerializable
         return $this->sourceColumns;
     }
 
-    public function getOnDelete(): ForeignKeyAction
+    public function getOnDelete(): ?ForeignKeyAction
     {
         return $this->onDelete;
     }
@@ -75,7 +75,7 @@ class ReferenceDefinition implements \SqlFtw\Sql\SqlSerializable
         $this->onDelete = $action;
     }
 
-    public function getOnUpdate(): ForeignKeyAction
+    public function getOnUpdate(): ?ForeignKeyAction
     {
         return $this->onUpdate;
     }
@@ -90,7 +90,7 @@ class ReferenceDefinition implements \SqlFtw\Sql\SqlSerializable
         return $this->matchType;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = ' REFERENCES ' . $this->sourceTable->serialize($formatter) . ' (' . $formatter->formatNamesList($this->sourceColumns) . ')';
 

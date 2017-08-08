@@ -608,4 +608,8 @@ class FeaturesMysql55 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::ELSE,
     ];
 
+    public const FUNCTIONS = [
+        ///
+    ];
+
 }

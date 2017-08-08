@@ -11,17 +11,17 @@ namespace SqlFtw\Sql\Dml\Delete;
 
 use Dogma\Check;
 use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
-class DeleteCommand implements \SqlFtw\Sql\TablesCommand
+class DeleteCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName[] */
+    /** @var \SqlFtw\Sql\TableName[] */
     private $tables;
 
     /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null */
@@ -49,7 +49,7 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
     private $ignore;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName[] $tables
+     * @param \SqlFtw\Sql\TableName[] $tables
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param int|null $limit
@@ -96,7 +96,7 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\TableName[]
+     * @return \SqlFtw\Sql\TableName[]
      */
     public function getTables(): array
     {
@@ -149,7 +149,7 @@ class DeleteCommand implements \SqlFtw\Sql\TablesCommand
         return $this->ignore;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DELETE ';
         if ($this->lowPriority) {

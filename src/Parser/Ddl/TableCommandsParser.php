@@ -9,7 +9,12 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\Dml\SelectCommandParser;
+use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Alter\AddColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\AddColumnsAction;
 use SqlFtw\Sql\Ddl\Table\Alter\AddConstraintAction;
@@ -47,26 +52,23 @@ use SqlFtw\Sql\Ddl\Table\DropTableCommand;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
+use SqlFtw\Sql\Ddl\Table\Option\TableCompression;
 use SqlFtw\Sql\Ddl\Table\Option\TableInsertMethod;
 use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableRowFormat;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
-use SqlFtw\Sql\Ddl\Table\Partition\Partitioning;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
+use SqlFtw\Sql\Ddl\Table\Partition\Partitioning;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningConditionType;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionOption;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Sql\Names\TableNameList;
-use SqlFtw\Parser\Dml\SelectCommandParser;
-use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Operator;
+use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\TableNameList;
 
 class TableCommandsParser
 {
@@ -211,18 +213,21 @@ class TableCommandsParser
                             // ADD [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
                             $actions[] = new AddForeignKeyAction($this->parseForeignKey($tokenList->resetPosition(-1)));
                             break;
+                        case Keyword::PRIMARY:
+                            // ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
+                            $index = $this->parseIndex($tokenList, true);
+                            $actions[] = new AddIndexAction($index);
+                            break;
                         case Keyword::FULLTEXT:
                         case Keyword::INDEX:
                         case Keyword::KEY:
-                        case Keyword::PRIMARY:
                         case Keyword::SPATIAL:
                         case Keyword::UNIQUE:
                             // ADD FULLTEXT [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
                             // ADD {INDEX|KEY} [index_name] [index_type] (index_col_name,...) [index_option] ...
-                            // ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
                             // ADD SPATIAL [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
                             // ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
-                            $index = $this->parseIndex($tokenList);
+                            $index = $this->parseIndex($tokenList->resetPosition(-1));
                             $actions[] = new AddIndexAction($index);
                             break;
                         case Keyword::PARTITION:
@@ -242,7 +247,7 @@ class TableCommandsParser
                 case Keyword::ALGORITHM:
                     // ALGORITHM [=] {DEFAULT|INPLACE|COPY}
                     $tokenList->mayConsumeOperator(Operator::EQUAL);
-                    $alterOptions[Keyword::ALGORITHM] = $tokenList->consumeEnum(AlterTableAlgorithm::class);
+                    $alterOptions[Keyword::ALGORITHM] = $tokenList->consumeKeywordEnum(AlterTableAlgorithm::class);
                     break;
                 case Keyword::ALTER:
                     if ($tokenList->mayConsumeKeyword(Keyword::INDEX)) {
@@ -259,7 +264,7 @@ class TableCommandsParser
                             $actions[] = new AlterColumnAction($column, $value);
                         } else {
                             $tokenList->consumeKeywords(Keyword::DROP, Keyword::DEFAULT);
-                            $actions[] = new AlterColumnAction($column, null, true);
+                            $actions[] = new AlterColumnAction($column, null);
                         }
                     }
                     break;
@@ -297,10 +302,10 @@ class TableCommandsParser
                     // CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]
                     $tokenList->consumeKeywords(Keyword::TO, Keyword::CHARACTER, Keyword::SET);
                     /** @var \SqlFtw\Sql\Charset $charset */
-                    $charset = $tokenList->consumeEnum(Charset::class);
+                    $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
                     $collation = null;
                     if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
-                        $collation = $tokenList->consumeName();
+                        $collation = Collation::get($tokenList->consumeNameOrString());
                     }
                     $actions[] = new ConvertToCharsetAction($charset, $collation);
                     break;
@@ -340,6 +345,7 @@ class TableCommandsParser
                             break;
                         case Keyword::FOREIGN:
                             // DROP FOREIGN KEY fk_symbol
+                            $tokenList->consumeKeyword(Keyword::KEY);
                             $foreignKey = $tokenList->consumeName();
                             $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DROP_FOREIGN_KEY), $foreignKey);
                             break;
@@ -397,7 +403,7 @@ class TableCommandsParser
                 case Keyword::LOCK:
                     // LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
                     $tokenList->mayConsumeOperator(Operator::EQUAL);
-                    $alterOptions[Keyword::LOCK] = $tokenList->consumeEnum(AlterTableLock::class);
+                    $alterOptions[Keyword::LOCK] = $tokenList->consumeKeywordEnum(AlterTableLock::class);
                     break;
                 case Keyword::MODIFY:
                     // MODIFY [COLUMN] col_name column_definition [FIRST | AFTER col_name]
@@ -419,6 +425,7 @@ class TableCommandsParser
                     break;
                 case Keyword::ORDER:
                     // ORDER BY col_name [, col_name] ...
+                    $tokenList->consumeKeyword(Keyword::BY);
                     $orderByColumns = [];
                     do {
                         $orderByColumns[] = $tokenList->consumeName();
@@ -529,8 +536,9 @@ class TableCommandsParser
         $temporary = (bool) $tokenList->mayConsumeKeyword(Keyword::TEMPORARY);
         $tokenList->consumeKeyword(Keyword::TABLE);
         $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $table = new TableName(...$tokenList->consumeName());
+        $table = new TableName(...$tokenList->consumeQualifiedName());
 
+        $position = $tokenList->getPosition();
         $bodyOpen = $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS);
         if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
             $oldTable = new TableName(...$tokenList->consumeQualifiedName());
@@ -542,25 +550,28 @@ class TableCommandsParser
 
         $items = null;
         if ($bodyOpen !== null) {
-            $items = $this->parseCreateTableBody($tokenList);
+            $items = $this->parseCreateTableBody($tokenList->resetPosition($position));
         }
 
         $options = [];
-        do {
-            [$option, $value] = $this->parseTableOption($tokenList);
-            if ($option === null) {
-                $keywords = AlterTableOption::getAllowedValues();
-                $tokenList->expectedAnyKeyword(...$keywords);
-            }
-            $options[$option] = $value;
-        } while ($tokenList->mayConsumeComma());
+        if (!$tokenList->isFinished()) {
+            do {
+                [$option, $value] = $this->parseTableOption($tokenList);
+                if ($option === null) {
+                    $keywords = AlterTableOption::getAllowedValues();
+                    $tokenList->expectedAnyKeyword(...$keywords);
+                }
+                $options[$option] = $value;
+            } while ($tokenList->mayConsumeComma());
+        }
 
         $partitioning = null;
         if ($tokenList->mayConsumeAnyKeyword(Keyword::PARTITION)) {
             $partitioning = $this->parsePartitioning($tokenList->resetPosition(-1));
         }
 
-        $duplicateOption = $tokenList->mayConsumeEnum(DuplicateOption::class);
+        /** @var \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption */
+        $duplicateOption = $tokenList->mayConsumeKeywordEnum(DuplicateOption::class);
         $select = null;
         if ($tokenList->mayConsumeKeyword(Keyword::AS) || $items === null || $duplicateOption !== null || !$tokenList->isFinished()) {
             $select = $this->selectCommandParser->parseSelect($tokenList);
@@ -635,15 +646,17 @@ class TableCommandsParser
         $name = $tokenList->consumeName();
         $type = $this->typeParser->parseType($tokenList);
 
-        if ($tokenList->seekKeyword(Keyword::AS, 5)) {
-            $tokenList->mayConsumeKeywords(Keyword::GENERATED, Keyword::ALWAYS);
-            $tokenList->consumeKeyword(Keyword::AS);
+        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::GENERATED, Keyword::AS);
+        if ($keyword !== null) {
+            if ($keyword === Keyword::GENERATED) {
+                $tokenList->consumeKeywords(Keyword::ALWAYS, Keyword::AS);
+            }
             $tokenList->consume(TokenType::LEFT_PARENTHESIS);
             $expression = $this->expressionParser->parseExpression($tokenList);
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
 
             /** @var \SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType $generatedType */
-            $generatedType = $tokenList->mayConsumeEnum(GeneratedColumnType::class);
+            $generatedType = $tokenList->mayConsumeKeywordEnum(GeneratedColumnType::class);
             $index = null;
             if ($tokenList->mayConsumeKeyword(Keyword::UNIQUE)) {
                 $tokenList->mayConsumeKeyword(Keyword::KEY);
@@ -700,7 +713,7 @@ class TableCommandsParser
             $columnFormat = null;
             if ($tokenList->mayConsumeKeyword(Keyword::COLUMN_FORMAT)) {
                 /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnFormat $columnFormat */
-                $columnFormat = $tokenList->consumeEnum(ColumnFormat::class);
+                $columnFormat = $tokenList->consumeKeywordEnum(ColumnFormat::class);
             }
             $reference = null;
             if ($tokenList->mayConsumeKeyword(Keyword::REFERENCES)) {
@@ -722,9 +735,14 @@ class TableCommandsParser
      *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...)
      *         [index_option] ...
      */
-    private function parseIndex(TokenList $tokenList): IndexDefinition
+    private function parseIndex(TokenList $tokenList, bool $primary = false): IndexDefinition
     {
-        return $this->indexCommandsParser->parseIndexDefinition($tokenList);
+        if ($primary) {
+            $index = $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
+            return $index->duplicateAsPrimary();
+        } else {
+            return $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
+        }
     }
 
     /**
@@ -744,7 +762,7 @@ class TableCommandsParser
         $keyword = $tokenList->consumeAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN);
         if ($keyword === Keyword::PRIMARY) {
             $type = ConstraintType::get(ConstraintType::PRIMARY_KEY);
-            $body = $this->parseIndex($tokenList->resetPosition(-1));
+            $body = $this->parseIndex($tokenList, true);
             return new ConstraintDefinition($type, $name, $body);
         } elseif ($keyword === Keyword::UNIQUE) {
             $type = ConstraintType::get(ConstraintType::UNIQUE_KEY);
@@ -785,23 +803,25 @@ class TableCommandsParser
      */
     private function parseReference(TokenList $tokenList): ReferenceDefinition
     {
+        $tokenList->consumeKeyword(Keyword::REFERENCES);
         $table = new TableName(...$tokenList->consumeQualifiedName());
 
         $columns = $this->parseColumnList($tokenList);
 
         $matchType = null;
         if ($tokenList->mayConsumeKeyword(Keyword::MATCH)) {
-            $matchType = $tokenList->consumeEnum(ForeignKeyMatchType::class);
+            /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyMatchType $matchType */
+            $matchType = $tokenList->consumeKeywordEnum(ForeignKeyMatchType::class);
         }
 
         $onDelete = $onUpdate = null;
         if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::DELETE)) {
             /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction $onDelete */
-            $onDelete = $tokenList->consumeEnum(ForeignKeyAction::class);
+            $onDelete = $tokenList->consumeKeywordEnum(ForeignKeyAction::class);
         }
         if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::UPDATE)) {
-            /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction $onDelete */
-            $onUpdate = $tokenList->consumeEnum(ForeignKeyAction::class);
+            /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction $onUpdate */
+            $onUpdate = $tokenList->consumeKeywordEnum(ForeignKeyAction::class);
         }
 
         return new ReferenceDefinition($table, $columns, $onDelete, $onUpdate, $matchType);
@@ -863,7 +883,7 @@ class TableCommandsParser
                 return [TableOption::COMMENT, $tokenList->consumeString()];
             case Keyword::COMPRESSION:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
-                return [TableOption::COMPRESSION, $tokenList->consumeString()];
+                return [TableOption::COMPRESSION, TableCompression::get($tokenList->consumeString())];
             case Keyword::CONNECTION:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
                 return [TableOption::CONNECTION, $tokenList->consumeString()];
@@ -897,7 +917,7 @@ class TableCommandsParser
                 return [TableOption::INDEX_DIRECTORY, $tokenList->consumeString()];
             case Keyword::INSERT_METHOD:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
-                return [TableOption::INSERT_METHOD, $tokenList->consumeEnum(TableInsertMethod::class)];
+                return [TableOption::INSERT_METHOD, $tokenList->consumeKeywordEnum(TableInsertMethod::class)];
             case Keyword::KEY_BLOCK_SIZE:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
                 return [TableOption::KEY_BLOCK_SIZE, $tokenList->consumeInt()];
@@ -912,7 +932,7 @@ class TableCommandsParser
                 if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
                     return [TableOption::PACK_KEYS, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::PACK_KEYS, ThreeStateValue::get($tokenList->consumeInt())];
+                    return [TableOption::PACK_KEYS, ThreeStateValue::get((string) $tokenList->consumeInt())];
                 }
                 break;
             case Keyword::PASSWORD:
@@ -920,13 +940,13 @@ class TableCommandsParser
                 return [TableOption::PASSWORD, $tokenList->consumeString()];
             case Keyword::ROW_FORMAT:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
-                return [TableOption::ROW_FORMAT, $tokenList->consumeEnum(TableRowFormat::class)];
+                return [TableOption::ROW_FORMAT, $tokenList->consumeKeywordEnum(TableRowFormat::class)];
             case Keyword::STATS_AUTO_RECALC:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
                 if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get($tokenList->consumeInt())];
+                    return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get((string) $tokenList->consumeInt())];
                 }
                 break;
             case Keyword::STATS_PERSISTENT:
@@ -934,7 +954,7 @@ class TableCommandsParser
                 if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_PERSISTENT, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::STATS_PERSISTENT, ThreeStateValue::get($tokenList->consumeInt())];
+                    return [TableOption::STATS_PERSISTENT, ThreeStateValue::get((string) $tokenList->consumeInt())];
                 }
                 break;
             case Keyword::STATS_SAMPLE_PAGES:
@@ -1190,18 +1210,18 @@ class TableCommandsParser
 
     /**
      * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return string|string[]
+     * @return string[]|null
      */
-    private function parsePartitionNames(TokenList $tokenList): array
+    private function parsePartitionNames(TokenList $tokenList): ?array
     {
         if ($tokenList->mayConsumeKeyword(Keyword::ALL)) {
-            $names = Keyword::ALL;
-        } else {
-            $names = [];
-            do {
-                $names[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
+            return null;
         }
+        $names = [];
+        do {
+            $names[] = $tokenList->consumeName();
+        } while ($tokenList->mayConsumeComma());
+
         return $names;
     }
 

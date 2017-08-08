@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\DropDatabaseCommand;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Operator;
 
 class DatabaseCommandsParser
 {
@@ -63,7 +63,7 @@ class DatabaseCommandsParser
 
     /**
      * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return string[]|\SqlFtw\Sql\Charset[]|null[]
+     * @return \SqlFtw\Sql\Charset[]|\SqlFtw\Sql\Collation[]|null[]
      */
     private function parseDefaults(TokenList $tokenList): array
     {
@@ -73,10 +73,10 @@ class DatabaseCommandsParser
         if ($token === Keyword::CHARACTER) {
             $tokenList->consumeKeyword(Keyword::SET);
             $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $charset = Charset::get($tokenList->consumeString());
+            $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
         } else {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $collation = $tokenList->consumeString();
+            $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
         }
 
         $token = $tokenList->mayConsumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATION);
@@ -84,10 +84,10 @@ class DatabaseCommandsParser
             if ($token === Keyword::CHARACTER) {
                 $tokenList->consumeKeyword(Keyword::SET);
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
-                $charset = Charset::get($tokenList->consumeString());
+                $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
             } else {
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
-                $collation = $tokenList->consumeString();
+                $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
             }
         }
 

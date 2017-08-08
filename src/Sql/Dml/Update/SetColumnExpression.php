@@ -9,15 +9,15 @@
 
 namespace SqlFtw\Sql\Dml\Update;
 
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Names\ColumnName;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SetColumnExpression implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\ColumnName */
+    /** @var \SqlFtw\Sql\ColumnName */
     private $column;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
@@ -51,7 +51,7 @@ class SetColumnExpression implements \SqlFtw\Sql\SqlSerializable
         return $this->default;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->column->serialize($formatter);
         if ($this->value !== null) {
@@ -62,6 +62,5 @@ class SetColumnExpression implements \SqlFtw\Sql\SqlSerializable
 
         return $result;
     }
-
 
 }

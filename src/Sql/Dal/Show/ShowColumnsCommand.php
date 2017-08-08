@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class ShowColumnsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var bool */
@@ -56,7 +56,7 @@ class ShowColumnsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->where;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW';
         if ($this->full) {

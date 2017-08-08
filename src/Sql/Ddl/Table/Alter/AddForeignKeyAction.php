@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class AddForeignKeyAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -34,7 +34,7 @@ class AddForeignKeyAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActio
         return $this->foreignKey;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'ADD ' . $this->foreignKey->serialize($formatter);
     }

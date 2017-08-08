@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Sql\Dml\Load;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class LoadXmlCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
 {
@@ -48,7 +48,7 @@ class LoadXmlCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
         return 'XML';
     }
 
-    protected function serializeFormat(SqlFormatter $formatter): string
+    protected function serializeFormat(Formatter $formatter): string
     {
         return $this->rowsTag !== null ? ' ROWS IDENTIFIED BY ' . $formatter->formatString($this->rowsTag) : '';
     }

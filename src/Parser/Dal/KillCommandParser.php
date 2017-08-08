@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Kill\KillCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
 
 class KillCommandParser
 {

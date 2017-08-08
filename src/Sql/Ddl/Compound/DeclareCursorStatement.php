@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class DeclareCursorStatement implements \SqlFtw\Sql\Statement
 {
@@ -38,7 +38,7 @@ class DeclareCursorStatement implements \SqlFtw\Sql\Statement
         return $this->select;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'DECLARE ' . $formatter->formatName($this->name) . ' CURSOR FOR ' . $this->select->serialize($formatter);
     }

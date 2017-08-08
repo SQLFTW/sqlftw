@@ -10,22 +10,22 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class RenameUserCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     protected $users;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $newUsers;
 
     /**
-     * @param \SqlFtw\Sql\Names\UserName[] $users
-     * @param \SqlFtw\Sql\Names\UserName[] $newUsers
+     * @param \SqlFtw\Sql\UserName[] $users
+     * @param \SqlFtw\Sql\UserName[] $newUsers
      */
     public function __construct(array $users, array $newUsers)
     {
@@ -42,7 +42,7 @@ class RenameUserCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getUsers(): array
     {
@@ -50,7 +50,7 @@ class RenameUserCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getNewUsers(): array
     {
@@ -62,7 +62,7 @@ class RenameUserCommand implements \SqlFtw\Sql\Command
         /// zip iterator
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'RENAME USER';
         foreach ($this->users as $i => $user) {

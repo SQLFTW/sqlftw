@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
-class BinaryLiteral implements \SqlFtw\Sql\SqlSerializable
+class BinaryLiteral implements \SqlFtw\Sql\Expression\Literal
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -21,6 +21,11 @@ class BinaryLiteral implements \SqlFtw\Sql\SqlSerializable
     public function __construct(string $value)
     {
         $this->value = $value;
+    }
+
+    public function getType(): NodeType
+    {
+        return NodeType::get(NodeType::LITERAL);
     }
 
     public function getValue(): string
@@ -43,7 +48,7 @@ class BinaryLiteral implements \SqlFtw\Sql\SqlSerializable
         return bindec($this->value);
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return '0b' . $this->value;
     }

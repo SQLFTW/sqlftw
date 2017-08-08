@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use SqlFtw\Sql\Dml\Call\CallCommand;
-use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\QualifiedName;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Dml\Call\CallCommand;
+use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\QualifiedName;
 
 class CallCommandParser
 {

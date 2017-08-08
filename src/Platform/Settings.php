@@ -65,7 +65,7 @@ class Settings
         return $this->charset;
     }
 
-    public function setCharset(Charset $charset)
+    public function setCharset(Charset $charset): void
     {
         $this->charset = $charset;
     }
@@ -83,6 +83,16 @@ class Settings
     public function setSqlMode(SqlMode $sqlMode): void
     {
         $this->mode = $sqlMode->getMode();
+    }
+
+    public function setQuoteAllNames(bool $quote): void
+    {
+        $this->quoteAllNames = $quote;
+    }
+
+    public function quoteAllNames(): bool
+    {
+        return $this->quoteAllNames;
     }
 
 }

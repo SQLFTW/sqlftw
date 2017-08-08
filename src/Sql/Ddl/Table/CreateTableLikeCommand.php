@@ -9,17 +9,17 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class CreateTableLikeCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $oldTable;
 
     /** @var bool */
@@ -56,7 +56,7 @@ class CreateTableLikeCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableComm
         return $this->ifNotExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE ';
         if ($this->temporary) {
@@ -67,6 +67,8 @@ class CreateTableLikeCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableComm
             $result .= 'IF NOT EXISTS ';
         }
         $result .= $this->table->serialize($formatter);
+
+        $result .= ' LIKE ' . $this->oldTable->serialize($formatter);
 
         return $result;
     }

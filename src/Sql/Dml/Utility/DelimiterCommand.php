@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class DelimiterCommand implements \SqlFtw\Sql\Command
 {
@@ -23,7 +23,7 @@ class DelimiterCommand implements \SqlFtw\Sql\Command
         $this->delimiter = $delimiter;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'DELIMITER ' . $this->delimiter . "\n";
     }

@@ -9,11 +9,11 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Routines\CreateFunctionSonameCommand;
 use SqlFtw\Sql\Ddl\Routines\UdfReturnDataType;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\QualifiedName;
 
 class CreateFunctionCommandParser
 {
@@ -31,7 +31,7 @@ class CreateFunctionCommandParser
         $name = new QualifiedName(...$tokenList->consumeQualifiedName());
         $tokenList->consumeKeyword(Keyword::RETURNS);
         /** @var \SqlFtw\Sql\Ddl\Routines\UdfReturnDataType $type */
-        $type = $tokenList->consumeEnum(UdfReturnDataType::class);
+        $type = $tokenList->consumeKeywordEnum(UdfReturnDataType::class);
         $tokenList->consumeKeyword(Keyword::SONAME);
         $libName = $tokenList->consumeNameOrString();
 

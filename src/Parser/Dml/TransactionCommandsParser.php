@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Transaction\CommitCommand;
 use SqlFtw\Sql\Dml\Transaction\LockTablesCommand;
 use SqlFtw\Sql\Dml\Transaction\LockTablesItem;
@@ -22,10 +23,8 @@ use SqlFtw\Sql\Dml\Transaction\StartTransactionCommand;
 use SqlFtw\Sql\Dml\Transaction\TransactionIsolationLevel;
 use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
 use SqlFtw\Sql\Scope;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\TableName;
 
 class TransactionCommandsParser
 {
@@ -171,7 +170,7 @@ class TransactionCommandsParser
         $tokenList->consumeKeyword(Keyword::SET);
 
         /** @var \SqlFtw\Sql\Scope $scope */
-        $scope = $tokenList->mayConsumeEnum(Scope::class);
+        $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
 
         $isolationLevel = $write = null;
         do {

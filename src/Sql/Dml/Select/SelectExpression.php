@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SelectExpression implements \SqlFtw\Sql\SqlSerializable
 {
@@ -38,7 +38,7 @@ class SelectExpression implements \SqlFtw\Sql\SqlSerializable
         return $this->alias;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->expression->serialize($formatter);
         if ($this->alias !== null) {

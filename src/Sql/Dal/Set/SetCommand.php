@@ -10,15 +10,14 @@
 namespace SqlFtw\Sql\Dal\Set;
 
 use Dogma\Check;
-use SqlFtw\Sql\SetAssignment;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Scope;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SetCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\SetAssignment[] */
+    /** @var \SqlFtw\Sql\Dal\Set\SetAssignment[] */
     private $assignments = [];
 
     public function __construct(array $assignments)
@@ -30,7 +29,7 @@ class SetCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\SetAssignment[]
+     * @return \SqlFtw\Sql\Dal\Set\SetAssignment[]
      */
     public function getAssignments(): array
     {
@@ -39,7 +38,7 @@ class SetCommand implements \SqlFtw\Sql\Command
 
     /**
      * @param \SqlFtw\Sql\Scope $scope
-     * @return \SqlFtw\Sql\SetAssignment[]
+     * @return \SqlFtw\Sql\Dal\Set\SetAssignment[]
      */
     public function getAssignmentsByScope(?Scope $scope = null): array
     {
@@ -55,7 +54,7 @@ class SetCommand implements \SqlFtw\Sql\Command
     /**
      * @param string $variable
      * @param \SqlFtw\Sql\Scope|null $scope
-     * @return \SqlFtw\Sql\SetAssignment|null
+     * @return \SqlFtw\Sql\Dal\Set\SetAssignment|null
      */
     public function getAssignment(string $variable, ?Scope $scope = null): ?SetAssignment
     {
@@ -71,7 +70,7 @@ class SetCommand implements \SqlFtw\Sql\Command
         return null;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'SET ' . $formatter->formatSerializablesList($this->assignments);
     }

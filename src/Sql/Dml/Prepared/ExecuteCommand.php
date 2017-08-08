@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Prepared;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ExecuteCommand implements \SqlFtw\Sql\Command
 {
@@ -27,7 +27,7 @@ class ExecuteCommand implements \SqlFtw\Sql\Command
         $this->variables = $variables;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'EXECUTE ' . $formatter->formatName($this->name);
         if ($this->variables !== null) {

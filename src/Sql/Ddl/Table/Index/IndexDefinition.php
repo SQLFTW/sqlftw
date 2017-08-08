@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
-class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
+class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem, \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -26,7 +26,7 @@ class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexColumn[] */
     private $columns;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexOptions|null */
+    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexOptions */
     private $options;
 
     /**
@@ -39,8 +39,7 @@ class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         ?string $name,
         IndexType $type,
         array $columns,
-        ?IndexOptions $options = null,
-        $origin = null
+        ?IndexOptions $options = null
     ) {
         if (count($columns) < 1) {
             throw new \SqlFtw\Sql\InvalidDefinitionException('Index must contain at least one column. None given.');
@@ -56,6 +55,15 @@ class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     {
         $self = clone($this);
         $self->name = $newName;
+
+        return $self;
+    }
+
+    public function duplicateAsPrimary(): self
+    {
+        $self = clone($this);
+        $self->type = IndexType::get(IndexType::PRIMARY);
+        $self->name = self::PRIMARY_KEY_NAME;
 
         return $self;
     }
@@ -136,7 +144,7 @@ class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         return $this->columns;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
 
@@ -146,7 +154,7 @@ class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
 
         $result .= ' (' . $formatter->formatSerializablesList($this->columns) . ')';
 
-        if ($this->options !== null) {
+        if (!$this->options->isEmpty()) {
             $result .= ' ' . $this->options->serialize($formatter);
         }
 

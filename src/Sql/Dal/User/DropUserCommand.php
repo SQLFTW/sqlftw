@@ -10,21 +10,21 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class DropUserCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
     /** @var bool */
     private $ifExists;
 
     /**
-     * @param \SqlFtw\Sql\Names\UserName[] $users
+     * @param \SqlFtw\Sql\UserName[] $users
      * @param bool $ifExists
      */
     public function __construct(array $users, bool $ifExists = false)
@@ -37,7 +37,7 @@ class DropUserCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getUsers(): array
     {
@@ -49,7 +49,7 @@ class DropUserCommand implements \SqlFtw\Sql\Command
         return $this->ifExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DROP USER ';
         if ($this->ifExists) {

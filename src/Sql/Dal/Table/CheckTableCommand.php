@@ -10,21 +10,21 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
-class CheckTableCommand implements \SqlFtw\Sql\TablesCommand
+class CheckTableCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName[] */
+    /** @var \SqlFtw\Sql\TableName[] */
     private $tables;
 
     /** @var \SqlFtw\Sql\Dal\Table\CheckTableOption|null */
     private $option;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName[] $tables
+     * @param \SqlFtw\Sql\TableName[] $tables
      * @param \SqlFtw\Sql\Dal\Table\CheckTableOption|null $option
      */
     public function __construct(array $tables, ?CheckTableOption $option = null)
@@ -37,7 +37,7 @@ class CheckTableCommand implements \SqlFtw\Sql\TablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\TableName[]
+     * @return \SqlFtw\Sql\TableName[]
      */
     public function getTables(): array
     {
@@ -49,7 +49,7 @@ class CheckTableCommand implements \SqlFtw\Sql\TablesCommand
         return $this->option;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CHECK TABLE ' . $formatter->formatSerializablesList($this->tables);
 

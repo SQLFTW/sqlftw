@@ -11,14 +11,14 @@ namespace SqlFtw\Sql\Dal\Cache;
 
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class TableIndexList implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var string[]|null */
@@ -28,26 +28,29 @@ class TableIndexList implements \SqlFtw\Sql\SqlSerializable
     private $partitions;
 
     /** @var bool */
-    private $ignoreLeafs;
+    private $ignoreLeaves;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param string[]|null $indexes
      * @param string[]|bool|null $partitions
-     * @param bool $ignoreLeafs
+     * @param bool $ignoreLeaves
      */
     public function __construct(
         TableName $table,
         ?array $indexes = null,
-        ?array $partitions = null,
-        bool $ignoreLeafs = false
+        $partitions = null,
+        bool $ignoreLeaves = false
     ) {
         Check::itemsOfType($indexes, Type::STRING, 1);
+        if ($partitions !== null && $partitions !== true) {
+            Check::itemsOfType($partitions, Type::STRING);
+        }
 
         $this->table = $table;
         $this->indexes = $indexes;
         $this->partitions = $partitions;
-        $this->ignoreLeafs = $ignoreLeafs;
+        $this->ignoreLeaves = $ignoreLeaves;
     }
 
     public function getTable(): TableName
@@ -73,10 +76,10 @@ class TableIndexList implements \SqlFtw\Sql\SqlSerializable
 
     public function ignoreLeafs(): bool
     {
-        return $this->ignoreLeafs;
+        return $this->ignoreLeaves;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->table->serialize($formatter);
 
@@ -93,8 +96,8 @@ class TableIndexList implements \SqlFtw\Sql\SqlSerializable
             $result .= ' INDEX (' . $formatter->formatNamesList($this->indexes) . ')';
         }
 
-        if ($this->ignoreLeafs) {
-            $result .= ' IGNORE LEAFS';
+        if ($this->ignoreLeaves) {
+            $result .= ' IGNORE LEAVES';
         }
 
         return $result;

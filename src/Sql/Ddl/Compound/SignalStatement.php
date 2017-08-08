@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use Dogma\Arr;
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class SignalStatement implements \SqlFtw\Sql\Statement
 {
@@ -24,6 +24,10 @@ class SignalStatement implements \SqlFtw\Sql\Statement
     /** @var int[]|string[]|null */
     private $items;
 
+    /**
+     * @param int|string $condition
+     * @param int[]|string[]|null $items
+     */
     public function __construct($condition, ?array $items)
     {
         Check::types($condition, [Type::INT, Type::STRING]);
@@ -50,11 +54,11 @@ class SignalStatement implements \SqlFtw\Sql\Statement
         return $this->items;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SIGNAL';
         if ($this->condition !== null) {
-            $result .= ' ' . (strlen($this->condition) > 4 ? 'SQLSTATE ' : '') . $formatter->formatString($this->condition);
+            $result .= ' ' . (strlen($this->condition) > 4 ? 'SQLSTATE ' : '') . $formatter->formatValue($this->condition);
         }
         if ($this->items !== null) {
             $result .= ' SET ' . implode(', ', Arr::mapPairs($this->items, function ($item, $value) use ($formatter): string {

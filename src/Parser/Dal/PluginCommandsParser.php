@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Plugin\InstallPluginCommand;
 use SqlFtw\Sql\Dal\Plugin\UninstallPluginCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
 
 class PluginCommandsParser
 {
@@ -36,7 +36,7 @@ class PluginCommandsParser
      */
     public function parseUninstallPlugin(TokenList $tokenList): UninstallPluginCommand
     {
-        $tokenList->consumeKeywords(Keyword::INSTALL, Keyword::PLUGIN);
+        $tokenList->consumeKeywords(Keyword::UNINSTALL, Keyword::PLUGIN);
         $pluginName = $tokenList->consumeName();
 
         return new UninstallPluginCommand($pluginName);

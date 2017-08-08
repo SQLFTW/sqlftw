@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Time\DateTime;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class PurgeBinaryLogsCommand implements \SqlFtw\Sql\Command
 {
@@ -38,7 +38,7 @@ class PurgeBinaryLogsCommand implements \SqlFtw\Sql\Command
         return $this->before;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'PURGE BINARY LOGS';
         if ($this->toLog !== null) {

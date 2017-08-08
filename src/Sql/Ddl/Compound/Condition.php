@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class Condition implements \SqlFtw\Sql\SqlSerializable
 {
@@ -23,9 +23,19 @@ class Condition implements \SqlFtw\Sql\SqlSerializable
     /** @var int|string|null */
     private $value;
 
+    /**
+     * @param \SqlFtw\Sql\Ddl\Compound\ConditionType $type
+     * @param int|string|null $value
+     */
     public function __construct(ConditionType $type, $value = null)
     {
-        Check::types($value, [Type::INT, Type::STRING, Type::NULLABLE]);
+        if ($type->equals(ConditionType::ERROR)) {
+            Check::int($value);
+        } elseif ($type->equals(ConditionType::CONDITION) || $type->equals(ConditionType::SQL_STATE)) {
+            Check::string($value);
+        } else {
+            Check::null($value);
+        }
 
         $this->type = $type;
         $this->value = $value;
@@ -44,7 +54,7 @@ class Condition implements \SqlFtw\Sql\SqlSerializable
         return $this->value;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         if ($this->type->equals(ConditionType::ERROR)) {
             return (string) $this->value;

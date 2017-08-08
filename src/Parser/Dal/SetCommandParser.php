@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use SqlFtw\Sql\Dal\Set\SetAssignment;
-use SqlFtw\Sql\Dal\Set\SetCommand;
-use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Scope;
-use SqlFtw\Sql\SystemVariable;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Dal\Set\SetAssignment;
+use SqlFtw\Sql\Dal\Set\SetCommand;
+use SqlFtw\Sql\Dal\SystemVariable;
+use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Scope;
 
 class SetCommandParser
 {
@@ -48,9 +48,9 @@ class SetCommandParser
 
         $assignments = [];
         do {
-            $scope = $tokenList->mayConsumeEnum(Scope::class);
+            $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
             if ($scope !== null) {
-                $variable = $tokenList->consumeEnum(SystemVariable::class);
+                $variable = $tokenList->consumeKeywordEnum(SystemVariable::class);
             } else {
                 $variable = $tokenList->mayConsume(TokenType::AT_VARIABLE);
                 if ($variable !== null) {

@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Server\AlterServerCommand;
 use SqlFtw\Sql\Ddl\Server\CreateServerCommand;
 use SqlFtw\Sql\Ddl\Server\DropServerCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 
 class ServerCommandsParser
 {

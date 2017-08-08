@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class StraightJoin extends \SqlFtw\Sql\Dml\TableReference\Join
 {
@@ -36,7 +36,7 @@ class StraightJoin extends \SqlFtw\Sql\Dml\TableReference\Join
         return $this->condition;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->left->serialize($formatter) . ' STRAIGHT_JOIN ' . $this->right->serialize($formatter);
         if ($this->condition !== null) {

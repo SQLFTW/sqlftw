@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class UserPrivilegeResource implements \SqlFtw\Sql\SqlSerializable
 {
@@ -48,7 +48,7 @@ class UserPrivilegeResource implements \SqlFtw\Sql\SqlSerializable
         return $this->objectType;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = '';
         if ($this->objectType !== null) {

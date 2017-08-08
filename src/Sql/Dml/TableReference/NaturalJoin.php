@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class NaturalJoin extends \SqlFtw\Sql\Dml\TableReference\Join
 {
@@ -35,7 +35,7 @@ class NaturalJoin extends \SqlFtw\Sql\Dml\TableReference\Join
         return $this->joinSide;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->left->serialize($formatter) . ' NATURAL ';
         if ($this->joinSide !== null) {

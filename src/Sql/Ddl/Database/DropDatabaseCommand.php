@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Database;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class DropDatabaseCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class DropDatabaseCommand implements \SqlFtw\Sql\Command
         return $this->ifExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE DATABASE ';
         if ($this->ifExists) {

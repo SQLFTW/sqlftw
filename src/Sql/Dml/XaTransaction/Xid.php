@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class Xid implements \SqlFtw\Sql\SqlSerializable
 {
@@ -46,7 +46,7 @@ class Xid implements \SqlFtw\Sql\SqlSerializable
         return $this->formatId;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $formatter->formatString($this->transactionId);
         if ($this->branchQualifier !== null) {

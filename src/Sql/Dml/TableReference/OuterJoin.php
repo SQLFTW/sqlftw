@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
 use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class OuterJoin extends \SqlFtw\Sql\Dml\TableReference\Join
 {
@@ -77,7 +77,7 @@ class OuterJoin extends \SqlFtw\Sql\Dml\TableReference\Join
         return $this->using;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->left->serialize($formatter) . ' ' . $this->joinSide->serialize($formatter)
             . ' JOIN ' . $this->right->serialize($formatter);

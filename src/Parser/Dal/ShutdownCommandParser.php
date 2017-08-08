@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Shutdown\ShutdownCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
 
 class ShutdownCommandParser
 {

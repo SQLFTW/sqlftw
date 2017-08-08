@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dal\Cache;
 
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 /**
  * MySQL MyISAM tables only
@@ -40,7 +40,7 @@ class LoadIndexIntoCacheCommand implements \SqlFtw\Sql\Command
         return $this->tableIndexLists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'LOAD INDEX INTO CACHE ' . $formatter->formatSerializablesList($this->tableIndexLists);
     }

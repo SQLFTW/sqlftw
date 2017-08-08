@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\XaTransaction\XaCommitCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaEndCommand;
@@ -19,8 +21,6 @@ use SqlFtw\Sql\Dml\XaTransaction\XaStartCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaStartOption;
 use SqlFtw\Sql\Dml\XaTransaction\Xid;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 
 class XaTransactionCommandsParser
 {
@@ -48,7 +48,7 @@ class XaTransactionCommandsParser
             case Keyword::BEGIN:
                 $xid = $this->parseXid($tokenList);
                 /** @var \SqlFtw\Sql\Dml\XaTransaction\XaStartOption $option */
-                $option = $tokenList->mayConsumeEnum(XaStartOption::class);
+                $option = $tokenList->mayConsumeKeywordEnum(XaStartOption::class);
 
                 return new XaStartCommand($xid, $option);
             case Keyword::END:

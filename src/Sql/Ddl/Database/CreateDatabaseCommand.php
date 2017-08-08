@@ -9,8 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Database;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\Collation;
 
 class CreateDatabaseCommand implements \SqlFtw\Sql\Command
 {
@@ -22,13 +23,13 @@ class CreateDatabaseCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Charset|null */
     private $charset;
 
-    /** @var string|null */
+    /** @var \SqlFtw\Sql\Collation|null */
     private $collation;
 
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(?string $database, ?Charset $charset, ?string $collation = null, bool $ifNotExists = false)
+    public function __construct(?string $database, ?Charset $charset, ?Collation $collation = null, bool $ifNotExists = false)
     {
         $this->database = $database;
         $this->charset = $charset;
@@ -46,7 +47,7 @@ class CreateDatabaseCommand implements \SqlFtw\Sql\Command
         return $this->charset;
     }
 
-    public function getCollation(): ?string
+    public function getCollation(): ?Collation
     {
         return $this->collation;
     }
@@ -56,7 +57,7 @@ class CreateDatabaseCommand implements \SqlFtw\Sql\Command
         return $this->ifNotExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE DATABASE ';
         if ($this->ifNotExists) {
@@ -64,10 +65,10 @@ class CreateDatabaseCommand implements \SqlFtw\Sql\Command
         }
         $result .= $formatter->formatName($this->database);
         if ($this->charset !== null) {
-            $result .= ' CHARACTER SET = ' . $formatter->formatString($this->charset->getValue());
+            $result .= ' CHARACTER SET = ' . $this->charset->serialize($formatter);
         }
         if ($this->collation !== null) {
-            $result .= ' COLLATION = ' . $formatter->formatString($this->collation);
+            $result .= ' COLLATION = ' . $this->collation->serialize($formatter);
         }
 
         return $result;

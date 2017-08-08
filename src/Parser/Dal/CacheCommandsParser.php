@@ -9,13 +9,13 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Cache\CacheIndexCommand;
 use SqlFtw\Sql\Dal\Cache\LoadIndexIntoCacheCommand;
 use SqlFtw\Sql\Dal\Cache\TableIndexList;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\TableName;
 
 /**
  * MySQL MyISAM tables only
@@ -111,19 +111,20 @@ class CacheCommandsParser
      */
     private function parsePartitions(TokenList $tokenList)
     {
-        $partitions = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
-            if ($tokenList->mayConsumeKeyword(Keyword::ALL)) {
-                $partitions = true;
-            } else {
-                $partitions = [];
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-                do {
-                    $partitions[] = $tokenList->consumeName();
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
-            }
+        if (!$tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
+            return null;
         }
+
+        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        if ($tokenList->mayConsumeKeyword(Keyword::ALL)) {
+            $partitions = true;
+        } else {
+            $partitions = [];
+            do {
+                $partitions[] = $tokenList->consumeName();
+            } while ($tokenList->mayConsumeComma());
+        }
+        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
 
         return $partitions;
     }

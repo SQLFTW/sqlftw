@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\BaseType;
-use SqlFtw\Sql\Ddl\DataType;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\Ddl\BaseType;
+use SqlFtw\Sql\Ddl\DataType;
+use SqlFtw\Sql\Keyword;
 
 class TypeParser
 {
@@ -66,8 +67,8 @@ class TypeParser
      */
     public function parseType(TokenList $tokenList): DataType
     {
-        /** @var \SqlFtw\Sql\BaseType $dataType */
-        $dataType = $tokenList->consumeEnum(BaseType::class);
+        /** @var \SqlFtw\Sql\Ddl\BaseType $dataType */
+        $dataType = $tokenList->consumeKeywordEnum(BaseType::class);
         $params = $charset = $collation = null;
         $unsigned = $zerofill = false;
 
@@ -105,7 +106,7 @@ class TypeParser
                 $charset = Charset::get($tokenList->consumeNameOrString());
             }
             if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
-                $collation = $tokenList->consumeNameOrString();
+                $collation = Collation::get($tokenList->consumeNameOrString());
             }
         }
 

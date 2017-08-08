@@ -9,18 +9,17 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class Identifier implements \SqlFtw\Sql\Expression\ExpressionNode
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var string|\SqlFtw\Sql\Names\QualifiedName|\SqlFtw\Sql\Names\ColumnName */
+    /** @var string|\SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\ColumnName */
     private $name;
 
     /**
-     * @param string|\SqlFtw\Sql\Names\QualifiedName|\SqlFtw\Sql\Names\ColumnName $name
+     * @param string|\SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\ColumnName $name
      */
     public function __construct($name)
     {
@@ -33,14 +32,14 @@ class Identifier implements \SqlFtw\Sql\Expression\ExpressionNode
     }
 
     /**
-     * @return string|\SqlFtw\Sql\Names\QualifiedName|\SqlFtw\Sql\Names\ColumnName
+     * @return string|\SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\ColumnName
      */
     public function getName()
     {
         return $this->name;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return is_string($this->name) ? $formatter->formatName($this->name) : $this->name->serialize($formatter);
     }

@@ -2,7 +2,7 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class LoopStatement implements \SqlFtw\Sql\Statement
 {
@@ -37,7 +37,7 @@ class LoopStatement implements \SqlFtw\Sql\Statement
         return $this->label;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = '';
         if ($this->label !== null) {

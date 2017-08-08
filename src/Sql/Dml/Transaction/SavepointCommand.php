@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class SavepointCommand implements \SqlFtw\Sql\Command
 {
@@ -28,7 +28,7 @@ class SavepointCommand implements \SqlFtw\Sql\Command
         return $this->name;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'SAVEPOINT ' . $formatter->formatName($this->name);
     }

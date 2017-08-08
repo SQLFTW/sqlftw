@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use Dogma\Arr;
 use Dogma\Check;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class InsertSetCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\InsertCommand
 {
@@ -26,7 +26,7 @@ class InsertSetCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand imp
     private $onDuplicateKeyActions;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param \SqlFtw\Sql\Expression\ExpressionNode[] $values (string $column => ExpressionNode $value)
      * @param string[]|null $columns
      * @param string[]|null $partitions
@@ -64,7 +64,7 @@ class InsertSetCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand imp
         return $this->onDuplicateKeyActions;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'INSERT' . $this->serializeBody($formatter);
 

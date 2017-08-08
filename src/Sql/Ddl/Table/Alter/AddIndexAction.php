@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class AddIndexAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -34,7 +34,7 @@ class AddIndexAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
         return $this->index;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'ADD ' . $this->index->serialize($formatter);
     }

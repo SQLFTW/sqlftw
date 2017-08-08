@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Reset;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ResetPersistCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class ResetPersistCommand implements \SqlFtw\Sql\Command
         return $this->ifExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'RESET PERSIST ';
         if ($this->ifExists) {

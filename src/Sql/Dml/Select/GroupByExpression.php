@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Order;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class GroupByExpression implements \SqlFtw\Sql\SqlSerializable
 {
@@ -39,7 +39,7 @@ class GroupByExpression implements \SqlFtw\Sql\SqlSerializable
         return $this->order;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->expression->serialize($formatter);
         if ($this->order !== null) {

@@ -9,17 +9,17 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\Dml\DoCommandsParser;
+use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\Parser\Dml\DoCommandsParser;
-use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\UserName;
 
 class EventCommandsParser
 {

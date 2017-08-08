@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class XaEndCommand implements \SqlFtw\Sql\Command
 {
@@ -46,7 +46,7 @@ class XaEndCommand implements \SqlFtw\Sql\Command
         return $this->forMigrate;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'XA END ' . $this->xid->serialize($formatter) . ($this->suspend ? ' SUSPEND' . ($this->forMigrate ? ' FOR MIGRATE' : '') : '');
     }

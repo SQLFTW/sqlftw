@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Handler;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class HandlerOpenCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var string|null */
@@ -38,7 +38,7 @@ class HandlerOpenCommand implements \SqlFtw\Sql\Command
         return $this->alias;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'HANDLER ' . $this->table->serialize($formatter) . ' OPEN';
         if ($this->alias !== null) {

@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class IdentifiedUser implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName */
+    /** @var \SqlFtw\Sql\UserName */
     private $user;
 
     /** @var string|null */
@@ -56,7 +56,7 @@ class IdentifiedUser implements \SqlFtw\Sql\SqlSerializable
         return $this->hash;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->user->serialize($formatter);
         if ($this->plugin !== null || $this->password !== null) {

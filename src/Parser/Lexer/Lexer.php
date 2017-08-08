@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Parser\Lexer;
 
-use SqlFtw\Platform\Mode;
-use SqlFtw\Platform\Settings;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Mode;
+use SqlFtw\Platform\Settings;
 
 /**
  * todo:
@@ -103,6 +103,7 @@ class Lexer
         $operatorKeywordsKey = array_flip($features->getOperatorKeywords());
 
         $delimiter = $this->settings->getDelimiter();
+        /** @var \SqlFtw\Parser\Token|null $previous */
         $previous = null;
         $condition = null;
 
@@ -169,7 +170,7 @@ class Lexer
                 case ',':
                     yield $previous = new Token(TokenType::SYMBOL | TokenType::COMMA, $position, $char, null, $condition);
                     break;
-                case ';';
+                case ';':
                     yield $previous = new Token(TokenType::SYMBOL | TokenType::SEMICOLON, $position, $char, null, $condition);
                     break;
                 case ':':
@@ -198,6 +199,7 @@ class Lexer
                         $string->column++;
                         break;
                     }
+                    // continue
                 case '!':
                 case '%':
                 case '&':
@@ -225,7 +227,7 @@ class Lexer
                     yield $previous = new Token(TokenType::SYMBOL | TokenType::PLACEHOLDER, $position, $char, null, $condition);
                     break;
                 case '@':
-                    if ($previous !== null && $previous->type & TokenType::NAME) {
+                    if ($previous !== null && ($previous->type & TokenType::NAME)) {
                         // user @ host
                         yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $position, $char, null, $condition);
                         break;
@@ -320,7 +322,7 @@ class Lexer
 
                         if ($value[2] === '!') {
                             // /*!12345 comment */
-                            $versionId = (int)trim(substr($value, 2, 6));
+                            $versionId = (int) trim(substr($value, 2, 6));
                             if ($this->settings->getPlatform()->hasOptionalComments()
                                 && ($versionId === 0 || $versionId <= $this->settings->getPlatform()->getVersion()->getId())
                             ) {
@@ -463,6 +465,7 @@ class Lexer
                             }
                         } while (true);
                     }
+                    // continue
                 case '1':
                 case '2':
                 case '3':
@@ -486,6 +489,7 @@ class Lexer
                         yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $position, $value, $orig, $condition);
                         break;
                     }
+                    // continue
                 case 'B':
                 case 'b':
                     // b'01'
@@ -511,6 +515,7 @@ class Lexer
                             }
                         } while (true);
                     }
+                    // continue
                 case 'A':
                 case 'a':
                 case 'C':
@@ -531,6 +536,7 @@ class Lexer
                             break;
                         }
                     }
+                    // continue
                 case 'X':
                 case 'x':
                     if (($char === 'X' || $char === 'x') && $string->get() === '\'') {
@@ -557,6 +563,7 @@ class Lexer
                             }
                         } while (true);
                     }
+                    // continue
                 case 'G':
                 case 'g':
                 case 'H':
@@ -608,11 +615,11 @@ class Lexer
                     }
                     $upper = strtoupper($value);
                     if ($upper === 'NULL') {
-                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, null, $value, $condition);
+                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, 'NULL', $value, $condition);
                     } elseif ($upper === 'TRUE') {
-                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, true, $value, $condition);
+                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, 'TRUE', $value, $condition);
                     } elseif ($upper === 'FALSE') {
-                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, false, $value, $condition);
+                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, 'FALSE', $value, $condition);
                     } elseif (isset($reservedKey[$upper])) {
                         if (isset($operatorKeywordsKey[$upper])) {
                             yield $previous = new Token(TokenType::KEYWORD | TokenType::RESERVED | TokenType::OPERATOR, $position, $upper, $value, $condition);
@@ -620,11 +627,11 @@ class Lexer
                             yield $previous = new Token(TokenType::KEYWORD | TokenType::RESERVED, $position, $upper, $value, $condition);
                         }
                     } elseif (isset($keywordsKey[$upper])) {
-                        yield $previous = new Token(TokenType::KEYWORD, $position, $upper, $value, $condition);
+                        yield $previous = new Token(TokenType::KEYWORD | TokenType::NAME | TokenType::UNQUOTED_NAME, $position, $upper, $value, $condition);
                     } elseif ($upper === 'DELIMITER' && $this->settings->getPlatform()->hasUserDelimiter()) {
                         yield new Token(TokenType::KEYWORD, $position, $upper, $value, $condition);
                         $position = $string->position;
-                        $whitespace = $this->parseWhitespace('', $string);
+                        $whitespace = $this->parseWhitespace($string);
                         if ($this->withWhitespace) {
                             yield new Token(TokenType::WHITESPACE, $position, $whitespace, null, $condition);
                         }
@@ -650,9 +657,8 @@ class Lexer
                     }
                     break;
                 case '_':
-                    ///
+                    /// charset declaration
                 default:
-                    dump($char);
                     if (ord($char) < 32) {
                         throw new \SqlFtw\Parser\Lexer\InvalidCharacterException($char, $position, ''); ///
                     }
@@ -669,12 +675,11 @@ class Lexer
                     yield $previous = new Token(TokenType::NAME | TokenType::UNQUOTED_NAME, $position, $value, $value, $condition);
             }
         }
-
-        return;
     }
 
-    private function parseWhitespace($whitespace, StringBuffer $string)
+    private function parseWhitespace(StringBuffer $string)
     {
+        $whitespace = '';
         while (($next = $string->get()) !== '') {
             if ($next === ' ' || $next === "\t" || $next === "\r") {
                 $whitespace .= $next;
@@ -776,7 +781,7 @@ class Lexer
             '\\r' => "\r",
             '\\t' => "\t",
             '\\Z' => "\x1A",
-            '\\\\' => '\\'
+            '\\\\' => '\\',
         ];
 
         $string = substr($string, 1, -1);

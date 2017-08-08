@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Utility\UseCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
 
 class UseCommandParser
 {

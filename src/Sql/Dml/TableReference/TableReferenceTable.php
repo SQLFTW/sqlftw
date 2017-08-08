@@ -11,14 +11,14 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class TableReferenceTable implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var string|null */
@@ -31,12 +31,12 @@ class TableReferenceTable implements \SqlFtw\Sql\Dml\TableReference\TableReferen
     private $indexHints;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param string|null $alias
      * @param string[]|null $partitions
      * @param \SqlFtw\Sql\Dml\TableReference\IndexHint[]|null $indexHints
      */
-    public function __construct(TableName $table, ?string $alias, ?array $partitions, ?array $indexHints)
+    public function __construct(TableName $table, ?string $alias = null, ?array $partitions = null, ?array $indexHints = null)
     {
         if ($partitions !== null) {
             Check::itemsOfType($partitions, Type::STRING);
@@ -81,7 +81,7 @@ class TableReferenceTable implements \SqlFtw\Sql\Dml\TableReference\TableReferen
         return $this->indexHints;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->table->serialize($formatter);
         if ($this->partitions !== null) {

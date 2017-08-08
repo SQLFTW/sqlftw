@@ -9,13 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class RevokeAllCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
     public function __construct(array $users)
@@ -24,14 +24,14 @@ class RevokeAllCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getUsers(): array
     {
         return $this->users;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'REVOKE ALL PRIVILEGES, GRANT OPTION FROM ' . $formatter->formatSerializablesList($this->users);
     }

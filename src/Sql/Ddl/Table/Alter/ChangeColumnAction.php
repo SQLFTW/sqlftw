@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class ChangeColumnAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -61,10 +61,10 @@ class ChangeColumnAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 
     public function getAfter(): ?string
     {
-        return is_bool($this->after) ?  null : $this->after;
+        return is_bool($this->after) ? null : $this->after;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CHANGE COLUMN ' . $formatter->formatName($this->oldName) . ' ' . $this->column->serialize($formatter);
         if ($this->after !== null) {

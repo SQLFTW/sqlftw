@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class SetPasswordCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName|null */
+    /** @var \SqlFtw\Sql\UserName|null */
     private $user;
 
     /** @var string */
@@ -47,7 +47,7 @@ class SetPasswordCommand implements \SqlFtw\Sql\Command
         return $this->usePasswordFunction;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SET PASSWORD';
         if ($this->user !== null) {

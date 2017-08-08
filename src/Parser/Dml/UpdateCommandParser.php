@@ -11,10 +11,10 @@ namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
-use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\Dml\Update\UpdateCommand;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Operator;
 
 class UpdateCommandParser
 {

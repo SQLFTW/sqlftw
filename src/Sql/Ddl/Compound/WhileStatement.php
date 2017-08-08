@@ -2,8 +2,8 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class WhileStatement implements \SqlFtw\Sql\Statement
 {
@@ -48,7 +48,7 @@ class WhileStatement implements \SqlFtw\Sql\Statement
         return $this->label;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = '';
         if ($this->label !== null) {

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class CreateLogfileGroupCommand implements \SqlFtw\Sql\Command
 {
@@ -110,7 +110,7 @@ class CreateLogfileGroupCommand implements \SqlFtw\Sql\Command
         return $this->comment;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ADD UNDOFILE ' . $formatter->formatString($this->undoFile);
         if ($this->initialSize !== null) {

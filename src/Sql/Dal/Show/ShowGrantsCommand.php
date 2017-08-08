@@ -11,20 +11,20 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class ShowGrantsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
 
-    /** @var \SqlFtw\Sql\Names\UserName|null */
+    /** @var \SqlFtw\Sql\UserName|null */
     private $user;
 
     /** @var string[]|null */
     private $roles;
 
     /**
-     * @param \SqlFtw\Sql\Names\UserName|null $user
+     * @param \SqlFtw\Sql\UserName|null $user
      * @param string[] $roles
      */
     public function __construct(?UserName $user = null, ?array $roles = null)
@@ -51,7 +51,7 @@ class ShowGrantsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->roles;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW GRANTS';
         if ($this->user) {

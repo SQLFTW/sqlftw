@@ -10,14 +10,14 @@
 namespace SqlFtw\Sql\Dal\Flush;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class FlushTablesCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName[]|null */
+    /** @var \SqlFtw\Sql\TableName[]|null */
     private $tables;
 
     /** @var bool */
@@ -27,7 +27,7 @@ class FlushTablesCommand implements \SqlFtw\Sql\Command
     private $forExport;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName[]|null $tables
+     * @param \SqlFtw\Sql\TableName[]|null $tables
      * @param bool $withReadLock
      * @param bool $forExport
      */
@@ -44,7 +44,7 @@ class FlushTablesCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\TableName[]|null
+     * @return \SqlFtw\Sql\TableName[]|null
      */
     public function getTables(): array
     {
@@ -61,7 +61,7 @@ class FlushTablesCommand implements \SqlFtw\Sql\Command
         return $this->forExport;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'FLUSH TABLES';
         if ($this->tables !== null) {

@@ -11,16 +11,16 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\Check;
 use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class AlterTableCommand implements \SqlFtw\Sql\Command
 {
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList */
@@ -33,7 +33,7 @@ class AlterTableCommand implements \SqlFtw\Sql\Command
     private $tableOptions;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList|\SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] $actions
      * @param mixed[] $alterOptions
      * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[] $tableOptions
@@ -68,27 +68,35 @@ class AlterTableCommand implements \SqlFtw\Sql\Command
         return $this->actions;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER TABLE ' . $this->table->serialize($formatter) . "\n";
+        $result = 'ALTER TABLE ' . $this->table->serialize($formatter);
 
         $result .= $this->actions->serialize($formatter);
 
-        if ($this->tableOptions !== null) {
-            $result .= ",\n" . $this->tableOptions->serialize($formatter, ",\n", ' = ');
+        if (!$this->actions->isEmpty() && $this->tableOptions !== null) {
+            $result .= ',';
         }
+
+        if ($this->tableOptions !== null && !$this->tableOptions->isEmpty()) {
+            $result .= "\n" . $formatter->indent . $this->tableOptions->serialize($formatter, ",\n", ' ');
+        }
+
+        $result = rtrim($result, ',');
 
         if ($this->alterOptions !== null) {
             foreach ($this->alterOptions as $option => $value) {
                 if ($option === AlterTableOption::FORCE) {
-                    $result .= "\nFORCE";
+                    $result .= "\n" . $formatter->indent . 'FORCE, ';
+                } elseif ($option === AlterTableOption::VALIDATION) {
+                    $result .= "\n" . $formatter->indent . ($value ? 'WITH' : 'WITHOUT') . ' VALIDATION, ';
                 } else {
-                    $result .= ",\n" . $option . ' = ' . $formatter->formatValue($value);
+                    $result .= "\n" . $formatter->indent . $option . ' ' . $formatter->formatValue($value) . ',';
                 }
             }
         }
 
-        return $result;
+        return trim(rtrim($result, ' '), ',');
     }
 
 }

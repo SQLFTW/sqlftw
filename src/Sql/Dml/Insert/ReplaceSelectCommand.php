@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class ReplaceSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\ReplaceCommand
 {
@@ -21,7 +21,7 @@ class ReplaceSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand
     private $select;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param \SqlFtw\Sql\Dml\Select\SelectCommand $select
      * @param string[]|null $columns
      * @param string[]|null $partitions
@@ -41,15 +41,12 @@ class ReplaceSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand
         $this->select = $select;
     }
 
-    /**
-     * @return \SqlFtw\Sql\Dml\Select\SelectCommand
-     */
-    public function getSelect(): array
+    public function getSelect(): SelectCommand
     {
         return $this->select;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'REPLACE' . $this->serializeBody($formatter) . ' ' . $this->select->serialize($formatter);
     }

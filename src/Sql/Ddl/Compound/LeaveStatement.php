@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class LeaveStatement implements \SqlFtw\Sql\Statement
 {
@@ -28,7 +28,7 @@ class LeaveStatement implements \SqlFtw\Sql\Statement
         return $this->label;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'LEAVE ' . $formatter->formatName($this->label);
     }

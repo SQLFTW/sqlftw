@@ -9,16 +9,16 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DoCommand\DoCommand;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\UserName;
 
 class CreateEventCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var \SqlFtw\Sql\Ddl\Event\EventSchedule */
@@ -27,7 +27,7 @@ class CreateEventCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Dml\DoCommand\DoCommand */
     private $body;
 
-    /** @var \SqlFtw\Sql\Names\UserName|null */
+    /** @var \SqlFtw\Sql\UserName|null */
     private $definer;
 
     /** @var \SqlFtw\Sql\Ddl\Event\EventState|null */
@@ -102,7 +102,7 @@ class CreateEventCommand implements \SqlFtw\Sql\Command
         return $this->ifNotExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
         if ($this->definer !== null) {

@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\User\AlterCurrentUserCommand;
 use SqlFtw\Sql\Dal\User\AlterUserCommand;
@@ -41,11 +43,9 @@ use SqlFtw\Sql\Dal\User\UserResourceOption;
 use SqlFtw\Sql\Dal\User\UserResourceOptionType;
 use SqlFtw\Sql\Dal\User\UserTlsOption;
 use SqlFtw\Sql\Dal\User\UserTlsOptionType;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Operator;
+use SqlFtw\Sql\UserName;
 
 class UserCommandsParser
 {
@@ -81,7 +81,7 @@ class UserCommandsParser
             $tokenList->consumeKeyword(Keyword::ROLE);
             $user = new UserName(...$tokenList->consumeUserName());
             /** @var \SqlFtw\Sql\Dal\User\RolesSpecification $roles */
-            $roles = $tokenList->mayConsumeEnum(RolesSpecification::class);
+            $roles = $tokenList->mayConsumeKeywordEnum(RolesSpecification::class);
             if ($roles !== null) {
                 return new AlterUserDefaultRoleCommand($user, $roles, null, $ifExists);
             } else {
@@ -124,30 +124,28 @@ class UserCommandsParser
         $resourceOptions = $this->parseResourceOptions($tokenList);
 
         $passwordLockOptions = null;
-        if ($tokenList->seekAnyKeyword([Keyword::PASSWORD, Keyword::ACCOUNT], 1)) {
-            do {
-                if ($tokenList->mayConsumeKeyword(Keyword::ACCOUNT)) {
-                    if ($tokenList->mayConsumeKeyword(Keyword::LOCK)) {
-                        $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
-                    } else {
-                        $tokenList->consumeKeyword(Keyword::UNLOCK);
-                        $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
-                    }
+        while ($keyword = $tokenList->mayConsumeAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT)) {
+            if ($keyword === Keyword::ACCOUNT) {
+                if ($tokenList->mayConsumeKeyword(Keyword::LOCK)) {
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
                 } else {
-                    $tokenList->consumeKeywords(Keyword::PASSWORD, Keyword::EXPIRE);
-                    if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
-                        $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_DEFAULT));
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::NEVER)) {
-                        $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_NEVER));
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
-                        $value = $tokenList->consumeInt();
-                        $tokenList->consumeKeyword(Keyword::DAY);
-                        $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_INTERVAL), $value);
-                    } else {
-                        $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE));
-                    }
+                    $tokenList->consumeKeyword(Keyword::UNLOCK);
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
                 }
-            } while ($tokenList->mayConsumeComma());
+            } else {
+                $tokenList->consumeKeyword(Keyword::EXPIRE);
+                if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_DEFAULT));
+                } elseif ($tokenList->mayConsumeKeyword(Keyword::NEVER)) {
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_NEVER));
+                } elseif ($tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
+                    $value = $tokenList->consumeInt();
+                    $tokenList->consumeKeyword(Keyword::DAY);
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_INTERVAL), $value);
+                } else {
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE));
+                }
+            }
         }
 
         return [$users, $tlsOptions, $resourceOptions, $passwordLockOptions];
@@ -214,7 +212,7 @@ class UserCommandsParser
                 $tlsOptions = [];
                 do {
                     /** @var \SqlFtw\Sql\Dal\User\UserTlsOptionType $type */
-                    $type = $tokenList->consumeEnum(UserTlsOptionType::class);
+                    $type = $tokenList->consumeKeywordEnum(UserTlsOptionType::class);
                     $value = $tokenList->mayConsumeString();
                     $tlsOptions[] = new UserTlsOption($type, $value);
 
@@ -248,7 +246,7 @@ class UserCommandsParser
             $resourceOptions = [];
             do {
                 /** @var \SqlFtw\Sql\Dal\User\UserResourceOptionType $type */
-                $type = $tokenList->consumeEnum(UserResourceOptionType::class);
+                $type = $tokenList->consumeKeywordEnum(UserResourceOptionType::class);
                 $value = $tokenList->consumeInt();
                 $resourceOptions[] = new UserResourceOption($type, $value);
             } while ($tokenList->mayConsumeComma());
@@ -379,7 +377,7 @@ class UserCommandsParser
         $privileges = [];
         do {
             /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeType $type */
-            $type = $tokenList->consumeEnum(UserPrivilegeType::class);
+            $type = $tokenList->consumeKeywordEnum(UserPrivilegeType::class);
             $columns = null;
             if ($tokenList->consume(TokenType::LEFT_PARENTHESIS)) {
                 $columns = [];
@@ -416,7 +414,7 @@ class UserCommandsParser
     {
         $tokenList->consumeKeyword(Keyword::ON);
         /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeResourceType|null $resourceType */
-        $resourceType = $tokenList->mayConsumeEnum(UserPrivilegeResourceType::class);
+        $resourceType = $tokenList->mayConsumeKeywordEnum(UserPrivilegeResourceType::class);
         if ($tokenList->mayConsumeOperator(Operator::MULTIPLY)) {
             $object = false;
             if ($tokenList->mayConsume(TokenType::DOT)) {
@@ -521,7 +519,7 @@ class UserCommandsParser
     {
         $tokenList->consumeKeywords(Keyword::SET, Keyword::DEFAULT, Keyword::ROLE);
         /** @var \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification $roles */
-        $roles = $tokenList->mayConsumeEnum(UserDefaultRolesSpecification::class);
+        $roles = $tokenList->mayConsumeKeywordEnum(UserDefaultRolesSpecification::class);
         $rolesList = null;
         if ($roles === null) {
             $rolesList = $this->parseUserList($tokenList);
@@ -594,7 +592,7 @@ class UserCommandsParser
 
     /**
      * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     private function parseUserList(TokenList $tokenList): array
     {

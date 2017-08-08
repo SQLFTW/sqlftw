@@ -10,8 +10,8 @@
 namespace SqlFtw\Sql\Dml\Insert;
 
 use Dogma\Arr;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class OnDuplicateKeyActions implements \SqlFtw\Sql\SqlSerializable
 {
@@ -28,7 +28,7 @@ class OnDuplicateKeyActions implements \SqlFtw\Sql\SqlSerializable
         $this->expressions = $expressions;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'ON DUPLICATE KEY UPDATE ';
 

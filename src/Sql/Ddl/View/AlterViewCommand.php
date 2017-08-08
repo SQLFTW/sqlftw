@@ -9,17 +9,17 @@
 
 namespace SqlFtw\Sql\Ddl\View;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\UserName;
 
 class AlterViewCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
@@ -28,7 +28,7 @@ class AlterViewCommand implements \SqlFtw\Sql\Command
     /** @var string[]|null */
     private $columns;
 
-    /** @var \SqlFtw\Sql\Names\UserName|null */
+    /** @var \SqlFtw\Sql\UserName|null */
     private $definer;
 
     /** @var \SqlFtw\Sql\Ddl\SqlSecurity|null */
@@ -96,7 +96,7 @@ class AlterViewCommand implements \SqlFtw\Sql\Command
         return $this->checkOption;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER';
         if ($this->algorithm !== null) {

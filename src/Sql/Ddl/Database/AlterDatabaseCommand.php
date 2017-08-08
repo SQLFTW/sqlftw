@@ -9,8 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Database;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\Collation;
 
 class AlterDatabaseCommand implements \SqlFtw\Sql\Command
 {
@@ -22,10 +23,10 @@ class AlterDatabaseCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Charset|null */
     private $charset;
 
-    /** @var string|null */
+    /** @var \SqlFtw\Sql\Collation|null */
     private $collation;
 
-    public function __construct(?string $database, ?Charset $charset, ?string $collation = null)
+    public function __construct(?string $database, ?Charset $charset, ?Collation $collation = null)
     {
         $this->database = $database;
         $this->charset = $charset;
@@ -42,22 +43,22 @@ class AlterDatabaseCommand implements \SqlFtw\Sql\Command
         return $this->charset;
     }
 
-    public function getCollation(): ?string
+    public function getCollation(): ?Collation
     {
         return $this->collation;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER DATABASE';
         if ($this->database !== null) {
             $result .= ' ' . $formatter->formatName($this->database);
         }
         if ($this->charset !== null) {
-            $result .= ' CHARACTER SET = ' . $formatter->formatString($this->charset->getValue());
+            $result .= ' CHARACTER SET = ' . $this->charset->serialize($formatter);
         }
         if ($this->collation !== null) {
-            $result .= ' COLLATION = ' . $formatter->formatString($this->collation);
+            $result .= ' COLLATION = ' . $this->collation->serialize($formatter);
         }
 
         return $result;

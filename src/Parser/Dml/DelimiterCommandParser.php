@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use SqlFtw\Sql\Dml\Utility\DelimiterCommand;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Dml\Utility\DelimiterCommand;
+use SqlFtw\Sql\Keyword;
 
 class DelimiterCommandParser
 {

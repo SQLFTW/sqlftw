@@ -11,18 +11,18 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\Check;
 use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\Partitioning;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var \SqlFtw\Sql\Ddl\Table\TableItem[] */
@@ -47,7 +47,7 @@ class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
     private $select;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param \SqlFtw\Sql\Ddl\Table\TableItem[] $items
      * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[]|null $options
      * @param \SqlFtw\Sql\Ddl\Table\Partition\Partitioning|null $partitioning
@@ -67,6 +67,9 @@ class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
         ?SelectCommand $select = null
     ) {
         Check::types($options, [TableOptionsList::class, Type::PHP_ARRAY, Type::NULL]);
+        if ($duplicateOption !== null && $select === null) {
+            throw new \SqlFtw\Sql\InvalidDefinitionException('IGNORE/REPLACE can be uses only with CREATE TABLE AS ... command.');
+        }
 
         $this->table = $table;
         $this->items = $items;
@@ -78,11 +81,80 @@ class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
         $this->select = $select;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function getTable(): TableName
     {
-        $result = 'CREATE TABLE ' . $this->table->serialize($formatter);
+        return $this->table;
+    }
 
-        ///
+    /**
+     * @return \SqlFtw\Sql\Ddl\Table\TableItem[]
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    public function getOptions(): ?TableOptionsList
+    {
+        return $this->options;
+    }
+
+    public function getPartitioning(): ?Partitioning
+    {
+        return $this->partitioning;
+    }
+
+    public function isTemporary(): bool
+    {
+        return $this->temporary;
+    }
+
+    public function ifNotExists(): bool
+    {
+        return $this->ifNotExists;
+    }
+
+    public function getDuplicateOption(): ?DuplicateOption
+    {
+        return $this->duplicateOption;
+    }
+
+    public function getSelect(): ?SelectCommand
+    {
+        return $this->select;
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        $result = 'CREATE ';
+        if ($this->temporary) {
+            $result .= 'TEMPORARY ';
+        }
+        $result .= 'TABLE ';
+        if ($this->ifNotExists) {
+            $result .= 'IF NOT EXISTS';
+        }
+        $result .= $this->table->serialize($formatter);
+
+        if ($this->items !== null) {
+            $result .= " (\n" . $formatter->indent . $formatter->formatSerializablesList($this->items, ",\n" . $formatter->indent) . "\n)";
+        }
+
+        if ($this->options !== null && !$this->options->isEmpty()) {
+            $result .= ' ' . $this->options->serialize($formatter, ', ', ' ');
+        }
+
+        if ($this->partitioning) {
+            $result .= $this->partitioning->serialize($formatter);
+        }
+
+        if ($this->duplicateOption) {
+            $result .= "\n" . $this->duplicateOption->serialize($formatter);
+        }
+
+        if ($this->select !== null) {
+            $result .= "\nAS " . $this->select->serialize($formatter);
+        }
 
         return $result;
     }

@@ -10,8 +10,7 @@
 namespace SqlFtw\Sql\Dal\Reset;
 
 use Dogma\Check;
-use Dogma\Type;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ResetCommand implements \SqlFtw\Sql\Command
 {
@@ -39,7 +38,7 @@ class ResetCommand implements \SqlFtw\Sql\Command
         return $this->options;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'RESET ' . $formatter->formatSerializablesList($this->options);
     }

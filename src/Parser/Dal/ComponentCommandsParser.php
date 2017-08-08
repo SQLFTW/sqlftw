@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Component\InstallComponentCommand;
 use SqlFtw\Sql\Dal\Component\UninstallComponentCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
 
 class ComponentCommandsParser
 {
@@ -26,7 +26,7 @@ class ComponentCommandsParser
         $tokenList->consumeKeywords(Keyword::INSTALL, Keyword::COMPONENT);
         $components = [];
         do {
-            $components[] = $tokenList->consumeString();
+            $components[] = $tokenList->consumeNameOrString();
         } while ($tokenList->mayConsumeComma());
 
         return new InstallComponentCommand($components);
@@ -40,7 +40,7 @@ class ComponentCommandsParser
         $tokenList->consumeKeywords(Keyword::UNINSTALL, Keyword::COMPONENT);
         $components = [];
         do {
-            $components[] = $tokenList->consumeString();
+            $components[] = $tokenList->consumeNameOrString();
         } while ($tokenList->mayConsumeComma());
 
         return new UninstallComponentCommand($components);

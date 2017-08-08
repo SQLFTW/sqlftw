@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class TableReferenceParentheses implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode, \Countable
 {
@@ -38,7 +38,7 @@ class TableReferenceParentheses implements \SqlFtw\Sql\Dml\TableReference\TableR
         return $this->content;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return '(' . $this->content->serialize($formatter) . ')';
     }

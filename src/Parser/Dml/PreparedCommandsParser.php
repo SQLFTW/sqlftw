@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Prepared\DeallocatePrepareCommand;
 use SqlFtw\Sql\Dml\Prepared\ExecuteCommand;
 use SqlFtw\Sql\Dml\Prepared\PrepareCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 
 class PreparedCommandsParser
 {

@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\Sql\Operator;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 /**
  * NOT right
@@ -53,7 +51,7 @@ class UnaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->right;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $this->operator . ($this->operator === Operator::NOT ? ' ' : '') . $this->right->serialize($formatter);
     }

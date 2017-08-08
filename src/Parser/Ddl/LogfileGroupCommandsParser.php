@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\LogfileGroup\AlterLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\CreateLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\DropLogfileGroupCommand;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Operator;
 
 /**
  * MySQL 5.7 only

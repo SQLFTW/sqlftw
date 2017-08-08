@@ -10,17 +10,17 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class GrantProxyCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName */
+    /** @var \SqlFtw\Sql\UserName */
     private $proxy;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
     /** @var bool */
@@ -41,7 +41,7 @@ class GrantProxyCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getUsers(): array
     {
@@ -53,7 +53,7 @@ class GrantProxyCommand implements \SqlFtw\Sql\Command
         return $this->withGrantOption;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'GRANT PROXY ON ' . $this->proxy->serialize($formatter)
             . ' TO ' . $formatter->formatSerializablesList($this->users)

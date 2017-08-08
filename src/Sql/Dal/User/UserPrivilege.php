@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class UserPrivilege implements \SqlFtw\Sql\SqlSerializable
 {
@@ -44,7 +44,7 @@ class UserPrivilege implements \SqlFtw\Sql\SqlSerializable
         return $this->columns;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
         if ($this->columns !== null) {

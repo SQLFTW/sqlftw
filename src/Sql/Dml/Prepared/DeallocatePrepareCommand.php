@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Prepared;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class DeallocatePrepareCommand implements \SqlFtw\Sql\Command
 {
@@ -23,7 +23,7 @@ class DeallocatePrepareCommand implements \SqlFtw\Sql\Command
         $this->name = $name;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'DEALLOCATE PREPARE ' . $formatter->formatName($this->name);
     }

@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\Sql\Operator;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 /**
  * left BETWEEN middle AND right
@@ -24,7 +22,7 @@ class TernaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
     private $left;
 
-    /** @var string */
+    /** @var string[] */
     private $leftOperator;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
@@ -36,14 +34,28 @@ class TernaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
     private $right;
 
+    /**
+     * @param \SqlFtw\Sql\Expression\ExpressionNode $left
+     * @param string|string[] $leftOperator
+     * @param \SqlFtw\Sql\Expression\ExpressionNode $middle
+     * @param string $rightOperator
+     * @param \SqlFtw\Sql\Expression\ExpressionNode $right
+     */
     public function __construct(
         ExpressionNode $left,
-        string $leftOperator,
+        $leftOperator,
         ExpressionNode $middle,
         string $rightOperator,
         ExpressionNode $right
     ) {
-        Operator::get($leftOperator)->checkTernaryLeft();
+        if (is_array($leftOperator)) {
+            foreach ($leftOperator as $op) {
+                Operator::get($op)->checkTernaryLeft();
+            }
+        } else {
+            Operator::get($leftOperator)->checkTernaryLeft();
+            $leftOperator = [$leftOperator];
+        }
         Operator::get($rightOperator)->checkTernaryRight();
 
         $this->left = $left;
@@ -63,7 +75,10 @@ class TernaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->left;
     }
 
-    public function getLeftOperator(): string
+    /**
+     * @return string[]
+     */
+    public function getLeftOperator(): array
     {
         return $this->leftOperator;
     }
@@ -83,9 +98,9 @@ class TernaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->right;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
-        return $this->left->serialize($formatter) . ' ' . $this->leftOperator . ' ' .
+        return $this->left->serialize($formatter) . ' ' . implode(' ', $this->leftOperator) . ' ' .
             $this->middle->serialize($formatter) . ' ' . $this->rightOperator . ' ' .
             $this->right->serialize($formatter);
     }

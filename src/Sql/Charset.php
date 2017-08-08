@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Sql;
 
+use SqlFtw\Formatter\Formatter;
+
 class Charset extends \SqlFtw\Sql\SqlEnum
 {
 
@@ -53,5 +55,10 @@ class Charset extends \SqlFtw\Sql\SqlEnum
     public const UTF_32 = 'utf32';
     public const UTF_8_OLD = 'utf8';
     public const UTF_8 = 'utf8mb4';
+
+    public function serialize(Formatter $formatter): string
+    {
+        return "'" . $this->getValue() . "'";
+    }
 
 }

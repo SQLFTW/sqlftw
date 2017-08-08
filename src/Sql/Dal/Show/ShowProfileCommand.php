@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ShowProfileCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
@@ -67,7 +67,7 @@ class ShowProfileCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->offset;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW PROFILE ' . $formatter->formatSerializablesList($this->types);
 

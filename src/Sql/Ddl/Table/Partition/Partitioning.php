@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class Partitioning implements \SqlFtw\Sql\SqlSerializable
 {
@@ -83,7 +83,7 @@ class Partitioning implements \SqlFtw\Sql\SqlSerializable
         return $this->subpartitionsNumber;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'PARTITION BY ' . $this->condition->serialize($formatter);
         if ($this->partitionsNumber !== null) {

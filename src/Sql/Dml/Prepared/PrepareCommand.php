@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Prepared;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class PrepareCommand implements \SqlFtw\Sql\Command
 {
@@ -27,7 +27,7 @@ class PrepareCommand implements \SqlFtw\Sql\Command
         $this->statement = $statement;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'PREPARE ' . $formatter->formatName($this->name) . ' FROM '
             . ($this->statement[0] === '@' ? $this->statement : $formatter->formatString($this->statement));

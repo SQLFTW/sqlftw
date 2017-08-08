@@ -10,8 +10,8 @@
 namespace SqlFtw\Sql\Dml\DoCommand;
 
 use Dogma\Check;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class DoCommand implements \SqlFtw\Sql\Command
 {
@@ -38,7 +38,7 @@ class DoCommand implements \SqlFtw\Sql\Command
         return $this->expressions;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'DO ' . $formatter->formatSerializablesList($this->expressions);
     }

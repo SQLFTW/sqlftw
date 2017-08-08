@@ -10,18 +10,18 @@
 namespace SqlFtw\Sql\Ddl\Routines;
 
 use Dogma\Arr;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
-use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\DataType;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\Ddl\SqlSecurity;
+use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\UserName;
 
 class CreateFunctionCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var \SqlFtw\Sql\Ddl\Compound\CompoundStatement */
@@ -33,7 +33,7 @@ class CreateFunctionCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Ddl\DataType */
     private $returnType;
 
-    /** @var \SqlFtw\Sql\Names\UserName|null */
+    /** @var \SqlFtw\Sql\UserName|null */
     private $definer;
 
     /** @var bool|null */
@@ -128,7 +128,7 @@ class CreateFunctionCommand implements \SqlFtw\Sql\Command
         return $this->language;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
         if ($this->getDefiner() !== null) {

@@ -18,13 +18,13 @@ use SqlFtw\Sql\Dml\TableReference\JoinSide;
 use SqlFtw\Sql\Dml\TableReference\NaturalJoin;
 use SqlFtw\Sql\Dml\TableReference\OuterJoin;
 use SqlFtw\Sql\Dml\TableReference\StraightJoin;
-use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
-use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
-use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
+use SqlFtw\Sql\TableName;
 
 class JoinParser
 {
@@ -127,7 +127,7 @@ class JoinParser
                     //
                 } else {
                     /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide $side */
-                    $side = $tokenList->mayConsumeEnum(JoinSide::class);
+                    $side = $tokenList->mayConsumeKeywordEnum(JoinSide::class);
                     if ($side !== null) {
                         $tokenList->mayConsumeKeyword(Keyword::OUTER);
                     }
@@ -138,7 +138,8 @@ class JoinParser
                 $left = new NaturalJoin($left, $right, $side);
                 continue;
             }
-            $side = $tokenList->mayConsumeEnum(JoinSide::class);
+            /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide $side */
+            $side = $tokenList->mayConsumeKeywordEnum(JoinSide::class);
             if ($side !== null) {
                 // OUTER JOIN
                 $tokenList->mayConsumeKeyword(Keyword::OUTER);
@@ -169,6 +170,10 @@ class JoinParser
         } while (true);
     }
 
+    /**
+     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @return \SqlFtw\Sql\Expression\ExpressionNode[]|string[][]
+     */
     private function parseJoinCondition(TokenList $tokenList): array
     {
         $on = $using = null;
@@ -252,7 +257,7 @@ class JoinParser
      * index_list:
      *     index_name [, index_name] ...
      *
-     * @param \SqlFtw\Parser\TokenList
+     * @param \SqlFtw\Parser\TokenList $tokenList
      * @return \SqlFtw\Sql\Dml\TableReference\IndexHint[]
      */
     private function parseIndexHints(TokenList $tokenList): array
@@ -260,7 +265,7 @@ class JoinParser
         $hints = [];
         do {
             /** @var \SqlFtw\Sql\Dml\TableReference\IndexHintAction $action */
-            $action = $tokenList->mayConsumeEnum(IndexHintAction::class);
+            $action = $tokenList->mayConsumeKeywordEnum(IndexHintAction::class);
             $tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY);
             $target = null;
             if ($tokenList->mayConsumeKeyword(Keyword::FOR)) {

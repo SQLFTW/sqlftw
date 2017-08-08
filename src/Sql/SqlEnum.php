@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Sql;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class SqlEnum extends \Dogma\StringEnum implements \SqlFtw\Sql\SqlSerializable
 {
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $this->getValue();
     }

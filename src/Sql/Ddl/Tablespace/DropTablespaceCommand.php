@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class DropTablespaceCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class DropTablespaceCommand implements \SqlFtw\Sql\Command
         return $this->engine;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DROP TABLESPACE ' . $formatter->formatName($this->name);
         if ($this->engine !== null) {

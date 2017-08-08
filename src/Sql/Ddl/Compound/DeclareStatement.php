@@ -9,8 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use Dogma\Check;
+use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\DataType;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class DeclareStatement implements \SqlFtw\Sql\Statement
 {
@@ -25,8 +27,15 @@ class DeclareStatement implements \SqlFtw\Sql\Statement
     /** @var string|int|float|bool|null */
     private $default;
 
+    /**
+     * @param string[] $names
+     * @param \SqlFtw\Sql\Ddl\DataType $type
+     * @param mixed|null $default
+     */
     public function __construct(array $names, DataType $type, $default = null)
     {
+        Check::itemsOfType($names, Type::STRING);
+
         $this->names = $names;
         $this->type = $type;
         $this->default = $default;
@@ -53,7 +62,7 @@ class DeclareStatement implements \SqlFtw\Sql\Statement
         return $this->default;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DECLARE ' . $formatter->formatNamesList($this->names) . ' ' . $this->type->serialize($formatter);
         if ($this->default !== null) {

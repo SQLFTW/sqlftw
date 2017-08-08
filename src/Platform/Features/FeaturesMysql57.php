@@ -305,6 +305,7 @@ class FeaturesMysql57 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::CONSTRAINT_SCHEMA,
         Keyword::CONTAINS,
         Keyword::CONTEXT,
+        Keyword::COPY, // undocumented
         Keyword::CPU,
         Keyword::CUBE,
         Keyword::CURRENT,
@@ -341,6 +342,7 @@ class FeaturesMysql57 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::EVENT,
         Keyword::EVENTS,
         Keyword::EVERY,
+        Keyword::EXCLUSIVE, // undocumented
         Keyword::EXECUTE,
         Keyword::EXCHANGE,
         Keyword::EXPANSION,
@@ -385,6 +387,7 @@ class FeaturesMysql57 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::IMPORT,
         Keyword::INDEXES,
         Keyword::INITIAL_SIZE,
+        Keyword::INPLACE, // not documented
         Keyword::INSERT_METHOD,
         Keyword::INSTALL,
         Keyword::INSTANCE,
@@ -549,6 +552,7 @@ class FeaturesMysql57 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::SERVER,
         Keyword::SESSION,
         Keyword::SHARE,
+        Keyword::SHARED, // undocumented
         Keyword::SHUTDOWN,
         Keyword::SCHEDULE,
         Keyword::SCHEMA_NAME,
@@ -663,6 +667,10 @@ class FeaturesMysql57 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::WHEN,
         Keyword::THAN,
         Keyword::ELSE,
+    ];
+
+    public const FUNCTIONS = [
+        ///
     ];
 
 }

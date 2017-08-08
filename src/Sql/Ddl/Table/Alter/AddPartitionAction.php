@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class AddPartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -34,7 +34,7 @@ class AddPartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
         return $this->partition;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'ADD ' . $this->partition->serialize($formatter);
     }

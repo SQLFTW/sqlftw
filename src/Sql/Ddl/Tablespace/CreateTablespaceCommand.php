@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class CreateTablespaceCommand implements \SqlFtw\Sql\Command
 {
@@ -55,7 +55,7 @@ class CreateTablespaceCommand implements \SqlFtw\Sql\Command
         return $this->engine;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE TABLESPACE ' . $formatter->formatName($this->name);
         $result .= ' ADD DATAFILE ' . $formatter->formatString($this->file);

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\Time\DateTime;
 use SqlFtw\Platform\Settings;
 use SqlFtw\Sql\SqlEnum;
 
@@ -37,6 +36,9 @@ class TokenList
     /** @var \SqlFtw\Platform\Settings */
     private $settings;
 
+    /** @var bool */
+    private $whitespace;
+
     /** @var int[] */
     private $autoSkip;
 
@@ -46,10 +48,11 @@ class TokenList
     /**
      * @param \SqlFtw\Parser\Token[] $tokens
      */
-    public function __construct(array $tokens, Settings $settings)
+    public function __construct(array $tokens, Settings $settings, bool $whitespace = true)
     {
         $this->tokens = $tokens;
         $this->settings = $settings;
+        $this->whitespace = $whitespace;
     }
 
     public function getSettings(): Settings
@@ -59,7 +62,7 @@ class TokenList
 
     public function isFinished(): bool
     {
-        return $this->position === count($this->tokens) - 1;
+        return $this->position >= count($this->tokens);
     }
 
     public function getPosition(): int
@@ -85,21 +88,27 @@ class TokenList
 
     private function doAutoSkip(): void
     {
-        $token = $this->get();
-        while (in_array($token->type, $this->autoSkip)) {
+        $token = $this->tokens[$this->position] ?? null;
+        while ($token !== null && ($this->autoSkip & $token->type)) {
             $this->position++;
-            $token = $this->get();
+            $token = $this->tokens[$this->position] ?? null;
         }
     }
 
-    private function get(int $offset = 0): Token
+    /**
+     * @param int $position
+     * @param int $count
+     * @return \SqlFtw\Parser\Token[]
+     */
+    public function getTokens(int $position, int $count): array
     {
-        return $this->tokens[$this->position + $offset];
-    }
-
-    public function getNext(int &$position): Token
-    {
-        ///
+        $tokens = [];
+        for ($n = 0; $n < $count; $n++) {
+            if (isset($this->tokens[$position + $n])) {
+                $tokens[] = $this->tokens[$position + $n];
+            }
+        }
+        return $tokens;
     }
 
     /**
@@ -110,26 +119,27 @@ class TokenList
     public function consume(int $tokenType, $value = null): Token
     {
         $this->doAutoSkip();
-        $token = $this->tokens[++$this->position];
-        if (!($token->type & $tokenType)) {
-            throw new \SqlFtw\Parser\UnexpectedTokenException([$tokenType], $token->type);
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token === null || !($token->type & $tokenType)) {
+            throw new \SqlFtw\Parser\UnexpectedTokenException([$tokenType], $value, $token, $this);
         }
         if ($value !== null && $token->value !== $value) {
-            throw new \SqlFtw\Parser\UnexpectedTokenValueException($tokenType, [$value], $token->value);
+            throw new \SqlFtw\Parser\UnexpectedTokenException([$tokenType], $value, $token, $this);
         }
+        $this->position++;
+
         return $token;
     }
 
     /**
      * @param int $tokenType
-     * @param string|int|float|bool|null $value
      * @return \SqlFtw\Parser\Token|null
      */
-    public function mayConsume(int $tokenType, $value = null): ?Token
+    public function mayConsume(int $tokenType): ?Token
     {
         $this->doAutoSkip();
-        $token = $this->tokens[$this->position + 1];
-        if ($token->type & $tokenType) {
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token !== null && ($token->type & $tokenType)) {
             $this->position++;
             return $token;
         } else {
@@ -140,22 +150,27 @@ class TokenList
     public function consumeAny(int ...$tokenTypes): Token
     {
         $this->doAutoSkip();
-        $token = $this->tokens[++$this->position];
-        foreach ($tokenTypes as $tokenType) {
-            if ($token->type & $tokenType) {
-                return $token;
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token !== null) {
+            foreach ($tokenTypes as $tokenType) {
+                if ($token->type & $tokenType) {
+                    $this->position++;
+
+                    return $token;
+                }
             }
         }
 
-        throw new \SqlFtw\Parser\UnexpectedTokenException($tokenTypes, $token->type);
+        throw new \SqlFtw\Parser\UnexpectedTokenException($tokenTypes, null, $token, $this);
     }
 
     public function mayConsumeComma(): bool
     {
         $this->doAutoSkip();
-        $token = $this->tokens[$this->position + 1];
-        if ($token->type & TokenType::COMMA) {
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token !== null && ($token->type & TokenType::COMMA)) {
             $this->position++;
+
             return true;
         } else {
             return false;
@@ -164,22 +179,25 @@ class TokenList
 
     public function consumeName(?string $name = null): string
     {
-        return $this->consume(TokenType::NAME, $name)->value;
+        return $this->consume(TokenType::NAME, $name)->original;
     }
 
-    public function mayConsumeName(): string
+    public function mayConsumeName(): ?string
     {
         $token = $this->mayConsume(TokenType::NAME);
 
-        return $token !== null ? $token->value : null;
+        return $token !== null ? $token->original : null;
     }
 
     public function consumeString(): string
     {
-        return $this->consume(TokenType::STRING)->value;
+        /** @var string $value */
+        $value = $this->consume(TokenType::STRING)->value;
+
+        return $value;
     }
 
-    public function mayConsumeString(): string
+    public function mayConsumeString(): ?string
     {
         $token = $this->mayConsume(TokenType::STRING);
 
@@ -193,7 +211,11 @@ class TokenList
 
     public function mayConsumeNameOrKeyword(string $name): ?string
     {
-        ///
+        $result = $this->mayConsumeKeyword($name);
+        if ($result !== null) {
+            return $result;
+        }
+        return $this->mayConsumeName();
     }
 
     /**
@@ -216,115 +238,173 @@ class TokenList
 
     public function consumeInt(): int
     {
-        $number = $this->consume(TokenType::NUMBER)->value;
-        if (!is_int($number)) {
-            ///
+        $number = $this->mayConsume(TokenType::NUMBER);
+        if ($number !== null) {
+            if (is_int($number->value)) {
+                return $number->value;
+            } else {
+                throw new \SqlFtw\Parser\UnexpectedTokenException([TokenType::NUMBER], 'integer', $number, $this);
+            }
         }
-        return $number;
+        $number = $this->mayConsumeString();
+        if ($number !== null && preg_match('/^[0-9]+$/', $number)) {
+            return (int) $number;
+        }
+        $this->consume(TokenType::NUMBER);
+        exit;
     }
 
     public function mayConsumeInt(): ?int
     {
-        ///
+        try {
+            $int = $this->consumeInt();
+            return $int;
+        } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
+            return null;
+        }
     }
 
     public function consumeBool(): bool
     {
-        /// TRUE, FALSE, ON, OFF, 1, 0, Y, N, T, F
-        return false;
+        // TRUE, FALSE, ON, OFF, 1, 0, Y, N, T, F
+        $value = $this->consume(TokenType::VALUE)->value;
+        if (is_bool($value)) {
+            return $value;
+        }
+        if ($value === 1 || $value === 'Y' || $value === 'T') {
+            return true;
+        } elseif ($value === 0 || $value === 'N' || $value === 'F') {
+            return false;
+        }
+        throw new \SqlFtw\Parser\ParserException(sprintf('Boolean-like value expected. "%s" found.', $value));
     }
 
-    public function consumeDateTime(): DateTime
-    {
-        ///
-        return new DateTime();
-    }
-
-    public function consumeOperator(?string $operator = null): string
+    public function consumeOperator(string $operator): string
     {
         return $this->consume(TokenType::OPERATOR, $operator)->value;
     }
 
-    public function mayConsumeOperator(?string $operator = null): ?string
+    public function mayConsumeOperator(string $operator): ?string
     {
-        $token = $this->mayConsume(TokenType::OPERATOR, $operator);
+        $token = $this->mayConsume(TokenType::OPERATOR);
+        if ($token === null) {
+            return null;
+        }
 
-        return $token ? $token->value : null;
+        return $token->value === $operator ? $token->value : null;
     }
 
     /**
-     * @param string ...$operators
+     * @param string $operators
      * @return string
      */
-    public function consumeAnyOperator(...$operators): string
+    public function consumeAnyOperator(string ...$operators): string
     {
-        ///
+        $operator = $this->consume(TokenType::OPERATOR);
+        if (!in_array($operator, $operators)) {
+            throw new \SqlFtw\Parser\UnexpectedTokenException([TokenType::OPERATOR], $operators, $operator, $this);
+        }
+        return $operator->value;
     }
 
     /**
-     * @param string ...$operators
+     * @param string $operators
      * @return string|null
      */
-    public function mayConsumeAnyOperator(...$operators): ?string
+    public function mayConsumeAnyOperator(string ...$operators): ?string
     {
-        ///
+        try {
+            $operator = $this->consumeAnyOperator($operators);
+            return $operator;
+        } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
+            return null;
+        }
     }
 
     public function consumeKeyword(string $keyword): string
     {
         $this->doAutoSkip();
-        $token = $this->tokens[$this->position++];
-        if ($token->type & TokenType::KEYWORD) {
-            throw new \SqlFtw\Parser\UnexpectedTokenException(TokenType::KEYWORD, $token->type);
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token === null || !($token->type & TokenType::KEYWORD)) {
+            throw new \SqlFtw\Parser\UnexpectedTokenException([TokenType::KEYWORD], $keyword, $token, $this);
         }
         if ($token->value !== $keyword) {
-            throw new \SqlFtw\Parser\UnexpectedKeywordException($keyword, $token->value);
+            throw new \SqlFtw\Parser\UnexpectedTokenException([TokenType::KEYWORD], $keyword, $token, $this);
         }
+        $this->position++;
 
         return $token->value;
     }
 
     public function mayConsumeKeyword(string $keyword): ?string
     {
-        ///
-        return '';
+        try {
+            $keyword = $this->consumeKeyword($keyword);
+            return $keyword;
+        } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
+            return null;
+        }
     }
 
-    /**
-     * Returns keywords concatenated with ' '
-     */
     public function consumeKeywords(string ...$keywords): string
     {
-        ///
-        return '';
+        foreach ($keywords as $keyword) {
+            $this->consumeKeyword($keyword);
+        }
+        return implode(' ', $keywords);
     }
 
     public function mayConsumeKeywords(string ...$keywords): ?string
     {
-        ///
-        return '';
+        $position = $this->position;
+        try {
+            $keywords = $this->consumeKeywords(...$keywords);
+            return $keywords;
+        } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
+            $this->position = $position;
+            return null;
+        }
     }
 
     public function consumeAnyKeyword(string ...$keywords): string
     {
-        ///
-        return '';
+        $keyword = $this->consume(TokenType::KEYWORD)->value;
+        if (!in_array($keyword, $keywords)) {
+            $this->expectedAnyKeyword(...$keywords);
+        }
+        return $keyword;
     }
 
     public function mayConsumeAnyKeyword(string ...$keywords): ?string
     {
-        ///
-        return '';
+        $position = $this->position;
+        try {
+            $keyword = $this->consumeAnyKeyword(...$keywords);
+            return $keyword;
+        } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
+            $this->position = $position;
+            return null;
+        }
     }
 
-    public function consumeEnum(string $className): SqlEnum
+    public function consumeKeywordEnum(string $className): SqlEnum
     {
-        return call_user_func([$className, 'get'], $this->consumeAnyKeyword(call_user_func($className, 'getAvailableValues')));
+        return call_user_func([$className, 'get'], $this->consumeAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues']))));
     }
 
-    public function mayConsumeEnum(string $className): ?SqlEnum
+    public function consumeNameOrStringEnum(string $className): SqlEnum
     {
-        $token = $this->mayConsumeAnyKeyword(call_user_func($className, 'getAvailableValues'));
+        $values = call_user_func([$className, 'getAllowedValues']);
+        $value = $this->consumeNameOrString();
+        if (in_array($value, $values)) {
+            return call_user_func([$className, 'get'], $value);
+        }
+        throw new \SqlFtw\Parser\UnexpectedTokenException([TokenType::NAME], $values, $this->tokens[$this->position], $this);
+    }
+
+    public function mayConsumeKeywordEnum(string $className): ?SqlEnum
+    {
+        $token = $this->mayConsumeAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues'])));
         if ($token === null) {
             return null;
         } else {
@@ -335,30 +415,27 @@ class TokenList
     public function seek(int $type, int $maxOffset): Token
     {
         ///
-        return new Token(1, '');
+        throw new \Dogma\NotImplementedException('seek');
     }
 
-    public function seekKeyword(string $keyword, int $maxOffset): string
+    public function seekKeyword(string $keyword, int $maxOffset): bool
     {
-        ///
-        return '';
-    }
+        $position = $this->position;
+        for ($n = 0; $n < $maxOffset; $n++) {
+            $this->doAutoSkip();
+            $token = $this->tokens[$this->position] ?? null;
+            if ($token === null) {
+                break;
+            }
+            $this->position++;
+            if ($token->type === TokenType::KEYWORD && $token->value === $keyword) {
+                $this->position = $position;
+                return true;
+            }
+        }
+        $this->position = $position;
 
-    /**
-     * @param string[] $keywords
-     * @param int $maxOffset
-     * @return string
-     */
-    public function seekAnyKeyword(array $keywords, int $maxOffset): string
-    {
-        ///
-        return '';
-    }
-
-    public function mayConsumeAtVariable(): ?string
-    {
-        ///
-        return null;
+        return false;
     }
 
     /**
@@ -366,8 +443,19 @@ class TokenList
      */
     public function consumeQualifiedName(): array
     {
-        ///
-        return [];
+        $first = $this->consumeName();
+        if ($this->mayConsume(TokenType::DOT)) {
+            // a reserved keyword may follow after "." unescaped as we know it is a name context
+            $second = $this->mayConsume(TokenType::KEYWORD);
+            if ($second !== null) {
+                $second = $second->value;
+            } else {
+                $second = $this->mayConsumeName();
+            }
+
+            return [$second, $first];
+        }
+        return [$first, null];
     }
 
     /**
@@ -375,17 +463,11 @@ class TokenList
      */
     public function mayConsumeQualifiedName(): ?array
     {
-        ///
-        return [];
-    }
-
-    /**
-     * @return string[]|null[]|null (string|null $database, string|null $tableOrAlias, string $name)
-     */
-    public function consumeColumnName(): array
-    {
-        ///
-        return [];
+        try {
+            return $this->consumeQualifiedName();
+        } catch (\SqlFtw\Parser\ParserException $e) {
+            return null;
+        }
     }
 
     /**
@@ -393,49 +475,50 @@ class TokenList
      */
     public function consumeUserName(): array
     {
-        ///
-        return [];
+        $name = $this->consumeString();
+        $symbol = $this->consume(TokenType::SYMBOL);
+        if ($symbol->value !== '@') {
+            $this->expected('@');
+        }
+        $host = $this->consumeString();
+
+        return [$name, $host];
     }
 
     public function expectEnd(): void
     {
         ///
-        $this->finished = true;
+        throw new \Dogma\NotImplementedException('expectEnd');
     }
 
-    /**
-     * @throws \SqlFtw\Parser\UnexpectedTokenException
-     */
-    public function unexpected(): void
-    {
-        /// fail
-    }
-
-    /**
-     * @param string $description
-     * @throws \Exception
-     */
     public function expected(string $description): void
     {
-        /// fail
-    }
-
-    /**
-     * @param $value
-     * @throws \SqlFtw\Parser\UnexpectedTokenValueException
-     */
-    public function expectedValue($value): void
-    {
-        /// fail
+        throw new \SqlFtw\Parser\ParserException($description);
     }
 
     /**
      * @param string[] ...$keywords
-     * @throws \SqlFtw\Parser\UnexpectedKeywordException
+     * @throws \SqlFtw\Parser\UnexpectedTokenException
      */
     public function expectedAnyKeyword(string ...$keywords): void
     {
-        /// fail
+        $this->position--;
+        $token = $this->mayConsume(TokenType::KEYWORD);
+
+        throw new \SqlFtw\Parser\UnexpectedTokenException([TokenType::KEYWORD], $keywords, $token, $this);
+    }
+
+    public function serialize(): string
+    {
+        $result = '';
+        foreach ($this->tokens as $token) {
+            $result .= $token->original ?? $token->value;
+            if (!$this->whitespace) {
+                $result .= ' ';
+            }
+        }
+
+        return trim($result);
     }
 
 }

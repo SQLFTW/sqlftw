@@ -10,8 +10,8 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class AlterUserDefaultRoleCommand implements \SqlFtw\Sql\Command
 {
@@ -21,22 +21,22 @@ class AlterUserDefaultRoleCommand implements \SqlFtw\Sql\Command
     public const ALL_ROLES = true;
     public const LIST_ROLES = null;
 
-    /** @var \SqlFtw\Sql\Names\UserName */
+    /** @var \SqlFtw\Sql\UserName */
     private $user;
 
     /** @var \SqlFtw\Sql\Dal\User\RolesSpecification|null */
     private $roles;
 
-    /** @var \SqlFtw\Sql\Names\UserName[]|null */
+    /** @var \SqlFtw\Sql\UserName[]|null */
     private $rolesList;
 
     /** @var bool */
     private $ifExists;
 
     /**
-     * @param \SqlFtw\Sql\Names\UserName $user
+     * @param \SqlFtw\Sql\UserName $user
      * @param bool|null $roles
-     * @param \SqlFtw\Sql\Names\UserName[]|null $rolesList
+     * @param \SqlFtw\Sql\UserName[]|null $rolesList
      * @param bool $ifExists
      */
     public function __construct(UserName $user, ?RolesSpecification $roles = null, ?array $rolesList = null, bool $ifExists = false)
@@ -63,7 +63,7 @@ class AlterUserDefaultRoleCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]|null
+     * @return \SqlFtw\Sql\UserName[]|null
      */
     public function getRolesList(): ?array
     {
@@ -75,7 +75,7 @@ class AlterUserDefaultRoleCommand implements \SqlFtw\Sql\Command
         return $this->ifExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER USER ' . $this->user->serialize($formatter) . ' DEFAULT ROLE ';
         if ($this->roles !== null) {

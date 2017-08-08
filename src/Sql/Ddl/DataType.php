@@ -9,18 +9,17 @@
 
 namespace SqlFtw\Sql\Ddl;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\BaseType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\Collation;
 
 class DataType implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    public const SIGNED = false;
     public const UNSIGNED = true;
 
-    /** @var \SqlFtw\Sql\BaseType */
+    /** @var \SqlFtw\Sql\Ddl\BaseType */
     private $type;
 
     /** @var int|int[]|null */
@@ -38,35 +37,35 @@ class DataType implements \SqlFtw\Sql\SqlSerializable
     /** @var \SqlFtw\Sql\Charset|null */
     private $charset;
 
-    /** @var string|null */
+    /** @var \SqlFtw\Sql\Collation|null */
     private $collation;
 
     /**
-     * @param \SqlFtw\Sql\BaseType $type
+     * @param \SqlFtw\Sql\Ddl\BaseType $type
      * @param int|int[]|string[]|null $params
      * @param bool|null $unsigned
      * @param \SqlFtw\Sql\Charset|null $charset
-     * @param string|null $collation
+     * @param \SqlFtw\Sql\Collation|null $collation
      */
     public function __construct(
         BaseType $type,
         $params = null,
-        ?bool $unsigned = null,
+        bool $unsigned = false,
         ?Charset $charset = null,
-        ?string $collation = null,
+        ?Collation $collation = null,
         bool $zerofill = false
     ) {
-        if ($unsigned !== null && !$type->isNumber()) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-numeric columns cannot be signed or unsigned.');
+        if ($unsigned && !$type->isNumber()) {
+            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-numeric columns cannot be unsigned.');
         }
         if ($zerofill && !$type->isNumber()) {
             throw new \SqlFtw\Sql\InvalidDefinitionException('Non-numeric columns cannot be zerofill.');
         }
-        if ($charset && !$type->isText()) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-text columns cannot have charset.');
+        if ($charset !== null && !$type->isText()) {
+            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-textual columns cannot have charset.');
         }
-        if ($collation && !$type->isText()) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-text columns cannot have collation.');
+        if ($collation !== null && !$type->isText()) {
+            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-textual columns cannot have collation.');
         }
 
         $this->type = $type;
@@ -78,7 +77,7 @@ class DataType implements \SqlFtw\Sql\SqlSerializable
     }
 
     /**
-     * @param \SqlFtw\Sql\BaseType $type
+     * @param \SqlFtw\Sql\Ddl\BaseType $type
      * @param int|int[]|string[]|null $params
      */
     private function setParams(BaseType $type, $params = null): void
@@ -97,6 +96,7 @@ class DataType implements \SqlFtw\Sql\SqlSerializable
             if ($params !== null && !is_int($params)) {
                 throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf('An integer size parameter or null required for type "%s".', $type->getValue()));
             }
+            /** @var int $params */
             $this->size = $params;
         } elseif ($type->needsLength()) {
             if (!is_int($params)) {
@@ -142,7 +142,7 @@ class DataType implements \SqlFtw\Sql\SqlSerializable
         return $this->values;
     }
 
-    public function setUnsigned(?bool $unsigned): void
+    public function setUnsigned(bool $unsigned): void
     {
         $this->unsigned = $unsigned;
     }
@@ -152,35 +152,34 @@ class DataType implements \SqlFtw\Sql\SqlSerializable
         return (bool) $this->unsigned;
     }
 
-    public function isSigned(): bool
-    {
-        return $this->unsigned !== null ? !$this->unsigned : false;
-    }
-
     public function getCharset(): ?Charset
     {
         return $this->charset;
     }
 
-    public function getCollation(): ?string
+    public function getCollation(): ?Collation
     {
         return $this->collation;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
 
         $params = $this->size ?: $this->values;
 
         if (is_array($params)) {
-            $result .= '(' . $formatter->formatStringList($params) . ')';
+            if ($this->type->hasLength()) {
+                $result .= '(' . implode(', ', $params) . ')';
+            } else {
+                $result .= '(' . $formatter->formatStringList($params) . ')';
+            }
         } elseif (is_int($params)) {
             $result .= '(' . $params . ')';
         }
 
         if ($this->unsigned === true) {
-            $result .= ' unsigned';
+            $result .= ' UNSIGNED';
         }
 
         if ($this->charset !== null) {
@@ -188,7 +187,7 @@ class DataType implements \SqlFtw\Sql\SqlSerializable
         }
 
         if ($this->collation !== null) {
-            $result .= ' COLLATE ' . $this->collation;
+            $result .= ' COLLATE ' . $this->collation->serialize($formatter);
         }
 
         return $result;

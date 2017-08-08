@@ -10,6 +10,8 @@
 namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Insert\InsertCommand;
 use SqlFtw\Sql\Dml\Insert\InsertPriority;
 use SqlFtw\Sql\Dml\Insert\InsertSelectCommand;
@@ -20,11 +22,9 @@ use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Operator;
+use SqlFtw\Sql\TableName;
 
 class InsertCommandParser
 {
@@ -72,7 +72,7 @@ class InsertCommandParser
     {
         $tokenList->consumeKeyword(Keyword::INSERT);
         /** @var \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority */
-        $priority = $tokenList->mayConsumeEnum(InsertPriority::class);
+        $priority = $tokenList->mayConsumeKeywordEnum(InsertPriority::class);
         $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
         $tokenList->mayConsumeKeyword(Keyword::INTO);
         $table = new TableName(...$tokenList->consumeQualifiedName());
@@ -123,7 +123,7 @@ class InsertCommandParser
     {
         $tokenList->consumeKeyword(Keyword::REPLACE);
         /** @var \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority */
-        $priority = $tokenList->mayConsumeEnum(InsertPriority::class);
+        $priority = $tokenList->mayConsumeKeywordEnum(InsertPriority::class);
         $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
         $tokenList->mayConsumeKeyword(Keyword::INTO);
         $table = new TableName(...$tokenList->consumeQualifiedName());

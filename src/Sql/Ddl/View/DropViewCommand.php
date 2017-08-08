@@ -10,14 +10,14 @@
 namespace SqlFtw\Sql\Ddl\View;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\QualifiedName;
 
 class DropViewCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName[] */
+    /** @var \SqlFtw\Sql\QualifiedName[] */
     private $names;
 
     /** @var bool */
@@ -27,7 +27,7 @@ class DropViewCommand implements \SqlFtw\Sql\Command
     private $option;
 
     /**
-     * @param \SqlFtw\Sql\Names\QualifiedName[] $names
+     * @param \SqlFtw\Sql\QualifiedName[] $names
      * @param bool $ifExists
      * @param \SqlFtw\Sql\Ddl\View\DropViewOption|null $option
      */
@@ -42,7 +42,7 @@ class DropViewCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\QualifiedName[]
+     * @return \SqlFtw\Sql\QualifiedName[]
      */
     public function getNames(): array
     {
@@ -59,7 +59,7 @@ class DropViewCommand implements \SqlFtw\Sql\Command
         return $this->option;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DROP TRIGGER ';
         if ($this->ifExists) {

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class UserPasswordLockOption implements \SqlFtw\Sql\SqlSerializable
 {
@@ -37,7 +37,7 @@ class UserPasswordLockOption implements \SqlFtw\Sql\SqlSerializable
         return $this->value;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $this->type->serialize($formatter) . ($this->value !== null ? ' ' . $this->value . ' DAY' : '');
     }

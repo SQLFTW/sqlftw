@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
-class TruncateTableCommand implements \SqlFtw\Sql\TableCommand
+class TruncateTableCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     public function __construct(TableName $table)
@@ -29,7 +29,7 @@ class TruncateTableCommand implements \SqlFtw\Sql\TableCommand
         return $this->table;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'TRUNCATE TABLE ' . $this->table->serialize($formatter);
     }

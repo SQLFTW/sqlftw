@@ -9,13 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\QualifiedName;
 
 class ShowCreateTableCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     public function __construct(QualifiedName $name)
@@ -28,7 +28,7 @@ class ShowCreateTableCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->name;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'SHOW CREATE TABLE ' . $this->name->serialize($formatter);
     }

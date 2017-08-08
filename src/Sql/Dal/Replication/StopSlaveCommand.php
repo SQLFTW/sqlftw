@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class StopSlaveCommand implements \SqlFtw\Sql\Command
 {
@@ -46,7 +46,7 @@ class StopSlaveCommand implements \SqlFtw\Sql\Command
         return $this->channel;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'STOP SLAVE';
         if ($this->ioThread) {

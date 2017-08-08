@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ShowPrivilegesCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'SHOW PRIVILEGES';
     }

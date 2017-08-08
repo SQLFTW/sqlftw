@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Server;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class AlterServerCommand implements \SqlFtw\Sql\Command
 {
@@ -99,7 +99,7 @@ class AlterServerCommand implements \SqlFtw\Sql\Command
         return $this->port;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE SERVER ' . $formatter->formatName($this->name) . ' OPTIONS (';
 

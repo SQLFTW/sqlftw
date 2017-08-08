@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Index;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class DropIndexCommand implements \SqlFtw\Sql\Command
 {
@@ -21,7 +21,7 @@ class DropIndexCommand implements \SqlFtw\Sql\Command
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm|null */
@@ -62,7 +62,7 @@ class DropIndexCommand implements \SqlFtw\Sql\Command
         return $this->lock;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DROP INDEX ' . $formatter->formatName($this->name) . ' ON ' . $this->table->serialize($formatter);
         if ($this->algorithm !== null) {

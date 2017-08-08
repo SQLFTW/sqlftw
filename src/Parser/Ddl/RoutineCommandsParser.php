@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
@@ -20,10 +22,8 @@ use SqlFtw\Sql\Ddl\Routines\ProcedureParam;
 use SqlFtw\Sql\Ddl\Routines\RoutineSideEffects;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\UserName;
 
 class RoutineCommandsParser
 {
@@ -116,7 +116,7 @@ class RoutineCommandsParser
             } elseif ($keyword === Keyword::SQL) {
                 $tokenList->consumeKeyword(Keyword::SECURITY);
                 /** @var \SqlFtw\Sql\Ddl\SqlSecurity $sqlSecurity */
-                $sqlSecurity = $tokenList->consumeEnum(SqlSecurity::class);
+                $sqlSecurity = $tokenList->consumeKeywordEnum(SqlSecurity::class);
             } elseif ($keyword === Keyword::NOT) {
                 $tokenList->consumeKeyword(Keyword::DETERMINISTIC);
                 $deterministic = false;
@@ -218,7 +218,7 @@ class RoutineCommandsParser
         if (!$tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS)) {
             do {
                 /** @var \SqlFtw\Sql\Ddl\Routines\InOutParamFlag $inOut */
-                $inOut = $tokenList->mayConsumeEnum(InOutParamFlag::class);
+                $inOut = $tokenList->mayConsumeKeywordEnum(InOutParamFlag::class);
                 $param = $tokenList->consumeName();
                 $type = $this->typeParser->parseType($tokenList);
                 $params[] = new ProcedureParam($param, $type, $inOut);

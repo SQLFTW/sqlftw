@@ -1,0 +1,65 @@
+
+- SqlSerializable (I): serializable snippet of SQL code 
+    - Statement (I): command or statement used in stored routines
+        - Command (I): a complete command that can be run independently
+            - Dal\...
+                - SystemVariable /// move to Platform
+            - Ddl\...
+
+            - Dml\...
+        - Ddl\Compound...
+            - CaseStatement
+            - CloseCursorStatement
+            - CompoundStatement
+            - DeclareConditionStatement
+            - DeclareCursorStatement
+            - DeclareHandlerStatement
+            - DeclareStatement
+            - FetchStatement
+            - GetDiagnosticsStatement
+            - IfStatement
+            - IterateStatement
+            - LeaveStatement
+            - LoopStatement
+            - OpenCursorStatement
+            - RepeatStatement
+            - ResignalStatement
+            - ReturnStatement
+            - SignalStatement
+            - WhileStatement
+    - Expression\ExpressionNode (I)
+        - BinaryOperator
+        - CaseExpression
+        - CollateExpression
+        - CurlyExpression /// make a Literal!
+        - ExistsExpression
+        - FunctionCall
+        - Identifier
+        - ListExpression
+        - Literal (I):
+            - BinaryLiteral
+            - HexadecimalLiteral
+            - IntervalLiteral
+            - NullLiteral
+            - UnknownLiteral
+            - ValueLiteral
+        - MatchExpression
+        - Parentheses
+        - Placeholder
+        - RowExpression
+        - Subquery
+        - TernaryOperator
+        - TimeExpression /// make a Literal
+        - UnaryOperator
+    - Charset
+    - Collation
+    - ColumnName
+    - Keyword
+    - Order
+    - QualifiedName
+        - TableName
+    - Scope /// ns?
+    - SqlEnum
+    - SqlMode /// ns Dal?
+    - TableNameList /// ???
+    - UserName /// ns Dal?

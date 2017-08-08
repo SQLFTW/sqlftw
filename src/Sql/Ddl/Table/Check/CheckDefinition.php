@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Check;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class CheckDefinition implements \SqlFtw\Sql\SqlSerializable
 {
@@ -29,7 +29,7 @@ class CheckDefinition implements \SqlFtw\Sql\SqlSerializable
         return $this->expression;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'CHECK (' . $this->expression->serialize($formatter) . ')';
     }

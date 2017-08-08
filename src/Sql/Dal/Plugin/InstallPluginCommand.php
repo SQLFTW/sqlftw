@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Plugin;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class InstallPluginCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class InstallPluginCommand implements \SqlFtw\Sql\Command
         return $this->libName;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'INSTALL PLUGIN ' . $formatter->formatName($this->pluginName) . ' SONAME ' . $formatter->formatString($this->libName);
     }

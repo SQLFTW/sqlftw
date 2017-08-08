@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class DropLogfileGroupCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class DropLogfileGroupCommand implements \SqlFtw\Sql\Command
         return $this->engine;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'ALTER LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ENGINE = ' . $formatter->formatName($this->engine);
     }

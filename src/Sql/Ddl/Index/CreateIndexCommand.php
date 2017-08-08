@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Index;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class CreateIndexCommand implements \SqlFtw\Sql\Command
 {
@@ -49,7 +49,7 @@ class CreateIndexCommand implements \SqlFtw\Sql\Command
         return $this->lock;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
         // remove "ADD "

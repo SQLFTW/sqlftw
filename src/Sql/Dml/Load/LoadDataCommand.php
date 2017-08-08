@@ -9,16 +9,17 @@
 
 namespace SqlFtw\Sql\Dml\Load;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\Dml\FileFormat;
+use SqlFtw\Sql\TableName;
 
 class LoadDataCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Load\FileFormat|null */
+    /** @var \SqlFtw\Sql\Dml\FileFormat|null */
     private $format;
 
     public function __construct(
@@ -49,7 +50,7 @@ class LoadDataCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
         return 'DATA';
     }
 
-    protected function serializeFormat(SqlFormatter $formatter): string
+    protected function serializeFormat(Formatter $formatter): string
     {
         return $this->format->serialize($formatter);
     }

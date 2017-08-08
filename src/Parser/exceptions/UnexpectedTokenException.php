@@ -10,26 +10,71 @@
 namespace SqlFtw\Parser;
 
 use Dogma\Arr;
+use Dogma\ExceptionValueFormater;
 
 class UnexpectedTokenException extends \SqlFtw\Parser\ParserException
 {
 
     /**
      * @param int[] $expectedTokens
-     * @param int $token
+     * @param mixed $expectedValue
+     * @param \SqlFtw\Parser\Token|null $token
+     * @param \SqlFtw\Parser\TokenList $tokenList
      * @param \Throwable|null $previous
      */
-    public function __construct(array $expectedTokens, int $token, ?\Throwable $previous = null)
+    public function __construct(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?\Throwable $previous = null)
     {
-        $expected = implode(', ', Arr::map($expectedTokens, function (int $type) {
-            return TokenType::get($type)->getConstantName();
+        $expectedToken = implode(', ', Arr::map($expectedTokens, function (int $type) {
+            return implode('|', TokenType::get($type)->getConstantNames());
         }));
-        $actual = TokenType::get($token)->getConstantName();
+        if ($expectedValue !== null) {
+            $expectedValue = sprintf(' with value %s', ExceptionValueFormater::format($expectedValue));
+        }
 
-        parent::__construct(
-            sprintf('Expected token of type %s. Found %s instead.', $expected, $actual),
-            $previous
-        );
+        $context = '';//$this->formatContext($tokenList);
+
+        if ($token === null) {
+            parent::__construct(sprintf(
+                "Expected token %s%s, but end of query found instead at position %d in:\n%s",
+                $expectedToken,
+                $expectedValue,
+                $tokenList->getPosition(),
+                $context
+            ), $previous);
+            return;
+        }
+
+        $actualToken = implode('|', TokenType::get($token->type)->getConstantNames());
+        $actualValue = ExceptionValueFormater::format($token->value);
+
+        parent::__construct(sprintf(
+            "Expected token %s%s, but token %s with value %s found instead at position %d in:\n%s",
+            $expectedToken,
+            $expectedValue,
+            $actualToken,
+            $actualValue,
+            $tokenList->getPosition(),
+            $context
+        ), $previous);
+    }
+
+    private function formatContext(TokenList $tokenList): string
+    {
+        $tokens = $tokenList->getTokens($tokenList->getPosition() - 10, 21);
+        $context = '"…' . implode('', array_map(function (Token $token) {
+            return $token->original ?? $token->value;
+        }, array_slice($tokens, 0, 10)));
+
+        if (isset($tokens[7])) {
+            $context .= '»' . ($tokens[10]->original ?? $tokens[10]->value) . '«';
+            $context .= implode('', array_map(function (Token $token) {
+                return $token->original ?? $token->value;
+            }, array_slice($tokens, 11, 10))) . '…"';
+        } else {
+            $context .= '»«"';
+        }
+
+        return $context;
     }
 
 }

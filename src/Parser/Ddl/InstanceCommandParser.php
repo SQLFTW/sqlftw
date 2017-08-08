@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
 
 class InstanceCommandParser
 {

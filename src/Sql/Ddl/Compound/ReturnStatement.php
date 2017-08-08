@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class ReturnStatement implements \SqlFtw\Sql\Statement
 {
@@ -29,7 +29,7 @@ class ReturnStatement implements \SqlFtw\Sql\Statement
         return $this->statement;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'RETURN ' . $this->statement->serialize($formatter) . ";\n";
     }

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class CreateUserCommand implements \SqlFtw\Sql\Command
 {
@@ -83,7 +83,7 @@ class CreateUserCommand implements \SqlFtw\Sql\Command
         return $this->ifExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE USER ';
         if ($this->ifExists) {

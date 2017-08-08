@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableCommand;
 use SqlFtw\Sql\Dal\Table\ChecksumTableCommand;
 use SqlFtw\Sql\Dal\Table\CheckTableCommand;
@@ -16,9 +17,7 @@ use SqlFtw\Sql\Dal\Table\CheckTableOption;
 use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
 use SqlFtw\Sql\Dal\Table\RepairTableCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\TableName;
 
 class TableMaintenanceCommandsParser
 {

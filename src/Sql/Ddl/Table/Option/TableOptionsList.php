@@ -11,10 +11,9 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use Dogma\Arr;
 use Dogma\Check;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class TableOptionsList
 {
@@ -102,19 +101,29 @@ class TableOptionsList
         }
     }
 
-    public function serialize(SqlFormatter $formatter, string $itemSeparator, string $valueSeparator): string
+    public function isEmpty(): bool
     {
+        return $this->options === [];
+    }
+
+    public function serialize(Formatter $formatter, string $itemSeparator, string $valueSeparator): string
+    {
+        if ($this->isEmpty()) {
+            return '';
+        }
         return implode($itemSeparator, Arr::filter(Arr::mapPairs(
             $this->options,
             function (string $option, $value) use ($formatter, $valueSeparator): ?string {
                 if ($value === null) {
                     return null;
                 } elseif ($value instanceof SqlSerializable) {
-                    if ($option === Keyword::UNION) {
+                    if ($option === TableOption::UNION) {
                         return $option . $valueSeparator . '(' . $value->serialize($formatter) . ')';
                     } else {
                         return $option . $valueSeparator . $value->serialize($formatter);
                     }
+                } elseif ($option === TableOption::ENCRYPTION) {
+                    return $option . $valueSeparator . ($value ? "'Y'" : "'N'");
                 } else {
                     return $option . $valueSeparator . $formatter->formatValue($value);
                 }

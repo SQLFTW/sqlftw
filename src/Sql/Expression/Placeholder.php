@@ -9,8 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class Placeholder implements \SqlFtw\Sql\Expression\ExpressionNode
 {
@@ -21,7 +20,7 @@ class Placeholder implements \SqlFtw\Sql\Expression\ExpressionNode
         return NodeType::get(NodeType::PLACEHOLDER);
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return '?';
     }

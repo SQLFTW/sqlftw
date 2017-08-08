@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
 use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class TableReferenceSubquery implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode, \Countable
 {
@@ -62,12 +62,15 @@ class TableReferenceSubquery implements \SqlFtw\Sql\Dml\TableReference\TableRefe
         return $this->alias;
     }
 
+    /**
+     * @return string[]|null
+     */
     public function getColumnList(): ?array
     {
         return $this->columnList;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->query->serialize($formatter);
         if ($this->alias !== null) {

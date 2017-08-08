@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class StorageEngine extends \SqlFtw\Sql\SqlEnum
 {
@@ -41,7 +41,7 @@ class StorageEngine extends \SqlFtw\Sql\SqlEnum
         }
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return "'" . parent::serialize($formatter) . "'";
     }

@@ -9,20 +9,20 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Collation;
 
 class CollateExpression implements \SqlFtw\Sql\Expression\ExpressionNode
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var \SqlFtw\Sql\Collation */
     private $collation;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
     private $expression;
 
-    public function __construct(ExpressionNode $expression, string $collation)
+    public function __construct(ExpressionNode $expression, Collation $collation)
     {
         $this->expression = $expression;
         $this->collation = $collation;
@@ -33,7 +33,7 @@ class CollateExpression implements \SqlFtw\Sql\Expression\ExpressionNode
         return NodeType::get(NodeType::CURLY_EXPRESSION);
     }
 
-    public function getCollation(): string
+    public function getCollation(): Collation
     {
         return $this->collation;
     }
@@ -43,9 +43,9 @@ class CollateExpression implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->expression;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
-        return $this->expression->serialize($formatter) . ' COLLATE ' . $formatter->formatString($this->collation);
+        return $this->expression->serialize($formatter) . ' COLLATE ' . $this->collation->serialize($formatter);
     }
 
 }

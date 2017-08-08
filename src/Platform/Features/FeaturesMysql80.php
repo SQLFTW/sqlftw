@@ -32,9 +32,11 @@ class FeaturesMysql80 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::COLLATION,
         Keyword::COMMENT,
         Keyword::COMMITTED,
+        Keyword::COMPONENT,
         Keyword::COMPRESSED,
         Keyword::COMPRESSION,
         Keyword::CONNECTION,
+        Keyword::CREATE,
         Keyword::CUBE,
         Keyword::CURSOR_NAME,
         Keyword::DISABLE,
@@ -428,6 +430,10 @@ class FeaturesMysql80 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::WHEN,
         Keyword::THAN,
         Keyword::ELSE,
+    ];
+
+    public const FUNCTIONS = [
+        ///
     ];
 
 }

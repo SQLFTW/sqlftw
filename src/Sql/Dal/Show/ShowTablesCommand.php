@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class ShowTablesCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
@@ -55,7 +55,7 @@ class ShowTablesCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->where;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW';
         if ($this->full) {

@@ -16,7 +16,7 @@ class BaseType extends \SqlFtw\Sql\SqlEnum
 
     public const BIT = Keyword::BIT;
 
-    public const TINYINT = Keyword::BIGINT;
+    public const TINYINT = Keyword::TINYINT;
     public const SMALLINT = Keyword::SMALLINT;
     public const MEDIUMINT = Keyword::MEDIUMINT;
     public const INT = Keyword::INT;

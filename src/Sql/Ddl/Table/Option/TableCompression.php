@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class TableCompression extends \SqlFtw\Sql\SqlEnum
 {
@@ -18,7 +18,7 @@ class TableCompression extends \SqlFtw\Sql\SqlEnum
     public const LZ4 = 'LZ4';
     public const NONE = 'NONE';
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return "'" . parent::serialize($formatter) . "'";
     }

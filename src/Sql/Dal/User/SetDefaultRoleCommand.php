@@ -10,26 +10,26 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class SetDefaultRoleCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
     /** @var \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification|null */
     private $roles;
 
-    /** @var \SqlFtw\Sql\Names\UserName[]|null */
+    /** @var \SqlFtw\Sql\UserName[]|null */
     private $rolesList;
 
     /**
-     * @param \SqlFtw\Sql\Names\UserName[] $users
+     * @param \SqlFtw\Sql\UserName[] $users
      * @param \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification|null $roles
-     * @param \SqlFtw\Sql\Names\UserName[]|null $rolesList
+     * @param \SqlFtw\Sql\UserName[]|null $rolesList
      */
     public function __construct(array $users, ?UserDefaultRolesSpecification $roles, ?array $rolesList = null)
     {
@@ -46,7 +46,7 @@ class SetDefaultRoleCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getUsers(): array
     {
@@ -59,14 +59,14 @@ class SetDefaultRoleCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getRolesList(): array
     {
         return $this->rolesList;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SET DEFAULT ROLE ';
         if ($this->roles !== null) {

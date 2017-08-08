@@ -9,6 +9,9 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Show\ShowBinaryLogsCommand;
 use SqlFtw\Sql\Dal\Show\ShowBinlogEventsCommand;
 use SqlFtw\Sql\Dal\Show\ShowCharacterSetCommand;
@@ -52,15 +55,12 @@ use SqlFtw\Sql\Dal\Show\ShowTableStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowTriggersCommand;
 use SqlFtw\Sql\Dal\Show\ShowVariablesCommand;
 use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\Sql\Operator;
+use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
-use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\UserName;
 
 class ShowCommandsParser
 {
@@ -139,8 +139,10 @@ class ShowCommandsParser
 
                 return new ShowCollationCommand($like, $where);
             case Keyword::CREATE:
-                $third = $tokenList->consumeAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA, Keyword::EVENT,
-                    Keyword::FUNCTION, Keyword::PROCEDURE, Keyword::TABLE, Keyword::TRIGGER, Keyword::USER, Keyword::VIEW);
+                $third = $tokenList->consumeAnyKeyword(
+                    Keyword::DATABASE, Keyword::SCHEMA, Keyword::EVENT, Keyword::FUNCTION, Keyword::PROCEDURE,
+                    Keyword::TABLE, Keyword::TRIGGER, Keyword::USER, Keyword::VIEW
+                );
                 switch ($third) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
@@ -201,7 +203,7 @@ class ShowCommandsParser
                 // SHOW ENGINE engine_name {STATUS | MUTEX}
                 $engine = $tokenList->consumeName();
                 /** @var \SqlFtw\Sql\Dal\Show\ShowEngineOption $what */
-                $what = $tokenList->consumeEnum(ShowEngineOption::class);
+                $what = $tokenList->consumeKeywordEnum(ShowEngineOption::class);
 
                 return new ShowEngineCommand($engine, $what);
             case Keyword::STORAGE:
@@ -322,7 +324,7 @@ class ShowCommandsParser
                 $what = $tokenList->consumeAnyKeyword(Keyword::CODE, Keyword::STATUS);
                 if ($what === Keyword::CODE) {
                     // SHOW PROCEDURE CODE proc_name
-                    $name = new QualifiedName($tokenList->consumeQualifiedName());
+                    $name = new QualifiedName(...$tokenList->consumeQualifiedName());
 
                     return new ShowProcedureCodeCommand($name);
                 } else {

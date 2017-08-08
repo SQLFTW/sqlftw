@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class XaStartCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class XaStartCommand implements \SqlFtw\Sql\Command
         return $this->option;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'XA START ' . $this->xid->serialize($formatter) . ($this->option !== null ? ' ' . $this->option->serialize($formatter) : '');
     }

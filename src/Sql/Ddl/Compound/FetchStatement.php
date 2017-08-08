@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class FetchStatement implements \SqlFtw\Sql\Statement
 {
@@ -44,10 +44,10 @@ class FetchStatement implements \SqlFtw\Sql\Statement
         return $this->variables;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'FETCH NEXT FROM ' . $formatter->formatName($this->cursor)
-            . ' INTO ' . $formatter->formatSerializablesList($this->variables);
+            . ' INTO ' . $formatter->formatNamesList($this->variables);
     }
 
 }

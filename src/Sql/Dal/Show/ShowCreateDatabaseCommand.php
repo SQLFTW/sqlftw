@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ShowCreateDatabaseCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
@@ -27,7 +27,7 @@ class ShowCreateDatabaseCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->name;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'SHOW CREATE DATABASE ' . $formatter->formatName($this->name);
     }

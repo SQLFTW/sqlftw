@@ -10,21 +10,21 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class CreateRoleCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $roles;
 
     /** @var bool */
     private $ifNotExists;
 
     /**
-     * @param \SqlFtw\Sql\Names\UserName[] $roles
+     * @param \SqlFtw\Sql\UserName[] $roles
      * @param bool $ifNotExists
      */
     public function __construct(array $roles, bool $ifNotExists = false)
@@ -36,7 +36,7 @@ class CreateRoleCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getRoles(): array
     {
@@ -48,7 +48,7 @@ class CreateRoleCommand implements \SqlFtw\Sql\Command
         return $this->ifNotExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'CREATE ROLE ' . ($this->ifNotExists ? 'IF NOT EXISTS' : '') . $formatter->formatSerializablesList($this->roles);
     }

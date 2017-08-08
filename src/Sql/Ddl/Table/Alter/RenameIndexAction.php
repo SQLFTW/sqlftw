@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class RenameIndexAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -42,7 +42,7 @@ class RenameIndexAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
         return $this->newName;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'RENAME INDEX ' . $formatter->formatName($this->oldName) . ' TO ' . $formatter->formatName($this->newName);
     }

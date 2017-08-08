@@ -18,21 +18,21 @@ class Platform
     public const SQL = 'sql';
     public const MYSQL = 'mysql';
     public const MARIA = 'maria';
-    /*
-    public const SQLITE = 'sqlite';
-    public const POSTGRE = 'postgre';
-    public const FIREBASE = 'firebase';
-    public const MSSQL = 'mssql';
-    public const ORACLE = 'oracle';
-    public const DB2 = 'db2';
-    */
+    //public const SQLITE = 'sqlite';
+    //public const POSTGRE = 'postgre';
+    //public const FIREBASE = 'firebase';
+    //public const MSSQL = 'mssql';
+    //public const ORACLE = 'oracle';
+    //public const DB2 = 'db2';
 
+    /** @var string[][] */
     private static $versions = [
         self::SQL => ['92', '99', '2003', '2008', '2011'],
         self::MYSQL => ['5.1', '5.5', '5.6', '5.7', '8.0'],
         self::MARIA => ['5.1', '5.2', '5.3', '5.5', '10.0', '10.1', '10.2', '10.3'],
     ];
 
+    /** @var string[] */
     private static $defaultVersions = [
         self::SQL => '2011',
         self::MYSQL => '5.7',

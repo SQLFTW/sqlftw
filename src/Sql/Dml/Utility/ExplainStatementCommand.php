@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class ExplainStatementCommand implements \SqlFtw\Sql\Command
 {
@@ -47,7 +47,7 @@ class ExplainStatementCommand implements \SqlFtw\Sql\Command
         return $this->type;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'EXPLAIN ';
         if ($this->type !== null) {

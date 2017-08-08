@@ -10,24 +10,24 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\QualifiedName;
 
 class FunctionCall implements \SqlFtw\Sql\Expression\ExpressionNode
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
     private $arguments;
 
     /**
-     * @param string $name
+     * @param \SqlFtw\Sql\QualifiedName $name
      * @param \SqlFtw\Sql\Expression\ExpressionNode[] $arguments
      */
-    public function __construct(string $name, array $arguments)
+    public function __construct(QualifiedName $name, array $arguments)
     {
         Check::itemsOfType($arguments, ExpressionNode::class);
 
@@ -37,12 +37,35 @@ class FunctionCall implements \SqlFtw\Sql\Expression\ExpressionNode
 
     public function getType(): NodeType
     {
-        // TODO: Implement getType() method.
+        return NodeType::get(NodeType::FUNCTION_CALL);
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function getName(): QualifiedName
     {
-        // TODO: Implement serialize() method.
+        return $this->name;
+    }
+
+    public function isBuiltInFunction(): bool
+    {
+        return $this->name->getDatabaseName() === null && BuiltInFunction::isValid($this->name->getName());
+    }
+
+    public function getBuiltInFUnction(): ?BuiltInFunction
+    {
+        return $this->isBuiltInFunction() ? BuiltInFunction::get($this->name->getName()) : null;
+    }
+
+    /**
+     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     */
+    public function getArguments(): array
+    {
+        return $this->arguments;
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        return $this->name->serialize($formatter) . '(' . $formatter->formatSerializablesList($this->arguments) . ')';
     }
 
 }

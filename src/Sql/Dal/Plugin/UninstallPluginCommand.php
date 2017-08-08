@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Plugin;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class UninstallPluginCommand implements \SqlFtw\Sql\Command
 {
@@ -28,7 +28,7 @@ class UninstallPluginCommand implements \SqlFtw\Sql\Command
         return $this->pluginName;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'UNINSTALL PLUGIN ' . $formatter->formatName($this->pluginName);
     }

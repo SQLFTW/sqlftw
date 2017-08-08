@@ -9,15 +9,15 @@
 
 namespace SqlFtw\Sql\Ddl\Routines;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\QualifiedName;
 
 class AlterFunctionCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var \SqlFtw\Sql\Ddl\SqlSecurity|null */
@@ -71,7 +71,7 @@ class AlterFunctionCommand implements \SqlFtw\Sql\Command
         return $this->language;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER FUNCTION ' . $this->name->serialize($formatter);
         if ($this->comment !== null) {

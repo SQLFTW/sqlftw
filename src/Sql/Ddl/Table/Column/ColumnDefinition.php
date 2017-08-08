@@ -9,11 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Column;
 
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\DataType;
 use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
-use SqlFtw\Sql\Ddl\DataType;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
 {
@@ -36,7 +36,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     /** @var bool */
     private $nullable;
 
-    /** @var string|int|float|null */
+    /** @var string|int|float|\SqlFtw\Sql\Expression\Literal|null */
     private $defaultValue;
 
     /** @var bool */
@@ -63,7 +63,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     /**
      * @param string $name
      * @param \SqlFtw\Sql\Ddl\DataType $type
-     * @param string|int|float|null $defaultValue
+     * @param string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null $defaultValue
      * @param bool|null $nullable
      * @param bool $autoincrement
      * @param string|null $comment
@@ -123,7 +123,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     }
 
     /**
-     * @param string|int|float|null $defaultValue
+     * @param string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null $defaultValue
      * @return \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition
      */
     public function duplicateWithDefaultValue($defaultValue): self
@@ -163,7 +163,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     }
 
     /**
-     * @return mixed|null
+     * @return string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null
      */
     public function getDefaultValue()
     {
@@ -205,7 +205,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         return $this->reference;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $formatter->formatName($this->name);
 

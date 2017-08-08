@@ -5,5 +5,7 @@ parameters:
         - '~\(SqlFtw\\Sql\\Command\|SqlFtw\\Sql\\Ddl\\CompoundStatement\) does not accept SqlFtw\\Sql\\SqlSerializable~'
         - '~Property SqlFtw\\Sql\\Ddl\\Type::\$size \(int\[\]\|int\|null\) does not accept int\|int\[\]\|string\[\]\|null~'
         - '~Property SqlFtw\\Sql\\Time\\TimeExpression::\$intervals \(SqlFtw\\Sql\\Time\\TimeInterval\[\]\) does not accept Dogma\\Time\\DateTimeInterval\[\]\|DateInterval\[\]~'
+        - '~Parameter #1 \$items of static method Dogma\\Check::itemsOfType\(\) expects mixed\[\]\|Traversable~'
+        - '~Cannot call method serialize\(\) on SqlFtw\\Sql\\Statement\[\]~'
     universalObjectCratesClasses:
         - Nette\Application\UI\ITemplate

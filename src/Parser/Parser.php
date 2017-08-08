@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Platform\Settings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\Lexer\Lexer;
 
 class Parser
 {
@@ -34,6 +34,11 @@ class Parser
         $this->factory = new ParserFactory($settings, $this);
     }
 
+    public function getSettings(): Settings
+    {
+        return $this->settings;
+    }
+
     /**
      * @param string $sql
      * @return \SqlFtw\Sql\Command[]
@@ -45,11 +50,21 @@ class Parser
 
         $commands = [];
         foreach ($tokenLists as $tokenList) {
-            $commands[] = $this->parseCommand($tokenList);
+            $commands[] = $this->parseTokenList($tokenList);
             $tokenList->expectEnd();
         }
 
         return $commands;
+    }
+
+    public function parseCommand(string $sql): Command
+    {
+        $tokens = $this->lexer->tokenizeAll($sql);
+        $tokenLists = $this->slice($tokens);
+        if (count($tokenLists) > 1) {
+            throw new \SqlFtw\Parser\ParserException('More than one command found in given SQL code.');
+        }
+        return $this->parseTokenList($tokenLists[0]);
     }
 
     /**
@@ -68,10 +83,14 @@ class Parser
                 $lists[$n][] = $token;
             }
         }
+        if (is_array($lists[$n])) {
+            $lists[$n] = new TokenList($lists[$n], $this->settings);
+        }
+
         return $lists;
     }
 
-    public function parseCommand(TokenList $tokenList): Command
+    public function parseTokenList(TokenList $tokenList): Command
     {
         $start = $tokenList->getPosition();
         $tokenList->addAutoSkip(TokenType::get(TokenType::WHITESPACE));
@@ -80,8 +99,8 @@ class Parser
         $first = $tokenList->consume(TokenType::KEYWORD);
         switch ($first->value) {
             case Keyword::ALTER:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                switch ($second->value) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                switch ($second) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // ALTER {DATABASE|SCHEMA}
@@ -136,11 +155,11 @@ class Parser
                 // CALL
                 return $this->factory->getCallCommandParser()->parseCall($tokenList->resetPosition($start));
             case Keyword::CHANGE:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                if ($second->value === Keyword::MASTER) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                if ($second === Keyword::MASTER) {
                     // CHANGE MASTER TO
                     return $this->factory->getReplicationCommandsParser()->parseChangeMasterTo($tokenList->resetPosition($start));
-                } elseif ($second->value === Keyword::REPLICATION) {
+                } elseif ($second === Keyword::REPLICATION) {
                     // CHANGE REPLICATION FILTER
                     return $this->factory->getReplicationCommandsParser()->parseChangeReplicationFilter($tokenList->resetPosition($start));
                 }
@@ -156,8 +175,8 @@ class Parser
                 // COMMIT
                 return $this->factory->getTransactionCommandsParser()->parseCommit($tokenList->resetPosition($start));
             case Keyword::CREATE:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                switch ($second->value) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                switch ($second) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // CREATE {DATABASE | SCHEMA}
@@ -177,6 +196,16 @@ class Parser
                     case Keyword::USER:
                         // CREATE USER
                         return $this->factory->getUserCommandsParser()->parseCreateUser($tokenList->resetPosition($start));
+                    case Keyword::TEMPORARY:
+                    case Keyword::TABLE:
+                        // CREATE [TEMPORARY] TABLE
+                        return $this->factory->getTableCommandsParser()->parseCreateTable($tokenList->resetPosition($start));
+                    case Keyword::UNIQUE:
+                    case Keyword::FULLTEXT:
+                    case Keyword::SPATIAL:
+                    case Keyword::INDEX:
+                        // CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX
+                        return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->resetPosition($start));
                 }
                 if ($tokenList->seekKeyword(Keyword::EVENT, 5)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] EVENT
@@ -187,15 +216,9 @@ class Parser
                 } elseif ($tokenList->seekKeyword(Keyword::FUNCTION, 5)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] FUNCTION
                     return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::INDEX, 2)) {
-                    // CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX
-                    return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->resetPosition($start));
                 } elseif ($tokenList->seekKeyword(Keyword::PROCEDURE, 5)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] PROCEDURE
                     return $this->factory->getRoutineCommandsParser()->parseCreateProcedure($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::TABLE, 2)) {
-                    // CREATE [TEMPORARY] TABLE
-                    return $this->factory->getTableCommandsParser()->parseCreateTable($tokenList->resetPosition($start));
                 } elseif ($tokenList->seekKeyword(Keyword::TRIGGER, 5)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] TRIGGER
                     return $this->factory->getTriggerCommandsParser($this)->parseCreateTrigger($tokenList->resetPosition($start));
@@ -228,8 +251,8 @@ class Parser
                 // DO
                 return $this->factory->getDoCommandParser()->parseDo($tokenList->resetPosition($start));
             case Keyword::DROP:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                switch ($second->value) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                switch ($second) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // DROP {DATABASE | SCHEMA}
@@ -288,8 +311,8 @@ class Parser
                 // EXPLAIN
                 return $this->factory->getExplainCommandParser()->parseExplain($tokenList->resetPosition($start));
             case Keyword::FLUSH:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                if ($second->value === Keyword::TABLES) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                if ($second === Keyword::TABLES) {
                     // FLUSH TABLES
                     return $this->factory->getFlushCommandParser()->parseFlushTables($tokenList->resetPosition($start));
                 }
@@ -300,15 +323,16 @@ class Parser
                 return $this->factory->getUserCommandsParser()->parseGrant($tokenList->resetPosition($start));
             case Keyword::HANDLER:
                 // HANDLER
-                if ($tokenList->seekKeyword(Keyword::OPEN, 10)) {
+                $tokenList->consumeQualifiedName();
+                $keyword = $tokenList->consumeAnyKeyword(Keyword::OPEN, Keyword::READ, Keyword::CLOSE);
+                if ($keyword === Keyword::OPEN) {
                     return $this->factory->getHandlerCommandParser()->parseHandlerOpen($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::READ, 10)) {
+                } elseif ($keyword === Keyword::READ) {
                     return $this->factory->getHandlerCommandParser()->parseHandlerRead($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::CLOSE, 10)) {
+                } else {
                     return $this->factory->getHandlerCommandParser()->parseHandlerClose($tokenList->resetPosition($start));
                 }
-                $tokenList->expectedAnyKeyword(Keyword::OPEN, Keyword::READ, Keyword::CLOSE);
-                exit;
+                break;
             case Keyword::HELP:
                 // HELP
                 return $this->factory->getHelpCommandParser()->parseHelp($tokenList->resetPosition($start));
@@ -316,7 +340,7 @@ class Parser
                 // INSERT
                 return $this->factory->getInsertCommandParser()->parseInsert($tokenList->resetPosition($start));
             case Keyword::INSTALL:
-                $second = $tokenList->consume(TokenType::KEYWORD);
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
                 if ($second === Keyword::COMPONENT) {
                     // INSTALL COMPONENT
                     return $this->factory->getComponentCommandsParser()->parseInstallComponent($tokenList->resetPosition($start));
@@ -333,7 +357,7 @@ class Parser
                 // LOCK TABLES
                 return $this->factory->getTransactionCommandsParser()->parseLockTables($tokenList->resetPosition($start));
             case Keyword::LOAD:
-                $second = $tokenList->consume(TokenType::KEYWORD);
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
                 if ($second === Keyword::DATA) {
                     // LOAD DATA
                     return $this->factory->getLoadCommandsParser()->parseLoadData($tokenList->resetPosition($start));
@@ -359,11 +383,11 @@ class Parser
                 // RELEASE SAVEPOINT
                 return $this->factory->getTransactionCommandsParser()->parseReleaseSavepoint($tokenList->resetPosition($start));
             case Keyword::RENAME:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                if ($second->value === Keyword::TABLE) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                if ($second === Keyword::TABLE) {
                     // RENAME TABLE
                     return $this->factory->getTableCommandsParser()->parseRenameTable($tokenList->resetPosition($start));
-                } elseif ($second->value === Keyword::USER) {
+                } elseif ($second === Keyword::USER) {
                     // RENAME USER
                     return $this->factory->getUserCommandsParser()->parseRenameUser($tokenList->resetPosition($start));
                 }
@@ -376,21 +400,30 @@ class Parser
                 // REPLACE
                 return $this->factory->getInsertCommandParser()->parseReplace($tokenList->resetPosition($start));
             case Keyword::RESET:
-                if ($tokenList->seekKeyword(Keyword::PERSIST, 2)) {
+                if ($tokenList->mayConsumeKeyword(Keyword::PERSIST)) {
                     // RESET PERSIST
                     return $this->factory->getResetPersistCommandParser()->parseResetPersist($tokenList->resetPosition($start));
-                } elseif ($tokenList->seek(TokenType::COMMA, 8) || $tokenList->seekKeyword(Keyword::QUERY, 8)) {
-                    // RESET MASTER, SLAVE, QUERY CACHE
-                    return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::MASTER, 2)) {
+                }
+                $keyword = $tokenList->consumeAnyKeyword(Keyword::MASTER, Keyword::SLAVE, Keyword::QUERY);
+                if ($keyword === Keyword::MASTER) {
+                    if ($tokenList->mayConsumeComma()) {
+                        // RESET MASTER, SLAVE, QUERY CACHE
+                        return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
+                    }
                     // RESET MASTER
                     return $this->factory->getReplicationCommandsParser()->parseResetMaster($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::SLAVE, 2)) {
+                } elseif ($keyword === Keyword::SLAVE) {
+                    if ($tokenList->mayConsumeComma()) {
+                        // RESET MASTER, SLAVE, QUERY CACHE
+                        return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
+                    }
                     // RESET SLAVE
                     return $this->factory->getReplicationCommandsParser()->parseResetSlave($tokenList->resetPosition($start));
+                } else {
+                    // RESET MASTER, SLAVE, QUERY CACHE
+                    return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                 }
-                $tokenList->expectedAnyKeyword(Keyword::PERSIST, Keyword::MASTER, Keyword::SLAVE, Keyword::QUERY);
-                exit;
+                break;
             case Keyword::REVOKE:
                 // REVOKE
                 return $this->factory->getUserCommandsParser()->parseRevoke($tokenList->resetPosition($start));
@@ -404,8 +437,8 @@ class Parser
                 // SELECT
                 return $this->factory->getSelectCommandParser()->parseSelect($tokenList->resetPosition($start));
             case Keyword::SET:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                switch ($second->value) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                switch ($second) {
                     case Keyword::CHARACTER:
                     case Keyword::CHARSET:
                         // SET {CHARACTER SET | CHARSET}
@@ -422,13 +455,22 @@ class Parser
                     case Keyword::ROLE:
                         // SET ROLE
                         return $this->factory->getUserCommandsParser()->parseSetRole($tokenList->resetPosition($start));
+                    case Keyword::GLOBAL:
+                    case Keyword::SESSION:
+                    case Keyword::TRANSACTION:
+                        if ($second === Keyword::TRANSACTION || $tokenList->mayConsumeKeyword(Keyword::TRANSACTION)) {
+                            // SET [GLOBAL | SESSION] TRANSACTION
+                            return $this->factory->getTransactionCommandsParser()->parseSetTransaction($tokenList->resetPosition($start));
+                        } else {
+                            // SET
+                            return $this->factory->getSetCommandParser()->parseSet($tokenList->resetPosition($start));
+                        }
+                        break;
+                    default:
+                        // SET
+                        return $this->factory->getSetCommandParser()->parseSet($tokenList->resetPosition($start));
                 }
-                if ($tokenList->seekKeyword(Keyword::TRANSACTION, 2)) {
-                    // SET [GLOBAL | SESSION] TRANSACTION
-                    return $this->factory->getTransactionCommandsParser()->parseSetTransaction($tokenList->resetPosition($start));
-                }
-                // SET
-                return $this->factory->getSetCommandParser()->parseSet($tokenList->resetPosition($start));
+                break;
             case Keyword::SHOW:
                 // SHOW
                 return $this->factory->getShowCommandsParser()->parseShow($tokenList->resetPosition($start));
@@ -436,25 +478,25 @@ class Parser
                 // SHUTDOWN
                 return $this->factory->getShutdownCommandParser()->parseShutdown($tokenList->resetPosition($start));
             case Keyword::START:
-                $second = $tokenList->consume(TokenType::KEYWORD);
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
                 if ($second === Keyword::GROUP_REPLICATION) {
                     // START GROUP_REPLICATION
                     return $this->factory->getReplicationCommandsParser()->parseStartGroupReplication($tokenList->resetPosition($start));
-                } elseif ($second->value === Keyword::SLAVE) {
+                } elseif ($second === Keyword::SLAVE) {
                     // START SLAVE
                     return $this->factory->getReplicationCommandsParser()->parseStartSlave($tokenList->resetPosition($start));
-                } elseif ($second->value === Keyword::TRANSACTION) {
+                } elseif ($second === Keyword::TRANSACTION) {
                     // START TRANSACTION
                     return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::TRANSACTION);
                 exit;
             case Keyword::STOP:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                if ($second->value === Keyword::GROUP_REPLICATION) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                if ($second === Keyword::GROUP_REPLICATION) {
                     // STOP GROUP_REPLICATION
                     return $this->factory->getReplicationCommandsParser()->parseStopGroupReplication($tokenList->resetPosition($start));
-                } elseif ($second->value === Keyword::SLAVE) {
+                } elseif ($second === Keyword::SLAVE) {
                     // STOP SLAVE
                     return $this->factory->getReplicationCommandsParser()->parseStopSlave($tokenList->resetPosition($start));
                 }
@@ -464,11 +506,11 @@ class Parser
                 // TRUNCATE [TABLE]
                 return $this->factory->getTableCommandsParser()->parseTruncateTable($tokenList->resetPosition($start));
             case Keyword::UNINSTALL:
-                $second = $tokenList->consume(TokenType::KEYWORD);
-                if ($second->value === Keyword::COMPONENT) {
+                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                if ($second === Keyword::COMPONENT) {
                     // UNINSTALL COMPONENT
                     return $this->factory->getComponentCommandsParser()->parseUninstallComponent($tokenList->resetPosition($start));
-                } elseif ($second->value === Keyword::PLUGIN) {
+                } elseif ($second === Keyword::PLUGIN) {
                     // UNINSTALL PLUGIN
                     return $this->factory->getPluginCommandsParser()->parseUninstallPlugin($tokenList->resetPosition($start));
                 }

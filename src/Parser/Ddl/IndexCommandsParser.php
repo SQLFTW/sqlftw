@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
@@ -19,13 +21,11 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexOption;
 use SqlFtw\Sql\Ddl\Table\Index\IndexOptions;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Sql\Operator;
 use SqlFtw\Sql\Order;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\TableName;
 
 class IndexCommandsParser
 {
@@ -67,54 +67,66 @@ class IndexCommandsParser
         while ($keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ALGORITHM, Keyword::LOCK)) {
             if ($keyword === Keyword::ALGORITHM) {
                 /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm $alterAlgorithm */
-                $alterAlgorithm = $tokenList->consumeEnum(AlterTableAlgorithm::class);
+                $alterAlgorithm = $tokenList->consumeKeywordEnum(AlterTableAlgorithm::class);
             } elseif ($keyword === Keyword::LOCK) {
                 /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock $alterLock */
-                $alterLock = $tokenList->consumeEnum(AlterTableLock::class);
+                $alterLock = $tokenList->consumeKeywordEnum(AlterTableLock::class);
             }
         }
 
         return new CreateIndexCommand($index, $alterAlgorithm, $alterLock);
     }
 
-    public function parseIndexDefinition(TokenList $tokenList): IndexDefinition
+    public function parseIndexDefinition(TokenList $tokenList, bool $inTable = false): IndexDefinition
     {
         $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::UNIQUE, Keyword::FULLTEXT, Keyword::SPATIAL);
-        if ($keyword !== null) {
-            $type = IndexType::get($keyword);
+        if ($keyword === Keyword::UNIQUE) {
+            $type = IndexType::get($keyword . ' KEY');
+        } elseif ($keyword !== null) {
+            $type = IndexType::get($keyword . ' INDEX');
         } else {
             $type = IndexType::get(IndexType::INDEX);
         }
-        $tokenList->consumeKeyword(Keyword::INDEX);
-        $name = $tokenList->consumeName();
+        $tokenList->consumeAnyKeyword(Keyword::INDEX, Keyword::KEY);
+        if ($inTable) {
+            $name = $tokenList->mayConsumeName();
+        } else {
+            $name = $tokenList->consumeName();
+        }
 
         $algorithm = null;
         if ($tokenList->mayConsumeKeyword(Keyword::USING)) {
-            $algorithm = $tokenList->consumeEnum(IndexAlgorithm::class);
+            $algorithm = $tokenList->consumeKeywordEnum(IndexAlgorithm::class);
         }
 
-        $tokenList->consumeKeyword(Keyword::ON);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $table = null;
+        if (!$inTable) {
+            $tokenList->consumeKeyword(Keyword::ON);
+            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        }
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
         $columns = [];
         do {
             $column = $tokenList->consumeName();
             $length = null;
-            if ($tokenList->consume(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
                 $length = $tokenList->consumeInt();
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             }
             /** @var \SqlFtw\Sql\Order $order */
-            $order = $tokenList->mayConsumeEnum(Order::class);
+            $order = $tokenList->mayConsumeKeywordEnum(Order::class);
             $columns[] = new IndexColumn($column, $length, $order);
-        } while ($tokenList->consume(TokenType::COMMA));
+        } while ($tokenList->mayConsumeComma());
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
 
-        $options = [IndexOption::TABLE => $table];
+        $options = [];
+        if (!$inTable) {
+            $options = [IndexOption::TABLE => $table];
+        }
         $keywords = [Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE];
         while ($keyword = $tokenList->mayConsumeAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::USING) {
-                $algorithm = $tokenList->consumeEnum(IndexAlgorithm::class);
+                $algorithm = $tokenList->consumeKeywordEnum(IndexAlgorithm::class);
             } elseif ($keyword === Keyword::KEY_BLOCK_SIZE) {
                 $options[IndexOption::KEY_BLOCK_SIZE] = $tokenList->consumeInt();
             } elseif ($keyword === Keyword::WITH) {
@@ -156,13 +168,13 @@ class IndexCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
             /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm $algorithm */
-            $algorithm = $tokenList->consumeEnum(AlterTableAlgorithm::class);
+            $algorithm = $tokenList->consumeKeywordEnum(AlterTableAlgorithm::class);
         }
         $lock = null;
         if ($tokenList->mayConsumeKeyword(Keyword::LOCK)) {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
             /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock $lock */
-            $lock = $tokenList->consumeEnum(AlterTableLock::class);
+            $lock = $tokenList->consumeKeywordEnum(AlterTableLock::class);
         }
 
         return new DropIndexCommand($name, $table, $algorithm, $lock);

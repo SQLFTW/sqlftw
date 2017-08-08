@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class RevokeCommand implements \SqlFtw\Sql\Command
 {
@@ -21,13 +21,13 @@ class RevokeCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeResource */
     private $resource;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
     /**
      * @param \SqlFtw\Sql\Dal\User\UserPrivilege[] $privileges
      * @param \SqlFtw\Sql\Dal\User\UserPrivilegeResource $resource
-     * @param \SqlFtw\Sql\Names\UserName[] $users
+     * @param \SqlFtw\Sql\UserName[] $users
      */
     public function __construct(array $privileges, UserPrivilegeResource $resource, array $users)
     {
@@ -50,14 +50,14 @@ class RevokeCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getUsers(): array
     {
         return $this->users;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'REVOKE ' . $formatter->formatSerializablesList($this->privileges)
             . ' ON ' . $this->resource->serialize($formatter)

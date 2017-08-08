@@ -9,16 +9,17 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\TriggerEvent;
 use SqlFtw\Sql\Ddl\Trigger\TriggerOrder;
+use SqlFtw\Sql\Ddl\Trigger\TriggerPosition;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\UserName;
 
 class TriggerCommandsParser
 {
@@ -69,21 +70,22 @@ class TriggerCommandsParser
         $tokenList->consumeKeywords(Keyword::FOR, Keyword::EACH, Keyword::ROW);
 
         $order = $tokenList->mayConsumeAnyKeyword(Keyword::FOLLOWS, Keyword::PRECEDES);
-        $otherTrigger = null;
+        $triggerPosition = null;
         if ($order !== null) {
             $order = TriggerOrder::get($order);
-            $otherTrigger = new QualifiedName(...$tokenList->consumeQualifiedName());
+            $otherTrigger = $tokenList->consumeName();
+            $triggerPosition = new TriggerPosition($order, $otherTrigger);
         }
 
-        if ($tokenList->seekKeyword(Keyword::BEGIN, 1)) {
+        if ($tokenList->mayConsumeKeyword(Keyword::BEGIN)) {
             // BEGIN ... END
-            $body = $this->compoundStatementParser->parseCompoundStatement($tokenList);
+            $body = $this->compoundStatementParser->parseCompoundStatement($tokenList->resetPosition(-1));
         } else {
             // SET, UPDATE, INSERT, DELETE, REPLACE...
-            $body = $this->parser->parseCommand($tokenList);
+            $body = $this->parser->parseTokenList($tokenList);
         }
 
-        return new CreateTriggerCommand($name, $event, $table, $body, $definer, $order, $otherTrigger);
+        return new CreateTriggerCommand($name, $event, $table, $body, $definer, $triggerPosition);
     }
 
     /**

@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class AddConstraintAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -34,7 +34,7 @@ class AddConstraintAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActio
         return $this->constraint;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'ADD ' . $this->constraint->serialize($formatter);
     }

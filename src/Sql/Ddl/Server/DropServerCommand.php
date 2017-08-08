@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Server;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class DropServerCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class DropServerCommand implements \SqlFtw\Sql\Command
         return $this->ifExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'DROP SERVER ' . ($this->ifExists ? 'IF EXISTS ' : '') . $formatter->formatName($this->name);
     }

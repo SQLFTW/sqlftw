@@ -9,8 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class RowExpression implements \SqlFtw\Sql\Expression\ExpressionNode
 {
@@ -40,7 +39,7 @@ class RowExpression implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->contents;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'ROW (' . $formatter->formatSerializablesList($this->contents) . ')';
     }

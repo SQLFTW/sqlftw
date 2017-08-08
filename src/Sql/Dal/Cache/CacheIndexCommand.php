@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Cache;
 
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 /**
  * MySQL MyISAM tables only
@@ -67,7 +67,7 @@ class CacheIndexCommand implements \SqlFtw\Sql\Command
         return $this->partitions;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CACHE INDEX ' . $formatter->formatSerializablesList($this->tableIndexLists);
 

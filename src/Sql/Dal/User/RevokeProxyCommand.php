@@ -9,22 +9,22 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class RevokeProxyCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\UserName */
+    /** @var \SqlFtw\Sql\UserName */
     private $proxy;
 
-    /** @var \SqlFtw\Sql\Names\UserName[] */
+    /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
     /**
-     * @param \SqlFtw\Sql\Names\UserName $proxy
-     * @param \SqlFtw\Sql\Names\UserName[] $users
+     * @param \SqlFtw\Sql\UserName $proxy
+     * @param \SqlFtw\Sql\UserName[] $users
      */
     public function __construct(UserName $proxy, array $users)
     {
@@ -38,14 +38,14 @@ class RevokeProxyCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getUsers(): array
     {
         return $this->users;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'REVOKE PROXY ON ' . $this->proxy->serialize($formatter)
             . ' FROM ' . $formatter->formatSerializablesList($this->users);

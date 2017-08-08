@@ -10,8 +10,8 @@
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SimpleAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -29,8 +29,6 @@ class SimpleAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
      */
     public function __construct(AlterTableActionType $type, $value = null)
     {
-        AlterTableActionType::get($type);
-
         $this->type = $type;
         $this->value = $value;
     }
@@ -48,7 +46,7 @@ class SimpleAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
         return $this->value;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
         $type = $this->type->getType();

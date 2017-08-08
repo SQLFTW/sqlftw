@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Scope;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class ShowStatusCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
@@ -47,7 +47,7 @@ class ShowStatusCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->where;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW';
         if ($this->scope) {

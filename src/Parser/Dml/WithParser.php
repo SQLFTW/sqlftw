@@ -9,9 +9,11 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Dml\SelectCommand;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
+use SqlFtw\Sql\TableName;
 
 class WithParser
 {
@@ -38,12 +40,16 @@ class WithParser
 
     /**
      * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dml\SelectCommand|\SqlFtw\Sql\Dml\UpdateCommand|\SqlFtw\Sql\Dml\DeleteCommand
+     * @return \SqlFtw\Sql\Dml\Select\SelectCommand|\SqlFtw\Sql\Dml\Update\UpdateCommand|\SqlFtw\Sql\Dml\Delete\DeleteCommand
      */
     public function parseWith(TokenList $tokenList): Command
     {
         ///
-        return new SelectCommand();
+        if (true) {
+            throw new \Dogma\NotImplementedException('Common table expressions are not implemented yet.');
+        } else {
+            return new SelectCommand([], new TableReferenceTable(new TableName('foo')));
+        }
     }
 
 }

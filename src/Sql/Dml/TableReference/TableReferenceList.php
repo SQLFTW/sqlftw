@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class TableReferenceList implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode, \Countable
 {
@@ -47,7 +47,7 @@ class TableReferenceList implements \SqlFtw\Sql\Dml\TableReference\TableReferenc
         return $this->references;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $formatter->formatSerializablesList($this->references);
     }

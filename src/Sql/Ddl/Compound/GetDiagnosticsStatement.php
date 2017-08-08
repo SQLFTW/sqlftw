@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class GetDiagnosticsStatement implements \SqlFtw\Sql\Statement
 {
@@ -43,7 +43,7 @@ class GetDiagnosticsStatement implements \SqlFtw\Sql\Statement
         $this->area = $area;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'GET';
         if ($this->area !== null) {

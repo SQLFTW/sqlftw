@@ -10,6 +10,9 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\Type;
+use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
 use SqlFtw\Sql\Dal\Replication\ChangeReplicationFilterCommand;
 use SqlFtw\Sql\Dal\Replication\PurgeBinaryLogsCommand;
@@ -23,13 +26,10 @@ use SqlFtw\Sql\Dal\Replication\StartSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\StopGroupReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\StopSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\UuidSet;
+use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Sql\Operator;
-use SqlFtw\Sql\Time\TimeInterval;
-use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\TableName;
 
 class ReplicationCommandsParser
 {
@@ -84,7 +84,7 @@ class ReplicationCommandsParser
         $tokenList->consumeKeywords(Keyword::CHANGE, Keyword::MASTER, Keyword::TO);
         $options = [];
         do {
-            $option = $tokenList->consumeEnum(SlaveOption::class);
+            $option = $tokenList->consumeKeywordEnum(SlaveOption::class);
             switch (SlaveOption::getTypes()[$option->getValue()]) {
                 case Type::STRING:
                     $value = $tokenList->consumeString();
@@ -156,7 +156,7 @@ class ReplicationCommandsParser
         $types = ReplicationFilter::getTypes();
         $filters = [];
         do {
-            $filter = $tokenList->consumeEnum(ReplicationFilter::class)->getValue();
+            $filter = $tokenList->consumeKeywordEnum(ReplicationFilter::class)->getValue();
             $tokenList->consume(TokenType::LEFT_PARENTHESIS);
             switch ($types[$filter]) {
                 case 'array<string>':
@@ -210,7 +210,7 @@ class ReplicationCommandsParser
             $log = $tokenList->consumeString();
         } else {
             $tokenList->consumeKeyword(Keyword::BEFORE);
-            $before = $tokenList->consumeDateTime();
+            $before = $this->expressionParser->parseDateTime($tokenList);
         }
 
         return new PurgeBinaryLogsCommand($log, $before);
@@ -285,11 +285,11 @@ class ReplicationCommandsParser
 
         $threadTypes = null;
         /** @var \SqlFtw\Sql\Dal\Replication\ReplicationThreadType $threadType */
-        $threadType = $tokenList->mayConsumeEnum(ReplicationThreadType::class);
+        $threadType = $tokenList->mayConsumeKeywordEnum(ReplicationThreadType::class);
         if ($threadType !== null) {
             $threadTypes = [$threadType];
             while ($tokenList->mayConsumeComma()) {
-                $threadTypes[] = $tokenList->mayConsumeEnum(ReplicationThreadType::class);
+                $threadTypes[] = $tokenList->mayConsumeKeywordEnum(ReplicationThreadType::class);
             };
         }
 
@@ -389,6 +389,7 @@ class ReplicationCommandsParser
 
         $gtids = [];
         do {
+            /** @var string $uuid */
             $uuid = $tokenList->consume(TokenType::UUID)->value;
             $intervals = [];
             $tokenList->consume(TokenType::DOUBLE_COLON);

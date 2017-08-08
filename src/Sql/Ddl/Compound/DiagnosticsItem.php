@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class DiagnosticsItem implements \SqlFtw\Sql\SqlSerializable
 {
@@ -37,7 +37,7 @@ class DiagnosticsItem implements \SqlFtw\Sql\SqlSerializable
         return $this->item;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $formatter->formatName($this->target) . ' = ' . $this->item->serialize($formatter);
     }

@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class IndexOptions implements \SqlFtw\Sql\SqlSerializable
 {
@@ -25,6 +25,11 @@ class IndexOptions implements \SqlFtw\Sql\SqlSerializable
     public function __construct(array $options)
     {
         $this->options = $options;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->options === [];
     }
 
     public function getTable(): ?TableName
@@ -62,7 +67,7 @@ class IndexOptions implements \SqlFtw\Sql\SqlSerializable
         return $this->options[IndexOption::MERGE_THRESHOLD] ?? null;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = '';
         /** @var \SqlFtw\Sql\SqlSerializable|int|string $value */

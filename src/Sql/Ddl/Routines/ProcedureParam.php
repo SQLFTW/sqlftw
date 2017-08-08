@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Routines;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\DataType;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class ProcedureParam implements \SqlFtw\Sql\SqlSerializable
 {
@@ -47,7 +47,7 @@ class ProcedureParam implements \SqlFtw\Sql\SqlSerializable
         return $this->inOutFlag;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = '';
         if ($this->inOutFlag !== null) {

@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class StartSlaveCommand implements \SqlFtw\Sql\Command
 {
@@ -105,7 +105,7 @@ class StartSlaveCommand implements \SqlFtw\Sql\Command
         return $this->getChannel();
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'START SLAVE';
 

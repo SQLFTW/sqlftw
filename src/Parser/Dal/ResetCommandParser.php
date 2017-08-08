@@ -9,12 +9,11 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Reset\ResetCommand;
 use SqlFtw\Sql\Dal\Reset\ResetOption;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 
 class ResetCommandParser
 {

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ShowSlaveStatusCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
@@ -27,7 +27,7 @@ class ShowSlaveStatusCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->channel;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'SHOW SLAVE STATUS' . ($this->channel ? ' FOR ' . $formatter->formatName($this->channel) : '');
     }

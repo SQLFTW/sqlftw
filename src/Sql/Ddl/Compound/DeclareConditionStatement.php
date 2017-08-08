@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class DeclareConditionStatement implements \SqlFtw\Sql\Statement
 {
@@ -20,9 +20,13 @@ class DeclareConditionStatement implements \SqlFtw\Sql\Statement
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var int|string */
     private $value;
 
+    /**
+     * @param string $name
+     * @param int|string $value
+     */
     public function __construct(string $name, $value)
     {
         Check::types($value, [Type::INT, Type::STRING]);
@@ -36,15 +40,18 @@ class DeclareConditionStatement implements \SqlFtw\Sql\Statement
         return $this->name;
     }
 
+    /**
+     * @return int|string
+     */
     public function getValue()
     {
         return $this->value;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'DECLARE ' . $formatter->formatName($this->name)
-            . ' CONDITION FOR ' . (strlen($this->value) > 4 ? 'SQLSTATE ' : '') . $formatter->formatString($this->value);
+            . ' CONDITION FOR ' . (strlen($this->value) > 4 ? 'SQLSTATE ' : '') . $formatter->formatValue($this->value);
     }
 
 }

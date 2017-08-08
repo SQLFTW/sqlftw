@@ -9,13 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
-class DropTableCommand implements \SqlFtw\Sql\TablesCommand
+class DropTableCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName[] */
+    /** @var \SqlFtw\Sql\TableName[] */
     private $tables;
 
     /** @var bool */
@@ -25,7 +25,7 @@ class DropTableCommand implements \SqlFtw\Sql\TablesCommand
     private $ifExists;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName[] $tables
+     * @param \SqlFtw\Sql\TableName[] $tables
      * @param bool $temporary
      * @param bool $ifExists
      */
@@ -37,7 +37,7 @@ class DropTableCommand implements \SqlFtw\Sql\TablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\TableName[]
+     * @return \SqlFtw\Sql\TableName[]
      */
     public function getTables(): array
     {
@@ -54,7 +54,7 @@ class DropTableCommand implements \SqlFtw\Sql\TablesCommand
         return $this->ifExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DROP';
         if ($this->temporary) {

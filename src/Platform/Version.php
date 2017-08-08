@@ -25,7 +25,7 @@ class Version
     public function __construct(string $version)
     {
         $parts = explode('.', $version);
-        $this->major = $parts[0];
+        $this->major = (int) $parts[0];
         $this->minor = isset($parts[1]) ? (int) $parts[1] : null;
         $this->patch = isset($parts[2]) ? (int) $parts[2] : null;
     }

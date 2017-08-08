@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Scope;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SetAssignment implements \SqlFtw\Sql\SqlSerializable
 {
@@ -65,17 +65,17 @@ class SetAssignment implements \SqlFtw\Sql\SqlSerializable
         return $this->expression;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $this->scope->serialize($formatter) . ' ' . $this->variable . ' = ' . $this->formatExpression($formatter, $this->expression);
     }
 
     /**
-     * @param \SqlFtw\SqlFormatter\SqlFormatter $formatter
+     * @param \SqlFtw\Formatter\Formatter $formatter
      * @param bool|int|float|string|\SqlFtw\Sql\Expression\ExpressionNode $expression
      * @return string
      */
-    private function formatExpression(SqlFormatter $formatter, $expression): string
+    private function formatExpression(Formatter $formatter, $expression): string
     {
         if ($expression === true) {
             return 'ON';

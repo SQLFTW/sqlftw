@@ -9,20 +9,64 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use Dogma\Arr;
+use Dogma\Check;
+use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 
 class ResignalStatement implements \SqlFtw\Sql\Statement
 {
     use \Dogma\StrictBehaviorMixin;
 
-    public function __construct()
+    /** @var int|string */
+    private $condition;
+
+    /** @var int[]|string[]|null */
+    private $items;
+
+    /**
+     * @param int|string $condition
+     * @param int[]|string[]||null $items
+     */
+    public function __construct($condition, ?array $items)
     {
-        ///
+        Check::types($condition, [Type::INT, Type::STRING]);
+        foreach ($items as $key => $value) {
+            ConditionInformationItem::get($key);
+        }
+        $this->condition = $condition;
+        $this->items = $items;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    /**
+     * @return int|string
+     */
+    public function getCondition()
     {
-        ///
+        return $this->condition;
+    }
+
+    /**
+     * @return int[]|string[]|null
+     */
+    public function getItems(): ?array
+    {
+        return $this->items;
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        $result = 'RESIGNAL';
+        if ($this->condition !== null) {
+            $result .= ' ' . (strlen($this->condition) > 4 ? 'SQLSTATE ' : '') . $formatter->formatValue($this->condition);
+        }
+        if ($this->items !== null) {
+            $result .= ' SET ' . implode(', ', Arr::mapPairs($this->items, function ($item, $value) use ($formatter): string {
+                    return $item . ' = ' . $formatter->formatValue($value);
+                }));
+        }
+
+        return $result;
     }
 
 }

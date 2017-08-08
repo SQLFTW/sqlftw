@@ -9,7 +9,10 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\Time\DateTime;
 use SqlFtw\Platform\Mode;
+use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
@@ -18,31 +21,44 @@ use SqlFtw\Sql\Expression\CollateExpression;
 use SqlFtw\Sql\Expression\CurlyExpression;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Identifier;
-use SqlFtw\Sql\Expression\IntervalExpression;
+use SqlFtw\Sql\Expression\IntervalLiteral;
 use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
+use SqlFtw\Sql\Expression\NullLiteral;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\RowExpression;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\TernaryOperator;
+use SqlFtw\Sql\Expression\TimeExpression;
+use SqlFtw\Sql\Expression\TimeInterval;
+use SqlFtw\Sql\Expression\TimeIntervalUnit;
 use SqlFtw\Sql\Expression\UnaryOperator;
-use SqlFtw\Sql\Expression\Unknown;
+use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\ColumnName;
-use SqlFtw\Sql\Operator;
 use SqlFtw\Sql\Order;
-use SqlFtw\Sql\Time\TimeExpression;
-use SqlFtw\Sql\Time\TimeInterval;
-use SqlFtw\Sql\Time\TimeIntervalUnit;
+use SqlFtw\Sql\QualifiedName;
 
 class ExpressionParser
 {
     use \Dogma\StrictBehaviorMixin;
+
+    private const INT_DATETIME_EXPRESSION = '/^(?:[1-9][0-9])?[0-9]{2}(?:0[1-9]|1[012])(?:0[1-9]|[12][0-9]|3[01])(?:[01][0-9]|2[0-3])(?:[0-5][0-9]){2}$/';
+    private const PUNCTUATION = '[~`@#$%^&\'"\\\\=[\\]{}()<>;:,.?!_|/*+-]';
+    private const STRING_DATETIME_EXPRESSION = 'Z^((?:[1-9][0-9])?[0-9]{2}'
+        . self::PUNCTUATION . '(?:0[1-9]|1[012])'
+        . self::PUNCTUATION . '(?:0[1-9]|[12][0-9]|3[01])'
+        . '[ T](?:[01][0-9]|2[0-3])'
+        . self::PUNCTUATION . '(?:[0-5][0-9])'
+        . self::PUNCTUATION . '(?:[0-5][0-9]))'
+        . '(\\.[0-9]+)?$Z/';
 
     /** @var \SqlFtw\Parser\ParserFactory */
     private $parserFactory;
@@ -82,7 +98,7 @@ class ExpressionParser
         }
 
         $left = $this->parseBooleanPrimary($tokenList);
-        $operator = $tokenList->mayConsumeAnyOperator($operators);
+        $operator = $tokenList->mayConsumeAnyOperator(...$operators);
         if ($operator !== null) {
             $right = $this->parseExpression($tokenList);
 
@@ -91,8 +107,8 @@ class ExpressionParser
             $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
             $keyword = $tokenList->consumeAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
             $right = $keyword === Keyword::UNKNOWN
-                ? new Unknown()
-                : new Literal($keyword === Keyword::TRUE ? true : false);
+                ? new UnknownLiteral()
+                : new ValueLiteral($keyword === Keyword::TRUE ? true : false);
 
             return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IS] : [Operator::IS], $right);
         } else {
@@ -128,11 +144,11 @@ class ExpressionParser
     {
         $operators = [
             Operator::SAFE_EQUAL, Operator::EQUAL, Operator::GREATER_OR_EQUAL, Operator::GREATER,
-            Operator::LESS_OR_EQUAL, Operator::LESS, Operator::LESS_OR_GREATER, Operator::NON_EQUAL
+            Operator::LESS_OR_EQUAL, Operator::LESS, Operator::LESS_OR_GREATER, Operator::NON_EQUAL,
         ];
 
         $left = $this->parsePredicate($tokenList);
-        $operator = $tokenList->mayConsumeAnyOperator($operators);
+        $operator = $tokenList->mayConsumeAnyOperator(...$operators);
         if ($operator !== null) {
             $quantifier = $tokenList->mayConsumeAnyKeyword(Keyword::ALL, Keyword::ANY);
             if ($quantifier !== null) {
@@ -149,7 +165,7 @@ class ExpressionParser
         } elseif ($tokenList->mayConsumeKeyword(Keyword::IS)) {
             $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
             $tokenList->consumeKeyword(Keyword::NULL);
-            $right = new Literal(null);
+            $right = new NullLiteral();
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         } else {
@@ -178,7 +194,8 @@ class ExpressionParser
 
         $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
 
-        if ($operator = $tokenList->mayConsumeAnyKeyword(Keyword::REGEXP, Keyword::RLIKE)) {
+        $operator = $tokenList->mayConsumeAnyKeyword(Keyword::REGEXP, Keyword::RLIKE);
+        if ($operator !== null) {
             $right = $this->parseBitExpression($tokenList);
 
             return new BinaryOperator($left, $not ? [Operator::NOT, $operator] : [$operator], $right);
@@ -237,7 +254,7 @@ class ExpressionParser
     {
         $operators = [
             Operator::BIT_OR, Operator::BIT_AND, Operator::LEFT_SHIFT, Operator::RIGHT_SHIFT, Operator::PLUS, Operator::MINUS,
-            Operator::MULTIPLY, Operator::DIVIDE, Operator::DIV, Operator::MOD, Operator::MODULO, Operator::BIT_XOR
+            Operator::MULTIPLY, Operator::DIVIDE, Operator::DIV, Operator::MOD, Operator::MODULO, Operator::BIT_XOR,
         ];
 
         $left = $this->parseSimpleExpression($tokenList);
@@ -247,7 +264,7 @@ class ExpressionParser
         }
 
         if (($operator === Operator::PLUS || $operator === Operator::MINUS) && $tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
-            $right = new IntervalExpression($this->parseInterval($tokenList));
+            $right = new IntervalLiteral($this->parseInterval($tokenList));
 
             return new BinaryOperator($left, [$operator], $right);
         }
@@ -324,7 +341,7 @@ class ExpressionParser
         } elseif ($tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
             // interval_expr
             $interval = $this->parseInterval($tokenList);
-            $expression = new IntervalExpression($interval);
+            $expression = new IntervalLiteral($interval);
 
         } elseif ($tokenList->mayConsumeKeyword(Keyword::CASE)) {
             // case_expr
@@ -334,7 +351,7 @@ class ExpressionParser
             // match_expr
             $expression = $this->parseMatch($tokenList);
 
-        } elseif ($tokenList->mayConsumeKeyword(TokenType::PLACEHOLDER)) {
+        } elseif ($tokenList->mayConsume(TokenType::PLACEHOLDER)) {
             // param_marker
             $expression = new Placeholder();
 
@@ -345,48 +362,65 @@ class ExpressionParser
             $tokenList->consume(TokenType::RIGHT_CURLY_BRACKET);
             $expression = new CurlyExpression($name, $expression);
 
-        } elseif ($variable = $tokenList->mayConsume(TokenType::AT_VARIABLE)) {
-            // variable
-            if ($variable[1] === '@') {
-                // @@global.xyz
-                $tokenList->consume(TokenType::DOT);
-                $variable .= '.' . $tokenList->consumeName();
-            }
-            $expression = new Identifier($variable);
-
-        } elseif ($name1 = $tokenList->mayConsumeName()) {
-            $name2 = $name3 = null;
-            if ($tokenList->mayConsume(TokenType::DOT)) {
-                $name2 = $tokenList->consumeName();
-                if ($tokenList->mayConsume(TokenType::DOT)) {
-                    $name3 = $tokenList->consumeName();
+        } else {
+            $variable = $tokenList->mayConsume(TokenType::AT_VARIABLE);
+            if ($variable !== null) {
+                /** @var string $variableName */
+                $variableName = $variable->value;
+                // variable
+                if ($variableName[1] === '@') {
+                    // @@global.xyz
+                    $tokenList->consume(TokenType::DOT);
+                    /// better type here
+                    $variableName .= '.' . $tokenList->consumeName();
                 }
-            }
-            if ($name3 !== null) {
-                // identifier
-                $expression = new Identifier(new ColumnName($name1, $name2, $name3));
-
-            } elseif ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
-                // function_call
-                ///
-            } elseif ($name2 !== null) {
-                // identifier
-                $expression = new Identifier(new ColumnName(null, $name1, $name2));
+                $expression = new Identifier($variableName);
 
             } else {
-                // identifier
-                /// constant?
-                $expression = new Identifier(new ColumnName(null, null, $name1));
+                $name1 = $tokenList->mayConsumeName();
+                if ($name1 !== null) {
+                    $name2 = $name3 = null;
+                    if ($tokenList->mayConsume(TokenType::DOT)) {
+                        $name2 = $tokenList->consumeName();
+                        if ($tokenList->mayConsume(TokenType::DOT)) {
+                            $name3 = $tokenList->consumeName();
+                        }
+                    }
+                    if ($name3 !== null) {
+                        // identifier
+                        $expression = new Identifier(new ColumnName($name1, $name2, $name3));
+
+                    } elseif ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                        // function_call
+                        /// support for irregular arguments - eg "GROUP_CONCAT(DISTINCT foo ORDER BY bar)"
+                        $arguments = [];
+                        if (!$tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS)) {
+                            do {
+                                $arguments[] = $this->parseExpression($tokenList);
+                            } while ($tokenList->mayConsumeComma());
+                            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                        }
+                        $expression = new FunctionCall(new QualifiedName($name2 ? $name2 : $name1, $name2 ? $name1 : null), $arguments);
+
+                    } elseif ($name2 !== null) {
+                        // identifier
+                        $expression = new Identifier(new ColumnName($name2, $name1, null));
+
+                    } else {
+                        // identifier
+                        /// constant?
+                        $expression = new Identifier(new ColumnName($name1, null, null));
+                    }
+                } else {
+                    // literal
+                    $expression = $this->parseLiteral($tokenList);
+                }
             }
-        } else {
-            // literal
-            $literal = $this->parseLiteralValue($tokenList);
-            $expression = new Literal($literal);
         }
 
         if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
             // simple_expr COLLATE collation_name
-            $collation = $tokenList->consumeString();
+            $collation = Collation::get($tokenList->consumeString());
 
             return new CollateExpression($expression, $collation);
         } elseif ($tokenList->getSettings()->getMode()->contains(Mode::PIPES_AS_CONCAT) && $tokenList->mayConsumeOperator(Operator::PIPES)) {
@@ -408,22 +442,22 @@ class ExpressionParser
     {
         $condition = null;
         if (!$tokenList->mayConsumeKeyword(Keyword::WHEN)) {
-            $condition = new Literal($this->parseLiteralValue($tokenList));
+            $condition = $this->parseLiteral($tokenList);
             $tokenList->consumeKeyword(Keyword::WHEN);
         }
         $values = $results = [];
         do {
             if ($condition !== null) {
-                $values[] = new Literal($this->parseLiteralValue($tokenList));
+                $values[] = $this->parseLiteral($tokenList);
             } else {
                 $values[] = $this->parseExpression($tokenList);
             }
             $tokenList->consumeKeyword(Keyword::THEN);
-            $results[] = new Literal($this->parseLiteralValue($tokenList));
+            $results[] = $this->parseLiteral($tokenList);
         } while ($tokenList->mayConsumeKeyword(Keyword::WHEN));
 
         if ($tokenList->mayConsumeKeyword(Keyword::ELSE)) {
-            $results[] = new Literal($this->parseLiteralValue($tokenList));
+            $results[] = $this->parseLiteral($tokenList);
         }
         $tokenList->consumeKeywords(Keyword::END, Keyword::CASE);
 
@@ -444,7 +478,7 @@ class ExpressionParser
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
         $columns = [];
         do {
-            $columns[] = new ColumnName(...$tokenList->consumeColumnName());
+            $columns[] = $this->parseColumnName($tokenList);
         } while ($tokenList->mayConsumeComma());
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
 
@@ -452,11 +486,40 @@ class ExpressionParser
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
         $query = $tokenList->consumeString();
         /** @var \SqlFtw\Sql\Expression\MatchMode|null $mode */
-        $mode = $tokenList->mayConsumeEnum(MatchMode::class);
+        $mode = $tokenList->mayConsumeKeywordEnum(MatchMode::class);
         $expansion = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
 
         return new MatchExpression($columns, $query, $mode, $expansion);
+    }
+
+    /**
+     * @return string[]|null[]|null (string|null $database, string|null $tableOrAlias, string $name)
+     */
+    public function parseColumnName(TokenList $tokenList): ColumnName
+    {
+        $first = $tokenList->consumeName();
+        $second = $third = null;
+        if ($tokenList->mayConsume(TokenType::DOT)) {
+            // a reserved keyword may follow after "." unescaped as we know it is a name context
+            $second = $tokenList->mayConsume(TokenType::KEYWORD);
+            if ($second !== null) {
+                $second = $second->value;
+            } else {
+                $second = $tokenList->consumeName();
+            }
+            if ($tokenList->mayConsume(TokenType::DOT)) {
+                // a reserved keyword may follow after "." unescaped as we know it is a name context
+                $third = $tokenList->mayConsume(TokenType::KEYWORD);
+                if ($third !== null) {
+                    $third = $third->value;
+                } else {
+                    $third = $tokenList->consumeName();
+                }
+            }
+        }
+
+        return new ColumnName($first, $second, $third);
     }
 
     private function parseSubquery(TokenList $tokenList): Subquery
@@ -464,23 +527,43 @@ class ExpressionParser
         return new Subquery($this->parserFactory->getSelectCommandParser()->parseSelect($tokenList));
     }
 
+    private function parseLiteral(TokenList $tokenList): Literal
+    {
+        $literal = $this->parseLiteralValue($tokenList);
+
+        return $literal instanceof Literal ? $literal : new ValueLiteral($literal);
+    }
+
     /**
      * @param \SqlFtw\Parser\TokenList $tokenList
-     * @param int|null $position
-     * @return string|int|float|bool|\SqlFtw\Sql\Expression\BinaryLiteral|\SqlFtw\Sql\Expression\HexadecimalLiteral|null
+     * @return string|int|float|bool|\SqlFtw\Sql\Expression\Literal
      */
     public function parseLiteralValue(TokenList $tokenList)
     {
         $token = $tokenList->consume(TokenType::VALUE);
 
-        $value = $token->value;
         if ($token->type & TokenType::BINARY_LITERAL) {
-            $value = new BinaryLiteral($value);
+            /** @var string $value */
+            $value = $token->value;
+            return new BinaryLiteral($value);
         } elseif ($token->type & TokenType::HEXADECIMAL_LITERAL) {
-            $value = new HexadecimalLiteral($value);
+            /** @var string $value */
+            $value = $token->value;
+            return new HexadecimalLiteral($value);
+        } elseif ($token->type & TokenType::KEYWORD) {
+            if ($token->value === 'NULL') {
+                return new NullLiteral();
+            } elseif ($token->value === 'TRUE') {
+                return true;
+            } elseif ($token->value === 'FALSE') {
+                return false;
+            } else {
+                // DEFAULT, ON, OFF ?
+                throw new \Dogma\NotImplementedException('DEFAULT, ON, OFF literals not implemented.');
+            }
         }
 
-        return $value;
+        return $token->value;
     }
 
     /**
@@ -498,7 +581,7 @@ class ExpressionParser
             /// todo: extract column name or position from expression
 
             /** @var \SqlFtw\Sql\Order $order */
-            $order = $tokenList->mayConsumeEnum(Order::class);
+            $order = $tokenList->mayConsumeKeywordEnum(Order::class);
             $orderBy[] = new OrderByExpression($order, null, $expression);
         } while ($tokenList->mayConsumeComma());
 
@@ -532,13 +615,53 @@ class ExpressionParser
      */
     public function parseTimeExpression(TokenList $tokenList): TimeExpression
     {
-        $time = $tokenList->consumeDateTime();
+        $time = $this->parseDateTime($tokenList);
         $intervals = [];
         while ($tokenList->mayConsumeOperator(Operator::PLUS)) {
             $tokenList->consumeKeyword(Keyword::INTERVAL);
             $intervals[] = $this->parseInterval($tokenList);
         }
         return new TimeExpression($time, $intervals);
+    }
+
+    public function parseDateTime(TokenList $tokenList): DateTime
+    {
+        $string = $tokenList->mayConsumeInt();
+        if ($string !== null) {
+            $string = $tokenList->consumeString();
+        }
+        if (preg_match(self::INT_DATETIME_EXPRESSION, $string)) {
+            if (strlen($string) === 12) {
+                $string = '20' . $string;
+            }
+            return new DateTime(sprintf(
+                '%s-%s-%s %s:%s:%s',
+                substr($string, 0, 4),
+                substr($string, 4, 2),
+                substr($string, 6, 2),
+                substr($string, 8, 2),
+                substr($string, 10, 2),
+                substr($string, 12, 2)
+            ));
+        } elseif (preg_match(self::STRING_DATETIME_EXPRESSION, $string, $match)) {
+            $string = $match[1];
+            $decimalPart = isset($match[2]) ? $match[2] : '';
+            if (strlen($string) === 17) {
+                $string = '20' . $string;
+            }
+            return new DateTime(sprintf(
+                '%s-%s-%s %s:%s:%s%s',
+                substr($string, 0, 4),
+                substr($string, 5, 2),
+                substr($string, 8, 2),
+                substr($string, 11, 2),
+                substr($string, 14, 2),
+                substr($string, 17, 2),
+                $decimalPart
+            ));
+        } else {
+            throw new \SqlFtw\Parser\ParserException(sprintf('Invalid datetime value "%s"', $string));
+        }
     }
 
     /**
@@ -553,8 +676,8 @@ class ExpressionParser
         if ($value === null) {
             $value = $tokenList->consumeInt();
         }
-        /** @var \SqlFtw\Sql\Time\TimeIntervalUnit $unit */
-        $unit = $tokenList->consumeEnum(TimeIntervalUnit::class);
+        /** @var \SqlFtw\Sql\Expression\TimeIntervalUnit $unit */
+        $unit = $tokenList->consumeKeywordEnum(TimeIntervalUnit::class);
 
         return new TimeInterval($value, $unit);
     }

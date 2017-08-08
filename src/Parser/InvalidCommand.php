@@ -9,8 +9,7 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
-use SqlFtw\Parser\TokenList;
+use SqlFtw\Formatter\Formatter;
 
 class InvalidCommand implements \SqlFtw\Sql\Command
 {
@@ -38,9 +37,9 @@ class InvalidCommand implements \SqlFtw\Sql\Command
         return $this->exception;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
-        return $this->getTokenList()->build();
+        return $this->tokenList->serialize();
     }
 
 }

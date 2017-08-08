@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class CaseExpression implements \SqlFtw\Sql\Statement
 {
@@ -22,13 +22,13 @@ class CaseExpression implements \SqlFtw\Sql\Statement
     /** @var \SqlFtw\Sql\Expression\Literal[]|\SqlFtw\Sql\Expression\ExpressionNode[] */
     private $values;
 
-    /** @var \SqlFtw\Sql\Statement[][] */
+    /** @var \SqlFtw\Sql\Expression\Literal[] */
     private $results;
 
     /**
      * @param \SqlFtw\Sql\Expression\Literal|null $condition
      * @param \SqlFtw\Sql\Expression\Literal[]|\SqlFtw\Sql\Expression\ExpressionNode[] $values
-     * @param \SqlFtw\Sql\Expression\Literal $results
+     * @param \SqlFtw\Sql\Expression\Literal[] $results
      */
     public function __construct(?ExpressionNode $condition, array $values, array $results)
     {
@@ -39,7 +39,7 @@ class CaseExpression implements \SqlFtw\Sql\Statement
             Check::itemsOfType($values, ExpressionNode::class);
         }
         Check::array($results, count($values), count($values) + 1);
-        Check::itemsOfType($results, Literal::class);
+        Check::itemsOfType($results, ValueLiteral::class);
 
         $this->condition = $condition;
         $this->values = $values;
@@ -67,7 +67,7 @@ class CaseExpression implements \SqlFtw\Sql\Statement
         return $this->results;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CASE';
         if ($this->condition !== null) {

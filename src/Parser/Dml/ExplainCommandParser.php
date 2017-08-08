@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\Utility\DescribeTableCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainType;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Operator;
+use SqlFtw\Sql\TableName;
 
 class ExplainCommandParser
 {
@@ -78,47 +78,9 @@ class ExplainCommandParser
     {
         $tokenList->consumeAnyKeyword(Keyword::EXPLAIN, Keyword::DESCRIBE, Keyword::DESC);
 
-        $statements = [Keyword::SELECT, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE];
-        $statement = $tokenList->seekAnyKeyword($statements + [Keyword::FOR], 10);
-        if ($statement !== null) {
-            $type = $tokenList->consumeAnyKeyword(Keyword::EXTENDED, Keyword::PARTITIONS, Keyword::FORMAT);
-            if ($type !== null) {
-                if ($type === Keyword::FORMAT) {
-                    $tokenList->consumeOperator(Operator::EQUAL);
-                    $format = $tokenList->consumeAnyKeyword(Keyword::JSON, Keyword::TRADITIONAL);
-                    $type = ExplainType::get($type . ' = ' . $format);
-                } else {
-                    $type = ExplainType::get($type);
-                }
-            }
-
-            $statement = $connectionId = null;
-            switch ($statement) {
-                case Keyword::FOR:
-                    $tokenList->consumeKeywords(Keyword::FOR, Keyword::CONNECTION);
-                    /** @var int $connectionId */
-                    $connectionId = $tokenList->consumeInt();
-                    break;
-                case Keyword::SELECT:
-                    $statement = $this->selectCommandParser->parseSelect($tokenList);
-                    break;
-                case Keyword::INSERT:
-                    $statement = $this->insertCommandParser->parseInsert($tokenList);
-                    break;
-                case Keyword::UPDATE:
-                    $statement = $this->updateCommandParser->parseUpdate($tokenList);
-                    break;
-                case Keyword::DELETE:
-                    $statement = $this->deleteCommandParser->parseDelete($tokenList);
-                    break;
-                case Keyword::REPLACE:
-                    $statement = $this->insertCommandParser->parseReplace($tokenList);
-                    break;
-            }
-
-            return new ExplainStatementCommand($statement, $connectionId, $type);
-        } else {
-            $table = new TableName(...$tokenList->consumeQualifiedName());
+        $tableName = $tokenList->mayConsumeQualifiedName();
+        if ($tableName !== null) {
+            $table = new TableName(...$tableName);
             $column = $tokenList->mayConsumeName();
             if ($column === null) {
                 $column = $tokenList->mayConsumeString();
@@ -126,6 +88,43 @@ class ExplainCommandParser
 
             return new DescribeTableCommand($table, $column);
         }
+
+        $type = $tokenList->consumeAnyKeyword(Keyword::EXTENDED, Keyword::PARTITIONS, Keyword::FORMAT);
+        if ($type !== null) {
+            if ($type === Keyword::FORMAT) {
+                $tokenList->consumeOperator(Operator::EQUAL);
+                $format = $tokenList->consumeAnyKeyword(Keyword::JSON, Keyword::TRADITIONAL);
+                $type = ExplainType::get($type . ' = ' . $format);
+            } else {
+                $type = ExplainType::get($type);
+            }
+        }
+
+        $statement = $connectionId = null;
+        switch ($tokenList->consumeAnyKeyword(Keyword::SELECT, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR)) {
+            case Keyword::FOR:
+                $tokenList->consumeKeyword(Keyword::CONNECTION);
+                /** @var int $connectionId */
+                $connectionId = $tokenList->consumeInt();
+                break;
+            case Keyword::SELECT:
+                $statement = $this->selectCommandParser->parseSelect($tokenList);
+                break;
+            case Keyword::INSERT:
+                $statement = $this->insertCommandParser->parseInsert($tokenList);
+                break;
+            case Keyword::UPDATE:
+                $statement = $this->updateCommandParser->parseUpdate($tokenList);
+                break;
+            case Keyword::DELETE:
+                $statement = $this->deleteCommandParser->parseDelete($tokenList);
+                break;
+            case Keyword::REPLACE:
+                $statement = $this->insertCommandParser->parseReplace($tokenList);
+                break;
+        }
+
+        return new ExplainStatementCommand($statement, $connectionId, $type);
     }
 
 }

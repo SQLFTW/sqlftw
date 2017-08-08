@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class EscapedTableReference implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode
 {
@@ -33,7 +33,7 @@ class EscapedTableReference implements \SqlFtw\Sql\Dml\TableReference\TableRefer
         return $this->node;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return '{ OJ ' . $this->node->serialize($formatter) . ' }';
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="AlterExecutor" default="build">
+<project name="SqlFtw" default="build">
 
     <property name="path.build" value="${project.basedir}/build"/>
     <property name="path.build.properties" value="${path.build}/build.properties"/>

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class XaPrepareCommand implements \SqlFtw\Sql\Command
 {
@@ -28,7 +28,7 @@ class XaPrepareCommand implements \SqlFtw\Sql\Command
         return $this->xid;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'XA PREPARE ' . $this->xid->serialize($formatter);
     }

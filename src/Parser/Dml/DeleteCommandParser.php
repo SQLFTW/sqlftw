@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use SqlFtw\Parser\JoinParser;
-use SqlFtw\Sql\Dml\Delete\DeleteCommand;
-use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Operator;
+use SqlFtw\Parser\JoinParser;
+use SqlFtw\Sql\Dml\Delete\DeleteCommand;
+use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\TableName;
 
 class DeleteCommandParser
 {

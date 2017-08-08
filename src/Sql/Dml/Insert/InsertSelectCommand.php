@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class InsertSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\InsertCommand
 {
@@ -24,7 +24,7 @@ class InsertSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand 
     private $onDuplicateKeyActions;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param \SqlFtw\Sql\Dml\Select\SelectCommand $select
      * @param string[]|null $columns
      * @param string[]|null $partitions
@@ -47,10 +47,7 @@ class InsertSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand 
         $this->onDuplicateKeyActions = $onDuplicateKeyActions;
     }
 
-    /**
-     * @return \SqlFtw\Sql\Dml\Select\SelectCommand
-     */
-    public function getSelect(): array
+    public function getSelect(): SelectCommand
     {
         return $this->select;
     }
@@ -60,7 +57,7 @@ class InsertSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand 
         return $this->onDuplicateKeyActions;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'INSERT' . $this->serializeBody($formatter) . ' ' . $this->select->serialize($formatter);
 

@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Routines;
 
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\QualifiedName;
 
 class DropFunctionCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var bool */
@@ -38,7 +38,7 @@ class DropFunctionCommand implements \SqlFtw\Sql\Command
         return $this->ifExists();
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DROP FUNCTION ';
         if ($this->ifExists) {

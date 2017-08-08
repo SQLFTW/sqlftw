@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Kill;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class KillCommand implements \SqlFtw\Sql\Command
 {
@@ -28,7 +28,7 @@ class KillCommand implements \SqlFtw\Sql\Command
         return $this->processId;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'KILL ' . $this->processId;
     }

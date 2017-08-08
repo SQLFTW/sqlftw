@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ResetSlaveCommand implements \SqlFtw\Sql\Command
 {
@@ -27,7 +27,7 @@ class ResetSlaveCommand implements \SqlFtw\Sql\Command
         $this->channel = $channel;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'RESET SLAVE';
         if ($this->all) {

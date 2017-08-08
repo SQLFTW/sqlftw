@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\Sql\Operator;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 /**
  * left := right
@@ -108,7 +106,7 @@ class BinaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->right;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $this->left->serialize($formatter) . ' '
             . (is_array($this->operator) ? implode('', $this->operator) : $this->operator) . ' '

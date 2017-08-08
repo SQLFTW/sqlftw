@@ -11,10 +11,10 @@ namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Select\GroupByExpression;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Select\SelectDistinctOption;
 use SqlFtw\Sql\Dml\Select\SelectExpression;
 use SqlFtw\Sql\Dml\Select\SelectInto;
@@ -23,8 +23,8 @@ use SqlFtw\Sql\Dml\Select\SelectLockOption;
 use SqlFtw\Sql\Dml\Select\SelectLockWaitOption;
 use SqlFtw\Sql\Dml\Select\SelectOption;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
 use SqlFtw\Sql\Order;
+use SqlFtw\Sql\TableName;
 
 class SelectCommandParser
 {
@@ -80,7 +80,7 @@ class SelectCommandParser
         $tokenList->consumeKeyword(Keyword::SELECT);
 
         /** @var \SqlFtw\Sql\Dml\Select\SelectDistinctOption $distinct */
-        $distinct = $tokenList->mayConsumeEnum(SelectDistinctOption::class);
+        $distinct = $tokenList->mayConsumeKeywordEnum(SelectDistinctOption::class);
         $options = [];
         $options[SelectOption::HIGH_PRIORITY] = (bool) $tokenList->mayConsumeKeyword(Keyword::HIGH_PRIORITY);
         $options[SelectOption::STRAIGHT_JOIN] = (bool) $tokenList->mayConsumeKeyword(Keyword::STRAIGHT_JOIN);
@@ -94,7 +94,7 @@ class SelectCommandParser
         $what = [];
         do {
             $value = $this->expressionParser->parseExpression($tokenList);
-            if ($tokenList->mayConsumeKeyword(Keyword:: AS)) {
+            if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
                 $alias = $tokenList->consumeName();
             } else {
                 $alias = $tokenList->mayConsumeName();
@@ -126,7 +126,8 @@ class SelectCommandParser
             $groupBy = [];
             do {
                 $expression = $this->expressionParser->parseExpression($tokenList);
-                $order = $tokenList->mayConsumeEnum(Order::class);
+                /** @var \SqlFtw\Sql\Order $order */
+                $order = $tokenList->mayConsumeKeywordEnum(Order::class);
                 $groupBy[] = new GroupByExpression($expression, $order);
             } while ($tokenList->mayConsumeComma());
 
@@ -185,7 +186,7 @@ class SelectCommandParser
                 } while ($tokenList->mayConsumeComma());
             }
             /** @var \SqlFtw\Sql\Dml\Select\SelectLockWaitOption $lockWaitOption */
-            $lockWaitOption = $tokenList->mayConsumeEnum(SelectLockWaitOption::class);
+            $lockWaitOption = $tokenList->mayConsumeKeywordEnum(SelectLockWaitOption::class);
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
         }
 

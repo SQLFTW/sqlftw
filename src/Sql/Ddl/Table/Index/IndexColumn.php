@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Order;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class IndexColumn implements \SqlFtw\Sql\SqlSerializable
 {
@@ -52,7 +52,7 @@ class IndexColumn implements \SqlFtw\Sql\SqlSerializable
         return $this->order;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $formatter->formatName($this->name);
         if ($this->length !== null) {

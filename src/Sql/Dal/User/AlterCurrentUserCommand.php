@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class AlterCurrentUserCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class AlterCurrentUserCommand implements \SqlFtw\Sql\Command
         return $this->ifExists;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'ALTER USER ' . ($this->ifExists ? 'IF EXISTS ' : '') . 'USER() IDENTIFIED BY ' . $formatter->formatString($this->password);
     }

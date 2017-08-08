@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dml;
 
 use Dogma\Check;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Names\ColumnName;
 use SqlFtw\Sql\Order;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class OrderByExpression implements \SqlFtw\Sql\SqlSerializable
 {
@@ -22,7 +22,7 @@ class OrderByExpression implements \SqlFtw\Sql\SqlSerializable
     /** @var \SqlFtw\Sql\Order */
     private $order;
 
-    /** @var \SqlFtw\Sql\Names\ColumnName|null */
+    /** @var \SqlFtw\Sql\ColumnName|null */
     private $column;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
@@ -41,7 +41,7 @@ class OrderByExpression implements \SqlFtw\Sql\SqlSerializable
         $this->position = $position;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         if ($this->column !== null) {
             $result = $this->column->serialize($formatter);

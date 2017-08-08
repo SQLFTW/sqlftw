@@ -9,21 +9,21 @@
 
 namespace SqlFtw\Sql\Dml\Call;
 
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\QualifiedName;
 
 class CallCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $procedure;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode[]|null */
     private $params;
 
     /**
-     * @param \SqlFtw\Sql\Names\QualifiedName $procedure
+     * @param \SqlFtw\Sql\QualifiedName $procedure
      * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $params
      */
     public function __construct(QualifiedName $procedure, ?array $params = null)
@@ -45,7 +45,7 @@ class CallCommand implements \SqlFtw\Sql\Command
         return $this->params;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CALL ' . $this->procedure->serialize($formatter);
         if ($this->params !== null) {

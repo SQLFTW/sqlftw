@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\Type;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
+use SqlFtw\Sql\TableName;
 
 class AlterTableActionType extends \SqlFtw\Sql\SqlEnum
 {
@@ -114,7 +114,7 @@ class AlterTableActionType extends \SqlFtw\Sql\SqlEnum
         return self::$types;
     }
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return self::$types[$this->getValue()];
     }

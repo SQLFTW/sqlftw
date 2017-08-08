@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class UseCommand implements \SqlFtw\Sql\Command
 {
@@ -28,7 +28,7 @@ class UseCommand implements \SqlFtw\Sql\Command
         return $this->databaseName;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'USE ' . $formatter->formatName($this->databaseName);
     }

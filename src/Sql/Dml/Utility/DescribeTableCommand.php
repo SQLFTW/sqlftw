@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class DescribeTableCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var string|null */
@@ -38,7 +38,7 @@ class DescribeTableCommand implements \SqlFtw\Sql\Command
         return $this->column;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'DESCRIBE ' . $this->table->serialize($formatter);
 

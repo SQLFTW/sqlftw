@@ -9,8 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Parser\Dml\FileFormatParser;
-use SqlFtw\Platform\Settings;
 use SqlFtw\Parser\Dal\BinlogCommandParser;
 use SqlFtw\Parser\Dal\CacheCommandsParser;
 use SqlFtw\Parser\Dal\CharsetCommandsParser;
@@ -45,6 +43,7 @@ use SqlFtw\Parser\Dml\DeleteCommandParser;
 use SqlFtw\Parser\Dml\DelimiterCommandParser;
 use SqlFtw\Parser\Dml\DoCommandsParser;
 use SqlFtw\Parser\Dml\ExplainCommandParser;
+use SqlFtw\Parser\Dml\FileFormatParser;
 use SqlFtw\Parser\Dml\HandlerCommandsParser;
 use SqlFtw\Parser\Dml\HelpCommandParser;
 use SqlFtw\Parser\Dml\InsertCommandParser;
@@ -56,6 +55,7 @@ use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
 use SqlFtw\Parser\Dml\WithParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
+use SqlFtw\Platform\Settings;
 
 class ParserFactory
 {
@@ -71,6 +71,11 @@ class ParserFactory
     {
         $this->settings = $settings;
         $this->parser = $parser;
+    }
+
+    public function getParser(): Parser
+    {
+        return $this->parser;
     }
 
     // partial parsers -------------------------------------------------------------------------------------------------

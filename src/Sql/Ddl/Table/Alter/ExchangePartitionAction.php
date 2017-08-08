@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class ExchangePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -19,7 +19,7 @@ class ExchangePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableA
     /** @var string */
     private $partition;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var bool|null */
@@ -52,7 +52,7 @@ class ExchangePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableA
         return $this->validation;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'EXCHANGE PARTITION ' . $formatter->formatName($this->partition)
             . ' WITH TABLE ' . $this->table->serialize($formatter);

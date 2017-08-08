@@ -10,22 +10,22 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
-class RenameTableCommand implements \SqlFtw\Sql\TablesCommand
+class RenameTableCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName[] */
+    /** @var \SqlFtw\Sql\TableName[] */
     protected $tables;
 
-    /** @var \SqlFtw\Sql\Names\TableName[] */
+    /** @var \SqlFtw\Sql\TableName[] */
     private $newTables;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName[] $tables
-     * @param \SqlFtw\Sql\Names\TableName[] $newTables
+     * @param \SqlFtw\Sql\TableName[] $tables
+     * @param \SqlFtw\Sql\TableName[] $newTables
      */
     public function __construct(array $tables, array $newTables)
     {
@@ -42,7 +42,7 @@ class RenameTableCommand implements \SqlFtw\Sql\TablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\TableName[]
+     * @return \SqlFtw\Sql\TableName[]
      */
     public function getTables(): array
     {
@@ -50,7 +50,7 @@ class RenameTableCommand implements \SqlFtw\Sql\TablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\TableName[]
+     * @return \SqlFtw\Sql\TableName[]
      */
     public function getNewTables(): array
     {
@@ -62,7 +62,7 @@ class RenameTableCommand implements \SqlFtw\Sql\TablesCommand
         /// zip iterator
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'RENAME TABLE';
         foreach ($this->tables as $i => $table) {

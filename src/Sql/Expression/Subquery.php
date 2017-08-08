@@ -9,9 +9,8 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class Subquery implements \SqlFtw\Sql\Expression\ExpressionNode
 {
@@ -35,7 +34,7 @@ class Subquery implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->subquery;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $this->subquery->serialize($formatter);
     }

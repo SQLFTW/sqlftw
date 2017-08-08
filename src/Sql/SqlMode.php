@@ -47,6 +47,7 @@ class SqlMode extends \Dogma\StringSet
     public const ORACLE = 'ORACLE';
     public const POSTGRESQL = 'POSTGRESQL';
 
+    /** @var string[][] */
     private $groups = [
         self::TRADITIONAL => [
             self::STRICT_TRANS_TABLES,
@@ -62,7 +63,7 @@ class SqlMode extends \Dogma\StringSet
             self::IGNORE_SPACE,
             self::PIPES_AS_CONCAT,
             self::REAL_AS_FLOAT,
-            self::ONLY_FULL_GROUP_BY
+            self::ONLY_FULL_GROUP_BY,
         ],
         self::DB2 => [
             self::ANSI_QUOTES,
@@ -70,7 +71,7 @@ class SqlMode extends \Dogma\StringSet
             self::PIPES_AS_CONCAT,
             self::NO_KEY_OPTIONS,
             self::NO_TABLE_OPTIONS,
-            self::NO_FIELD_OPTIONS
+            self::NO_FIELD_OPTIONS,
         ],
         self::MAXDB => [
             self::ANSI_QUOTES,
@@ -79,7 +80,7 @@ class SqlMode extends \Dogma\StringSet
             self::NO_KEY_OPTIONS,
             self::NO_TABLE_OPTIONS,
             self::NO_FIELD_OPTIONS,
-            self::NO_AUTO_CREATE_USER
+            self::NO_AUTO_CREATE_USER,
         ],
         self::MSSQL => [
             self::ANSI_QUOTES,

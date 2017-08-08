@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Component;
 
 use Dogma\Check;
 use Dogma\Type;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class InstallComponentCommand implements \SqlFtw\Sql\Command
 {
@@ -39,7 +39,7 @@ class InstallComponentCommand implements \SqlFtw\Sql\Command
         return $this->components;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'INSTALL COMPONENT ' . $formatter->formatNamesList($this->components);
     }

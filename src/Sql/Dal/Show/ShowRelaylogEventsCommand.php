@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ShowRelaylogEventsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
@@ -45,7 +45,7 @@ class ShowRelaylogEventsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->offset;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW RELAYLOG EVENTS';
         if ($this->logName) {

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 use Dogma\Type;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableNameList;
+use SqlFtw\Sql\TableNameList;
 
 class TableOption extends \SqlFtw\Sql\SqlEnum
 {

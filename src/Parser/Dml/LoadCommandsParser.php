@@ -9,16 +9,16 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadPriority;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Operator;
+use SqlFtw\Sql\TableName;
 
 class LoadCommandsParser
 {
@@ -101,13 +101,13 @@ class LoadCommandsParser
      */
     private function parseOptions(TokenList $tokenList, bool $parsePartitions): array
     {
-        $priority = $tokenList->mayConsumeEnum(LoadPriority::class);
+        $priority = $tokenList->mayConsumeKeywordEnum(LoadPriority::class);
         $local = (bool) $tokenList->mayConsumeKeyword(Keyword::LOCAL);
 
         $tokenList->consumeKeyword(Keyword::INFILE);
         $file = $tokenList->consumeString();
 
-        $duplicateOption = $tokenList->mayConsumeEnum(DuplicateOption::class);
+        $duplicateOption = $tokenList->mayConsumeKeywordEnum(DuplicateOption::class);
 
         $tokenList->consumeKeywords(Keyword::INTO, Keyword::TABLE);
         $table = new TableName(...$tokenList->consumeQualifiedName());

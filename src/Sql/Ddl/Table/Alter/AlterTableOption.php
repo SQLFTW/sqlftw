@@ -17,5 +17,6 @@ class AlterTableOption extends \SqlFtw\Sql\SqlEnum
     public const ALGORITHM = Keyword::ALGORITHM;
     public const FORCE = Keyword::FORCE;
     public const LOCK = Keyword::LOCK;
+    public const VALIDATION = Keyword::VALIDATION;
 
 }

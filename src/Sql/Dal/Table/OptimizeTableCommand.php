@@ -10,21 +10,21 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
-class OptimizeTableCommand implements \SqlFtw\Sql\TablesCommand
+class OptimizeTableCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName[] */
+    /** @var \SqlFtw\Sql\TableName[] */
     private $tables;
 
     /** @var bool */
     private $local;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName[] $tables
+     * @param \SqlFtw\Sql\TableName[] $tables
      * @param bool $local
      */
     public function __construct(array $tables, bool $local = false)
@@ -37,7 +37,7 @@ class OptimizeTableCommand implements \SqlFtw\Sql\TablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\TableName[]
+     * @return \SqlFtw\Sql\TableName[]
      */
     public function getTables(): array
     {
@@ -49,7 +49,7 @@ class OptimizeTableCommand implements \SqlFtw\Sql\TablesCommand
         return $this->local;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'OPTIMIZE';
         if ($this->local) {

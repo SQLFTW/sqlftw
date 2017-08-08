@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
 use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class InnerJoin extends \SqlFtw\Sql\Dml\TableReference\Join
 {
@@ -49,7 +49,7 @@ class InnerJoin extends \SqlFtw\Sql\Dml\TableReference\Join
             Check::itemsOfType($using, Type::STRING);
         }
 
-        $this->crossJoin = $condition;
+        $this->crossJoin = $crossJoin;
         $this->condition = $condition;
         $this->using = $using;
     }
@@ -77,7 +77,7 @@ class InnerJoin extends \SqlFtw\Sql\Dml\TableReference\Join
         return $this->using;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->left->serialize($formatter);
         if ($this->crossJoin) {

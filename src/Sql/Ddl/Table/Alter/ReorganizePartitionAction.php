@@ -9,25 +9,30 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\Check;
+use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class ReorganizePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var string|string[] */
+    /** @var string[]|null */
     private $partitions;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition[] */
     private $newPartitions;
 
     /**
-     * @param string|string[] $partitions
+     * @param string[]|null $partitions (where null means ALL)
      * @param \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition[] $newPartitions
      */
-    public function __construct($partitions, array $newPartitions)
+    public function __construct(?array $partitions, array $newPartitions)
     {
+        if ($partitions !== null) {
+            Check::itemsOfType($partitions, Type::STRING);
+        }
         $this->partitions = $partitions;
         $this->newPartitions = $newPartitions;
     }
@@ -38,9 +43,9 @@ class ReorganizePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTabl
     }
 
     /**
-     * @return string|string[]
+     * @return string[]|null
      */
-    public function getPartitions()
+    public function getPartitions(): ?array
     {
         return $this->partitions;
     }
@@ -53,9 +58,9 @@ class ReorganizePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTabl
         return $this->newPartitions;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
-        return 'REORGANIZE PARTITION ' . ($this->partitions === Keyword::ALL ? 'ALL' : $formatter->formatNamesList($this->partitions))
+        return 'REORGANIZE PARTITION ' . ($this->partitions === null ? 'ALL' : $formatter->formatNamesList($this->partitions))
             . ' INTO (' . $formatter->formatSerializablesList($this->newPartitions) . ')';
     }
 

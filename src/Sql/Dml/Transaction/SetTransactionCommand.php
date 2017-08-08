@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Scope;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SetTransactionCommand implements \SqlFtw\Sql\Command
 {
@@ -32,7 +32,7 @@ class SetTransactionCommand implements \SqlFtw\Sql\Command
         $this->write = $write;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SET TRANSACTION';
         if ($this->scope !== null) {

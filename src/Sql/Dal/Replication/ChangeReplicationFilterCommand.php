@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use Dogma\Check;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class ChangeReplicationFilterCommand implements \SqlFtw\Sql\Command
 {
@@ -33,7 +33,7 @@ class ChangeReplicationFilterCommand implements \SqlFtw\Sql\Command
         $this->filters = $filters;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $types = ReplicationFilter::getTypes();
 

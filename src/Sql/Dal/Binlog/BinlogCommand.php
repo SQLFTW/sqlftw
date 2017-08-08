@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Binlog;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class BinlogCommand implements \SqlFtw\Sql\Command
 {
@@ -23,7 +23,7 @@ class BinlogCommand implements \SqlFtw\Sql\Command
         $this->value = $value;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return sprintf('BINLOG %s', $formatter->formatString($this->value));
     }

@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dml\Select;
 
 use Dogma\Check;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SelectCommand implements \SqlFtw\Sql\Command
 {
@@ -193,7 +193,7 @@ class SelectCommand implements \SqlFtw\Sql\Command
         return $this->locking;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SELECT';
         if ($this->distinct !== null) {

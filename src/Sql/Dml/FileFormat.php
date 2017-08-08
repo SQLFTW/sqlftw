@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class FileFormat implements \SqlFtw\Sql\SqlSerializable
 {
@@ -84,7 +84,7 @@ class FileFormat implements \SqlFtw\Sql\SqlSerializable
         return $this->fieldsTerminatedBy;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = '';
         if ($this->fieldsTerminatedBy !== null || $this->fieldsEnclosedBy !== null || $this->fieldsEscapedBy !== null) {

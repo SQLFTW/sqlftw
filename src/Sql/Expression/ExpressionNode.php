@@ -9,8 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-
 interface ExpressionNode extends \SqlFtw\Sql\SqlSerializable
 {
 

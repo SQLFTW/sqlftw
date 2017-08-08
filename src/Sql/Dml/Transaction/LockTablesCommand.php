@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class LockTablesCommand implements \SqlFtw\Sql\Command
 {
@@ -37,7 +37,7 @@ class LockTablesCommand implements \SqlFtw\Sql\Command
         return $this->items;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'LOCK TABLES ' . $formatter->formatSerializablesList($this->items);
     }

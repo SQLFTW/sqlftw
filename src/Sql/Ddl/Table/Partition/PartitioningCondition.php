@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class PartitioningCondition implements \SqlFtw\Sql\SqlSerializable
 {
@@ -69,7 +69,7 @@ class PartitioningCondition implements \SqlFtw\Sql\SqlSerializable
         return $this->algorithm;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
         if ($this->expression !== null) {

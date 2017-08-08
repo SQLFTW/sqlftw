@@ -10,11 +10,11 @@
 namespace SqlFtw\Sql\Dml\Update;
 
 use Dogma\Check;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class UpdateCommand implements \SqlFtw\Sql\Command
 {
@@ -117,7 +117,7 @@ class UpdateCommand implements \SqlFtw\Sql\Command
         return $this->lowPriority;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'UPDATE ';
         if ($this->lowPriority) {

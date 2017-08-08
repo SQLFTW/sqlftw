@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class AlterActionsList implements \SqlFtw\Sql\SqlSerializable
 {
@@ -34,9 +34,19 @@ class AlterActionsList implements \SqlFtw\Sql\SqlSerializable
         return $this->actions;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function isEmpty(): bool
     {
-        return $formatter->formatSerializablesList($this->actions, ",\n");
+        return $this->actions === [];
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        $result = '';
+        foreach ($this->actions as $action) {
+            $result .= "\n" . $formatter->indent . $action->serialize($formatter) . ',';
+        }
+
+        return rtrim($result, ',');
     }
 
 }

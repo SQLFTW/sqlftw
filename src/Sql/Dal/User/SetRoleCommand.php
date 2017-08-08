@@ -10,8 +10,8 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class SetRoleCommand implements \SqlFtw\Sql\Command
 {
@@ -20,12 +20,12 @@ class SetRoleCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Dal\User\RolesSpecification */
     private $roles;
 
-    /** @var \SqlFtw\Sql\Names\UserName[]|null */
+    /** @var \SqlFtw\Sql\UserName[]|null */
     private $rolesList;
 
     /**
      * @param \SqlFtw\Sql\Dal\User\RolesSpecification $roles
-     * @param \SqlFtw\Sql\Names\UserName[]|null $rolesList
+     * @param \SqlFtw\Sql\UserName[]|null $rolesList
      */
     public function __construct(?RolesSpecification $roles, ?array $rolesList = null)
     {
@@ -44,14 +44,14 @@ class SetRoleCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\UserName[]
+     * @return \SqlFtw\Sql\UserName[]
      */
     public function getRolesList(): array
     {
         return $this->rolesList;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'SET ROLE ';
         if ($this->roles !== null) {

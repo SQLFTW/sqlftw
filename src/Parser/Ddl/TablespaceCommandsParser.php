@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\CreateTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\DropTablespaceCommand;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Operator;
 
 class TablespaceCommandsParser
 {

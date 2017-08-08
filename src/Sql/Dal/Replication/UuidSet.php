@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Lexer\Lexer;
 
 class UuidSet implements \SqlFtw\Sql\SqlSerializable
@@ -53,7 +53,7 @@ class UuidSet implements \SqlFtw\Sql\SqlSerializable
         return $this->intervals;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return $this->uuid . ':' . implode(':', Arr::map($this->intervals, function (array $interval) {
             return $interval[0] . ($interval[1] !== null ? '-' . $interval[1] : '');

@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dml\Insert;
 
 use Dogma\Arr;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\TableName;
 
 class ReplaceValuesCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\ReplaceCommand
 {
@@ -22,7 +22,7 @@ class ReplaceValuesCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand
     private $rows;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName $table
+     * @param \SqlFtw\Sql\TableName $table
      * @param \SqlFtw\Sql\Expression\ExpressionNode[][] $rows
      * @param string[]|null $columns
      * @param string[]|null $partitions
@@ -50,7 +50,7 @@ class ReplaceValuesCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand
         return $this->rows;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'REPLACE' . $this->serializeBody($formatter);
 

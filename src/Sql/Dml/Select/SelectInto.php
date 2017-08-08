@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\FileFormat;
-use SqlFtw\SqlFormatter\SqlFormatter;
 
 class SelectInto implements \SqlFtw\Sql\SqlSerializable
 {
@@ -81,7 +81,7 @@ class SelectInto implements \SqlFtw\Sql\SqlSerializable
         return $this->format;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         if ($this->variables !== null) {
             return 'INTO ' . $formatter->formatNamesList($this->variables);
@@ -99,6 +99,5 @@ class SelectInto implements \SqlFtw\Sql\SqlSerializable
 
         return $result;
     }
-
 
 }

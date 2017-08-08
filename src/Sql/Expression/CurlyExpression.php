@@ -9,8 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\NodeType;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class CurlyExpression implements \SqlFtw\Sql\Expression\ExpressionNode
 {
@@ -43,7 +42,7 @@ class CurlyExpression implements \SqlFtw\Sql\Expression\ExpressionNode
         return $this->expression;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return '{' . $formatter->formatName($this->name) . ' ' . $this->expression->serialize($formatter) . '}';
     }

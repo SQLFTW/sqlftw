@@ -9,13 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Instance;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class AlterInstanceCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'ALTER INSTANCE ROTATE INNODB MASTER KEY';
     }

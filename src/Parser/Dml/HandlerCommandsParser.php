@@ -9,15 +9,15 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Handler\HandlerCloseCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerOpenCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadWhat;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\TableName;
 
 class HandlerCommandsParser
 {
@@ -75,7 +75,7 @@ class HandlerCommandsParser
             }
         } else {
             /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadWhat $what */
-            $what = $tokenList->consumeEnum(HandlerReadWhat::class);
+            $what = $tokenList->consumeKeywordEnum(HandlerReadWhat::class);
         }
 
         $where = $limit = $offset = null;

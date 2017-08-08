@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use Dogma\Check;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ChangeMasterToCommand implements \SqlFtw\Sql\Command
 {
@@ -73,7 +73,7 @@ class ChangeMasterToCommand implements \SqlFtw\Sql\Command
         return $this->channel;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CHANGE MASTER TO ' . implode(', ', Arr::filter(Arr::mapPairs(
             $this->options,

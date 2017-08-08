@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ShowEngineCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
 {
@@ -36,7 +36,7 @@ class ShowEngineCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
         return $this->option;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         return 'SHOW ENGINE ' . $formatter->formatName($this->name) . ' ' . $this->option->serialize($formatter);
     }

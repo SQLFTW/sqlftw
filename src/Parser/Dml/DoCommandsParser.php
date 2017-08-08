@@ -9,11 +9,10 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use SqlFtw\Sql\Dml\DoCommand\DoCommand;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Dml\DoCommand\DoCommand;
+use SqlFtw\Sql\Keyword;
 
 class DoCommandsParser
 {

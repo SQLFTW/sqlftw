@@ -9,6 +9,9 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\Dml\SelectCommandParser;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
@@ -16,13 +19,10 @@ use SqlFtw\Sql\Ddl\View\DropViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewOption;
 use SqlFtw\Sql\Ddl\View\ViewAlgorithm;
 use SqlFtw\Sql\Ddl\View\ViewCheckOption;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\UserName;
-use SqlFtw\Parser\Dml\SelectCommandParser;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Operator;
+use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\UserName;
 
 class ViewCommandsParser
 {
@@ -82,7 +82,7 @@ class ViewCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
             $tokenList->consumeOperator(Operator::EQUAL);
             /** @var \SqlFtw\Sql\Ddl\View\ViewAlgorithm $algorithm */
-            $algorithm = $tokenList->consumeEnum(ViewAlgorithm::class);
+            $algorithm = $tokenList->consumeKeywordEnum(ViewAlgorithm::class);
         }
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
             $tokenList->consumeOperator(Operator::EQUAL);
@@ -91,7 +91,7 @@ class ViewCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::SQL)) {
             $tokenList->consumeKeyword(Keyword::SECURITY);
             /** @var \SqlFtw\Sql\Ddl\SqlSecurity $sqlSecurity */
-            $sqlSecurity = $tokenList->consumeEnum(SqlSecurity::class);
+            $sqlSecurity = $tokenList->consumeKeywordEnum(SqlSecurity::class);
         }
 
         $tokenList->consumeKeyword(Keyword::VIEW);

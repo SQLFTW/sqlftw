@@ -10,13 +10,12 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\Arr;
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushOption;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\TableName;
 
 class FlushCommandParser
 {
@@ -55,9 +54,9 @@ class FlushCommandParser
         $options = [];
         $channel = null;
         $logs = [Keyword::BINARY, Keyword::ENGINE, Keyword::ERROR, Keyword::GENERAL, Keyword::RELAY, Keyword::SLOW];
-        $other = [Keyword::DES_KEY_FILE, Keyword::HOSTS, Keyword::OPTIMIZER_COSTS, Keyword::PRIVILEGES, Keyword::QUERY];
+        $other = [Keyword::DES_KEY_FILE, Keyword::HOSTS, Keyword::OPTIMIZER_COSTS, Keyword::PRIVILEGES, Keyword::QUERY, Keyword::STATUS, Keyword::USER_RESOURCES];
         do {
-            $keyword = $tokenList->consumeAnyKeyword($logs + $other);
+            $keyword = $tokenList->consumeAnyKeyword(...array_merge($logs, $other));
             if (Arr::contains($logs, $keyword)) {
                 $tokenList->consumeKeyword(Keyword::LOGS);
                 if ($keyword === Keyword::RELAY && $tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
@@ -70,7 +69,7 @@ class FlushCommandParser
             } else {
                 $options[] = FlushOption::get($keyword);
             }
-        } while (true);
+        } while ($tokenList->mayConsumeComma());
 
         return new FlushCommand($options, $channel, $local);
     }

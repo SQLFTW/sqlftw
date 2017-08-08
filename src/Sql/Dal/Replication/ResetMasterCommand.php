@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
 
 class ResetMasterCommand implements \SqlFtw\Sql\Command
 {
@@ -28,7 +28,7 @@ class ResetMasterCommand implements \SqlFtw\Sql\Command
         return $this->binlogPosition;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'RESET MASTER';
         if ($this->binlogPosition !== null) {

@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Parser\TokenList;
 
 class CharsetCommandsParser
 {
@@ -30,8 +31,9 @@ class CharsetCommandsParser
         if ($keyword === Keyword::CHARACTER) {
             $tokenList->consumeKeyword(Keyword::SET);
         }
-        $charset = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT) !== null) {
+        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+            $charset = null;
+        } else {
             $charset = Charset::get($tokenList->consumeNameOrString());
         }
 
@@ -46,10 +48,10 @@ class CharsetCommandsParser
     {
         $tokenList->consumeKeywords(Keyword::SET, Keyword::NAMES);
         $charset = $collation = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT) !== null) {
+        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT) === null) {
             $charset = Charset::get($tokenList->consumeNameOrString());
             if ($tokenList->mayConsumeKeyword(Keyword::COLLATE) !== null) {
-                $collation = $tokenList->consumeNameOrString();
+                $collation = Collation::get($tokenList->consumeNameOrString());
             }
         }
 

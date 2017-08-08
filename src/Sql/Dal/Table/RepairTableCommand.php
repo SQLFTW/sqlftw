@@ -10,14 +10,14 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use Dogma\Check;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
-class RepairTableCommand implements \SqlFtw\Sql\TablesCommand
+class RepairTableCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName[] */
+    /** @var \SqlFtw\Sql\TableName[] */
     private $tables;
 
     /** @var bool */
@@ -33,7 +33,7 @@ class RepairTableCommand implements \SqlFtw\Sql\TablesCommand
     private $useFrm;
 
     /**
-     * @param \SqlFtw\Sql\Names\TableName[] $tables
+     * @param \SqlFtw\Sql\TableName[] $tables
      * @param bool $local
      * @param bool $quick
      * @param bool $extended
@@ -52,7 +52,7 @@ class RepairTableCommand implements \SqlFtw\Sql\TablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Names\TableName[]
+     * @return \SqlFtw\Sql\TableName[]
      */
     public function getTables(): array
     {
@@ -79,7 +79,7 @@ class RepairTableCommand implements \SqlFtw\Sql\TablesCommand
         return $this->useFrm;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'REPAIR';
         if ($this->local) {

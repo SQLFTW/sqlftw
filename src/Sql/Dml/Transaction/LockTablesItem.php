@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\TableName;
 
 class LockTablesItem implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
     /** @var \SqlFtw\Sql\Dml\Transaction\LockTableType */
@@ -32,7 +32,7 @@ class LockTablesItem implements \SqlFtw\Sql\SqlSerializable
         $this->alias = $alias;
     }
 
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = $this->table->serialize($formatter);
         if ($this->alias !== null) {

@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Names\TableName;
+use SqlFtw\Sql\TableName;
 
 class ReplicationFilter extends \SqlFtw\Sql\SqlEnum
 {

@@ -9,13 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Trigger;
 
-use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Ddl\CompoundStatement;
-use SqlFtw\Sql\Names\QualifiedName;
-use SqlFtw\Sql\Names\TableName;
-use SqlFtw\Sql\Names\UserName;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\SqlFormatter\SqlFormatter;
+use SqlFtw\Sql\Statement;
+use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\UserName;
 
 class CreateTriggerCommand implements \SqlFtw\Sql\Command
 {
@@ -27,47 +26,32 @@ class CreateTriggerCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Ddl\Trigger\TriggerEvent */
     private $event;
 
-    /** @var \SqlFtw\Sql\Names\TableName */
+    /** @var \SqlFtw\Sql\TableName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Command|\SqlFtw\Sql\Ddl\CompoundStatement */
+    /** @var \SqlFtw\Sql\Statement */
     private $body;
 
-    /** @var \SqlFtw\Sql\Names\UserName|null */
+    /** @var \SqlFtw\Sql\UserName|null */
     private $definer;
 
-    /** @var \SqlFtw\Sql\Ddl\Trigger\TriggerOrder|null */
-    private $order;
-
-    /** @var \SqlFtw\Sql\Names\QualifiedName|null */
-    private $otherTrigger;
+    /** @var \SqlFtw\Sql\Ddl\Trigger\TriggerPosition|null */
+    private $position;
 
     public function __construct(
         string $name,
         TriggerEvent $event,
         TableName $table,
-        SqlSerializable $body,
+        Statement $body,
         ?UserName $definer = null,
-        ?TriggerOrder $order = null,
-        ?QualifiedName $otherTrigger = null
+        ?TriggerPosition $position = null
     ) {
-        if (!($body instanceof Command) && !($body instanceof CompoundStatement)) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf(
-                'Trigger body must be an instance of %s or %s. %s given.',
-                Command::class,
-                CompoundStatement::class,
-                get_class($body)
-            ));
-        }
-
         $this->name = $name;
         $this->event = $event;
         $this->table = $table;
         $this->body = $body;
         $this->definer = $definer;
-        /// check both are set
-        $this->order = $order;
-        $this->otherTrigger = $otherTrigger;
+        $this->position = $position;
     }
 
     public function getName(): string
@@ -86,9 +70,9 @@ class CreateTriggerCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\Command|\SqlFtw\Sql\Ddl\CompoundStatement
+     * @return \SqlFtw\Sql\Statement
      */
-    public function getBody(): SqlSerializable
+    public function getBody(): Statement
     {
         return $this->body;
     }
@@ -98,17 +82,12 @@ class CreateTriggerCommand implements \SqlFtw\Sql\Command
         return $this->definer;
     }
 
-    public function getOrder(): ?TriggerOrder
+    public function getPosition(): ?TriggerPosition
     {
-        return $this->order;
+        return $this->position;
     }
 
-    public function getOtherTrigger(): ?QualifiedName
-    {
-        return $this->otherTrigger;
-    }
-
-    public function serialize(SqlFormatter $formatter): string
+    public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
@@ -116,8 +95,8 @@ class CreateTriggerCommand implements \SqlFtw\Sql\Command
         }
         $result .= ' TRIGGER ' . $formatter->formatName($this->name) . ' ' . $this->event->serialize($formatter);
         $result .= ' ON ' . $this->table->serialize($formatter) . ' FOR EACH ROW';
-        if ($this->order !== null) {
-            $result .= $this->order->serialize($formatter) . ' ' . $this->otherTrigger->serialize($formatter);
+        if ($this->position !== null) {
+            $result .= ' ' . $this->position->serialize($formatter);
         }
         $result .= ' ' . $this->body->serialize($formatter);
 
