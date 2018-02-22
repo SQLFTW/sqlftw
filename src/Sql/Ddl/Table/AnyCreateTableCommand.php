@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-interface AnyCreateTableCommand extends \SqlFtw\Sql\Command
+interface AnyCreateSingleTableCommand extends \SqlFtw\Sql\SingleTableCommand
 {
 
 }

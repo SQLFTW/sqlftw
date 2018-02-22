@@ -13,7 +13,7 @@ use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\TableName;
 
-class ChecksumTableCommand implements \SqlFtw\Sql\Command
+class ChecksumTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

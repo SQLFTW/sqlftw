@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -13,7 +13,7 @@ use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\TableName;
 
-class AnalyzeTableCommand implements \SqlFtw\Sql\Command
+class AnalyzeTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

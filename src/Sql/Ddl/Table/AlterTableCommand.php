@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -17,7 +17,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\TableName;
 
-class AlterTableCommand implements \SqlFtw\Sql\Command
+class AlterSingleTableCommand implements \SqlFtw\Sql\SingleTableCommand
 {
 
     /** @var \SqlFtw\Sql\TableName */
@@ -29,22 +29,22 @@ class AlterTableCommand implements \SqlFtw\Sql\Command
     /** @var mixed[] */
     private $alterOptions;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[] */
+    /** @var \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|null */
     private $tableOptions;
 
     /**
      * @param \SqlFtw\Sql\TableName $table
      * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList|\SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] $actions
      * @param mixed[] $alterOptions
-     * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[] $tableOptions
+     * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[]|null $tableOptions
      */
     public function __construct(
         TableName $table,
         $actions = [],
         $alterOptions = [],
-        $tableOptions = []
+        $tableOptions = null
     ) {
-        Check::types($actions, [AlterActionsList::class, Type::PHP_ARRAY, Type::NULL]);
+        Check::types($actions, [AlterActionsList::class, Type::PHP_ARRAY]);
         Check::types($tableOptions, [TableOptionsList::class, Type::PHP_ARRAY, Type::NULL]);
         if (is_array($alterOptions)) {
             foreach ($alterOptions as $option => $value) {
@@ -66,6 +66,19 @@ class AlterTableCommand implements \SqlFtw\Sql\Command
     public function getActions(): AlterActionsList
     {
         return $this->actions;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getAlterOptions(): array
+    {
+        return $this->alterOptions;
+    }
+
+    public function getTableOptions(): ?TableOptionsList
+    {
+        return $this->tableOptions;
     }
 
     public function serialize(Formatter $formatter): string

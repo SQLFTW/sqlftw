@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -10,10 +10,11 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\Check;
+use Dogma\ZipIterator;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\TableName;
 
-class RenameTableCommand implements \SqlFtw\Sql\Command
+class RenameTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -57,9 +58,9 @@ class RenameTableCommand implements \SqlFtw\Sql\Command
         return $this->newTables;
     }
 
-    public function getIterator(): \IteratorAggregate
+    public function getIterator(): ZipIterator
     {
-        /// zip iterator
+        return new ZipIterator($this->tables, $this->newTables);
     }
 
     public function serialize(Formatter $formatter): string

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\TableName;
 
-class TruncateTableCommand implements \SqlFtw\Sql\Command
+class TruncateSingleTableCommand implements \SqlFtw\Sql\SingleTableCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

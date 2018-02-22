@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropTableCommand implements \SqlFtw\Sql\Command
+class DropTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
