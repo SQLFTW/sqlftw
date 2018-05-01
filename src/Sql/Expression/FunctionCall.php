@@ -24,11 +24,12 @@ class FunctionCall implements \SqlFtw\Sql\Expression\ExpressionNode
     private $arguments;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $name
+     * @param \SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\Expression\BuiltInFunction $name
      * @param \SqlFtw\Sql\Expression\ExpressionNode[] $arguments
      */
-    public function __construct(QualifiedName $name, array $arguments)
+    public function __construct($name, array $arguments = [])
     {
+        Check::types($name, [QualifiedName::class, BuiltInFunction::class]);
         Check::itemsOfType($arguments, ExpressionNode::class);
 
         $this->name = $name;
@@ -40,19 +41,12 @@ class FunctionCall implements \SqlFtw\Sql\Expression\ExpressionNode
         return NodeType::get(NodeType::FUNCTION_CALL);
     }
 
-    public function getName(): QualifiedName
+    /**
+     * @return \SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\Expression\BuiltInFunction
+     */
+    public function getName()
     {
         return $this->name;
-    }
-
-    public function isBuiltInFunction(): bool
-    {
-        return $this->name->getDatabaseName() === null && BuiltInFunction::isValid($this->name->getName());
-    }
-
-    public function getBuiltInFUnction(): ?BuiltInFunction
-    {
-        return $this->isBuiltInFunction() ? BuiltInFunction::get($this->name->getName()) : null;
     }
 
     /**

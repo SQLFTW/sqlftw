@@ -15,12 +15,12 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class AlterSingleTableCommand implements \SqlFtw\Sql\SingleTableCommand
+class AlterTableCommand implements \SqlFtw\Sql\SingleTableCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
 {
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList */
@@ -33,13 +33,13 @@ class AlterSingleTableCommand implements \SqlFtw\Sql\SingleTableCommand
     private $tableOptions;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList|\SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] $actions
      * @param mixed[] $alterOptions
      * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[]|null $tableOptions
      */
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         $actions = [],
         $alterOptions = [],
         $tableOptions = null
@@ -58,7 +58,7 @@ class AlterSingleTableCommand implements \SqlFtw\Sql\SingleTableCommand
         $this->tableOptions = is_array($tableOptions) ? new TableOptionsList($tableOptions) : $tableOptions;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

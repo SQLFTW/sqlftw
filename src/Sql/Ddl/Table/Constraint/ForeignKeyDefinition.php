@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class ForeignKeyDefinition implements \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody
 {
@@ -19,7 +19,7 @@ class ForeignKeyDefinition implements \SqlFtw\Sql\Ddl\Table\Constraint\Constrain
     /** @var string[] */
     private $columns;
 
-    /** @var \SqlFtw\Sql\TableName|null */
+    /** @var \SqlFtw\Sql\QualifiedName|null */
     private $sourceTable;
 
     /** @var string[] */
@@ -39,7 +39,7 @@ class ForeignKeyDefinition implements \SqlFtw\Sql\Ddl\Table\Constraint\Constrain
 
     /**
      * @param string[] $columns
-     * @param \SqlFtw\Sql\TableName $sourceTable
+     * @param \SqlFtw\Sql\QualifiedName $sourceTable
      * @param string[] $sourceColumns
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onDelete
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onUpdate
@@ -48,7 +48,7 @@ class ForeignKeyDefinition implements \SqlFtw\Sql\Ddl\Table\Constraint\Constrain
      */
     public function __construct(
         array $columns,
-        TableName $sourceTable,
+        QualifiedName $sourceTable,
         array $sourceColumns,
         ?ForeignKeyAction $onDelete = null,
         ?ForeignKeyAction $onUpdate = null,
@@ -98,7 +98,7 @@ class ForeignKeyDefinition implements \SqlFtw\Sql\Ddl\Table\Constraint\Constrain
         return $this->columns;
     }
 
-    public function getSourceTable(): TableName
+    public function getSourceTable(): QualifiedName
     {
         return $this->sourceTable;
     }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -13,7 +13,7 @@ use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class SetDefaultRoleCommand implements \SqlFtw\Sql\Command
+class SetDefaultRoleCommand implements \SqlFtw\Sql\Dal\User\UserCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

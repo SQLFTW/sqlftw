@@ -9,8 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-abstract class ShowCommand implements \SqlFtw\Sql\Command
+interface ShowCommand extends \SqlFtw\Sql\Dal\DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
 
 }

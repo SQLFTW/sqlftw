@@ -13,7 +13,7 @@ use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class AlterUserDefaultRoleCommand implements \SqlFtw\Sql\Command
+class AlterUserDefaultRoleCommand implements \SqlFtw\Sql\Dal\User\UserCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

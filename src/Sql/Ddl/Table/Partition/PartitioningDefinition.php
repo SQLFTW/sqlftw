@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Partition;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 
-class Partitioning implements \SqlFtw\Sql\SqlSerializable
+class PartitioningDefinition implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 

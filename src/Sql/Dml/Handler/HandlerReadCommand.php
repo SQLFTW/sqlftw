@@ -11,13 +11,13 @@ namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class HandlerReadCommand implements \SqlFtw\Sql\Command
+class HandlerReadCommand implements \SqlFtw\Sql\Dml\Handler\HandlerCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadWhat */
@@ -39,7 +39,7 @@ class HandlerReadCommand implements \SqlFtw\Sql\Command
     private $offset;
 
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         HandlerReadWhat $what,
         ?string $index = null,
         ?array $values = null,
@@ -56,7 +56,7 @@ class HandlerReadCommand implements \SqlFtw\Sql\Command
         $this->offset = $offset;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

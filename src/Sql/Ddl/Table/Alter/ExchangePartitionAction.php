@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class ExchangePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {
@@ -19,13 +19,13 @@ class ExchangePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableA
     /** @var string */
     private $partition;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var bool|null */
     private $validation;
 
-    public function __construct(string $partition, TableName $table, ?bool $validation)
+    public function __construct(string $partition, QualifiedName $table, ?bool $validation)
     {
         $this->partition = $partition;
         $this->table = $table;
@@ -42,7 +42,7 @@ class ExchangePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableA
         return $this->partition;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

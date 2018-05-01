@@ -18,7 +18,6 @@ use SqlFtw\Sql\Ddl\Trigger\TriggerOrder;
 use SqlFtw\Sql\Ddl\Trigger\TriggerPosition;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\TableName;
 use SqlFtw\Sql\UserName;
 
 class TriggerCommandsParser
@@ -66,7 +65,7 @@ class TriggerCommandsParser
             . ' ' . $tokenList->consumeAnyKeyword(Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE));
 
         $tokenList->consumeKeyword(Keyword::ON);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
         $tokenList->consumeKeywords(Keyword::FOR, Keyword::EACH, Keyword::ROW);
 
         $order = $tokenList->mayConsumeAnyKeyword(Keyword::FOLLOWS, Keyword::PRECEDES);

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Trigger;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class DropTriggerCommand implements \SqlFtw\Sql\Command
+class DropTriggerCommand implements \SqlFtw\Sql\Ddl\Trigger\TriggerCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

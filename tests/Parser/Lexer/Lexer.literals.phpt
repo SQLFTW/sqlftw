@@ -2,15 +2,15 @@
 
 namespace SqlFtw\Parser\Lexer;
 
-use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\Settings;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Platform;
+use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Tests\Assert;
 
 require '../../bootstrap.php';
 
-$settings = new Settings(Platform::get(Platform::MYSQL, '5.7'));
-$lexer = new Lexer($settings,true, true);
+$settings = new PlatformSettings(Platform::get(Platform::MYSQL, '5.7'));
+$lexer = new Lexer($settings, true, true);
 
 // BINARY_LITERAL
 $tokens = $lexer->tokenizeAll(' 0b0101 ');

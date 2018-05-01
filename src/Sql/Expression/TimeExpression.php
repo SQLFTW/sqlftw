@@ -19,19 +19,19 @@ class TimeExpression implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime|\SqlFtw\Sql\Expression\BuiltInFunction */
+    /** @var \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime */
     private $value;
 
     /** @var \SqlFtw\Sql\Expression\TimeInterval[] */
     private $intervals;
 
     /**
-     * @param \Dogma\Time\Date|\Dogma\Time\Time|\DateTimeInterface|\SqlFtw\Sql\Expression\BuiltInFunction $value
-     * @param \Dogma\Time\DateTimeInterval[]|\DateInterval[]|\SqlFtw\Sql\Expression\TimeInterval[] $intervals
+     * @param \Dogma\Time\Date|\Dogma\Time\Time|\DateTimeInterface $value
+     * @param \Dogma\Time\Interval\DateTimeInterval[]|\DateInterval[]|\SqlFtw\Sql\Expression\TimeInterval[] $intervals
      */
     public function __construct($value, array $intervals = [])
     {
-        Check::types($value, [Date::class, Time::class, DateTime::class, BuiltInFunction::class]);
+        Check::types($value, [Date::class, Time::class, DateTime::class]);
         if ($value instanceof \DateTimeInterface && !$value instanceof DateTime) {
             $value = DateTime::createFromDateTimeInterface($value);
         }
@@ -47,18 +47,18 @@ class TimeExpression implements \SqlFtw\Sql\SqlSerializable
             }
         }
 
-        if ($value instanceof BuiltInFunction && !$value->isTime()) {
+        /*if ($value instanceof BuiltInFunction && !$value->isTime()) {
             throw new \SqlFtw\Sql\InvalidDefinitionException(
                 sprintf('Invalid function. A time returning function expected. %s given.', $value->getValue())
             );
-        }
+        }*/
 
         $this->value = $value;
         $this->intervals = $int;
     }
 
     /**
-     * @return \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime|\SqlFtw\Sql\Expression\BuiltInFunction
+     * @return \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime
      */
     public function getValue()
     {

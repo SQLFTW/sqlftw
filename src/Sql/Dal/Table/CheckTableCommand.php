@@ -11,33 +11,33 @@ namespace SqlFtw\Sql\Dal\Table;
 
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class CheckTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
+class CheckTableCommand implements \SqlFtw\Sql\MultipleTablesCommand, \SqlFtw\Sql\Dal\Table\DalTableCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName[] */
+    /** @var \SqlFtw\Sql\QualifiedName[] */
     private $tables;
 
     /** @var \SqlFtw\Sql\Dal\Table\CheckTableOption|null */
     private $option;
 
     /**
-     * @param \SqlFtw\Sql\TableName[] $tables
+     * @param \SqlFtw\Sql\QualifiedName[] $tables
      * @param \SqlFtw\Sql\Dal\Table\CheckTableOption|null $option
      */
     public function __construct(array $tables, ?CheckTableOption $option = null)
     {
         Check::array($tables, 1);
-        Check::itemsOfType($tables, TableName::class);
+        Check::itemsOfType($tables, QualifiedName::class);
 
         $this->tables = $tables;
         $this->option = $option;
     }
 
     /**
-     * @return \SqlFtw\Sql\TableName[]
+     * @return \SqlFtw\Sql\QualifiedName[]
      */
     public function getTables(): array
     {

@@ -2,9 +2,9 @@
 
 namespace AlterExecutor\Parser;
 
+use SqlFtw\Sql\BaseType;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
-use SqlFtw\Sql\BaseType;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnAction;
 use Tester\Assert;
 

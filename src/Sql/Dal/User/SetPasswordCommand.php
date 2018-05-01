@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\User;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class SetPasswordCommand implements \SqlFtw\Sql\Command
+class SetPasswordCommand implements \SqlFtw\Sql\Dal\User\UserCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

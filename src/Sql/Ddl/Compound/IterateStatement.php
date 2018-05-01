@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Formatter\Formatter;
 
-class IterateStatement implements \SqlFtw\Sql\Statement
+class IterateStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

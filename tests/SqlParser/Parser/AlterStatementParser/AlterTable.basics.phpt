@@ -2,13 +2,13 @@
 
 namespace AlterExecutor\Parser;
 
+use SqlFtw\Parser\Lexer\Lexer;
+use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
-use SqlFtw\Parser\Lexer\Lexer;
-use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserFactory;
 use Tester\Assert;
 
 require '../../../bootstrap.php';

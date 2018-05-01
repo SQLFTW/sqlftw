@@ -11,11 +11,11 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
+class DropTableCommand implements \SqlFtw\Sql\MultipleTablesCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName[] */
+    /** @var \SqlFtw\Sql\QualifiedName[] */
     private $tables;
 
     /** @var bool */
@@ -25,7 +25,7 @@ class DropTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
     private $ifExists;
 
     /**
-     * @param \SqlFtw\Sql\TableName[] $tables
+     * @param \SqlFtw\Sql\QualifiedName[] $tables
      * @param bool $temporary
      * @param bool $ifExists
      */
@@ -37,7 +37,7 @@ class DropTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\TableName[]
+     * @return \SqlFtw\Sql\QualifiedName[]
      */
     public function getTables(): array
     {

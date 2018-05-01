@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -11,13 +11,13 @@ namespace SqlFtw\Sql\Dal\Table;
 
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class ChecksumTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
+class ChecksumTableCommand implements \SqlFtw\Sql\MultipleTablesCommand, \SqlFtw\Sql\Dal\Table\DalTableCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName[] */
+    /** @var \SqlFtw\Sql\QualifiedName[] */
     private $tables;
 
     /** @var bool */
@@ -27,14 +27,14 @@ class ChecksumTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
     private $extended;
 
     /**
-     * @param \SqlFtw\Sql\TableName[] $tables
+     * @param \SqlFtw\Sql\QualifiedName[] $tables
      * @param bool $quick
      * @param bool $extended
      */
     public function __construct(array $tables, bool $quick, bool $extended)
     {
         Check::array($tables, 1);
-        Check::itemsOfType($tables, TableName::class);
+        Check::itemsOfType($tables, QualifiedName::class);
 
         $this->tables = $tables;
         $this->quick = $quick;
@@ -42,7 +42,7 @@ class ChecksumTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\TableName[]
+     * @return \SqlFtw\Sql\QualifiedName[]
      */
     public function getTables(): array
     {

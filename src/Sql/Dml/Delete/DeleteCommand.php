@@ -15,13 +15,13 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class DeleteCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName[] */
+    /** @var \SqlFtw\Sql\QualifiedName[] */
     private $tables;
 
     /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null */
@@ -49,7 +49,7 @@ class DeleteCommand implements \SqlFtw\Sql\Command
     private $ignore;
 
     /**
-     * @param \SqlFtw\Sql\TableName[] $tables
+     * @param \SqlFtw\Sql\QualifiedName[] $tables
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param int|null $limit
@@ -70,7 +70,7 @@ class DeleteCommand implements \SqlFtw\Sql\Command
         bool $quick = false,
         bool $ignore = false
     ) {
-        Check::itemsOfType($tables, TableName::class);
+        Check::itemsOfType($tables, QualifiedName::class);
         if ($orderBy !== null) {
             Check::itemsOfType($orderBy, OrderByExpression::class);
         }
@@ -96,7 +96,7 @@ class DeleteCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\TableName[]
+     * @return \SqlFtw\Sql\QualifiedName[]
      */
     public function getTables(): array
     {

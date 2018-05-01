@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\Keyword;
+use Dogma\Arr;
 
-class BuiltInFunction extends \SqlFtw\Sql\SqlEnum
+class BuiltInFunction extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
 {
 
     // comparison
@@ -28,30 +28,14 @@ class BuiltInFunction extends \SqlFtw\Sql\SqlEnum
     public const NULLIF = 'NULLIF';
 
     // case
-    public const CAST = 'CAST'; /// CAST(expr AS type)
-    public const CONVERT = 'CONVERT'; /// CONVERT(string, type), CONVERT(expr USING charset_name)
-    // type:
-    //   BINARY[(N)]
-    //   CHAR[(N)] [charset_info]
-    //   DATE
-    //   DATETIME
-    //   DECIMAL[(M[,D])]
-    //   JSON
-    //   NCHAR[(N)]
-    //   SIGNED [INTEGER]
-    //   TIME
-    //   UNSIGNED [INTEGER]
-    //
-    // charset_info:
-    //   CHARACTER SET charset_name
-    //   ASCII
-    //   UNICODE
+    public const CAST = 'CAST';
+    public const CONVERT = 'CONVERT';
 
     // strings
     public const ASCII = 'ASCII';
     public const BIN = 'BIN';
     public const BIT_LENGTH = 'BIN_LENGTH';
-    public const CHAR = 'CHAR'; /// CHAR(N,... [USING charset_name])
+    public const CHAR = 'CHAR';
     public const CHAR_LENGTH = 'CHAR_LENGTH';
     public const CHARACTER_LENGTH = 'CHARACTER_LENGTH';
     public const CONCAT = 'CONCAT';
@@ -78,7 +62,7 @@ class BuiltInFunction extends \SqlFtw\Sql\SqlEnum
     public const OCT = 'OCT';
     public const OCTET_LENGTH = 'OCTET_LENGTH';
     public const ORD = 'ORD';
-    public const POSITION = 'POSITION'; /// POSITION(substr IN str)
+    public const POSITION = 'POSITION';
     public const QUOTE = 'QUOTE';
     public const REPEAT = 'REPEAT';
     public const REPLACE = 'REPLACE';
@@ -88,358 +72,499 @@ class BuiltInFunction extends \SqlFtw\Sql\SqlEnum
     public const RTRIM = 'RTRIM';
     public const SOUNDEX = 'SOUNDEX';
     public const SPACE = 'SPACE';
-    public const SUBSTR = 'SUBSTR'; /// SUBSTR(str,pos), SUBSTR(str FROM pos), SUBSTR(str,pos,len), SUBSTR(str FROM pos FOR len)
-    public const SUBSTRING = 'SUBSTRING'; /// SUBSTRING(str,pos), SUBSTRING(str FROM pos), SUBSTRING(str,pos,len), SUBSTRING(str FROM pos FOR len)
+    public const SUBSTR = 'SUBSTR';
+    public const SUBSTRING = 'SUBSTRING';
     public const SUBSTRING_INDEX = 'SUBSTRING_INDEX';
     public const TO_BASE64 = 'TO_BASE64';
-    public const TRIM = 'TRIM'; /// TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
+    public const TRIM = 'TRIM';
     public const UCASE = 'UCASE';
     public const UNHEX = 'UNHEX';
     public const UPPER = 'UPPER';
-    public const WEIGHT_STRING = 'WEIGHT_STRING'; /// WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags])
+    public const WEIGHT_STRING = 'WEIGHT_STRING';
 
     // XML
+    // @codingStandardsIgnoreStart
     public const ExtractValue = 'ExtractValue';
     public const UpdateXML = 'UpdateXML';
+    // @codingStandardsIgnoreStart
 
     // numeric
-    public const ABS = '';
-    public const ACOS = '';
-    public const ASIN = '';
-    public const ATAN = '';
-    public const ATAN2 = '';
-    public const BIT_COUNT = '';
-    public const CEIL = '';
-    public const CEILING = '';
-    public const CONV = '';
-    public const COS = '';
-    public const COT = '';
-    public const CRC32 = '';
-    public const DEGREES = '';
-    public const EXP = '';
-    public const FLOOR = '';
-    public const LN = '';
-    public const LOG = '';
-    public const LOG10 = '';
-    public const LOG2 = '';
-    public const MOD = '';
-    public const PI = '';
-    public const POW = '';
-    public const POWER = '';
-    public const RADIANS = '';
-    public const RAND = '';
-    public const ROUND = '';
-    public const SIGN = '';
-    public const SIN = '';
-    public const SQRT = '';
-    public const TAN = '';
-    public const TRUNCATE = '';
-
-    /*
-    public const CURRENT_TIME = 'CURRENT_TIME';
-    public const CURRENT_DATE = 'CURRENT_DATE';
-    public const CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP';
-    public const CURRENT_USER = 'CURRENT_USER';
-    public const LOCALTIME = 'LOCALTIME';
-    public const LOCALTIMESTAMP = 'LOCALTIMESTAMP';
-    public const UTC_DATE = 'UTC_DATE';
-    public const UTC_TIME = 'UTC_TIME';
-    public const UTC_TIMESTAMP = 'UTC_TIMESTAMP';
-    */
+    public const ABS = 'ABS';
+    public const ACOS = 'ACOS';
+    public const ASIN = 'ASIN';
+    public const ATAN = 'ATAN';
+    public const ATAN2 = 'ATAN2';
+    public const BIT_COUNT = 'BIT_COUNT';
+    public const CEIL = 'CEIL';
+    public const CEILING = 'CEILING';
+    public const CONV = 'CONV';
+    public const COS = 'COS';
+    public const COT = 'COT';
+    public const CRC32 = 'CRC32';
+    public const DEGREES = 'DEGREES';
+    public const EXP = 'EXP';
+    public const FLOOR = 'FLOOR';
+    public const LN = 'LN';
+    public const LOG = 'LOG';
+    public const LOG10 = 'LOG10';
+    public const LOG2 = 'LOG2';
+    public const MOD = 'MOD';
+    public const PI = 'PI';
+    public const POW = 'POW';
+    public const POWER = 'POWER';
+    public const RADIANS = 'RADIANS';
+    public const RAND = 'RAND';
+    public const ROUND = 'ROUND';
+    public const SIGN = 'SIGN';
+    public const SIN = 'SIN';
+    public const SQRT = 'SQRT';
+    public const TAN = 'TAN';
+    public const TRUNCATE = 'TRUNCATE';
 
     // date/time
     public const ADDDATE = 'ADDDATE';
     public const ADDTIME = 'ADDTIME';
     public const CONVERT_TZ = 'CONVERT_TZ';
-    public const CURDATE = '';
-    public const CURRENT_DATE = '';
-    public const CURRENT_TIME = '';
-    public const CURRENT_TIMESTAMP = '';
-    public const CURTIME = '';
-    public const DATE = '';
-    public const DATE_ADD = '';
-    public const DATE_FORMAT = '';
-    public const DATE_SUB = '';
-    public const DATEDIFF = '';
-    public const DAY = '';
-    public const DAYNAME = '';
-    public const DAYOFMONTH = '';
-    public const DAYOFWEEK = '';
+    public const CURDATE = 'CURDATE';
+    public const CURRENT_DATE = 'CURRENT_DATE';
+    public const CURRENT_TIME = 'CURRENT_TIME';
+    public const CURRENT_TIMESTAMP = 'CURRENT_TIMESTAMP';
+    public const CURTIME = 'CURTIME';
+    public const DATE = 'DATE';
+    public const DATE_ADD = 'DATE_ADD';
+    public const DATE_FORMAT = 'DATE_FORMAT';
+    public const DATE_SUB = 'DATE_SUB';
+    public const DATEDIFF = 'DATEDIFF';
+    public const DAY = 'DAY';
+    public const DAYNAME = 'DAYNAME';
+    public const DAYOFMONTH = 'DAYOFMONTH';
+    public const DAYOFWEEK = 'DAYOFWEEK';
     public const DAYOFYEAR = 'DAYOFYEAR';
-    public const EXTRACT = 'EXTRACT'; /// EXTRACT(unit FROM date)
+    public const EXTRACT = 'EXTRACT';
     public const FROM_DAYS = 'FROM_DAYS';
     public const FROM_UNIXTIME = 'FROM_UNIXTIME';
-    public const GET_FORMAT = 'GET_FORMAT'; /// GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
-    public const HOUR = Keyword::HOUR;
+    public const GET_FORMAT = 'GET_FORMAT';
+    public const HOUR = 'HOUR';
     public const LAST_DAY = 'LAST_DAY';
-    public const LOCALTIME = '';
-    public const LOCALTIMESTAMP = '';
-    public const MAKEDATE = '';
-    public const MAKETIME = '';
-    public const MICROSECOND = '';
-    public const MINUTE = '';
-    public const MONTH = '';
-    public const MONTHNAME = '';
-    public const NOW = '';
-    public const PERIOD_ADD = '';
-    public const PERIOD_DIFF = '';
-    public const QUARTER = '';
-    public const SEC_TO_TIME = '';
-    public const SECOND = '';
-    public const STR_TO_DATE = '';
-    public const SUBDATE = '';
-    public const SUBTIME = '';
-    public const SYSDATE = '';
-    public const TIME = '';
-    public const TIME_FORMAT = '';
-    public const TIME_TO_SEC = '';
-    public const TIMEDIFF = '';
-    public const TIMESTAMP = '';
-    public const TIMESTAMPADD = '';
-    public const TIMESTAMPDIFF = '';
-    public const TO_DAYS = '';
-    public const TO_SECONDS = '';
-    public const UNIX_TIMESTAMP = '';
-    public const UTC_DATE = '';
-    public const UTC_TIME = '';
-    public const UTC_TIMESTAMP = '';
-    public const WEEK = '';
-    public const WEEKDAY = '';
-    public const WEEKOFYEAR = '';
-    public const YEAR = '';
-    public const YEARWEEK = '';
+    public const LOCALTIME = 'LOCALTIME';
+    public const LOCALTIMESTAMP = 'LOCALTIMESTAMP';
+    public const MAKEDATE = 'MAKEDATE';
+    public const MAKETIME = 'MAKETIME';
+    public const MICROSECOND = 'MICROSECONDS';
+    public const MINUTE = 'MINUTE';
+    public const MONTH = 'MONTH';
+    public const MONTHNAME = 'MONTHNAME';
+    public const NOW = 'NOW';
+    public const PERIOD_ADD = 'PERIOD_ADD';
+    public const PERIOD_DIFF = 'PERIOD_DIFF';
+    public const QUARTER = 'QUARTER';
+    public const SEC_TO_TIME = 'SEC_TO_TIME';
+    public const SECOND = 'SECOND';
+    public const STR_TO_DATE = 'STR_TO_DATE';
+    public const SUBDATE = 'SUBDATE';
+    public const SUBTIME = 'SUBTIME';
+    public const SYSDATE = 'SYSDATE';
+    public const TIME = 'TIME';
+    public const TIME_FORMAT = 'TIME_FORMAT';
+    public const TIME_TO_SEC = 'TIME_TO_SEC';
+    public const TIMEDIFF = 'TIMEDIFF';
+    public const TIMESTAMP = 'TIMESTAMP';
+    public const TIMESTAMPADD = 'TIMESTAMPADD';
+    public const TIMESTAMPDIFF = 'TIMESTAMPDIFF';
+    public const TO_DAYS = 'TO_DAYS';
+    public const TO_SECONDS = 'TO_SECONDS';
+    public const UNIX_TIMESTAMP = 'UNIX_TIMESTAMP';
+    public const UTC_DATE = 'UTC_DATE';
+    public const UTC_TIME = 'UTC_TIME';
+    public const UTC_TIMESTAMP = 'UTC_TIMESTAMP';
+    public const WEEK = 'WEEK';
+    public const WEEKDAY = 'WEEKDAY';
+    public const WEEKOFYEAR = 'WEEKOFYEAR';
+    public const YEAR = 'YEAR';
+    public const YEARWEEK = 'YEARWEEK';
 
     // encryption & compression
-    public const AES_DECRYPT = '';
-    public const AES_ENCRYPT = '';
-    public const ASYMMETRIC_DECRYPT = '';
-    public const ASYMMETRIC_DERIVE = '';
-    public const ASYMMETRIC_ENCRYPT = '';
-    public const ASYMMETRIC_SIGN = '';
-    public const ASYMMETRIC_VERIFY = '';
-    public const COMPRESS = '';
-    public const CREATE_ASYMMETRIC_PRIV_KEY = '';
-    public const CREATE_ASYMMETRIC_PUB_KEY = '';
-    public const CREATE_DH_PARAMETERS = '';
-    public const CREATE_DIGEST = '';
-    public const DECODE = '';
-    public const DES_DECRYPT = '';
-    public const DES_ENCRYPT = '';
-    public const ENCODE = '';
-    public const ENCRYPT = '';
-    public const MD5 = '';
-    public const PASSWORD = '';
-    public const RANDOM_BYTES = '';
-    public const SHA = '';
-    public const SHA1 = '';
-    public const SHA2 = '';
-    public const UNCOMPRESS = '';
-    public const UNCOMPRESSED_LENGTH = '';
-    public const VALIDATE_PASSWORD_STRENGTH = '';
+    public const AES_DECRYPT = 'AES_DECRYPT';
+    public const AES_ENCRYPT = 'AES_ENCRYPT';
+    public const ASYMMETRIC_DECRYPT = 'ASYMMETRIC_DECRYPT';
+    public const ASYMMETRIC_DERIVE = 'ASYMMETRIC_DERIVE';
+    public const ASYMMETRIC_ENCRYPT = 'ASYMMETRIC_ENCRYPT';
+    public const ASYMMETRIC_SIGN = 'ASYMMETRIC_SIGN';
+    public const ASYMMETRIC_VERIFY = 'ASYMMETRIC_VERIFY';
+    public const COMPRESS = 'COMPRESS';
+    public const CREATE_ASYMMETRIC_PRIV_KEY = 'CREATE_ASYMMETRIC_PRIV_KEY';
+    public const CREATE_ASYMMETRIC_PUB_KEY = 'CREATE_ASYMMETRIC_PUB_KEY';
+    public const CREATE_DH_PARAMETERS = 'CREATE_DH_PARAMETERS';
+    public const CREATE_DIGEST = 'CREATE_DIGEST';
+    public const DECODE = 'DECODE';
+    public const DES_DECRYPT = 'DES_DECRYPT';
+    public const DES_ENCRYPT = 'DES_ENCRYPT';
+    public const ENCODE = 'ENCODE';
+    public const ENCRYPT = 'ENCRYPT';
+    public const MD5 = 'MD5';
+    public const PASSWORD = 'PASSWORD';
+    public const RANDOM_BYTES = 'RANDOM_BYTES';
+    public const SHA = 'SHA';
+    public const SHA1 = 'SHA1';
+    public const SHA2 = 'SHA2';
+    public const UNCOMPRESS = 'UNCOMPRESS';
+    public const UNCOMPRESSED_LENGTH = 'UNCOMPRESSED_LENGTH';
+    public const VALIDATE_PASSWORD_STRENGTH = 'VALIDATE_PASSWORD_STRENGTH';
 
     // information
-    public const BENCHMARK = '';
-    public const CHARSET = '';
-    public const COERCIBILITY = '';
-    public const COLLATION = '';
-    public const CONNECTION_ID = '';
-    public const CURRENT_ROLE = '';
-    public const CURRENT_USER = '';
-    public const DATABASE = '';
-    public const FOUND_ROWS = '';
-    public const LAST_INSERT_ID = '';
-    public const ROLES_GRAPHML = '';
-    public const ROW_COUNT = '';
-    public const SCHEMA = '';
-    public const SESSION_USER = '';
-    public const SYSTEM_USER = '';
-    public const USER = '';
-    public const VERSION = '';
-    
+    public const BENCHMARK = 'BENCHMARK';
+    public const CHARSET = 'CHARSET';
+    public const COERCIBILITY = 'COERCIBILITY';
+    public const COLLATION = 'COLLATION';
+    public const CONNECTION_ID = 'CONNECTION_ID';
+    public const CURRENT_ROLE = 'CURRENT_ROLE';
+    public const CURRENT_USER = 'CURRENT_USER';
+    public const DATABASE = 'DATABASE';
+    public const FOUND_ROWS = 'FOUND_ROWS';
+    public const LAST_INSERT_ID = 'LAST_INSERT_ID';
+    public const ROLES_GRAPHML = 'ROLES_GRAPHML';
+    public const ROW_COUNT = 'ROW_COUNT';
+    public const SCHEMA = 'SCHEMA';
+    public const SESSION_USER = 'SESSION_USER';
+    public const SYSTEM_USER = 'SYSTEM_USER';
+    public const USER = 'USER';
+    public const VERSION = 'VERSION';
+
     // spatial
-    public const GeometryCollection = '';
-    public const LineString = '';
-    public const MBRContains = '';
-    public const MBRCoveredBy = '';
-    public const MBRCovers = '';
-    public const MBRDisjoint = '';
-    public const MBREquals = '';
-    public const MBRIntersects = '';
-    public const MBROverlaps = '';
-    public const MBRTouches = '';
-    public const MBRWithin = '';
-    public const MultiLineString = '';
-    public const MultiPoint = '';
-    public const MultiPolygon = '';
-    public const Point = '';
-    public const Polygon = '';
-    public const ST_Area = '';
-    public const ST_AsBinary = '';
-    public const ST_AsGeoJSON = '';
-    public const ST_AsText = '';
-    public const ST_AsWKT = '';
-    public const ST_Buffer = '';
-    public const ST_Buffer_Strategy = '';
-    public const ST_Centroid = '';
-    public const ST_Contains = '';
-    public const ST_ConvexHull = '';
-    public const ST_Crosses = '';
-    public const ST_Difference = '';
-    public const ST_Dimension = '';
-    public const ST_Disjoint = '';
-    public const ST_Distance = '';
-    public const ST_Distance_Sphere = '';
-    public const ST_EndPoint = '';
-    public const ST_Envelope = '';
-    public const ST_Equals = '';
-    public const ST_ExteriorRing = '';
-    public const ST_GeoHash = '';
-    public const ST_GeomCollFromText = '';
-    public const ST_GeometryCollectionFromText = '';
-    public const ST_GeomCollFromTxt = '';
-    public const ST_GeomCollFromWKB = '';
-    public const ST_GeometryCollectionFromWKB = '';
-    public const ST_GeometryN = '';
-    public const ST_GeometryType = '';
-    public const ST_GeomFromGeoJSON = '';
-    public const ST_GeomFromText = '';
-    public const ST_GeometryFromText = '';
-    public const ST_GeomFromWKB = '';
-    public const ST_GeometryFromWKB = '';
-    public const ST_InteriorRingN = '';
-    public const ST_Intersection = '';
-    public const ST_Intersects = '';
-    public const ST_IsClosed = '';
-    public const ST_IsEmpty = '';
-    public const ST_IsSimple = '';
-    public const ST_IsValid = '';
-    public const ST_LatFromGeoHash = '';
-    public const ST_Length = '';
-    public const ST_LineFromText = '';
-    public const ST_LineStringFromText = '';
-    public const ST_LineFromWKB = '';
-    public const ST_LineStringFromWKB = '';
-    public const ST_LongFromGeoHash = '';
-    public const ST_MakeEnvelope = '';
-    public const ST_MLineFromText = '';
-    public const ST_MultiLineStringFromText = '';
-    public const ST_MLineFromWKB = '';
-    public const ST_MultiLineStringFromWKB = '';
-    public const ST_MPointFromText = '';
-    public const ST_MultiPointFromText = '';
-    public const ST_MPointFromWKB = '';
-    public const ST_MultiPointFromWKB = '';
-    public const ST_MPolyFromText = '';
-    public const ST_MultiPolygonFromText = '';
-    public const ST_MPolyFromWKB = '';
-    public const ST_MultiPolygonFromWKB = '';
-    public const ST_NumGeometries = '';
-    public const ST_NumInteriorRing = '';
-    public const ST_NumInteriorRings = '';
-    public const ST_NumPoints = '';
-    public const ST_Overlaps = '';
-    public const ST_PointFromGeoHash = '';
-    public const ST_PointFromText = '';
-    public const ST_PointFromWKB = '';
-    public const ST_PointN = '';
-    public const ST_PolyFromText = '';
-    public const ST_PolygonFromText = '';
-    public const ST_PolyFromWKB = '';
-    public const ST_PolygonFromWKB = '';
-    public const ST_Simplify = '';
-    public const ST_SRID = '';
-    public const ST_StartPoint = '';
-    public const ST_SwapXY = '';
-    public const ST_SymDifference = '';
-    public const ST_Touches = '';
-    public const ST_Union = '';
-    public const ST_Validate = '';
-    public const ST_Within = '';
-    public const ST_X = '';
-    public const ST_Y = '';
+    // @codingStandardsIgnoreStart
+    public const Contains = 'Contains'; // removed in 8.0
+    public const Disjoint = 'Disjoint'; // removed in 8.0
+    public const Equals = 'Equals'; // removed in 8.0
+    public const Intersects = 'Intersects'; // removed in 8.0
+    public const Overlaps = 'Overlaps'; // removed in 8.0
+    public const Within = 'Within'; // removed in 8.0
+    public const GLength = 'GLength'; // removed in 8.0
+    public const Area = 'Area'; // removed in 8.0
+    public const AsBinary = 'AsBinary'; // removed in 8.0
+    public const AsText = 'AsText'; // removed in 8.0
+    public const AsWKB = 'AsWKB'; // removed in 8.0
+    public const AsWKT = 'AsWKT'; // removed in 8.0
+    public const Buffer = 'Buffer'; // removed in 8.0
+    public const Centroid = 'Centroid'; // removed in 8.0
+    public const ConvexHull = 'ConvexHull'; // removed in 8.0
+    public const Crosses = 'Crosses'; // removed in 8.0
+    public const Dimension = 'Dimension'; // removed in 8.0
+    public const Distance = 'Distance'; // removed in 8.0
+    public const EndPoint = 'EndPoint'; // removed in 8.0
+    public const Envelope = 'Envelope'; // removed in 8.0
+    public const ExteriorRing = 'ExteriorRing'; // removed in 8.0
+    public const GeomCollFromText = 'GeomCollFromText'; // removed in 8.0
+    public const GeomCollFromWKB = 'GeomCollFromWKB'; // removed in 8.0
+    public const GeomFromText = 'GeomFromText'; // removed in 8.0
+    public const GeomFromWKB = 'GeomFromWKB'; // removed in 8.0
+    public const GeometryCollectionFromText = 'GeometryCollectionFromText'; // removed in 8.0
+    public const GeometryCollectionFromWKB = 'GeometryCollectionFromWKB'; // removed in 8.0
+    public const GeometryFromText = 'GeometryFromText'; // removed in 8.0
+    public const GeometryFromWKB = 'GeometryFromWKB'; // removed in 8.0
+    public const GeometryN = 'GeometryN'; // removed in 8.0
+    public const GeometryType = 'GeometryType'; // removed in 8.0
+    public const InteriorRingN = 'InteriorRing'; // removed in 8.0
+    public const IsClosed = 'IsClosed'; // removed in 8.0
+    public const IsEmpty = 'IsEmpty'; // removed in 8.0
+    public const IsSimple = 'IsSimple'; // removed in 8.0
+    public const LineFromText = 'LineFromText'; // removed in 8.0
+    public const LineFromWKB = 'LineFromWKB'; // removed in 8.0
+    public const LineStringFromText = 'LineStringFromText'; // removed in 8.0
+    public const LineStringFromWKB = 'LineStringFromWKB'; // removed in 8.0
+    public const MLineFromText = 'MLineFromText'; // removed in 8.0
+    public const MLineFromWKB = 'MLineFromWKB'; // removed in 8.0
+    public const MPointFromText = 'MPointFromText'; // removed in 8.0
+    public const MPointFromWKB = 'MPointFromWKB'; // removed in 8.0
+    public const MPolyFromText = 'MPolyFromText'; // removed in 8.0
+    public const MPolyFromWKB = 'MPolyFromWKB'; // removed in 8.0
+    public const MultiLineStringFromText = 'MultilineStringFromText'; // removed in 8.0
+    public const MultiLineStringFromWKB = 'MultilineStringFromWKB'; // removed in 8.0
+    public const MultiPointFromText = 'MultiPointFromText'; // removed in 8.0
+    public const MultiPointFromWKB = 'MultiPointFromWKB'; // removed in 8.0
+    public const MultiPolygonFromText = 'MultiPolygonFromText'; // removed in 8.0
+    public const MultiPolygonFromWKB = 'MultiPolygonFromWKB'; // removed in 8.0
+    public const NumGeometries = 'NumGeometries'; // removed in 8.0
+    public const NumInteriorRings = 'NumInteriorRings'; // removed in 8.0
+    public const NumPoints = 'NumPoints'; // removed in 8.0
+    public const PointFromText = 'PointFromText'; // removed in 8.0
+    public const PointFromWKB = 'PointFromWKB'; // removed in 8.0
+    public const PointN = 'PointN'; // removed in 8.0
+    public const PolyFromText = 'PolyFromText'; // removed in 8.0
+    public const PolyFromWKB = 'PolyFromWKB'; // removed in 8.0
+    public const PolygonFromText = 'PolygonFromText'; // removed in 8.0
+    public const PolygonFromWKB = 'PolygonFromWKB'; // removed in 8.0
+    public const SRID = 'SRID'; // removed in 8.0
+    public const StartPoint = 'StartPoint'; // removed in 8.0
+    public const Touches = 'Touches'; // removed in 8.0
+    public const X = 'X'; // removed in 8.0
+    public const Y = 'Y'; // removed in 8.0
+
+    public const GeometryCollection = 'GeometryCollection';
+    public const LineString = 'LineString';
+    public const MBRContains = 'MBRContains';
+    public const MBRCoveredBy = 'MBRCoveredBy';
+    public const MBRCovers = 'MBRCovers';
+    public const MBRDisjoint = 'MBRDisjoint';
+    public const MBREquals = 'MBREquals';
+    public const MBRIntersects = 'MBRIntersects';
+    public const MBROverlaps = 'MBROverlaps';
+    public const MBRTouches = 'MBRTouches';
+    public const MBRWithin = 'MBRWithin';
+    public const MultiLineString = 'MultiLineString';
+    public const MultiPoint = 'MultiPoint';
+    public const MultiPolygon = 'MultiPolygon';
+    public const Point = 'Point';
+    public const Polygon = 'Polygon';
+    public const ST_Area = 'ST_Area';
+    public const ST_AsBinary = 'ST_AsBinary';
+    public const ST_AsGeoJSON = 'ST_AsGeoJSON';
+    public const ST_AsText = 'ST_AsText';
+    public const ST_AsWKT = 'ST_AsWKT';
+    public const ST_Buffer = 'ST_Buffer';
+    public const ST_Buffer_Strategy = 'ST_Buffer_Strategy';
+    public const ST_Centroid = 'ST_Centroid';
+    public const ST_Contains = 'ST_Contains';
+    public const ST_ConvexHull = 'ST_ConvexHull';
+    public const ST_Crosses = 'ST_Crosses';
+    public const ST_Difference = 'ST_Difference';
+    public const ST_Dimension = 'ST_Dimension';
+    public const ST_Disjoint = 'ST_Disjoint';
+    public const ST_Distance = 'ST_Distance';
+    public const ST_Distance_Sphere = 'ST_Distance_Sphere';
+    public const ST_EndPoint = 'ST_EndPoint';
+    public const ST_Envelope = 'ST_Envelope';
+    public const ST_Equals = 'ST_Equals';
+    public const ST_ExteriorRing = 'ST_ExteriorRing';
+    public const ST_GeoHash = 'ST_GeoHash';
+    public const ST_GeomCollFromText = 'ST_GeomCollFromText';
+    public const ST_GeometryCollectionFromText = 'ST_GeometryCollectionFromText';
+    public const ST_GeomCollFromTxt = 'ST_GeomCollFromTxt';
+    public const ST_GeomCollFromWKB = 'ST_GeomCollFromWKB';
+    public const ST_GeometryCollectionFromWKB = 'ST_GeometryCollectionFromWKB';
+    public const ST_GeometryN = 'ST_GeometryN';
+    public const ST_GeometryType = 'ST_GeometryType';
+    public const ST_GeomFromGeoJSON = 'ST_GeomFromGeoJSON';
+    public const ST_GeomFromText = 'ST_GeomFromText';
+    public const ST_GeometryFromText = 'ST_GeometryFromText';
+    public const ST_GeomFromWKB = 'ST_GeomFromWKB';
+    public const ST_GeometryFromWKB = 'ST_GeometryFromWKB';
+    public const ST_InteriorRingN = 'ST_InteriorRingN';
+    public const ST_Intersection = 'ST_Intersection';
+    public const ST_Intersects = 'ST_Intersects';
+    public const ST_IsClosed = 'ST_IsClosed';
+    public const ST_IsEmpty = 'ST_IsEmpty';
+    public const ST_IsSimple = 'ST_IsSimple';
+    public const ST_IsValid = 'ST_IsValid';
+    public const ST_LatFromGeoHash = 'ST_LatFromGeoHash';
+    public const ST_Length = 'ST_Length';
+    public const ST_LineFromText = 'ST_LineFromText';
+    public const ST_LineStringFromText = 'ST_LineStringFromText';
+    public const ST_LineFromWKB = 'ST_LineFromWKB';
+    public const ST_LineStringFromWKB = 'ST_LineStringFromWKB';
+    public const ST_LongFromGeoHash = 'ST_LongFromGeoHash';
+    public const ST_MakeEnvelope = 'ST_MakeEnvelope';
+    public const ST_MLineFromText = 'ST_MLineFromText';
+    public const ST_MultiLineStringFromText = 'ST_MultiLineStringFromText';
+    public const ST_MLineFromWKB = 'ST_MLineFromWKB';
+    public const ST_MultiLineStringFromWKB = 'ST_MultiLineStringFromWKB';
+    public const ST_MPointFromText = 'ST_MPointFromText';
+    public const ST_MultiPointFromText = 'ST_MultiPointFromText';
+    public const ST_MPointFromWKB = 'ST_MPointFromWKB';
+    public const ST_MultiPointFromWKB = 'ST_MultiPointFromWKB';
+    public const ST_MPolyFromText = 'ST_MPolyFromText';
+    public const ST_MultiPolygonFromText = 'ST_MultiPolygonFromText';
+    public const ST_MPolyFromWKB = 'ST_MPolyFromWKB';
+    public const ST_MultiPolygonFromWKB = 'ST_MultiPolygonFromWKB';
+    public const ST_NumGeometries = 'ST_NumGeometries';
+    public const ST_NumInteriorRing = 'ST_NumInteriorRing';
+    public const ST_NumInteriorRings = 'ST_NumInteriorRings';
+    public const ST_NumPoints = 'ST_NumPoints';
+    public const ST_Overlaps = 'ST_Overlaps';
+    public const ST_PointFromGeoHash = 'ST_PointFromGeoHash';
+    public const ST_PointFromText = 'ST_PointFromText';
+    public const ST_PointFromWKB = 'ST_PointFromWKB';
+    public const ST_PointN = 'ST_PointN';
+    public const ST_PolyFromText = 'ST_PolyFromText';
+    public const ST_PolygonFromText = 'ST_PolygonFromText';
+    public const ST_PolyFromWKB = 'ST_PolyFromWKB';
+    public const ST_PolygonFromWKB = 'ST_PolygonFromWKB';
+    public const ST_Simplify = 'ST_Simplify';
+    public const ST_SRID = 'ST_SRID';
+    public const ST_StartPoint = 'ST_StartPoint';
+    public const ST_SwapXY = 'ST_SwapXY';
+    public const ST_SymDifference = 'ST_SymDifference';
+    public const ST_Touches = 'ST_Touches';
+    public const ST_Union = 'ST_Union';
+    public const ST_Validate = 'ST_Validate';
+    public const ST_Within = 'ST_Within';
+    public const ST_X = 'ST_X';
+    public const ST_Y = 'ST_Y';
+    // @codingStandardsIgnoreStart
 
     // JSON
-    public const JSON_ARRAY = '';
-    public const JSON_ARRAY_APPEND = '';
-    public const JSON_ARRAY_INSERT = '';
-    public const JSON_CONTAINS = '';
-    public const JSON_CONTAINS_PATH = '';
-    public const JSON_DEPTH = '';
-    public const JSON_EXTRACT = '';
-    public const JSON_INSERT = '';
-    public const JSON_KEYS = '';
-    public const JSON_LENGTH = '';
-    public const JSON_MERGE = '';
-    public const JSON_OBJECT = '';
-    public const JSON_PRETTY = '';
-    public const JSON_QUOTE = '';
-    public const JSON_REMOVE = '';
-    public const JSON_REPLACE = '';
-    public const JSON_SEARCH = '';
-    public const JSON_SET = '';
-    public const JSON_STORAGE_FREE = '';
-    public const JSON_STORAGE_SIZE = '';
-    public const JSON_TYPE = '';
-    public const JSON_UNQUOTE = '';
-    public const JSON_VALID = '';
+    public const JSON_ARRAY = 'JSON_ARRAY';
+    public const JSON_ARRAY_APPEND = 'JSON_ARRAY_APPEND';
+    public const JSON_ARRAY_INSERT = 'JSON_ARRAY_INSERT';
+    public const JSON_CONTAINS = 'JSON_CONTAINS';
+    public const JSON_CONTAINS_PATH = 'JSON_CONTAINS_PATH';
+    public const JSON_DEPTH = 'JSON_DEPTH';
+    public const JSON_EXTRACT = 'JSON_EXTRACT';
+    public const JSON_INSERT = 'JSON_INSERT';
+    public const JSON_KEYS = 'JSON_KEYS';
+    public const JSON_LENGTH = 'JSON_LENGTH';
+    public const JSON_MERGE = 'JSON_MERGE';
+    public const JSON_OBJECT = 'JSON_OBJECT';
+    public const JSON_PRETTY = 'JSON_PRETTY';
+    public const JSON_QUOTE = 'JSON_QUOTE';
+    public const JSON_REMOVE = 'JSON_REMOVE';
+    public const JSON_REPLACE = 'JSON_REPLACE';
+    public const JSON_SEARCH = 'JSON_SEARCH';
+    public const JSON_SET = 'JSON_SET';
+    public const JSON_STORAGE_FREE = 'JSON_STORAGE_FREE';
+    public const JSON_STORAGE_SIZE = 'JSON_STORAGE_SIZE';
+    public const JSON_TYPE = 'JSON_TYPE';
+    public const JSON_UNQUOTE = 'JSON_UNQUOTE';
+    public const JSON_VALID = 'JSON_VALID';
 
     // GTID
-    public const GTID_SUBSET = '';
-    public const GTID_SUBTRACT = '';
-    public const WAIT_FOR_EXECUTED_GTID_SET = '';
-    public const WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS = '';
+    public const GTID_SUBSET = 'GTID_SUBSET';
+    public const GTID_SUBTRACT = 'GTID_SUBTRACT';
+    public const WAIT_FOR_EXECUTED_GTID_SET = 'WAIT_FOR_EXECUTED_GTID_SET';
+    public const WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS = 'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS';
 
     // misc
-    public const ANY_VALUE = '';
-    public const BIN_TO_UUID = '';
-    public const DEFAULT = '';
-    public const GET_LOCK = '';
-    public const GROUPING = '';
-    public const INET_ATON = '';
-    public const INET_NTOA = '';
-    public const INET6_ATON = '';
-    public const INET6_NTOA = '';
-    public const IS_FREE_LOCK = '';
-    public const IS_IPV4 = '';
-    public const IS_IPV4_COMPAT = '';
-    public const IS_IPV4_MAPPED = '';
-    public const IS_IPV6 = '';
-    public const IS_USED_LOCK = '';
-    public const IS_UUID = '';
-    public const MASTER_POS_WAIT = '';
-    public const NAME_CONST = '';
-    public const RELEASE_ALL_LOCKS = '';
-    public const RELEASE_LOCK = '';
-    public const SLEEP = '';
-    public const UUID = '';
-    public const UUID_SHORT = '';
-    public const UUID_TO_BIN = '';
-    public const VALUES = '';
+    public const ANALYSE = 'ANALYSE'; // removed in 8.0
+    public const BIN_TO_UUID = 'BIN_TO_UUID';
+    public const DEFAULT = 'DEFAULT';
+    public const GET_LOCK = 'GET_LOCK';
+    public const GROUPING = 'GROUPING';
+    public const INET_ATON = 'INET_ATON';
+    public const INET_NTOA = 'INET_NTOA';
+    public const INET6_ATON = 'INET6_ATON';
+    public const INET6_NTOA = 'INET6_NTOA';
+    public const IS_FREE_LOCK = 'IS_FREE_LOCK';
+    public const IS_IPV4 = 'IS_IPV4';
+    public const IS_IPV4_COMPAT = 'IS_IPV4_COMPAT';
+    public const IS_IPV4_MAPPED = 'IS_IPV4_MAPPED';
+    public const IS_IPV6 = 'IS_IPV6';
+    public const IS_USED_LOCK = 'IS_USED_LOCK';
+    public const IS_UUID = 'IS_UUID';
+    public const MASTER_POS_WAIT = 'MASTER_POS_WAIT';
+    public const NAME_CONST = 'NAME_CONST';
+    public const RELEASE_ALL_LOCKS = 'RELEASE_ALL_LOCKS';
+    public const RELEASE_LOCK = 'RELEASE_LOCK';
+    public const SLEEP = 'SLEEP';
+    public const UUID = 'UUID';
+    public const UUID_SHORT = 'UUID_SHORT';
+    public const UUID_TO_BIN = 'UUID_TO_BIN';
+    public const VALUES = 'VALUES';
 
     // aggregate functions
-    public const AVG = ''; /// AVG([DISTINCT] expr)
-    public const BIT_AND = '';
-    public const BIT_OR = '';
-    public const BIT_XOR = '';
-    public const COUNT = '';
-    public const COUNT_DISTINCT = ''; /// COUNT(DISTINCT expr,[expr...])
-    public const GROUP_CONCAT = '';
-    public const JSON_ARRAYAGG = '';
-    public const JSON_OBJECTAGG = ''; // JSON_OBJECTAGG(key, value)
-    public const MAX = ''; /// MAX([DISTINCT] expr)
-    public const MIN = ''; /// MIN([DISTINCT] expr)
-    public const STD = '';
-    public const STDDEV = '';
-    public const STDDEV_POP = '';
-    public const STDDEV_SAMP = '';
-    public const SUM = ''; /// SUM([DISTINCT] expr)
-    public const VAR_POP = '';
-    public const VAR_SAMP = '';
-    public const VARIANCE = '';
+    public const ANY_VALUE = 'ANY_VALUE';
+    public const AVG = 'AVG';
+    public const BIT_AND = 'BIT_AND';
+    public const BIT_OR = 'BIT_OR';
+    public const BIT_XOR = 'BIT_XOR';
+    public const COUNT = 'COUNT';
+    public const COUNT_DISTINCT = 'COUNT_DISTINCT';
+    public const GROUP_CONCAT = 'GROUP_CONCAT';
+    public const JSON_ARRAYAGG = 'JSON_ARRAYAGG';
+    public const JSON_OBJECTAGG = 'JSON_OBJECTAGG';
+    public const MAX = 'MAX';
+    public const MIN = 'MIN';
+    public const STD = 'STD';
+    public const STDDEV = 'STD';
+    public const STDDEV_POP = 'STDDEV_POP';
+    public const STDDEV_SAMP = 'STDDEV_SAMP';
+    public const SUM = 'SUM';
+    public const VAR_POP = 'VAR_POP';
+    public const VAR_SAMP = 'VAR_SAMP';
+    public const VARIANCE = 'VARIANCE';
 
-    public function isTime(): bool
+    private static $namedParams = [
+        self::CAST, // CAST(expr AS type)
+
+        self::CONVERT, // CONVERT(string, type), CONVERT(expr USING charset_name)
+        // type:
+        //   BINARY[(N)]
+        //   CHAR[(N)] [charset_info]
+        //   DATE
+        //   DATETIME
+        //   DECIMAL[(M[,D])]
+        //   JSON
+        //   NCHAR[(N)]
+        //   SIGNED [INTEGER]
+        //   TIME
+        //   UNSIGNED [INTEGER]
+        //
+        // charset_info:
+        //   CHARACTER SET charset_name
+        //   ASCII
+        //   UNICODE
+
+        self::CHAR, // CHAR(N,... [USING charset_name])
+        self::POSITION, // POSITION(substr IN str)
+        self::SUBSTR, // SUBSTR(str,pos), SUBSTR(str FROM pos), SUBSTR(str,pos,len), SUBSTR(str FROM pos FOR len)
+        self::SUBSTRING, // SUBSTRING(str,pos), SUBSTRING(str FROM pos), SUBSTRING(str,pos,len), SUBSTRING(str FROM pos FOR len)
+        self::TRIM, // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
+        self::WEIGHT_STRING, // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags])
+        self::EXTRACT, // EXTRACT(unit FROM date)
+        self::GET_FORMAT, // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
+        self::AVG, // AVG([DISTINCT] expr)
+        self::COUNT, // COUNT(DISTINCT expr,[expr...])
+        self::MAX, // MAX([DISTINCT] expr)
+        self::MIN, // MIN([DISTINCT] expr)
+        self::SUM, // SUM([DISTINCT] expr)
+    ];
+
+    private static $aggregate = [
+        self::ANY_VALUE,
+        self::AVG,
+        self::BIT_AND,
+        self::BIT_OR,
+        self::BIT_XOR,
+        self::COUNT,
+        self::COUNT_DISTINCT,
+        self::GROUP_CONCAT,
+        self::JSON_ARRAYAGG,
+        self::JSON_OBJECTAGG,
+        self::MAX,
+        self::MIN,
+        self::STD,
+        self::STDDEV,
+        self::STDDEV_POP,
+        self::STDDEV_SAMP,
+        self::SUM,
+        self::VAR_POP,
+        self::VAR_SAMP,
+        self::VARIANCE,
+    ];
+
+    private static $bare = [
+        self::CURRENT_TIME,
+        self::CURRENT_DATE,
+        self::CURRENT_TIMESTAMP,
+        self::CURRENT_USER,
+        self::LOCALTIME,
+        self::LOCALTIMESTAMP,
+        self::UTC_DATE,
+        self::UTC_TIME,
+        self::UTC_TIMESTAMP,
+    ];
+
+    public function hasNamedParams(): bool
     {
-        return !$this->equals(self::CURRENT_USER);
+        return Arr::contains(self::$namedParams, $this->getValue());
+    }
+
+    public function isAggregate(): bool
+    {
+        return Arr::contains(self::$aggregate, $this->getValue());
+    }
+
+    public function isBare(): bool
+    {
+        return Arr::contains(self::$bare, $this->getValue());
     }
 
 }

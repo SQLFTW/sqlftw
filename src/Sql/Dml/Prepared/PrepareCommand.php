@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Prepared;
 
 use SqlFtw\Formatter\Formatter;
 
-class PrepareCommand implements \SqlFtw\Sql\Command
+class PrepareCommand implements \SqlFtw\Sql\Dml\Prepared\PreparedStatementCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

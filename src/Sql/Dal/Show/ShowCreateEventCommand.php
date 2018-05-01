@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Show;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class ShowCreateEventCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowCreateEventCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $name;

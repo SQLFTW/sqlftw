@@ -24,7 +24,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class JoinParser
 {
@@ -221,7 +221,7 @@ class JoinParser
             return new TableReferenceSubquery($query, $alias, $columns);
 
         } else {
-            $table = new TableName(...$tokenList->consumeQualifiedName());
+            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
             $partitions = null;
             if ($tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
                 $tokenList->consume(TokenType::LEFT_PARENTHESIS);

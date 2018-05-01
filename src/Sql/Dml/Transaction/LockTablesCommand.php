@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Transaction;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 
-class LockTablesCommand implements \SqlFtw\Sql\Command
+class LockTablesCommand implements \SqlFtw\Sql\Dml\Transaction\TransactionCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

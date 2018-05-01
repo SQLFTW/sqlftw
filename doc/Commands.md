@@ -1,0 +1,46 @@
+
+interfaces of commands in namespace "SqlFtw\Sql":
+
+- Statement
+    - Ddl\Compound\CompoundStatementItem
+
+    - Command
+        - TableCommand
+            - SingleTableCommand
+            - MultipleTableCommand
+            - Ddl\DdlTableCommand
+            - Ddl\DalTableCommand
+        - [Dal]
+            - DalCommand
+                - Cache\CacheCommand
+                - Component\ComponentCommand
+                - Plugin\PluginCommand
+                - Replication\ReplicationCommand
+                    - GroupReplicationCommand
+                - Set\CharsetCommand
+                - Show\ShowCommand
+                - Table\DalTableCommand
+                - User\UserCommand
+        - [Ddl]
+            - DdlCommand
+                - Database\DatabaseCommand
+                - Event\EventCommand
+                - Index\IndexCommand
+                - LogfileGroup\LogfileGroupCommand
+                - Routines\StoredRoutineCommand
+                    - StoredFunctionCommand
+                    - StoredProcedureCommand
+                - Server\ServerCommand
+                - Table\DdlTableCommand
+                - Tablespace\TablespaceCommand
+                - Trigger\TriggerCommand
+                - View\ViewCommand
+        - [Dml]
+            - DmlCommand
+                - Handler\HandlerCommand
+                - Insert\InsertCommand
+                - Insert\ReplaceCommand
+                - Load\LoadCommand (abstract class)
+                - Prepared\PreparedStatementCommand
+                - Transaction\TransactionCommand
+                - XaTransaction\XaTransactionCommand

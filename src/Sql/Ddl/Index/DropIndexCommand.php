@@ -12,16 +12,16 @@ namespace SqlFtw\Sql\Ddl\Index;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class DropIndexCommand implements \SqlFtw\Sql\Command
+class DropIndexCommand implements \SqlFtw\Sql\Ddl\Index\IndexCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm|null */
@@ -32,7 +32,7 @@ class DropIndexCommand implements \SqlFtw\Sql\Command
 
     public function __construct(
         string $name,
-        TableName $table,
+        QualifiedName $table,
         ?AlterTableAlgorithm $algorithm = null,
         ?AlterTableLock $lock = null
     ) {
@@ -47,7 +47,7 @@ class DropIndexCommand implements \SqlFtw\Sql\Command
         return $this->name;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

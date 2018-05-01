@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Show;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class ShowTablesCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowTablesCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var string|null */
     private $database;

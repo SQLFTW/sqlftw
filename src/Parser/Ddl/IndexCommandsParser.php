@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\Str;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
@@ -25,7 +26,6 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\TableName;
 
 class IndexCommandsParser
 {
@@ -133,8 +133,14 @@ class IndexCommandsParser
                 $tokenList->consumeKeyword(Keyword::PARSER);
                 $options[IndexOption::WITH_PARSER] = $tokenList->consumeName();
             } elseif ($keyword === Keyword::COMMENT) {
-                /// parse: COMMENT 'MERGE_THRESHOLD=40';
-                $options[IndexOption::COMMENT] = $tokenList->consumeString();
+                $comment = $tokenList->consumeString();
+                // parse "COMMENT 'MERGE_THRESHOLD=40';"
+                $match = Str::match($comment, '/^MERGE_THRESHOLD=([0-9]+)$/');
+                if ($match) {
+                    $options[IndexOption::MERGE_THRESHOLD] = (int) $match[1];
+                } else {
+                    $options[IndexOption::COMMENT] = $comment;
+                }
             } elseif ($keyword === Keyword::VISIBLE) {
                 $options[IndexOption::VISIBLE] = true;
             } elseif ($keyword === Keyword::INVISIBLE) {
@@ -163,7 +169,7 @@ class IndexCommandsParser
         $tokenList->consumeKeywords(Keyword::DROP, Keyword::INDEX);
         $name = $tokenList->consumeName();
         $tokenList->consumeKeyword(Keyword::ON);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
         $algorithm = null;
         if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
             $tokenList->mayConsumeOperator(Operator::EQUAL);

@@ -10,21 +10,21 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class TruncateSingleTableCommand implements \SqlFtw\Sql\SingleTableCommand
+class TruncateTableCommand implements \SqlFtw\Sql\SingleTableCommand, \SqlFtw\Sql\Ddl\Table\DdlTableCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
-    public function __construct(TableName $table)
+    public function __construct(QualifiedName $table)
     {
         $this->table = $table;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 
-class ShowBinlogEventsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowBinlogEventsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var string|null */
     private $logName;

@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 
-class ShowEnginesCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowEnginesCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropTablespaceCommand implements \SqlFtw\Sql\Command
+class DropTablespaceCommand implements \SqlFtw\Sql\Ddl\Tablespace\TablespaceCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

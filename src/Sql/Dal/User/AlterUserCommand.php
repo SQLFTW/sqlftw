@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 
-class AlterUserCommand implements \SqlFtw\Sql\Command
+class AlterUserCommand implements \SqlFtw\Sql\Dal\User\UserCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

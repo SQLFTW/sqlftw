@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Server;
 
 use SqlFtw\Formatter\Formatter;
 
-class AlterServerCommand implements \SqlFtw\Sql\Command
+class AlterServerCommand implements \SqlFtw\Sql\Ddl\Server\ServerCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

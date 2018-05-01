@@ -12,7 +12,7 @@ namespace SqlFtw\Platform;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\SqlMode;
 
-class Settings
+class PlatformSettings
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -31,18 +31,23 @@ class Settings
     /** @var bool */
     private $quoteAllNames;
 
+    /** @var bool */
+    private $canonicalizeTypes;
+
     public function __construct(
         Platform $platform,
         string $delimiter = ';',
         ?Charset $charset = null,
         ?Mode $mode = null,
-        bool $quoteAllNames = true
+        bool $quoteAllNames = true,
+        bool $canonicalizeTypes = true
     ) {
         $this->platform = $platform;
         $this->delimiter = $delimiter;
         $this->charset = $charset;
         $this->mode = $mode !== null ? $mode : $platform->getDefaultMode();
         $this->quoteAllNames = $quoteAllNames;
+        $this->canonicalizeTypes = $canonicalizeTypes;
     }
 
     public function getPlatform(): Platform
@@ -93,6 +98,16 @@ class Settings
     public function quoteAllNames(): bool
     {
         return $this->quoteAllNames;
+    }
+
+    public function setCanonicalizeTypes(bool $canonicalize): void
+    {
+        $this->canonicalizeTypes = $canonicalize;
+    }
+
+    public function canonicalizeTypes(): bool
+    {
+        return $this->canonicalizeTypes;
     }
 
 }

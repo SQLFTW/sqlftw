@@ -13,12 +13,12 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 
-class CreateDatabaseCommand implements \SqlFtw\Sql\Command
+class CreateDatabaseCommand implements \SqlFtw\Sql\Ddl\Database\DatabaseCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
     /** @var string|null */
-    private $database;
+    private $name;
 
     /** @var \SqlFtw\Sql\Charset|null */
     private $charset;
@@ -29,17 +29,17 @@ class CreateDatabaseCommand implements \SqlFtw\Sql\Command
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(?string $database, ?Charset $charset, ?Collation $collation = null, bool $ifNotExists = false)
+    public function __construct(?string $name, ?Charset $charset, ?Collation $collation = null, bool $ifNotExists = false)
     {
-        $this->database = $database;
+        $this->name = $name;
         $this->charset = $charset;
         $this->collation = $collation;
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getDatabase(): ?string
+    public function getName(): ?string
     {
-        return $this->database;
+        return $this->name;
     }
 
     public function getCharset(): ?Charset
@@ -63,7 +63,7 @@ class CreateDatabaseCommand implements \SqlFtw\Sql\Command
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
-        $result .= $formatter->formatName($this->database);
+        $result .= $formatter->formatName($this->name);
         if ($this->charset !== null) {
             $result .= ' CHARACTER SET = ' . $this->charset->serialize($formatter);
         }

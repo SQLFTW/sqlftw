@@ -18,7 +18,7 @@ use SqlFtw\Sql\Dml\Load\LoadPriority;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class LoadCommandsParser
 {
@@ -110,7 +110,7 @@ class LoadCommandsParser
         $duplicateOption = $tokenList->mayConsumeKeywordEnum(DuplicateOption::class);
 
         $tokenList->consumeKeywords(Keyword::INTO, Keyword::TABLE);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         $partitions = null;
         if ($parsePartitions && $tokenList->mayConsumeKeyword(Keyword::PARTITION)) {

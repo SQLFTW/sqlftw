@@ -24,7 +24,7 @@ use SqlFtw\Sql\Dml\Select\SelectLockWaitOption;
 use SqlFtw\Sql\Dml\Select\SelectOption;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class SelectCommandParser
 {
@@ -182,7 +182,7 @@ class SelectCommandParser
             if ($tokenList->mayConsumeKeyword(Keyword::OF)) {
                 $lockTables = [];
                 do {
-                    $lockTables[] = new TableName(...$tokenList->consumeName());
+                    $lockTables[] = new QualifiedName(...$tokenList->consumeName());
                 } while ($tokenList->mayConsumeComma());
             }
             /** @var \SqlFtw\Sql\Dml\Select\SelectLockWaitOption $lockWaitOption */

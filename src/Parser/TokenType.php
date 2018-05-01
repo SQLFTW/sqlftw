@@ -53,7 +53,7 @@ namespace SqlFtw\Parser;
  *    - DOT, COMMA, SEMICOLON
  *    - DELIMITER - default ";"
  *    - DELIMITER_DEFINITION
- *    - PLACEHOLDER "?"
+ *    - PLACEHOLDER - "?"
  *    - OPERATOR - everything else
  */
 class TokenType extends \Dogma\IntSet

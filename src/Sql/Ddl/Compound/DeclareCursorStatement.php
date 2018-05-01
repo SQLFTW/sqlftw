@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 
-class DeclareCursorStatement implements \SqlFtw\Sql\Statement
+class DeclareCursorStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

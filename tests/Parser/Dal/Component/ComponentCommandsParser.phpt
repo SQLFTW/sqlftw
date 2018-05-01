@@ -12,9 +12,9 @@ $parser = getParserFactory(Platform::get(Platform::MYSQL, '8.0'))->getParser();
 $formatter = new Formatter($parser->getSettings());
 
 // INSTALL COMPONENT
-$query = "INSTALL COMPONENT foo, bar";
+$query = 'INSTALL COMPONENT foo, bar';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // UNINSTALL COMPONENT
-$query = "UNINSTALL COMPONENT foo, bar";
+$query = 'UNINSTALL COMPONENT foo, bar';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));

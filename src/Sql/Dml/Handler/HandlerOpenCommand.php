@@ -10,25 +10,25 @@
 namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class HandlerOpenCommand implements \SqlFtw\Sql\Command
+class HandlerOpenCommand implements \SqlFtw\Sql\Dml\Handler\HandlerCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var string|null */
     private $alias;
 
-    public function __construct(TableName $table, ?string $alias = null)
+    public function __construct(QualifiedName $table, ?string $alias = null)
     {
         $this->table = $table;
         $this->alias = $alias;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

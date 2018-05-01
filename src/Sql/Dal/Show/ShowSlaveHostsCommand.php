@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 
-class ShowSlaveHostsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowSlaveHostsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

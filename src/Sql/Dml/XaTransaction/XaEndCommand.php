@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\XaTransaction;
 
 use SqlFtw\Formatter\Formatter;
 
-class XaEndCommand implements \SqlFtw\Sql\Command
+class XaEndCommand implements \SqlFtw\Sql\Dml\XaTransaction\XaTransactionCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

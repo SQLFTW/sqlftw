@@ -14,16 +14,16 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-abstract class LoadCommand implements \SqlFtw\Sql\Command
+abstract class LoadCommand implements \SqlFtw\Sql\Dml\DmlCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
     /** @var string */
     private $file;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var \SqlFtw\Sql\Charset|null */
@@ -52,7 +52,7 @@ abstract class LoadCommand implements \SqlFtw\Sql\Command
 
     public function __construct(
         string $file,
-        TableName $table,
+        QualifiedName $table,
         ?Charset $charset = null,
         ?array $fields = null,
         ?array $setters = null,

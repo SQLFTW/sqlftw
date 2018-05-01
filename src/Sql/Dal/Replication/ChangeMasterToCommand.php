@@ -13,7 +13,7 @@ use Dogma\Arr;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 
-class ChangeMasterToCommand implements \SqlFtw\Sql\Command
+class ChangeMasterToCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

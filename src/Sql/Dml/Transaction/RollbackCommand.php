@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Formatter\Formatter;
 
-class RollbackCommand implements \SqlFtw\Sql\Command
+class RollbackCommand implements \SqlFtw\Sql\Dml\Transaction\TransactionCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

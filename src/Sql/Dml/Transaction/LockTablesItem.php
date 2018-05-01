@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class LockTablesItem implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var \SqlFtw\Sql\Dml\Transaction\LockTableType */
@@ -25,7 +25,7 @@ class LockTablesItem implements \SqlFtw\Sql\SqlSerializable
     /** @var string|null */
     private $alias;
 
-    public function __construct(TableName $table, LockTableType $lock, ?string $alias)
+    public function __construct(QualifiedName $table, LockTableType $lock, ?string $alias)
     {
         $this->table = $table;
         $this->lock = $lock;

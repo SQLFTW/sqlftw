@@ -12,13 +12,13 @@ namespace SqlFtw\Sql\Dml\TableReference;
 use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class TableReferenceTable implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var string|null */
@@ -31,12 +31,12 @@ class TableReferenceTable implements \SqlFtw\Sql\Dml\TableReference\TableReferen
     private $indexHints;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param string|null $alias
      * @param string[]|null $partitions
      * @param \SqlFtw\Sql\Dml\TableReference\IndexHint[]|null $indexHints
      */
-    public function __construct(TableName $table, ?string $alias = null, ?array $partitions = null, ?array $indexHints = null)
+    public function __construct(QualifiedName $table, ?string $alias = null, ?array $partitions = null, ?array $indexHints = null)
     {
         if ($partitions !== null) {
             Check::itemsOfType($partitions, Type::STRING);
@@ -55,7 +55,7 @@ class TableReferenceTable implements \SqlFtw\Sql\Dml\TableReference\TableReferen
         return TableReferenceNodeType::get(TableReferenceNodeType::TABLE);
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

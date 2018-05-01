@@ -12,21 +12,21 @@ $formatter = new Formatter($parser->getSettings());
 
 
 // more
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) AUTO_INCREMENT 17, AVG_ROW_LENGTH 17";
+) AUTO_INCREMENT 17, AVG_ROW_LENGTH 17';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // AUTO_INCREMENT
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) AUTO_INCREMENT 17";
+) AUTO_INCREMENT 17';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // AVG_ROW_LENGTH
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) AVG_ROW_LENGTH 17";
+) AVG_ROW_LENGTH 17';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // CHARACTER_SET
@@ -36,14 +36,14 @@ $query = "CREATE TABLE foo (
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // CHECKSUM
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) CHECKSUM 0";
+) CHECKSUM 0';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) CHECKSUM 1";
+) CHECKSUM 1';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // COLLATE
@@ -87,14 +87,14 @@ $query = "CREATE TABLE foo (
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // DELAY_KEY_WRITE
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) DELAY_KEY_WRITE 0";
+) DELAY_KEY_WRITE 0';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) DELAY_KEY_WRITE 1";
+) DELAY_KEY_WRITE 1';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // ENCRYPTION
@@ -121,53 +121,53 @@ $query = "CREATE TABLE foo (
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // INSERT_METHOD
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) INSERT_METHOD NO";
+) INSERT_METHOD NO';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) INSERT_METHOD FIRST";
+) INSERT_METHOD FIRST';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) INSERT_METHOD LAST";
+) INSERT_METHOD LAST';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // KEY_BLOCK_SIZE
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) KEY_BLOCK_SIZE 17";
+) KEY_BLOCK_SIZE 17';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // MAX_ROWS
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) MAX_ROWS 17";
+) MAX_ROWS 17';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // MIN_ROWS
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) MIN_ROWS 17";
+) MIN_ROWS 17';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // PACK_KEYS
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) PACK_KEYS 0";
+) PACK_KEYS 0';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) PACK_KEYS 1";
+) PACK_KEYS 1';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) PACK_KEYS DEFAULT";
+) PACK_KEYS DEFAULT';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // PASSWORD
@@ -177,72 +177,72 @@ $query = "CREATE TABLE foo (
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // ROW_FORMAT DEFAULT|DYNAMIC|FIXED|COMPRESSED|REDUNDANT|COMPACT
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) ROW_FORMAT DEFAULT";
+) ROW_FORMAT DEFAULT';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) ROW_FORMAT DYNAMIC";
+) ROW_FORMAT DYNAMIC';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) ROW_FORMAT FIXED";
+) ROW_FORMAT FIXED';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) ROW_FORMAT COMPRESSED";
+) ROW_FORMAT COMPRESSED';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) ROW_FORMAT REDUNDANT";
+) ROW_FORMAT REDUNDANT';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) ROW_FORMAT COMPACT";
+) ROW_FORMAT COMPACT';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // STATS_AUTO_RECALC
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) STATS_AUTO_RECALC 0";
+) STATS_AUTO_RECALC 0';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) STATS_AUTO_RECALC 1";
+) STATS_AUTO_RECALC 1';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) STATS_AUTO_RECALC DEFAULT";
+) STATS_AUTO_RECALC DEFAULT';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // STATS_PERSISTENT
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) STATS_PERSISTENT 0";
+) STATS_PERSISTENT 0';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) STATS_PERSISTENT 1";
+) STATS_PERSISTENT 1';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) STATS_PERSISTENT DEFAULT";
+) STATS_PERSISTENT DEFAULT';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // STATS_SAMPLE_PAGES
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) STATS_SAMPLE_PAGES 17";
+) STATS_SAMPLE_PAGES 17';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // TABLESPACE
@@ -252,7 +252,7 @@ $query = "CREATE TABLE foo (
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // UNION
-$query = "CREATE TABLE foo (
+$query = 'CREATE TABLE foo (
   bar INT
-) UNION (foo, bar)";
+) UNION (foo, bar)';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));

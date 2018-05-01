@@ -10,7 +10,7 @@
 namespace SqlFtw\Parser;
 
 use SqlFtw\Parser\Lexer\Lexer;
-use SqlFtw\Platform\Settings;
+use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 
@@ -24,17 +24,17 @@ class Parser
     /** @var \SqlFtw\Parser\ParserFactory */
     private $factory;
 
-    /** @var \SqlFtw\Platform\Settings */
+    /** @var \SqlFtw\Platform\PlatformSettings */
     private $settings;
 
-    public function __construct(Lexer $lexer, Settings $settings)
+    public function __construct(Lexer $lexer, PlatformSettings $settings)
     {
         $this->lexer = $lexer;
         $this->settings = $settings;
         $this->factory = new ParserFactory($settings, $this);
     }
 
-    public function getSettings(): Settings
+    public function getSettings(): PlatformSettings
     {
         return $this->settings;
     }

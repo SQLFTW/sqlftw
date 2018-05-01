@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 
-class ShowSlaveStatusCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowSlaveStatusCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var string|null */
     private $channel;

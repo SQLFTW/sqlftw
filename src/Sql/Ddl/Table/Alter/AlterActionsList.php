@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\Arr;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 
@@ -32,6 +33,17 @@ class AlterActionsList implements \SqlFtw\Sql\SqlSerializable
     public function getActions(): array
     {
         return $this->actions;
+    }
+
+    /**
+     * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType $type
+     * @return \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[]
+     */
+    public function getActionsByType(AlterTableActionType $type): array
+    {
+        return Arr::filter($this->actions, function (AlterTableAction $action) use ($type) {
+            return $action->getType() === $type;
+        });
     }
 
     public function isEmpty(): bool

@@ -13,7 +13,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class WithParser
 {
@@ -45,10 +45,10 @@ class WithParser
     public function parseWith(TokenList $tokenList): Command
     {
         ///
-        if (true) {
+        if (true === true) {
             throw new \Dogma\NotImplementedException('Common table expressions are not implemented yet.');
         } else {
-            return new SelectCommand([], new TableReferenceTable(new TableName('foo')));
+            return new SelectCommand([], new TableReferenceTable(new QualifiedName('foo')));
         }
     }
 

@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 abstract class InsertOrReplaceCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     protected $table;
 
     /** @var string[]|null */
@@ -32,14 +32,14 @@ abstract class InsertOrReplaceCommand implements \SqlFtw\Sql\Command
     protected $ignore;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param string[]|null $columns
      * @param string[]|null $partitions
      * @param \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority
      * @param bool $ignore
      */
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         ?array $columns,
         ?array $partitions,
         ?InsertPriority $priority = null,
@@ -53,7 +53,7 @@ abstract class InsertOrReplaceCommand implements \SqlFtw\Sql\Command
         $this->ignore = $ignore;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

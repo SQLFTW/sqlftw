@@ -59,9 +59,9 @@ class Condition implements \SqlFtw\Sql\SqlSerializable
         if ($this->type->equals(ConditionType::ERROR)) {
             return (string) $this->value;
         } elseif ($this->type->equals(ConditionType::CONDITION)) {
-            return $formatter->formatName($this->value);
+            return $formatter->formatName((string) $this->value);
         } elseif ($this->type->equals(ConditionType::SQL_STATE)) {
-            return 'SQLSTATE ' . $formatter->formatString($this->value);
+            return 'SQLSTATE ' . $formatter->formatString((string) $this->value);
         } else {
             return $this->type->serialize($formatter);
         }

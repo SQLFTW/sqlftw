@@ -13,7 +13,7 @@ use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
-class UninstallComponentCommand implements \SqlFtw\Sql\Command
+class UninstallComponentCommand implements \SqlFtw\Sql\Dal\Component\ComponentCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

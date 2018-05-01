@@ -24,7 +24,7 @@ use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class InsertCommandParser
 {
@@ -75,7 +75,7 @@ class InsertCommandParser
         $priority = $tokenList->mayConsumeKeywordEnum(InsertPriority::class);
         $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
         $tokenList->mayConsumeKeyword(Keyword::INTO);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
@@ -126,7 +126,7 @@ class InsertCommandParser
         $priority = $tokenList->mayConsumeKeywordEnum(InsertPriority::class);
         $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
         $tokenList->mayConsumeKeyword(Keyword::INTO);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);

@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class WhileStatement implements \SqlFtw\Sql\Statement
+class WhileStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

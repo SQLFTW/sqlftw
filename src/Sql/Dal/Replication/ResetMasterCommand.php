@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Formatter\Formatter;
 
-class ResetMasterCommand implements \SqlFtw\Sql\Command
+class ResetMasterCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

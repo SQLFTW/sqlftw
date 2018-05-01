@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-interface AnyCreateSingleTableCommand extends \SqlFtw\Sql\SingleTableCommand
+interface AnyCreateTableCommand extends \SqlFtw\Sql\SingleTableCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
 {
 
 }

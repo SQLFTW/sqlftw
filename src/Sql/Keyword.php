@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-class Keyword extends \SqlFtw\Sql\SqlEnum
+class Keyword extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
 {
 
     public const A = 'A';

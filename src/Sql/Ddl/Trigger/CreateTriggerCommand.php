@@ -11,12 +11,10 @@ namespace SqlFtw\Sql\Ddl\Trigger;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\TableName;
 use SqlFtw\Sql\UserName;
 
-class CreateTriggerCommand implements \SqlFtw\Sql\Command
+class CreateTriggerCommand implements \SqlFtw\Sql\Ddl\Trigger\TriggerCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -26,7 +24,7 @@ class CreateTriggerCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Ddl\Trigger\TriggerEvent */
     private $event;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var \SqlFtw\Sql\Statement */
@@ -41,7 +39,7 @@ class CreateTriggerCommand implements \SqlFtw\Sql\Command
     public function __construct(
         string $name,
         TriggerEvent $event,
-        TableName $table,
+        QualifiedName $table,
         Statement $body,
         ?UserName $definer = null,
         ?TriggerPosition $position = null
@@ -64,7 +62,7 @@ class CreateTriggerCommand implements \SqlFtw\Sql\Command
         return $this->event;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

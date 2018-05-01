@@ -10,6 +10,7 @@
 namespace SqlFtw\Platform;
 
 use SqlFtw\Platform\Features\PlatformFeatures;
+use SqlFtw\Platform\Naming\NamingStrategy;
 
 class Platform
 {
@@ -18,12 +19,6 @@ class Platform
     public const SQL = 'sql';
     public const MYSQL = 'mysql';
     public const MARIA = 'maria';
-    //public const SQLITE = 'sqlite';
-    //public const POSTGRE = 'postgre';
-    //public const FIREBASE = 'firebase';
-    //public const MSSQL = 'mssql';
-    //public const ORACLE = 'oracle';
-    //public const DB2 = 'db2';
 
     /** @var string[][] */
     private static $versions = [
@@ -89,6 +84,11 @@ class Platform
         return true;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     /**
      * @return string[]
      */
@@ -134,6 +134,13 @@ class Platform
     public function getFeatures(): PlatformFeatures
     {
         $class = __NAMESPACE__ . '\\Features\\Features' . ucfirst($this->name) . str_replace('.', '', $this->version->getMajorMinor());
+
+        return new $class;
+    }
+
+    public function getNamingStrategy(): NamingStrategy
+    {
+        $class = __NAMESPACE__ . '\\Naming\\NamingStrategy' . ucfirst($this->name);
 
         return new $class;
     }

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 use Dogma\Type;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableNameList;
+use SqlFtw\Sql\QualifiedName;
 
 class TableOption extends \SqlFtw\Sql\SqlEnum
 {
@@ -69,7 +69,7 @@ class TableOption extends \SqlFtw\Sql\SqlEnum
         self::STATS_PERSISTENT => ThreeStateValue::class,
         self::STATS_SAMPLE_PAGES => Type::INT,
         self::TABLESPACE => Type::STRING,
-        self::UNION => TableNameList::class,
+        self::UNION => QualifiedName::class . '[]',
     ];
 
     /**

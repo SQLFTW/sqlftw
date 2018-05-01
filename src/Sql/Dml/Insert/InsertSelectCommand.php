@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class InsertSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\InsertCommand
 {
@@ -24,7 +24,7 @@ class InsertSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand 
     private $onDuplicateKeyActions;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param \SqlFtw\Sql\Dml\Select\SelectCommand $select
      * @param string[]|null $columns
      * @param string[]|null $partitions
@@ -33,7 +33,7 @@ class InsertSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand 
      * @param \SqlFtw\Sql\Dml\Insert\OnDuplicateKeyActions|null $onDuplicateKeyActions
      */
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         SelectCommand $select,
         ?array $columns,
         ?array $partitions,

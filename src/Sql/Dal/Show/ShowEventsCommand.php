@@ -12,11 +12,12 @@ namespace SqlFtw\Sql\Dal\Show;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class ShowEventsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowEventsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var string|null */
-    private $databaseName;
+    private $schema;
 
     /** @var string|null */
     private $like;
@@ -24,16 +25,16 @@ class ShowEventsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $where;
 
-    public function __construct(?string $databaseName = null, ?string $like = null, ?ExpressionNode $where = null)
+    public function __construct(?string $schema = null, ?string $like = null, ?ExpressionNode $where = null)
     {
-        $this->databaseName = $databaseName;
+        $this->schema = $schema;
         $this->like = $like;
         $this->where = $where;
     }
 
-    public function getDatabaseName(): ?string
+    public function getSchema(): ?string
     {
-        return $this->databaseName;
+        return $this->schema;
     }
 
     public function getLike(): ?string
@@ -49,8 +50,8 @@ class ShowEventsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW EVENTS';
-        if ($this->databaseName) {
-            $result .= ' FROM ' . $formatter->formatName($this->databaseName);
+        if ($this->schema) {
+            $result .= ' FROM ' . $formatter->formatName($this->schema);
         }
         if ($this->like !== null) {
             $result .= ' LIKE ' . $formatter->formatString($this->like);

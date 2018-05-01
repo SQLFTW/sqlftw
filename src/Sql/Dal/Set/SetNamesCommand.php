@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 
-class SetNamesCommand implements \SqlFtw\Sql\Command
+class SetNamesCommand implements \SqlFtw\Sql\Dal\Set\CharsetCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

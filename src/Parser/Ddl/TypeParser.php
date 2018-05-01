@@ -40,35 +40,66 @@ class TypeParser
      *   | TIMESTAMP[(fsp)]
      *   | DATETIME[(fsp)]
      *   | YEAR
-     *   | CHAR[(length)] [BINARY]
-     *       [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | VARCHAR(length) [BINARY]
-     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | CHAR[(length)] [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | VARCHAR(length) [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
      *   | BINARY[(length)]
      *   | VARBINARY(length)
      *   | TINYBLOB
      *   | BLOB
      *   | MEDIUMBLOB
      *   | LONGBLOB
-     *   | TINYTEXT [BINARY]
-     *       [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | TEXT [BINARY]
-     *       [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | MEDIUMTEXT [BINARY]
-     *       [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | LONGTEXT [BINARY]
-     *       [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | ENUM(value1,value2,value3,...)
-     *       [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | SET(value1,value2,value3,...)
-     *       [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | TINYTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | TEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | MEDIUMTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | LONGTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | ENUM(value1,value2,value3,...) [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | SET(value1,value2,value3,...) [CHARACTER SET charset_name] [COLLATE collation_name]
      *   | JSON
      *   | spatial_type
+     *
+     *   + aliases defined in BaseType class
      */
     public function parseType(TokenList $tokenList): DataType
     {
-        /** @var \SqlFtw\Sql\Ddl\BaseType $dataType */
-        $dataType = $tokenList->consumeKeywordEnum(BaseType::class);
+        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::DOUBLE, Keyword::NATIONAL, Keyword::CHARACTER, Keyword::CHAR, Keyword::LONG);
+        if ($keyword === Keyword::DOUBLE) {
+            if ($tokenList->mayConsumeKeyword(Keyword::PRECISION)) {
+                $dataType = BaseType::get(BaseType::DOUBLE_PRECISION);
+            } else {
+                $dataType = BaseType::get(BaseType::DOUBLE);
+            }
+        } elseif ($keyword === Keyword::NATIONAL) {
+            $second = $tokenList->consumeAnyKeyword(Keyword::CHAR, Keyword::VARCHAR);
+            $dataType = BaseType::get($keyword . ' ' . $second);
+        } elseif ($keyword === Keyword::CHARACTER) {
+            if ($tokenList->mayConsumeKeyword(Keyword::VARYING)) {
+                $dataType = BaseType::get(BaseType::CHARACTER_VARYING);
+            } else {
+                $dataType = BaseType::get(BaseType::CHARACTER);
+            }
+        } elseif ($keyword === Keyword::CHAR) {
+            if ($tokenList->mayConsumeKeyword(Keyword::BYTE)) {
+                $dataType = BaseType::get(BaseType::CHAR_BYTE);
+            } else {
+                $dataType = BaseType::get(BaseType::CHAR);
+            }
+        } elseif ($keyword === Keyword::LONG) {
+            $second = $tokenList->mayConsumeAnyKeyword(Keyword::VARCHAR, Keyword::VARBINARY);
+            if ($second !== null) {
+                $dataType = BaseType::get($keyword . ' ' . $second);
+            } else {
+                $dataType = BaseType::get(BaseType::LONG);
+            }
+        } else {
+            /** @var \SqlFtw\Sql\Ddl\BaseType $dataType */
+            $dataType = $tokenList->consumeKeywordEnum(BaseType::class);
+        }
+
+        $settings = $tokenList->getSettings();
+        if ($settings->canonicalizeTypes()) {
+            $dataType = $dataType->canonicalize($settings);
+        }
+
         $params = $charset = $collation = null;
         $unsigned = $zerofill = false;
 
@@ -94,7 +125,10 @@ class TypeParser
                 $params[] = $tokenList->consumeString();
             } while ($tokenList->mayConsumeComma());
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
-        }
+        }/* elseif ($dataType->hasFsp() && $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+            ///
+            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        }*/
 
         if ($dataType->isNumber()) {
             $unsigned = (bool) $tokenList->mayConsumeKeyword(Keyword::UNSIGNED);

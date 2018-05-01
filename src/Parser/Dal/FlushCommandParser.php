@@ -15,7 +15,7 @@ use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushOption;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class FlushCommandParser
 {
@@ -83,9 +83,9 @@ class FlushCommandParser
         $tables = [];
         $table = $tokenList->mayConsumeQualifiedName();
         if ($table !== null) {
-            $tables[] = new TableName(...$table);
+            $tables[] = new QualifiedName(...$table);
             while ($tokenList->mayConsumeComma()) {
-                $tables = new TableName(...$tokenList->consumeQualifiedName());
+                $tables = new QualifiedName(...$tokenList->consumeQualifiedName());
             }
         }
         $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::WITH, Keyword::FOR);

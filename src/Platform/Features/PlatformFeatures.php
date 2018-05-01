@@ -9,17 +9,28 @@
 
 namespace SqlFtw\Platform\Features;
 
+use SqlFtw\Sql\Dal\SystemVariable;
+use SqlFtw\Sql\Ddl\BaseType;
+use SqlFtw\Sql\Expression\BuiltInFunction;
+use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Feature;
+use SqlFtw\Sql\Keyword;
+
 abstract class PlatformFeatures
 {
     use \Dogma\StrictBehaviorMixin;
 
     public const RESERVED_WORDS = [];
-
     public const NON_RESERVED_WORDS = [];
 
     public const OPERATOR_KEYWORDS = [];
+    public const OPERATORS = [];
 
-    public const FUNCTIONS = [];
+    public const TYPES = []; ///
+    public const TYPE_ALIASES = []; ///
+
+    public const BUILT_IN_FUNCTIONS = [];
+    public const SYSTEM_VARIABLES = []; ///
 
     /**
      * @return string[]
@@ -48,19 +59,76 @@ abstract class PlatformFeatures
     /**
      * @return string[]
      */
-    public function getFunctions(): array
+    public function getOperators(): array
     {
-        return static::FUNCTIONS;
+        return static::OPERATORS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBuiltInFunctions(): array
+    {
+        return static::BUILT_IN_FUNCTIONS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypes(): array
+    {
+        return static::TYPES;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypeAliases(): array
+    {
+        return static::TYPE_ALIASES;
     }
 
     public function isKeyword(string $word): bool
     {
-        return in_array($word, $this->getReservedWords()) || in_array($word, $this->getNonReservedWords());
+        return in_array($word, $this->getReservedWords(), true) || in_array($word, $this->getNonReservedWords(), true);
     }
 
     public function isReserved(string $word): bool
     {
-        return in_array($word, $this->getReservedWords());
+        return in_array($word, $this->getReservedWords(), true);
+    }
+
+    public function isOperator(string $symbol): bool
+    {
+        return in_array($symbol, $this->getOperators());
+    }
+
+    public function isType(string $word): bool
+    {
+        return in_array($word, $this->getTypes());
+    }
+
+    /**
+     * @param \SqlFtw\Sql\Feature $feature
+     * @return bool
+     */
+    public function available(Feature $feature): bool
+    {
+        if ($feature instanceof Keyword) {
+            return $this->isKeyword($feature->getValue());
+        } elseif ($feature instanceof Operator) {
+            return $this->isOperator($feature->getValue());
+        } elseif ($feature instanceof BuiltInFunction) {
+            ///
+            return false;
+        } elseif ($feature instanceof SystemVariable) {
+            ///
+            return false;
+        } elseif ($feature instanceof BaseType) {
+            return $this->isType($feature->getValue());
+        } else {
+            return false;
+        }
     }
 
 }

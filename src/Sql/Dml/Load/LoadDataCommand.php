@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\FileFormat;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class LoadDataCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
 {
@@ -24,7 +24,7 @@ class LoadDataCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
 
     public function __construct(
         string $file,
-        TableName $table,
+        QualifiedName $table,
         ?FileFormat $format,
         ?Charset $charset = null,
         ?array $fields = null,

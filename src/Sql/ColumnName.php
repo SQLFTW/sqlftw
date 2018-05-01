@@ -19,16 +19,16 @@ class ColumnName implements \SqlFtw\Sql\SqlSerializable
     private $name;
 
     /** @var string|null */
-    private $tableName;
+    private $table;
 
     /** @var string|null */
-    private $databaseName;
+    private $schema;
 
-    public function __construct(string $name, ?string $tableName = null, ?string $databaseName = null)
+    public function __construct(string $name, ?string $table = null, ?string $schema = null)
     {
         $this->name = $name;
-        $this->tableName = $tableName;
-        $this->databaseName = $databaseName;
+        $this->table = $table;
+        $this->schema = $schema;
     }
 
     public function getName(): string
@@ -36,24 +36,24 @@ class ColumnName implements \SqlFtw\Sql\SqlSerializable
         return $this->name;
     }
 
-    public function getTableName(): ?string
+    public function getTable(): ?string
     {
-        return $this->tableName;
+        return $this->table;
     }
 
-    public function getDatabaseName(): ?string
+    public function getSchema(): ?string
     {
-        return $this->databaseName;
+        return $this->schema;
     }
 
     public function serialize(Formatter $formatter): string
     {
         $result = '';
-        if ($this->databaseName !== null) {
-            $result = $formatter->formatName($this->databaseName) . '.';
+        if ($this->schema !== null) {
+            $result = $formatter->formatName($this->schema) . '.';
         }
-        if ($this->tableName !== null) {
-            $result .= $formatter->formatName($this->tableName) . '.';
+        if ($this->table !== null) {
+            $result .= $formatter->formatName($this->table) . '.';
         }
         $result .= $formatter->formatName($this->name);
 

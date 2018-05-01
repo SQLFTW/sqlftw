@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Statement;
 
-class CaseStatement implements \SqlFtw\Sql\Statement
+class CaseStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

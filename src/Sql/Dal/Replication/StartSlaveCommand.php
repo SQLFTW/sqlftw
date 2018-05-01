@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\Replication;
 use Dogma\Arr;
 use SqlFtw\Formatter\Formatter;
 
-class StartSlaveCommand implements \SqlFtw\Sql\Command
+class StartSlaveCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

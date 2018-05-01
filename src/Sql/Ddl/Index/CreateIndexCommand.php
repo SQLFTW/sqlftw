@@ -13,8 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
+use SqlFtw\Sql\QualifiedName;
 
-class CreateIndexCommand implements \SqlFtw\Sql\Command
+class CreateIndexCommand implements \SqlFtw\Sql\Ddl\Index\IndexCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -32,6 +33,11 @@ class CreateIndexCommand implements \SqlFtw\Sql\Command
         $this->index = $index;
         $this->algorithm = $algorithm;
         $this->lock = $lock;
+    }
+
+    public function getTable(): QualifiedName
+    {
+        return $this->index->getOptions()->getTable();
     }
 
     public function getIndex(): IndexDefinition

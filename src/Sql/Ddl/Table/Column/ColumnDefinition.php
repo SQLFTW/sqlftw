@@ -36,7 +36,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     /** @var bool */
     private $nullable;
 
-    /** @var string|int|float|\SqlFtw\Sql\Expression\Literal|null */
+    /** @var string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null */
     private $defaultValue;
 
     /** @var bool */
@@ -52,7 +52,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
     private $comment;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexType|null */
-    private $index;
+    private $indexType;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnFormat|null */
     private $columnFormat;
@@ -67,7 +67,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
      * @param bool|null $nullable
      * @param bool $autoincrement
      * @param string|null $comment
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexType $index
+     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexType $indexType
      * @param \SqlFtw\Sql\Ddl\Table\Column\ColumnFormat|null $columnFormat
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition $reference
      */
@@ -78,7 +78,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         ?bool $nullable = null,
         bool $autoincrement = false,
         ?string $comment = null,
-        ?IndexType $index = null,
+        ?IndexType $indexType = null,
         ?ColumnFormat $columnFormat = null,
         ?ReferenceDefinition $reference = null
     )
@@ -89,7 +89,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         $this->nullable = $nullable;
         $this->autoincrement = $autoincrement;
         $this->comment = $comment;
-        $this->index = $index;
+        $this->indexType = $indexType;
         $this->columnFormat = $columnFormat;
         $this->reference = $reference;
     }
@@ -101,7 +101,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
      * @param \SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType $generatedColumnType
      * @param bool $nullable
      * @param string|null $comment
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexType $index
+     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexType $indexType
      * @return \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition
      */
     public static function createGenerated(
@@ -111,10 +111,10 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         ?GeneratedColumnType $generatedColumnType,
         ?bool $nullable = null,
         ?string $comment = null,
-        ?IndexType $index = null
+        ?IndexType $indexType = null
     ): self
     {
-        $instance = new self($name, $type, null, $nullable, false, $comment, $index);
+        $instance = new self($name, $type, null, $nullable, false, $comment, $indexType);
 
         $instance->generatedColumnType = $generatedColumnType;
         $instance->expression = $expression;
@@ -190,9 +190,9 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         return $this->comment;
     }
 
-    public function getIndex(): ?IndexType
+    public function getIndexType(): ?IndexType
     {
-        return $this->index;
+        return $this->indexType;
     }
 
     public function getColumnFormat(): ?ColumnFormat
@@ -216,7 +216,7 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
             if ($this->generatedColumnType !== null) {
                 $result .= ' ' . $this->generatedColumnType->serialize($formatter);
             }
-            if ($this->index === IndexType::get(IndexType::UNIQUE)) {
+            if ($this->indexType === IndexType::get(IndexType::UNIQUE)) {
                 $result .= ' UNIQUE KEY';
             }
             if ($this->comment !== null) {
@@ -225,9 +225,9 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
             if ($this->nullable !== null) {
                 $result .= $this->nullable ? ' NULL' : ' NOT NULL';
             }
-            if ($this->index === IndexType::get(IndexType::PRIMARY)) {
+            if ($this->indexType === IndexType::get(IndexType::PRIMARY)) {
                 $result .= ' PRIMARY KEY';
-            } elseif ($this->index === IndexType::get(IndexType::INDEX)) {
+            } elseif ($this->indexType === IndexType::get(IndexType::INDEX)) {
                 $result .= ' KEY';
             }
         } else {
@@ -240,8 +240,8 @@ class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
             if ($this->autoincrement) {
                 $result .= ' AUTO_INCREMENT';
             }
-            if ($this->index !== null) {
-                $result .= ' ' . $this->index->serialize($formatter);
+            if ($this->indexType !== null) {
+                $result .= ' ' . $this->indexType->serialize($formatter);
             }
             if ($this->comment !== null) {
                 $result .= ' COMMENT ' . $formatter->formatString($this->comment);

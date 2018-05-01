@@ -13,6 +13,7 @@ use Dogma\Arr;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
 
 class TableOptionsList
@@ -48,6 +49,8 @@ class TableOptionsList
                         $this->options[TableRowFormat::class] = $value;
                         break;
                 }
+            } elseif ($option === TableOption::UNION) {
+                Check::itemsOfType($value, QualifiedName::class);
             } else {
                 TableOption::get($option);
                 Check::type($value, $types[$option]);
@@ -124,6 +127,8 @@ class TableOptionsList
                     }
                 } elseif ($option === TableOption::ENCRYPTION) {
                     return $option . $valueSeparator . ($value ? "'Y'" : "'N'");
+                } elseif ($option === TableOption::UNION) {
+                    return $option . $valueSeparator . $formatter->formatSerializablesList($value);
                 } else {
                     return $option . $valueSeparator . $formatter->formatValue($value);
                 }

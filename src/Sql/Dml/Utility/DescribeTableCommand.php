@@ -10,25 +10,25 @@
 namespace SqlFtw\Sql\Dml\Utility;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class DescribeTableCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var string|null */
     private $column;
 
-    public function __construct(TableName $table, ?string $column)
+    public function __construct(QualifiedName $table, ?string $column)
     {
         $this->table = $table;
         $this->column = $column;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

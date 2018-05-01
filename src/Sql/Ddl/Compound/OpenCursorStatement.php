@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Formatter\Formatter;
 
-class OpenCursorStatement implements \SqlFtw\Sql\Statement
+class OpenCursorStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

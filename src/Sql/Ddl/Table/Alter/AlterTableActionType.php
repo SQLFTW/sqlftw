@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\Type;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class AlterTableActionType extends \SqlFtw\Sql\SqlEnum
 {
@@ -83,7 +83,7 @@ class AlterTableActionType extends \SqlFtw\Sql\SqlEnum
 
         self::ORDER_BY => 'array<string>',
 
-        self::RENAME_TO => TableName::class,
+        self::RENAME_TO => QualifiedName::class,
 
         self::DISCARD_TABLESPACE => null,
         self::DISCARD_PARTITION_TABLESPACE => Type::STRING,

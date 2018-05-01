@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 
-class ShowCreateDatabaseCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowCreateDatabaseCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var string */
     private $name;

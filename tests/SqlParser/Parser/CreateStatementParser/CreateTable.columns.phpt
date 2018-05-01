@@ -2,10 +2,10 @@
 
 namespace AlterExecutor\Parser;
 
+use SqlFtw\Sql\BaseType;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnAction;
 use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
-use SqlFtw\Sql\BaseType;
 use Tester\Assert;
 
 require '../../../bootstrap.php';

@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Show;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 
-class ShowProfileCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowProfileCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dal\Show\ShowProfileType[] */
     private $types;

@@ -2,16 +2,16 @@
 
 namespace SqlFtw\Parser\Lexer;
 
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\Settings;
-use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Tests\Assert;
 
 require '../../bootstrap.php';
 
-$settings = new Settings(Platform::get(Platform::MYSQL, '5.7'));
-$lexer = new Lexer($settings,true, true);
+$settings = new PlatformSettings(Platform::get(Platform::MYSQL, '5.7'));
+$lexer = new Lexer($settings, true, true);
 
 // KEYWORD
 $tokens = $lexer->tokenizeAll(' SELECT ');
@@ -75,7 +75,7 @@ Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
 $tokens = $lexer->tokenizeAll(" 'foo\\\\' ");
 Assert::count(3, $tokens);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, "foo\\", 1);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'foo\\', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
 
 $tokens = $lexer->tokenizeAll(" 'fo\\\\\\'o' ");
@@ -89,7 +89,7 @@ $settings->setMode($settings->getMode()->add(Mode::NO_BACKSLASH_ESCAPES));
 $tokens = $lexer->tokenizeAll(" 'foo\\' ");
 Assert::count(3, $tokens);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, "foo\\", 1);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'foo\\', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 7);
 $settings->setMode($settings->getMode()->remove(Mode::NO_BACKSLASH_ESCAPES));
 
@@ -101,7 +101,7 @@ Assert::token($tokens[1], TokenType::NAME | TokenType::BACKTICK_QUOTED_STRING, '
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
 
 Assert::exception(function () use ($lexer) {
-    $lexer->tokenizeAll(" `foo");
+    $lexer->tokenizeAll(' `foo');
 }, EndOfStringNotFoundException::class);
 
 // AT_VARIABLE

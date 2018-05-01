@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Prepared;
 
 use SqlFtw\Formatter\Formatter;
 
-class DeallocatePrepareCommand implements \SqlFtw\Sql\Command
+class DeallocatePrepareCommand implements \SqlFtw\Sql\Dml\Prepared\PreparedStatementCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

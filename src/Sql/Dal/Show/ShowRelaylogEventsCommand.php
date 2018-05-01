@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 
-class ShowRelaylogEventsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowRelaylogEventsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var string|null */
     private $logName;

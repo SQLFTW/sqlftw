@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Platform\Features;
 
+use SqlFtw\Sql\Ddl\BaseType;
 use SqlFtw\Sql\Keyword;
 
 class FeaturesMysql56 extends \SqlFtw\Platform\Features\PlatformFeatures
@@ -635,8 +636,10 @@ class FeaturesMysql56 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::ELSE,
     ];
 
-    public const FUNCTIONS = [
-        ///
-    ];
+    public const BUILT_IN_FUNCTIONS = [];
+
+    public const TYPES = FeaturesMysql55::TYPES;
+
+    public const TYPE_ALIASES = FeaturesMysql55::TYPE_ALIASES;
 
 }

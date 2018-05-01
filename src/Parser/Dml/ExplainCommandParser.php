@@ -16,7 +16,7 @@ use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class ExplainCommandParser
 {
@@ -78,9 +78,9 @@ class ExplainCommandParser
     {
         $tokenList->consumeAnyKeyword(Keyword::EXPLAIN, Keyword::DESCRIBE, Keyword::DESC);
 
-        $tableName = $tokenList->mayConsumeQualifiedName();
-        if ($tableName !== null) {
-            $table = new TableName(...$tableName);
+        $qualifiedName = $tokenList->mayConsumeQualifiedName();
+        if ($qualifiedName !== null) {
+            $table = new QualifiedName(...$qualifiedName);
             $column = $tokenList->mayConsumeName();
             if ($column === null) {
                 $column = $tokenList->mayConsumeString();

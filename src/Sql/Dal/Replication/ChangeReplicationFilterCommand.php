@@ -12,9 +12,9 @@ namespace SqlFtw\Sql\Dal\Replication;
 use Dogma\Arr;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class ChangeReplicationFilterCommand implements \SqlFtw\Sql\Command
+class ChangeReplicationFilterCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -48,7 +48,7 @@ class ChangeReplicationFilterCommand implements \SqlFtw\Sql\Command
                             return $filter . ' (' . $formatter->formatStringList($values) . ')';
                         }
                         break;
-                    case 'array<' . TableName::class . '>':
+                    case 'array<' . QualifiedName::class . '>':
                         return $filter . ' (' . $formatter->formatSerializablesList($values) . ')';
                     case 'map<string,string>':
                         return $filter . ' (' . implode(', ', Arr::mapPairs($values, function (string $key, string $value) use ($formatter) {

@@ -23,8 +23,8 @@ use SqlFtw\Sql\Dml\Transaction\StartTransactionCommand;
 use SqlFtw\Sql\Dml\Transaction\TransactionIsolationLevel;
 use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
-use SqlFtw\Sql\TableName;
 
 class TransactionCommandsParser
 {
@@ -67,7 +67,7 @@ class TransactionCommandsParser
         $tokenList->consumeKeywords(Keyword::LOCK, Keyword::TABLES);
         $items = [];
         do {
-            $table = new TableName(...$tokenList->consumeQualifiedName());
+            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
             $alias = null;
             if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
                 $alias = $tokenList->consumeName();

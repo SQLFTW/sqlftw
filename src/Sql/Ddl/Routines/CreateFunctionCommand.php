@@ -17,7 +17,7 @@ use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 
-class CreateFunctionCommand implements \SqlFtw\Sql\Command
+class CreateFunctionCommand implements \SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand, \SqlFtw\Sql\Ddl\Routines\CreateRoutineCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

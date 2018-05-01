@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Transaction;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Scope;
 
-class SetTransactionCommand implements \SqlFtw\Sql\Command
+class SetTransactionCommand implements \SqlFtw\Sql\Dml\Transaction\TransactionCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

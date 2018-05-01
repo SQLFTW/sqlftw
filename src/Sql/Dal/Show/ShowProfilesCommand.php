@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 
-class ShowProfilesCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowProfilesCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

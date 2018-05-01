@@ -59,7 +59,6 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
-use SqlFtw\Sql\TableName;
 use SqlFtw\Sql\UserName;
 
 class ShowCommandsParser
@@ -285,7 +284,7 @@ class ShowCommandsParser
                 //     [{FROM | IN} db_name]
                 //     [WHERE expr]
                 $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
-                $table = new TableName(...$tokenList->consumeQualifiedName());
+                $table = new QualifiedName(...$tokenList->consumeQualifiedName());
                 $database = null;
                 if ($table[0] === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
                     $database = $tokenList->consumeName();
@@ -512,7 +511,7 @@ class ShowCommandsParser
                     $full = (bool) $tokenList->mayConsumeKeyword(Keyword::FULL);
                     $tokenList->consumeKeyword(Keyword::COLUMNS);
                     $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
-                    $table = new TableName(...$tokenList->consumeQualifiedName());
+                    $table = new QualifiedName(...$tokenList->consumeQualifiedName());
                     $database = null;
                     if ($table[0] === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
                         $database = $tokenList->consumeName();

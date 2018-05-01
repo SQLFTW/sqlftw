@@ -46,6 +46,9 @@ class ConstraintDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
         return $this->name;
     }
 
+    /**
+     * @return \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody|\SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition|\SqlFtw\Sql\Ddl\Table\Index\IndexDefinition
+     */
     public function getBody(): ConstraintBody
     {
         return $this->body;

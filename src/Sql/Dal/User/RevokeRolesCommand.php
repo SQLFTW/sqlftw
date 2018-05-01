@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 
-class RevokeRolesCommand implements \SqlFtw\Sql\Command
+class RevokeRolesCommand implements \SqlFtw\Sql\Dal\User\UserCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

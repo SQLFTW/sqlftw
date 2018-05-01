@@ -19,12 +19,12 @@ class QualifiedName implements \SqlFtw\Sql\SqlSerializable
     private $name;
 
     /** @var string|null */
-    private $databaseName;
+    private $schema;
 
-    public function __construct(string $name, ?string $databaseName = null)
+    public function __construct(string $name, ?string $schema = null)
     {
         $this->name = $name;
-        $this->databaseName = $databaseName;
+        $this->schema = $schema;
     }
 
     public function getName(): string
@@ -32,15 +32,23 @@ class QualifiedName implements \SqlFtw\Sql\SqlSerializable
         return $this->name;
     }
 
-    public function getDatabaseName(): ?string
+    public function getSchema(): ?string
     {
-        return $this->databaseName;
+        return $this->schema;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function toArray(): array
+    {
+        return [$this->name, $this->schema];
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->databaseName !== null
-            ? $formatter->formatName($this->databaseName) . '.' . $formatter->formatName($this->name)
+        return $this->schema !== null
+            ? $formatter->formatName($this->schema) . '.' . $formatter->formatName($this->name)
             : $formatter->formatName($this->name);
     }
 

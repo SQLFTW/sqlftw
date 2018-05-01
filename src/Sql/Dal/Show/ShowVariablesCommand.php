@@ -13,8 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Scope;
 
-class ShowVariablesCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowVariablesCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Scope|null */
     private $scope;

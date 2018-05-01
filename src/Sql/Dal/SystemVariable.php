@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal;
 
-class SystemVariable extends \SqlFtw\Sql\SqlEnum
+class SystemVariable extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
 {
 
     public const AUTO_INCREMENT_INCREMENT = 'auto_increment_increment';
@@ -106,7 +106,7 @@ class SystemVariable extends \SqlFtw\Sql\SqlEnum
     public const HOSTNAME = 'hostname';
     public const IDENTITY = 'identity';
     public const IGNORE_BUILTIN_INNODB = 'ignore_builtin_innodb';
-    public const IGNORE_DB_DIRS = 'ignore_db_dirs';
+    public const IGNORE_DB_DIRS = 'ignore_db_dirs'; /// removed in 8.0
     public const INIT_CONNECT = 'init_connect';
     public const INIT_FILE = 'init_file';
     public const INIT_SLAVE = 'init_slave';
@@ -125,7 +125,7 @@ class SystemVariable extends \SqlFtw\Sql\SqlEnum
     public const INNODB_BUFFER_POOL_CHUNK_SIZE = 'innodb_buffer_pool_chunk_size';
     public const INNODB_BUFFER_POOL_DUMP_AT_SHUTDOWN = 'innodb_buffer_pool_dump_at_shutdown';
     public const INNODB_BUFFER_POOL_DUMP_NOW = 'innodb_buffer_pool_dump_now';
-    public const INNODB_BUFFER_POOL_DUMP_PCT = 'innodb_buffer_pool_dump_pct';
+    public const INNODB_BUFFER_POOL_DUMP_PCT = 'innodb_buffer_pool_dump_pct'; // added in 5.7
     public const INNODB_BUFFER_POOL_FILENAME = 'innodb_buffer_pool_filename';
     public const INNODB_BUFFER_POOL_INSTANCES = 'innodb_buffer_pool_instances';
     public const INNODB_BUFFER_POOL_LOAD_ABORT = 'innodb_buffer_pool_load_abort';
@@ -144,7 +144,7 @@ class SystemVariable extends \SqlFtw\Sql\SqlEnum
     public const INNODB_CONCURRENCY_TICKETS = 'innodb_concurrency_tickets';
     public const INNODB_DATA_FILE_PATH = 'innodb_data_file_path';
     public const INNODB_DATA_HOME_DIR = 'innodb_data_home_dir';
-    public const INNODB_DEFAULT_ROW_FORMAT = 'innodb_default_row_format';
+    public const INNODB_DEFAULT_ROW_FORMAT = 'innodb_default_row_format'; // added in 5.7
     public const INNODB_DISABLE_SORT_FILE_CACHE = 'innodb_disable_sort_file_cache';
     public const INNODB_DOUBLEWRITE = 'innodb_doublewrite';
     public const INNODB_FAST_SHUTDOWN = 'innodb_fast_shutdown';
@@ -152,7 +152,7 @@ class SystemVariable extends \SqlFtw\Sql\SqlEnum
     public const INNODB_FILE_FORMAT_CHECK = 'innodb_file_format_check';
     public const INNODB_FILE_FORMAT_MAX = 'innodb_file_format_max';
     public const INNODB_FILE_PER_TABLE = 'innodb_file_per_table';
-    public const INNODB_FILL_FACTOR = 'innodb_fill_factor';
+    public const INNODB_FILL_FACTOR = 'innodb_fill_factor'; // added in 5.7
     public const INNODB_FLUSH_LOG_AT_TIMEOUT = 'innodb_flush_log_at_timeout';
     public const INNODB_FLUSH_LOG_AT_TRX_COMMIT = 'innodb_flush_log_at_trx_commit';
     public const INNODB_FLUSH_METHOD = 'innodb_flush_method';
@@ -200,7 +200,7 @@ class SystemVariable extends \SqlFtw\Sql\SqlEnum
     public const INNODB_ONLINE_ALTER_LOG_MAX_SIZE = 'innodb_online_alter_log_max_size';
     public const INNODB_OPEN_FILES = 'innodb_open_files';
     public const INNODB_OPTIMIZE_FULLTEXT_ONLY = 'innodb_optimize_fulltext_only';
-    public const INNODB_PAGE_CLEANERS = 'innodb_page_cleaners';
+    public const INNODB_PAGE_CLEANERS = 'innodb_page_cleaners'; // added in 5.7
     public const INNODB_PAGE_SIZE = 'innodb_page_size';
     public const INNODB_PRINT_ALL_DEADLOCKS = 'innodb_print_all_deadlocks';
     public const INNODB_PURGE_BATCH_SIZE = 'innodb_purge_batch_size';
@@ -332,7 +332,7 @@ class SystemVariable extends \SqlFtw\Sql\SqlEnum
     public const OPEN_FILES_LIMIT = 'open_files_limit';
     public const OPTIMIZER_PRUNE_LEVEL = 'optimizer_prune_level';
     public const OPTIMIZER_SEARCH_DEPTH = 'optimizer_search_depth';
-    public const OPTIMIZER_SWITCH = 'optimizer_switch';
+    public const OPTIMIZER_SWITCH = 'optimizer_switch'; // new in 5.7Mes
     public const OPTIMIZER_TRACE = 'optimizer_trace';
     public const OPTIMIZER_TRACE_FEATURES = 'optimizer_trace_features';
     public const OPTIMIZER_TRACE_LIMIT = 'optimizer_trace_limit';
@@ -432,7 +432,7 @@ class SystemVariable extends \SqlFtw\Sql\SqlEnum
     public const SHA256_PASSWORD_PROXY_USERS = 'sha256_password_proxy_users';
     public const SHARED_MEMORY = 'shared_memory';
     public const SHARED_MEMORY_BASE_NAME = 'shared_memory_base_name';
-    public const SHOW_COMPATIBILITY_56 = 'show_compatibility_56';
+    public const SHOW_COMPATIBILITY_56 = 'show_compatibility_56'; // removed in 8.0
     public const SHOW_OLD_TEMPORALS = 'show_old_temporals';
     public const SKIP_EXTERNAL_LOCKING = 'skip_external_locking';
     public const SKIP_NAME_RESOLVE = 'skip_name_resolve';
@@ -482,7 +482,7 @@ class SystemVariable extends \SqlFtw\Sql\SqlEnum
     public const STORED_PROGRAM_CACHE = 'stored_program_cache';
     public const SUPER_READ_ONLY = 'super_read_only';
     public const SYNC_BINLOG = 'sync_binlog';
-    public const SYNC_FRM = 'sync_frm';
+    public const SYNC_FRM = 'sync_frm'; /// removed in 8.0
     public const SYNC_MASTER_INFO = 'sync_master_info';
     public const SYNC_RELAY_LOG = 'sync_relay_log';
     public const SYNC_RELAY_LOG_INFO = 'sync_relay_log_info';

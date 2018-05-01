@@ -15,5 +15,5 @@ $query = "INSTALL PLUGIN foo SONAME 'library.so'";
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // UNINSTALL PLUGIN
-$query = "UNINSTALL PLUGIN foo";
+$query = 'UNINSTALL PLUGIN foo';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));

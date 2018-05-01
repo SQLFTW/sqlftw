@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class ReferenceDefinition implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName|null */
+    /** @var \SqlFtw\Sql\QualifiedName|null */
     private $sourceTable;
 
     /** @var string[] */
@@ -32,14 +32,14 @@ class ReferenceDefinition implements \SqlFtw\Sql\SqlSerializable
     private $matchType;
 
     /**
-     * @param \SqlFtw\Sql\TableName $sourceTable
+     * @param \SqlFtw\Sql\QualifiedName $sourceTable
      * @param string[] $sourceColumns
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onDelete
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onUpdate
      * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyMatchType|null $matchType
      */
     public function __construct(
-        TableName $sourceTable,
+        QualifiedName $sourceTable,
         array $sourceColumns,
         ?ForeignKeyAction $onDelete = null,
         ?ForeignKeyAction $onUpdate = null,
@@ -52,7 +52,7 @@ class ReferenceDefinition implements \SqlFtw\Sql\SqlSerializable
         $this->matchType = $matchType;
     }
 
-    public function getSourceTable(): TableName
+    public function getSourceTable(): QualifiedName
     {
         return $this->sourceTable;
     }

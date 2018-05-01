@@ -12,13 +12,13 @@ namespace SqlFtw\Sql\Dal\Cache;
 use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class TableIndexList implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var string[]|null */
@@ -31,13 +31,13 @@ class TableIndexList implements \SqlFtw\Sql\SqlSerializable
     private $ignoreLeaves;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param string[]|null $indexes
      * @param string[]|bool|null $partitions
      * @param bool $ignoreLeaves
      */
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         ?array $indexes = null,
         $partitions = null,
         bool $ignoreLeaves = false
@@ -53,7 +53,7 @@ class TableIndexList implements \SqlFtw\Sql\SqlSerializable
         $this->ignoreLeaves = $ignoreLeaves;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

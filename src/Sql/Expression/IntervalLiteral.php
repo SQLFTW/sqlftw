@@ -10,18 +10,18 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
-use Dogma\Time\DateTimeInterval;
+use Dogma\Time\Interval\DateTimeInterval;
 use SqlFtw\Formatter\Formatter;
 
 class IntervalLiteral implements \SqlFtw\Sql\Expression\Literal
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\DateTimeInterval|\DateInterval */
+    /** @var \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\Interval\DateTimeInterval|\DateInterval */
     private $value;
 
     /**
-     * @param \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\DateTimeInterval|\DateInterval $value
+     * @param \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\Interval\DateTimeInterval|\DateInterval $value
      */
     public function __construct($value)
     {
@@ -36,7 +36,7 @@ class IntervalLiteral implements \SqlFtw\Sql\Expression\Literal
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\DateTimeInterval|\DateInterval
+     * @return \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\Interval\DateTimeInterval|\DateInterval
      */
     public function getValue()
     {

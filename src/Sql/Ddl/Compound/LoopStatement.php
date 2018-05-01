@@ -4,7 +4,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Formatter\Formatter;
 
-class LoopStatement implements \SqlFtw\Sql\Statement
+class LoopStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

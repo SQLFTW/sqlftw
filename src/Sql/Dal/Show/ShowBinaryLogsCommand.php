@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 
-class ShowBinaryLogsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowBinaryLogsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

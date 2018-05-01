@@ -13,7 +13,7 @@ use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
-class DeclareConditionStatement implements \SqlFtw\Sql\Statement
+class DeclareConditionStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

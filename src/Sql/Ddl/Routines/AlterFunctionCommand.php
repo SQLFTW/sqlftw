@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\QualifiedName;
 
-class AlterFunctionCommand implements \SqlFtw\Sql\Command
+class AlterFunctionCommand implements \SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand, \SqlFtw\Sql\Ddl\Routines\AlterRoutineCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

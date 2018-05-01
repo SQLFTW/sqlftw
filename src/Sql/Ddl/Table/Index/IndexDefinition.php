@@ -59,6 +59,16 @@ class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem, \SqlFtw\Sql\Dd
         return $self;
     }
 
+    public function duplicateWithVisibility(bool $visible): self
+    {
+        $self = clone($this);
+        $options = $self->options->getOptions();
+        $options[IndexOption::VISIBLE] = $visible;
+        $self->options = new IndexOptions($options);
+
+        return $self;
+    }
+
     public function duplicateAsPrimary(): self
     {
         $self = clone($this);

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 
-class GetDiagnosticsStatement implements \SqlFtw\Sql\Statement
+class GetDiagnosticsStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

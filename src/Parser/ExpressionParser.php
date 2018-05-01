@@ -16,6 +16,7 @@ use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
+use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CaseExpression;
 use SqlFtw\Sql\Expression\CollateExpression;
 use SqlFtw\Sql\Expression\CurlyExpression;
@@ -27,7 +28,6 @@ use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalLiteral;
 use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
-use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
 use SqlFtw\Sql\Expression\NullLiteral;
@@ -42,6 +42,7 @@ use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Expression\TimeIntervalUnit;
 use SqlFtw\Sql\Expression\UnaryOperator;
 use SqlFtw\Sql\Expression\UnknownLiteral;
+use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
@@ -377,6 +378,7 @@ class ExpressionParser
                 $expression = new Identifier($variableName);
 
             } else {
+                $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
                 $name1 = $tokenList->mayConsumeName();
                 if ($name1 !== null) {
                     $name2 = $name3 = null;
@@ -406,9 +408,12 @@ class ExpressionParser
                         // identifier
                         $expression = new Identifier(new ColumnName($name2, $name1, null));
 
+                    } elseif (BuiltInFunction::isValid($name1) && $platformFeatures->isReserved($name1)) {
+                        // function without parentheses
+                        $expression = new FunctionCall(BuiltInFunction::get($name1));
+
                     } else {
                         // identifier
-                        /// constant?
                         $expression = new Identifier(new ColumnName($name1, null, null));
                     }
                 } else {

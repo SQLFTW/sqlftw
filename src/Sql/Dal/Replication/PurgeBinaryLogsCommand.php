@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\Replication;
 use Dogma\Time\DateTime;
 use SqlFtw\Formatter\Formatter;
 
-class PurgeBinaryLogsCommand implements \SqlFtw\Sql\Command
+class PurgeBinaryLogsCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

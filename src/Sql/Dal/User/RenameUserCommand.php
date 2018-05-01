@@ -10,10 +10,11 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
+use Dogma\ZipIterator;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class RenameUserCommand implements \SqlFtw\Sql\Command
+class RenameUserCommand implements \SqlFtw\Sql\Dal\User\UserCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -57,9 +58,9 @@ class RenameUserCommand implements \SqlFtw\Sql\Command
         return $this->newUsers;
     }
 
-    public function getIterator(): \IteratorAggregate
+    public function getIterator(): ZipIterator
     {
-        /// zip iterator
+        return new ZipIterator($this->users, $this->newUsers);
     }
 
     public function serialize(Formatter $formatter): string

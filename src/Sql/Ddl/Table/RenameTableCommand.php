@@ -12,28 +12,28 @@ namespace SqlFtw\Sql\Ddl\Table;
 use Dogma\Check;
 use Dogma\ZipIterator;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class RenameTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
+class RenameTableCommand implements \SqlFtw\Sql\MultipleTablesCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName[] */
+    /** @var \SqlFtw\Sql\QualifiedName[] */
     protected $tables;
 
-    /** @var \SqlFtw\Sql\TableName[] */
+    /** @var \SqlFtw\Sql\QualifiedName[] */
     private $newTables;
 
     /**
-     * @param \SqlFtw\Sql\TableName[] $tables
-     * @param \SqlFtw\Sql\TableName[] $newTables
+     * @param \SqlFtw\Sql\QualifiedName[] $tables
+     * @param \SqlFtw\Sql\QualifiedName[] $newTables
      */
     public function __construct(array $tables, array $newTables)
     {
         Check::array($tables, 1);
-        Check::itemsOfType($tables, TableName::class);
+        Check::itemsOfType($tables, QualifiedName::class);
         Check::array($newTables, 1);
-        Check::itemsOfType($newTables, TableName::class);
+        Check::itemsOfType($newTables, QualifiedName::class);
         if (count($tables) !== count($newTables)) {
             throw new \SqlFtw\Sql\InvalidDefinitionException('Count of old table names and new table names do not match.');
         }
@@ -43,7 +43,7 @@ class RenameTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\TableName[]
+     * @return \SqlFtw\Sql\QualifiedName[]
      */
     public function getTables(): array
     {
@@ -51,11 +51,30 @@ class RenameTableCommandMultiple implements \SqlFtw\Sql\MultipleTablesCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\TableName[]
+     * @return \SqlFtw\Sql\QualifiedName[]
      */
     public function getNewTables(): array
     {
         return $this->newTables;
+    }
+
+    public function getNewNameForTable(QualifiedName $table): ?QualifiedName
+    {
+        /**
+         * @var \SqlFtw\Sql\QualifiedName $old
+         * @var \SqlFtw\Sql\QualifiedName $new
+         */
+        foreach ($this->getIterator() as $old => $new) {
+            if ($old->getName() !== $table->getName()) {
+                continue;
+            }
+            $oldSchema = $old->getSchema();
+            $targetSchema = $new->getSchema();
+            if ($oldSchema === $targetSchema() || $oldSchema === null) {
+                return $new->getSchema() === null ? new QualifiedName($new->getName(), $targetSchema) : $new;
+            }
+        }
+        return null;
     }
 
     public function getIterator(): ZipIterator

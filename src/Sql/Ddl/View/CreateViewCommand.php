@@ -15,7 +15,7 @@ use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 
-class CreateViewCommand implements \SqlFtw\Sql\Command
+class CreateViewCommand implements \SqlFtw\Sql\Ddl\View\ViewCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

@@ -5,7 +5,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class RepeatStatement implements \SqlFtw\Sql\Statement
+class RepeatStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

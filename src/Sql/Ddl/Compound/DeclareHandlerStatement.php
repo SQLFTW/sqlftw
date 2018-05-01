@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
-class DeclareHandlerStatement implements \SqlFtw\Sql\Statement
+class DeclareHandlerStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

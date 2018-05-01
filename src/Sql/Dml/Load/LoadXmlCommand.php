@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Load;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class LoadXmlCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
 {
@@ -23,7 +23,7 @@ class LoadXmlCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
 
     public function __construct(
         string $file,
-        TableName $table,
+        QualifiedName $table,
         ?string $rowsTag = null,
         ?Charset $charset = null,
         ?array $fields = null,

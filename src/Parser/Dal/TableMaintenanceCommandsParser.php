@@ -17,7 +17,7 @@ use SqlFtw\Sql\Dal\Table\CheckTableOption;
 use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
 use SqlFtw\Sql\Dal\Table\RepairTableCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class TableMaintenanceCommandsParser
 {
@@ -34,7 +34,7 @@ class TableMaintenanceCommandsParser
         $tokenList->consumeKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
 
         return new AnalyzeTableCommand($tables, $local);
@@ -57,7 +57,7 @@ class TableMaintenanceCommandsParser
         $tokenList->consumeKeywords(Keyword::REPAIR, Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
 
         $option = null;
@@ -81,7 +81,7 @@ class TableMaintenanceCommandsParser
         $tokenList->consumeKeywords(Keyword::REPAIR, Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
 
         $quick = (bool) $tokenList->mayConsumeKeyword(Keyword::QUICK);
@@ -101,7 +101,7 @@ class TableMaintenanceCommandsParser
         $tokenList->consumeKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
 
         return new OptimizeTableCommand($tables, $local);
@@ -119,7 +119,7 @@ class TableMaintenanceCommandsParser
         $tokenList->consumeKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
 
         $quick = (bool) $tokenList->mayConsumeKeyword(Keyword::QUICK);

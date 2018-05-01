@@ -14,7 +14,7 @@ use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
-class ResignalStatement implements \SqlFtw\Sql\Statement
+class ResignalStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 
@@ -26,7 +26,7 @@ class ResignalStatement implements \SqlFtw\Sql\Statement
 
     /**
      * @param int|string $condition
-     * @param int[]|string[]||null $items
+     * @param int[]|string[]|null $items
      */
     public function __construct($condition, ?array $items)
     {
@@ -62,8 +62,8 @@ class ResignalStatement implements \SqlFtw\Sql\Statement
         }
         if ($this->items !== null) {
             $result .= ' SET ' . implode(', ', Arr::mapPairs($this->items, function ($item, $value) use ($formatter): string {
-                    return $item . ' = ' . $formatter->formatValue($value);
-                }));
+                return $item . ' = ' . $formatter->formatValue($value);
+            }));
         }
 
         return $result;

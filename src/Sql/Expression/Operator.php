@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Sql\Keyword;
 
-class Operator extends \SqlFtw\Sql\SqlEnum
+class Operator extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
 {
 
     // assign

@@ -13,12 +13,12 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 
-class AlterDatabaseCommand implements \SqlFtw\Sql\Command
+class AlterDatabaseCommand implements \SqlFtw\Sql\Ddl\Database\DatabaseCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
     /** @var string|null */
-    private $database;
+    private $name;
 
     /** @var \SqlFtw\Sql\Charset|null */
     private $charset;
@@ -26,16 +26,16 @@ class AlterDatabaseCommand implements \SqlFtw\Sql\Command
     /** @var \SqlFtw\Sql\Collation|null */
     private $collation;
 
-    public function __construct(?string $database, ?Charset $charset, ?Collation $collation = null)
+    public function __construct(?string $name, ?Charset $charset, ?Collation $collation = null)
     {
-        $this->database = $database;
+        $this->name = $name;
         $this->charset = $charset;
         $this->collation = $collation;
     }
 
-    public function getDatabase(): ?string
+    public function getName(): ?string
     {
-        return $this->database;
+        return $this->name;
     }
 
     public function getCharset(): ?Charset
@@ -51,8 +51,8 @@ class AlterDatabaseCommand implements \SqlFtw\Sql\Command
     public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER DATABASE';
-        if ($this->database !== null) {
-            $result .= ' ' . $formatter->formatName($this->database);
+        if ($this->name !== null) {
+            $result .= ' ' . $formatter->formatName($this->name);
         }
         if ($this->charset !== null) {
             $result .= ' CHARACTER SET = ' . $this->charset->serialize($formatter);

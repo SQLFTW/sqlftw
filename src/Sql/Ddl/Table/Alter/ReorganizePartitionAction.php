@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Keyword;
 
 class ReorganizePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
 {

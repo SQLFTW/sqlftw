@@ -15,7 +15,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * MySQL MyISAM tables only
  */
-class LoadIndexIntoCacheCommand implements \SqlFtw\Sql\Command
+class LoadIndexIntoCacheCommand implements \SqlFtw\Sql\Dal\Cache\CacheCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

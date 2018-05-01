@@ -13,16 +13,16 @@ use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
-use SqlFtw\Sql\Ddl\Table\Partition\Partitioning;
+use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var \SqlFtw\Sql\Ddl\Table\TableItem[] */
@@ -31,7 +31,7 @@ class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
     /** @var \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList  */
     private $options;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\Partitioning|null */
+    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition|null */
     private $partitioning;
 
     /** @var bool */
@@ -47,20 +47,20 @@ class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
     private $select;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param \SqlFtw\Sql\Ddl\Table\TableItem[] $items
      * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[]|null $options
-     * @param \SqlFtw\Sql\Ddl\Table\Partition\Partitioning|null $partitioning
+     * @param \SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition|null $partitioning
      * @param bool $temporary
      * @param bool $ifNotExists
      * @param \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption
      * @param \SqlFtw\Sql\Dml\Select\SelectCommand|null $select
      */
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         array $items,
         $options = null,
-        ?Partitioning $partitioning = null,
+        ?PartitioningDefinition $partitioning = null,
         bool $temporary = false,
         bool $ifNotExists = false,
         ?DuplicateOption $duplicateOption = null,
@@ -81,7 +81,7 @@ class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
         $this->select = $select;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }
@@ -99,7 +99,7 @@ class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
         return $this->options;
     }
 
-    public function getPartitioning(): ?Partitioning
+    public function getPartitioning(): ?PartitioningDefinition
     {
         return $this->partitioning;
     }

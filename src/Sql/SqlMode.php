@@ -15,13 +15,13 @@ class SqlMode extends \Dogma\StringSet
 {
 
     public const ALLOW_INVALID_DATES = 'ALLOW_INVALID_DATES';
-    public const ANSI_QUOTES = 'ANSI_QUOTES'; /// syntax
+    public const ANSI_QUOTES = 'ANSI_QUOTES';
     public const ERROR_FOR_DIVISION_BY_ZERO = 'ERROR_FOR_DIVISION_BY_ZERO';
-    public const HIGH_NOT_PRECEDENCE = 'HIGH_NOT_PRECEDENCE'; /// syntax
-    public const IGNORE_SPACE = 'IGNORE_SPACE'; /// syntax
+    public const HIGH_NOT_PRECEDENCE = 'HIGH_NOT_PRECEDENCE';
+    public const IGNORE_SPACE = 'IGNORE_SPACE';
     public const NO_AUTO_CREATE_USER = 'NO_AUTO_CREATE_USER';
     public const NO_AUTO_VALUE_ON_ZERO = 'NO_AUTO_VALUE_ON_ZERO';
-    public const NO_BACKSLASH_ESCAPES = 'NO_BACKSLASH_ESCAPES'; /// syntax
+    public const NO_BACKSLASH_ESCAPES = 'NO_BACKSLASH_ESCAPES';
     public const NO_DIR_IN_CREATE = 'NO_DIR_IN_CREATE';
     public const NO_ENGINE_SUBSTITUTION = 'NO_ENGINE_SUBSTITUTION';
     public const NO_FIELD_OPTIONS = 'NO_FIELD_OPTIONS';
@@ -32,8 +32,8 @@ class SqlMode extends \Dogma\StringSet
     public const NO_ZERO_IN_DATE = 'NO_ZERO_IN_DATE';
     public const ONLY_FULL_GROUP_BY = 'ONLY_FULL_GROUP_BY';
     public const PAD_CHAR_TO_FULL_LENGTH = 'PAD_CHAR_TO_FULL_LENGTH';
-    public const PIPES_AS_CONCAT = 'PIPES_AS_CONCAT'; /// syntax
-    public const REAL_AS_FLOAT = 'REAL_AS_FLOAT'; /// syntax
+    public const PIPES_AS_CONCAT = 'PIPES_AS_CONCAT';
+    public const REAL_AS_FLOAT = 'REAL_AS_FLOAT';
     public const STRICT_ALL_TABLES = 'STRICT_ALL_TABLES';
     public const STRICT_TRANS_TABLES = 'STRICT_TRANS_TABLES';
     public const TIME_TRUNCATE_FRACTIONAL = 'TIME_TRUNCATE_FRACTIONAL';
@@ -48,7 +48,7 @@ class SqlMode extends \Dogma\StringSet
     public const POSTGRESQL = 'POSTGRESQL';
 
     /** @var string[][] */
-    private $groups = [
+    private static $groups = [
         self::TRADITIONAL => [
             self::STRICT_TRANS_TABLES,
             self::STRICT_ALL_TABLES,
@@ -108,6 +108,22 @@ class SqlMode extends \Dogma\StringSet
             self::NO_FIELD_OPTIONS,
         ],
     ];
+
+    public static function getFromString(string $string): self
+    {
+        $parts = explode('', $string);
+        $items = [];
+        foreach ($parts as $part) {
+            self::check($part);
+            if (isset(self::$groups[$part])) {
+                $items = array_merge($items, self::$groups[$part]);
+            } else {
+                $items[] = $part;
+            }
+        }
+
+        return self::get(...array_unique($items));
+    }
 
     public function getMode(): Mode
     {

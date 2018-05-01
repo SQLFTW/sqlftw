@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Platform\Features;
 
+use SqlFtw\Sql\Ddl\BaseType;
 use SqlFtw\Sql\Keyword;
 
 class FeaturesMysql55 extends \SqlFtw\Platform\Features\PlatformFeatures
@@ -608,8 +609,118 @@ class FeaturesMysql55 extends \SqlFtw\Platform\Features\PlatformFeatures
         Keyword::ELSE,
     ];
 
-    public const FUNCTIONS = [
-        ///
+    public const BUILT_IN_FUNCTIONS = [];
+
+    public const TYPES = [
+        // bitwise
+        BaseType::BIT,
+
+        // integers
+        BaseType::TINYINT,
+        BaseType::SMALLINT,
+        BaseType::MEDIUMINT,
+        BaseType::INT,
+        BaseType::BIGINT,
+        BaseType::BOOL, // TINYINT
+        BaseType::BOOLEAN, // TINYINT
+        BaseType::INTEGER, // INT
+        BaseType::MIDDLEINT, // MEDIUMINT
+        BaseType::INT1, // TINYINT
+        BaseType::INT2, // SMALLINT
+        BaseType::INT3, // MEDIUMINT
+        BaseType::INT4, // INT
+        BaseType::INT8, // BIGINT
+
+        // floats
+        BaseType::REAL,
+        BaseType::FLOAT,
+        BaseType::DOUBLE,
+        BaseType::FLOAT4, // FLOAT
+        BaseType::FLOAT8, // DOUBLE
+        BaseType::DOUBLE_PRECISION, // DOUBLE
+
+        // decimal
+        BaseType::DECIMAL,
+        BaseType::NUMERIC, // DECIMAL
+        BaseType::DEC, // DECIMAL
+        BaseType::FIXED, // DECIMAL
+
+        // time
+        BaseType::YEAR,
+        BaseType::DATE,
+        BaseType::DATETIME,
+        BaseType::TIME,
+        BaseType::TIMESTAMP,
+
+        // texts
+        BaseType::CHAR,
+        BaseType::VARCHAR,
+        BaseType::TINYTEXT,
+        BaseType::TEXT,
+        BaseType::MEDIUMTEXT,
+        BaseType::LONGTEXT,
+        BaseType::CHARACTER, // CHAR
+        BaseType::NCHAR, // CHAR
+        BaseType::NATIONAL_CHAR, // CHAR
+        BaseType::CHARACTER_VARYING, // VARCHAR
+        BaseType::NVARCHAR, // VARCHAR
+        BaseType::NATIONAL_VARCHAR, // VARCHAR
+        BaseType::LONG, // MEDIUMTEXT
+        BaseType::LONG_VARCHAR, // MEDIUMTEXT
+
+        // binary
+        BaseType::BINARY,
+        BaseType::VARBINARY,
+        BaseType::TINYBLOB,
+        BaseType::BLOB,
+        BaseType::MEDIUMBLOB,
+        BaseType::LONGBLOB,
+        BaseType::CHAR_BYTE, // BINARY
+        BaseType::LONG_VARBINARY, // MEDIUMBLOB
+
+        // sets
+        BaseType::ENUM,
+        BaseType::SET,
+
+        // json
+        BaseType::JSON,
+
+        // geometry
+        BaseType::GEOMETRY,
+        BaseType::POINT,
+        BaseType::LINESTRING,
+        BaseType::POLYGON,
+        BaseType::GEOMETRYCOLLECTION,
+        BaseType::MULTIPOINT,
+        BaseType::MULTILINESTRING,
+        BaseType::MULTIPOLYGON,
+    ];
+
+    public const TYPE_ALIASES = [
+        BaseType::BOOL => BaseType::TINYINT,
+        BaseType::BOOLEAN => BaseType::TINYINT,
+        BaseType::MIDDLEINT => BaseType::MEDIUMINT,
+        BaseType::INTEGER => BaseType::INT,
+        BaseType::INT1 => BaseType::TINYINT,
+        BaseType::INT2 => BaseType::SMALLINT,
+        BaseType::INT3 => BaseType::MEDIUMINT,
+        BaseType::INT4 => BaseType::INT,
+        BaseType::INT8 => BaseType::BIGINT,
+        BaseType::FLOAT4 => BaseType::FLOAT,
+        BaseType::FLOAT8 => BaseType::DOUBLE,
+        BaseType::DEC => BaseType::DECIMAL,
+        BaseType::NUMERIC => BaseType::DECIMAL,
+        BaseType::FIXED => BaseType::DECIMAL,
+        BaseType::CHARACTER => BaseType::CHAR,
+        BaseType::NCHAR => BaseType::CHAR,
+        BaseType::NATIONAL_CHAR => BaseType::CHAR,
+        BaseType::CHARACTER_VARYING => BaseType::VARCHAR,
+        BaseType::NVARCHAR => BaseType::VARCHAR,
+        BaseType::NATIONAL_VARCHAR => BaseType::VARCHAR,
+        BaseType::LONG => BaseType::MEDIUMTEXT,
+        BaseType::LONG_VARCHAR => BaseType::MEDIUMTEXT,
+        BaseType::CHAR_BYTE => BaseType::BINARY,
+        BaseType::LONG_VARBINARY => BaseType::MEDIUMBLOB,
     ];
 
 }

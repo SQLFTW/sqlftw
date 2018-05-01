@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use Dogma\Arr;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class InsertValuesCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\InsertCommand
 {
@@ -25,7 +25,7 @@ class InsertValuesCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand 
     private $onDuplicateKeyActions;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param \SqlFtw\Sql\Expression\ExpressionNode[][] $rows
      * @param string[]|null $columns
      * @param string[]|null $partitions
@@ -34,7 +34,7 @@ class InsertValuesCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand 
      * @param \SqlFtw\Sql\Dml\Insert\OnDuplicateKeyActions|null $onDuplicateKeyActions
      */
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         array $rows,
         ?array $columns,
         ?array $partitions,

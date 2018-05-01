@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Event;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class DropEventCommand implements \SqlFtw\Sql\Command
+class DropEventCommand implements \SqlFtw\Sql\Ddl\Event\EventCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

@@ -13,7 +13,7 @@ use Dogma\Arr;
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class InsertSetCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\InsertCommand
 {
@@ -26,7 +26,7 @@ class InsertSetCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand imp
     private $onDuplicateKeyActions;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param \SqlFtw\Sql\Expression\ExpressionNode[] $values (string $column => ExpressionNode $value)
      * @param string[]|null $columns
      * @param string[]|null $partitions
@@ -35,7 +35,7 @@ class InsertSetCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand imp
      * @param \SqlFtw\Sql\Dml\Insert\OnDuplicateKeyActions|null $onDuplicateKeyActions
      */
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         array $values,
         ?array $columns,
         ?array $partitions,

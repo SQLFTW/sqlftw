@@ -29,7 +29,7 @@ use SqlFtw\Sql\Dal\Replication\UuidSet;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class ReplicationCommandsParser
 {
@@ -169,10 +169,10 @@ class ReplicationCommandsParser
                         }
                     } while ($tokenList->mayConsumeComma());
                     break;
-                case 'array<' . TableName::class . '>':
+                case 'array<' . QualifiedName::class . '>':
                     $values = [];
                     do {
-                        $values[] = new TableName(...$tokenList->consumeQualifiedName());
+                        $values[] = new QualifiedName(...$tokenList->consumeQualifiedName());
                     } while ($tokenList->mayConsumeComma());
                     break;
                 case 'map<string,string>':

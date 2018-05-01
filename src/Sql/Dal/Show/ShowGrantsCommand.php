@@ -14,8 +14,9 @@ use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class ShowGrantsCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowGrantsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\UserName|null */
     private $user;

@@ -15,7 +15,7 @@ $query = "INSTALL PLUGIN foo SONAME 'library.so'";
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // CHANGE REPLICATION FILTER
-$query = "UNINSTALL PLUGIN foo";
+$query = 'UNINSTALL PLUGIN foo';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // PURGE { BINARY | MASTER } LOGS

@@ -13,7 +13,7 @@ use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class GrantProxyCommand implements \SqlFtw\Sql\Command
+class GrantProxyCommand implements \SqlFtw\Sql\Dal\User\UserCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

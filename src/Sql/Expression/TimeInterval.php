@@ -55,7 +55,7 @@ class TimeInterval implements \SqlFtw\Sql\SqlSerializable
         Check::types($interval, [\DateInterval::class, DateTimeInterval::class]);
 
         if ($interval instanceof \DateInterval) {
-            $interval = new DateTimeInterval($interval);
+            $interval = DateTimeInterval::createFromDateInterval($interval);
         }
 
         $intervals = [];

@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class ReplicationFilter extends \SqlFtw\Sql\SqlEnum
 {
@@ -27,8 +27,8 @@ class ReplicationFilter extends \SqlFtw\Sql\SqlEnum
     private static $types = [
         self::REPLICATE_DO_DB => 'array<string>',
         self::REPLICATE_IGNORE_DB => 'array<string>',
-        self::REPLICATE_DO_TABLE => 'array<' . TableName::class . '>',
-        self::REPLICATE_IGNORE_TABLE => 'array<' . TableName::class . '>',
+        self::REPLICATE_DO_TABLE => 'array<' . QualifiedName::class . '>',
+        self::REPLICATE_IGNORE_TABLE => 'array<' . QualifiedName::class . '>',
         self::REPLICATE_WILD_DO_TABLE => 'array<string>',
         self::REPLICATE_WILD_IGNORE_TABLE => 'array<string>',
         self::REPLICATE_REWRITE_DB => 'map<string,string>',

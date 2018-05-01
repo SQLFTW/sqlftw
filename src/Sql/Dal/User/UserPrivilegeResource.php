@@ -18,7 +18,7 @@ class UserPrivilegeResource implements \SqlFtw\Sql\SqlSerializable
     public const ALL = '*';
 
     /** @var string|null */
-    private $databaseName;
+    private $schema;
 
     /** @var string */
     private $objectName;
@@ -26,16 +26,16 @@ class UserPrivilegeResource implements \SqlFtw\Sql\SqlSerializable
     /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeResourceType|null */
     private $objectType;
 
-    public function __construct(?string $databaseName, string $objectName, ?UserPrivilegeResourceType $objectType)
+    public function __construct(?string $schema, string $objectName, ?UserPrivilegeResourceType $objectType)
     {
-        $this->databaseName = $databaseName;
+        $this->schema = $schema;
         $this->objectName = $objectName;
         $this->objectType = $objectType;
     }
 
-    public function getDatabaseName(): ?string
+    public function getSchema(): ?string
     {
-        return $this->databaseName;
+        return $this->schema;
     }
 
     public function getObjectName(): string
@@ -54,8 +54,8 @@ class UserPrivilegeResource implements \SqlFtw\Sql\SqlSerializable
         if ($this->objectType !== null) {
             $result .= $this->objectType->serialize($formatter) . ' ';
         }
-        if ($this->databaseName !== null) {
-            $result .= ($this->databaseName === self::ALL ? self::ALL : $formatter->formatName($this->databaseName)) . '.';
+        if ($this->schema !== null) {
+            $result .= ($this->schema === self::ALL ? self::ALL : $formatter->formatName($this->schema)) . '.';
         }
         $result .= $this->objectName === self::ALL ? self::ALL : $formatter->formatName($this->objectName);
 

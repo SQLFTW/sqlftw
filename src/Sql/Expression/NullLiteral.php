@@ -20,6 +20,9 @@ class NullLiteral implements \SqlFtw\Sql\Expression\Literal
         return NodeType::get(NodeType::LITERAL);
     }
 
+    /**
+     * @return null
+     */
     public function getValue()
     {
         return null;

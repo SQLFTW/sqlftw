@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropLogfileGroupCommand implements \SqlFtw\Sql\Command
+class DropLogfileGroupCommand implements \SqlFtw\Sql\Ddl\LogfileGroup\LogfileGroupCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

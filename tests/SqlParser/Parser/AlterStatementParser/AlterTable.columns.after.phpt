@@ -2,10 +2,10 @@
 
 namespace AlterExecutor\Parser;
 
-use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
+use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use Tester\Assert;
 
 require '../../../bootstrap.php';

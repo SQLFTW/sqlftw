@@ -11,13 +11,13 @@ namespace SqlFtw\Sql\Dal\Flush;
 
 use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class FlushTablesCommand implements \SqlFtw\Sql\Command
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName[]|null */
+    /** @var \SqlFtw\Sql\QualifiedName[]|null */
     private $tables;
 
     /** @var bool */
@@ -27,7 +27,7 @@ class FlushTablesCommand implements \SqlFtw\Sql\Command
     private $forExport;
 
     /**
-     * @param \SqlFtw\Sql\TableName[]|null $tables
+     * @param \SqlFtw\Sql\QualifiedName[]|null $tables
      * @param bool $withReadLock
      * @param bool $forExport
      */
@@ -35,7 +35,7 @@ class FlushTablesCommand implements \SqlFtw\Sql\Command
     {
         if ($tables !== null) {
             Check::array($tables, 1);
-            Check::itemsOfType($tables, TableName::class);
+            Check::itemsOfType($tables, QualifiedName::class);
         }
 
         $this->tables = $tables;
@@ -44,7 +44,7 @@ class FlushTablesCommand implements \SqlFtw\Sql\Command
     }
 
     /**
-     * @return \SqlFtw\Sql\TableName[]|null
+     * @return \SqlFtw\Sql\QualifiedName[]|null
      */
     public function getTables(): array
     {

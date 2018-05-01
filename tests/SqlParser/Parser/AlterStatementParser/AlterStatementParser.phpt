@@ -3,6 +3,9 @@
 namespace AlterExecutor\Parser;
 
 use AlterExecutor\Parser\Sql\InvalidCommand;
+use SqlFtw\Parser\Lexer\Lexer;
+use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
@@ -11,9 +14,6 @@ use SqlFtw\Sql\Ddl\Server\AlterServerCommand;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
-use SqlFtw\Parser\Lexer\Lexer;
-use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserFactory;
 use Tester\Assert;
 
 require '../../../bootstrap.php';

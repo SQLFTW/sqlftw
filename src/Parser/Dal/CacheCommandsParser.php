@@ -15,7 +15,7 @@ use SqlFtw\Sql\Dal\Cache\CacheIndexCommand;
 use SqlFtw\Sql\Dal\Cache\LoadIndexIntoCacheCommand;
 use SqlFtw\Sql\Dal\Cache\TableIndexList;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 /**
  * MySQL MyISAM tables only
@@ -42,7 +42,7 @@ class CacheCommandsParser
 
         $tableIndexLists = [];
         do {
-            $table = new TableName(...$tokenList->consumeQualifiedName());
+            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
             $indexes = $this->parseIndexes($tokenList);
 
             $tableIndexLists[] = new TableIndexList($table, $indexes);
@@ -75,7 +75,7 @@ class CacheCommandsParser
 
         $tableIndexLists = [];
         do {
-            $table = new TableName(...$tokenList->consumeQualifiedName());
+            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
             $partitions = $this->parsePartitions($tokenList);
             $indexes = $this->parseIndexes($tokenList);
             $ignoreLeaves = (bool) $tokenList->mayConsumeKeywords(Keyword::IGNORE, Keyword::LEAVES);

@@ -11,49 +11,49 @@ $parser = ParserHelper::getParserFactory()->getParser();
 $formatter = new Formatter($parser->getSettings());
 
 // FLUSH
-$query = "FLUSH NO_WRITE_TO_BINLOG DES_KEY_FILE";
-$result = "FLUSH LOCAL DES_KEY_FILE";
+$query = 'FLUSH NO_WRITE_TO_BINLOG DES_KEY_FILE';
+$result = 'FLUSH LOCAL DES_KEY_FILE';
 Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH LOCAL HOSTS";
+$query = 'FLUSH LOCAL HOSTS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH BINARY LOGS";
+$query = 'FLUSH BINARY LOGS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH ENGINE LOGS";
+$query = 'FLUSH ENGINE LOGS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH ERROR LOGS";
+$query = 'FLUSH ERROR LOGS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH GENERAL LOGS";
+$query = 'FLUSH GENERAL LOGS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH RELAY LOGS";
+$query = 'FLUSH RELAY LOGS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH SLOW LOGS";
+$query = 'FLUSH SLOW LOGS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH RELAY LOGS FOR CHANNEL foo";
+$query = 'FLUSH RELAY LOGS FOR CHANNEL foo';
 $result = "FLUSH RELAY LOGS FOR CHANNEL 'foo'";
 Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH OPTIMIZER_COSTS";
+$query = 'FLUSH OPTIMIZER_COSTS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH PRIVILEGES";
+$query = 'FLUSH PRIVILEGES';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH QUERY CACHE";
+$query = 'FLUSH QUERY CACHE';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH STATUS";
+$query = 'FLUSH STATUS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH USER_RESOURCES";
+$query = 'FLUSH USER_RESOURCES';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$query = "FLUSH PRIVILEGES, STATUS";
+$query = 'FLUSH PRIVILEGES, STATUS';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));

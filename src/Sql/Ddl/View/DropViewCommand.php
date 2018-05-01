@@ -13,7 +13,7 @@ use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class DropViewCommand implements \SqlFtw\Sql\Command
+class DropViewCommand implements \SqlFtw\Sql\Ddl\View\ViewCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

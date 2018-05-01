@@ -16,21 +16,21 @@ class UseCommand implements \SqlFtw\Sql\Command
     use \Dogma\StrictBehaviorMixin;
 
     /** @var string */
-    private $databaseName;
+    private $schema;
 
-    public function __construct(string $databaseName)
+    public function __construct(string $schema)
     {
-        $this->databaseName = $databaseName;
+        $this->schema = $schema;
     }
 
-    public function getDatabaseName(): string
+    public function getSchema(): string
     {
-        return $this->databaseName;
+        return $this->schema;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'USE ' . $formatter->formatName($this->databaseName);
+        return 'USE ' . $formatter->formatName($this->schema);
     }
 
 }

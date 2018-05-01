@@ -13,7 +13,7 @@ use Dogma\Arr;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
-use SqlFtw\Platform\Settings;
+use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -21,16 +21,21 @@ class Formatter
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Platform\Settings */
+    /** @var \SqlFtw\Platform\PlatformSettings */
     private $settings;
 
     /** @var string */
     public $indent;
 
-    public function __construct(Settings $settings, string $indent = '  ')
+    public function __construct(PlatformSettings $settings, string $indent = '  ')
     {
         $this->settings = $settings;
         $this->indent = $indent;
+    }
+
+    public function getSettings(): PlatformSettings
+    {
+        return $this->settings;
     }
 
     public function formatName(string $name): string

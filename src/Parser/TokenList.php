@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Platform\Settings;
+use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\SqlEnum;
 
 /**
@@ -33,7 +33,7 @@ class TokenList
     /** @var \SqlFtw\Parser\Token[] */
     private $tokens;
 
-    /** @var \SqlFtw\Platform\Settings */
+    /** @var \SqlFtw\Platform\PlatformSettings */
     private $settings;
 
     /** @var bool */
@@ -48,14 +48,14 @@ class TokenList
     /**
      * @param \SqlFtw\Parser\Token[] $tokens
      */
-    public function __construct(array $tokens, Settings $settings, bool $whitespace = true)
+    public function __construct(array $tokens, PlatformSettings $settings, bool $whitespace = true)
     {
         $this->tokens = $tokens;
         $this->settings = $settings;
         $this->whitespace = $whitespace;
     }
 
-    public function getSettings(): Settings
+    public function getSettings(): PlatformSettings
     {
         return $this->settings;
     }
@@ -295,7 +295,7 @@ class TokenList
     }
 
     /**
-     * @param string $operators
+     * @param string ...$operators
      * @return string
      */
     public function consumeAnyOperator(string ...$operators): string
@@ -308,13 +308,13 @@ class TokenList
     }
 
     /**
-     * @param string $operators
+     * @param string ...$operators
      * @return string|null
      */
     public function mayConsumeAnyOperator(string ...$operators): ?string
     {
         try {
-            $operator = $this->consumeAnyOperator($operators);
+            $operator = $this->consumeAnyOperator(...$operators);
             return $operator;
         } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
             return null;

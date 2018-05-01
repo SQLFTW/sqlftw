@@ -1,14 +1,9 @@
-<?php declare(strict_types = 1); declare(strict_types = 1);
+<?php declare(strict_types = 1);
 
 namespace SqlFtw\Tests;
 
-use SqlFtw\Parser\Lexer\Lexer;
-use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\Settings;
 
 class Assert extends \Tester\Assert
 {

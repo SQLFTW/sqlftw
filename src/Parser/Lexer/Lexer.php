@@ -12,12 +12,13 @@ namespace SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Mode;
-use SqlFtw\Platform\Settings;
+use SqlFtw\Platform\PlatformSettings;
 
 /**
  * todo:
  * - Date and Time Literals?
  * - Mysql string charset declaration (_utf* & N)
+ * - \N is synonymum for NULL (until 8.0)
  * - PostgreSql dollar strings
  */
 class Lexer
@@ -47,7 +48,7 @@ class Lexer
     /** @var int[] */
     private static $operatorSymbolsKey;
 
-    /** @var \SqlFtw\Platform\Settings */
+    /** @var \SqlFtw\Platform\PlatformSettings */
     private $settings;
 
     /** @var bool */
@@ -57,11 +58,11 @@ class Lexer
     private $withWhitespace;
 
     /**
-     * @param \SqlFtw\Platform\Settings $settings
+     * @param \SqlFtw\Platform\PlatformSettings $settings
      * @param bool $withComments
      * @param bool $withWhitespace
      */
-    public function __construct(Settings $settings, bool $withComments = true, bool $withWhitespace = false)
+    public function __construct(PlatformSettings $settings, bool $withComments = true, bool $withWhitespace = false)
     {
         self::$numbersKey = array_flip(self::NUMBERS);
         self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
@@ -288,7 +289,7 @@ class Lexer
                         $string->position++;
                         $string->column++;
                         if ($condition !== null) {
-                            /// fail
+                            /// fail: starting comment inside a conditional comment
                         }
                         $column = $string->column;
                         $row = $string->row;
@@ -579,6 +580,7 @@ class Lexer
                 case 'M':
                 case 'm':
                 case 'N':
+                    /// charset declaration
                 case 'n':
                 case 'O':
                 case 'o':
@@ -677,7 +679,7 @@ class Lexer
         }
     }
 
-    private function parseWhitespace(StringBuffer $string)
+    private function parseWhitespace(StringBuffer $string): string
     {
         $whitespace = '';
         while (($next = $string->get()) !== '') {

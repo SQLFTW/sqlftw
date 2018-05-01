@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\User;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class RevokeProxyCommand implements \SqlFtw\Sql\Command
+class RevokeProxyCommand implements \SqlFtw\Sql\Dal\User\UserCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

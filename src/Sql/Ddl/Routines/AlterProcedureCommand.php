@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\QualifiedName;
 
-class AlterProcedureCommand implements \SqlFtw\Sql\Command
+class AlterProcedureCommand implements \SqlFtw\Sql\Ddl\Routines\StoredProcedureCommand, \SqlFtw\Sql\Ddl\Routines\AlterRoutineCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

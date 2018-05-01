@@ -14,7 +14,7 @@ use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\DataType;
 
-class DeclareStatement implements \SqlFtw\Sql\Statement
+class DeclareStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
 {
     use \Dogma\StrictBehaviorMixin;
 

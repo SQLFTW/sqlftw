@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class ReplaceSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\ReplaceCommand
 {
@@ -21,7 +21,7 @@ class ReplaceSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand
     private $select;
 
     /**
-     * @param \SqlFtw\Sql\TableName $table
+     * @param \SqlFtw\Sql\QualifiedName $table
      * @param \SqlFtw\Sql\Dml\Select\SelectCommand $select
      * @param string[]|null $columns
      * @param string[]|null $partitions
@@ -29,7 +29,7 @@ class ReplaceSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand
      * @param bool $ignore
      */
     public function __construct(
-        TableName $table,
+        QualifiedName $table,
         SelectCommand $select,
         ?array $columns,
         ?array $partitions,

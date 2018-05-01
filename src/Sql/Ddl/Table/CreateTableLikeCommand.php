@@ -10,17 +10,17 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class CreateTableLikeCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\TableName */
-    private $oldTable;
+    /** @var \SqlFtw\Sql\QualifiedName */
+    private $templateTable;
 
     /** @var bool */
     private $temporary;
@@ -28,22 +28,22 @@ class CreateTableLikeCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableComm
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(TableName $table, TableName $oldTable, bool $temporary = false, bool $ifNotExists = false)
+    public function __construct(QualifiedName $table, QualifiedName $templateTable, bool $temporary = false, bool $ifNotExists = false)
     {
         $this->table = $table;
-        $this->oldTable = $oldTable;
+        $this->templateTable = $templateTable;
         $this->temporary = $temporary;
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }
 
-    public function getOldTable(): TableName
+    public function getTemplateTable(): QualifiedName
     {
-        return $this->oldTable;
+        return $this->templateTable;
     }
 
     public function isTemporary(): bool
@@ -68,7 +68,7 @@ class CreateTableLikeCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableComm
         }
         $result .= $this->table->serialize($formatter);
 
-        $result .= ' LIKE ' . $this->oldTable->serialize($formatter);
+        $result .= ' LIKE ' . $this->templateTable->serialize($formatter);
 
         return $result;
     }

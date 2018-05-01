@@ -11,24 +11,25 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
-class ShowIndexesCommand extends \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowIndexesCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
 {
+    use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\TableName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $where;
 
-    public function __construct(TableName $table, ?ExpressionNode $where = null)
+    public function __construct(QualifiedName $table, ?ExpressionNode $where = null)
     {
         $this->table = $table;
         $this->where = $where;
     }
 
-    public function getTable(): TableName
+    public function getTable(): QualifiedName
     {
         return $this->table;
     }

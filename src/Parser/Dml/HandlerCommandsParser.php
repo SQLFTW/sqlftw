@@ -17,7 +17,7 @@ use SqlFtw\Sql\Dml\Handler\HandlerOpenCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadWhat;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class HandlerCommandsParser
 {
@@ -37,7 +37,7 @@ class HandlerCommandsParser
     public function parseHandlerOpen(TokenList $tokenList): HandlerOpenCommand
     {
         $tokenList->consumeKeyword(Keyword::HANDLER);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
         $tokenList->consumeKeyword(Keyword::OPEN);
 
         $tokenList->mayConsumeKeyword(Keyword::AS);
@@ -57,7 +57,7 @@ class HandlerCommandsParser
     public function parseHandlerRead(TokenList $tokenList): HandlerReadCommand
     {
         $tokenList->consumeKeyword(Keyword::HANDLER);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
         $tokenList->consumeKeyword(Keyword::READ);
 
         $values = null;
@@ -95,7 +95,7 @@ class HandlerCommandsParser
     public function parseHandlerClose(TokenList $tokenList): HandlerCloseCommand
     {
         $tokenList->consumeKeyword(Keyword::HANDLER);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
         $tokenList->consumeKeyword(Keyword::CLOSE);
 
         return new HandlerCloseCommand($table);

@@ -42,4 +42,3 @@ $query = "CREATE TABLE test (
   col_27 SET('c', 'd')
 )";
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-

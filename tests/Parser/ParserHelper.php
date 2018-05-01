@@ -11,7 +11,7 @@ namespace SqlFtw\Parser;
 
 use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\Settings;
+use SqlFtw\Platform\PlatformSettings;
 
 class ParserHelper
 {
@@ -22,7 +22,7 @@ class ParserHelper
         if ($platform === null) {
             $platform = Platform::get(Platform::MYSQL);
         }
-        $settings = new Settings($platform);
+        $settings = new PlatformSettings($platform);
         $settings->setQuoteAllNames(false);
 
         $lexer = new Lexer($settings, true, true);
@@ -32,4 +32,3 @@ class ParserHelper
     }
 
 }
-

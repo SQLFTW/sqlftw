@@ -58,17 +58,16 @@ use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableRowFormat;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
-use SqlFtw\Sql\Ddl\Table\Partition\Partitioning;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningConditionType;
+use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionOption;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
-use SqlFtw\Sql\TableNameList;
+use SqlFtw\Sql\QualifiedName;
 
 class TableCommandsParser
 {
@@ -168,7 +167,7 @@ class TableCommandsParser
     public function parseAlterTable(TokenList $tokenList): AlterTableCommand
     {
         $tokenList->consumeKeywords(Keyword::ALTER, Keyword::TABLE);
-        $name = new TableName(...$tokenList->consumeQualifiedName());
+        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         $actions = [];
         $alterOptions = [];
@@ -375,7 +374,7 @@ class TableCommandsParser
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partition = $tokenList->consumeName();
                     $tokenList->consumeKeywords(Keyword::WITH, Keyword::TABLE);
-                    $table = new TableName(...$tokenList->consumeQualifiedName());
+                    $table = new QualifiedName(...$tokenList->consumeQualifiedName());
                     $validation = $tokenList->mayConsumeAnyKeyword(Keyword::WITH, Keyword::WITHOUT);
                     if ($validation === Keyword::WITH) {
                         $validation = true;
@@ -453,7 +452,7 @@ class TableCommandsParser
                     } else {
                         // RENAME [TO|AS] new_tbl_name
                         $tokenList->mayConsumeAnyKeyword(Keyword::TO, Keyword::AS);
-                        $newName = new TableName(...$tokenList->consumeQualifiedName());
+                        $newName = new QualifiedName(...$tokenList->consumeQualifiedName());
                         $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::RENAME_TO), $newName);
                     }
                     break;
@@ -536,12 +535,12 @@ class TableCommandsParser
         $temporary = (bool) $tokenList->mayConsumeKeyword(Keyword::TEMPORARY);
         $tokenList->consumeKeyword(Keyword::TABLE);
         $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         $position = $tokenList->getPosition();
         $bodyOpen = $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS);
         if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-            $oldTable = new TableName(...$tokenList->consumeQualifiedName());
+            $oldTable = new QualifiedName(...$tokenList->consumeQualifiedName());
             if ($bodyOpen !== null) {
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             }
@@ -804,7 +803,7 @@ class TableCommandsParser
     private function parseReference(TokenList $tokenList): ReferenceDefinition
     {
         $tokenList->consumeKeyword(Keyword::REFERENCES);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         $columns = $this->parseColumnList($tokenList);
 
@@ -968,10 +967,10 @@ class TableCommandsParser
                 $tokenList->consume(TokenType::LEFT_PARENTHESIS);
                 $tables = [];
                 do {
-                    $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+                    $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
                 } while ($tokenList->mayConsumeComma());
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
-                return [TableOption::UNION, new TableNameList($tables)];
+                return [TableOption::UNION, $tables];
             default:
                 return [null, null];
         }
@@ -993,7 +992,7 @@ class TableCommandsParser
      *     ]
      *     [(partition_definition [, partition_definition] ...)]
      */
-    private function parsePartitioning(TokenList $tokenList): Partitioning
+    private function parsePartitioning(TokenList $tokenList): PartitioningDefinition
     {
         $tokenList->consumeKeywords(Keyword::PARTITION, Keyword::BY);
         $condition = $this->parsePartitionCondition($tokenList);
@@ -1018,7 +1017,7 @@ class TableCommandsParser
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         }
 
-        return new Partitioning($condition, $partitions, $partitionsNumber, $subpartitionsCondition, $subpartitionsNumber);
+        return new PartitioningDefinition($condition, $partitions, $partitionsNumber, $subpartitionsCondition, $subpartitionsNumber);
     }
 
     /**
@@ -1257,7 +1256,7 @@ class TableCommandsParser
         }
         $tables = [];
         do {
-            $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
 
         // ignored in MySQL 5.7, 8.0
@@ -1277,9 +1276,9 @@ class TableCommandsParser
         $tables = [];
         $newTables = [];
         do {
-            $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
             $tokenList->consumeKeyword(Keyword::TO);
-            $newTables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $newTables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
 
         return new RenameTableCommand($tables, $newTables);
@@ -1292,7 +1291,7 @@ class TableCommandsParser
     {
         $tokenList->consumeKeyword(Keyword::TRUNCATE);
         $tokenList->mayConsumeKeyword(Keyword::TABLE);
-        $table = new TableName(...$tokenList->consumeQualifiedName());
+        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         return new TruncateTableCommand($table);
     }

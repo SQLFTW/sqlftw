@@ -10,13 +10,13 @@
 namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Parser\JoinParser;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class DeleteCommandParser
 {
@@ -96,11 +96,15 @@ class DeleteCommandParser
         return new DeleteCommand($tables, $where, $orderBy, $limit, $references, $partitions, $lowPriority, $quick, $ignore);
     }
 
+    /**
+     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @return \SqlFtw\Sql\QualifiedName[]
+     */
     private function parseTablesList(TokenList $tokenList): array
     {
         $tables = [];
         do {
-            $tables[] = new TableName(...$tokenList->consumeQualifiedName());
+            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
             if ($tokenList->mayConsume(TokenType::DOT)) {
                 $tokenList->consumeOperator(Operator::MULTIPLY);
             }

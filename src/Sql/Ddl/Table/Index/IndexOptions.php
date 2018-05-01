@@ -10,21 +10,29 @@
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TableName;
+use SqlFtw\Sql\QualifiedName;
 
 class IndexOptions implements \SqlFtw\Sql\SqlSerializable
 {
     use \Dogma\StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\SqlSerializable[]|int[]|string[] */
+    /** @var \SqlFtw\Sql\SqlSerializable[]|int[]|string[]|bool[] */
     private $options;
 
     /**
-     * @param \SqlFtw\Sql\SqlSerializable[]|int[]|string[] $options
+     * @param \SqlFtw\Sql\SqlSerializable[]|int[]|string[]|bool[] $options
      */
     public function __construct(array $options)
     {
         $this->options = $options;
+    }
+
+    /**
+     * @return \SqlFtw\Sql\SqlSerializable[]|int[]|string[]|bool[]
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 
     public function isEmpty(): bool
@@ -32,7 +40,7 @@ class IndexOptions implements \SqlFtw\Sql\SqlSerializable
         return $this->options === [];
     }
 
-    public function getTable(): ?TableName
+    public function getTable(): ?QualifiedName
     {
         return $this->options[IndexOption::TABLE] ?? null;
     }

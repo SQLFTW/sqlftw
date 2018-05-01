@@ -11,25 +11,25 @@ namespace SqlFtw\Sql\Ddl\Database;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropDatabaseCommand implements \SqlFtw\Sql\Command
+class DropDatabaseCommand implements \SqlFtw\Sql\Ddl\Database\DatabaseCommand
 {
     use \Dogma\StrictBehaviorMixin;
 
     /** @var string|null */
-    private $database;
+    private $name;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(?string $database, bool $ifExists = false)
+    public function __construct(?string $name, bool $ifExists = false)
     {
-        $this->database = $database;
+        $this->name = $name;
         $this->ifExists = $ifExists;
     }
 
-    public function getDatabase(): ?string
+    public function getName(): ?string
     {
-        return $this->database;
+        return $this->name;
     }
 
     public function ifExists(): bool
@@ -43,7 +43,7 @@ class DropDatabaseCommand implements \SqlFtw\Sql\Command
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $formatter->formatName($this->database);
+        $result .= $formatter->formatName($this->name);
 
         return $result;
     }

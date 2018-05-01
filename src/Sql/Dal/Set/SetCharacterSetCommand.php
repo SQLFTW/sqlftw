@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\Set;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 
-class SetCharacterSetCommand implements \SqlFtw\Sql\Command
+class SetCharacterSetCommand implements \SqlFtw\Sql\Dal\Set\CharsetCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

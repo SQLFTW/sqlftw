@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Formatter\Formatter;
 
-class StartGroupReplicationCommand implements \SqlFtw\Sql\Command
+class StartGroupReplicationCommand implements \SqlFtw\Sql\Dal\Replication\GroupReplicationCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

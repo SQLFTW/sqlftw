@@ -14,7 +14,7 @@ use SqlFtw\Sql\Dml\DoCommand\DoCommand;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 
-class AlterEventCommand implements \SqlFtw\Sql\Command
+class AlterEventCommand implements \SqlFtw\Sql\Ddl\Event\EventCommand
 {
     use \Dogma\StrictBehaviorMixin;
 

@@ -57,9 +57,7 @@
     - Keyword
     - Order
     - QualifiedName
-        - TableName
     - Scope /// ns?
     - SqlEnum
     - SqlMode /// ns Dal?
-    - TableNameList /// ???
     - UserName /// ns Dal?
