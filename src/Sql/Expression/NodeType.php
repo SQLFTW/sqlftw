@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-class NodeType extends \Dogma\IntEnum
+use Dogma\IntEnum;
+
+class NodeType extends IntEnum
 {
 
     public const PARENTHESES = 1; // (exp)

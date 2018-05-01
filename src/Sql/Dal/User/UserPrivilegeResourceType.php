@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class UserPrivilegeResourceType extends \SqlFtw\Sql\SqlEnum
+class UserPrivilegeResourceType extends SqlEnum
 {
 
     public const TABLE = Keyword::TABLE;

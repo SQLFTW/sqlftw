@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\SelectCommandParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\Parser;
@@ -46,7 +47,7 @@ use SqlFtw\Sql\Statement;
 
 class CompoundStatementParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Parser */
     private $parser;

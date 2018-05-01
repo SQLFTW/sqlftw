@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\TableItem;
 
-class ConstraintDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
+class ConstraintDefinition implements TableItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType */
     private $type;

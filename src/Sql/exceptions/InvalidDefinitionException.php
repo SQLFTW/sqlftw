@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql;
 
-class InvalidDefinitionException extends \Dogma\Exception
+use Dogma\Exception;
+
+class InvalidDefinitionException extends Exception
 {
 
     public function __construct(string $message, ?\Exception $previous = null)

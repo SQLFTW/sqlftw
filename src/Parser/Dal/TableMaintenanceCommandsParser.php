@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableCommand;
 use SqlFtw\Sql\Dal\Table\ChecksumTableCommand;
@@ -21,7 +22,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class TableMaintenanceCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE

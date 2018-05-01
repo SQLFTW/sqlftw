@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class InsertPriority extends \SqlFtw\Sql\SqlEnum
+class InsertPriority extends SqlEnum
 {
 
     public const LOW_PRIORITY = Keyword::LOW_PRIORITY;

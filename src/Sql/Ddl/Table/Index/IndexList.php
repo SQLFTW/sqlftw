@@ -9,9 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
+use Dogma\StrictBehaviorMixin;
+
 class IndexList
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[] (string|int $name => $index) */
     private $indexes = [];

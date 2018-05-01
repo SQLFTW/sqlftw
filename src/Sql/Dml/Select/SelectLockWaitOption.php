@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Select;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class SelectLockWaitOption extends \SqlFtw\Sql\SqlEnum
+class SelectLockWaitOption extends SqlEnum
 {
 
     public const NO_WAIT = Keyword::NOWAIT;

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Prepared\DeallocatePrepareCommand;
@@ -18,7 +19,7 @@ use SqlFtw\Sql\Keyword;
 
 class PreparedCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * {DEALLOCATE | DROP} PREPARE stmt_name

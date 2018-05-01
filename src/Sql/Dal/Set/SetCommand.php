@@ -10,12 +10,14 @@
 namespace SqlFtw\Sql\Dal\Set;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Scope;
 
-class SetCommand implements \SqlFtw\Sql\Command
+class SetCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dal\Set\SetAssignment[] */
     private $assignments = [];

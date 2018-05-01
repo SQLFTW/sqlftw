@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class MatchMode extends \SqlFtw\Sql\SqlEnum
+class MatchMode extends SqlEnum
 {
 
     public const NATURAL_LANGUAGE_MODE = Keyword::NATURAL . ' ' . Keyword::LANGUAGE . ' ' . Keyword::MODE;

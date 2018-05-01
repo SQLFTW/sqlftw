@@ -10,12 +10,14 @@
 namespace SqlFtw\Sql\Dml\Insert;
 
 use Dogma\Arr;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\SqlSerializable;
 
-class OnDuplicateKeyActions implements \SqlFtw\Sql\SqlSerializable
+class OnDuplicateKeyActions implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
     private $expressions;

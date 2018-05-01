@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\MultipleTablesCommand;
 
-class DropTableCommand implements \SqlFtw\Sql\MultipleTablesCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
+class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName[] */
     private $tables;

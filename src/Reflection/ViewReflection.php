@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class ViewReflection
 {
-	use \Dogma\StrictBehaviorMixin;
+	use StrictBehaviorMixin;
 
 	/** @var \SqlFtw\Sql\QualifiedName */
 	private $name;

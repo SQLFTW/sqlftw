@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class StopSlaveCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
+class StopSlaveCommand implements ReplicationCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var bool */
     private $ioThread;

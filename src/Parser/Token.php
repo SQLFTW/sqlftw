@@ -9,9 +9,11 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\StrictBehaviorMixin;
+
 final class Token
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var int */
     public $type;

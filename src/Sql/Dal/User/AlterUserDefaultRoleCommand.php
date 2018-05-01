@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class AlterUserDefaultRoleCommand implements \SqlFtw\Sql\Dal\User\UserCommand
+class AlterUserDefaultRoleCommand implements UserCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const NO_ROLES = false;
     public const ALL_ROLES = true;

@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
-use Dogma\Type;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class Condition implements \SqlFtw\Sql\SqlSerializable
+class Condition implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Compound\ConditionType */
     private $type;

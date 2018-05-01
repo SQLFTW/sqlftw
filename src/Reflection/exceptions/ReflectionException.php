@@ -9,8 +9,11 @@
 
 namespace SqlFtw\Reflection;
 
-class ReflectionException extends \Dogma\Exception
+use Dogma\Exception;
+use Dogma\StrictBehaviorMixin;
+
+class ReflectionException extends Exception
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
 }

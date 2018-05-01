@@ -9,13 +9,15 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeExpression;
 use SqlFtw\Sql\Expression\TimeInterval;
+use SqlFtw\Sql\SqlSerializable;
 
-class EventSchedule implements \SqlFtw\Sql\SqlSerializable
+class EventSchedule implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\TimeInterval|null */
     private $interval;

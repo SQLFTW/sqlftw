@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-interface ConstraintBody extends \SqlFtw\Sql\SqlSerializable
+use SqlFtw\Sql\SqlSerializable;
+
+interface ConstraintBody extends SqlSerializable
 {
 
 }

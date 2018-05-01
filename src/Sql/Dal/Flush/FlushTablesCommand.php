@@ -10,12 +10,14 @@
 namespace SqlFtw\Sql\Dal\Flush;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class FlushTablesCommand implements \SqlFtw\Sql\Command
+class FlushTablesCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName[]|null */
     private $tables;

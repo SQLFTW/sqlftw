@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class UserPrivilegeType extends \SqlFtw\Sql\SqlEnum
+class UserPrivilegeType extends SqlEnum
 {
 
     public const ALL = Keyword::ALL;

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-class Order extends \SqlFtw\Sql\SqlEnum
+class Order extends SqlEnum
 {
 
     public const ASC = Keyword::ASC;

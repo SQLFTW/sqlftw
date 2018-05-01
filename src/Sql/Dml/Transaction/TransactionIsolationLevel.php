@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class TransactionIsolationLevel extends \SqlFtw\Sql\SqlEnum
+class TransactionIsolationLevel extends SqlEnum
 {
 
     public const REPEATABLE_READ = Keyword::REPEATABLE . ' ' . Keyword::READ;

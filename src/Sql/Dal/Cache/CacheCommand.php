@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Cache;
 
-interface CacheCommand extends \SqlFtw\Sql\Dal\DalCommand
+use SqlFtw\Sql\Dal\DalCommand;
+
+interface CacheCommand extends DalCommand
 {
 
 }

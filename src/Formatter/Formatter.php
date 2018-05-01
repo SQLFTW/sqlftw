@@ -10,6 +10,8 @@
 namespace SqlFtw\Formatter;
 
 use Dogma\Arr;
+use Dogma\NotImplementedException;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
@@ -19,7 +21,7 @@ use SqlFtw\Sql\SqlSerializable;
 
 class Formatter
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Platform\PlatformSettings */
     private $settings;
@@ -112,7 +114,7 @@ class Formatter
         } elseif ($value instanceof \DateTimeInterface) {
             return $this->formatDateTime($value);
         }
-        throw new \Dogma\NotImplementedException('Unknown type.');
+        throw new NotImplementedException('Unknown type.');
     }
 
     /**

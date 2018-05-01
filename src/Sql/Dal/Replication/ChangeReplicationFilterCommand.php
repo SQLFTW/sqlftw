@@ -11,12 +11,13 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class ChangeReplicationFilterCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
+class ChangeReplicationFilterCommand implements ReplicationCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * @var mixed[]

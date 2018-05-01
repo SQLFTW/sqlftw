@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ValueLiteral implements \SqlFtw\Sql\Expression\Literal
+class ValueLiteral implements Literal
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTimeInterval|\SqlFtw\Sql\Expression\TimeInterval */
     private $value;

@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class UserPasswordLockOptionType extends \SqlFtw\Sql\SqlEnum
+class UserPasswordLockOptionType extends SqlEnum
 {
 
     public const PASSWORD_EXPIRE = Keyword::PASSWORD . ' ' . Keyword::EXPIRE;

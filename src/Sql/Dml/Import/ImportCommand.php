@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\Import;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\DmlCommand;
 
-class ImportCommand implements \SqlFtw\Sql\Command
+class ImportCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string[] */
     private $files;

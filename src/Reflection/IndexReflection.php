@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 
 class IndexReflection
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Reflection\TableReflection */
     private $table;

@@ -10,13 +10,14 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class TableReferenceTable implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode
+class TableReferenceTable implements TableReferenceNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;

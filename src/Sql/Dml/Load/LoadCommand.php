@@ -10,15 +10,17 @@
 namespace SqlFtw\Sql\Dml\Load;
 
 use Dogma\Arr;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
 
-abstract class LoadCommand implements \SqlFtw\Sql\Dml\DmlCommand
+abstract class LoadCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $file;

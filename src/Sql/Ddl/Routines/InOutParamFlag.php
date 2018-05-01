@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Routines;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class InOutParamFlag extends \SqlFtw\Sql\SqlEnum
+class InOutParamFlag extends SqlEnum
 {
 
     public const IN = Keyword::IN;

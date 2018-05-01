@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
-interface LogfileGroupCommand extends \SqlFtw\Sql\Ddl\DdlCommand
+use SqlFtw\Sql\Ddl\DdlCommand;
+
+interface LogfileGroupCommand extends DdlCommand
 {
 
 }

@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Trigger;
 
-interface TriggerCommand extends \SqlFtw\Sql\Ddl\DdlCommand
+use SqlFtw\Sql\Ddl\DdlCommand;
+
+interface TriggerCommand extends DdlCommand
 {
 
 }

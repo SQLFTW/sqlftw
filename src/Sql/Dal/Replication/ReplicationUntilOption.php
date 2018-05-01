@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ReplicationUntilOption extends \SqlFtw\Sql\SqlEnum
+class ReplicationUntilOption extends SqlEnum
 {
 
     public const SQL_AFTER_MTS_GAPS = Keyword::SQL_AFTER_MTS_GAPS;

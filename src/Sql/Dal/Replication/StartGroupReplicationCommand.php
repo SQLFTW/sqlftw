@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class StartGroupReplicationCommand implements \SqlFtw\Sql\Dal\Replication\GroupReplicationCommand
+class StartGroupReplicationCommand implements GroupReplicationCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

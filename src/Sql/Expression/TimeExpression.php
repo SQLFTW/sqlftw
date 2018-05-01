@@ -10,14 +10,16 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class TimeExpression implements \SqlFtw\Sql\SqlSerializable
+class TimeExpression implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime */
     private $value;

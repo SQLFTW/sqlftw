@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class EventDoesNotExistException extends \SqlFtw\Reflection\ReflectionException
+class EventDoesNotExistException extends ReflectionException
 {
 
     /** @var string */

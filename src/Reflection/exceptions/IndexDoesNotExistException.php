@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class IndexDoesNotExistException extends \SqlFtw\Reflection\ReflectionException
+class IndexDoesNotExistException extends ReflectionException
 {
 
     /** @var string */

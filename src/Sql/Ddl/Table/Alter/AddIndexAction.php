@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 
-class AddIndexAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
+class AddIndexAction implements AlterTableAction
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition */
     private $index;

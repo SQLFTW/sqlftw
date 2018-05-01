@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\DropDatabaseCommand;
 
 class SchemaReflection
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

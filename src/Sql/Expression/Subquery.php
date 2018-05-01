@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 
-class Subquery implements \SqlFtw\Sql\Expression\ExpressionNode
+class Subquery implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
     private $subquery;

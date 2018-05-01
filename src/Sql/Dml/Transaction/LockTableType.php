@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class LockTableType extends \SqlFtw\Sql\SqlEnum
+class LockTableType extends SqlEnum
 {
 
     public const READ = Keyword::READ;

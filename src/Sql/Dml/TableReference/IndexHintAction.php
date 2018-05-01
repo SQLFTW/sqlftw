@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class IndexHintAction extends \SqlFtw\Sql\SqlEnum
+class IndexHintAction extends SqlEnum
 {
 
     public const USE = Keyword::USE;

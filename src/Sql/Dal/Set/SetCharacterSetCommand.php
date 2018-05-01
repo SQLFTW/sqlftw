@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 
-class SetCharacterSetCommand implements \SqlFtw\Sql\Dal\Set\CharsetCommand
+class SetCharacterSetCommand implements CharsetCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Charset|null */
     private $charset;

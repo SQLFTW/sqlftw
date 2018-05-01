@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Server;
 
-interface ServerCommand extends \SqlFtw\Sql\Ddl\DdlCommand
+use SqlFtw\Sql\Ddl\DdlCommand;
+
+interface ServerCommand extends DdlCommand
 {
 
 }

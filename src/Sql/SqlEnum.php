@@ -9,9 +9,10 @@
 
 namespace SqlFtw\Sql;
 
+use Dogma\StringEnum;
 use SqlFtw\Formatter\Formatter;
 
-class SqlEnum extends \Dogma\StringEnum implements \SqlFtw\Sql\SqlSerializable
+class SqlEnum extends StringEnum implements SqlSerializable
 {
 
     public function serialize(Formatter $formatter): string

@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Routines;
 
 use Dogma\Arr;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
 use SqlFtw\Sql\Ddl\DataType;
@@ -17,9 +18,9 @@ use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 
-class CreateFunctionCommand implements \SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand, \SqlFtw\Sql\Ddl\Routines\CreateRoutineCommand
+class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $name;

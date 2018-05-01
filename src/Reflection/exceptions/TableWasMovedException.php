@@ -12,7 +12,7 @@ namespace SqlFtw\Reflection;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 
-class TableWasMovedException extends \SqlFtw\Reflection\ReflectionException
+class TableWasMovedException extends ReflectionException
 {
 
     /** @var \SqlFtw\Reflection\TableReflection */

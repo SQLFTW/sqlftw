@@ -11,11 +11,12 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ChangeMasterToCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
+class ChangeMasterToCommand implements ReplicationCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var mixed[] */
     private $options = [];

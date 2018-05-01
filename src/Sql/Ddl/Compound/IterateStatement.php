@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class IterateStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class IterateStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $label;

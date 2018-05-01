@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Component;
 
-interface ComponentCommand extends \SqlFtw\Sql\Dal\DalCommand
+use SqlFtw\Sql\Dal\DalCommand;
+
+interface ComponentCommand extends DalCommand
 {
 
 }

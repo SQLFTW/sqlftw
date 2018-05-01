@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class UnionCommand implements \SqlFtw\Sql\SqlSerializable
+class UnionCommand implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

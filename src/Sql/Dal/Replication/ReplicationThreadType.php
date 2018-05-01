@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ReplicationThreadType extends \SqlFtw\Sql\SqlEnum
+class ReplicationThreadType extends SqlEnum
 {
 
     public const IO_THREAD = Keyword::IO_THREAD;

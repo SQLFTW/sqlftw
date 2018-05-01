@@ -9,14 +9,15 @@
 
 namespace SqlFtw\Sql\Ddl\Trigger;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
-class CreateTriggerCommand implements \SqlFtw\Sql\Ddl\Trigger\TriggerCommand
+class CreateTriggerCommand implements TriggerCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

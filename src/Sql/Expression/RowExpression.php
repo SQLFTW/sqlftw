@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class RowExpression implements \SqlFtw\Sql\Expression\ExpressionNode
+class RowExpression implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
     private $contents;

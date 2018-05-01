@@ -9,14 +9,15 @@
 
 namespace SqlFtw\Sql\Dml\Load;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\QualifiedName;
 
-class LoadXmlCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
+class LoadXmlCommand extends LoadCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $rowsTag;

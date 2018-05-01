@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Routines\CreateFunctionSonameCommand;
 use SqlFtw\Sql\Ddl\Routines\UdfReturnDataType;
@@ -17,7 +18,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class CreateFunctionCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * CREATE [AGGREGATE] FUNCTION function_name RETURNS {STRING|INTEGER|REAL|DECIMAL}

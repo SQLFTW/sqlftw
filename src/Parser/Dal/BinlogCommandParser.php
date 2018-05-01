@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Binlog\BinlogCommand;
 use SqlFtw\Sql\Keyword;
 
 class BinlogCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * BINLOG 'str'

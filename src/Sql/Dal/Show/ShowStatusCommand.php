@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Scope;
 
-class ShowStatusCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowStatusCommand implements ShowCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Scope|null */
     private $scope;

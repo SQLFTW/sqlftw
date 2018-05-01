@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ShowErrorsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowErrorsCommand implements ShowCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var int|null */
     private $limit;

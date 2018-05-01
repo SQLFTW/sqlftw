@@ -11,7 +11,7 @@ namespace SqlFtw\Platform\Features;
 
 use SqlFtw\Sql\Keyword;
 
-class FeaturesSqlite38 extends \SqlFtw\Platform\Features\PlatformFeatures
+class FeaturesSqlite38 extends PlatformFeatures
 {
 
     public const RESERVED_WORDS = [

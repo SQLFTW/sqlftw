@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\IntSet;
+
 /**
  * Token type hierarchy:
  * ---------------------
@@ -56,7 +58,7 @@ namespace SqlFtw\Parser;
  *    - PLACEHOLDER - "?"
  *    - OPERATOR - everything else
  */
-class TokenType extends \Dogma\IntSet
+class TokenType extends IntSet
 {
 
     /** Space, \t, \r, \n */

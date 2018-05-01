@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dal\BinlogCommandParser;
 use SqlFtw\Parser\Dal\CacheCommandsParser;
 use SqlFtw\Parser\Dal\CharsetCommandsParser;
@@ -59,7 +60,7 @@ use SqlFtw\Platform\PlatformSettings;
 
 class ParserFactory
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Platform\PlatformSettings */
     private $settings;

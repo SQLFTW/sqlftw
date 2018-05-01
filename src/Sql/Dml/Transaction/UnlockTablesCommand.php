@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class UnlockTablesCommand implements \SqlFtw\Sql\Dml\Transaction\TransactionCommand
+class UnlockTablesCommand implements TransactionCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

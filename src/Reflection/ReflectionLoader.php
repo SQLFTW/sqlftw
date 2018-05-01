@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
@@ -20,7 +21,7 @@ use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 
 class ReflectionLoader
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Parser */
     private $parser;

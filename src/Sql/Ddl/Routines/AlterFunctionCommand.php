@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Routines;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\QualifiedName;
 
-class AlterFunctionCommand implements \SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand, \SqlFtw\Sql\Ddl\Routines\AlterRoutineCommand
+class AlterFunctionCommand implements StoredFunctionCommand, AlterRoutineCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $name;

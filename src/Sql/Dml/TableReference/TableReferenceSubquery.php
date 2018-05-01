@@ -10,13 +10,14 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 
-class TableReferenceSubquery implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode, \Countable
+class TableReferenceSubquery implements TableReferenceNode, \Countable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
     private $query;

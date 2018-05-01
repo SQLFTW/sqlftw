@@ -10,13 +10,14 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class OuterJoin extends \SqlFtw\Sql\Dml\TableReference\Join
+class OuterJoin extends Join
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide */
     private $joinSide;

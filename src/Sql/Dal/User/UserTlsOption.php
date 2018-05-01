@@ -10,11 +10,13 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class UserTlsOption implements \SqlFtw\Sql\SqlSerializable
+class UserTlsOption implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dal\User\UserTlsOptionType */
     private $type;

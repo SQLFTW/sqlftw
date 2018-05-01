@@ -11,11 +11,13 @@ namespace SqlFtw\Sql\Dal\Flush;
 
 use Dogma\Arr;
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 
-class FlushCommand implements \SqlFtw\Sql\Command
+class FlushCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dal\Flush\FlushOption[] */
     private $options;

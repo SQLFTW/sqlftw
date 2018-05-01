@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Platform;
 
+use Dogma\InvalidArgumentException;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Features\PlatformFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
 
 class Platform
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const SQL = 'sql';
     public const MYSQL = 'mysql';
@@ -52,10 +54,10 @@ class Platform
     public static function get(string $name, ?string $version = null): self
     {
         if (!isset(self::$versions[$name])) {
-            throw new \Dogma\InvalidArgumentException(sprintf('Unknown platform %s.', $name));
+            throw new InvalidArgumentException(sprintf('Unknown platform %s.', $name));
         }
         if ($version !== null && !in_array($version, self::$versions[$name])) {
-            throw new \Dogma\InvalidArgumentException(sprintf('Unknown version %s for platform %s.', $version, $name));
+            throw new InvalidArgumentException(sprintf('Unknown version %s for platform %s.', $version, $name));
         }
         if ($version === null) {
             $version = new Version(self::$defaultVersions[$name]);

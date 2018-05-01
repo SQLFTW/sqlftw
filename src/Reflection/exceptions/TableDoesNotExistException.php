@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class TableDoesNotExistException extends \SqlFtw\Reflection\ReflectionException
+class TableDoesNotExistException extends ReflectionException
 {
 
     /** @var string */

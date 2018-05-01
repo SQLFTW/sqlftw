@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class BinaryLiteral implements \SqlFtw\Sql\Expression\Literal
+class BinaryLiteral implements Literal
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $value;

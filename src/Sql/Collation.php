@@ -11,7 +11,7 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Formatter\Formatter;
 
-class Collation extends \SqlFtw\Sql\SqlEnum
+class Collation extends SqlEnum
 {
     public const ARMSCII8_BIN = 'armscii8_bin';
     public const ARMSCII8_GENERAL_CI = 'armscii8_general_ci';

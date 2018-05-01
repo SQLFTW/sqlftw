@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
@@ -18,9 +19,9 @@ use SqlFtw\Formatter\Formatter;
  * -right
  * +right
  */
-class UnaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
+class UnaryOperator implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $operator;

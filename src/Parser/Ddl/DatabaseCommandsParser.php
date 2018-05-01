@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -20,7 +21,7 @@ use SqlFtw\Sql\Keyword;
 
 class DatabaseCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * ALTER {DATABASE | SCHEMA} [db_name]

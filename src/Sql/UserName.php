@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class UserName implements \SqlFtw\Sql\SqlSerializable
+class UserName implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|null */
     protected $user;

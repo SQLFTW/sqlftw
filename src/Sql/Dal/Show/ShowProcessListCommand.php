@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ShowProcessListCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowProcessListCommand implements ShowCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var bool */
     private $full;

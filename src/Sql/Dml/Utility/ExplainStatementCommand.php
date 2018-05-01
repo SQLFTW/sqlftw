@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Dml\DmlCommand;
 
-class ExplainStatementCommand implements \SqlFtw\Sql\Command
+class ExplainStatementCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Command|null */
     private $statement;

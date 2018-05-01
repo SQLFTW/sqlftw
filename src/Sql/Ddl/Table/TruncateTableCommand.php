@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SingleTableCommand;
 
-class TruncateTableCommand implements \SqlFtw\Sql\SingleTableCommand, \SqlFtw\Sql\Ddl\Table\DdlTableCommand
+class TruncateTableCommand implements SingleTableCommand, DdlTableCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;

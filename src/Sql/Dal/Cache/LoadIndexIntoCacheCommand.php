@@ -10,14 +10,15 @@
 namespace SqlFtw\Sql\Dal\Cache;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
  * MySQL MyISAM tables only
  */
-class LoadIndexIntoCacheCommand implements \SqlFtw\Sql\Dal\Cache\CacheCommand
+class LoadIndexIntoCacheCommand implements CacheCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dal\Cache\TableIndexList[] */
     private $tableIndexLists;

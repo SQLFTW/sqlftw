@@ -9,9 +9,10 @@
 
 namespace SqlFtw\Sql;
 
+use Dogma\StringSet;
 use SqlFtw\Platform\Mode;
 
-class SqlMode extends \Dogma\StringSet
+class SqlMode extends StringSet
 {
 
     public const ALLOW_INVALID_DATES = 'ALLOW_INVALID_DATES';

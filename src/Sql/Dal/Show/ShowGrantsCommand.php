@@ -10,13 +10,14 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class ShowGrantsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowGrantsCommand implements ShowCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\UserName|null */
     private $user;

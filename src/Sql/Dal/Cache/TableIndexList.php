@@ -10,13 +10,15 @@
 namespace SqlFtw\Sql\Dal\Cache;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SqlSerializable;
 
-class TableIndexList implements \SqlFtw\Sql\SqlSerializable
+class TableIndexList implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;

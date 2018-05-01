@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class TriggerWasDroppedException extends \SqlFtw\Reflection\TriggerDoesNotExistException
+class TriggerWasDroppedException extends TriggerDoesNotExistException
 {
 
     /** @var \SqlFtw\Reflection\TriggerReflection */

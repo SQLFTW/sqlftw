@@ -10,12 +10,14 @@
 namespace SqlFtw\Sql\Dml\DoCommand;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class DoCommand implements \SqlFtw\Sql\Command
+class DoCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
     private $expressions;

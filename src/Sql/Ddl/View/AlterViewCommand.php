@@ -9,15 +9,16 @@
 
 namespace SqlFtw\Sql\Ddl\View;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 
-class AlterViewCommand implements \SqlFtw\Sql\Ddl\View\ViewCommand
+class AlterViewCommand implements ViewCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $name;

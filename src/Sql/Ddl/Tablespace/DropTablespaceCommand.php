@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class DropTablespaceCommand implements \SqlFtw\Sql\Ddl\Tablespace\TablespaceCommand
+class DropTablespaceCommand implements TablespaceCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

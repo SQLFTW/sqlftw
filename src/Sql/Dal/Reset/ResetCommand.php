@@ -10,11 +10,13 @@
 namespace SqlFtw\Sql\Dal\Reset;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 
-class ResetCommand implements \SqlFtw\Sql\Command
+class ResetCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dal\Reset\ResetOption[] */
     private $options;

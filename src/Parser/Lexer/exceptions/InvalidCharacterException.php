@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser\Lexer;
 
-class InvalidCharacterException extends \SqlFtw\Parser\Lexer\LexerException
+class InvalidCharacterException extends LexerException
 {
 
     /** @var string */

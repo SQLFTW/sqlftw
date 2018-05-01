@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class PartitionOption extends \SqlFtw\Sql\SqlEnum
+class PartitionOption extends SqlEnum
 {
 
     public const ENGINE = Keyword::ENGINE;

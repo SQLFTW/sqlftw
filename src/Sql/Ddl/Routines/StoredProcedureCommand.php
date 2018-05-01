@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Routines;
 
-interface StoredProcedureCommand extends \SqlFtw\Sql\Ddl\Routines\StoredRoutineCommand
+interface StoredProcedureCommand extends StoredRoutineCommand
 {
 
 }

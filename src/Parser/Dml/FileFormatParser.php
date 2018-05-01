@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\FileFormat;
 use SqlFtw\Sql\Keyword;
 
 class FileFormatParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * [{FIELDS | COLUMNS}

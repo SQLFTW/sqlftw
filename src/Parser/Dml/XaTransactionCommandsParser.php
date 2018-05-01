@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
@@ -24,7 +25,7 @@ use SqlFtw\Sql\Keyword;
 
 class XaTransactionCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * XA {START|BEGIN} xid [JOIN|RESUME]

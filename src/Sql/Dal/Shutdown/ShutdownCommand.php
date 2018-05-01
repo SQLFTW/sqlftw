@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\Shutdown;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 
-class ShutdownCommand implements \SqlFtw\Sql\Command
+class ShutdownCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

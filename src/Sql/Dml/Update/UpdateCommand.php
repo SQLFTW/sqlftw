@@ -10,15 +10,17 @@
 namespace SqlFtw\Sql\Dml\Update;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class UpdateCommand implements \SqlFtw\Sql\Command
+class UpdateCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
     private $tableReferences;

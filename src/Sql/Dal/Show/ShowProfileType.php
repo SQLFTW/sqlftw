@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ShowProfileType extends \SqlFtw\Sql\SqlEnum
+class ShowProfileType extends SqlEnum
 {
 
     public const ALL = Keyword::ALL;

@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Routines;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class RoutineSideEffects extends \SqlFtw\Sql\SqlEnum
+class RoutineSideEffects extends SqlEnum
 {
 
     public const CONTAINS_SQL = Keyword::CONTAINS . ' ' . Keyword::SQL;

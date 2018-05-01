@@ -9,15 +9,16 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
  * left BETWEEN middle AND right
  * left LIKE middle ESCAPE right
  */
-class TernaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
+class TernaryOperator implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
     private $left;

@@ -10,11 +10,12 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class GetDiagnosticsStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class GetDiagnosticsStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Compound\DiagnosticsItem[]|null */
     private $conditionItems;

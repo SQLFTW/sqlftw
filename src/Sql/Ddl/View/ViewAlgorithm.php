@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\View;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ViewAlgorithm extends \SqlFtw\Sql\SqlEnum
+class ViewAlgorithm extends SqlEnum
 {
 
     public const UNDEFINED = Keyword::UNDEFINED;

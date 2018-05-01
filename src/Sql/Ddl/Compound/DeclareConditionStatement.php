@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
-class DeclareConditionStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class DeclareConditionStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

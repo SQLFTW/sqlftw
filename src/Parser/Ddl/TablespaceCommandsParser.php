@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\CreateTablespaceCommand;
@@ -18,7 +19,7 @@ use SqlFtw\Sql\Keyword;
 
 class TablespaceCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * ALTER TABLESPACE tablespace_name

@@ -9,14 +9,16 @@
 
 namespace SqlFtw\Sql\Ddl\Index;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
+use SqlFtw\Sql\Ddl\Table\TableStructureCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class DropIndexCommand implements \SqlFtw\Sql\Ddl\Index\IndexCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
+class DropIndexCommand implements IndexCommand, TableStructureCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

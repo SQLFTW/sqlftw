@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Parser\Lexer;
 
-class LexerException extends \SqlFtw\Parser\ParserException
+use SqlFtw\Parser\ParserException;
+
+class LexerException extends ParserException
 {
 
 }

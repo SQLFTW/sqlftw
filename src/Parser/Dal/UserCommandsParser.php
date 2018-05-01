@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
@@ -49,7 +50,7 @@ use SqlFtw\Sql\UserName;
 
 class UserCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * ALTER USER [IF EXISTS]

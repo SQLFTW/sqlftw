@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class CurlyExpression implements \SqlFtw\Sql\Expression\ExpressionNode
+class CurlyExpression implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

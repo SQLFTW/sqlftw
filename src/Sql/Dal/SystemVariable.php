@@ -9,7 +9,10 @@
 
 namespace SqlFtw\Sql\Dal;
 
-class SystemVariable extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
+use SqlFtw\Sql\Feature;
+use SqlFtw\Sql\SqlEnum;
+
+class SystemVariable extends SqlEnum implements Feature
 {
 
     public const AUTO_INCREMENT_INCREMENT = 'auto_increment_increment';

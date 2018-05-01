@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\DoCommand\DoCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\Keyword;
 
 class DoCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;

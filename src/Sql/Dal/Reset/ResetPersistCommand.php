@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\Reset;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 
-class ResetPersistCommand implements \SqlFtw\Sql\Command
+class ResetPersistCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $variable;

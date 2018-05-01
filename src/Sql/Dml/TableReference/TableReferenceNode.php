@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-interface TableReferenceNode extends \SqlFtw\Sql\SqlSerializable
+use SqlFtw\Sql\SqlSerializable;
+
+interface TableReferenceNode extends SqlSerializable
 {
 
     public function getType(): TableReferenceNodeType;

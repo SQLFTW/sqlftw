@@ -11,7 +11,7 @@ namespace SqlFtw\Platform\Features;
 
 use SqlFtw\Sql\Keyword;
 
-class FeaturesSql92 extends \SqlFtw\Platform\Features\PlatformFeatures
+class FeaturesSql92 extends PlatformFeatures
 {
 
     public const RESERVED_WORDS = [

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Utility\DelimiterCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\Keyword;
 
 class DelimiterCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public function parseDelimiter(TokenList $tokenList): DelimiterCommand
     {

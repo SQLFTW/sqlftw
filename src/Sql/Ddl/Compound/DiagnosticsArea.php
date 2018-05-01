@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class DiagnosticsArea extends \SqlFtw\Sql\SqlEnum
+class DiagnosticsArea extends SqlEnum
 {
 
     public const CURRENT = Keyword::CURRENT;

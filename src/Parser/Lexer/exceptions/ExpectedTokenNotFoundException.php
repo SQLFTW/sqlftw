@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser\Lexer;
 
-class ExpectedTokenNotFoundException extends \SqlFtw\Parser\Lexer\LexerException
+class ExpectedTokenNotFoundException extends LexerException
 {
 
     ///

@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
@@ -18,9 +19,9 @@ use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class CreateTableCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
+class CreateTableCommand implements AnyCreateTableCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;

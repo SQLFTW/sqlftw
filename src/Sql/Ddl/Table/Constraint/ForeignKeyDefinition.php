@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class ForeignKeyDefinition implements \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody
+class ForeignKeyDefinition implements ConstraintBody
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string[] */
     private $columns;

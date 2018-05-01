@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ShowBinlogEventsCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowBinlogEventsCommand implements ShowCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $logName;

@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\ColumnName;
 
-class MatchExpression implements \SqlFtw\Sql\Expression\ExpressionNode
+class MatchExpression implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\ColumnName[] */
     private $columns;

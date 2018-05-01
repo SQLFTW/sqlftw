@@ -2,12 +2,13 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class RepeatStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class RepeatStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Statement[] */
     private $statements;

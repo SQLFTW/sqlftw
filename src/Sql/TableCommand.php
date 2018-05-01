@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-interface TableCommand extends \SqlFtw\Sql\Command
+interface TableCommand extends Command
 {
 
 }

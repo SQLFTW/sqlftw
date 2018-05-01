@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class SetPasswordCommand implements \SqlFtw\Sql\Dal\User\UserCommand
+class SetPasswordCommand implements UserCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\UserName|null */
     private $user;

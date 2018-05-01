@@ -10,12 +10,14 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class RepairTableCommand implements \SqlFtw\Sql\MultipleTablesCommand, \SqlFtw\Sql\Dal\Table\DalTableCommand
+class RepairTableCommand implements MultipleTablesCommand, DalTableCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName[] */
     private $tables;

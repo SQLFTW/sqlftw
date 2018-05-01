@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class OpenCursorStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class OpenCursorStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceCommand;
 use SqlFtw\Sql\Keyword;
 
 class InstanceCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * ALTER INSTANCE ROTATE INNODB MASTER KEY

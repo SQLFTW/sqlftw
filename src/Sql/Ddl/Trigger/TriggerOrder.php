@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Trigger;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class TriggerOrder extends \SqlFtw\Sql\SqlEnum
+class TriggerOrder extends SqlEnum
 {
 
     public const FOLLOWS = Keyword::FOLLOWS;

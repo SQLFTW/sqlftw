@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\SqlSerializable;
 
-class SelectExpression implements \SqlFtw\Sql\SqlSerializable
+class SelectExpression implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
     private $expression;

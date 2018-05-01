@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class IndexType extends \SqlFtw\Sql\SqlEnum
+class IndexType extends SqlEnum
 {
 
     public const PRIMARY = Keyword::PRIMARY . ' ' . Keyword::KEY;

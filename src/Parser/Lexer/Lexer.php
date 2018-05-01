@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Lexer;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Mode;
@@ -23,7 +24,7 @@ use SqlFtw\Platform\PlatformSettings;
  */
 class Lexer
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     private const NUMBERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 

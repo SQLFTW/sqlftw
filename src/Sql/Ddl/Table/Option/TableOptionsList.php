@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use Dogma\Arr;
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\QualifiedName;
@@ -18,7 +19,7 @@ use SqlFtw\Sql\SqlSerializable;
 
 class TableOptionsList
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var mixed[] */
     private $options = [];

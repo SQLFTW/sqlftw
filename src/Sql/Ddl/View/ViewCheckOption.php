@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\View;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ViewCheckOption extends \SqlFtw\Sql\SqlEnum
+class ViewCheckOption extends SqlEnum
 {
 
     public const CHECK_OPTION = Keyword::CHECK . ' ' . Keyword::OPTION;

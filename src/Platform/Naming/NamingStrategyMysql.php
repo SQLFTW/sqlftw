@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Platform\Naming;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Reflection\TableReflection;
 
-class NamingStrategyMysql implements \SqlFtw\Platform\Naming\NamingStrategy
+class NamingStrategyMysql implements NamingStrategy
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * @param \SqlFtw\Reflection\TableReflection $table

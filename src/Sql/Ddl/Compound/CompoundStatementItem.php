@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-interface CompoundStatementItem extends \SqlFtw\Sql\Statement
+use SqlFtw\Sql\Statement;
+
+interface CompoundStatementItem extends Statement
 {
 
 }

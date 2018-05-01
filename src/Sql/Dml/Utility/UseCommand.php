@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\DmlCommand;
 
-class UseCommand implements \SqlFtw\Sql\Command
+class UseCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $schema;

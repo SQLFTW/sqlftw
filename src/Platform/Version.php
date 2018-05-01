@@ -9,9 +9,11 @@
 
 namespace SqlFtw\Platform;
 
+use Dogma\StrictBehaviorMixin;
+
 class Version
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var int */
     private $major;

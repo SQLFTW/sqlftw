@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Platform;
 
-class Mode extends \Dogma\IntSet
+use Dogma\IntSet;
+
+class Mode extends IntSet
 {
 
     public const ANSI_QUOTES = 1;

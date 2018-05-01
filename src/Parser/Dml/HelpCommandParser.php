@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Utility\HelpCommand;
 use SqlFtw\Sql\Keyword;
 
 class HelpCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * HELP 'search_string'

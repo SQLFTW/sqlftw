@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Utility;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ExplainType extends \SqlFtw\Sql\SqlEnum
+class ExplainType extends SqlEnum
 {
 
     public const EXTENDED = Keyword::EXTENDED;

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser\Lexer;
 
-class UnrecognizedTokenException extends \SqlFtw\Parser\Lexer\LexerException
+class UnrecognizedTokenException extends LexerException
 {
 
     /** @var string */

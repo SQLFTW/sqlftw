@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -18,7 +19,7 @@ use SqlFtw\Sql\Keyword;
 
 class CharsetCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * SET {CHARACTER SET | CHARSET}

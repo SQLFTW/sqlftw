@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-interface ShowCommand extends \SqlFtw\Sql\Dal\DalCommand
+use SqlFtw\Sql\Dal\DalCommand;
+
+interface ShowCommand extends DalCommand
 {
 
 }

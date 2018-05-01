@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ConditionType extends \SqlFtw\Sql\SqlEnum
+class ConditionType extends SqlEnum
 {
 
     public const ERROR = 'error';

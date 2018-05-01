@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
@@ -47,9 +48,9 @@ use SqlFtw\Formatter\Formatter;
  * left -> right
  * left ->> right
  */
-class BinaryOperator implements \SqlFtw\Sql\Expression\ExpressionNode
+class BinaryOperator implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
     private $left;

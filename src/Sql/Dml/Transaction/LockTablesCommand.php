@@ -10,11 +10,12 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class LockTablesCommand implements \SqlFtw\Sql\Dml\Transaction\TransactionCommand
+class LockTablesCommand implements TransactionCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\Transaction\LockTablesItem[] */
     private $items;

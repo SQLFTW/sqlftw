@@ -9,15 +9,17 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Column;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\DataType;
 use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
+use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class ColumnDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem
+class ColumnDefinition implements TableItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const AUTOINCREMENT = true;
     public const NO_AUTOINCREMENT = false;

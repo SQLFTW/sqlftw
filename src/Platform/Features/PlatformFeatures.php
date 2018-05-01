@@ -18,7 +18,7 @@ use SqlFtw\Sql\Keyword;
 
 abstract class PlatformFeatures
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const RESERVED_WORDS = [];
     public const NON_RESERVED_WORDS = [];

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Transaction\CommitCommand;
 use SqlFtw\Sql\Dml\Transaction\LockTablesCommand;
@@ -28,7 +29,7 @@ use SqlFtw\Sql\Scope;
 
 class TransactionCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * COMMIT [WORK] [AND [NO] CHAIN] [[NO] RELEASE]

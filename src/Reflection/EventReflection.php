@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class EventReflection
 {
-	use \Dogma\StrictBehaviorMixin;
+	use StrictBehaviorMixin;
 
 	/** @var \SqlFtw\Sql\QualifiedName */
 	private $name;

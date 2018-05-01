@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class HexadecimalLiteral implements \SqlFtw\Sql\Expression\Literal
+class HexadecimalLiteral implements Literal
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $value;

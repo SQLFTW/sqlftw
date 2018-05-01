@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class RolesSpecification extends \SqlFtw\Sql\SqlEnum
+class RolesSpecification extends SqlEnum
 {
 
     public const DEFAULT = Keyword::DEFAULT;

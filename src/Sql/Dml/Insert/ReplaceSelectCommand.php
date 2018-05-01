@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class ReplaceSelectCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\ReplaceCommand
+class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
     private $select;

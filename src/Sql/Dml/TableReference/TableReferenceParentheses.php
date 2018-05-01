@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class TableReferenceParentheses implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode, \Countable
+class TableReferenceParentheses implements TableReferenceNode, \Countable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
     private $content;

@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-interface InformationItem extends \SqlFtw\Sql\SqlSerializable
+use SqlFtw\Sql\SqlSerializable;
+
+interface InformationItem extends SqlSerializable
 {
 
 }

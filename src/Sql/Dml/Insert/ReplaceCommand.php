@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-interface ReplaceCommand extends \SqlFtw\Sql\Ddl\DdlCommand
+use SqlFtw\Sql\Ddl\DdlCommand;
+
+interface ReplaceCommand extends DdlCommand
 {
 
 }

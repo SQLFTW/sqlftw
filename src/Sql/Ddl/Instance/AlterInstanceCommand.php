@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Instance;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\DdlCommand;
 
-class AlterInstanceCommand implements \SqlFtw\Sql\Command
+class AlterInstanceCommand implements DdlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

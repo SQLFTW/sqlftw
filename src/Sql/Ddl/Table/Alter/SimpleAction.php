@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 
-class SimpleAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
+class SimpleAction implements AlterTableAction
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType */
     private $type;

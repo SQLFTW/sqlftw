@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Load;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class LoadPriority extends \SqlFtw\Sql\SqlEnum
+class LoadPriority extends SqlEnum
 {
 
     public const LOW_PRIORITY = Keyword::LOW_PRIORITY;

@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SqlEnum;
 
-class ReplicationFilter extends \SqlFtw\Sql\SqlEnum
+class ReplicationFilter extends SqlEnum
 {
 
     public const REPLICATE_DO_DB = Keyword::REPLICATE_DO_DB;

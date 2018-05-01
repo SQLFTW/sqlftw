@@ -10,11 +10,13 @@
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class PartitioningDefinition implements \SqlFtw\Sql\SqlSerializable
+class PartitioningDefinition implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition */
     private $condition;

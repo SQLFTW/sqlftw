@@ -10,14 +10,16 @@
 namespace SqlFtw\Sql\Dml;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Order;
+use SqlFtw\Sql\SqlSerializable;
 
-class OrderByExpression implements \SqlFtw\Sql\SqlSerializable
+class OrderByExpression implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Order */
     private $order;

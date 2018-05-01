@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Column;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class GeneratedColumnType extends \SqlFtw\Sql\SqlEnum
+class GeneratedColumnType extends SqlEnum
 {
 
     public const VIRTUAL = Keyword::VIRTUAL;

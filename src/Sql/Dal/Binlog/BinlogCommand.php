@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\Binlog;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 
-class BinlogCommand implements \SqlFtw\Sql\Dal\DalCommand
+class BinlogCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $value;

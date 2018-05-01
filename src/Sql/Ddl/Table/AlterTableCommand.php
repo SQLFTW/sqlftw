@@ -16,8 +16,9 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SingleTableCommand;
 
-class AlterTableCommand implements \SqlFtw\Sql\SingleTableCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
+class AlterTableCommand implements SingleTableCommand, TableStructureCommand
 {
 
     /** @var \SqlFtw\Sql\QualifiedName */

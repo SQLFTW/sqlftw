@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ThreeStateValue extends \SqlFtw\Sql\SqlEnum
+class ThreeStateValue extends SqlEnum
 {
 
     public const ON = '1';

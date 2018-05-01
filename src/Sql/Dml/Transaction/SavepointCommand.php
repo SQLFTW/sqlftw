@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class SavepointCommand implements \SqlFtw\Sql\Dml\Transaction\TransactionCommand
+class SavepointCommand implements TransactionCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

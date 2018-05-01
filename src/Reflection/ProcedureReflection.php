@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class ProcedureReflection
 {
-	use \Dogma\StrictBehaviorMixin;
+	use StrictBehaviorMixin;
 
 	/** @var \SqlFtw\Sql\QualifiedName */
     private $name;

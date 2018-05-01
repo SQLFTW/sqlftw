@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class Identifier implements \SqlFtw\Sql\Expression\ExpressionNode
+class Identifier implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|\SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\ColumnName */
     private $name;

@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\View;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class DropViewOption extends \SqlFtw\Sql\SqlEnum
+class DropViewOption extends SqlEnum
 {
 
     public const RESTRICT = Keyword::RESTRICT;

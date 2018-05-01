@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class DuplicateOption extends \SqlFtw\Sql\SqlEnum
+class DuplicateOption extends SqlEnum
 {
 
     public const IGNORE = Keyword::IGNORE;

@@ -10,13 +10,14 @@
 namespace SqlFtw\Sql\Dml\Insert;
 
 use Dogma\Arr;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
 
-class InsertValuesCommand extends \SqlFtw\Sql\Dml\Insert\InsertOrReplaceCommand implements \SqlFtw\Sql\Dml\Insert\InsertCommand
+class InsertValuesCommand extends InsertOrReplaceCommand implements InsertCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode[][] */
     private $rows;

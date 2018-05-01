@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
-interface TablespaceCommand extends \SqlFtw\Sql\Ddl\DdlCommand
+use SqlFtw\Sql\Ddl\DdlCommand;
+
+interface TablespaceCommand extends DdlCommand
 {
 
 }

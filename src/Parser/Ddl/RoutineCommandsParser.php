@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
@@ -27,7 +28,7 @@ use SqlFtw\Sql\UserName;
 
 class RoutineCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Ddl\TypeParser */
     private $typeParser;

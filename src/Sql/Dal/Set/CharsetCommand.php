@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
-interface CharsetCommand extends \SqlFtw\Sql\Dal\DalCommand
+use SqlFtw\Sql\Dal\DalCommand;
+
+interface CharsetCommand extends DalCommand
 {
 
 }

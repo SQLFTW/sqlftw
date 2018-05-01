@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\Handler;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class HandlerCloseCommand implements \SqlFtw\Sql\Dml\Handler\HandlerCommand
+class HandlerCloseCommand implements HandlerCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;

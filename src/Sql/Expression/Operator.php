@@ -9,9 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\InvalidValueException;
+use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class Operator extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
+class Operator extends SqlEnum implements Feature
 {
 
     // assign
@@ -123,7 +126,7 @@ class Operator extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
     public function checkUnary(): void
     {
         if (!$this->isUnary()) {
-            throw new \Dogma\InvalidValueException($this->getValue(), 'unary operator');
+            throw new InvalidValueException($this->getValue(), 'unary operator');
         }
     }
 
@@ -133,7 +136,7 @@ class Operator extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
     public function checkBinary(): void
     {
         if (!$this->isBinary()) {
-            throw new \Dogma\InvalidValueException($this->getValue(), 'binary operator');
+            throw new InvalidValueException($this->getValue(), 'binary operator');
         }
     }
 
@@ -143,7 +146,7 @@ class Operator extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
     public function checkTernaryLeft(): void
     {
         if (!$this->isTernaryLeft()) {
-            throw new \Dogma\InvalidValueException($this->getValue(), 'ternary operator');
+            throw new InvalidValueException($this->getValue(), 'ternary operator');
         }
     }
 
@@ -153,7 +156,7 @@ class Operator extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
     public function checkTernaryRight(): void
     {
         if (!$this->isTernaryRight()) {
-            throw new \Dogma\InvalidValueException($this->getValue(), 'ternary operator');
+            throw new InvalidValueException($this->getValue(), 'ternary operator');
         }
     }
 

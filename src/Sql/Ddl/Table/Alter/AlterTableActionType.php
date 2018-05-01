@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 use Dogma\Type;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SqlEnum;
 
-class AlterTableActionType extends \SqlFtw\Sql\SqlEnum
+class AlterTableActionType extends SqlEnum
 {
 
     public const ADD_COLUMN = Keyword::ADD . ' ' . Keyword::COLUMN;

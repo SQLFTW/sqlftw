@@ -11,12 +11,14 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Lexer\Lexer;
+use SqlFtw\Sql\SqlSerializable;
 
-class UuidSet implements \SqlFtw\Sql\SqlSerializable
+class UuidSet implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $uuid;

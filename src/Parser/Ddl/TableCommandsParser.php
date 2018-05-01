@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\SelectCommandParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
@@ -71,7 +72,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class TableCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Ddl\TypeParser */
     private $typeParser;

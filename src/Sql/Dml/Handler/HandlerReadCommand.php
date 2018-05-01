@@ -9,18 +9,19 @@
 
 namespace SqlFtw\Sql\Dml\Handler;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
 
-class HandlerReadCommand implements \SqlFtw\Sql\Dml\Handler\HandlerCommand
+class HandlerReadCommand implements HandlerCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadWhat */
+    /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadTarget */
     private $what;
 
     /** @var string|null */
@@ -40,7 +41,7 @@ class HandlerReadCommand implements \SqlFtw\Sql\Dml\Handler\HandlerCommand
 
     public function __construct(
         QualifiedName $table,
-        HandlerReadWhat $what,
+        HandlerReadTarget $what,
         ?string $index = null,
         ?array $values = null,
         ?ExpressionNode $where = null,
@@ -61,7 +62,7 @@ class HandlerReadCommand implements \SqlFtw\Sql\Dml\Handler\HandlerCommand
         return $this->table;
     }
 
-    public function getWhat(): HandlerReadWhat
+    public function getWhat(): HandlerReadTarget
     {
         return $this->what;
     }

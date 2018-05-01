@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class ShowFunctionStatusCommand implements \SqlFtw\Sql\Dal\Show\ShowCommand
+class ShowFunctionStatusCommand implements ShowCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $like;

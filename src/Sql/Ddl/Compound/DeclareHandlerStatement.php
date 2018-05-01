@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
-class DeclareHandlerStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class DeclareHandlerStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Compound\HandlerAction */
     private $action;

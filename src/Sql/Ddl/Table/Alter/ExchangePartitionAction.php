@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class ExchangePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
+class ExchangePartitionAction implements AlterTableAction
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $partition;

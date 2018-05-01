@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\Arr;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushOption;
@@ -19,7 +20,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class FlushCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * FLUSH [NO_WRITE_TO_BINLOG | LOCAL]

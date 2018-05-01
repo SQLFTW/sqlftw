@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ColumnName implements \SqlFtw\Sql\SqlSerializable
+class ColumnName implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

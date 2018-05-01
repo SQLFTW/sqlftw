@@ -9,8 +9,10 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
+
 class VariablesReflection
 {
-	use \Dogma\StrictBehaviorMixin;
+	use StrictBehaviorMixin;
 
 }

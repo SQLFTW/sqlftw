@@ -9,15 +9,16 @@
 
 namespace SqlFtw\Sql\Dml\Load;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\FileFormat;
 use SqlFtw\Sql\QualifiedName;
 
-class LoadDataCommand extends \SqlFtw\Sql\Dml\Load\LoadCommand
+class LoadDataCommand extends LoadCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\FileFormat|null */
     private $format;

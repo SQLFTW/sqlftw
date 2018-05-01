@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Collation;
 
-class CollateExpression implements \SqlFtw\Sql\Expression\ExpressionNode
+class CollateExpression implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Collation */
     private $collation;

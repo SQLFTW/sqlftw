@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Reset\ResetPersistCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\Keyword;
 
 class ResetPersistCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * RESET PERSIST [[IF EXISTS] system_var_name]

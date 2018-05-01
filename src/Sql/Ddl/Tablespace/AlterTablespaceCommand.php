@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class AlterTablespaceCommand implements \SqlFtw\Sql\Ddl\Tablespace\TablespaceCommand
+class AlterTablespaceCommand implements TablespaceCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class NaturalJoin extends \SqlFtw\Sql\Dml\TableReference\Join
+class NaturalJoin extends Join
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide|null */
     private $joinSide;

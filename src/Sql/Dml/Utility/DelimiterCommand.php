@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\DmlCommand;
 
-class DelimiterCommand implements \SqlFtw\Sql\Command
+class DelimiterCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $delimiter;

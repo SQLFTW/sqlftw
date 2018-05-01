@@ -10,15 +10,16 @@
 namespace SqlFtw\Sql\Dal\Cache;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
 /**
  * MySQL MyISAM tables only
  */
-class CacheIndexCommand implements \SqlFtw\Sql\Dal\Cache\CacheCommand
+class CacheIndexCommand implements CacheCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $keyCache;

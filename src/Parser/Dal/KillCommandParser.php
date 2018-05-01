@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Kill\KillCommand;
 use SqlFtw\Sql\Keyword;
 
 class KillCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * KILL [CONNECTION | QUERY] processlist_id

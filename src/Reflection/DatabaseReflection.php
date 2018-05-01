@@ -10,6 +10,7 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\Arr;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
@@ -44,7 +45,7 @@ use SqlFtw\Sql\QualifiedName;
  */
 class DatabaseReflection
 {
-	use \Dogma\StrictBehaviorMixin;
+	use StrictBehaviorMixin;
 
 	/** @var \SqlFtw\Platform\Platform */
 	private $platform;

@@ -10,13 +10,15 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\ZipIterator;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class RenameTableCommand implements \SqlFtw\Sql\MultipleTablesCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
+class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName[] */
     protected $tables;

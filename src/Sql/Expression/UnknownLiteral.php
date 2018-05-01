@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
-class UnknownLiteral implements \SqlFtw\Sql\Expression\Literal
+class UnknownLiteral implements Literal
 {
 
     public function getType(): NodeType

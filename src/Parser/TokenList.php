@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\NotImplementedException;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\SqlEnum;
 
@@ -28,7 +30,7 @@ use SqlFtw\Sql\SqlEnum;
  */
 class TokenList
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Token[] */
     private $tokens;
@@ -415,7 +417,7 @@ class TokenList
     public function seek(int $type, int $maxOffset): Token
     {
         ///
-        throw new \Dogma\NotImplementedException('seek');
+        throw new NotImplementedException('seek');
     }
 
     public function seekKeyword(string $keyword, int $maxOffset): bool
@@ -488,7 +490,7 @@ class TokenList
     public function expectEnd(): void
     {
         ///
-        throw new \Dogma\NotImplementedException('expectEnd');
+        throw new NotImplementedException('expectEnd');
     }
 
     public function expected(string $description): void

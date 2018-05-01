@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
 
-class AddForeignKeyAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
+class AddForeignKeyAction implements AlterTableAction
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition */
     private $foreignKey;

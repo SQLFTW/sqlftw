@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class XaStartOption extends \SqlFtw\Sql\SqlEnum
+class XaStartOption extends SqlEnum
 {
 
     public const JOIN = Keyword::JOIN;

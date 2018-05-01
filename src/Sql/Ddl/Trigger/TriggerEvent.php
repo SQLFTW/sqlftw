@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Trigger;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class TriggerEvent extends \SqlFtw\Sql\SqlEnum
+class TriggerEvent extends SqlEnum
 {
 
     public const BEFORE_INSERT = Keyword::BEFORE . ' ' . Keyword::INSERT;

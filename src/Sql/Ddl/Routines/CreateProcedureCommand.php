@@ -9,15 +9,16 @@
 
 namespace SqlFtw\Sql\Ddl\Routines;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 
-class CreateProcedureCommand implements \SqlFtw\Sql\Ddl\Routines\StoredProcedureCommand, \SqlFtw\Sql\Ddl\Routines\CreateRoutineCommand
+class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $name;

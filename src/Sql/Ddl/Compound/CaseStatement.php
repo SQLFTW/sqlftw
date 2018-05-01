@@ -10,13 +10,14 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Statement;
 
-class CaseStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class CaseStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $condition;

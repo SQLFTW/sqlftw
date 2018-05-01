@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
@@ -22,7 +23,7 @@ use SqlFtw\Sql\UserName;
 
 class TriggerCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Parser */
     private $parser;

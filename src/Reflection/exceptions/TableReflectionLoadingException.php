@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class TableReflectionLoadingException extends \SqlFtw\Reflection\ReflectionException
+class TableReflectionLoadingException extends ReflectionException
 {
 
     /** @var string */

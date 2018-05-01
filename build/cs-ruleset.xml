@@ -23,6 +23,9 @@
         <exclude name="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod"/><!-- false positive on private method used by static constructor -->
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing"/><!-- fuck strict types -->
         <exclude name="SlevomatCodingStandard.Types.EmptyLinesAroundTypeBraces.NoEmptyLineAfterOpeningBrace"/><!-- "use" on first line of class -->
+        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameAfterKeyword.NonFullyQualifiedImplements"/>
+        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameAfterKeyword.NonFullyQualifiedExtends"/>
+        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedExceptions.NonFullyQualifiedException"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>

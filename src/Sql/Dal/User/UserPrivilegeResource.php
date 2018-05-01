@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class UserPrivilegeResource implements \SqlFtw\Sql\SqlSerializable
+class UserPrivilegeResource implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const ALL = '*';
 

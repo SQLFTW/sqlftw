@@ -13,9 +13,11 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class BaseType extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
+class BaseType extends SqlEnum implements Feature
 {
 
     // bitwise

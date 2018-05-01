@@ -10,11 +10,12 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class TableReferenceList implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode, \Countable
+class TableReferenceList implements TableReferenceNode, \Countable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode[] */
     private $references;

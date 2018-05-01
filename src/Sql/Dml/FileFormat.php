@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class FileFormat implements \SqlFtw\Sql\SqlSerializable
+class FileFormat implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $fieldsTerminatedBy;

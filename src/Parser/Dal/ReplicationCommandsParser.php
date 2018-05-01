@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
@@ -33,7 +34,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class ReplicationCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;

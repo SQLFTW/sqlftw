@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ConditionInformationItem extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Ddl\Compound\InformationItem
+class ConditionInformationItem extends SqlEnum implements InformationItem
 {
 
     public const CLASS_ORIGIN = Keyword::CLASS_ORIGIN;

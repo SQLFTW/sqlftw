@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\NotImplementedException;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
@@ -17,7 +19,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class WithParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
     private $selectParser;
@@ -46,7 +48,7 @@ class WithParser
     {
         ///
         if (true === true) {
-            throw new \Dogma\NotImplementedException('Common table expressions are not implemented yet.');
+            throw new NotImplementedException('Common table expressions are not implemented yet.');
         } else {
             return new SelectCommand([], new TableReferenceTable(new QualifiedName('foo')));
         }

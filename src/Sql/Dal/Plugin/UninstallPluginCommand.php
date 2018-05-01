@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Plugin;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class UninstallPluginCommand implements \SqlFtw\Sql\Dal\Plugin\PluginCommand
+class UninstallPluginCommand implements PluginCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $pluginName;

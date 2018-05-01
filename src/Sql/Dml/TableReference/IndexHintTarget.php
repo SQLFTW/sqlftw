@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class IndexHintTarget extends \SqlFtw\Sql\SqlEnum
+class IndexHintTarget extends SqlEnum
 {
 
     public const JOIN = Keyword::JOIN;

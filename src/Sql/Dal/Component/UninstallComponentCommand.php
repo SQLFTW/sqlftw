@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Dal\Component;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
-class UninstallComponentCommand implements \SqlFtw\Sql\Dal\Component\ComponentCommand
+class UninstallComponentCommand implements ComponentCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string[] */
     private $components;

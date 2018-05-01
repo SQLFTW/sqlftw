@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\DropFunctionCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class FunctionReflection
 {
-	use \Dogma\StrictBehaviorMixin;
+	use StrictBehaviorMixin;
 
 	/** @var \SqlFtw\Sql\QualifiedName */
     private $name;

@@ -9,13 +9,15 @@
 
 namespace SqlFtw\Sql\Dml\Update;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\SqlSerializable;
 
-class SetColumnExpression implements \SqlFtw\Sql\SqlSerializable
+class SetColumnExpression implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\ColumnName */
     private $column;

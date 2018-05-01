@@ -10,12 +10,14 @@
 namespace SqlFtw\Sql\Dml\Select;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SqlSerializable;
 
-class SelectLocking implements \SqlFtw\Sql\SqlSerializable
+class SelectLocking implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\Select\SelectLockOption */
     private $for;

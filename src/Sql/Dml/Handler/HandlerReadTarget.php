@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class HandlerReadWhat extends \SqlFtw\Sql\SqlEnum
+class HandlerReadTarget extends SqlEnum
 {
 
     public const FIRST = Keyword::FIRST;

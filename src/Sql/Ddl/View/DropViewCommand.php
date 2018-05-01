@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Ddl\View;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class DropViewCommand implements \SqlFtw\Sql\Ddl\View\ViewCommand
+class DropViewCommand implements ViewCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName[] */
     private $names;

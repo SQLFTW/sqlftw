@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ConstraintType extends \SqlFtw\Sql\SqlEnum
+class ConstraintType extends SqlEnum
 {
 
     public const FOREIGN_KEY = Keyword::FOREIGN . ' ' . Keyword::KEY;

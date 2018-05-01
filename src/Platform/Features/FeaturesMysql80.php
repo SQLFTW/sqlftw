@@ -9,12 +9,11 @@
 
 namespace SqlFtw\Platform\Features;
 
-use SqlFtw\Sql\Ddl\BaseType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 
-class FeaturesMysql80 extends \SqlFtw\Platform\Features\PlatformFeatures
+class FeaturesMysql80 extends PlatformFeatures
 {
 
     public const RESERVED_WORDS = [

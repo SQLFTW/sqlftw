@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class TimeIntervalUnit extends \SqlFtw\Sql\SqlEnum
+class TimeIntervalUnit extends SqlEnum
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const MICROSECOND = Keyword::MICROSECOND;
     public const SECOND = Keyword::SECOND;

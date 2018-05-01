@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
+use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Formatter\Formatter;
 
-class PurgeBinaryLogsCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
+class PurgeBinaryLogsCommand implements ReplicationCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $toLog;

@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-interface ExpressionNode extends \SqlFtw\Sql\SqlSerializable
+use SqlFtw\Sql\SqlSerializable;
+
+interface ExpressionNode extends SqlSerializable
 {
 
     public function getType(): NodeType;

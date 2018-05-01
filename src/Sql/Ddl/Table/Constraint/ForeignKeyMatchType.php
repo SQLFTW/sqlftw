@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ForeignKeyMatchType extends \SqlFtw\Sql\SqlEnum
+class ForeignKeyMatchType extends SqlEnum
 {
 
     public const FULL = Keyword::FULL;

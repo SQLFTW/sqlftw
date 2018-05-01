@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class XaRecoverCommand implements \SqlFtw\Sql\Dml\XaTransaction\XaTransactionCommand
+class XaRecoverCommand implements XaTransactionCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var bool */
     private $convertXid;

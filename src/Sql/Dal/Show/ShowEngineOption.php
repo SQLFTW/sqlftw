@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ShowEngineOption extends \SqlFtw\Sql\SqlEnum
+class ShowEngineOption extends SqlEnum
 {
 
     public const STATUS = Keyword::STATUS;

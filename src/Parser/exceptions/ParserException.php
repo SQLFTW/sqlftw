@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Parser;
 
-class ParserException extends \Dogma\Exception
+use Dogma\Exception;
+
+class ParserException extends Exception
 {
 
     ///

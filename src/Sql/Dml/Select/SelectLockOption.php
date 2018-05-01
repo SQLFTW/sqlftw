@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Select;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class SelectLockOption extends \SqlFtw\Sql\SqlEnum
+class SelectLockOption extends SqlEnum
 {
 
     public const FOR_UPDATE = Keyword::FOR . ' ' . Keyword::UPDATE;

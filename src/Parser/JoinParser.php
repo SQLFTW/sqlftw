@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Dml\TableReference\EscapedTableReference;
 use SqlFtw\Sql\Dml\TableReference\IndexHint;
 use SqlFtw\Sql\Dml\TableReference\IndexHintAction;
@@ -28,7 +29,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class JoinParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\ParserFactory */
     private $parserFactory;

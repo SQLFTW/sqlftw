@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Column;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ColumnFormat extends \SqlFtw\Sql\SqlEnum
+class ColumnFormat extends SqlEnum
 {
 
     public const FIXED = Keyword::FIXED;

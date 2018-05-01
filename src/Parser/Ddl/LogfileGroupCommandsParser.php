@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\LogfileGroup\AlterLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\CreateLogfileGroupCommand;
@@ -21,7 +22,7 @@ use SqlFtw\Sql\Keyword;
  */
 class LogfileGroupCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * ALTER LOGFILE GROUP logfile_group

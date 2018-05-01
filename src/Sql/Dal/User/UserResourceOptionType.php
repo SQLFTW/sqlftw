@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class UserResourceOptionType extends \SqlFtw\Sql\SqlEnum
+class UserResourceOptionType extends SqlEnum
 {
 
     public const MAX_QUERIES_PER_HOUR = Keyword::MAX_QUERIES_PER_HOUR;

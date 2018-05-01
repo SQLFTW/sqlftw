@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\QualifiedName;
 
 class TriggerReflection
 {
-	use \Dogma\StrictBehaviorMixin;
+	use StrictBehaviorMixin;
 
 	/** @var \SqlFtw\Sql\QualifiedName */
 	private $name;

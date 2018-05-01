@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Order;
+use SqlFtw\Sql\SqlSerializable;
 
-class IndexColumn implements \SqlFtw\Sql\SqlSerializable
+class IndexColumn implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

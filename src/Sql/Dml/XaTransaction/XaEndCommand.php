@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class XaEndCommand implements \SqlFtw\Sql\Dml\XaTransaction\XaTransactionCommand
+class XaEndCommand implements XaTransactionCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\XaTransaction\Xid */
     private $xid;

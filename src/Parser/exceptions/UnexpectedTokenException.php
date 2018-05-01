@@ -12,7 +12,7 @@ namespace SqlFtw\Parser;
 use Dogma\Arr;
 use Dogma\ExceptionValueFormater;
 
-class UnexpectedTokenException extends \SqlFtw\Parser\ParserException
+class UnexpectedTokenException extends ParserException
 {
 
     /**

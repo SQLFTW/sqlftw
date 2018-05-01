@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Index;
 
-interface IndexCommand extends \SqlFtw\Sql\Ddl\DdlCommand
+use SqlFtw\Sql\Ddl\DdlCommand;
+
+interface IndexCommand extends DdlCommand
 {
 
 }

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\Keyword;
 
 class Parser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Lexer\Lexer */
     private $lexer;

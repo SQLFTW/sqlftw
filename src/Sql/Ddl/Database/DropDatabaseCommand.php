@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Database;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class DropDatabaseCommand implements \SqlFtw\Sql\Ddl\Database\DatabaseCommand
+class DropDatabaseCommand implements DatabaseCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $name;

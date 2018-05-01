@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Server;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class AlterServerCommand implements \SqlFtw\Sql\Ddl\Server\ServerCommand
+class AlterServerCommand implements ServerCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

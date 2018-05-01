@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class AlterTableOption extends \SqlFtw\Sql\SqlEnum
+class AlterTableOption extends SqlEnum
 {
 
     public const ALGORITHM = Keyword::ALGORITHM;

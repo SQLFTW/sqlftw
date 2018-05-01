@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-interface ReplicationCommand extends \SqlFtw\Sql\Dal\DalCommand
+use SqlFtw\Sql\Dal\DalCommand;
+
+interface ReplicationCommand extends DalCommand
 {
 
 }

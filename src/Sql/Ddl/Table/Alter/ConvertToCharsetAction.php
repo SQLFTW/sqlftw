@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 
-class ConvertToCharsetAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
+class ConvertToCharsetAction implements AlterTableAction
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Charset */
     private $charset;

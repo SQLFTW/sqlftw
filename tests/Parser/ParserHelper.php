@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 
 class ParserHelper
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public static function getParserFactory(?Platform $platform = null): ParserFactory
     {

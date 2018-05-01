@@ -10,11 +10,12 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class StartSlaveCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
+class StartSlaveCommand implements ReplicationCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $user;

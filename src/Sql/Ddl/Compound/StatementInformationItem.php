@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class StatementInformationItem extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Ddl\Compound\InformationItem
+class StatementInformationItem extends SqlEnum implements InformationItem
 {
 
     public const NUMBER = Keyword::NUMBER;

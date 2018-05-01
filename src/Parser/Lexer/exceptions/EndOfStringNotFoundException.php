@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser\Lexer;
 
-class EndOfStringNotFoundException extends \SqlFtw\Parser\Lexer\LexerException
+class EndOfStringNotFoundException extends LexerException
 {
 
     ///

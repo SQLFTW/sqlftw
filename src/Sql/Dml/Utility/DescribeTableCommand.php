@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class DescribeTableCommand implements \SqlFtw\Sql\Command
+class DescribeTableCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;

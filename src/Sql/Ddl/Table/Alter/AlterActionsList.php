@@ -11,11 +11,13 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\Arr;
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class AlterActionsList implements \SqlFtw\Sql\SqlSerializable
+class AlterActionsList implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] */
     private $actions;

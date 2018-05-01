@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class FunctionCall implements \SqlFtw\Sql\Expression\ExpressionNode
+class FunctionCall implements ExpressionNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $name;

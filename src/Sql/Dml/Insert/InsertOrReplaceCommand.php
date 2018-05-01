@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\QualifiedName;
 
-abstract class InsertOrReplaceCommand implements \SqlFtw\Sql\Command
+abstract class InsertOrReplaceCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     protected $table;

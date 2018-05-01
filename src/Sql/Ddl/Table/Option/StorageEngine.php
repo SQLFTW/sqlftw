@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlEnum;
 
-class StorageEngine extends \SqlFtw\Sql\SqlEnum
+class StorageEngine extends SqlEnum
 {
 
     public const INNODB = 'InnoDB';

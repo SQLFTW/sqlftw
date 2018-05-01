@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Platform;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\SqlMode;
 
 class PlatformSettings
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Platform\Platform */
     private $platform;

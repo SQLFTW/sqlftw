@@ -9,13 +9,15 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Scope;
+use SqlFtw\Sql\SqlSerializable;
 
-class SetAssignment implements \SqlFtw\Sql\SqlSerializable
+class SetAssignment implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Scope */
     private $scope;

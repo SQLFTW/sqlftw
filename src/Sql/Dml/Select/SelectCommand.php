@@ -10,14 +10,16 @@
 namespace SqlFtw\Sql\Dml\Select;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class SelectCommand implements \SqlFtw\Sql\Command
+class SelectCommand implements DmlCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\Select\SelectExpression[] */
     private $columns;

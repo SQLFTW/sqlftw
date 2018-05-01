@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class ForeignKeyAlreadyExistsException extends \SqlFtw\Reflection\ReflectionException
+class ForeignKeyAlreadyExistsException extends ReflectionException
 {
 
     /** @var string */

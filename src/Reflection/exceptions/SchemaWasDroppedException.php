@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class SchemaWasDroppedException extends \SqlFtw\Reflection\SchemaDoesNotExistException
+class SchemaWasDroppedException extends SchemaDoesNotExistException
 {
 
     /** @var \SqlFtw\Reflection\SchemaReflection */

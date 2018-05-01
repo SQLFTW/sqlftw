@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ConstraintAction extends \SqlFtw\Sql\SqlEnum
+class ConstraintAction extends SqlEnum
 {
 
     public const ADD = Keyword::ADD;

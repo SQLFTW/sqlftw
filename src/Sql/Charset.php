@@ -11,7 +11,7 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Formatter\Formatter;
 
-class Charset extends \SqlFtw\Sql\SqlEnum
+class Charset extends SqlEnum
 {
 
     public const ARMSCII_8 = 'armscii8';

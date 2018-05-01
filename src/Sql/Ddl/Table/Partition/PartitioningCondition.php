@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\SqlSerializable;
 
-class PartitioningCondition implements \SqlFtw\Sql\SqlSerializable
+class PartitioningCondition implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningConditionType */
     private $type;

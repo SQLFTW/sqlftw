@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ResetSlaveCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
+class ResetSlaveCommand implements ReplicationCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var bool */
     private $all;

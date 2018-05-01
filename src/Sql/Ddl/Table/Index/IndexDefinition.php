@@ -9,11 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
+use SqlFtw\Sql\Ddl\Table\TableItem;
 
-class IndexDefinition implements \SqlFtw\Sql\Ddl\Table\TableItem, \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody
+class IndexDefinition implements TableItem, ConstraintBody
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const PRIMARY_KEY_NAME = null;
 

@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SqlSerializable;
 
-class IndexOptions implements \SqlFtw\Sql\SqlSerializable
+class IndexOptions implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\SqlSerializable[]|int[]|string[]|bool[] */
     private $options;

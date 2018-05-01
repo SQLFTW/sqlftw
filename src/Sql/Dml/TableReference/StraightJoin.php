@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class StraightJoin extends \SqlFtw\Sql\Dml\TableReference\Join
+class StraightJoin extends Join
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $condition;

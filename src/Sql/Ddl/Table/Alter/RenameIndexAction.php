@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class RenameIndexAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
+class RenameIndexAction implements AlterTableAction
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $oldName;

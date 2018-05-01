@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class EventState extends \SqlFtw\Sql\SqlEnum
+class EventState extends SqlEnum
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const ENABLE = Keyword::ENABLE;
     public const DISABLE = Keyword::DISABLE;

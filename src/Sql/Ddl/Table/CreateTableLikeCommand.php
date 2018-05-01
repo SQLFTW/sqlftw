@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-class CreateTableLikeCommand implements \SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand
+class CreateTableLikeCommand implements AnyCreateTableCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;

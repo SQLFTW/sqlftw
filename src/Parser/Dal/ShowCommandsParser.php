@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -63,7 +64,7 @@ use SqlFtw\Sql\UserName;
 
 class ShowCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;

@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-class TableReferenceNodeType extends \Dogma\IntEnum
+use Dogma\IntEnum;
+
+class TableReferenceNodeType extends IntEnum
 {
 
     public const TABLE = 1;

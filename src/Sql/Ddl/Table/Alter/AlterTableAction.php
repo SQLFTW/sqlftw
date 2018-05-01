@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
-interface AlterTableAction extends \SqlFtw\Sql\SqlSerializable
+use SqlFtw\Sql\SqlSerializable;
+
+interface AlterTableAction extends SqlSerializable
 {
 
     public function getType(): AlterTableActionType;

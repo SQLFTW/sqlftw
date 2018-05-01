@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Select;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class SelectOption extends \SqlFtw\Sql\SqlEnum
+class SelectOption extends SqlEnum
 {
 
     public const HIGH_PRIORITY = Keyword::HIGH_PRIORITY;

@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class IndexAlgorithm extends \SqlFtw\Sql\SqlEnum
+class IndexAlgorithm extends SqlEnum
 {
 
     public const BTREE = Keyword::BTREE;

@@ -9,13 +9,15 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Order;
+use SqlFtw\Sql\SqlSerializable;
 
-class GroupByExpression implements \SqlFtw\Sql\SqlSerializable
+class GroupByExpression implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
     private $expression;

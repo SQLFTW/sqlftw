@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 
 class ColumnReflection
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Reflection\TableReflection */
     private $table;

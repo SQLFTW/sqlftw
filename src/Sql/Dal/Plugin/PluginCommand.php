@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Plugin;
 
-interface PluginCommand extends \SqlFtw\Sql\Dal\DalCommand
+use SqlFtw\Sql\Dal\DalCommand;
+
+interface PluginCommand extends DalCommand
 {
 
 }

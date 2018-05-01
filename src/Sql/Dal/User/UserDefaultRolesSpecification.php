@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class UserDefaultRolesSpecification extends \SqlFtw\Sql\SqlEnum
+class UserDefaultRolesSpecification extends SqlEnum
 {
 
     public const NONE = Keyword::NONE;

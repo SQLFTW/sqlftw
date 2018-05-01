@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ResetMasterCommand implements \SqlFtw\Sql\Dal\Replication\ReplicationCommand
+class ResetMasterCommand implements ReplicationCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var int|null */
     private $binlogPosition;

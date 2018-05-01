@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\NotImplementedException;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Sql\Collation;
@@ -49,7 +51,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class ExpressionParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     private const INT_DATETIME_EXPRESSION = '/^(?:[1-9][0-9])?[0-9]{2}(?:0[1-9]|1[012])(?:0[1-9]|[12][0-9]|3[01])(?:[01][0-9]|2[0-3])(?:[0-5][0-9]){2}$/';
     private const PUNCTUATION = '[~`@#$%^&\'"\\\\=[\\]{}()<>;:,.?!_|/*+-]';
@@ -564,7 +566,7 @@ class ExpressionParser
                 return false;
             } else {
                 // DEFAULT, ON, OFF ?
-                throw new \Dogma\NotImplementedException('DEFAULT, ON, OFF literals not implemented.');
+                throw new NotImplementedException('DEFAULT, ON, OFF literals not implemented.');
             }
         }
 

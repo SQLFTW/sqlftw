@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\Flush;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class FlushOption extends \SqlFtw\Sql\SqlEnum
+class FlushOption extends SqlEnum
 {
 
     public const DES_KEY_FILE = Keyword::DES_KEY_FILE;

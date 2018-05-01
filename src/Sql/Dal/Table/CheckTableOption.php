@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class CheckTableOption extends \SqlFtw\Sql\SqlEnum
+class CheckTableOption extends SqlEnum
 {
 
     public const FOR_UPGRADE = Keyword::FOR . ' ' . Keyword::UPGRADE;

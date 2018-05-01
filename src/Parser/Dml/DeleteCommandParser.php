@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\TokenList;
@@ -20,7 +21,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class DeleteCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;

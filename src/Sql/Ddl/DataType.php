@@ -9,13 +9,15 @@
 
 namespace SqlFtw\Sql\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\SqlSerializable;
 
-class DataType implements \SqlFtw\Sql\SqlSerializable
+class DataType implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const UNSIGNED = true;
 

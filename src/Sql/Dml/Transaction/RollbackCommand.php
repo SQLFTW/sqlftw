@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class RollbackCommand implements \SqlFtw\Sql\Dml\Transaction\TransactionCommand
+class RollbackCommand implements TransactionCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var bool|null */
     private $chain;

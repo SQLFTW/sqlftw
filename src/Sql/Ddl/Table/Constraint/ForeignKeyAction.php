@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ForeignKeyAction extends \SqlFtw\Sql\SqlEnum
+class ForeignKeyAction extends SqlEnum
 {
 
     public const RESTRICT = Keyword::RESTRICT;

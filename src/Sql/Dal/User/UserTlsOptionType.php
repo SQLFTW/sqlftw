@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class UserTlsOptionType extends \SqlFtw\Sql\SqlEnum
+class UserTlsOptionType extends SqlEnum
 {
 
     public const SSL = Keyword::SSL;

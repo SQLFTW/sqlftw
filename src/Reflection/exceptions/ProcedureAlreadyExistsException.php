@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class ProcedureAlreadyExistsException extends \SqlFtw\Reflection\ReflectionException
+class ProcedureAlreadyExistsException extends ReflectionException
 {
 
     /** @var string */

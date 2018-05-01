@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType;
 use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
 
 class ForeignKeyReflection
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Reflection\TableReflection */
     private $table;

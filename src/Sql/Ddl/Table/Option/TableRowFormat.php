@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class TableRowFormat extends \SqlFtw\Sql\SqlEnum
+class TableRowFormat extends SqlEnum
 {
 
     public const DEFAULT = Keyword::DEFAULT;

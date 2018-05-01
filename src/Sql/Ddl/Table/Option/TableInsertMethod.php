@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class TableInsertMethod extends \SqlFtw\Sql\SqlEnum
+class TableInsertMethod extends SqlEnum
 {
 
     public const NO = Keyword::NO;

@@ -9,13 +9,15 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\FileFormat;
+use SqlFtw\Sql\SqlSerializable;
 
-class SelectInto implements \SqlFtw\Sql\SqlSerializable
+class SelectInto implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string[]|null */
     private $variables;

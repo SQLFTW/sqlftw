@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Shutdown\ShutdownCommand;
 use SqlFtw\Sql\Keyword;
 
 class ShutdownCommandParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * SHUTDOWN

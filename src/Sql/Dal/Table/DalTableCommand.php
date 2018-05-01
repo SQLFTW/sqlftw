@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\Table;
 
-interface DalTableCommand extends \SqlFtw\Sql\Dal\DalCommand
+use SqlFtw\Sql\Dal\DalCommand;
+
+interface DalTableCommand extends DalCommand
 {
 
 }

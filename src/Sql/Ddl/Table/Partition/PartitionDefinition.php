@@ -10,12 +10,14 @@
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use Dogma\Arr;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\SqlSerializable;
 
-class PartitionDefinition implements \SqlFtw\Sql\SqlSerializable
+class PartitionDefinition implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const MAX_VALUE = true;
 

@@ -10,8 +10,10 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Arr;
+use SqlFtw\Sql\Feature;
+use SqlFtw\Sql\SqlEnum;
 
-class BuiltInFunction extends \SqlFtw\Sql\SqlEnum implements \SqlFtw\Sql\Feature
+class BuiltInFunction extends SqlEnum implements Feature
 {
 
     // comparison

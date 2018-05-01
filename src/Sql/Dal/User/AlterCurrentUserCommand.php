@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class AlterCurrentUserCommand implements \SqlFtw\Sql\Dal\User\UserCommand
+class AlterCurrentUserCommand implements UserCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $password;

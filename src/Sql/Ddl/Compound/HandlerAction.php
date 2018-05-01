@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class HandlerAction extends \SqlFtw\Sql\SqlEnum
+class HandlerAction extends SqlEnum
 {
 
     public const CONTINUE = Keyword::CONTINUE;

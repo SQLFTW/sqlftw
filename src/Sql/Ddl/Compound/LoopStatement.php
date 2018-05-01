@@ -2,11 +2,12 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class LoopStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class LoopStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Statement[] */
     private $statements;

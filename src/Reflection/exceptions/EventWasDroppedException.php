@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class EventWasDroppedException extends \SqlFtw\Reflection\EventDoesNotExistException
+class EventWasDroppedException extends EventDoesNotExistException
 {
 
     /** @var \SqlFtw\Reflection\EventReflection */

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-class Scope extends \SqlFtw\Sql\SqlEnum
+class Scope extends SqlEnum
 {
 
     public const GLOBAL = Keyword::GLOBAL;

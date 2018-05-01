@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\SelectCommandParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -26,7 +27,7 @@ use SqlFtw\Sql\UserName;
 
 class ViewCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
     private $selectCommandParser;

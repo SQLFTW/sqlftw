@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\View;
 
-interface ViewCommand extends \SqlFtw\Sql\Ddl\DdlCommand
+use SqlFtw\Sql\Ddl\DdlCommand;
+
+interface ViewCommand extends DdlCommand
 {
 
 }

@@ -9,15 +9,17 @@
 
 namespace SqlFtw\Sql\Ddl\Index;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
+use SqlFtw\Sql\Ddl\Table\TableStructureCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class CreateIndexCommand implements \SqlFtw\Sql\Ddl\Index\IndexCommand, \SqlFtw\Sql\Ddl\Table\TableStructureCommand
+class CreateIndexCommand implements IndexCommand, TableStructureCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition */
     private $index;

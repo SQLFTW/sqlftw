@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\Select;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class SelectDistinctOption extends \SqlFtw\Sql\SqlEnum
+class SelectDistinctOption extends SqlEnum
 {
 
     public const ALL = Keyword::ALL;

@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 
-class InvalidCommand implements \SqlFtw\Sql\Command
+class InvalidCommand implements Command
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\TokenList */
     private $tokenList;

@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\Str;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
@@ -29,7 +30,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class IndexCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name

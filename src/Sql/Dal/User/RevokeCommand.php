@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class RevokeCommand implements \SqlFtw\Sql\Dal\User\UserCommand
+class RevokeCommand implements UserCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dal\User\UserPrivilege[] */
     private $privileges;

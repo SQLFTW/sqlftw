@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
-interface XaTransactionCommand extends \SqlFtw\Sql\Dml\DmlCommand
+use SqlFtw\Sql\Dml\DmlCommand;
+
+interface XaTransactionCommand extends DmlCommand
 {
 
 }

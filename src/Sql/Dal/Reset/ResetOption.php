@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dal\Reset;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class ResetOption extends \SqlFtw\Sql\SqlEnum
+class ResetOption extends SqlEnum
 {
 
     public const MASTER = Keyword::MASTER;

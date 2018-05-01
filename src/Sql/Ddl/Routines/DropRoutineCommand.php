@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Routines;
 
-interface DropRoutineCommand extends \SqlFtw\Sql\Ddl\Routines\StoredRoutineCommand
+interface DropRoutineCommand extends StoredRoutineCommand
 {
 
 }

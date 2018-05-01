@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Plugin\InstallPluginCommand;
 use SqlFtw\Sql\Dal\Plugin\UninstallPluginCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\Keyword;
 
 class PluginCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * INSTALL PLUGIN plugin_name SONAME 'shared_library_name'

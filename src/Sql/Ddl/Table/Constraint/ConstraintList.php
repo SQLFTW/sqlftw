@@ -9,9 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
+use Dogma\StrictBehaviorMixin;
+
 class ConstraintList
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition[] (string|int $name => $constraint) */
     private $constraints = [];

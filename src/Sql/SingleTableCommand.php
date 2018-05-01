@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-interface SingleTableCommand extends \SqlFtw\Sql\TableCommand
+interface SingleTableCommand extends TableCommand
 {
 
     public function getTable(): QualifiedName;

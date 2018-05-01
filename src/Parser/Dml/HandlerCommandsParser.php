@@ -9,19 +9,20 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Handler\HandlerCloseCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerOpenCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadCommand;
-use SqlFtw\Sql\Dml\Handler\HandlerReadWhat;
+use SqlFtw\Sql\Dml\Handler\HandlerReadTarget;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 
 class HandlerCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;
@@ -63,9 +64,9 @@ class HandlerCommandsParser
         $values = null;
         $index = $tokenList->mayConsumeName();
         if ($index !== null) {
-            $what = $tokenList->mayConsumeAnyKeyword(...HandlerReadWhat::getKeywords());
+            $what = $tokenList->mayConsumeAnyKeyword(...HandlerReadTarget::getKeywords());
             if ($what === null) {
-                $what = $tokenList->consumeAnyOperator(...HandlerReadWhat::getOperators());
+                $what = $tokenList->consumeAnyOperator(...HandlerReadTarget::getOperators());
                 $values = [];
                 $tokenList->consume(TokenType::LEFT_PARENTHESIS);
                 do {
@@ -74,8 +75,8 @@ class HandlerCommandsParser
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             }
         } else {
-            /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadWhat $what */
-            $what = $tokenList->consumeKeywordEnum(HandlerReadWhat::class);
+            /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadTarget $what */
+            $what = $tokenList->consumeKeywordEnum(HandlerReadTarget::class);
         }
 
         $where = $limit = $offset = null;

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\DoCommandsParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
@@ -23,7 +24,7 @@ use SqlFtw\Sql\UserName;
 
 class EventCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Parser\Dml\DoCommandsParser */
     private $doCommandsParser;

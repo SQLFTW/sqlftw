@@ -10,11 +10,13 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class CaseExpression implements \SqlFtw\Sql\Statement
+class CaseExpression implements Statement
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\Literal|null */
     private $condition;

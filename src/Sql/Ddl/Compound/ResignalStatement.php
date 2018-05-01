@@ -11,12 +11,13 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Arr;
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
-class ResignalStatement implements \SqlFtw\Sql\Ddl\Compound\CompoundStatementItem
+class ResignalStatement implements CompoundStatementItem
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var int|string */
     private $condition;

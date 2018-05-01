@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Database;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 
-class CreateDatabaseCommand implements \SqlFtw\Sql\Ddl\Database\DatabaseCommand
+class CreateDatabaseCommand implements DatabaseCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $name;

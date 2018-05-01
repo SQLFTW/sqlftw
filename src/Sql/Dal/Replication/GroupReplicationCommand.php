@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-interface GroupReplicationCommand extends \SqlFtw\Sql\Dal\Replication\ReplicationCommand
+interface GroupReplicationCommand extends ReplicationCommand
 {
 
 }

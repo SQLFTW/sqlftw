@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class RevokeProxyCommand implements \SqlFtw\Sql\Dal\User\UserCommand
+class RevokeProxyCommand implements UserCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\UserName */
     private $proxy;

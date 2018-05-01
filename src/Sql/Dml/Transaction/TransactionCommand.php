@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-interface TransactionCommand extends \SqlFtw\Sql\Dml\DmlCommand
+use SqlFtw\Sql\Dml\DmlCommand;
+
+interface TransactionCommand extends DmlCommand
 {
 
 }

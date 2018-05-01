@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
-class ReorganizePartitionAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
+class ReorganizePartitionAction implements AlterTableAction
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string[]|null */
     private $partitions;

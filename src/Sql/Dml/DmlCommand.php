@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dml;
 
-interface DmlCommand extends \SqlFtw\Sql\Command
+use SqlFtw\Sql\Command;
+
+interface DmlCommand extends Command
 {
 
 }

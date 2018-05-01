@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
-class FunctionWasDroppedException extends \SqlFtw\Reflection\FunctionDoesNotExistException
+class FunctionWasDroppedException extends FunctionDoesNotExistException
 {
 
     /** @var \SqlFtw\Reflection\FunctionReflection */

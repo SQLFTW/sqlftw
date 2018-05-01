@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 
-class ChangeColumnAction implements \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction
+class ChangeColumnAction implements AlterTableAction
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     public const FIRST = true;
 

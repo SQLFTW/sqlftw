@@ -9,9 +9,11 @@
 
 namespace SqlFtw\Parser\Lexer;
 
+use Dogma\StrictBehaviorMixin;
+
 class StringBuffer
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $string;

@@ -9,13 +9,15 @@
 
 namespace SqlFtw\Sql\Dal\Routines;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Ddl\Routines\UdfReturnDataType;
 use SqlFtw\Sql\QualifiedName;
 
-class CreateFunctionSonameCommand implements \SqlFtw\Sql\Command
+class CreateFunctionSonameCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $name;

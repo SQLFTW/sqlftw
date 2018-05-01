@@ -9,12 +9,14 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Check;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\SqlSerializable;
 
-class CheckDefinition implements \SqlFtw\Sql\SqlSerializable
+class CheckDefinition implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode */
     private $expression;

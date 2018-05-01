@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Routines;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class UdfReturnDataType extends \SqlFtw\Sql\SqlEnum
+class UdfReturnDataType extends SqlEnum
 {
 
     public const STRING = Keyword::STRING;

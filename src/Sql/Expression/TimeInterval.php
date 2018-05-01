@@ -10,12 +10,14 @@
 namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTimeInterval;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class TimeInterval implements \SqlFtw\Sql\SqlSerializable
+class TimeInterval implements SqlSerializable
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var int|string */
     private $value;

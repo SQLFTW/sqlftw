@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class EscapedTableReference implements \SqlFtw\Sql\Dml\TableReference\TableReferenceNode
+class EscapedTableReference implements TableReferenceNode
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
     private $node;

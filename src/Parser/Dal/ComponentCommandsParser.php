@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Component\InstallComponentCommand;
 use SqlFtw\Sql\Dal\Component\UninstallComponentCommand;
@@ -16,7 +17,7 @@ use SqlFtw\Sql\Keyword;
 
 class ComponentCommandsParser
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /**
      * INSTALL COMPONENT component_name [, component_name ] ...

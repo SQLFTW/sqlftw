@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\NotImplementedException;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
 use SqlFtw\Sql\Ddl\Table\Alter\AddColumnAction;
@@ -42,7 +44,7 @@ use SqlFtw\Sql\QualifiedName;
 
 class TableReflection
 {
-	use \Dogma\StrictBehaviorMixin;
+	use StrictBehaviorMixin;
 
 	/** @var \SqlFtw\Reflection\DatabaseReflection */
 	private $database;
@@ -250,10 +252,10 @@ class TableReflection
                         ///
                         break;
                     default:
-                        throw new \Dogma\NotImplementedException('Unknown action.');
+                        throw new NotImplementedException('Unknown action.');
                 }
             } else {
-                throw new \Dogma\NotImplementedException('Unknown action.');
+                throw new NotImplementedException('Unknown action.');
             }
         }
 

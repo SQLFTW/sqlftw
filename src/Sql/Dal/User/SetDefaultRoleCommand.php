@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
-class SetDefaultRoleCommand implements \SqlFtw\Sql\Dal\User\UserCommand
+class SetDefaultRoleCommand implements UserCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\UserName[] */
     private $users;

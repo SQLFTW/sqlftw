@@ -9,11 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Prepared;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ExecuteCommand implements \SqlFtw\Sql\Dml\Prepared\PreparedStatementCommand
+class ExecuteCommand implements PreparedStatementCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class JoinSide extends \SqlFtw\Sql\SqlEnum
+class JoinSide extends SqlEnum
 {
 
     public const LEFT = Keyword::LEFT;

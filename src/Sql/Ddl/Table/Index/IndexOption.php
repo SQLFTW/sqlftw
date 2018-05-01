@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class IndexOption extends \SqlFtw\Sql\SqlEnum
+class IndexOption extends SqlEnum
 {
 
     public const TABLE = Keyword::ON;

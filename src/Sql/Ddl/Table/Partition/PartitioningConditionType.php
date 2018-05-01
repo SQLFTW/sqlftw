@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class PartitioningConditionType extends \SqlFtw\Sql\SqlEnum
+class PartitioningConditionType extends SqlEnum
 {
 
     public const HASH = Keyword::HASH;

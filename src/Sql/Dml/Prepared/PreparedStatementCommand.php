@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Prepared;
 
-interface PreparedStatementCommand extends \SqlFtw\Sql\Dml\DmlCommand
+use SqlFtw\Sql\Dml\DmlCommand;
+
+interface PreparedStatementCommand extends DmlCommand
 {
 
 }

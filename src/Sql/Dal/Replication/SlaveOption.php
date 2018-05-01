@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Replication;
 use Dogma\Type;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class SlaveOption extends \SqlFtw\Sql\SqlEnum
+class SlaveOption extends SqlEnum
 {
 
     public const MASTER_BIND = Keyword::MASTER_BIND;

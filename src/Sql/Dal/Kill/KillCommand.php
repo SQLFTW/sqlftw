@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Dal\Kill;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 
-class KillCommand implements \SqlFtw\Sql\Command
+class KillCommand implements DalCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var int */
     private $processId;

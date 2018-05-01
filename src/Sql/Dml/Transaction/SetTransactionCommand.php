@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Scope;
 
-class SetTransactionCommand implements \SqlFtw\Sql\Dml\Transaction\TransactionCommand
+class SetTransactionCommand implements TransactionCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\Scope|null */
     private $scope;

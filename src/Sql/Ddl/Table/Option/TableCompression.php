@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlEnum;
 
-class TableCompression extends \SqlFtw\Sql\SqlEnum
+class TableCompression extends SqlEnum
 {
 
     public const ZLIB = 'ZLIB';

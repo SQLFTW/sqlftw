@@ -9,14 +9,15 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DoCommand\DoCommand;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 
-class AlterEventCommand implements \SqlFtw\Sql\Ddl\Event\EventCommand
+class AlterEventCommand implements EventCommand
 {
-    use \Dogma\StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
     /** @var \SqlFtw\Sql\QualifiedName */
     private $name;

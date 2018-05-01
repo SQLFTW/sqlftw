@@ -9,10 +9,9 @@
 
 namespace SqlFtw\Platform\Features;
 
-use SqlFtw\Sql\Ddl\BaseType;
 use SqlFtw\Sql\Keyword;
 
-class FeaturesMysql56 extends \SqlFtw\Platform\Features\PlatformFeatures
+class FeaturesMysql56 extends PlatformFeatures
 {
 
     public const RESERVED_WORDS = [

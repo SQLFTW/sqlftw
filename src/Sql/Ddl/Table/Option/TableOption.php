@@ -13,8 +13,9 @@ use Dogma\Type;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SqlEnum;
 
-class TableOption extends \SqlFtw\Sql\SqlEnum
+class TableOption extends SqlEnum
 {
 
     public const AUTO_INCREMENT = Keyword::AUTO_INCREMENT;

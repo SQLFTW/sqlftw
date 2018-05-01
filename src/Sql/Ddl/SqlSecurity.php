@@ -10,8 +10,9 @@
 namespace SqlFtw\Sql\Ddl;
 
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlEnum;
 
-class SqlSecurity extends \SqlFtw\Sql\SqlEnum
+class SqlSecurity extends SqlEnum
 {
 
     public const DEFINER = Keyword::DEFINER;
