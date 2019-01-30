@@ -611,8 +611,10 @@ class TableCommandsParser
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
                 $items[] = new CheckDefinition($expression);
-            } elseif ($tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY, Keyword::FULLTEXT, Keyword::SPATIAL, Keyword::PRIMARY, Keyword::UNIQUE)) {
+            } elseif ($tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY, Keyword::FULLTEXT, Keyword::SPATIAL, Keyword::UNIQUE)) {
                 $items[] = $this->parseIndex($tokenList->resetPosition(-1));
+            } elseif ($tokenList->mayConsumeKeyword(Keyword::PRIMARY)) {
+                $items[] = $this->parseIndex($tokenList, true);
             } elseif ($tokenList->mayConsumeKeyword(Keyword::FOREIGN)) {
                 $items[] = $this->parseForeignKey($tokenList->resetPosition(-1));
             } elseif ($tokenList->mayConsumeKeyword(Keyword::CONSTRAINT)) {

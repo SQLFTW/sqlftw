@@ -13,6 +13,7 @@ use Dogma\Arr;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\TimeInterval;
 
 class ChangeMasterToCommand implements ReplicationCommand
 {
@@ -76,13 +77,15 @@ class ChangeMasterToCommand implements ReplicationCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CHANGE MASTER TO ' . implode(', ', Arr::filter(Arr::mapPairs(
+        $result = "CHANGE MASTER TO \n  " . implode(",\n  ", Arr::filter(Arr::mapPairs(
             $this->options,
             function (string $option, $value) use ($formatter): ?string {
                 if ($value === null) {
                     return null;
                 } elseif ($option === SlaveOption::IGNORE_SERVER_IDS) {
                     return $option . ' = (' . $formatter->formatValuesList($value) . ')';
+                } elseif ($value instanceof TimeInterval) {
+                    return $option . ' = INTERVAL ' . $formatter->formatValue($value);
                 } else {
                     return $option . ' = ' . $formatter->formatValue($value);
                 }
@@ -90,7 +93,7 @@ class ChangeMasterToCommand implements ReplicationCommand
         )));
 
         if ($this->channel !== null) {
-            $result .= ' FOR CHANNEL ' . $formatter->formatString($this->channel);
+            $result .= "\nFOR CHANNEL " . $formatter->formatString($this->channel);
         }
 
         return $result;

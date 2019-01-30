@@ -52,10 +52,10 @@ class TableOptionsList
                 }
             } elseif ($option === TableOption::UNION) {
                 Check::itemsOfType($value, QualifiedName::class);
+                $this->options[$option] = $value;
             } else {
                 TableOption::get($option);
                 Check::type($value, $types[$option]);
-
                 $this->options[$option] = $value;
             }
         }
@@ -121,15 +121,11 @@ class TableOptionsList
                 if ($value === null) {
                     return null;
                 } elseif ($value instanceof SqlSerializable) {
-                    if ($option === TableOption::UNION) {
-                        return $option . $valueSeparator . '(' . $value->serialize($formatter) . ')';
-                    } else {
-                        return $option . $valueSeparator . $value->serialize($formatter);
-                    }
+                    return $option . $valueSeparator . $value->serialize($formatter);
                 } elseif ($option === TableOption::ENCRYPTION) {
                     return $option . $valueSeparator . ($value ? "'Y'" : "'N'");
                 } elseif ($option === TableOption::UNION) {
-                    return $option . $valueSeparator . $formatter->formatSerializablesList($value);
+                    return $option . $valueSeparator . '(' . $formatter->formatSerializablesList($value) . ')';
                 } else {
                     return $option . $valueSeparator . $formatter->formatValue($value);
                 }

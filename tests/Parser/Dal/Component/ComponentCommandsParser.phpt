@@ -8,7 +8,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = getParserFactory(Platform::get(Platform::MYSQL, '8.0'))->getParser();
+$parser = ParserHelper::getParserFactory(Platform::get(Platform::MYSQL, '8.0'))->getParser();
 $formatter = new Formatter($parser->getSettings());
 
 // INSTALL COMPONENT

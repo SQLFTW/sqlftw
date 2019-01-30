@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\IntEnum;
+use Dogma\Enum\IntEnum;
 
 class TableReferenceNodeType extends IntEnum
 {

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Platform\Features;
 
+use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Dal\SystemVariable;
 use SqlFtw\Sql\Ddl\BaseType;
 use SqlFtw\Sql\Expression\BuiltInFunction;

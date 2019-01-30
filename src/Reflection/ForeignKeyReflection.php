@@ -30,11 +30,11 @@ class ForeignKeyReflection
         $this->constraintDefinition = $constraintDefinition;
     }
 
-    public static function fromForeignKey(TableReflection $table, ForeignKeyDefinition $foreignKeyDefinition): self
+    public static function fromForeignKey(TableReflection $table, ForeignKeyDefinition $foreignKeyDefinition, string $constraintName): self
     {
         $constraintDefinition = new ConstraintDefinition(
             ConstraintType::get(ConstraintType::FOREIGN_KEY),
-            null,
+            $constraintName,
             $foreignKeyDefinition
         );
 

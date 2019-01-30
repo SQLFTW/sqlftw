@@ -11,6 +11,7 @@ namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Parser;
+use SqlFtw\Reflection\Context\ContextProvider;
 use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
@@ -26,7 +27,7 @@ class ReflectionLoader
     /** @var \SqlFtw\Parser\Parser */
     private $parser;
 
-    /** @var \SqlFtw\Reflection\ContextProvider */
+    /** @var \SqlFtw\Reflection\Context\ContextProvider */
     private $provider;
 
     public function __construct(Parser $parser, ContextProvider $provider)

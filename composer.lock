@@ -12,41 +12,46 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/paranoiq/dogma.git",
-                "reference": "607cf552f49841daf4b83f07869b3f22fe691449"
+                "reference": "8a76dbb30cfcb3603008e8ed6651b62b4e6ade1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paranoiq/dogma/zipball/607cf552f49841daf4b83f07869b3f22fe691449",
-                "reference": "607cf552f49841daf4b83f07869b3f22fe691449",
+                "url": "https://api.github.com/repos/paranoiq/dogma/zipball/8a76dbb30cfcb3603008e8ed6651b62b4e6ade1b",
+                "reference": "8a76dbb30cfcb3603008e8ed6651b62b4e6ade1b",
                 "shasum": ""
             },
             "require": {
+                "ext-bcmath": "*",
+                "ext-dom": "*",
+                "ext-intl": "*",
                 "nette/http": "~2.4",
-                "nette/php-generator": "~2.4",
                 "nette/reflection": "~2.4",
                 "nette/utils": "~2.4",
-                "php": ">=7.1",
+                "php-64bit": "^7.1.0",
                 "tracy/tracy": "~2.4"
             },
             "require-dev": {
-                "consistence/coding-standard": "0.13.0",
+                "consistence/coding-standard": "~2.3",
                 "jakub-onderka/php-console-highlighter": "~0.3",
                 "jakub-onderka/php-parallel-lint": "~0.8",
                 "nette/tester": "~1.7",
                 "phing/phing": "~2.16",
-                "phpstan/phpstan": "~0.6",
-                "slevomat/coding-standard": "dev-2.0-dev#06c9cbb",
-                "squizlabs/php_codesniffer": "~2.7"
+                "phpstan/phpstan": "~0.8",
+                "slevomat/coding-standard": "~4.3",
+                "spell-checker/dictionary-en": "~0.1",
+                "spell-checker/spell-checker": "~0.3",
+                "squizlabs/php_codesniffer": "~3.2"
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "src/loader.php"
+                "classmap": [
+                    "src",
+                    "tests"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD-3"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
@@ -54,9 +59,9 @@
                     "homepage": "http://www.paranoiq.cz"
                 }
             ],
-            "description": "Collection of libraries sharing the same base and the same ideology - simplicity, self-explaining API, good design. Includes Database, Data sheet, XML/HTML DOM, HTTP, Filesystem and Email tools.",
+            "description": "The standard library you wish PHP had.",
             "homepage": "http://github.com/paranoiq/dogma",
-            "time": "2017-04-22 15:04:53"
+            "time": "2018-05-31T16:49:49+00:00"
         },
         {
             "name": "nette/caching",
@@ -236,62 +241,6 @@
             "description": "Nette HTTP Component",
             "homepage": "https://nette.org",
             "time": "2017-03-16T15:43:45+00:00"
-        },
-        {
-            "name": "nette/php-generator",
-            "version": "v2.6.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nette/php-generator.git",
-                "reference": "3a69f606db7f1e9995347c7d84b9d2a0507c0b38"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nette/php-generator/zipball/3a69f606db7f1e9995347c7d84b9d2a0507c0b38",
-                "reference": "3a69f606db7f1e9995347c7d84b9d2a0507c0b38",
-                "shasum": ""
-            },
-            "require": {
-                "nette/utils": "^2.4.2 || ~3.0.0",
-                "php": ">=5.6.0"
-            },
-            "conflict": {
-                "nette/nette": "<2.2"
-            },
-            "require-dev": {
-                "nette/tester": "^2.0",
-                "tracy/tracy": "^2.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.6-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause",
-                "GPL-2.0",
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "David Grudl",
-                    "homepage": "https://davidgrudl.com"
-                },
-                {
-                    "name": "Nette Community",
-                    "homepage": "https://nette.org/contributors"
-                }
-            ],
-            "description": "Nette PHP Generator",
-            "homepage": "https://nette.org",
-            "time": "2017-03-18T15:19:52+00:00"
         },
         {
             "name": "nette/reflection",
@@ -858,6 +807,62 @@
             "description": "Nette NEON: parser & generator for Nette Object Notation",
             "homepage": "http://ne-on.org",
             "time": "2017-01-13T08:00:19+00:00"
+        },
+        {
+            "name": "nette/php-generator",
+            "version": "v2.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/php-generator.git",
+                "reference": "3a69f606db7f1e9995347c7d84b9d2a0507c0b38"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/php-generator/zipball/3a69f606db7f1e9995347c7d84b9d2a0507c0b38",
+                "reference": "3a69f606db7f1e9995347c7d84b9d2a0507c0b38",
+                "shasum": ""
+            },
+            "require": {
+                "nette/utils": "^2.4.2 || ~3.0.0",
+                "php": ">=5.6.0"
+            },
+            "conflict": {
+                "nette/nette": "<2.2"
+            },
+            "require-dev": {
+                "nette/tester": "^2.0",
+                "tracy/tracy": "^2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.6-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0",
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "Nette PHP Generator",
+            "homepage": "https://nette.org",
+            "time": "2017-03-18T15:19:52+00:00"
         },
         {
             "name": "nette/robot-loader",

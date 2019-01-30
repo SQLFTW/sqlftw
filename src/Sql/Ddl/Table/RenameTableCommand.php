@@ -10,8 +10,8 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\Check;
+use Dogma\CombineIterator;
 use Dogma\StrictBehaviorMixin;
-use Dogma\ZipIterator;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
@@ -79,9 +79,9 @@ class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
         return null;
     }
 
-    public function getIterator(): ZipIterator
+    public function getIterator(): CombineIterator
     {
-        return new ZipIterator($this->tables, $this->newTables);
+        return new CombineIterator($this->tables, $this->newTables);
     }
 
     public function serialize(Formatter $formatter): string

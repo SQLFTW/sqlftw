@@ -38,8 +38,8 @@ class Version
             return $this->major;
         } else {
             return (int) ($this->major
-                . str_repeat('0', 2 - strlen($this->minor)) . $this->minor
-                . (isset($this->patch) ? str_repeat('0', 2 - strlen($this->patch)) : '99') . $this->patch
+                . str_repeat('0', 2 - strlen((string) $this->minor)) . $this->minor
+                . (isset($this->patch) ? str_repeat('0', 2 - strlen((string) $this->patch)) : '99') . $this->patch
             );
         }
     }

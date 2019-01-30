@@ -60,7 +60,7 @@ class ViewReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\View\CreateViewCommand[]|\SqlFtw\Sql\Ddl\View\AlterViewCommand[]|\SqlFtw\Sql\Ddl\View\DropViewCommand[]
+     * @return \SqlFtw\Sql\Ddl\View\ViewCommand[]
      */
     public function getCommands(): array
     {

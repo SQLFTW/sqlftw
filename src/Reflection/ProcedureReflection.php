@@ -57,7 +57,7 @@ class ProcedureReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand[]|\SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand[]|\SqlFtw\Sql\Ddl\Routines\DropProcedureCommand[]
+     * @return \SqlFtw\Sql\Ddl\Routines\StoredProcedureCommand[]
      */
     public function getCommands(): array
     {

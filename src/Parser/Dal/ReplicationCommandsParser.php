@@ -86,6 +86,7 @@ class ReplicationCommandsParser
         $options = [];
         do {
             $option = $tokenList->consumeKeywordEnum(SlaveOption::class);
+            $tokenList->consumeOperator(Operator::EQUAL);
             switch (SlaveOption::getTypes()[$option->getValue()]) {
                 case Type::STRING:
                     $value = $tokenList->consumeString();
@@ -158,6 +159,7 @@ class ReplicationCommandsParser
         $filters = [];
         do {
             $filter = $tokenList->consumeKeywordEnum(ReplicationFilter::class)->getValue();
+            $tokenList->consumeOperator(Operator::EQUAL);
             $tokenList->consume(TokenType::LEFT_PARENTHESIS);
             switch ($types[$filter]) {
                 case 'array<string>':
@@ -176,13 +178,13 @@ class ReplicationCommandsParser
                         $values[] = new QualifiedName(...$tokenList->consumeQualifiedName());
                     } while ($tokenList->mayConsumeComma());
                     break;
-                case 'map<string,string>':
+                case 'array<string,string>':
                     $values = [];
                     do {
                         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-                        $key = $tokenList->consumeString();
+                        $key = $tokenList->consumeName();
                         $tokenList->consume(TokenType::COMMA);
-                        $value = $tokenList->consumeString();
+                        $value = $tokenList->consumeName();
                         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
                         $values[$key] = $value;
                     } while ($tokenList->mayConsumeComma());
@@ -209,10 +211,11 @@ class ReplicationCommandsParser
         $log = $before = null;
         if ($tokenList->mayConsumeKeyword(Keyword::TO)) {
             $log = $tokenList->consumeString();
-        } else {
-            $tokenList->consumeKeyword(Keyword::BEFORE);
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::BEFORE)) {
             $before = $this->expressionParser->parseDateTime($tokenList);
-        }
+        } else {
+        	$tokenList->expectedAnyKeyword(Keyword::TO, Keyword::BEFORE);
+		}
 
         return new PurgeBinaryLogsCommand($log, $before);
     }
@@ -304,7 +307,7 @@ class ReplicationCommandsParser
                 $until[Keyword::SQL_BEFORE_GTIDS] = $this->parseGtidSet($tokenList);
             } elseif ($tokenList->mayConsumeKeyword(Keyword::SQL_AFTER_GTIDS)) {
                 $tokenList->consumeOperator(Operator::EQUAL);
-                $until[Keyword::SQL_BEFORE_GTIDS] = $this->parseGtidSet($tokenList);
+                $until[Keyword::SQL_AFTER_GTIDS] = $this->parseGtidSet($tokenList);
             } elseif ($tokenList->mayConsumeKeyword(Keyword::MASTER_LOG_FILE)) {
                 $tokenList->consumeOperator(Operator::EQUAL);
                 $until[Keyword::MASTER_LOG_FILE] = $tokenList->consumeString();
@@ -397,9 +400,12 @@ class ReplicationCommandsParser
             do {
                 $start = $tokenList->consumeInt();
                 $end = null;
-                if ($tokenList->mayConsume(TokenType::DOUBLE_COLON)) {
+                if ($tokenList->mayConsumeOperator(Operator::MINUS)) {
                     $end = $tokenList->consumeInt();
-                }
+                } elseif ($end = $tokenList->mayConsumeInt()) {
+                	/// lexer returns "10-20" as tokens of int and negative int :/
+                	$end = abs($end);
+				}
                 $intervals[] = [$start, $end];
                 if (!$tokenList->mayConsume(TokenType::DOUBLE_COLON)) {
                     break;

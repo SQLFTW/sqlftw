@@ -17,30 +17,18 @@ class EventWasDroppedException extends EventDoesNotExistException
 
     public function __construct(EventReflection $reflection, ?\Throwable $previous = null)
     {
-        $name = $reflection->getName();
+        $name = $reflection->getName()->getName();
+        $schema = $reflection->getName()->getSchema();
 
-        ReflectionException::__construct(sprintf(
-            'Event `%s`.`%s` was dropped by previous command.',
-            $name->getSchema(),
-            $name->getName()
-        ), $previous);
+        parent::__construct($name, $schema, $previous);
 
+        $this->message = sprintf('Event `%s`.`%s` was dropped by previous command.', $schema, $name);
         $this->reflection = $reflection;
     }
 
     public function getReflection(): EventReflection
     {
         return $this->reflection;
-    }
-
-    public function getName(): string
-    {
-        return $this->reflection->getName()->getName();
-    }
-
-    public function getSchema(): string
-    {
-        return $this->reflection->getName()->getSchema();
     }
 
 }

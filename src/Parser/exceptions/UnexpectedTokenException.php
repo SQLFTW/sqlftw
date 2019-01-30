@@ -10,7 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\Arr;
-use Dogma\ExceptionValueFormater;
+use Dogma\ExceptionValueFormatter;
 
 class UnexpectedTokenException extends ParserException
 {
@@ -28,10 +28,17 @@ class UnexpectedTokenException extends ParserException
             return implode('|', TokenType::get($type)->getConstantNames());
         }));
         if ($expectedValue !== null) {
-            $expectedValue = sprintf(' with value %s', ExceptionValueFormater::format($expectedValue));
+            if (is_array($expectedValue)) {
+                $expectedValue = implode(' or ', array_map(function ($value): string {
+                    return ExceptionValueFormatter::format($value);
+                }, $expectedValue));
+                $expectedValue = sprintf(' with value %s', $expectedValue);
+            } else {
+                $expectedValue = sprintf(' with value %s', ExceptionValueFormatter::format($expectedValue));
+            }
         }
 
-        $context = '';//$this->formatContext($tokenList);
+        $context = $this->formatContext($tokenList);
 
         if ($token === null) {
             parent::__construct(sprintf(
@@ -45,7 +52,7 @@ class UnexpectedTokenException extends ParserException
         }
 
         $actualToken = implode('|', TokenType::get($token->type)->getConstantNames());
-        $actualValue = ExceptionValueFormater::format($token->value);
+        $actualValue = ExceptionValueFormatter::format($token->value);
 
         parent::__construct(sprintf(
             "Expected token %s%s, but token %s with value %s found instead at position %d in:\n%s",
@@ -65,7 +72,7 @@ class UnexpectedTokenException extends ParserException
             return $token->original ?? $token->value;
         }, array_slice($tokens, 0, 10)));
 
-        if (isset($tokens[7])) {
+        if (isset($tokens[10])) {
             $context .= '»' . ($tokens[10]->original ?? $tokens[10]->value) . '«';
             $context .= implode('', array_map(function (Token $token) {
                 return $token->original ?? $token->value;

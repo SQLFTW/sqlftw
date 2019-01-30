@@ -16,11 +16,11 @@ class ValueLiteral implements Literal
 {
     use StrictBehaviorMixin;
 
-    /** @var bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTimeInterval|\SqlFtw\Sql\Expression\TimeInterval */
+    /** @var bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\Span\DateTimeSpan|\SqlFtw\Sql\Expression\TimeInterval */
     private $value;
 
     /**
-     * @param bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTimeInterval|\SqlFtw\Sql\Expression\TimeInterval $value
+     * @param bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\Span\DateTimeSpan|\SqlFtw\Sql\Expression\TimeInterval $value
      */
     public function __construct($value)
     {
@@ -33,7 +33,7 @@ class ValueLiteral implements Literal
     }
 
     /**
-     * @return bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTimeInterval|\SqlFtw\Sql\Expression\TimeInterval
+     * @return bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\Span\DateTimeSpan|\SqlFtw\Sql\Expression\TimeInterval
      */
     public function getValue()
     {

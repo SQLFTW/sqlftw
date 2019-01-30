@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-use Dogma\StringSet;
+use Dogma\Enum\StringSet;
 use SqlFtw\Platform\Mode;
 
 class SqlMode extends StringSet

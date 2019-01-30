@@ -127,16 +127,16 @@ class StartSlaveCommand implements ReplicationCommand
         }
 
         if ($this->user !== null) {
-            $result .= ' USER ' . $formatter->formatString($this->user);
+            $result .= ' USER=' . $formatter->formatString($this->user);
         }
         if ($this->password !== null) {
-            $result .= ' PASSWORD ' . $formatter->formatString($this->password);
+            $result .= ' PASSWORD=' . $formatter->formatString($this->password);
         }
         if ($this->defaultAuth !== null) {
-            $result .= ' DEFAULT_AUTH ' . $formatter->formatString($this->defaultAuth);
+            $result .= ' DEFAULT_AUTH=' . $formatter->formatString($this->defaultAuth);
         }
         if ($this->pluginDir !== null) {
-            $result .= ' PLUGIN_DIR ' . $formatter->formatString($this->pluginDir);
+            $result .= ' PLUGIN_DIR=' . $formatter->formatString($this->pluginDir);
         }
 
         if ($this->channel !== null) {

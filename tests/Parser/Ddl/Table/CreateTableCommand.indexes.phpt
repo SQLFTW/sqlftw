@@ -16,6 +16,6 @@ $query = 'CREATE TABLE test (
   bar CHAR(20),
   PRIMARY KEY (id),
   UNIQUE KEY key2 (foo(5), bar(10)),
-  KEY key3 (bar) USING HASH
+  INDEX key3 (bar) USING HASH
 )';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));

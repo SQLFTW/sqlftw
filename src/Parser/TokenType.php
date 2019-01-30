@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\IntSet;
+use Dogma\Enum\IntSet;
 
 /**
  * Token type hierarchy:

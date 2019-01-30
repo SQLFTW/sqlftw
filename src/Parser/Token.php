@@ -30,6 +30,9 @@ final class Token
     /** @var string */
     public $condition;
 
+    /** @var string */
+    private $typeDesc;
+
     /**
      * @param int $type
      * @param int $position
@@ -49,6 +52,15 @@ final class Token
         $this->value = $value;
         $this->original = $original;
         $this->condition = $condition;
+
+        // debug info
+        $types = [];
+        foreach (TokenType::getAllowedValues() as $name => $value) {
+            if ($value & $type) {
+                $types[] = $name;
+            }
+        }
+        $this->typeDesc = implode(',', $types);
     }
 
 }

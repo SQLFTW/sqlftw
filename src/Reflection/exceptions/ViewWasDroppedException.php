@@ -17,30 +17,18 @@ class ViewWasDroppedException extends ViewDoesNotExistException
 
     public function __construct(ViewReflection $reflection, ?\Throwable $previous = null)
     {
-        $name = $reflection->getName();
+        $name = $reflection->getName()->getName();
+        $schema = $reflection->getName()->getSchema();
 
-        ReflectionException::__construct(sprintf(
-            'View `%s`.`%s` was dropped by previous command.',
-            $name->getSchema(),
-            $name->getName()
-        ), $previous);
+        parent::__construct($name, $schema, $previous);
 
+        $this->message = sprintf('View `%s`.`%s` was dropped by previous command.', $schema, $name);
         $this->reflection = $reflection;
     }
 
     public function getReflection(): ViewReflection
     {
         return $this->reflection;
-    }
-
-    public function getName(): string
-    {
-        return $this->reflection->getName()->getName();
-    }
-
-    public function getSchema(): string
-    {
-        return $this->reflection->getName()->getSchema();
     }
 
 }

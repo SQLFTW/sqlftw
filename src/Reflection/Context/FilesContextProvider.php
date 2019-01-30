@@ -7,7 +7,7 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Reflection;
+namespace SqlFtw\Reflection\Context;
 
 final class FilesContextProvider ///implements \SqlFtw\Reflection\ContextProvider
 {

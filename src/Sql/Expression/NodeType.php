@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\IntEnum;
+use Dogma\Enum\IntEnum;
 
 class NodeType extends IntEnum
 {

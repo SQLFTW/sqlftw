@@ -18,7 +18,7 @@ class StopGroupReplicationCommand implements GroupReplicationCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'STOP GROUP REPLICATION';
+        return 'STOP GROUP_REPLICATION';
     }
 
 }

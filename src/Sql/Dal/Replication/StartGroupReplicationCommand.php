@@ -18,7 +18,7 @@ class StartGroupReplicationCommand implements GroupReplicationCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'START GROUP REPLICATION';
+        return 'START GROUP_REPLICATION';
     }
 
 }

@@ -35,7 +35,7 @@ class Lexer
 
     private const OPERATOR_SYMBOLS = ['!', '%', '&', '*', '+', '-', '/', ':', '<', '=', '>', '\\', '^', '|', '~'];
 
-    public const UUID_REGEXP = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i';
+    public const UUID_REGEXP = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i';
 
     /** @var int[] */
     private static $numbersKey;
@@ -97,7 +97,10 @@ class Lexer
      */
     public function tokenize(string $string): \Generator
     {
-        $string = new StringBuffer($string);
+        $length = strlen($string);
+        $position = 0;
+        $row = 1;
+        $column = 1;
 
         $features = $this->settings->getPlatform()->getFeatures();
         $reservedKey = array_flip($features->getReservedWords());
@@ -109,20 +112,21 @@ class Lexer
         $previous = null;
         $condition = null;
 
-        while (($char = $string->get()) !== '') {
+        while ($position < $length) {
             $uuidCheck = false;
-            $position = $string->position;
-            $string->position++;
-            $string->column++;
+            $char = $string[$position];
+            $startPosition = $position;
+            $position++;
+            $column++;
 
             if ($char === $delimiter[0]) {
                 do {
                     for ($n = 1; $n < strlen($delimiter); $n++) {
-                        if ($string->get($n) !== $delimiter[$n]) {
+                        if ($position + $n >= $length || $string[$position + $n] !== $delimiter[$n]) {
                             break 2;
                         }
                     }
-                    yield new Token(TokenType::SYMBOL | TokenType::DELIMITER, $position, $delimiter, null, $condition);
+                    yield new Token(TokenType::SYMBOL | TokenType::DELIMITER, $startPosition, $delimiter, null, $condition);
                     continue 2;
                 } while (false);
             }
@@ -133,72 +137,73 @@ class Lexer
                 case "\r":
                 case "\n":
                     $value = $char;
-                    while (($next = $string->get()) !== '') {
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if ($next === ' ' || $next === "\t" || $next === "\r") {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         } elseif ($next === "\n") {
                             $value .= $next;
-                            $string->position++;
-                            $string->column = 1;
-                            $string->row++;
+                            $position++;
+                            $column = 1;
+                            $row++;
                         } else {
                             break;
                         }
                     }
                     if ($this->withWhitespace) {
-                        yield new Token(TokenType::WHITESPACE, $position, $value, null, $condition);
+                        yield new Token(TokenType::WHITESPACE, $startPosition, $value, null, $condition);
                     }
                     break;
                 case '(':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::LEFT_PARENTHESIS, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::LEFT_PARENTHESIS, $startPosition, $char, null, $condition);
                     break;
                 case ')':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::RIGHT_PARENTHESIS, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::RIGHT_PARENTHESIS, $startPosition, $char, null, $condition);
                     break;
                 case '[':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::LEFT_SQUARE_BRACKET, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::LEFT_SQUARE_BRACKET, $startPosition, $char, null, $condition);
                     break;
                 case ']':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::RIGHT_SQUARE_BRACKET, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::RIGHT_SQUARE_BRACKET, $startPosition, $char, null, $condition);
                     break;
                 case '{':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::LEFT_CURLY_BRACKET, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::LEFT_CURLY_BRACKET, $startPosition, $char, null, $condition);
                     break;
                 case '}':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::RIGHT_CURLY_BRACKET, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::RIGHT_CURLY_BRACKET, $startPosition, $char, null, $condition);
                     break;
                 case ',':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::COMMA, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::COMMA, $startPosition, $char, null, $condition);
                     break;
                 case ';':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::SEMICOLON, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::SEMICOLON, $startPosition, $char, null, $condition);
                     break;
                 case ':':
                     $value = $char;
-                    do {
-                        $next = $string->get();
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if (isset(self::$operatorSymbolsKey[$next])) {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         } else {
                             break;
                         }
-                    } while (true);
+                    };
                     if ($value !== ':') {
-                        yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $position, $value, null, $condition);
+                        yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $value, null, $condition);
                     } else {
-                        yield $previous = new Token(TokenType::SYMBOL | TokenType::DOUBLE_COLON, $position, $char, null, $condition);
+                        yield $previous = new Token(TokenType::SYMBOL | TokenType::DOUBLE_COLON, $startPosition, $char, null, $condition);
                     }
                     break;
                 case '*':
                     // /*!12345 ... */
-                    if ($condition && $string->get() === '/') {
+                    if ($position < $length && $condition && $string[$position] === '/') {
                         $condition = null;
-                        $string->position++;
-                        $string->column++;
+                        $position++;
+                        $column++;
                         break;
                     }
                     // continue
@@ -213,111 +218,112 @@ class Lexer
                 case '|':
                 case '~':
                     $value = $char;
-                    do {
-                        $next = $string->get();
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if (isset(self::$operatorSymbolsKey[$next])) {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         } else {
                             break;
                         }
-                    } while (true);
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $position, $char, null, $condition);
+                    };
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $char, null, $condition);
                     break;
                 case '?':
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::PLACEHOLDER, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::PLACEHOLDER, $startPosition, $char, null, $condition);
                     break;
                 case '@':
                     if ($previous !== null && ($previous->type & TokenType::NAME)) {
                         // user @ host
-                        yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $position, $char, null, $condition);
+                        yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $char, null, $condition);
                         break;
                     }
                     // @variable
                     $value = $char;
-                    while ($next = $string->get()) {
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if ($next === '@' || isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         } else {
                             break;
                         }
                     }
-                    yield new Token(TokenType::NAME | TokenType::AT_VARIABLE, $position, $value, null, $condition);
+                    yield new Token(TokenType::NAME | TokenType::AT_VARIABLE, $startPosition, $value, null, $condition);
                     break;
                 case '#':
                     // # comment
                     $value = $char;
-                    while (($next = $string->get()) !== '') {
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if ($next === "\n") {
                             $value .= $next;
-                            $string->position++;
-                            $string->column = 1;
-                            $string->row++;
+                            $position++;
+                            $column = 1;
+                            $row++;
                             break;
                         } else {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         }
                     }
-                    yield $previous = new Token(TokenType::COMMENT | TokenType::HASH_COMMENT, $position, $value, null, $condition);
+                    yield $previous = new Token(TokenType::COMMENT | TokenType::HASH_COMMENT, $startPosition, $value, null, $condition);
                     break;
                 case '/':
-                    $next = $string->get();
+                    $next = $position < $length ? $string[$position] : '';
                     if ($next === '/') {
                         // // comment
-                        $string->position++;
-                        $string->column++;
+                        $position++;
+                        $column++;
                         $value = $char . $next;
-                        while (($next = $string->get()) !== '') {
+                        while ($position < $length) {
+                            $next = $string[$position];
                             if ($next === "\n") {
                                 $value .= $next;
-                                $string->position++;
-                                $string->column = 1;
-                                $string->row++;
+                                $position++;
+                                $column = 1;
+                                $row++;
                                 break;
                             } else {
                                 $value .= $next;
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                             }
                         }
-                        yield $previous = new Token(TokenType::COMMENT | TokenType::DOUBLE_SLASH_COMMENT, $position, $value, null, $condition);
+                        yield $previous = new Token(TokenType::COMMENT | TokenType::DOUBLE_SLASH_COMMENT, $startPosition, $value, null, $condition);
                     } elseif ($next === '*') {
-                        $string->position++;
-                        $string->column++;
+                        $position++;
+                        $column++;
                         if ($condition !== null) {
                             /// fail: starting comment inside a conditional comment
                         }
-                        $column = $string->column;
-                        $row = $string->row;
+                        //$column = $string->column;
+                        //$row = $string->row;
 
                         $value = $char . $next;
                         $ok = false;
-                        do {
-                            $next = $string->get();
-                            if ($next === '') {
-                                throw new \SqlFtw\Parser\Lexer\EndOfCommentNotFoundException(''); ///
-                            } elseif ($next === '*' && $string->get(1) === '/') {
-                                $value .= $next . $string->get(1);
-                                $string->position += 2;
-                                $string->column += 2;
+                        while ($position < $length) {
+                            $next = $string[$position];
+                            if ($next === '*' && ($position + 1 < $length) && $string[$position + 1] === '/') {
+                                $value .= $next . $string[$position + 1];
+                                $position += 2;
+                                $column += 2;
                                 $ok = true;
                                 break;
                             } elseif ($next === "\n") {
                                 $value .= $next;
-                                $string->position++;
-                                $string->column = 0;
-                                $string->row++;
+                                $position++;
+                                $column = 0;
+                                $row++;
                             } else {
                                 $value .= $next;
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                             }
-                        } while (true);
+                        };
                         if (!$ok) {
                             throw new \SqlFtw\Parser\Lexer\EndOfCommentNotFoundException(''); ///
                         }
@@ -330,142 +336,145 @@ class Lexer
                             ) {
                                 ///
                             } else {
-                                yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::OPTIONAL_COMMENT, $position, $value);
+                                yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::OPTIONAL_COMMENT, $startPosition, $value);
                             }
                         } elseif ($value[2] === '+') {
                             // /*+ comment */
-                            yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::HINT_COMMENT, $position, $value);
+                            yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::HINT_COMMENT, $startPosition, $value);
                         } else {
                             // /* comment */
-                            yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT, $position, $value);
+                            yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT, $startPosition, $value);
                         }
                     } else {
-                        yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $position, $char, null, $condition);
+                        yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $char, null, $condition);
                     }
                     break;
                 case '"':
-                    [$value, $orig] = $this->parseString($string, $char);
+                    [$value, $orig] = $this->parseString($string, $position, $column, $row, $char);
                     if ($this->settings->getMode()->contains(Mode::ANSI_QUOTES)) {
-                        yield $previous = new Token(TokenType::NAME | TokenType::DOUBLE_QUOTED_STRING, $position, $value, $orig, $condition);
+                        yield $previous = new Token(TokenType::NAME | TokenType::DOUBLE_QUOTED_STRING, $startPosition, $value, $orig, $condition);
                     } else {
-                        yield $previous = new Token(TokenType::VALUE | TokenType::STRING | TokenType::DOUBLE_QUOTED_STRING, $position, $value, $orig, $condition);
+                        yield $previous = new Token(TokenType::VALUE | TokenType::STRING | TokenType::DOUBLE_QUOTED_STRING, $startPosition, $value, $orig, $condition);
                     }
                     break;
                 case '\'':
-                    [$value, $orig] = $this->parseString($string, $char);
-                    yield $previous = new Token(TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, $position, $value, $orig, $condition);
+                    [$value, $orig] = $this->parseString($string, $position, $column, $row, $char);
+                    yield $previous = new Token(TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, $startPosition, $value, $orig, $condition);
                     break;
                 case '`':
-                    [$value, $orig] = $this->parseString($string, $char);
-                    yield $previous = new Token(TokenType::NAME | TokenType::BACKTICK_QUOTED_STRING, $position, $value, $orig, $condition);
+                    [$value, $orig] = $this->parseString($string, $position, $column, $row, $char);
+                    yield $previous = new Token(TokenType::NAME | TokenType::BACKTICK_QUOTED_STRING, $startPosition, $value, $orig, $condition);
                     break;
                 case '.':
-                    $next = $string->get();
+                    $next = $position < $length ? $string[$position] : '';
                     if (isset(self::$numbersKey[$next])) {
-                        [$value, $orig] = $this->parseNumber($string, '.');
+                        [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '.');
                         if ($value !== null) {
-                            yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $position, $value, $orig, $condition);
+                            yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $startPosition, $value, $orig, $condition);
                             break;
                         }
                     }
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::DOT, $position, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::DOT, $startPosition, $char, null, $condition);
                     break;
                 case '-':
-                    $next = $string->get();
+                    $next = $position < $length ? $string[$position] : '';
                     if ($next === '-') {
-                        $string->position++;
-                        $string->column++;
+                        $position++;
+                        $column++;
                         $value = $char . $next;
-                        while (($next = $string->get()) !== '') {
+                        while ($position < $length) {
+                            $next = $string[$position];
                             if ($next === "\n") {
                                 $value .= $next;
-                                $string->position++;
-                                $string->column = 1;
-                                $string->row++;
+                                $position++;
+                                $column = 1;
+                                $row++;
                                 break;
                             } else {
                                 $value .= $next;
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                             }
                         }
-                        yield $previous = new Token(TokenType::COMMENT | TokenType::DOUBLE_HYPHEN_COMMENT, $position, $value, null, $condition);
+                        yield $previous = new Token(TokenType::COMMENT | TokenType::DOUBLE_HYPHEN_COMMENT, $startPosition, $value, null, $condition);
                         break;
                     }
                     if (isset(self::$numbersKey[$next])) {
-                        [$value, $orig] = $this->parseNumber($string, '-');
+                        [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '-');
                         if ($value !== null) {
-                            yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $position, $value, $orig, $condition);
+                            yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $startPosition, $value, $orig, $condition);
                             break;
                         }
                     }
                     $value = $char;
-                    while ($next = $string->get()) {
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if (isset(self::$operatorSymbolsKey[$next])) {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         } else {
                             break;
                         }
                     }
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $position, $value, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $value, null, $condition);
                     break;
                 case '+':
-                    $next = $string->get();
+                    $next = $position < $length ? $string[$position] : '';
                     if (isset(self::$numbersKey[$next])) {
-                        [$value, $orig] = $this->parseNumber($string, '+');
+                        [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '+');
                         if ($value !== null) {
-                            yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $position, $value, $orig, $condition);
+                            yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $startPosition, $value, $orig, $condition);
                             break;
                         }
                     }
                     $value = $char;
-                    while ($next = $string->get()) {
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if (isset(self::$operatorSymbolsKey[$next])) {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         } else {
                             break;
                         }
                     }
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $position, $value, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $value, null, $condition);
                     break;
                 case '0':
-                    $next = $string->get();
+                    $next = $position < $length ? $string[$position] : '';
                     if ($next === 'b') {
-                        $string->position++;
-                        $string->column++;
+                        $position++;
+                        $column++;
                         $bits = '';
-                        do {
-                            $next = $string->get();
+                        while ($position < $length) {
+                            $next = $string[$position];
                             if ($next === '0' || $next === '1') {
                                 $bits .= $next;
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                             } else {
                                 $orig = $char . 'b' . $bits;
-                                yield $previous = new Token(TokenType::VALUE | TokenType::BINARY_LITERAL, $position, $bits, $orig, $condition);
+                                yield $previous = new Token(TokenType::VALUE | TokenType::BINARY_LITERAL, $startPosition, $bits, $orig, $condition);
                                 break 2;
                             }
-                        } while (true);
+                        };
                     } elseif ($next === 'x') {
-                        $string->position++;
-                        $string->column++;
+                        $position++;
+                        $column++;
                         $bits = '';
-                        do {
-                            $next = $string->get();
+                        while ($position < $length) {
+                            $next = $string[$position];
                             if (isset(self::$hexadecKey[$next])) {
                                 $bits .= $next;
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                             } else {
                                 $orig = $char . 'x' . $bits;
-                                yield $previous = new Token(TokenType::VALUE | TokenType::HEXADECIMAL_LITERAL, $position, strtolower($bits), $orig, $condition);
+                                yield $previous = new Token(TokenType::VALUE | TokenType::HEXADECIMAL_LITERAL, $startPosition, strtolower($bits), $orig, $condition);
                                 break 2;
                             }
-                        } while (true);
+                        };
                     }
                     // continue
                 case '1':
@@ -478,17 +487,17 @@ class Lexer
                 case '8':
                 case '9':
                     $uuidCheck = true;
-                    $value = $string->getRange(36, -1);
+                    $value = substr($string, $position - 1, 36);
                     // UUID
-                    if ($value !== null && preg_match(self::UUID_REGEXP, $value)) {
-                        $string->position += 35;
-                        $string->column += 35;
-                        yield $previous = new Token(TokenType::VALUE | TokenType::UUID, $position, $value, null, $condition);
+                    if (strlen($value) === 36 && preg_match(self::UUID_REGEXP, $value)) {
+                        $position += 35;
+                        $column += 35;
+                        yield $previous = new Token(TokenType::VALUE | TokenType::UUID, $startPosition, $value, null, $condition);
                         break;
                     }
-                    [$value, $orig] = $this->parseNumber($string, $char);
+                    [$value, $orig] = $this->parseNumber($string, $position, $column, $row, $char);
                     if ($value !== null) {
-                        yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $position, $value, $orig, $condition);
+                        yield $previous = new Token(TokenType::VALUE | TokenType::NUMBER, $startPosition, $value, $orig, $condition);
                         break;
                     }
                     // continue
@@ -496,26 +505,27 @@ class Lexer
                 case 'b':
                     // b'01'
                     // B'01'
-                    if (($char === 'B' || $char === 'b') && $string->get() === '\'') {
-                        $string->position++;
-                        $string->column++;
+                    if (($char === 'B' || $char === 'b') && $position < $length && $string[$position] === '\'') {
+                        $position++;
+                        $column++;
                         $bits = '';
-                        do {
-                            $next = $string->get();
+                        while ($position < $length) {
+                            $next = $string[$position];
                             if ($next === '0' || $next === '1') {
                                 $bits .= $next;
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                             } elseif ($next === '\'') {
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                                 $orig = $char . '\'' . $bits . '\'';
-                                yield $previous = new Token(TokenType::VALUE | TokenType::BINARY_LITERAL, $position, $bits, $orig, $condition);
-                                break 2;
+                                yield $previous = new Token(TokenType::VALUE | TokenType::BINARY_LITERAL, $startPosition, $bits, $orig, $condition);
+                                break;
                             } else {
                                 throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
                             }
-                        } while (true);
+                        };
+                        break;
                     }
                     // continue
                 case 'A':
@@ -529,41 +539,42 @@ class Lexer
                 case 'F':
                 case 'f':
                     if (!$uuidCheck) {
-                        $value = $string->getRange(36, -1);
+                        $value = substr($string, $position - 1, 36);
                         // UUID
-                        if ($value !== null && preg_match(self::UUID_REGEXP, $value)) {
-                            $string->position += 35;
-                            $string->column += 35;
-                            yield $previous = new Token(TokenType::VALUE | TokenType::UUID, $position, $value, null, $condition);
+                        if (strlen($value) === 36 && preg_match(self::UUID_REGEXP, $value)) {
+                            $position += 35;
+                            $column += 35;
+                            yield $previous = new Token(TokenType::VALUE | TokenType::UUID, $startPosition, $value, null, $condition);
                             break;
                         }
                     }
                     // continue
                 case 'X':
                 case 'x':
-                    if (($char === 'X' || $char === 'x') && $string->get() === '\'') {
-                        $string->position++;
-                        $string->column++;
+                    if (($char === 'X' || $char === 'x') && $position < $length && $string[$position] === '\'') {
+                        $position++;
+                        $column++;
                         $bits = '';
-                        do {
-                            $next = $string->get();
+                        while ($position < $length) {
+                            $next = $string[$position];
                             if (isset(self::$hexadecKey[$next])) {
                                 $bits .= $next;
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                             } elseif ($next === '\'') {
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                                 $orig = $char . '\'' . $bits . '\'';
                                 if ((strlen($bits) % 2) === 1) {
                                     throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
                                 }
-                                yield $previous = new Token(TokenType::VALUE | TokenType::HEXADECIMAL_LITERAL, $position, strtolower($bits), $orig, $condition);
-                                break 2;
+                                yield $previous = new Token(TokenType::VALUE | TokenType::HEXADECIMAL_LITERAL, $startPosition, strtolower($bits), $orig, $condition);
+                                break;
                             } else {
                                 throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
                             }
-                        } while (true);
+                        };
+                        break;
                     }
                     // continue
                 case 'G':
@@ -607,44 +618,46 @@ class Lexer
                 case 'z':
                 case '$':
                     $value = $char;
-                    while (($next = $string->get()) !== '') {
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         } else {
                             break;
                         }
                     }
                     $upper = strtoupper($value);
                     if ($upper === 'NULL') {
-                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, 'NULL', $value, $condition);
+                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $startPosition, 'NULL', $value, $condition);
                     } elseif ($upper === 'TRUE') {
-                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, 'TRUE', $value, $condition);
+                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $startPosition, 'TRUE', $value, $condition);
                     } elseif ($upper === 'FALSE') {
-                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $position, 'FALSE', $value, $condition);
+                        yield $previous = new Token(TokenType::KEYWORD | TokenType::VALUE, $startPosition, 'FALSE', $value, $condition);
                     } elseif (isset($reservedKey[$upper])) {
                         if (isset($operatorKeywordsKey[$upper])) {
-                            yield $previous = new Token(TokenType::KEYWORD | TokenType::RESERVED | TokenType::OPERATOR, $position, $upper, $value, $condition);
+                            yield $previous = new Token(TokenType::KEYWORD | TokenType::RESERVED | TokenType::OPERATOR, $startPosition, $upper, $value, $condition);
                         } else {
-                            yield $previous = new Token(TokenType::KEYWORD | TokenType::RESERVED, $position, $upper, $value, $condition);
+                            yield $previous = new Token(TokenType::KEYWORD | TokenType::RESERVED, $startPosition, $upper, $value, $condition);
                         }
                     } elseif (isset($keywordsKey[$upper])) {
-                        yield $previous = new Token(TokenType::KEYWORD | TokenType::NAME | TokenType::UNQUOTED_NAME, $position, $upper, $value, $condition);
+                        yield $previous = new Token(TokenType::KEYWORD | TokenType::NAME | TokenType::UNQUOTED_NAME, $startPosition, $upper, $value, $condition);
                     } elseif ($upper === 'DELIMITER' && $this->settings->getPlatform()->hasUserDelimiter()) {
-                        yield new Token(TokenType::KEYWORD, $position, $upper, $value, $condition);
-                        $position = $string->position;
-                        $whitespace = $this->parseWhitespace($string);
+                        yield new Token(TokenType::KEYWORD, $startPosition, $upper, $value, $condition);
+                        $startPosition = $position;
+                        $whitespace = $this->parseWhitespace($string, $position, $column, $row);
                         if ($this->withWhitespace) {
-                            yield new Token(TokenType::WHITESPACE, $position, $whitespace, null, $condition);
+                            yield new Token(TokenType::WHITESPACE, $startPosition, $whitespace, null, $condition);
                         }
-                        $position = $string->position;
+                        $startPosition = $position;
                         $del = '';
-                        while ($next = $string->get()) {
+                        while ($position < $length) {
+                            $next = $string[$position];
                             if ($next === ';' || isset(self::$operatorSymbolsKey[$next])) {
                                 $del .= $next;
-                                $string->position++;
-                                $string->column++;
+                                $position++;
+                                $column++;
                             } else {
                                 break;
                             }
@@ -654,45 +667,48 @@ class Lexer
                         }
                         $delimiter = $del;
                         $this->settings->setDelimiter($delimiter);
-                        yield $previous = new Token(TokenType::SYMBOL | TokenType::DELIMITER_DEFINITION, $position, $delimiter, $condition);
+                        yield $previous = new Token(TokenType::SYMBOL | TokenType::DELIMITER_DEFINITION, $startPosition, $delimiter, $condition);
                     } else {
-                        yield $previous = new Token(TokenType::NAME | TokenType::UNQUOTED_NAME, $position, $value, $value, $condition);
+                        yield $previous = new Token(TokenType::NAME | TokenType::UNQUOTED_NAME, $startPosition, $value, $value, $condition);
                     }
                     break;
                 case '_':
                     /// charset declaration
                 default:
                     if (ord($char) < 32) {
-                        throw new \SqlFtw\Parser\Lexer\InvalidCharacterException($char, $position, ''); ///
+                        throw new \SqlFtw\Parser\Lexer\InvalidCharacterException($char, $startPosition, ''); ///
                     }
                     $value = $char;
-                    while (($next = $string->get()) !== '') {
+                    while ($position < $length) {
+                        $next = $string[$position];
                         if (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                             $value .= $next;
-                            $string->position++;
-                            $string->column++;
+                            $position++;
+                            $column++;
                         } else {
                             break;
                         }
                     }
-                    yield $previous = new Token(TokenType::NAME | TokenType::UNQUOTED_NAME, $position, $value, $value, $condition);
+                    yield $previous = new Token(TokenType::NAME | TokenType::UNQUOTED_NAME, $startPosition, $value, $value, $condition);
             }
         }
     }
 
-    private function parseWhitespace(StringBuffer $string): string
+    private function parseWhitespace(string &$string, int &$position, int &$column, int &$row): string
     {
+        $length = strlen($string);
         $whitespace = '';
-        while (($next = $string->get()) !== '') {
+        while ($position < $length) {
+            $next = $string[$position];
             if ($next === ' ' || $next === "\t" || $next === "\r") {
                 $whitespace .= $next;
-                $string->position++;
-                $string->column++;
+                $position++;
+                $column++;
             } elseif ($next === "\n") {
                 $whitespace .= $next;
-                $string->position++;
-                $string->column = 1;
-                $string->row++;
+                $position++;
+                $column = 1;
+                $row++;
             } else {
                 break;
             }
@@ -702,25 +718,30 @@ class Lexer
     }
 
     /**
-     * @param \SqlFtw\Parser\Lexer\StringBuffer $string
+     * @param string $string
+     * @param int $position
+     * @param int $column
+     * @param int $row
      * @param string $quote
      * @return string[] ($value, $orig)
      */
-    private function parseString(StringBuffer $string, string $quote): array
+    private function parseString(string &$string, int &$position, int &$column, int &$row, string $quote): array
     {
+        $length = strlen($string);
         $backslashes = !$this->settings->getMode()->contains(Mode::NO_BACKSLASH_ESCAPES);
 
         $orig[] = $quote;
         $escaped = false;
         $finished = false;
-        while ($next = $string->get()) {
+        while ($position < $length) {
+            $next = $string[$position];
             if ($next === $quote) {
                 $orig[] = $next;
-                $string->position++;
-                $string->column++;
+                $position++;
+                $column++;
                 if ($escaped) {
                     $escaped = false;
-                } elseif ($string->get() === $quote) {
+                } elseif ($position < $length && $string[$position] === $quote) {
                     $escaped = true;
                 } else {
                     $finished = true;
@@ -728,18 +749,18 @@ class Lexer
                 }
             } elseif ($next === "\n") {
                 $orig[] = $next;
-                $string->position++;
-                $string->column = 1;
-                $string->row++;
+                $position++;
+                $column = 1;
+                $row++;
             } elseif ($backslashes && $next === '\\') {
                 $escaped = !$escaped;
                 $orig[] = $next;
-                $string->position++;
-                $string->column++;
+                $position++;
+                $column++;
             } else {
                 $orig[] = $next;
-                $string->position++;
-                $string->column++;
+                $position++;
+                $column++;
             }
         }
         if (!$finished) {
@@ -800,19 +821,23 @@ class Lexer
     }
 
     /**
-     * @param \SqlFtw\Parser\Lexer\StringBuffer $string
+     * @param string $string
+     * @param int $position
+     * @param int $column
+     * @param int $row
      * @param string $start
      * @return int[]|float[]|string[]|null[] (int|float|string|null $value, string|null $orig)
      */
-    private function parseNumber(StringBuffer $string, string $start): array
+    private function parseNumber(string &$string, int &$position, int &$column, int &$row, string $start): array
     {
+        $length = strlen($string);
         $offset = 0;
         $num = isset(self::$numbersKey[$start]);
         $base = $start;
         do {
             // integer
-            do {
-                $next = $string->get($offset);
+            while ($position + $offset < $length) {
+                $next = $string[$position + $offset];
                 if (isset(self::$numbersKey[$next])) {
                     $base .= $next;
                     $offset++;
@@ -820,15 +845,19 @@ class Lexer
                 } else {
                     break;
                 }
-            } while (true);
+            };
+            if ($position + $offset >= $length) {
+                $exp = '';
+                break;
+            }
 
             // decimal part
             if ($next === '.') {
                 if ($start !== '.') {
                     $base .= $next;
                     $offset++;
-                    do {
-                        $next = $string->get($offset);
+                    while ($position + $offset < $length) {
+                        $next = $string[$position + $offset];
                         if (isset(self::$numbersKey[$next])) {
                             $base .= $next;
                             $offset++;
@@ -836,36 +865,48 @@ class Lexer
                         } else {
                             break;
                         }
-                    } while (true);
+                    };
                 } else {
                     break;
                 }
             }
+            if ($position + $offset >= $length) {
+                $exp = '';
+                break;
+            }
 
             // exponent
-            $next = $string->get($offset);
+            $next = $string[$position + $offset];
             $exp = '';
             do {
                 if ($next === 'e' || $next === 'E') {
                     $exp = $next;
                     $offset++;
-                    $next = $string->get($offset);
+                    $next = $position + $offset < $length ? $string[$position + $offset] : '';
+                    $expComplete = false;
                     if ($next === '+' || $next === '-' || isset(self::$numbersKey[$next])) {
                         $exp .= $next;
                         $offset++;
+                        if (isset(self::$numbersKey[$next])) {
+                            $expComplete = true;
+                        }
                     }
-                    do {
-                        $next = $string->get($offset);
+                    while ($position + $offset < $length) {
+                        $next = $string[$position + $offset];
                         if (isset(self::$numbersKey[$next])) {
                             $exp .= $next;
                             $offset++;
+                            $expComplete = true;
                         } else {
                             if (strlen(trim($exp, 'e+-')) < 1 && strpos($base, '.') !== false) {
-                                throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); //
+                                throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
                             }
                             break;
                         }
-                    } while (true);
+                    };
+                    if (!$expComplete) {
+                        throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
+                    }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                     $num = false;
                     break 2;
@@ -893,8 +934,8 @@ class Lexer
         }
 
         $len = strlen($orig) - 1;
-        $string->position += $len;
-        $string->column += $len;
+        $position += $len;
+        $column += $len;
 
         return [$value, $orig];
     }

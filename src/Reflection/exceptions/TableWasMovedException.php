@@ -12,33 +12,41 @@ namespace SqlFtw\Reflection;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 
-class TableWasMovedException extends ReflectionException
+class TableWasMovedException extends TableDoesNotExistException
 {
 
     /** @var \SqlFtw\Reflection\TableReflection */
     private $reflection;
 
+    /** @var \SqlFtw\Sql\QualifiedName */
+    private $newName;
+
     public function __construct(TableReflection $reflection, ?\Throwable $previous = null)
     {
         $table = $reflection->getName();
+        $name = $table->getName();
+        $schema = $table->getSchema();
+
         /** @var \SqlFtw\Sql\Ddl\Table\AlterTableCommand|\SqlFtw\Sql\Ddl\Table\RenameTableCommand $command */
         $command = end($reflection->getCommands());
         if ($command instanceof RenameTableCommand) {
-            $newTable = $command->getNewNameForTable($table);
+            $this->newName = $command->getNewNameForTable($table);
         } else {
             /** @var \SqlFtw\Sql\Ddl\Table\Alter\SimpleAction $action */
             $action = $command->getActions()->getActionsByType(AlterTableActionType::get(AlterTableActionType::RENAME_TO));
             /** @var \SqlFtw\Sql\QualifiedName $table */
-            $newTable = $action->getValue();
+            $this->newName = $action->getValue();
         }
 
-        ReflectionException::__construct(sprintf(
-            'Table `%s`.`%s` was renamed by previous command to ``.``.',
-            $table->getSchema(),
-            $table->getName(),
-            $newTable->getSchema(),
-            $newTable->getName()
-        ), $previous);
+        parent::__construct($name, $schema, $previous);
+
+        $this->message = sprintf(
+            'Table `%s`.`%s` was renamed by previous command to `%s`.`%s`.',
+            $schema,
+            $name,
+            $this->newName->getSchema(),
+            $this->newName->getName()
+        );
 
         $this->reflection = $reflection;
     }
@@ -48,14 +56,14 @@ class TableWasMovedException extends ReflectionException
         return $this->reflection;
     }
 
-    public function getName(): string
+    public function getNewName(): string
     {
-        return $this->reflection->getName()->getName();
+        return $this->newName->getName();
     }
 
-    public function getSchema(): string
+    public function getNewSchema(): string
     {
-        return $this->reflection->getName()->getSchema();
+        return $this->newName->getSchema();
     }
 
 }

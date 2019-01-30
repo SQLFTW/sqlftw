@@ -32,8 +32,8 @@ class UuidSet implements SqlSerializable
      */
     public function __construct(string $uuid, array $intervals)
     {
-        $uuid = strtoupper($uuid);
-        Check::match($uuid, '/^' . Lexer::UUID_REGEXP . '$/');
+        $uuid = strtolower($uuid);
+        Check::match($uuid, Lexer::UUID_REGEXP);
         foreach ($intervals as $interval) {
             Check::int($interval[0], 1);
             Check::nullableInt($interval[1], 1);

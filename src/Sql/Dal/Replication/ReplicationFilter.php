@@ -32,7 +32,7 @@ class ReplicationFilter extends SqlEnum
         self::REPLICATE_IGNORE_TABLE => 'array<' . QualifiedName::class . '>',
         self::REPLICATE_WILD_DO_TABLE => 'array<string>',
         self::REPLICATE_WILD_IGNORE_TABLE => 'array<string>',
-        self::REPLICATE_REWRITE_DB => 'map<string,string>',
+        self::REPLICATE_REWRITE_DB => 'array<string,string>',
     ];
 
     /**

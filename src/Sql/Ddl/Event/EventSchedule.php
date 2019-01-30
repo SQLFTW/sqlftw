@@ -32,7 +32,7 @@ class EventSchedule implements SqlSerializable
     private $endTime;
 
     /**
-     * @param \SqlFtw\Sql\Expression\TimeInterval|\DateInterval|\Dogma\Time\DateTimeInterval $interval
+     * @param \SqlFtw\Sql\Expression\TimeInterval|\DateInterval|\Dogma\Time\Span\DateTimeSpan $interval
      * @param \SqlFtw\Sql\Expression\TimeExpression|null $time
      * @param \SqlFtw\Sql\Expression\TimeExpression|null $startTime
      * @param \SqlFtw\Sql\Expression\TimeExpression|null $endTime

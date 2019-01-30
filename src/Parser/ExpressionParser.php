@@ -53,15 +53,15 @@ class ExpressionParser
 {
     use StrictBehaviorMixin;
 
+	private const PUNCTUATION = '[~`@#$%^&\'"\\\\=[\\]{}()<>;:,.?!_|\\/*+-]';
     private const INT_DATETIME_EXPRESSION = '/^(?:[1-9][0-9])?[0-9]{2}(?:0[1-9]|1[012])(?:0[1-9]|[12][0-9]|3[01])(?:[01][0-9]|2[0-3])(?:[0-5][0-9]){2}$/';
-    private const PUNCTUATION = '[~`@#$%^&\'"\\\\=[\\]{}()<>;:,.?!_|/*+-]';
-    private const STRING_DATETIME_EXPRESSION = 'Z^((?:[1-9][0-9])?[0-9]{2}'
+    private const STRING_DATETIME_EXPRESSION = '/^((?:[1-9][0-9])?[0-9]{2}'
         . self::PUNCTUATION . '(?:0[1-9]|1[012])'
         . self::PUNCTUATION . '(?:0[1-9]|[12][0-9]|3[01])'
         . '[ T](?:[01][0-9]|2[0-3])'
         . self::PUNCTUATION . '(?:[0-5][0-9])'
         . self::PUNCTUATION . '(?:[0-5][0-9]))'
-        . '(\\.[0-9]+)?$Z/';
+        . '(\\.[0-9]+)?$/';
 
     /** @var \SqlFtw\Parser\ParserFactory */
     private $parserFactory;
@@ -634,7 +634,7 @@ class ExpressionParser
     public function parseDateTime(TokenList $tokenList): DateTime
     {
         $string = $tokenList->mayConsumeInt();
-        if ($string !== null) {
+        if ($string === null) {
             $string = $tokenList->consumeString();
         }
         if (preg_match(self::INT_DATETIME_EXPRESSION, $string)) {

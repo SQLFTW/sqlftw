@@ -57,7 +57,7 @@ class FunctionReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand[]|\SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand[]|\SqlFtw\Sql\Ddl\Routines\DropFunctionCommand[]
+     * @return \SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand[]
      */
     public function getCommands(): array
     {

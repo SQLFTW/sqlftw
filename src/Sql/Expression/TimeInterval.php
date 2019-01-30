@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Time\DateTimeInterval;
+use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -36,7 +36,7 @@ class TimeInterval implements SqlSerializable
     }
 
     /**
-     * @param \DateInterval|\Dogma\Time\DateTimeInterval $interval
+     * @param \DateInterval|\Dogma\Time\Span\DateTimeSpan $interval
      * @return self
      */
     public static function create($interval): self
@@ -49,15 +49,15 @@ class TimeInterval implements SqlSerializable
     }
 
     /**
-     * @param \DateInterval|\Dogma\Time\DateTimeInterval $interval
+     * @param \DateInterval|\Dogma\Time\Span\DateTimeSpan $interval
      * @return self[]
      */
     public static function createIntervals($interval): array
     {
-        Check::types($interval, [\DateInterval::class, DateTimeInterval::class]);
+        Check::types($interval, [\DateInterval::class, DateTimeSpan::class]);
 
         if ($interval instanceof \DateInterval) {
-            $interval = DateTimeInterval::createFromDateInterval($interval);
+            $interval = DateTimeSpan::createFromDateInterval($interval);
         }
 
         $intervals = [];
@@ -76,12 +76,12 @@ class TimeInterval implements SqlSerializable
         if ($interval->getDays() !== 0) {
             if ($interval->getMicroseconds() !== 0) {
                 $intervals[] = new self(
-                    sprintf('%d %d:%d:%d.%d', $interval->getDays(), $interval->getHours(), $interval->getMinutes(), $interval->getSecondsFloored(), $interval->getMicroseconds()),
+                    sprintf('%d %d:%d:%d.%d', $interval->getDays(), $interval->getHours(), $interval->getMinutes(), $interval->getSeconds(), $interval->getMicroseconds()),
                     TimeIntervalUnit::get(TimeIntervalUnit::DAY_MICROSECOND)
                 );
-            } elseif ($interval->getSecondsFloored() !== 0) {
+            } elseif ($interval->getSeconds() !== 0) {
                 $intervals[] = new self(
-                    sprintf('%d %d:%d:%d', $interval->getDays(), $interval->getHours(), $interval->getMinutes(), $interval->getSecondsFloored()),
+                    sprintf('%d %d:%d:%d', $interval->getDays(), $interval->getHours(), $interval->getMinutes(), $interval->getSeconds()),
                     TimeIntervalUnit::get(TimeIntervalUnit::DAY_HOUR)
                 );
             } elseif ($interval->getMinutes() !== 0) {
@@ -100,12 +100,12 @@ class TimeInterval implements SqlSerializable
         } elseif ($interval->getHours() !== 0) {
             if ($interval->getMicroseconds() !== 0) {
                 $intervals[] = new self(
-                    sprintf('%d:%d:%d.%d', $interval->getHours(), $interval->getMinutes(), $interval->getSecondsFloored(), $interval->getMicroseconds()),
+                    sprintf('%d:%d:%d.%d', $interval->getHours(), $interval->getMinutes(), $interval->getSeconds(), $interval->getMicroseconds()),
                     TimeIntervalUnit::get(TimeIntervalUnit::HOUR_MICROSECOND)
                 );
-            } elseif ($interval->getSecondsFloored() !== 0) {
+            } elseif ($interval->getSeconds() !== 0) {
                 $intervals[] = new self(
-                    sprintf('%d:%d:%d', $interval->getHours(), $interval->getMinutes(), $interval->getSecondsFloored()),
+                    sprintf('%d:%d:%d', $interval->getHours(), $interval->getMinutes(), $interval->getSeconds()),
                     TimeIntervalUnit::get(TimeIntervalUnit::HOUR_SECOND)
                 );
             } elseif ($interval->getMinutes() !== 0) {
@@ -119,25 +119,25 @@ class TimeInterval implements SqlSerializable
         } elseif ($interval->getMinutes() !== 0) {
             if ($interval->getMicroseconds() !== 0) {
                 $intervals[] = new self(
-                    sprintf('%d:%d.%d', $interval->getMinutes(), $interval->getSecondsFloored(), $interval->getMicroseconds()),
+                    sprintf('%d:%d.%d', $interval->getMinutes(), $interval->getSeconds(), $interval->getMicroseconds()),
                     TimeIntervalUnit::get(TimeIntervalUnit::MINUTE_MICROSECOND)
                 );
-            } elseif ($interval->getSecondsFloored() !== 0) {
+            } elseif ($interval->getSeconds() !== 0) {
                 $intervals[] = new self(
-                    sprintf('%d:%d', $interval->getMinutes(), $interval->getSecondsFloored()),
+                    sprintf('%d:%d', $interval->getMinutes(), $interval->getSeconds()),
                     TimeIntervalUnit::get(TimeIntervalUnit::MINUTE_SECOND)
                 );
             } else {
                 $intervals[] = new self($interval->getMinutes(), TimeIntervalUnit::get(TimeIntervalUnit::MINUTE));
             }
-        } elseif ($interval->getSecondsFloored() !== 0) {
+        } elseif ($interval->getSeconds() !== 0) {
             if ($interval->getMicroseconds() !== 0) {
                 $intervals[] = new self(
-                    sprintf('%d.%d', $interval->getSecondsFloored(), $interval->getMicroseconds()),
+                    sprintf('%d.%d', $interval->getSeconds(), $interval->getMicroseconds()),
                     TimeIntervalUnit::get(TimeIntervalUnit::SECOND_MICROSECOND)
                 );
             } else {
-                $intervals[] = new self($interval->getSecondsFloored(), TimeIntervalUnit::get(TimeIntervalUnit::SECOND));
+                $intervals[] = new self($interval->getSeconds(), TimeIntervalUnit::get(TimeIntervalUnit::SECOND));
             }
         } elseif ($interval->getMicroseconds() !== 0) {
             $intervals[] = new self($interval->getMicroseconds(), TimeIntervalUnit::get(TimeIntervalUnit::MICROSECOND));

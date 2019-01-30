@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-use Dogma\StringEnum;
+use Dogma\Enum\StringEnum;
 use SqlFtw\Formatter\Formatter;
 
 class SqlEnum extends StringEnum implements SqlSerializable

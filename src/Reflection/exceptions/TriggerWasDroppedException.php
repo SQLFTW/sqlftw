@@ -17,30 +17,18 @@ class TriggerWasDroppedException extends TriggerDoesNotExistException
 
     public function __construct(TriggerReflection $reflection, ?\Throwable $previous = null)
     {
-        $name = $reflection->getName();
+        $name = $reflection->getName()->getName();
+        $schema = $reflection->getName()->getSchema();
 
-        ReflectionException::__construct(sprintf(
-            'Trigger `%s`.`%s` was dropped by previous command.',
-            $name->getSchema(),
-            $name->getName()
-        ), $previous);
+        parent::__construct($name, $schema, $previous);
 
+        $this ->message = sprintf('Trigger `%s`.`%s` was dropped by previous command.', $schema, $name);
         $this->reflection = $reflection;
     }
 
     public function getReflection(): TriggerReflection
     {
         return $this->reflection;
-    }
-
-    public function getName(): string
-    {
-        return $this->reflection->getName()->getName();
-    }
-
-    public function getSchema(): string
-    {
-        return $this->reflection->getName()->getSchema();
     }
 
 }

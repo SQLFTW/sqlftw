@@ -26,7 +26,7 @@ use SqlFtw\Sql\SqlEnum;
  * - mayConsumeAnyFoo - has to consume any of given objects ot return null without moving pointer
  * - seekFoo() - seeks given object between following tokens without moving pointer
  * - expectFoo() - throws an exception when expectation is not fulfilled
- * - expectedFoo() - always throw an exception
+ * - expectedFoo() - always throws an exception
  */
 class TokenList
 {
@@ -258,10 +258,12 @@ class TokenList
 
     public function mayConsumeInt(): ?int
     {
+    	$position = $this->position;
         try {
             $int = $this->consumeInt();
             return $int;
         } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
+        	$this->position = $position;
             return null;
         }
     }
@@ -430,7 +432,7 @@ class TokenList
                 break;
             }
             $this->position++;
-            if ($token->type === TokenType::KEYWORD && $token->value === $keyword) {
+            if (($token->type & TokenType::KEYWORD) && $token->value === $keyword) {
                 $this->position = $position;
                 return true;
             }

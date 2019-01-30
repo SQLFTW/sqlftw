@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Platform;
 
-use Dogma\IntSet;
+use Dogma\Enum\IntSet;
 
 class Mode extends IntSet
 {
