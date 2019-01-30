@@ -11,19 +11,12 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
-        "dogma/dogma": "dev-master",
-        "tracy/tracy": "~2.3"
+        "php": ">=7.3.0",
+        "dogma/dogma": "~0.1.12",
+        "tracy/tracy": "~2.4"
     },
     "require-dev": {
-        "consistence/coding-standard": "~0.13",
-        "jakub-onderka/php-console-highlighter": "~0.3",
-        "jakub-onderka/php-parallel-lint": "~0.9",
-        "nette/tester": "~1.4",
-        "phing/phing": "~2.16",
-        "phpstan/phpstan": "~0.5",
-        "slevomat/coding-standard": "dev-2.0-dev#856860a",
-        "squizlabs/php_codesniffer": "~2.7"
+        "dogma/dogma-dev": "0.1.6"
     },
     "repositories": [
         {
