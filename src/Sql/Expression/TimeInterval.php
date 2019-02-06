@@ -14,6 +14,9 @@ use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
+use function count;
+use function is_string;
+use function sprintf;
 
 class TimeInterval implements SqlSerializable
 {

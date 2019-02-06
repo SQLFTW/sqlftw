@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\QualifiedName;
+use function strtr;
 
 class DescribeTableCommand implements DmlCommand
 {

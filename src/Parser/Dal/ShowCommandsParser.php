@@ -45,8 +45,8 @@ use SqlFtw\Sql\Dal\Show\ShowProcedureCodeCommand;
 use SqlFtw\Sql\Dal\Show\ShowProcedureStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowProcessListCommand;
 use SqlFtw\Sql\Dal\Show\ShowProfileCommand;
-use SqlFtw\Sql\Dal\Show\ShowProfilesCommand;
 use SqlFtw\Sql\Dal\Show\ShowProfileType;
+use SqlFtw\Sql\Dal\Show\ShowProfilesCommand;
 use SqlFtw\Sql\Dal\Show\ShowRelaylogEventsCommand;
 use SqlFtw\Sql\Dal\Show\ShowSlaveHostsCommand;
 use SqlFtw\Sql\Dal\Show\ShowSlaveStatusCommand;
@@ -61,6 +61,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
 use SqlFtw\Sql\UserName;
+use function array_keys;
 
 class ShowCommandsParser
 {
@@ -140,8 +141,15 @@ class ShowCommandsParser
                 return new ShowCollationCommand($like, $where);
             case Keyword::CREATE:
                 $third = $tokenList->consumeAnyKeyword(
-                    Keyword::DATABASE, Keyword::SCHEMA, Keyword::EVENT, Keyword::FUNCTION, Keyword::PROCEDURE,
-                    Keyword::TABLE, Keyword::TRIGGER, Keyword::USER, Keyword::VIEW
+                    Keyword::DATABASE,
+                    Keyword::SCHEMA,
+                    Keyword::EVENT,
+                    Keyword::FUNCTION,
+                    Keyword::PROCEDURE,
+                    Keyword::TABLE,
+                    Keyword::TRIGGER,
+                    Keyword::USER,
+                    Keyword::VIEW
                 );
                 switch ($third) {
                     case Keyword::DATABASE:
@@ -276,7 +284,7 @@ class ShowCommandsParser
                     }
                 }
 
-                return new ShowGrantsCommand($forUser, $usingRoles ? $usingRoles : null);
+                return new ShowGrantsCommand($forUser, $usingRoles ?: null);
             case Keyword::INDEX:
             case Keyword::INDEXES:
             case Keyword::KEYS:
@@ -358,7 +366,7 @@ class ShowCommandsParser
                     Keyword::SOURCE => null,
                     Keyword::SWAPS => null,
                 ];
-                $continue = function ($type) use ($tokenList, $keywords) {
+                $continue = function ($type) use ($tokenList, $keywords): void {
                     if (isset($keywords[$type->value])) {
                         $tokenList->consumeKeyword($keywords[$type->value]);
                     }
@@ -551,6 +559,7 @@ class ShowCommandsParser
 
                     return new ShowTablesCommand($database, $full, $like, $where);
                 } else {
+                    // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
                     $tokenList->expectedAnyKeyword(
                         Keyword::BINLOG, Keyword::CHARACTER, Keyword::COLLATION, Keyword::COUNT, Keyword::CREATE,
                         Keyword::DATABASES, Keyword::SCHEMAS, Keyword::ENGINE, Keyword::STORAGE, Keyword::ENGINES,

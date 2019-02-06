@@ -18,6 +18,10 @@ use Dogma\Time\Time;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlSerializable;
+use function implode;
+use function is_numeric;
+use function is_string;
+use function str_replace;
 
 class Formatter
 {

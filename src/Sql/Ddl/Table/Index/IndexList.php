@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
 use Dogma\StrictBehaviorMixin;
+use function is_string;
 
 class IndexList
 {

@@ -16,6 +16,8 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
+use function implode;
+use function is_int;
 
 class TableOptionsList
 {

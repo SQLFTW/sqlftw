@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\DropDatabaseCommand;
+use function end;
 
 class SchemaReflection
 {

@@ -11,6 +11,11 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use function bindec;
+use function chr;
+use function str_repeat;
+use function strlen;
+use function substr;
 
 class BinaryLiteral implements Literal
 {

@@ -23,6 +23,19 @@ class LoadDataCommand extends LoadCommand
     /** @var \SqlFtw\Sql\Dml\FileFormat|null */
     private $format;
 
+    /**
+     * @param string $file
+     * @param \SqlFtw\Sql\QualifiedName $table
+     * @param \SqlFtw\Sql\Dml\FileFormat|null $format
+     * @param \SqlFtw\Sql\Charset|null $charset
+     * @param string[]|null $fields
+     * @param string[]|null $setters
+     * @param int|null $ignoreRows
+     * @param \SqlFtw\Sql\Dml\Load\LoadPriority|null $priority
+     * @param bool $local
+     * @param \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption
+     * @param string[]|null $partitions
+     */
     public function __construct(
         string $file,
         QualifiedName $table,

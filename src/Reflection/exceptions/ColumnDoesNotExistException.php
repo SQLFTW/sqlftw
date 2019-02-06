@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Reflection;
 
+use function sprintf;
+
 class ColumnDoesNotExistException extends ReflectionException
 {
 

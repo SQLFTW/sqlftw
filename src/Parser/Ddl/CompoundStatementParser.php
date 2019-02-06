@@ -128,9 +128,22 @@ class CompoundStatementParser
             $keyword = $tokenList->consumeAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE);
         } else {
             $keyword = $tokenList->mayConsumeAnyKeyword(
-                Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF,
-                Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::GET, Keyword::SIGNAL,
-                Keyword::RESIGNAL, Keyword::RETURN, Keyword::LEAVE, Keyword::ITERATE
+                Keyword::BEGIN,
+                Keyword::LOOP,
+                Keyword::REPEAT,
+                Keyword::WHILE,
+                Keyword::CASE,
+                Keyword::IF,
+                Keyword::DECLARE,
+                Keyword::OPEN,
+                Keyword::FETCH,
+                Keyword::CLOSE,
+                Keyword::GET,
+                Keyword::SIGNAL,
+                Keyword::RESIGNAL,
+                Keyword::RETURN,
+                Keyword::LEAVE,
+                Keyword::ITERATE
             );
         }
         switch ($keyword) {

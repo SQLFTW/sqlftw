@@ -14,18 +14,19 @@ use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\DropFunctionCommand;
 use SqlFtw\Sql\QualifiedName;
+use function end;
 
 class FunctionReflection
 {
-	use StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
-	/** @var \SqlFtw\Sql\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var \SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand[] */
     private $commands = [];
 
-	public function __construct(QualifiedName $name, CreateFunctionCommand $createFunctionCommand)
+    public function __construct(QualifiedName $name, CreateFunctionCommand $createFunctionCommand)
     {
         $this->name = $name;
         $this->commands[] = $createFunctionCommand;

@@ -13,6 +13,7 @@ use Dogma\InvalidValueException;
 use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
+use function in_array;
 
 class Operator extends SqlEnum implements Feature
 {

@@ -16,6 +16,7 @@ use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
+use function in_array;
 
 abstract class PlatformFeatures
 {

@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use function is_string;
 
 class Identifier implements ExpressionNode
 {

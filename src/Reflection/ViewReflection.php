@@ -14,21 +14,22 @@ use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewCommand;
 use SqlFtw\Sql\QualifiedName;
+use function end;
 
 class ViewReflection
 {
-	use StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
-	/** @var \SqlFtw\Sql\QualifiedName */
-	private $name;
+    /** @var \SqlFtw\Sql\QualifiedName */
+    private $name;
 
-	/** @var \SqlFtw\Sql\Ddl\View\ViewCommand[] */
-	private $commands = [];
+    /** @var \SqlFtw\Sql\Ddl\View\ViewCommand[] */
+    private $commands = [];
 
-	/** @var \SqlFtw\Reflection\ColumnReflection[] */
-	private $columns = [];
+    /** @var \SqlFtw\Reflection\ColumnReflection[] */
+    private $columns = [];
 
-	public function __construct(QualifiedName $name, CreateViewCommand $createViewCommand)
+    public function __construct(QualifiedName $name, CreateViewCommand $createViewCommand)
     {
         $this->name = $name;
         $this->commands[] = $createViewCommand;

@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Parser\Lexer;
 
+use function sprintf;
+
 class UnrecognizedTokenException extends LexerException
 {
 

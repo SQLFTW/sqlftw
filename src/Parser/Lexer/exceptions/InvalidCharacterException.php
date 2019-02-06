@@ -9,6 +9,9 @@
 
 namespace SqlFtw\Parser\Lexer;
 
+use function ord;
+use function sprintf;
+
 class InvalidCharacterException extends LexerException
 {
 

@@ -25,7 +25,7 @@ class ShowBinlogEventsCommand implements ShowCommand
     /** @var  int|null */
     private $offset;
 
-    public function __construct(?string $logName = null, ?int $limit, ?int $offset)
+    public function __construct(?string $logName, ?int $limit, ?int $offset)
     {
         $this->logName = $logName;
         $this->limit = $limit;

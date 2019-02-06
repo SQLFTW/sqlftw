@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
+use function strlen;
 
 class DeclareConditionStatement implements CompoundStatementItem
 {

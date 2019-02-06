@@ -18,6 +18,7 @@ use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Dal\SystemVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Scope;
+use function substr;
 
 class SetCommandParser
 {

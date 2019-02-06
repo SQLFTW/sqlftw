@@ -34,6 +34,14 @@ class GrantCommand implements UserCommand
     /** @var bool */
     private $withGrantOption;
 
+    /**
+     * @param \SqlFtw\Sql\Dal\User\UserPrivilege[] $privileges
+     * @param \SqlFtw\Sql\Dal\User\UserPrivilegeResource $resource
+     * @param \SqlFtw\Sql\UserName[] $users
+     * @param \SqlFtw\Sql\Dal\User\UserTlsOption[]|null $tlsOptions
+     * @param \SqlFtw\Sql\Dal\User\UserResourceOption[]|null $resourceOptions
+     * @param bool $withGrantOption
+     */
     public function __construct(
         array $privileges,
         UserPrivilegeResource $resource,

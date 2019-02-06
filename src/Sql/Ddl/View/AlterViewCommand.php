@@ -41,6 +41,15 @@ class AlterViewCommand implements ViewCommand
     /** @var \SqlFtw\Sql\Ddl\View\ViewCheckOption|null */
     private $checkOption;
 
+    /**
+     * @param \SqlFtw\Sql\QualifiedName $name
+     * @param \SqlFtw\Sql\Dml\Select\SelectCommand $body
+     * @param string[]|null $columns
+     * @param \SqlFtw\Sql\UserName|null $definer
+     * @param \SqlFtw\Sql\Ddl\SqlSecurity|null $security
+     * @param \SqlFtw\Sql\Ddl\View\ViewAlgorithm|null $algorithm
+     * @param \SqlFtw\Sql\Ddl\View\ViewCheckOption|null $checkOption
+     */
     public function __construct(
         QualifiedName $name,
         SelectCommand $body,

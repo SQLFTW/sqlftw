@@ -13,6 +13,10 @@ use Dogma\InvalidArgumentException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Features\PlatformFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
+use function in_array;
+use function sprintf;
+use function str_replace;
+use function ucfirst;
 
 class Platform
 {
@@ -137,14 +141,14 @@ class Platform
     {
         $class = __NAMESPACE__ . '\\Features\\Features' . ucfirst($this->name) . str_replace('.', '', $this->version->getMajorMinor());
 
-        return new $class;
+        return new $class();
     }
 
     public function getNamingStrategy(): NamingStrategy
     {
         $class = __NAMESPACE__ . '\\Naming\\NamingStrategy' . ucfirst($this->name);
 
-        return new $class;
+        return new $class();
     }
 
 }

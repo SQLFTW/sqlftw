@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
+use function is_array;
 
 /**
  * MySQL MyISAM tables only
@@ -81,9 +82,7 @@ class CacheIndexCommand implements CacheCommand
             }
         }
 
-        $result .= ' IN ' . $formatter->formatName($this->keyCache);
-
-        return $result;
+        return $result . ' IN ' . $formatter->formatName($this->keyCache);
     }
 
 }

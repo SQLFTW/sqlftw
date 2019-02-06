@@ -39,6 +39,15 @@ class HandlerReadCommand implements HandlerCommand
     /** @var int|null */
     private $offset;
 
+    /**
+     * @param \SqlFtw\Sql\QualifiedName $table
+     * @param \SqlFtw\Sql\Dml\Handler\HandlerReadTarget $what
+     * @param string|null $index
+     * @param mixed[]|null $values
+     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
+     * @param int|null $limit
+     * @param int|null $offset
+     */
     public function __construct(
         QualifiedName $table,
         HandlerReadTarget $what,

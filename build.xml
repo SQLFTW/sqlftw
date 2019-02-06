@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="SqlFtw" default="build">
-
-    <property name="path.build" value="${project.basedir}/build"/>
-    <property name="path.build.properties" value="${path.build}/build.properties"/>
-    <property name="path.build.properties.local" value="${path.build}/build.local.properties"/>
-
-    <property file="${path.build.properties.local}"/>
-    <property file="${path.build.properties}"/>
+<project name="SqlFtw" default="check-php">
 
     <property name="file.mode.writable" value="0775"/>
     <property name="path.bin" value="${path.root}/bin"/>
-    <property name="path.log" value="${path.root}/log"/>
+    <property name="path.build" value="${path.root}/build"/>
+    <property name="path.composer.executable" value="composer"/>
     <property name="path.php.executable" value="php"/>
-    <property name="path.phpcbf.executable" value="${path.bin}/phpcbf"/>
     <property name="path.phpcs.executable" value="${path.bin}/phpcs"/>
-    <property name="path.phpcs.ruleset" value="${path.build}/cs-ruleset.xml"/>
+    <property name="path.phpcs.ruleset" value="${path.root}/build/CodeSniffer/ruleset.xml"/>
+    <property name="path.phpcs.ruleset-tests" value="${path.root}/vendor/dogma/dogma-dev/src/CodeSniffer/ruleset-tests.xml"/>
     <property name="path.phplint.executable" value="${path.bin}/parallel-lint"/>
     <property name="path.phpstan.executable" value="${path.bin}/phpstan"/>
-    <property name="path.phpstan.config" value="${path.build}/phpstan.neon"/>
+    <property name="path.phpstan.config" value="${path.build}/phpstan/phpstan.neon"/>
     <property name="path.root" value="${project.basedir}"/>
+    <property name="path.spell-checker.executable" value="${path.bin}/spell-checker"/>
+    <property name="path.spell-checker.config" value="${path.build}/spell-checker/spell-checker.neon"/>
     <property name="path.src" value="${path.root}/src"/>
-    <property name="path.temp" value="${path.root}/temp"/>
-    <property name="path.temp.cache" value="${path.temp}/cache"/>
     <property name="path.tester.executable" value="${path.bin}/tester"/>
     <property name="path.tests" value="${path.root}/tests"/>
 
-    <target name="build" depends="composer,create-dirs,clear-cache"/>
+    <!-- shortcuts -->
+    <target name="t" depends="tests"/>
+    <target name="tc" depends="tests-coverage"/>
+    <target name="cs" depends="phpcs-src,phpcs-tests"/>
+    <target name="da" depends="dump-autoload"/>
 
     <target name="check" depends="check-php"/>
 
-    <target name="check-php" depends="phplint,phpcs,phpstan,tests"/>
+    <target name="check-php" depends="phplint,tests,phpstan,phpcs-src,phpcs-tests,spell-check"/>
 
     <target name="composer">
         <exec executable="${path.composer.executable}" logoutput="true" passthru="true" checkreturn="true">
@@ -37,29 +35,13 @@
         </exec>
     </target>
 
-    <target name="da" depends="dump-autoload"/>
-
     <target name="dump-autoload">
         <exec executable="${path.composer.executable}" logoutput="true" passthru="true" checkreturn="true">
             <arg value="dump-autoload"/>
         </exec>
     </target>
 
-    <target name="create-dirs">
-        <mkdir dir="${path.log}" mode="${file.mode.writable}"/>
-        <mkdir dir="${path.temp}" mode="${file.mode.writable}"/>
-        <mkdir dir="${path.temp.cache}" mode="${file.mode.writable}"/>
-    </target>
-
-    <target name="clear-cache">
-        <delete>
-            <fileset dir="${path.temp.cache}" defaultexcludes="false">
-                <include name="**"/>
-            </fileset>
-        </delete>
-    </target>
-
-    <target name="phpcs">
+    <target name="phpcs-src">
         <exec executable="${path.phpcs.executable}" logoutput="true" passthru="true" checkreturn="true">
             <arg value="--standard=${path.phpcs.ruleset}"/>
             <arg value="--extensions=php"/>
@@ -71,13 +53,13 @@
         </exec>
     </target>
 
-    <target name="phpcs-fix">
-        <exec executable="${path.phpcbf.executable}" logoutput="true" passthru="true" checkreturn="true">
-            <arg value="--standard=${path.phpcs.ruleset}"/>
-            <arg value="--extensions=php,phpt"/>
+    <target name="phpcs-tests">
+        <exec executable="${path.phpcs.executable}" logoutput="true" passthru="true" checkreturn="true">
+            <arg value="--standard=${path.phpcs.ruleset-tests}"/>
+            <arg value="--extensions=phpt"/>
             <arg value="--encoding=utf-8"/>
             <arg value="--tab-width=4"/>
-            <arg path="${path.src}"/>
+            <arg value="-sp"/>
             <arg path="${path.tests}"/>
         </exec>
     </target>
@@ -91,11 +73,9 @@
 
     <target name="phpstan">
         <exec executable="${path.phpstan.executable}" logoutput="true" passthru="true" checkreturn="true">
-            <arg value="analyse"/>
-            <arg value="-c"/>
-            <arg path="${path.phpstan.config}"/>
-            <arg value="-l"/>
-            <arg value="5"/>
+            <arg line="analyse"/>
+            <arg line="-c ${path.phpstan.config}"/>
+            <arg line="-l 5"/>
             <arg path="${path.src}"/>
             <arg path="${path.tests}"/>
         </exec>
@@ -104,10 +84,28 @@
     <target name="tests">
         <exec executable="${path.tester.executable}" logoutput="true" passthru="true" checkreturn="true">
             <arg path="${path.tests}"/>
-            <arg path="-c"/>
+            <arg line="-c ${path.tests}"/>
+            <arg line="--colors 1"/>
+        </exec>
+    </target>
+
+    <target name="tests-coverage">
+        <exec executable="${path.tester.executable}" logoutput="true" passthru="true" checkreturn="true">
+            <arg line="-p phpdbg"/>
             <arg path="${path.tests}"/>
-            <arg path="--colors"/>
-            <arg path="1"/>
+            <arg line="-c ${path.tests}"/>
+            <arg line="--colors 1"/>
+            <arg line="--coverage ${path.tests}/coverage.html"/>
+            <arg line="--coverage-src ${path.src}"/>
+        </exec>
+    </target>
+
+    <target name="spell-check">
+        <exec executable="${path.spell-checker.executable}" logoutput="true" passthru="true" checkreturn="true">
+            <arg line="--config ${path.spell-checker.config}"/>
+            <arg line="--checkDictionaryFiles"/>
+            <arg line="--memoryLimit 1024M"/>
+            <arg line="--noLogo"/>
         </exec>
     </target>
 

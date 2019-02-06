@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
+
 namespace SqlFtw\Parser\Lexer;
 
 use Dogma\StrictBehaviorMixin;
@@ -14,6 +16,22 @@ use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Platform\PlatformSettings;
+use function array_flip;
+use function array_keys;
+use function array_merge;
+use function array_values;
+use function implode;
+use function ltrim;
+use function ord;
+use function preg_match;
+use function rtrim;
+use function str_replace;
+use function strlen;
+use function strpos;
+use function strtolower;
+use function strtoupper;
+use function substr;
+use function trim;
 
 /**
  * todo:
@@ -191,7 +209,7 @@ class Lexer
                         } else {
                             break;
                         }
-                    };
+                    }
                     if ($value !== ':') {
                         yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $value, null, $condition);
                     } else {
@@ -227,7 +245,7 @@ class Lexer
                         } else {
                             break;
                         }
-                    };
+                    }
                     yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $char, null, $condition);
                     break;
                 case '?':
@@ -323,7 +341,7 @@ class Lexer
                                 $position++;
                                 $column++;
                             }
-                        };
+                        }
                         if (!$ok) {
                             throw new \SqlFtw\Parser\Lexer\EndOfCommentNotFoundException(''); ///
                         }
@@ -458,7 +476,7 @@ class Lexer
                                 yield $previous = new Token(TokenType::VALUE | TokenType::BINARY_LITERAL, $startPosition, $bits, $orig, $condition);
                                 break 2;
                             }
-                        };
+                        }
                     } elseif ($next === 'x') {
                         $position++;
                         $column++;
@@ -474,7 +492,7 @@ class Lexer
                                 yield $previous = new Token(TokenType::VALUE | TokenType::HEXADECIMAL_LITERAL, $startPosition, strtolower($bits), $orig, $condition);
                                 break 2;
                             }
-                        };
+                        }
                     }
                     // continue
                 case '1':
@@ -524,7 +542,7 @@ class Lexer
                             } else {
                                 throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
                             }
-                        };
+                        }
                         break;
                     }
                     // continue
@@ -573,7 +591,7 @@ class Lexer
                             } else {
                                 throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
                             }
-                        };
+                        }
                         break;
                     }
                     // continue
@@ -730,7 +748,7 @@ class Lexer
         $length = strlen($string);
         $backslashes = !$this->settings->getMode()->contains(Mode::NO_BACKSLASH_ESCAPES);
 
-        $orig[] = $quote;
+        $orig = [$quote];
         $escaped = false;
         $finished = false;
         while ($position < $length) {
@@ -777,19 +795,19 @@ class Lexer
      * Disable the use of the backslash character (\) as an escape character within strings.
      * With this mode enabled, backslash becomes an ordinary character like any other.
      *
-     * \0	An ASCII NUL (X'00') character
-     * \'	A single quote (') character
-     * \"	A double quote (") character
-     * \b	A backspace character
-     * \n	A newline (linefeed) character
-     * \r	A carriage return character
-     * \t	A tab character
-     * \Z	ASCII 26 (Control+Z)
-     * \\	A backslash (\) character
+     * \0   An ASCII NUL (X'00') character
+     * \'   A single quote (') character
+     * \"   A double quote (") character
+     * \b   A backspace character
+     * \n   A newline (linefeed) character
+     * \r   A carriage return character
+     * \t   A tab character
+     * \Z   ASCII 26 (Control+Z)
+     * \\   A backslash (\) character
      *
      * (do not unescape. keep original for LIKE)
-     * \%	A % character
-     * \_	A _ character
+     * \%   A % character
+     * \_   A _ character
      *
      * A ' inside a string quoted with ' may be written as ''.
      * A " inside a string quoted with " may be written as "".
@@ -845,7 +863,7 @@ class Lexer
                 } else {
                     break;
                 }
-            };
+            }
             if ($position + $offset >= $length) {
                 $exp = '';
                 break;
@@ -865,7 +883,7 @@ class Lexer
                         } else {
                             break;
                         }
-                    };
+                    }
                 } else {
                     break;
                 }
@@ -903,7 +921,7 @@ class Lexer
                             }
                             break;
                         }
-                    };
+                    }
                     if (!$expComplete) {
                         throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
                     }

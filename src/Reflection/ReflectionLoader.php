@@ -19,6 +19,7 @@ use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
 use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
+use function count;
 
 class ReflectionLoader
 {

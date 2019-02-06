@@ -10,6 +10,9 @@
 namespace SqlFtw\Platform;
 
 use Dogma\StrictBehaviorMixin;
+use function explode;
+use function str_repeat;
+use function strlen;
 
 class Version
 {

@@ -12,6 +12,8 @@ namespace SqlFtw\Sql\Dal\Replication;
 use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use function implode;
+use function is_array;
 
 class StartSlaveCommand implements ReplicationCommand
 {

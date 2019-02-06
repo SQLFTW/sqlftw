@@ -20,6 +20,9 @@ class ImportCommand implements DmlCommand
     /** @var string[] */
     private $files;
 
+    /**
+     * @param string[] $files
+     */
     public function __construct(array $files)
     {
         $this->files = $files;

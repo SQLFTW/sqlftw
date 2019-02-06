@@ -13,6 +13,6 @@ use Dogma\StrictBehaviorMixin;
 
 class VariablesReflection
 {
-	use StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
 }

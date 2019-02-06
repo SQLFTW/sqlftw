@@ -77,7 +77,13 @@ class XaTransactionCommandsParser
                 return new XaRecoverCommand($convertXid);
             default:
                 $tokenList->expectedAnyKeyword(
-                    Keyword::START, Keyword::BEGIN, Keyword::END, Keyword::PREPARE, Keyword::COMMIT, Keyword::ROLLBACK, Keyword::RECOVER
+                    Keyword::START,
+                    Keyword::BEGIN,
+                    Keyword::END,
+                    Keyword::PREPARE,
+                    Keyword::COMMIT,
+                    Keyword::ROLLBACK,
+                    Keyword::RECOVER
                 );
                 exit;
         }

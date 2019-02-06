@@ -345,7 +345,6 @@ class UserCommandsParser
             $withGrantOption = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
 
             return new GrantProxyCommand($proxy, $users, $withGrantOption);
-
         } elseif (!$tokenList->seekKeyword(Keyword::ON, 1000)) {
             $roles = $this->parseUserList($tokenList);
             $tokenList->consumeKeyword(Keyword::TO);
@@ -353,7 +352,6 @@ class UserCommandsParser
             $withAdminOption = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::ADMIN, Keyword::OPTION);
 
             return new GrantRoleCommand($roles, $users, $withAdminOption);
-
         } else {
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
@@ -485,7 +483,6 @@ class UserCommandsParser
             $users = $this->parseUserList($tokenList);
 
             return new RevokeAllCommand($users);
-
         } elseif ($tokenList->mayConsumeKeywords(Keyword::PROXY)) {
             $tokenList->consumeKeyword(Keyword::ON);
             $proxy = new UserName(...$tokenList->consumeUserName());
@@ -493,7 +490,6 @@ class UserCommandsParser
             $users = $this->parseUserList($tokenList);
 
             return new RevokeProxyCommand($proxy, $users);
-
         } elseif ($tokenList->seekKeyword(Keyword::ON, 1000)) {
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
@@ -501,7 +497,6 @@ class UserCommandsParser
             $users = $this->parseUserList($tokenList);
 
             return new RevokeCommand($privileges, $resource, $users);
-
         } else {
             $roles = $this->parseUserList($tokenList);
             $tokenList->consumeKeyword(Keyword::FROM);

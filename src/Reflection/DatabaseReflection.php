@@ -39,59 +39,60 @@ use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewCommand;
 use SqlFtw\Sql\Dml\Utility\UseCommand;
 use SqlFtw\Sql\QualifiedName;
+use function count;
 
 /**
  * Represents whole "database" layer, not just a single schema.
  */
 class DatabaseReflection
 {
-	use StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
-	/** @var \SqlFtw\Platform\Platform */
-	private $platform;
+    /** @var \SqlFtw\Platform\Platform */
+    private $platform;
 
-	/** @var \SqlFtw\Reflection\ReflectionLoader */
-	private $loader;
+    /** @var \SqlFtw\Reflection\ReflectionLoader */
+    private $loader;
 
-	/** @var string */
-	private $currentSchema;
+    /** @var string */
+    private $currentSchema;
 
-	/** @var \SqlFtw\Reflection\DatabaseReflection */
-	private $history;
+    /** @var \SqlFtw\Reflection\DatabaseReflection */
+    private $history;
 
-	/** @var \SqlFtw\Reflection\SchemaReflection[] */
-	private $schemas = [];
+    /** @var \SqlFtw\Reflection\SchemaReflection[] */
+    private $schemas = [];
 
-	/** @var \SqlFtw\Reflection\TableReflection[][] */
-	private $tables = [];
+    /** @var \SqlFtw\Reflection\TableReflection[][] */
+    private $tables = [];
 
-	/** @var \SqlFtw\Reflection\ViewReflection[][] */
-	private $views = [];
+    /** @var \SqlFtw\Reflection\ViewReflection[][] */
+    private $views = [];
 
-	/** @var \SqlFtw\Reflection\FunctionReflection[][] */
-	private $functions = [];
+    /** @var \SqlFtw\Reflection\FunctionReflection[][] */
+    private $functions = [];
 
     /** @var \SqlFtw\Reflection\ProcedureReflection[][] */
     private $procedures = [];
 
-	/** @var \SqlFtw\Reflection\TriggerReflection[][] */
-	private $triggers = [];
+    /** @var \SqlFtw\Reflection\TriggerReflection[][] */
+    private $triggers = [];
 
-	/** @var \SqlFtw\Reflection\EventReflection[][] */
-	private $events = [];
+    /** @var \SqlFtw\Reflection\EventReflection[][] */
+    private $events = [];
 
-	/** @var \SqlFtw\Reflection\VariablesReflection[] */
-	private $variables = [];
+    /** @var \SqlFtw\Reflection\VariablesReflection[] */
+    private $variables = [];
 
-	public function __construct(Platform $platform, ReflectionLoader $loader, string $currentSchema, bool $trackHistory = true)
-	{
-	    $this->platform = $platform;
-		$this->loader = $loader;
-		$this->currentSchema = $currentSchema;
-		if ($trackHistory) {
+    public function __construct(Platform $platform, ReflectionLoader $loader, string $currentSchema, bool $trackHistory = true)
+    {
+        $this->platform = $platform;
+        $this->loader = $loader;
+        $this->currentSchema = $currentSchema;
+        if ($trackHistory) {
             $this->history = new static($platform, $loader, $currentSchema, false);
         }
-	}
+    }
 
     public function applyCommand(Command $command): self
     {
@@ -114,7 +115,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof AlterTableCommand) {
             $that = clone($this);
             $table = $command->getTable();
@@ -146,7 +146,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof RenameTableCommand) {
             $that = clone($this);
             /**
@@ -175,7 +174,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof DropTableCommand) {
             $that = clone($this);
             if ($this->history !== null) {
@@ -192,7 +190,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof CreateIndexCommand) {
             $that = clone($this);
             $table = $command->getTable();
@@ -203,7 +200,6 @@ class DatabaseReflection
             $that->tables[$schema][$name] = $reflection->createIndex($command);
 
             return $that;
-
         } elseif ($command instanceof DropIndexCommand) {
             $that = clone($this);
             $table = $command->getTable();
@@ -214,7 +210,6 @@ class DatabaseReflection
             $that->tables[$schema][$name] = $reflection->dropIndex($command);
 
             return $that;
-
         } elseif ($command instanceof CreateViewCommand) {
             $that = clone($this);
             $view = $command->getName();
@@ -234,7 +229,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof AlterViewCommand) {
             $that = clone($this);
             $view = $command->getName();
@@ -245,7 +239,6 @@ class DatabaseReflection
             $that->views[$schema][$name] = $reflection->alter($command);
 
             return $that;
-
         } elseif ($command instanceof DropViewCommand) {
             $that = clone($this);
             foreach ($command->getNames() as $view) {
@@ -260,7 +253,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof CreateFunctionCommand) {
             $that = clone($this);
             $function = $command->getName();
@@ -285,7 +277,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof AlterFunctionCommand) {
             $that = clone($this);
             $function = $command->getName();
@@ -296,7 +287,6 @@ class DatabaseReflection
             $that->functions[$schema][$name] = $reflection->alter($command);
 
             return $that;
-
         } elseif ($command instanceof DropFunctionCommand) {
             $that = clone($this);
             $function = $command->getName();
@@ -310,7 +300,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof CreateProcedureCommand) {
             $that = clone($this);
             $procedure = $command->getName();
@@ -335,7 +324,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof AlterProcedureCommand) {
             $that = clone($this);
             $procedure = $command->getName();
@@ -346,7 +334,6 @@ class DatabaseReflection
             $that->procedures[$schema][$name] = $reflection->alter($command);
 
             return $that;
-
         } elseif ($command instanceof DropProcedureCommand) {
             $that = clone($this);
             $procedure = $command->getName();
@@ -360,7 +347,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof CreateTriggerCommand) {
             $that = clone($this);
             $name = $command->getName();
@@ -383,7 +369,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof DropTriggerCommand) {
             $that = clone($this);
             $trigger = $command->getName();
@@ -403,7 +388,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof CreateEventCommand) {
             $that = clone($this);
             $event = $command->getName();
@@ -423,7 +407,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof AlterEventCommand) {
             $that = clone($this);
             $event = $command->getName();
@@ -434,7 +417,6 @@ class DatabaseReflection
             $that->events[$schema][$name] = $reflection->alter($command);
 
             return $that;
-
         } elseif ($command instanceof DropEventCommand) {
             $that = clone($this);
             $event = $command->getName();
@@ -449,7 +431,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof CreateDatabaseCommand) {
             $that = clone($this);
             $name = $command->getName();
@@ -466,7 +447,6 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof AlterDatabaseCommand) {
             $that = clone($this);
             $name = $command->getName();
@@ -475,7 +455,6 @@ class DatabaseReflection
             $that->schemas[$name] = $reflection->alter($command);
 
             return $that;
-
         } elseif ($command instanceof DropDatabaseCommand) {
             $that = clone($this);
             $name = $command->getName();
@@ -494,13 +473,11 @@ class DatabaseReflection
             }
 
             return $that;
-
         } elseif ($command instanceof UseCommand) {
             $schema = $command->getSchema();
             $this->useSchema($schema);
 
             return $this;
-
         } else {
             return $this;
         }

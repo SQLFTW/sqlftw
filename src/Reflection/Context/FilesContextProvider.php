@@ -9,40 +9,44 @@
 
 namespace SqlFtw\Reflection\Context;
 
+use function file_exists;
+use function file_get_contents;
+use function str_replace;
+
 final class FilesContextProvider ///implements \SqlFtw\Reflection\ContextProvider
 {
 
-	/** @var string */
-	private $basePath;
+    /** @var string */
+    private $basePath;
 
-	/** @var string */
-	private $pathTemplate;
+    /** @var string */
+    private $pathTemplate;
 
-	public function __construct(string $basePath, string $pathTemplate)
-	{
-		$this->basePath = $basePath;
-		$this->pathTemplate = $pathTemplate;
-	}
+    public function __construct(string $basePath, string $pathTemplate)
+    {
+        $this->basePath = $basePath;
+        $this->pathTemplate = $pathTemplate;
+    }
 
-	public function getCreateTable(string $schema, string $tableName): string
-	{
-		$path = str_replace(['$basePath$', '$databaseName$', '$tableName$'], [$this->basePath, $schema, $tableName], $this->pathTemplate);
+    public function getCreateTable(string $schema, string $tableName): string
+    {
+        $path = str_replace(['$basePath$', '$databaseName$', '$tableName$'], [$this->basePath, $schema, $tableName], $this->pathTemplate);
 
-		if (!file_exists($path)) {
-			throw new \AlterExecutor\Validation\TableDoesNotExistException($schema, $tableName, $path);
-		}
+        if (!file_exists($path)) {
+            throw new \AlterExecutor\Validation\TableDoesNotExistException($schema, $tableName, $path);
+        }
 
-		return file_get_contents($path);
-	}
+        return file_get_contents($path);
+    }
 
-	public function getIndexSize(string $schema, string $tableName, string $indexName): ?int
-	{
-		return null;
-	}
+    public function getIndexSize(string $schema, string $tableName, string $indexName): ?int
+    {
+        return null;
+    }
 
-	public function getIndexesSize(string $schema, string $tableName): ?int
-	{
-		return null;
-	}
+    public function getIndexesSize(string $schema, string $tableName): ?int
+    {
+        return null;
+    }
 
 }

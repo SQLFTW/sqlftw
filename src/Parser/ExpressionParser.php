@@ -48,12 +48,16 @@ use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
+use function preg_match;
+use function sprintf;
+use function strlen;
+use function substr;
 
 class ExpressionParser
 {
     use StrictBehaviorMixin;
 
-	private const PUNCTUATION = '[~`@#$%^&\'"\\\\=[\\]{}()<>;:,.?!_|\\/*+-]';
+    private const PUNCTUATION = '[~`@#$%^&\'"\\\\=[\\]{}()<>;:,.?!_|\\/*+-]';
     private const INT_DATETIME_EXPRESSION = '/^(?:[1-9][0-9])?[0-9]{2}(?:0[1-9]|1[012])(?:0[1-9]|[12][0-9]|3[01])(?:[01][0-9]|2[0-3])(?:[0-5][0-9]){2}$/';
     private const STRING_DATETIME_EXPRESSION = '/^((?:[1-9][0-9])?[0-9]{2}'
         . self::PUNCTUATION . '(?:0[1-9]|1[012])'
@@ -146,8 +150,14 @@ class ExpressionParser
     private function parseBooleanPrimary(TokenList $tokenList): ExpressionNode
     {
         $operators = [
-            Operator::SAFE_EQUAL, Operator::EQUAL, Operator::GREATER_OR_EQUAL, Operator::GREATER,
-            Operator::LESS_OR_EQUAL, Operator::LESS, Operator::LESS_OR_GREATER, Operator::NON_EQUAL,
+            Operator::SAFE_EQUAL,
+            Operator::EQUAL,
+            Operator::GREATER_OR_EQUAL,
+            Operator::GREATER,
+            Operator::LESS_OR_EQUAL,
+            Operator::LESS,
+            Operator::LESS_OR_GREATER,
+            Operator::NON_EQUAL,
         ];
 
         $left = $this->parsePredicate($tokenList);
@@ -256,8 +266,18 @@ class ExpressionParser
     private function parseBitExpression(TokenList $tokenList): ExpressionNode
     {
         $operators = [
-            Operator::BIT_OR, Operator::BIT_AND, Operator::LEFT_SHIFT, Operator::RIGHT_SHIFT, Operator::PLUS, Operator::MINUS,
-            Operator::MULTIPLY, Operator::DIVIDE, Operator::DIV, Operator::MOD, Operator::MODULO, Operator::BIT_XOR,
+            Operator::BIT_OR,
+            Operator::BIT_AND,
+            Operator::LEFT_SHIFT,
+            Operator::RIGHT_SHIFT,
+            Operator::PLUS,
+            Operator::MINUS,
+            Operator::MULTIPLY,
+            Operator::DIVIDE,
+            Operator::DIV,
+            Operator::MOD,
+            Operator::MODULO,
+            Operator::BIT_XOR,
         ];
 
         $left = $this->parseSimpleExpression($tokenList);
@@ -306,7 +326,11 @@ class ExpressionParser
     {
         $expression = null;
         $operator = $tokenList->mayConsumeAnyOperator(
-            Operator::PLUS, Operator::MINUS, Operator::BIT_INVERT, Operator::EXCLAMATION, Operator::BINARY
+            Operator::PLUS,
+            Operator::MINUS,
+            Operator::BIT_INVERT,
+            Operator::EXCLAMATION,
+            Operator::BINARY
         );
         if ($operator !== null) {
             // + simple_expr
@@ -404,7 +428,7 @@ class ExpressionParser
                             } while ($tokenList->mayConsumeComma());
                             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
                         }
-                        $expression = new FunctionCall(new QualifiedName($name2 ? $name2 : $name1, $name2 ? $name1 : null), $arguments);
+                        $expression = new FunctionCall(new QualifiedName($name2 ?: $name1, $name2 ? $name1 : null), $arguments);
 
                     } elseif ($name2 !== null) {
                         // identifier
@@ -430,7 +454,9 @@ class ExpressionParser
             $collation = Collation::get($tokenList->consumeString());
 
             return new CollateExpression($expression, $collation);
-        } elseif ($tokenList->getSettings()->getMode()->contains(Mode::PIPES_AS_CONCAT) && $tokenList->mayConsumeOperator(Operator::PIPES)) {
+        } elseif ($tokenList->getSettings()->getMode()->contains(Mode::PIPES_AS_CONCAT)
+            && $tokenList->mayConsumeOperator(Operator::PIPES)
+        ) {
             // simple_expr || simple_expr
             $right = $this->parseSimpleExpression($tokenList);
 
@@ -501,6 +527,7 @@ class ExpressionParser
     }
 
     /**
+     * @param \SqlFtw\Parser\TokenList $tokenList
      * @return string[]|null[]|null (string|null $database, string|null $tableOrAlias, string $name)
      */
     public function parseColumnName(TokenList $tokenList): ColumnName
@@ -652,7 +679,7 @@ class ExpressionParser
             ));
         } elseif (preg_match(self::STRING_DATETIME_EXPRESSION, $string, $match)) {
             $string = $match[1];
-            $decimalPart = isset($match[2]) ? $match[2] : '';
+            $decimalPart = $match[2] ?? '';
             if (strlen($string) === 17) {
                 $string = '20' . $string;
             }

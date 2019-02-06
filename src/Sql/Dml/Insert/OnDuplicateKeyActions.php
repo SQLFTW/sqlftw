@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\SqlSerializable;
+use function implode;
 
 class OnDuplicateKeyActions implements SqlSerializable
 {

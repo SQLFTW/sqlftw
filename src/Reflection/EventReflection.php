@@ -14,18 +14,19 @@ use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
 use SqlFtw\Sql\QualifiedName;
+use function end;
 
 class EventReflection
 {
-	use StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
-	/** @var \SqlFtw\Sql\QualifiedName */
-	private $name;
+    /** @var \SqlFtw\Sql\QualifiedName */
+    private $name;
 
-	/** @var \SqlFtw\Sql\Ddl\Event\EventCommand[] */
-	private $commands = [];
+    /** @var \SqlFtw\Sql\Ddl\Event\EventCommand[] */
+    private $commands = [];
 
-	public function __construct(QualifiedName $name, CreateEventCommand $createEventCommand)
+    public function __construct(QualifiedName $name, CreateEventCommand $createEventCommand)
     {
         $this->name = $name;
         $this->commands[] = $createEventCommand;

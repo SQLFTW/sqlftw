@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Reflection;
 
+use function sprintf;
+
 class TriggerWasDroppedException extends TriggerDoesNotExistException
 {
 
@@ -22,7 +24,7 @@ class TriggerWasDroppedException extends TriggerDoesNotExistException
 
         parent::__construct($name, $schema, $previous);
 
-        $this ->message = sprintf('Trigger `%s`.`%s` was dropped by previous command.', $schema, $name);
+        $this->message = sprintf('Trigger `%s`.`%s` was dropped by previous command.', $schema, $name);
         $this->reflection = $reflection;
     }
 

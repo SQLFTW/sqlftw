@@ -22,6 +22,18 @@ class LoadXmlCommand extends LoadCommand
     /** @var string */
     private $rowsTag;
 
+    /**
+     * @param string $file
+     * @param \SqlFtw\Sql\QualifiedName $table
+     * @param string|null $rowsTag
+     * @param \SqlFtw\Sql\Charset|null $charset
+     * @param string[]|null $fields
+     * @param string[]|null $setters
+     * @param int|null $ignoreRows
+     * @param \SqlFtw\Sql\Dml\Load\LoadPriority|null $priority
+     * @param bool $local
+     * @param \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption
+     */
     public function __construct(
         string $file,
         QualifiedName $table,

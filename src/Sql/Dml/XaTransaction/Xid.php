@@ -26,7 +26,7 @@ class Xid implements SqlSerializable
     /** @var int|null */
     private $formatId;
 
-    public function __construct(string $transactionId, ?string $branchQualifier = null, ?int $formatId)
+    public function __construct(string $transactionId, ?string $branchQualifier, ?int $formatId)
     {
         $this->transactionId = $transactionId;
         $this->branchQualifier = $branchQualifier;

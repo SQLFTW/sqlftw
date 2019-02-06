@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use Dogma\StrictBehaviorMixin;
+use function array_filter;
 
 class ConstraintList
 {

@@ -18,6 +18,7 @@ use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
+use function is_array;
 
 class CreateTableCommand implements AnyCreateTableCommand
 {

@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
+use function implode;
 
 final class Token
 {
@@ -31,7 +32,7 @@ final class Token
     public $condition;
 
     /** @var string */
-    private $typeDesc;
+    public $typeDesc;
 
     /**
      * @param int $type

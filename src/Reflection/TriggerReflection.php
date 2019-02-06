@@ -13,18 +13,19 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\QualifiedName;
+use function end;
 
 class TriggerReflection
 {
-	use StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
-	/** @var \SqlFtw\Sql\QualifiedName */
-	private $name;
+    /** @var \SqlFtw\Sql\QualifiedName */
+    private $name;
 
-	/** @var \SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand[]|\SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand[] */
-	private $commands = [];
+    /** @var \SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand[]|\SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand[] */
+    private $commands = [];
 
-	public function __construct(QualifiedName $name, CreateTriggerCommand $createTriggerCommand)
+    public function __construct(QualifiedName $name, CreateTriggerCommand $createTriggerCommand)
     {
         $this->name = $name;
         $this->commands[] = $createTriggerCommand;

@@ -11,6 +11,9 @@ namespace SqlFtw\Sql;
 
 use Dogma\Enum\StringSet;
 use SqlFtw\Platform\Mode;
+use function array_merge;
+use function array_unique;
+use function explode;
 
 class SqlMode extends StringSet
 {

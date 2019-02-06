@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable
+
 namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
@@ -14,6 +16,9 @@ use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
+use function count;
+use function is_array;
+use function rd;
 
 class Parser
 {

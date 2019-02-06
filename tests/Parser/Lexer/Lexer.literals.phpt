@@ -31,11 +31,11 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::VALUE | TokenType::BINARY_LITERAL, '0101', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
 rd(4);
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll(' b\'0102\' ');
 }, ExpectedTokenNotFoundException::class);
 rd(5);
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll(' b\'0101 ');
 }, ExpectedTokenNotFoundException::class);
 rd(6);
@@ -59,10 +59,10 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::VALUE | TokenType::HEXADECIMAL_LITERAL, '12ab', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
 rd(8);
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll(' x\'12A\' ');
 }, ExpectedTokenNotFoundException::class);
 rd(9);
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll(' x\'12AB ');
 }, ExpectedTokenNotFoundException::class);

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<ruleset name="SqlFtw">
+    <rule ref="../../vendor/dogma/dogma-dev/src/CodeSniffer/ruleset.xml">
+        <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
+    </rule>
+</ruleset>

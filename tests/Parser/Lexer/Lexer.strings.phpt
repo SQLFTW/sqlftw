@@ -34,7 +34,7 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::DOUBLE_QUOTED_STRING, 'foo', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
 
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll(' "foo');
 }, EndOfStringNotFoundException::class);
 
@@ -54,7 +54,7 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'foo', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
 
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll(" 'foo");
 }, EndOfStringNotFoundException::class);
 
@@ -100,7 +100,7 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::NAME | TokenType::BACKTICK_QUOTED_STRING, 'foo', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
 
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll(' `foo');
 }, EndOfStringNotFoundException::class);
 

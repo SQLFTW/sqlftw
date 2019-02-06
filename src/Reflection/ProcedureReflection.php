@@ -14,18 +14,19 @@ use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
 use SqlFtw\Sql\QualifiedName;
+use function end;
 
 class ProcedureReflection
 {
-	use StrictBehaviorMixin;
+    use StrictBehaviorMixin;
 
-	/** @var \SqlFtw\Sql\QualifiedName */
+    /** @var \SqlFtw\Sql\QualifiedName */
     private $name;
 
     /** @var \SqlFtw\Sql\Ddl\Routines\StoredProcedureCommand[] */
     private $commands = [];
 
-	public function __construct(QualifiedName $name, CreateProcedureCommand $createProcedureCommand)
+    public function __construct(QualifiedName $name, CreateProcedureCommand $createProcedureCommand)
     {
         $this->name = $name;
         $this->commands[] = $createProcedureCommand;

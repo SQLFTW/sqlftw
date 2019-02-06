@@ -15,6 +15,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
+use function array_values;
+use function count;
+use function rtrim;
 
 class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
 {

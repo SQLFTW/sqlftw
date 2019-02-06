@@ -13,6 +13,11 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
 use SqlFtw\Sql\Ddl\Table\TableItem;
+use function array_keys;
+use function count;
+use function is_int;
+use function is_string;
+use function sprintf;
 
 class IndexDefinition implements TableItem, ConstraintBody
 {

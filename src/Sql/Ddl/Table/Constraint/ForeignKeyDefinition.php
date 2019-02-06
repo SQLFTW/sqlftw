@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Constraint;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
+use function count;
 
 class ForeignKeyDefinition implements ConstraintBody
 {

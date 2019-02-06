@@ -13,6 +13,16 @@ use Dogma\NotImplementedException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\SqlEnum;
+use function array_values;
+use function call_user_func;
+use function count;
+use function implode;
+use function in_array;
+use function is_bool;
+use function is_int;
+use function preg_match;
+use function sprintf;
+use function trim;
 
 /**
  * Holds list of lexer tokens and a pointer to current token
@@ -49,6 +59,8 @@ class TokenList
 
     /**
      * @param \SqlFtw\Parser\Token[] $tokens
+     * @param \SqlFtw\Platform\PlatformSettings $settings
+     * @param bool $whitespace
      */
     public function __construct(array $tokens, PlatformSettings $settings, bool $whitespace = true)
     {
@@ -258,12 +270,11 @@ class TokenList
 
     public function mayConsumeInt(): ?int
     {
-    	$position = $this->position;
+        $position = $this->position;
         try {
-            $int = $this->consumeInt();
-            return $int;
+            return $this->consumeInt();
         } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
-        	$this->position = $position;
+            $this->position = $position;
             return null;
         }
     }
@@ -318,8 +329,7 @@ class TokenList
     public function mayConsumeAnyOperator(string ...$operators): ?string
     {
         try {
-            $operator = $this->consumeAnyOperator(...$operators);
-            return $operator;
+            return $this->consumeAnyOperator(...$operators);
         } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
             return null;
         }
@@ -383,8 +393,7 @@ class TokenList
     {
         $position = $this->position;
         try {
-            $keyword = $this->consumeAnyKeyword(...$keywords);
-            return $keyword;
+            return $this->consumeAnyKeyword(...$keywords);
         } catch (\SqlFtw\Parser\UnexpectedTokenException $e) {
             $this->position = $position;
             return null;

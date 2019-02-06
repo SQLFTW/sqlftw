@@ -12,6 +12,8 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
+use function is_bool;
+use function is_string;
 
 class ChangeColumnAction implements AlterTableAction
 {

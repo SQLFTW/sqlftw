@@ -14,6 +14,9 @@ use Dogma\CombineIterator;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
+use function array_values;
+use function count;
+use function rtrim;
 
 class RenameUserCommand implements UserCommand
 {

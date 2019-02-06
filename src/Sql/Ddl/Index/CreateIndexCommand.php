@@ -16,6 +16,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\TableStructureCommand;
 use SqlFtw\Sql\QualifiedName;
+use function substr;
 
 class CreateIndexCommand implements IndexCommand, TableStructureCommand
 {

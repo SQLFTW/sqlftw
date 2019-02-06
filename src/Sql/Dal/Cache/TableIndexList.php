@@ -15,6 +15,7 @@ use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
+use function is_array;
 
 class TableIndexList implements SqlSerializable
 {

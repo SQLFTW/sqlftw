@@ -35,6 +35,7 @@ class ShowWarningsCommand implements ShowCommand
     {
         $self = new self();
         $self->count = true;
+
         return $self;
     }
 
@@ -55,12 +56,11 @@ class ShowWarningsCommand implements ShowCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'SHOW';
         if ($this->count) {
-            $result .= ' COUNT(*) WARNINGS';
-            return $result;
+            return 'SHOW COUNT(*) WARNINGS';
         }
-        $result .= ' WARNINGS';
+
+        $result = 'SHOW WARNINGS';
         if ($this->limit) {
             $result .= ' LIMIT ';
             if ($this->offset) {
@@ -68,6 +68,7 @@ class ShowWarningsCommand implements ShowCommand
             }
             $result .= $this->limit;
         }
+
         return $result;
     }
 

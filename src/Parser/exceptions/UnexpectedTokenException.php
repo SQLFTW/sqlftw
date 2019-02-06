@@ -11,6 +11,11 @@ namespace SqlFtw\Parser;
 
 use Dogma\Arr;
 use Dogma\ExceptionValueFormatter;
+use function array_map;
+use function array_slice;
+use function implode;
+use function is_array;
+use function sprintf;
 
 class UnexpectedTokenException extends ParserException
 {

@@ -19,7 +19,7 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::COMMENT | TokenType::BLOCK_COMMENT, '/* comment */', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 14);
 
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll(' /* comment ');
 }, EndOfCommentNotFoundException::class);
 

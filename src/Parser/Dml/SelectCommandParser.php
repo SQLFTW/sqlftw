@@ -19,9 +19,9 @@ use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\Dml\Select\SelectDistinctOption;
 use SqlFtw\Sql\Dml\Select\SelectExpression;
 use SqlFtw\Sql\Dml\Select\SelectInto;
-use SqlFtw\Sql\Dml\Select\SelectLocking;
 use SqlFtw\Sql\Dml\Select\SelectLockOption;
 use SqlFtw\Sql\Dml\Select\SelectLockWaitOption;
+use SqlFtw\Sql\Dml\Select\SelectLocking;
 use SqlFtw\Sql\Dml\Select\SelectOption;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
@@ -191,10 +191,7 @@ class SelectCommandParser
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
         }
 
-        return new SelectCommand(
-            $what, $from, $where, $groupBy, $having, $orderBy, $limit, $offset,
-            $distinct, $options, $into, $locking, $withRollup
-        );
+        return new SelectCommand($what, $from, $where, $groupBy, $having, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);
     }
 
 }

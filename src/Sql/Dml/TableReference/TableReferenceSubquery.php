@@ -31,7 +31,7 @@ class TableReferenceSubquery implements TableReferenceNode, \Countable
     /**
      * @param \SqlFtw\Sql\Dml\Select\SelectCommand $query
      * @param string|null $alias
-     * @param array|null $columnList
+     * @param string[]|null $columnList
      */
     public function __construct(SelectCommand $query, ?string $alias, ?array $columnList)
     {

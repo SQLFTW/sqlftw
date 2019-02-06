@@ -34,6 +34,7 @@ class MatchExpression implements ExpressionNode
      * @param \SqlFtw\Sql\ColumnName[] $columns
      * @param string $query
      * @param \SqlFtw\Sql\Expression\MatchMode|null $mode
+     * @param bool $queryExpansion
      */
     public function __construct(array $columns, string $query, ?MatchMode $mode, bool $queryExpansion = false)
     {

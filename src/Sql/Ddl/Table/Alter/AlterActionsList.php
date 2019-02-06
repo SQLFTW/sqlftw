@@ -14,6 +14,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
+use function rtrim;
 
 class AlterActionsList implements SqlSerializable
 {
@@ -22,6 +23,9 @@ class AlterActionsList implements SqlSerializable
     /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] */
     private $actions;
 
+    /**
+     * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] $actions
+     */
     public function __construct(array $actions)
     {
         Check::itemsOfType($actions, AlterTableAction::class);

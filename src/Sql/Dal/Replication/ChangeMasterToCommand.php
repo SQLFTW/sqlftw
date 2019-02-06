@@ -14,6 +14,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeInterval;
+use function implode;
 
 class ChangeMasterToCommand implements ReplicationCommand
 {
@@ -25,6 +26,10 @@ class ChangeMasterToCommand implements ReplicationCommand
     /** @var string|null */
     private $channel;
 
+    /**
+     * @param mixed[] $options
+     * @param string|null $channel
+     */
     public function __construct(array $options, ?string $channel = null)
     {
         $types = SlaveOption::getTypes();

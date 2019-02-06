@@ -4,6 +4,9 @@ namespace SqlFtw\Tests;
 
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
+use function gettype;
+use function implode;
+use function sprintf;
 
 class Assert extends \Tester\Assert
 {

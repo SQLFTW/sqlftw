@@ -14,6 +14,14 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Scope;
 use SqlFtw\Sql\SqlSerializable;
+use function get_class;
+use function gettype;
+use function is_float;
+use function is_int;
+use function is_scalar;
+use function sprintf;
+use function str_replace;
+use function ucfirst;
 
 class SetAssignment implements SqlSerializable
 {

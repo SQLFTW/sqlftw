@@ -46,7 +46,7 @@ class PlatformSettings
         $this->platform = $platform;
         $this->delimiter = $delimiter;
         $this->charset = $charset;
-        $this->mode = $mode !== null ? $mode : $platform->getDefaultMode();
+        $this->mode = $mode ?: $platform->getDefaultMode();
         $this->quoteAllNames = $quoteAllNames;
         $this->canonicalizeTypes = $canonicalizeTypes;
     }

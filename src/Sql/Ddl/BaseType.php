@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
+
 namespace SqlFtw\Sql\Ddl;
 
 use SqlFtw\Formatter\Formatter;
@@ -16,6 +18,7 @@ use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
+use function in_array;
 
 class BaseType extends SqlEnum implements Feature
 {

@@ -19,13 +19,13 @@ interface ContextProvider
      */
     public function getCreateDatabase(string $name): string;
 
-	/**
+    /**
      * @param string $name
-	 * @param string $schema
-	 * @return string
-	 * @throws \SqlFtw\Reflection\TableDoesNotExistException
-	 */
-	public function getCreateTable(string $name, string $schema): string;
+     * @param string $schema
+     * @return string
+     * @throws \SqlFtw\Reflection\TableDoesNotExistException
+     */
+    public function getCreateTable(string $name, string $schema): string;
 
     /**
      * @param string $name

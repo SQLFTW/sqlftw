@@ -14,6 +14,8 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
+use function implode;
+use function strlen;
 
 class ResignalStatement implements CompoundStatementItem
 {

@@ -35,7 +35,7 @@ class ShowProfileCommand implements ShowCommand
      * @param int|null $limit
      * @param int|null $offset
      */
-    public function __construct(array $types, ?int $queryId = null, ?int $limit, ?int $offset)
+    public function __construct(array $types, ?int $queryId, ?int $limit, ?int $offset)
     {
         Check::array($types, 1);
         Check::itemsOfType($types, ShowProfileType::class);

@@ -26,6 +26,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use function count;
 
 class JoinParser
 {
@@ -205,7 +206,6 @@ class JoinParser
             $tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS);
 
             return new TableReferenceParentheses($references);
-
         } elseif ($tokenList->mayConsumeKeyword(Keyword::SELECT)) {
             $query = $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList->resetPosition(-1));
             $tokenList->mayConsumeKeyword(Keyword::AS);
@@ -220,7 +220,6 @@ class JoinParser
             }
 
             return new TableReferenceSubquery($query, $alias, $columns);
-
         } else {
             $table = new QualifiedName(...$tokenList->consumeQualifiedName());
             $partitions = null;

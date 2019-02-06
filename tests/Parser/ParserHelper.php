@@ -23,6 +23,7 @@ class ParserHelper
         if ($platform === null) {
             $platform = Platform::get(Platform::MYSQL);
         }
+
         $settings = new PlatformSettings($platform);
         $settings->setQuoteAllNames(false);
 

@@ -59,10 +59,10 @@ use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableRowFormat;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
+use SqlFtw\Sql\Ddl\Table\Partition\PartitionOption;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningConditionType;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
-use SqlFtw\Sql\Ddl\Table\Partition\PartitionOption;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
@@ -239,8 +239,16 @@ class TableCommandsParser
                             break;
                         default:
                             $tokenList->expectedAnyKeyword(
-                                Keyword::COLUMN, Keyword::CONSTRAINT, Keyword::FOREIGN, Keyword::FULLTEXT, Keyword::INDEX,
-                                Keyword::KEY, Keyword::PARTITION, Keyword::PRIMARY, Keyword::SPATIAL, Keyword::UNIQUE
+                                Keyword::COLUMN,
+                                Keyword::CONSTRAINT,
+                                Keyword::FOREIGN,
+                                Keyword::FULLTEXT,
+                                Keyword::INDEX,
+                                Keyword::KEY,
+                                Keyword::PARTITION,
+                                Keyword::PRIMARY,
+                                Keyword::SPATIAL,
+                                Keyword::UNIQUE
                             );
                     }
                     break;
@@ -1207,7 +1215,7 @@ class TableCommandsParser
             $tokenList[PartitionOption::TABLESPACE] = $tokenList->consumeString();
         }
 
-        return $options ? $options : null;
+        return $options ?: null;
     }
 
     /**

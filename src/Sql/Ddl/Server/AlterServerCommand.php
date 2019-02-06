@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Server;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use function rtrim;
 
 class AlterServerCommand implements ServerCommand
 {

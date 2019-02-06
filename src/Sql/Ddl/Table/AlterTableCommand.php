@@ -17,6 +17,9 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SingleTableCommand;
+use function is_array;
+use function rtrim;
+use function trim;
 
 class AlterTableCommand implements SingleTableCommand, TableStructureCommand
 {

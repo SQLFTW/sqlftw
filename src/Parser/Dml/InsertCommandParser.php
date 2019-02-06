@@ -86,13 +86,11 @@ class InsertCommandParser
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
             return new InsertSelectCommand($table, $select, $columns, $partitions, $priority, $ignore, $update);
-
         } elseif ($tokenList->mayConsumeKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
             return new InsertSetCommand($table, $values, $columns, $partitions, $priority, $ignore, $update);
-
         } else {
             $tokenList->consumeAnyKeyword(Keyword::VALUE, Keyword::VALUES);
             $rows = $this->parseRows($tokenList);
@@ -136,12 +134,10 @@ class InsertCommandParser
             $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
 
             return new ReplaceSelectCommand($table, $select, $columns, $partitions, $priority, $ignore);
-
         } elseif ($tokenList->mayConsumeKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
 
             return new ReplaceSetCommand($table, $values, $columns, $partitions, $priority, $ignore);
-
         } else {
             $tokenList->consumeAnyKeyword(Keyword::VALUE, Keyword::VALUES);
             $rows = $this->parseRows($tokenList);

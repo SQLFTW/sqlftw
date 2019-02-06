@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
+use function implode;
 
 class InsertValuesCommand extends InsertOrReplaceCommand implements InsertCommand
 {

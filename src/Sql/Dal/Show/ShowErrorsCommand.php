@@ -55,12 +55,11 @@ class ShowErrorsCommand implements ShowCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'SHOW';
         if ($this->count) {
-            $result .= ' COUNT(*) ERRORS';
-            return $result;
+            return 'SHOW COUNT(*) ERRORS';
         }
-        $result .= ' ERRORS';
+
+        $result = 'SHOW ERRORS';
         if ($this->limit) {
             $result .= ' LIMIT ';
             if ($this->offset) {
@@ -68,6 +67,7 @@ class ShowErrorsCommand implements ShowCommand
             }
             $result .= $this->limit;
         }
+
         return $result;
     }
 

@@ -79,6 +79,11 @@ class ParserFactory
         return $this->parser;
     }
 
+    public function getSettings(): PlatformSettings
+    {
+        return $this->settings;
+    }
+
     // partial parsers -------------------------------------------------------------------------------------------------
 
     public function getCompoundStatementParser(): CompoundStatementParser

@@ -15,6 +15,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
+use function implode;
 
 class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {

@@ -22,6 +22,9 @@ class SetCommand implements DalCommand
     /** @var \SqlFtw\Sql\Dal\Set\SetAssignment[] */
     private $assignments = [];
 
+    /**
+     * @param \SqlFtw\Sql\Dal\Set\SetAssignment[] $assignments
+     */
     public function __construct(array $assignments)
     {
         Check::array($assignments, 1);

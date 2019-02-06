@@ -14,16 +14,18 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
+use function implode;
 
 class ChangeReplicationFilterCommand implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 
-    /**
-     * @var mixed[]
-     */
+    /** @var mixed[] */
     private $filters;
 
+    /**
+     * @param mixed[] $filters
+     */
     public function __construct(array $filters)
     {
         $types = ReplicationFilter::getTypes();

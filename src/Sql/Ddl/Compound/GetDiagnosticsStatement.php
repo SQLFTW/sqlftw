@@ -26,6 +26,11 @@ class GetDiagnosticsStatement implements CompoundStatementItem
     /** @var \SqlFtw\Sql\Ddl\Compound\DiagnosticsArea|null */
     private $area;
 
+    /**
+     * @param \SqlFtw\Sql\Ddl\Compound\DiagnosticsItem[]|null $conditionItems
+     * @param \SqlFtw\Sql\Ddl\Compound\DiagnosticsItem[]|null $statementItems
+     * @param \SqlFtw\Sql\Ddl\Compound\DiagnosticsArea|null $area
+     */
     public function __construct(?array $conditionItems, ?array $statementItems, ?DiagnosticsArea $area)
     {
         Check::oneOf($conditionItems, $statementItems);

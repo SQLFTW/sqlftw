@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
+use function count;
 
 class CaseExpression implements Statement
 {

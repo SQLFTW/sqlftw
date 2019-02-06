@@ -11,6 +11,8 @@ namespace SqlFtw\Reflection;
 
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
+use function end;
+use function sprintf;
 
 class TableWasMovedException extends TableDoesNotExistException
 {

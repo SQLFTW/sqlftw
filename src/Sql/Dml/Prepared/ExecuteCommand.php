@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Prepared;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use function implode;
 
 class ExecuteCommand implements PreparedStatementCommand
 {
@@ -22,6 +23,10 @@ class ExecuteCommand implements PreparedStatementCommand
     /** @var string[]|null */
     private $variables;
 
+    /**
+     * @param string $name
+     * @param string[]|null $variables
+     */
     public function __construct(string $name, ?array $variables = null)
     {
         $this->name = $name;

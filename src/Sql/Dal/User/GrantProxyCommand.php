@@ -27,6 +27,11 @@ class GrantProxyCommand implements UserCommand
     /** @var bool */
     private $withGrantOption;
 
+    /**
+     * @param \SqlFtw\Sql\UserName $proxy
+     * @param \SqlFtw\Sql\UserName[] $users
+     * @param bool $withGrantOption
+     */
     public function __construct(UserName $proxy, array $users, bool $withGrantOption = false)
     {
         Check::itemsOfType($users, UserName::class);

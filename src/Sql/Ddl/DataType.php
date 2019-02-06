@@ -14,6 +14,11 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\SqlSerializable;
+use function count;
+use function implode;
+use function is_array;
+use function is_int;
+use function sprintf;
 
 class DataType implements SqlSerializable
 {
@@ -48,6 +53,7 @@ class DataType implements SqlSerializable
      * @param bool|null $unsigned
      * @param \SqlFtw\Sql\Charset|null $charset
      * @param \SqlFtw\Sql\Collation|null $collation
+     * @param bool $zerofill
      */
     public function __construct(
         BaseType $type,
@@ -182,6 +188,10 @@ class DataType implements SqlSerializable
 
         if ($this->unsigned === true) {
             $result .= ' UNSIGNED';
+        }
+
+        if ($this->zerofill) {
+            $result .= ' ZEROFILL';
         }
 
         if ($this->charset !== null) {

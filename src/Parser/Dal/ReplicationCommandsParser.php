@@ -31,6 +31,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use function abs;
 
 class ReplicationCommandsParser
 {
@@ -214,8 +215,8 @@ class ReplicationCommandsParser
         } elseif ($tokenList->mayConsumeKeyword(Keyword::BEFORE)) {
             $before = $this->expressionParser->parseDateTime($tokenList);
         } else {
-        	$tokenList->expectedAnyKeyword(Keyword::TO, Keyword::BEFORE);
-		}
+            $tokenList->expectedAnyKeyword(Keyword::TO, Keyword::BEFORE);
+        }
 
         return new PurgeBinaryLogsCommand($log, $before);
     }
@@ -294,7 +295,7 @@ class ReplicationCommandsParser
             $threadTypes = [$threadType];
             while ($tokenList->mayConsumeComma()) {
                 $threadTypes[] = $tokenList->mayConsumeKeywordEnum(ReplicationThreadType::class);
-            };
+            }
         }
 
         $until = null;
@@ -402,10 +403,11 @@ class ReplicationCommandsParser
                 $end = null;
                 if ($tokenList->mayConsumeOperator(Operator::MINUS)) {
                     $end = $tokenList->consumeInt();
+                    // phpcs:ignore
                 } elseif ($end = $tokenList->mayConsumeInt()) {
-                	/// lexer returns "10-20" as tokens of int and negative int :/
-                	$end = abs($end);
-				}
+                    /// lexer returns "10-20" as tokens of int and negative int :/
+                    $end = abs($end);
+                }
                 $intervals[] = [$start, $end];
                 if (!$tokenList->mayConsume(TokenType::DOUBLE_COLON)) {
                     break;

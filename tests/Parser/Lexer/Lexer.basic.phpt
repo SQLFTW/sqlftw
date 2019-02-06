@@ -63,7 +63,7 @@ Assert::token($tokens[2], TokenType::SYMBOL | TokenType::DELIMITER_DEFINITION, '
 Assert::token($tokens[3], TokenType::WHITESPACE, ' ', 12);
 Assert::token($tokens[4], TokenType::SYMBOL | TokenType::SEMICOLON, ';', 13);
 
-Assert::exception(function () use ($lexer) {
+Assert::exception(function () use ($lexer): void {
     $lexer->tokenizeAll('DELIMITER foo');
 }, ExpectedTokenNotFoundException::class);
 

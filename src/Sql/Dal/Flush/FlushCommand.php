@@ -14,6 +14,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
+use function implode;
 
 class FlushCommand implements DalCommand
 {

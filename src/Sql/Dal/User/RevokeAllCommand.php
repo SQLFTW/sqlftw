@@ -19,6 +19,9 @@ class RevokeAllCommand implements UserCommand
     /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
+    /**
+     * @param \SqlFtw\Sql\UserName[] $users
+     */
     public function __construct(array $users)
     {
         $this->users = $users;

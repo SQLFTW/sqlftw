@@ -47,6 +47,17 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
     /** @var string|null */
     private $language;
 
+    /**
+     * @param \SqlFtw\Sql\QualifiedName $name
+     * @param \SqlFtw\Sql\Ddl\Compound\CompoundStatement $body
+     * @param \SqlFtw\Sql\Ddl\Routines\ProcedureParam[] $params
+     * @param \SqlFtw\Sql\UserName|null $definer
+     * @param bool|null $deterministic
+     * @param \SqlFtw\Sql\Ddl\SqlSecurity|null $security
+     * @param \SqlFtw\Sql\Ddl\Routines\RoutineSideEffects|null $sideEffects
+     * @param string|null $comment
+     * @param string|null $language
+     */
     public function __construct(
         QualifiedName $name,
         CompoundStatement $body,

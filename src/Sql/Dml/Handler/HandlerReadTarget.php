@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
+use function in_array;
 
 class HandlerReadTarget extends SqlEnum
 {

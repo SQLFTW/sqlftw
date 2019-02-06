@@ -17,6 +17,7 @@ use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
+use function implode;
 
 abstract class LoadCommand implements DmlCommand
 {
@@ -52,6 +53,18 @@ abstract class LoadCommand implements DmlCommand
     /** @var string[]|null */
     private $partitions;
 
+    /**
+     * @param string $file
+     * @param \SqlFtw\Sql\QualifiedName $table
+     * @param \SqlFtw\Sql\Charset|null $charset
+     * @param string[]|null $fields
+     * @param string[]|null $setters
+     * @param int|null $ignoreRows
+     * @param \SqlFtw\Sql\Dml\Load\LoadPriority|null $priority
+     * @param bool $local
+     * @param \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption
+     * @param string[]|null $partitions
+     */
     public function __construct(
         string $file,
         QualifiedName $table,
