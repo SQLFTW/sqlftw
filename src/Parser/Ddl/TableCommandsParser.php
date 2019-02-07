@@ -387,7 +387,7 @@ class TableCommandsParser
                     $validation = $tokenList->mayConsumeAnyKeyword(Keyword::WITH, Keyword::WITHOUT);
                     if ($validation === Keyword::WITH) {
                         $validation = true;
-                    } elseif (Keyword::WITHOUT) {
+                    } elseif ($validation === Keyword::WITHOUT) {
                         $validation = false;
                     }
                     $actions[] = new ExchangePartitionAction($partition, $table, $validation);
@@ -1130,7 +1130,7 @@ class TableCommandsParser
                         $lessThan = [];
                         do {
                             $lessThan[] = $this->expressionParser->parseLiteralValue($tokenList);
-                            if (!$tokenList->consume(TokenType::COMMA)) {
+                            if (!$tokenList->mayConsume(TokenType::COMMA)) {
                                 break;
                             }
                         } while (true);
@@ -1212,7 +1212,7 @@ class TableCommandsParser
         }
         if ($tokenList->mayConsumeKeyword(Keyword::TABLESPACE)) {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $tokenList[PartitionOption::TABLESPACE] = $tokenList->consumeString();
+            $options[PartitionOption::TABLESPACE] = $tokenList->consumeString();
         }
 
         return $options ?: null;

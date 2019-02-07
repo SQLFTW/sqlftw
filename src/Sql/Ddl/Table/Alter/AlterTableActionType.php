@@ -61,7 +61,7 @@ class AlterTableActionType extends SqlEnum
     public const TRUNCATE_PARTITION = Keyword::TRUNCATE . ' ' . Keyword::PARTITION;
     public const UPGRADE_PARTITIONING = Keyword::UPGRADE . ' ' . Keyword::PARTITIONING;
 
-    /** @var string[] */
+    /** @var string[]|null[] */
     private static $types = [
         self::ADD_COLUMN => AddColumnAction::class,
         self::ALTER_COLUMN => AlterColumnAction::class,
@@ -93,7 +93,6 @@ class AlterTableActionType extends SqlEnum
 
         self::ADD_PARTITION => AddPartitionAction::class,
         self::ANALYZE_PARTITION => 'array<string>',
-        self::CHECK_PARTITION => 'array<string>',
         self::CHECK_PARTITION => 'array<string>',
         self::COALESCE_PARTITION => Type::INT,
         self::DROP_PARTITION => 'array<string>',

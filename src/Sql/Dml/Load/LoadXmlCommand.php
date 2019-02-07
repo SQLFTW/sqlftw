@@ -28,7 +28,7 @@ class LoadXmlCommand extends LoadCommand
      * @param string|null $rowsTag
      * @param \SqlFtw\Sql\Charset|null $charset
      * @param string[]|null $fields
-     * @param string[]|null $setters
+     * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $setters
      * @param int|null $ignoreRows
      * @param \SqlFtw\Sql\Dml\Load\LoadPriority|null $priority
      * @param bool $local

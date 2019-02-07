@@ -14,6 +14,7 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Select\GroupByExpression;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\Dml\Select\SelectDistinctOption;
@@ -154,7 +155,7 @@ class SelectCommandParser
         if ($tokenList->mayConsumeKeywords(Keyword::INTO, Keyword::OUTFILE)) {
             $outFile = $tokenList->consumeString();
             if ($tokenList->mayConsumeKeywords(Keyword::CHARACTER, Keyword::SET)) {
-                $charset = $tokenList->consumeName();
+                $charset = Charset::get($tokenList->consumeName());
             }
             $format = $this->fileFormatParser->parseFormat($tokenList);
             $into = new SelectInto(null, null, $outFile, $charset, $format);

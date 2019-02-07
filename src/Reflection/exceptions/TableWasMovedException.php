@@ -29,8 +29,9 @@ class TableWasMovedException extends TableDoesNotExistException
         $name = $table->getName();
         $schema = $table->getSchema();
 
+        $commands = $reflection->getCommands();
         /** @var \SqlFtw\Sql\Ddl\Table\AlterTableCommand|\SqlFtw\Sql\Ddl\Table\RenameTableCommand $command */
-        $command = end($reflection->getCommands());
+        $command = end($commands);
         if ($command instanceof RenameTableCommand) {
             $this->newName = $command->getNewNameForTable($table);
         } else {

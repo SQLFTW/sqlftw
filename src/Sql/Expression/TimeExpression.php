@@ -21,14 +21,14 @@ class TimeExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime */
+    /** @var \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime|\SqlFtw\Sql\Expression\BuiltInFunction */
     private $value;
 
     /** @var \SqlFtw\Sql\Expression\TimeInterval[] */
     private $intervals;
 
     /**
-     * @param \Dogma\Time\Date|\Dogma\Time\Time|\DateTimeInterface $value
+     * @param \Dogma\Time\Date|\Dogma\Time\Time|\DateTimeInterface|\SqlFtw\Sql\Expression\BuiltInFunction $value
      * @param \Dogma\Time\Interval\DateTimeInterval[]|\DateInterval[]|\SqlFtw\Sql\Expression\TimeInterval[] $intervals
      */
     public function __construct($value, array $intervals = [])
@@ -49,8 +49,9 @@ class TimeExpression implements SqlSerializable
             }
         }
 
+        // todo
         /*if ($value instanceof BuiltInFunction && !$value->isTime()) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException(
+            throw new InvalidDefinitionException(
                 sprintf('Invalid function. A time returning function expected. %s given.', $value->getValue())
             );
         }*/

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection\Context;
 
+use SqlFtw\Reflection\TableDoesNotExistException;
 use function file_exists;
 use function file_get_contents;
 use function str_replace;
@@ -33,7 +34,7 @@ final class FilesContextProvider ///implements \SqlFtw\Reflection\ContextProvide
         $path = str_replace(['$basePath$', '$databaseName$', '$tableName$'], [$this->basePath, $schema, $tableName], $this->pathTemplate);
 
         if (!file_exists($path)) {
-            throw new \AlterExecutor\Validation\TableDoesNotExistException($schema, $tableName, $path);
+            throw new TableDoesNotExistException($schema, $tableName, $path);
         }
 
         return file_get_contents($path);

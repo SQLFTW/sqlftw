@@ -48,7 +48,7 @@ class FlushTablesCommand implements DalCommand
     /**
      * @return \SqlFtw\Sql\QualifiedName[]|null
      */
-    public function getTables(): array
+    public function getTables(): ?array
     {
         return $this->tables;
     }

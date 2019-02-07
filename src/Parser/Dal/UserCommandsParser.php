@@ -378,7 +378,7 @@ class UserCommandsParser
             /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeType $type */
             $type = $tokenList->consumeKeywordEnum(UserPrivilegeType::class);
             $columns = null;
-            if ($tokenList->consume(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
                 $columns = [];
                 do {
                     $columns[] = $tokenList->consumeName();
@@ -514,7 +514,7 @@ class UserCommandsParser
     public function parseSetDefaultRole(TokenList $tokenList): SetDefaultRoleCommand
     {
         $tokenList->consumeKeywords(Keyword::SET, Keyword::DEFAULT, Keyword::ROLE);
-        /** @var \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification $roles */
+        /** @var \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification|null $roles */
         $roles = $tokenList->mayConsumeKeywordEnum(UserDefaultRolesSpecification::class);
         $rolesList = null;
         if ($roles === null) {

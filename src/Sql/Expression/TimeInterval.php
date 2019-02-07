@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use function count;
 use function is_string;
@@ -46,7 +47,7 @@ class TimeInterval implements SqlSerializable
     {
         $intervals = self::createIntervals($interval);
         if (count($intervals) !== 1) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Invalid interval. Only a single value expected.');
+            throw new InvalidDefinitionException('Invalid interval. Only a single value expected.');
         }
         return $intervals[0];
     }

@@ -36,11 +36,13 @@ class GetDiagnosticsStatement implements CompoundStatementItem
         Check::oneOf($conditionItems, $statementItems);
         if ($conditionItems !== null) {
             foreach ($conditionItems as $item) {
-                Check::type($item->getItem(), ConditionInformationItem::class);
+                $item = $item->getItem();
+                Check::type($item, ConditionInformationItem::class);
             }
         } else {
             foreach ($statementItems as $item) {
-                Check::type($item->getItem(), StatementInformationItem::class);
+                $item = $item->getItem();
+                Check::type($item, StatementInformationItem::class);
             }
         }
 

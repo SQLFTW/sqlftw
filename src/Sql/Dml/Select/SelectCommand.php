@@ -16,6 +16,7 @@ use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class SelectCommand implements DmlCommand
 {
@@ -94,7 +95,7 @@ class SelectCommand implements DmlCommand
         if ($groupBy !== null) {
             Check::itemsOfType($groupBy, GroupByExpression::class);
         } elseif ($withRollup === true) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('WITH ROLLUP can be used only with GROUP BY.');
+            throw new InvalidDefinitionException('WITH ROLLUP can be used only with GROUP BY.');
         }
         if ($orderBy !== null) {
             Check::itemsOfType($orderBy, OrderByExpression::class);

@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\Dml\Update\SetColumnExpression;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
@@ -57,8 +58,12 @@ class UpdateCommandParser
         do {
             $column = $tokenList->consumeName();
             $tokenList->consumeOperator(Operator::EQUAL);
-            $value = $this->expressionParser->parseExpression($tokenList);
-            $values[$column] = $value;
+            if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                $values[$column] = new SetColumnExpression($column, null, true);
+            } else {
+                $value = $this->expressionParser->parseExpression($tokenList);
+                $values[$column] = new SetColumnExpression($column, $value);
+            }
         } while ($tokenList->mayConsumeComma());
 
         $where = null;
@@ -69,7 +74,7 @@ class UpdateCommandParser
         $orderBy = $limit = null;
         if (!$tableReferences instanceof \Countable || $tableReferences->count() === 1) {
             if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
-                $orderBy = $this->expressionParser->parseOrderBy($orderBy);
+                $orderBy = $this->expressionParser->parseOrderBy($tokenList);
             }
             if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
                 $limit = $tokenList->consumeInt();

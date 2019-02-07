@@ -22,7 +22,7 @@ class SelectLocking implements SqlSerializable
     /** @var \SqlFtw\Sql\Dml\Select\SelectLockOption */
     private $for;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectLockWaitOption */
+    /** @var \SqlFtw\Sql\Dml\Select\SelectLockWaitOption|null */
     private $wait;
 
     /** @var \SqlFtw\Sql\QualifiedName[]|null */
@@ -30,7 +30,7 @@ class SelectLocking implements SqlSerializable
 
     /**
      * @param \SqlFtw\Sql\Dml\Select\SelectLockOption $for
-     * @param \SqlFtw\Sql\Dml\Select\SelectLockWaitOption[] $wait
+     * @param \SqlFtw\Sql\Dml\Select\SelectLockWaitOption|null $wait
      * @param \SqlFtw\Sql\QualifiedName[]|null $tables
      */
     public function __construct(SelectLockOption $for, ?SelectLockWaitOption $wait = null, ?array $tables = null)

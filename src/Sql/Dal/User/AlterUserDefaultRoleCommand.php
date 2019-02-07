@@ -36,7 +36,7 @@ class AlterUserDefaultRoleCommand implements UserCommand
 
     /**
      * @param \SqlFtw\Sql\UserName $user
-     * @param bool|null $roles
+     * @param \SqlFtw\Sql\Dal\User\RolesSpecification|null $roles
      * @param \SqlFtw\Sql\UserName[]|null $rolesList
      * @param bool $ifExists
      */

@@ -294,10 +294,10 @@ class ShowCommandsParser
                 //     [WHERE expr]
                 $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
                 $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-                $database = null;
-                if ($table[0] === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                    $database = $tokenList->consumeName();
-                    $table[0] = $database;
+                $schema = null;
+                if ($table->getSchema() === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                    $schema = $tokenList->consumeName();
+                    $table = new QualifiedName($table->getName(), $schema);
                 }
                 $where = null;
                 if ($tokenList->consumeKeyword(Keyword::WHERE)) {
@@ -521,10 +521,10 @@ class ShowCommandsParser
                     $tokenList->consumeKeyword(Keyword::COLUMNS);
                     $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
                     $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-                    $database = null;
-                    if ($table[0] === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                        $database = $tokenList->consumeName();
-                        $table[0] = $database;
+                    $schema = null;
+                    if ($table->getSchema() === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                        $schema = $tokenList->consumeName();
+                        $table = new QualifiedName($table->getName(), $schema);
                     }
                     $like = $where = null;
                     if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
@@ -546,9 +546,9 @@ class ShowCommandsParser
                     $full = (bool) $tokenList->mayConsumeKeyword(Keyword::FULL);
                     $tokenList->consumeKeyword(Keyword::COLUMNS);
                     $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
-                    $database = null;
+                    $schema = null;
                     if ($tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                        $database = $tokenList->consumeName();
+                        $schema = $tokenList->consumeName();
                     }
                     $like = $where = null;
                     if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
@@ -557,7 +557,7 @@ class ShowCommandsParser
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
 
-                    return new ShowTablesCommand($database, $full, $like, $where);
+                    return new ShowTablesCommand($schema, $full, $like, $where);
                 } else {
                     // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
                     $tokenList->expectedAnyKeyword(

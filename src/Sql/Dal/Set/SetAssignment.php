@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dal\Set;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Scope;
 use SqlFtw\Sql\SqlSerializable;
 use function get_class;
@@ -38,13 +39,13 @@ class SetAssignment implements SqlSerializable
 
     /**
      * @param string $variable
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|string|int|float|null $expression
+     * @param \SqlFtw\Sql\Expression\ExpressionNode|string|int|float $expression
      * @param \SqlFtw\Sql\Scope|null $scope
      */
     public function __construct(string $variable, $expression, ?Scope $scope = null)
     {
-        if (!$expression instanceof ExpressionNode && (!is_scalar($expression) || $expression === null)) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf(
+        if (!$expression instanceof ExpressionNode && !is_scalar($expression)) {
+            throw new InvalidDefinitionException(sprintf(
                 'ExpressionNode assigned to variable must be a scalar value or an ExpressionNode. %s given.',
                 gettype($expression) === 'object' ? get_class($expression) : ucfirst(gettype($expression))
             ));

@@ -324,7 +324,7 @@ class TableReflection
         $name = $trigger->getName();
         $trigger = $this->findTrigger($name);
         if ($trigger !== null) {
-            throw new \SqlFtw\Reflection\TriggerAlreadyExistsException($name, $this->name->getSchema());
+            throw new TriggerAlreadyExistsException($name, $this->name->getSchema());
         }
         $that->triggers[$trigger->getName()->getName()] = $trigger;
 
@@ -347,7 +347,7 @@ class TableReflection
         $name = $column->getName();
         $currentColumn = $this->findColumn($name);
         if ($currentColumn !== null) {
-            throw new \SqlFtw\Reflection\ColumnAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
+            throw new ColumnAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
         }
         $this->columns[$column->getName()] = new ColumnReflection($this, $column);
         if ($column->getIndexType() !== null) {
@@ -366,7 +366,7 @@ class TableReflection
         } else {
             $currentIndex = $this->findIndex($name);
             if ($currentIndex !== null) {
-                throw new \SqlFtw\Reflection\IndexAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
+                throw new IndexAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
             }
             $this->indexes[$name] = $index;
         }
@@ -385,7 +385,7 @@ class TableReflection
         if ($name !== null) {
             $currentForeignKey = $this->findForeignKey($name);
             if ($currentForeignKey !== null) {
-                throw new \SqlFtw\Reflection\ForeignKeyAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
+                throw new ForeignKeyAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
             }
         } else {
             $name = $this->database->getPlatform()->getNamingStrategy()->createForeignKeyName($this, $foreignKey->getColumns());
@@ -465,7 +465,7 @@ class TableReflection
     {
         $column = $this->columns[$name] ?? null;
         if ($column === null) {
-            throw new \SqlFtw\Reflection\ColumnDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
+            throw new ColumnDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
         }
 
         return $column;
@@ -488,7 +488,7 @@ class TableReflection
     {
         $index = $this->indexes[$name] ?? null;
         if ($index === null) {
-            throw new \SqlFtw\Reflection\IndexDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
+            throw new IndexDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
         }
 
         return $index;
@@ -511,7 +511,7 @@ class TableReflection
     {
         $foreignKey = $this->foreignKeys[$name] ?? null;
         if ($foreignKey === null) {
-            throw new \SqlFtw\Reflection\ForeignKeyDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
+            throw new ForeignKeyDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
         }
 
         return $foreignKey;
@@ -534,7 +534,7 @@ class TableReflection
     {
         $trigger = $this->triggers[$name] ?? null;
         if ($trigger === null) {
-            throw new \SqlFtw\Reflection\TriggerDoesNotExistException($name, $this->name->getSchema());
+            throw new TriggerDoesNotExistException($name, $this->name->getSchema());
         }
         return $trigger;
     }

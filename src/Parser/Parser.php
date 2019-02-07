@@ -68,7 +68,7 @@ class Parser
         $tokens = $this->lexer->tokenizeAll($sql);
         $tokenLists = $this->slice($tokens);
         if (count($tokenLists) > 1) {
-            throw new \SqlFtw\Parser\ParserException('More than one command found in given SQL code.');
+            throw new ParserException('More than one command found in given SQL code.');
         }
         return $this->parseTokenList($tokenLists[0]);
     }

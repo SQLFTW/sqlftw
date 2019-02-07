@@ -58,7 +58,7 @@ abstract class LoadCommand implements DmlCommand
      * @param \SqlFtw\Sql\QualifiedName $table
      * @param \SqlFtw\Sql\Charset|null $charset
      * @param string[]|null $fields
-     * @param string[]|null $setters
+     * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $setters
      * @param int|null $ignoreRows
      * @param \SqlFtw\Sql\Dml\Load\LoadPriority|null $priority
      * @param bool $local
@@ -112,7 +112,7 @@ abstract class LoadCommand implements DmlCommand
             $result .= ' PARTITION (' . $formatter->formatNamesList($this->partitions) . ')';
         }
         if ($this->charset !== null) {
-            $result .= ' CHARACTER SET ' . $formatter->formatString($this->charset);
+            $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
         }
         $result .= $this->serializeFormat($formatter);
         if ($this->ignoreRows !== null) {

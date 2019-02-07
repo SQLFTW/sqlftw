@@ -10,6 +10,8 @@
 namespace SqlFtw\Reflection\Context;
 
 use AlterExecutor\Database\SimplePdo;
+use PDOException;
+use SqlFtw\Reflection\TableDoesNotExistException;
 
 class DatabaseContextProvider ///implements \SqlFtw\Reflection\ContextProvider
 {
@@ -28,9 +30,9 @@ class DatabaseContextProvider ///implements \SqlFtw\Reflection\ContextProvider
     {
         try {
             return (string) $this->connection->query('SHOW CREATE TABLE %.%', $schema, $tableName)->fetchColumn('Create Table');
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             if ($e->getCode() === self::TABLE_NOT_FOUND) {
-                throw new \AlterExecutor\Validation\TableDoesNotExistException($schema, $tableName, '', $e);
+                throw new TableDoesNotExistException($schema, $tableName, '', $e);
             }
             throw $e;
         }

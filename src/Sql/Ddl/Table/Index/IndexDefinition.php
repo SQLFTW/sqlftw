@@ -18,6 +18,7 @@ use function count;
 use function is_int;
 use function is_string;
 use function sprintf;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class IndexDefinition implements TableItem, ConstraintBody
 {
@@ -50,7 +51,7 @@ class IndexDefinition implements TableItem, ConstraintBody
         ?IndexOptions $options = null
     ) {
         if (count($columns) < 1) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Index must contain at least one column. None given.');
+            throw new InvalidDefinitionException('Index must contain at least one column. None given.');
         }
 
         $this->name = $name;
@@ -106,7 +107,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     private function addColumn(string $columnName, IndexColumn $column): void
     {
         if (isset($this->columns[$columnName])) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf('Column `%s` is already added to the index.', $columnName));
+            throw new InvalidDefinitionException(sprintf('Column `%s` is already added to the index.', $columnName));
         }
         $this->columns[$columnName] = $column;
     }

@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\CombineIterator;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
 use function array_values;
@@ -40,7 +41,7 @@ class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
         Check::array($newTables, 1);
         Check::itemsOfType($newTables, QualifiedName::class);
         if (count($tables) !== count($newTables)) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Count of old table names and new table names do not match.');
+            throw new InvalidDefinitionException('Count of old table names and new table names do not match.');
         }
 
         $this->tables = array_values($tables);

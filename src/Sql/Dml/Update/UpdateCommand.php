@@ -18,6 +18,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use function count;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class UpdateCommand implements DmlCommand
 {
@@ -67,7 +68,7 @@ class UpdateCommand implements DmlCommand
             Check::itemsOfType($orderBy, OrderByExpression::class);
         }
         if ($tableReferences instanceof TableReferenceList && count($tableReferences) > 1 && ($orderBy !== null || $limit !== null)) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('ORDER BY and LIMIT must not be set, when more table references are used.');
+            throw new InvalidDefinitionException('ORDER BY and LIMIT must not be set, when more table references are used.');
         }
 
         $this->tableReferences = $tableReferences;

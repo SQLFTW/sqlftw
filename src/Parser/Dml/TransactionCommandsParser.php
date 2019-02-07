@@ -179,15 +179,15 @@ class TransactionCommandsParser
                 $tokenList->consumeKeyword(Keyword::LEVEL);
                 if ($tokenList->mayConsumeKeyword(Keyword::REPEATABLE)) {
                     $tokenList->consumeKeyword(Keyword::READ);
-                    $isolationLevel = TransactionIsolationLevel::get(TransactionIsolationLevel::REPEATABLE_READ);
+                    $isolationLevel = TransactionIsolationLevel::REPEATABLE_READ;
                 } elseif ($tokenList->mayConsumeKeyword(Keyword::SERIALIZABLE)) {
-                    $isolationLevel = TransactionIsolationLevel::get(TransactionIsolationLevel::SERIALIZABLE);
+                    $isolationLevel = TransactionIsolationLevel::SERIALIZABLE;
                 } else {
                     $tokenList->consumeKeyword(Keyword::READ);
                     $level = $tokenList->consumeAnyKeyword(Keyword::COMMITTED, Keyword::UNCOMMITTED);
                     $isolationLevel = $level === Keyword::COMMITTED
-                        ? TransactionIsolationLevel::get(TransactionIsolationLevel::READ_COMMITTED)
-                        : TransactionIsolationLevel::get(TransactionIsolationLevel::READ_UNCOMMITTED);
+                        ? TransactionIsolationLevel::READ_COMMITTED
+                        : TransactionIsolationLevel::READ_UNCOMMITTED;
                 }
             } elseif ($tokenList->mayConsumeKeyword(Keyword::READ)) {
                 if ($tokenList->mayConsumeKeyword(Keyword::WRITE)) {

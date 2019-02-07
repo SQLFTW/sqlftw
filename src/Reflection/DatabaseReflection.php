@@ -104,7 +104,7 @@ class DatabaseReflection
 
             $reflection = $this->findTable($name, $schema);
             if ($reflection !== null) {
-                throw new \SqlFtw\Reflection\TableAlreadyExistsException($name, $schema);
+                throw new TableAlreadyExistsException($name, $schema);
             }
 
             $reflection = new TableReflection($that, new QualifiedName($name, $schema), $command);
@@ -131,7 +131,7 @@ class DatabaseReflection
                 $newSchema = $newTable->getSchema() ?: $this->currentSchema;
                 $newReflection = $this->findTable($newName, $newSchema);
                 if ($newReflection !== null) {
-                    throw new \SqlFtw\Reflection\TableAlreadyExistsException($newTable->getName(), $newSchema);
+                    throw new TableAlreadyExistsException($newTable->getName(), $newSchema);
                 }
 
                 $that->tables[$newSchema][$newName] = $reflection->alter($command);
@@ -161,7 +161,7 @@ class DatabaseReflection
                 $newSchema = $newTable->getSchema() ?: $this->currentSchema;
                 $newReflection = $this->findTable($newName, $newSchema);
                 if ($newReflection !== null) {
-                    throw new \SqlFtw\Reflection\TableAlreadyExistsException($newTable, $newSchema);
+                    throw new TableAlreadyExistsException($newTable->getName(), $newSchema);
                 }
 
                 $that->tables[$newSchema][$newName] = $reflection->rename($command);
@@ -218,7 +218,7 @@ class DatabaseReflection
 
             $reflection = $this->findView($name, $schema);
             if ($reflection !== null) {
-                throw new \SqlFtw\Reflection\ViewAlreadyExistsException($name, $schema);
+                throw new ViewAlreadyExistsException($name, $schema);
             }
 
             $reflection = new ViewReflection(new QualifiedName($name, $schema), $command);
@@ -261,11 +261,11 @@ class DatabaseReflection
 
             $reflection = $this->findFunction($name, $schema);
             if ($reflection !== null) {
-                throw new \SqlFtw\Reflection\FunctionAlreadyExistsException($name, $schema);
+                throw new FunctionAlreadyExistsException($name, $schema);
             }
             $reflection = $this->findProcedure($name, $schema);
             if ($reflection !== null) {
-                throw new \SqlFtw\Reflection\ProcedureAlreadyExistsException($name, $schema);
+                throw new ProcedureAlreadyExistsException($name, $schema);
             }
 
             $reflection = new FunctionReflection(new QualifiedName($name, $schema), $command);
@@ -308,11 +308,11 @@ class DatabaseReflection
 
             $reflection = $this->findFunction($name, $schema);
             if ($reflection !== null) {
-                throw new \SqlFtw\Reflection\FunctionAlreadyExistsException($name, $schema);
+                throw new FunctionAlreadyExistsException($name, $schema);
             }
             $reflection = $this->findProcedure($name, $schema);
             if ($reflection !== null) {
-                throw new \SqlFtw\Reflection\ProcedureAlreadyExistsException($name, $schema);
+                throw new ProcedureAlreadyExistsException($name, $schema);
             }
 
             $reflection = new ProcedureReflection(new QualifiedName($name, $schema), $command);
@@ -357,7 +357,7 @@ class DatabaseReflection
             $tableReflection = $this->getTable($tableName, $schema);
             $reflection = $this->findTrigger($name, $schema);
             if ($reflection !== null) {
-                throw new \SqlFtw\Reflection\TriggerAlreadyExistsException($name, $schema);
+                throw new TriggerAlreadyExistsException($name, $schema);
             }
 
             $reflection = new TriggerReflection(new QualifiedName($name, $schema), $command);
@@ -396,7 +396,7 @@ class DatabaseReflection
 
             $reflection = $this->findEvent($name, $schema);
             if ($reflection !== null) {
-                throw new \SqlFtw\Reflection\EventAlreadyExistsException($name, $schema);
+                throw new EventAlreadyExistsException($name, $schema);
             }
 
             $reflection = new EventReflection(new QualifiedName($name, $schema), $command);
@@ -436,7 +436,7 @@ class DatabaseReflection
             $name = $command->getName();
             $schema = $this->findSchema($name);
             if ($schema !== null) {
-                throw new \SqlFtw\Reflection\SchemaAlreadyExistsException($name);
+                throw new SchemaAlreadyExistsException($name);
             }
 
             $reflection = new SchemaReflection($name, $command);
@@ -510,7 +510,7 @@ class DatabaseReflection
         $previous = $this->history->schemas[$name] ?? null;
         if ($previous !== null) {
             if ($previous->wasDropped()) {
-                throw new \SqlFtw\Reflection\SchemaWasDroppedException($previous);
+                throw new SchemaWasDroppedException($previous);
             }
         }
 
@@ -525,7 +525,7 @@ class DatabaseReflection
     {
         try {
             return $this->getSchema($name);
-        } catch (\SqlFtw\Reflection\SchemaDoesNotExistException $e) {
+        } catch (SchemaDoesNotExistException $e) {
             return null;
         }
     }
@@ -554,9 +554,9 @@ class DatabaseReflection
         $previous = $this->history->tables[$schema][$name] ?? null;
         if ($previous !== null) {
             if ($previous->wasDropped()) {
-                throw new \SqlFtw\Reflection\TableWasDroppedException($previous);
+                throw new TableWasDroppedException($previous);
             } elseif ($previous->wasMoved()) {
-                throw new \SqlFtw\Reflection\TableWasMovedException($previous);
+                throw new TableWasMovedException($previous);
             }
         }
 
@@ -571,7 +571,7 @@ class DatabaseReflection
     {
         try {
             return $this->getTable($name, $schema);
-        } catch (\SqlFtw\Reflection\TableDoesNotExistException $e) {
+        } catch (TableDoesNotExistException $e) {
             return null;
         }
     }
@@ -600,7 +600,7 @@ class DatabaseReflection
         $previous = $this->history->views[$schema][$name] ?? null;
         if ($previous !== null) {
             if ($previous->wasDropped()) {
-                throw new \SqlFtw\Reflection\ViewWasDroppedException($previous);
+                throw new ViewWasDroppedException($previous);
             }
         }
 
@@ -615,7 +615,7 @@ class DatabaseReflection
     {
         try {
             return $this->getView($name, $schema);
-        } catch (\SqlFtw\Reflection\ViewDoesNotExistException $e) {
+        } catch (ViewDoesNotExistException $e) {
             return null;
         }
     }
@@ -644,7 +644,7 @@ class DatabaseReflection
         $previous = $this->history->functions[$schema][$name] ?? null;
         if ($previous !== null) {
             if ($previous->wasDropped()) {
-                throw new \SqlFtw\Reflection\FunctionWasDroppedException($previous);
+                throw new FunctionWasDroppedException($previous);
             }
         }
 
@@ -659,7 +659,7 @@ class DatabaseReflection
     {
         try {
             return $this->getFunction($name, $schema);
-        } catch (\SqlFtw\Reflection\FunctionDoesNotExistException $e) {
+        } catch (FunctionDoesNotExistException $e) {
             return null;
         }
     }
@@ -688,7 +688,7 @@ class DatabaseReflection
         $previous = $this->history->procedures[$schema][$name] ?? null;
         if ($previous !== null) {
             if ($previous->wasDropped()) {
-                throw new \SqlFtw\Reflection\ProcedureWasDroppedException($previous);
+                throw new ProcedureWasDroppedException($previous);
             }
         }
 
@@ -703,7 +703,7 @@ class DatabaseReflection
     {
         try {
             return $this->getProcedure($name, $schema);
-        } catch (\SqlFtw\Reflection\ProcedureDoesNotExistException $e) {
+        } catch (ProcedureDoesNotExistException $e) {
             return null;
         }
     }
@@ -732,7 +732,7 @@ class DatabaseReflection
         $previous = $this->history->triggers[$schema][$name] ?? null;
         if ($previous !== null) {
             if ($previous->wasDropped()) {
-                throw new \SqlFtw\Reflection\TriggerWasDroppedException($previous);
+                throw new TriggerWasDroppedException($previous);
             }
         }
 
@@ -747,7 +747,7 @@ class DatabaseReflection
     {
         try {
             return $this->getTrigger($name, $schema);
-        } catch (\SqlFtw\Reflection\TriggerDoesNotExistException $e) {
+        } catch (TriggerDoesNotExistException $e) {
             return null;
         }
     }
@@ -776,7 +776,7 @@ class DatabaseReflection
         $previous = $this->history->events[$schema][$name] ?? null;
         if ($previous !== null) {
             if ($previous->wasDropped()) {
-                throw new \SqlFtw\Reflection\EventWasDroppedException($previous);
+                throw new EventWasDroppedException($previous);
             }
         }
 
@@ -791,7 +791,7 @@ class DatabaseReflection
     {
         try {
             return $this->getEvent($name, $schema);
-        } catch (\SqlFtw\Reflection\EventDoesNotExistException $e) {
+        } catch (EventDoesNotExistException $e) {
             return null;
         }
     }

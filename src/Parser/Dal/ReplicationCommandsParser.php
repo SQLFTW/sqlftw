@@ -9,9 +9,11 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
@@ -113,6 +115,9 @@ class ReplicationCommandsParser
                             $tokenList->consume(TokenType::COMMA);
                         }
                     } while (true);
+                    break;
+                default:
+                    throw new ShouldNotHappenException('Unknown type');
             }
             $options[$option->getValue()] = $value;
         } while ($tokenList->mayConsumeComma());
@@ -289,12 +294,12 @@ class ReplicationCommandsParser
         $tokenList->consumeKeywords(Keyword::START, Keyword::SLAVE);
 
         $threadTypes = null;
-        /** @var \SqlFtw\Sql\Dal\Replication\ReplicationThreadType $threadType */
+        /** @var \SqlFtw\Sql\Dal\Replication\ReplicationThreadType $threadType|null */
         $threadType = $tokenList->mayConsumeKeywordEnum(ReplicationThreadType::class);
         if ($threadType !== null) {
             $threadTypes = [$threadType];
             while ($tokenList->mayConsumeComma()) {
-                $threadTypes[] = $tokenList->mayConsumeKeywordEnum(ReplicationThreadType::class);
+                $threadTypes[] = $tokenList->consumeKeywordEnum(ReplicationThreadType::class);
             }
         }
 
@@ -387,7 +392,7 @@ class ReplicationCommandsParser
         $empty = $tokenList->mayConsumeString();
         if ($empty !== null) {
             if ($empty !== '') {
-                throw new \SqlFtw\Parser\ParserException('Expected UUID or empty string.');
+                throw new ParserException('Expected UUID or empty string.');
             }
             return '';
         }

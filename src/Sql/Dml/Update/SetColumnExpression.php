@@ -11,15 +11,15 @@ namespace SqlFtw\Sql\Dml\Update;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 
 class SetColumnExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\ColumnName */
+    /** @var string */
     private $column;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
@@ -28,17 +28,17 @@ class SetColumnExpression implements SqlSerializable
     /** @var bool */
     private $default;
 
-    public function __construct(ColumnName $column, ?ExpressionNode $value = null, bool $default = false)
+    public function __construct(string $column, ?ExpressionNode $value = null, bool $default = false)
     {
         if (($value === null && $default === false) || ($value !== null && $default === true)) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Either a value expression or default must be set, but not both at once.');
+            throw new InvalidDefinitionException('Either a value expression or default must be set, but not both at once.');
         }
         $this->column = $column;
         $this->value = $value;
         $this->default = $default;
     }
 
-    public function getColumn(): ColumnName
+    public function getColumn(): string
     {
         return $this->column;
     }
@@ -55,7 +55,7 @@ class SetColumnExpression implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $this->column->serialize($formatter);
+        $result = $formatter->formatName($this->column);
         if ($this->value !== null) {
             $result .= ' = ' . $this->value->serialize($formatter);
         } else {

@@ -85,7 +85,7 @@ class EventCommandsParser
             $body = $this->doCommandsParser->parseDo($tokenList->resetPosition($tokenList->getPosition() - 1));
         }
 
-        return new AlterEventCommand($name, $schedule, $body, $definer, $state, $preserve, $newName, $comment);
+        return new AlterEventCommand($name, $schedule, $body, $definer, $state, $preserve, $comment, $newName);
     }
 
     /**

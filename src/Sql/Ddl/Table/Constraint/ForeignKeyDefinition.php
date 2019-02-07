@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use function count;
 
@@ -58,10 +59,10 @@ class ForeignKeyDefinition implements ConstraintBody
         ?string $indexName = null
     ) {
         if (count($columns) < 1 || count($sourceColumns) < 1) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('List of columns and source columns must not be empty.');
+            throw new InvalidDefinitionException('List of columns and source columns must not be empty.');
         }
         if (count($columns) !== count($sourceColumns)) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Number of foreign key columns and source columns does not match.');
+            throw new InvalidDefinitionException('Number of foreign key columns and source columns does not match.');
         }
 
         $this->columns = $columns;

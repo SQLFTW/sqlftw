@@ -343,7 +343,7 @@ class Lexer
                             }
                         }
                         if (!$ok) {
-                            throw new \SqlFtw\Parser\Lexer\EndOfCommentNotFoundException(''); ///
+                            throw new EndOfCommentNotFoundException(''); ///
                         }
 
                         if ($value[2] === '!') {
@@ -352,7 +352,8 @@ class Lexer
                             if ($this->settings->getPlatform()->hasOptionalComments()
                                 && ($versionId === 0 || $versionId <= $this->settings->getPlatform()->getVersion()->getId())
                             ) {
-                                ///
+                                /// todo
+                                $condition = 'todo';
                             } else {
                                 yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::OPTIONAL_COMMENT, $startPosition, $value);
                             }
@@ -540,7 +541,7 @@ class Lexer
                                 yield $previous = new Token(TokenType::VALUE | TokenType::BINARY_LITERAL, $startPosition, $bits, $orig, $condition);
                                 break;
                             } else {
-                                throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
+                                throw new ExpectedTokenNotFoundException(''); ///
                             }
                         }
                         break;
@@ -584,12 +585,12 @@ class Lexer
                                 $column++;
                                 $orig = $char . '\'' . $bits . '\'';
                                 if ((strlen($bits) % 2) === 1) {
-                                    throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
+                                    throw new ExpectedTokenNotFoundException(''); ///
                                 }
                                 yield $previous = new Token(TokenType::VALUE | TokenType::HEXADECIMAL_LITERAL, $startPosition, strtolower($bits), $orig, $condition);
                                 break;
                             } else {
-                                throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
+                                throw new ExpectedTokenNotFoundException(''); ///
                             }
                         }
                         break;
@@ -681,7 +682,7 @@ class Lexer
                             }
                         }
                         if ($del === '') {
-                            throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
+                            throw new ExpectedTokenNotFoundException(''); ///
                         }
                         $delimiter = $del;
                         $this->settings->setDelimiter($delimiter);
@@ -694,7 +695,7 @@ class Lexer
                     /// charset declaration
                 default:
                     if (ord($char) < 32) {
-                        throw new \SqlFtw\Parser\Lexer\InvalidCharacterException($char, $startPosition, ''); ///
+                        throw new InvalidCharacterException($char, $startPosition, ''); ///
                     }
                     $value = $char;
                     while ($position < $length) {
@@ -782,7 +783,7 @@ class Lexer
             }
         }
         if (!$finished) {
-            throw new \SqlFtw\Parser\Lexer\EndOfStringNotFoundException(''); ///
+            throw new EndOfStringNotFoundException(''); ///
         }
         $orig = implode('', $orig);
         $value = $this->unescapeString($orig, $quote);
@@ -854,6 +855,7 @@ class Lexer
         $base = $start;
         do {
             // integer
+            $next = '';
             while ($position + $offset < $length) {
                 $next = $string[$position + $offset];
                 if (isset(self::$numbersKey[$next])) {
@@ -917,13 +919,13 @@ class Lexer
                             $expComplete = true;
                         } else {
                             if (strlen(trim($exp, 'e+-')) < 1 && strpos($base, '.') !== false) {
-                                throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
+                                throw new ExpectedTokenNotFoundException(''); ///
                             }
                             break;
                         }
                     }
                     if (!$expComplete) {
-                        throw new \SqlFtw\Parser\Lexer\ExpectedTokenNotFoundException(''); ///
+                        throw new ExpectedTokenNotFoundException(''); ///
                     }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                     $num = false;

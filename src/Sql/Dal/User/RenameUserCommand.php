@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\CombineIterator;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\UserName;
 use function array_values;
 use function count;
@@ -39,7 +40,7 @@ class RenameUserCommand implements UserCommand
         Check::array($newUsers, 1);
         Check::itemsOfType($newUsers, UserName::class);
         if (count($users) !== count($newUsers)) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Count of old user names and new user names do not match.');
+            throw new InvalidDefinitionException('Count of old user names and new user names do not match.');
         }
 
         $this->users = array_values($users);

@@ -526,10 +526,6 @@ class ExpressionParser
         return new MatchExpression($columns, $query, $mode, $expansion);
     }
 
-    /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return string[]|null[]|null (string|null $database, string|null $tableOrAlias, string $name)
-     */
     public function parseColumnName(TokenList $tokenList): ColumnName
     {
         $first = $tokenList->consumeName();
@@ -694,7 +690,7 @@ class ExpressionParser
                 $decimalPart
             ));
         } else {
-            throw new \SqlFtw\Parser\ParserException(sprintf('Invalid datetime value "%s"', $string));
+            throw new ParserException(sprintf('Invalid datetime value "%s"', $string));
         }
     }
 

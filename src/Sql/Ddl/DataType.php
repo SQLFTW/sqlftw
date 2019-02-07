@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use function count;
 use function implode;
@@ -35,7 +36,7 @@ class DataType implements SqlSerializable
     /** @var string[]|null */
     private $values;
 
-    /** @var bool|null */
+    /** @var bool */
     private $unsigned;
 
     /** @var bool */
@@ -50,7 +51,7 @@ class DataType implements SqlSerializable
     /**
      * @param \SqlFtw\Sql\Ddl\BaseType $type
      * @param int|int[]|string[]|null $params
-     * @param bool|null $unsigned
+     * @param bool $unsigned
      * @param \SqlFtw\Sql\Charset|null $charset
      * @param \SqlFtw\Sql\Collation|null $collation
      * @param bool $zerofill
@@ -64,16 +65,16 @@ class DataType implements SqlSerializable
         bool $zerofill = false
     ) {
         if ($unsigned && !$type->isNumber()) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-numeric columns cannot be unsigned.');
+            throw new InvalidDefinitionException('Non-numeric columns cannot be unsigned.');
         }
         if ($zerofill && !$type->isNumber()) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-numeric columns cannot be zerofill.');
+            throw new InvalidDefinitionException('Non-numeric columns cannot be zerofill.');
         }
         if ($charset !== null && !$type->isText()) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-textual columns cannot have charset.');
+            throw new InvalidDefinitionException('Non-textual columns cannot have charset.');
         }
         if ($collation !== null && !$type->isText()) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Non-textual columns cannot have collation.');
+            throw new InvalidDefinitionException('Non-textual columns cannot have collation.');
         }
 
         $this->type = $type;
@@ -92,32 +93,32 @@ class DataType implements SqlSerializable
     {
         if ($type->isDecimal()) {
             if (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1])) {
-                throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf('Two integer size parameters required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException(sprintf('Two integer size parameters required for type "%s".', $type->getValue()));
             }
             $this->size = $params;
         } elseif ($type->isFloatingPointNumber()) {
             if ($params !== null && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
-                throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf('Two integer size parameters required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException(sprintf('Two integer size parameters required for type "%s".', $type->getValue()));
             }
             $this->size = $params;
         } elseif ($type->isInteger()) {
             if ($params !== null && !is_int($params)) {
-                throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf('An integer size parameter or null required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException(sprintf('An integer size parameter or null required for type "%s".', $type->getValue()));
             }
             /** @var int $params */
             $this->size = $params;
         } elseif ($type->needsLength()) {
             if (!is_int($params)) {
-                throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf('An integer size parameter required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException(sprintf('An integer size parameter required for type "%s".', $type->getValue()));
             }
             $this->size = $params;
         } elseif ($type->hasValues()) {
             if (!is_array($params)) {
-                throw new \SqlFtw\Sql\InvalidDefinitionException(sprintf('List of values required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException(sprintf('List of values required for type "%s".', $type->getValue()));
             }
             $this->values = $params;
         } elseif ($params !== null) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Type parameters do not match data type.');
+            throw new InvalidDefinitionException('Type parameters do not match data type.');
         }
     }
 
@@ -157,7 +158,7 @@ class DataType implements SqlSerializable
 
     public function isUnsigned(): bool
     {
-        return (bool) $this->unsigned;
+        return $this->unsigned;
     }
 
     public function getCharset(): ?Charset

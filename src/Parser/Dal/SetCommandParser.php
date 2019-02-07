@@ -50,6 +50,7 @@ class SetCommandParser
 
         $assignments = [];
         do {
+            /** @var \SqlFtw\Sql\Scope $scope */
             $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
             if ($scope !== null) {
                 $variable = $tokenList->consumeKeywordEnum(SystemVariable::class);

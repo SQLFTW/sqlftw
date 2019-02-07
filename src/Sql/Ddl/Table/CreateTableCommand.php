@@ -17,6 +17,7 @@ use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use function is_array;
 
@@ -70,7 +71,7 @@ class CreateTableCommand implements AnyCreateTableCommand
     ) {
         Check::types($options, [TableOptionsList::class, Type::PHP_ARRAY, Type::NULL]);
         if ($duplicateOption !== null && $select === null) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('IGNORE/REPLACE can be uses only with CREATE TABLE AS ... command.');
+            throw new InvalidDefinitionException('IGNORE/REPLACE can be uses only with CREATE TABLE AS ... command.');
         }
 
         $this->table = $table;

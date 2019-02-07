@@ -115,6 +115,7 @@ class SqlMode extends StringSet
 
     public static function getFromString(string $string): self
     {
+        /** @var string[] $parts */
         $parts = explode('', $string);
         $items = [];
         foreach ($parts as $part) {

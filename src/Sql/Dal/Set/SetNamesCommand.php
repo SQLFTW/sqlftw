@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class SetNamesCommand implements CharsetCommand
 {
@@ -27,7 +28,7 @@ class SetNamesCommand implements CharsetCommand
     public function __construct(?Charset $charset, ?Collation $collation)
     {
         if ($charset === null && $collation !== null) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Cannot set collation, when charset is not set.');
+            throw new InvalidDefinitionException('Cannot set collation, when charset is not set.');
         }
         $this->charset = $charset;
         $this->collation = $collation;

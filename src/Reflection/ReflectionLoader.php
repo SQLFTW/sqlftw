@@ -20,6 +20,7 @@ use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use function count;
+use Throwable;
 
 class ReflectionLoader
 {
@@ -46,21 +47,21 @@ class ReflectionLoader
     {
         try {
             $sql = $this->provider->getCreateTable($schema, $name);
-        } catch (\SqlFtw\Reflection\TableDoesNotExistException $e) {
+        } catch (TableDoesNotExistException $e) {
             throw $e;
-        } catch (\Throwable $e) {
-            throw new \SqlFtw\Reflection\TableReflectionLoadingException($name, $schema, 'Loading error.', $e);
+        } catch (Throwable $e) {
+            throw new TableReflectionLoadingException($name, $schema, 'Loading error.', $e);
         }
 
         /** @var \SqlFtw\Sql\Ddl\Table\CreateTableCommand[] $commands */
         $commands = $this->parser->parse($sql);
 
         if (count($commands) > 1) {
-            throw new \SqlFtw\Reflection\TableReflectionLoadingException($name, $schema, 'More than one command parsed. One CREATE TABLE command expected.');
+            throw new TableReflectionLoadingException($name, $schema, 'More than one command parsed. One CREATE TABLE command expected.');
         } elseif (count($commands) < 1) {
-            throw new \SqlFtw\Reflection\TableReflectionLoadingException($name, $schema, 'No command parsed. One CREATE TABLE command expected.');
+            throw new TableReflectionLoadingException($name, $schema, 'No command parsed. One CREATE TABLE command expected.');
         } elseif (!$commands[0] instanceof CreateTableCommand) {
-            throw new \SqlFtw\Reflection\TableReflectionLoadingException($name, $schema, 'Unexpected command parsed. One CREATE TABLE command expected.');
+            throw new TableReflectionLoadingException($name, $schema, 'Unexpected command parsed. One CREATE TABLE command expected.');
         }
 
         return $commands[0];
@@ -70,21 +71,21 @@ class ReflectionLoader
     {
         try {
             $sql = $this->provider->getCreateTable($schema, $name);
-        } catch (\SqlFtw\Reflection\TableDoesNotExistException $e) {
+        } catch (TableDoesNotExistException $e) {
             throw $e;
-        } catch (\Throwable $e) {
-            throw new \SqlFtw\Reflection\ViewReflectionLoadingException($name, $schema, 'Loading error.', $e);
+        } catch (Throwable $e) {
+            throw new ViewReflectionLoadingException($name, $schema, 'Loading error.', $e);
         }
 
         /** @var \SqlFtw\Sql\Ddl\View\CreateViewCommand[] $commands */
         $commands = $this->parser->parse($sql);
 
         if (count($commands) > 1) {
-            throw new \SqlFtw\Reflection\ViewReflectionLoadingException($name, $schema, 'More than one command parsed. One CREATE VIEW command expected.');
+            throw new ViewReflectionLoadingException($name, $schema, 'More than one command parsed. One CREATE VIEW command expected.');
         } elseif (count($commands) < 1) {
-            throw new \SqlFtw\Reflection\ViewReflectionLoadingException($name, $schema, 'No command parsed. One CREATE VIEW command expected.');
-        } elseif (!$commands[0] instanceof CreateTableCommand) {
-            throw new \SqlFtw\Reflection\ViewReflectionLoadingException($name, $schema, 'Unexpected command parsed. One CREATE VIEW command expected.');
+            throw new ViewReflectionLoadingException($name, $schema, 'No command parsed. One CREATE VIEW command expected.');
+        } elseif (!$commands[0] instanceof CreateViewCommand) {
+            throw new ViewReflectionLoadingException($name, $schema, 'Unexpected command parsed. One CREATE VIEW command expected.');
         }
 
         return $commands[0];

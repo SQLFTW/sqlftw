@@ -17,6 +17,7 @@ use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 
 class DeleteCommand implements DmlCommand
@@ -77,10 +78,10 @@ class DeleteCommand implements DmlCommand
             Check::itemsOfType($orderBy, OrderByExpression::class);
         }
         if ($references !== null && $partitions !== null) {
-            throw new \SqlFtw\Sql\InvalidDefinitionException('Either table references or partition may be set. Not both a once.');
+            throw new InvalidDefinitionException('Either table references or partition may be set. Not both a once.');
         } elseif ($references !== null) {
             if ($orderBy !== null || $limit !== null) {
-                throw new \SqlFtw\Sql\InvalidDefinitionException('ORDER BY and LIMIT must not be set, when table references are used.');
+                throw new InvalidDefinitionException('ORDER BY and LIMIT must not be set, when table references are used.');
             }
         } elseif ($partitions !== null) {
             Check::itemsOfType($partitions, Type::STRING);

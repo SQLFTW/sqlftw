@@ -99,7 +99,7 @@ class ColumnDefinition implements TableItem
     /**
      * @param string $name
      * @param \SqlFtw\Sql\Ddl\DataType $type
-     * @param string $expression
+     * @param \SqlFtw\Sql\Expression\ExpressionNode $expression
      * @param \SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType $generatedColumnType
      * @param bool $nullable
      * @param string|null $comment

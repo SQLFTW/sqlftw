@@ -74,9 +74,11 @@ class DatabaseCommandsParser
         if ($token === Keyword::CHARACTER) {
             $tokenList->consumeKeyword(Keyword::SET);
             $tokenList->mayConsumeOperator(Operator::EQUAL);
+            /** @var \SqlFtw\Sql\Charset $charset */
             $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
         } else {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
+            /** @var \SqlFtw\Sql\Collation $collation */
             $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
         }
 
@@ -85,9 +87,11 @@ class DatabaseCommandsParser
             if ($token === Keyword::CHARACTER) {
                 $tokenList->consumeKeyword(Keyword::SET);
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+                /** @var \SqlFtw\Sql\Charset $charset */
                 $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
             } else {
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+                /** @var \SqlFtw\Sql\Collation $collation */
                 $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
             }
         }
