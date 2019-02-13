@@ -37,6 +37,9 @@ class SelectCommand implements DmlCommand
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $having;
 
+    /** @var \SqlFtw\Sql\Dml\Select\Window[]|null */
+    private $windows;
+
     /** @var \SqlFtw\Sql\Dml\OrderByExpression[]|null */
     private $orderBy;
 
@@ -67,6 +70,7 @@ class SelectCommand implements DmlCommand
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
      * @param \SqlFtw\Sql\Dml\Select\GroupByExpression[]|null $groupBy
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $having
+     * @param \SqlFtw\Sql\Dml\Select\Window[]|null $windows
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
@@ -82,6 +86,7 @@ class SelectCommand implements DmlCommand
         ?ExpressionNode $where = null,
         ?array $groupBy = null,
         ?ExpressionNode $having = null,
+        ?array $windows = null,
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null,
@@ -109,6 +114,7 @@ class SelectCommand implements DmlCommand
         $this->where = $where;
         $this->groupBy = $groupBy;
         $this->having = $having;
+        $this->windows = $windows;
         $this->orderBy = $orderBy;
         $this->limit = $limit;
         $this->offset = $offset;
@@ -153,6 +159,14 @@ class SelectCommand implements DmlCommand
     public function getHaving(): ?ExpressionNode
     {
         return $this->having;
+    }
+
+    /**
+     * @return \SqlFtw\Sql\Dml\Select\Window[]|null
+     */
+    public function getWindows(): ?array
+    {
+        return $this->windows;
     }
 
     /**
@@ -209,31 +223,37 @@ class SelectCommand implements DmlCommand
         }
 
         $result .= ' ' . $formatter->formatSerializablesList($this->columns);
-        $result .= ' FROM ' . $this->from->serialize($formatter);
+        $result .= "\nFROM " . $this->from->serialize($formatter);
 
         if ($this->where !== null) {
-            $result .= ' WHERE ' . $this->where->serialize($formatter);
+            $result .= "\nWHERE " . $this->where->serialize($formatter);
         }
         if ($this->groupBy !== null) {
-            $result .= ' GROUP BY ' . $formatter->formatSerializablesList($this->groupBy);
+            $result .= "\nGROUP BY " . $formatter->formatSerializablesList($this->groupBy, "\n\t");
+            if ($this->withRollup) {
+                $result .= "\n\tWITH ROLLUP";
+            }
         }
         if ($this->having !== null) {
-            $result .= ' HAVING ' . $this->having->serialize($formatter);
+            $result .= "\nHAVING " . $this->having->serialize($formatter);
+        }
+        if ($this->windows !== null) {
+            $result .= "\nWINDOW " . $formatter->formatSerializablesList($this->windows, "\n\t");
         }
         if ($this->orderBy !== null) {
-            $result .= ' ORDER BY ' . $formatter->formatSerializablesList($this->orderBy);
+            $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, "\n\t");
         }
         if ($this->limit !== null) {
-            $result .= ' LIMIT ' . $this->limit;
+            $result .= "\nLIMIT " . $this->limit;
             if ($this->offset !== null) {
-                $result .= ' OFFSET ' . $this->offset;
+                $result .= "\nOFFSET " . $this->offset;
             }
         }
         if ($this->into !== null) {
-            $result .= ' ' . $this->into->serialize($formatter);
+            $result .= "\n" . $this->into->serialize($formatter);
         }
         if ($this->locking !== null) {
-            $result .= ' ' . $this->locking->serialize($formatter);
+            $result .= "\n" . $this->locking->serialize($formatter);
         }
 
         return $result;
