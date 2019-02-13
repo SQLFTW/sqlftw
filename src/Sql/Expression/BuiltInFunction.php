@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\Arr;
 use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\SqlEnum;
+use function in_array;
 
 class BuiltInFunction extends SqlEnum implements Feature
 {
@@ -481,6 +481,20 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const VAR_SAMP = 'VAR_SAMP';
     public const VARIANCE = 'VARIANCE';
 
+    // window functions, since 8.0 (+SUM, AVG...)
+    public const CUME_DIST = 'CUME_DIST';
+    public const DENSE_RANK = 'DENSE_RANK';
+    public const FIRST_VALUE = 'FIRST_VALUE';
+    public const LAG = 'LAG';
+    public const LAST_VALUE = 'LAST_VALUE';
+    public const LEAD = 'LEAD';
+    public const NTH_VALUwE = 'NTH_VALUwE';
+    public const NTILE = 'NTILE';
+    public const PERCENT_RANK = 'PERCENT_RANK';
+    public const RANK = 'RANK';
+    public const ROW_NUMBER = 'ROW_NUMBER';
+
+    /** @var string[] */
     private static $namedParams = [
         self::CAST, // CAST(expr AS type)
 
@@ -517,6 +531,7 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::SUM, // SUM([DISTINCT] expr)
     ];
 
+    /** @var string[] */
     private static $aggregate = [
         self::ANY_VALUE,
         self::AVG,
@@ -540,6 +555,40 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::VARIANCE,
     ];
 
+    /** @var string[] */
+    private static $window = [
+        self::CUME_DIST,
+        self::DENSE_RANK,
+        self::FIRST_VALUE,
+        self::LAG,
+        self::LAST_VALUE,
+        self::LEAD,
+        self::NTH_VALUwE,
+        self::NTILE,
+        self::PERCENT_RANK,
+        self::RANK,
+        self::ROW_NUMBER,
+
+        self::AVG,
+        self::BIT_AND,
+        self::BIT_OR,
+        self::BIT_XOR,
+        self::COUNT,
+        self::JSON_ARRAYAGG,
+        self::JSON_OBJECTAGG,
+        self::MAX,
+        self::MIN,
+        self::STDDEV_POP,
+        self::STDDEV,
+        self::STD,
+        self::STDDEV_SAMP,
+        self::SUM,
+        self::VAR_POP,
+        self::VARIANCE,
+        self::VAR_SAMP,
+    ];
+
+    /** @var string[] */
     private static $bare = [
         self::CURRENT_TIME,
         self::CURRENT_DATE,
@@ -554,17 +603,22 @@ class BuiltInFunction extends SqlEnum implements Feature
 
     public function hasNamedParams(): bool
     {
-        return Arr::contains(self::$namedParams, $this->getValue());
+        return in_array($this->getValue(), self::$namedParams, true);
     }
 
     public function isAggregate(): bool
     {
-        return Arr::contains(self::$aggregate, $this->getValue());
+        return in_array($this->getValue(), self::$aggregate, true);
+    }
+
+    public function isWindow(): bool
+    {
+        return in_array($this->getValue(), self::$window, true);
     }
 
     public function isBare(): bool
     {
-        return Arr::contains(self::$bare, $this->getValue());
+        return in_array($this->getValue(), self::$bare, true);
     }
 
 }
