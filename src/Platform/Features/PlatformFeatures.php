@@ -121,10 +121,10 @@ abstract class PlatformFeatures
         } elseif ($feature instanceof Operator) {
             return $this->isOperator($feature->getValue());
         } elseif ($feature instanceof BuiltInFunction) {
-            ///
+            // todo: built in functions availability
             return false;
         } elseif ($feature instanceof SystemVariable) {
-            ///
+            // todo: system variables availability
             return false;
         } elseif ($feature instanceof BaseType) {
             return $this->isType($feature->getValue());

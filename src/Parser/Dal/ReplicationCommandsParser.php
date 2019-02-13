@@ -410,7 +410,7 @@ class ReplicationCommandsParser
                     $end = $tokenList->consumeInt();
                     // phpcs:ignore
                 } elseif ($end = $tokenList->mayConsumeInt()) {
-                    /// lexer returns "10-20" as tokens of int and negative int :/
+                    // todo: lexer returns "10-20" as tokens of int and negative int :/
                     $end = abs($end);
                 }
                 $intervals[] = [$start, $end];

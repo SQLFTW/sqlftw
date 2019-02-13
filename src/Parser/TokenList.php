@@ -427,7 +427,7 @@ class TokenList
 
     public function seek(int $type, int $maxOffset): ?Token
     {
-        /// todo
+        // todo: seek()
         throw new NotImplementedException('seek');
     }
 
@@ -500,7 +500,7 @@ class TokenList
 
     public function expectEnd(): void
     {
-        /// todo
+        // todo: expectEnd()
         throw new NotImplementedException('expectEnd');
     }
 

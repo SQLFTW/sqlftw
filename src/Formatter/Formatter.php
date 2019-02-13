@@ -67,7 +67,7 @@ class Formatter
 
     public function formatString(string $string): string
     {
-        /// replace entities (\n...)
+        // todo: replace entities (\n...)
         return "'" . str_replace("'", "''", $string) . "'";
     }
 

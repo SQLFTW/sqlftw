@@ -316,7 +316,7 @@ class Lexer
                         $position++;
                         $column++;
                         if ($condition !== null) {
-                            /// fail: starting comment inside a conditional comment
+                            // todo: fail - starting comment inside a conditional comment
                         }
                         //$column = $string->column;
                         //$row = $string->row;
@@ -352,7 +352,7 @@ class Lexer
                             if ($this->settings->getPlatform()->hasOptionalComments()
                                 && ($versionId === 0 || $versionId <= $this->settings->getPlatform()->getVersion()->getId())
                             ) {
-                                /// todo
+                                // todo: conditional comments
                                 $condition = 'todo';
                             } else {
                                 yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::OPTIONAL_COMMENT, $startPosition, $value);
@@ -611,7 +611,7 @@ class Lexer
                 case 'M':
                 case 'm':
                 case 'N':
-                    /// charset declaration
+                    // todo: charset declaration
                 case 'n':
                 case 'O':
                 case 'o':
@@ -692,7 +692,7 @@ class Lexer
                     }
                     break;
                 case '_':
-                    /// charset declaration
+                    // todo: charset declaration
                 default:
                     if (ord($char) < 32) {
                         throw new InvalidCharacterException($char, $startPosition, ''); ///
@@ -833,7 +833,7 @@ class Lexer
         if (!$this->settings->getMode()->contains(Mode::NO_BACKSLASH_ESCAPES)) {
             $string = str_replace(array_keys($translations), array_values($translations), $string);
 
-            ///
+            // todo: ???
         }
 
         return $string;

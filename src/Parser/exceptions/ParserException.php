@@ -14,6 +14,6 @@ use Dogma\Exception;
 class ParserException extends Exception
 {
 
-    ///
+    // todo: ParserException
 
 }

@@ -233,7 +233,6 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const VERSION = 'VERSION';
 
     // spatial
-    // @codingStandardsIgnoreStart
     public const Contains = 'Contains'; // removed in 8.0
     public const Disjoint = 'Disjoint'; // removed in 8.0
     public const Equals = 'Equals'; // removed in 8.0
@@ -401,7 +400,6 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const ST_Within = 'ST_Within';
     public const ST_X = 'ST_X';
     public const ST_Y = 'ST_Y';
-    // @codingStandardsIgnoreStart
 
     // JSON
     public const JSON_ARRAY = 'JSON_ARRAY';

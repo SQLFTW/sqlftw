@@ -127,7 +127,7 @@ class TypeParser
             } while ($tokenList->mayConsumeComma());
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         }/* elseif ($dataType->hasFsp() && $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
-            ///
+            // todo: fsp???
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         }*/
 

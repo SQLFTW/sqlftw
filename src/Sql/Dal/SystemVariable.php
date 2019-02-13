@@ -109,7 +109,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const HOSTNAME = 'hostname';
     public const IDENTITY = 'identity';
     public const IGNORE_BUILTIN_INNODB = 'ignore_builtin_innodb';
-    public const IGNORE_DB_DIRS = 'ignore_db_dirs'; /// removed in 8.0
+    public const IGNORE_DB_DIRS = 'ignore_db_dirs'; // removed in 8.0
     public const INIT_CONNECT = 'init_connect';
     public const INIT_FILE = 'init_file';
     public const INIT_SLAVE = 'init_slave';
@@ -485,7 +485,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const STORED_PROGRAM_CACHE = 'stored_program_cache';
     public const SUPER_READ_ONLY = 'super_read_only';
     public const SYNC_BINLOG = 'sync_binlog';
-    public const SYNC_FRM = 'sync_frm'; /// removed in 8.0
+    public const SYNC_FRM = 'sync_frm'; // removed in 8.0
     public const SYNC_MASTER_INFO = 'sync_master_info';
     public const SYNC_RELAY_LOG = 'sync_relay_log';
     public const SYNC_RELAY_LOG_INFO = 'sync_relay_log_info';

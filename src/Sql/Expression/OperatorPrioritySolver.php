@@ -26,7 +26,7 @@ class OperatorPrioritySolver
      */
     public function orderArithmeticOperators(ExpressionNode $node): ExpressionNode
     {
-        /// todo
+        // todo: operator priority
 
         return $node;
     }
@@ -40,7 +40,7 @@ class OperatorPrioritySolver
      */
     public function orderLogicOperators(ExpressionNode $node): ExpressionNode
     {
-        /// todo
+        // todo: operator priority
 
         return $node;
     }

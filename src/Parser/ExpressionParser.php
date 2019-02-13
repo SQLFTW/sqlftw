@@ -58,7 +58,9 @@ class ExpressionParser
     use StrictBehaviorMixin;
 
     private const PUNCTUATION = '[~`@#$%^&\'"\\\\=[\\]{}()<>;:,.?!_|\\/*+-]';
+
     private const INT_DATETIME_EXPRESSION = '/^(?:[1-9][0-9])?[0-9]{2}(?:0[1-9]|1[012])(?:0[1-9]|[12][0-9]|3[01])(?:[01][0-9]|2[0-3])(?:[0-5][0-9]){2}$/';
+
     private const STRING_DATETIME_EXPRESSION = '/^((?:[1-9][0-9])?[0-9]{2}'
         . self::PUNCTUATION . '(?:0[1-9]|1[012])'
         . self::PUNCTUATION . '(?:0[1-9]|[12][0-9]|3[01])'
@@ -398,7 +400,7 @@ class ExpressionParser
                 if ($variableName[1] === '@') {
                     // @@global.xyz
                     $tokenList->consume(TokenType::DOT);
-                    /// better type here
+                    // todo: better type here
                     $variableName .= '.' . $tokenList->consumeName();
                 }
                 $expression = new Identifier($variableName);
@@ -420,7 +422,7 @@ class ExpressionParser
 
                     } elseif ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
                         // function_call
-                        /// support for irregular arguments - eg "GROUP_CONCAT(DISTINCT foo ORDER BY bar)"
+                        // todo: support for irregular arguments - eg "GROUP_CONCAT(DISTINCT foo ORDER BY bar)"
                         $arguments = [];
                         if (!$tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS)) {
                             do {
@@ -588,7 +590,7 @@ class ExpressionParser
             } elseif ($token->value === 'FALSE') {
                 return false;
             } else {
-                // DEFAULT, ON, OFF ?
+                // todo: DEFAULT, ON, OFF ?
                 throw new NotImplementedException('DEFAULT, ON, OFF literals not implemented.');
             }
         }
@@ -608,7 +610,7 @@ class ExpressionParser
         $orderBy = [];
         do {
             $expression = $this->parseExpression($tokenList);
-            /// todo: extract column name or position from expression
+            // todo: extract column name or position from expression
 
             /** @var \SqlFtw\Sql\Order $order */
             $order = $tokenList->mayConsumeKeywordEnum(Order::class);
