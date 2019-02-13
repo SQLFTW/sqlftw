@@ -14,7 +14,8 @@ use SqlFtw\Sql\Keyword;
 class FeaturesSql2011 extends PlatformFeatures
 {
 
-    public const RESERVED_WORDS = [
+    /** @var string[] */
+    public static $reservedWords = [
         Keyword::ABS,
         Keyword::ALL,
         Keyword::ALLOCATE,
@@ -341,7 +342,8 @@ class FeaturesSql2011 extends PlatformFeatures
         Keyword::YEAR,
     ];
 
-    public const NON_RESERVED_WORDS = [
+    /** @var string[] */
+    public static $nonReservedWords = [
         Keyword::A,
         Keyword::ABSOLUTE,
         Keyword::ACTION,
@@ -563,7 +565,8 @@ class FeaturesSql2011 extends PlatformFeatures
         Keyword::ZONE,
     ];
 
-    public const OPERATOR_KEYWORDS = [
+    /** @var string[] */
+    public static $operatorKeywords = [
         Keyword::AND,
         Keyword::OR,
         Keyword::XOR,

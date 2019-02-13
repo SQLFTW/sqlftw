@@ -14,7 +14,8 @@ use SqlFtw\Sql\Keyword;
 class FeaturesSqlite38 extends PlatformFeatures
 {
 
-    public const RESERVED_WORDS = [
+    /** @var string[] */
+    public static $reservedWords = [
         Keyword::ABORT,
         Keyword::ACTION,
         Keyword::ADD,
@@ -141,9 +142,8 @@ class FeaturesSqlite38 extends PlatformFeatures
         Keyword::WITHOUT,
     ];
 
-    public const NON_RESERVED_WORDS = [];
-
-    public const OPERATOR_KEYWORDS = [
+    /** @var string[] */
+    public static $operatorKeywords = [
         Keyword::AND,
         Keyword::OR,
         Keyword::XOR,

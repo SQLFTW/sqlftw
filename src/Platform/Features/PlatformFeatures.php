@@ -22,92 +22,48 @@ abstract class PlatformFeatures
 {
     use StrictBehaviorMixin;
 
-    public const RESERVED_WORDS = [];
-    public const NON_RESERVED_WORDS = [];
+    /** @var string[] */
+    public static $reservedWords = [];
 
-    public const OPERATOR_KEYWORDS = [];
-    public const OPERATORS = [];
+    /** @var string[] */
+    public static $nonReservedWords = [];
 
-    public const TYPES = []; ///
-    public const TYPE_ALIASES = []; ///
+    /** @var string[] */
+    public static $operatorKeywords = [];
 
-    public const BUILT_IN_FUNCTIONS = [];
-    public const SYSTEM_VARIABLES = []; ///
+    /** @var string[] */
+    public static $operators = [];
 
-    /**
-     * @return string[]
-     */
-    public function getReservedWords(): array
-    {
-        return static::RESERVED_WORDS;
-    }
+    /** @var string[] */
+    public static $types = [];
 
-    /**
-     * @return string[]
-     */
-    public function getNonReservedWords(): array
-    {
-        return static::NON_RESERVED_WORDS;
-    }
+    /** @var string[] */
+    public static $typeAliases = [];
 
-    /**
-     * @return string[]
-     */
-    public function getOperatorKeywords(): array
-    {
-        return static::OPERATOR_KEYWORDS;
-    }
+    /** @var string[] */
+    public static $builtInFunctions = [];
 
-    /**
-     * @return string[]
-     */
-    public function getOperators(): array
-    {
-        return static::OPERATORS;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getBuiltInFunctions(): array
-    {
-        return static::BUILT_IN_FUNCTIONS;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getTypes(): array
-    {
-        return static::TYPES;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getTypeAliases(): array
-    {
-        return static::TYPE_ALIASES;
-    }
+    /** @var string[] */
+    public static $systemVariables = [];
 
     public function isKeyword(string $word): bool
     {
-        return in_array($word, $this->getReservedWords(), true) || in_array($word, $this->getNonReservedWords(), true);
+        return in_array($word, static::$reservedWords, true) || in_array($word, static::$nonReservedWords, true);
     }
 
     public function isReserved(string $word): bool
     {
-        return in_array($word, $this->getReservedWords(), true);
+        return in_array($word, static::$reservedWords, true);
     }
 
     public function isOperator(string $symbol): bool
     {
-        return in_array($symbol, $this->getOperators());
+        return in_array($symbol, static::$operators);
     }
 
     public function isType(string $word): bool
     {
-        return in_array($word, $this->getTypes());
+        return in_array($word, static::$types);
     }
 
     /**

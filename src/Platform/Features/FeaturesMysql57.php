@@ -16,7 +16,8 @@ use SqlFtw\Sql\Keyword;
 class FeaturesMysql57 extends PlatformFeatures
 {
 
-    public const RESERVED_WORDS = [
+    /** @var string[] */
+    public static $reservedWords = [
         Keyword::ACCESSIBLE,
         Keyword::ADD,
         Keyword::ALL,
@@ -254,7 +255,8 @@ class FeaturesMysql57 extends PlatformFeatures
         Keyword::ZEROFILL,
     ];
 
-    public const NON_RESERVED_WORDS = [
+    /** @var string[] */
+    public static $nonReservedWords = [
         Keyword::ACCOUNT,
         Keyword::ACTION,
         Keyword::AFTER,
@@ -648,7 +650,8 @@ class FeaturesMysql57 extends PlatformFeatures
         Keyword::YEAR,
     ];
 
-    public const OPERATOR_KEYWORDS = [
+    /** @var string[] */
+    public static $operatorKeywords = [
         Keyword::AND,
         Keyword::OR,
         Keyword::XOR,
@@ -671,7 +674,8 @@ class FeaturesMysql57 extends PlatformFeatures
         Keyword::ELSE,
     ];
 
-    public const OPERATORS = [
+    /** @var string[] */
+    public static $operators = [
         Operator::ALL,
         Operator::AMPERSANDS,
         Operator::AND,
@@ -722,7 +726,8 @@ class FeaturesMysql57 extends PlatformFeatures
         Operator::XOR,
     ];
 
-    public const BUILT_IN_FUNCTIONS = [
+    /** @var string[] */
+    public static $buildInFunctions = [
         BuiltInFunction::ABS,
         BuiltInFunction::ACOS,
         BuiltInFunction::ADDDATE,
@@ -1155,8 +1160,10 @@ class FeaturesMysql57 extends PlatformFeatures
         BuiltInFunction::Y,
     ];
 
-    public const TYPES = FeaturesMysql55::TYPES;
+    /** @var string[] */
+    public static $types = FeaturesMysql55::TYPES;
 
-    public const TYPE_ALIASES = FeaturesMysql55::TYPE_ALIASES;
+    /** @var string[] */
+    public static $typeAliases = FeaturesMysql55::TYPE_ALIASES;
 
 }

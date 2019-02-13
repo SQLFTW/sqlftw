@@ -14,7 +14,8 @@ use SqlFtw\Sql\Keyword;
 class FeaturesSql99 extends PlatformFeatures
 {
 
-    public const RESERVED_WORDS = [
+    /** @var string[] */
+    public static $reservedWords = [
         Keyword::ABSOLUTE,
         Keyword::ACTION,
         Keyword::ADD,
@@ -316,7 +317,8 @@ class FeaturesSql99 extends PlatformFeatures
         Keyword::ZONE,
     ];
 
-    public const NON_RESERVED_WORDS = [
+    /** @var string[] */
+    public static $nonReservedWords = [
         Keyword::ABS,
         Keyword::ADA,
         Keyword::ASENSITIVE,
@@ -459,7 +461,8 @@ class FeaturesSql99 extends PlatformFeatures
         Keyword::USER_DEFINED_TYPE_SCHEMA,
     ];
 
-    public const OPERATOR_KEYWORDS = [
+    /** @var string[] */
+    public static $operatorKeywords = [
         Keyword::AND,
         Keyword::OR,
         Keyword::XOR,

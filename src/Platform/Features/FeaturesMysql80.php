@@ -16,7 +16,8 @@ use SqlFtw\Sql\Keyword;
 class FeaturesMysql80 extends PlatformFeatures
 {
 
-    public const RESERVED_WORDS = [
+    /** @var string[] */
+    public static $reservedWords = [
         Keyword::ACCOUNT,
         Keyword::AGAINST,
         Keyword::AGGREGATE,
