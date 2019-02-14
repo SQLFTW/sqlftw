@@ -18,12 +18,9 @@ use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\SqlSerializable;
 
-class Window implements SqlSerializable
+class WindowSpecification implements SqlSerializable
 {
     use StrictBehaviorMixin;
-
-    /** @var string */
-    private $name;
 
     /** @var string|null */
     private $reference;
@@ -38,24 +35,17 @@ class Window implements SqlSerializable
     private $frame;
 
     /**
-     * @param string $name
      * @param string|null $reference
      * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $partitionBy
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param \SqlFtw\Sql\Dml\Select\WindowFrame|null $frame
      */
-    public function __construct(string $name, ?string $reference, ?array $partitionBy, ?array $orderBy, ?WindowFrame $frame)
+    public function __construct(?string $reference, ?array $partitionBy, ?array $orderBy, ?WindowFrame $frame)
     {
-        $this->name = $name;
         $this->reference = $reference;
         $this->partitionBy = $partitionBy;
         $this->orderBy = $orderBy;
         $this->frame = $frame;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getReference(): ?string
@@ -86,8 +76,6 @@ class Window implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $formatter->formatName($this->name) . 'AS (';
-
         $parts = [];
         if ($this->reference !== null) {
             $parts[] = $formatter->formatName($this->reference);
@@ -106,7 +94,7 @@ class Window implements SqlSerializable
             $parts[] = $this->frame->serialize($formatter);
         }
 
-        return $result . implode(' ', $parts) . ')';
+        return '(' . implode(' ', $parts) . ')';
     }
 
 }

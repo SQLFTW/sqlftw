@@ -37,7 +37,7 @@ class SelectCommand implements DmlCommand
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $having;
 
-    /** @var \SqlFtw\Sql\Dml\Select\Window[]|null */
+    /** @var \SqlFtw\Sql\Dml\Select\WindowSpecification[]|null */
     private $windows;
 
     /** @var \SqlFtw\Sql\Dml\OrderByExpression[]|null */
@@ -70,7 +70,7 @@ class SelectCommand implements DmlCommand
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
      * @param \SqlFtw\Sql\Dml\Select\GroupByExpression[]|null $groupBy
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $having
-     * @param \SqlFtw\Sql\Dml\Select\Window[]|null $windows
+     * @param \SqlFtw\Sql\Dml\Select\WindowSpecification[]|null $windows ($name => $spec)
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
@@ -162,7 +162,7 @@ class SelectCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\Select\Window[]|null
+     * @return \SqlFtw\Sql\Dml\Select\WindowSpecification[]|null
      */
     public function getWindows(): ?array
     {
@@ -238,7 +238,15 @@ class SelectCommand implements DmlCommand
             $result .= "\nHAVING " . $this->having->serialize($formatter);
         }
         if ($this->windows !== null) {
-            $result .= "\nWINDOW " . $formatter->formatSerializablesList($this->windows, "\n\t");
+            $result .= "\nWINDOW ";
+            $first = true;
+            foreach ($this->windows as $name => $window) {
+                if (!$first) {
+                    $result .= "\n\t";
+                }
+                $result .= $formatter->formatName($name) . ' AS ' . $window->serialize($formatter);
+                $first = false;
+            }
         }
         if ($this->orderBy !== null) {
             $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, "\n\t");

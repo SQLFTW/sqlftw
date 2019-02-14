@@ -16,7 +16,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Select\GroupByExpression;
-use SqlFtw\Sql\Dml\Select\Window;
+use SqlFtw\Sql\Dml\Select\WindowSpecification;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\Dml\Select\SelectDistinctOption;
 use SqlFtw\Sql\Dml\Select\SelectExpression;
@@ -103,12 +103,21 @@ class SelectCommandParser
         $what = [];
         do {
             $value = $this->expressionParser->parseExpression($tokenList);
+            $window = $alias = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::OVER)) {
+                if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                    $window = $this->parseWindow($tokenList);
+                    $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                } else {
+                    $window = $tokenList->consumeName();
+                }
+            }
             if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
                 $alias = $tokenList->consumeName();
             } else {
                 $alias = $tokenList->mayConsumeName();
             }
-            $what[] = new SelectExpression($value, $alias);
+            $what[] = new SelectExpression($value, $alias, $window);
         } while ($tokenList->mayConsumeComma());
 
         $from = $partitions = null;
@@ -150,7 +159,17 @@ class SelectCommandParser
 
         $windows = null;
         if ($tokenList->mayConsumeKeyword(Keyword::WINDOW)) {
-            $windows = $this->parseWindows($tokenList);
+            $windows = [];
+            do {
+                $name = $tokenList->consumeName();
+                $tokenList->consumeKeyword(Keyword::AS);
+
+                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                $window = $this->parseWindow($tokenList);
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+
+                $windows[$name] = $window;
+            } while ($tokenList->mayConsumeComma());
         }
 
         $orderBy = null;
@@ -208,9 +227,6 @@ class SelectCommandParser
     }
 
     /**
-     * [WINDOW window_name AS (window_spec)
-     *   [, window_name AS (window_spec)] ...]
-     *
      * window_spec:
      *   [window_name] [partition_clause] [order_clause] [frame_clause]
      *
@@ -233,51 +249,40 @@ class SelectCommandParser
      *   BETWEEN frame_start AND frame_end
      *
      * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dml\Select\Window[]
+     * @return \SqlFtw\Sql\Dml\Select\WindowSpecification
      */
-    private function parseWindows(TokenList $tokenList): array
+    private function parseWindow(TokenList $tokenList): WindowSpecification
     {
-        $windows = [];
-        do {
-            $name = $tokenList->consumeName();
-            $tokenList->consumeKeyword(Keyword::AS);
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $reference = $tokenList->mayConsumeName();
 
-            $reference = $tokenList->mayConsumeName();
+        $partitionBy = $orderBy = $frame = null;
+        if ($tokenList->mayConsumeKeywords(Keyword::PARTITION, Keyword::BY)) {
+            $partitionBy = [];
+            do {
+                $partitionBy[] = $this->expressionParser->parseExpression($tokenList);
+            } while ($tokenList->mayConsumeComma());
+        }
 
-            $partitionBy = $orderBy = $frame = null;
-            if ($tokenList->mayConsumeKeywords(Keyword::PARTITION, Keyword::BY)) {
-                $partitionBy = [];
-                do {
-                    $partitionBy[] = $this->expressionParser->parseExpression($tokenList);
-                } while ($tokenList->mayConsumeComma());
+        if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
+            $orderBy[] = $this->expressionParser->parseOrderBy($tokenList);
+        }
+
+        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ROWS, Keyword::RANGE);
+        if ($keyword !== null) {
+            $units = WindowFrameUnits::get($keyword);
+            $startType = $endType = $startExpression = $endExpression = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::BETWEEN)) {
+                $this->parseFrameBorder($tokenList, $startType, $startExpression);
+                $tokenList->consumeKeyword(Keyword::AND);
+                $this->parseFrameBorder($tokenList, $endType, $endExpression);
+            } else {
+                $this->parseFrameBorder($tokenList, $startType, $startExpression);
             }
 
-            if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
-                $orderBy[] = $this->expressionParser->parseOrderBy($tokenList);
-            }
+            $frame = new WindowFrame($units, $startType, $endType, $startExpression, $endExpression);
+        }
 
-            $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ROWS, Keyword::RANGE);
-            if ($keyword !== null) {
-                $units = WindowFrameUnits::get($keyword);
-                $startType = $endType = $startExpression = $endExpression = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::BETWEEN)) {
-                    $this->parseFrameBorder($tokenList, $startType, $startExpression);
-                    $tokenList->consumeKeyword(Keyword::AND);
-                    $this->parseFrameBorder($tokenList, $endType, $endExpression);
-                } else {
-                    $this->parseFrameBorder($tokenList, $startType, $startExpression);
-                }
-
-                $frame = new WindowFrame($units, $startType, $endType, $startExpression, $endExpression);
-            }
-
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
-
-            $windows[] = new Window($name, $reference, $partitionBy, $orderBy, $frame);
-        } while ($tokenList->mayConsumeComma());
-
-        return $windows;
+        return new WindowSpecification($reference, $partitionBy, $orderBy, $frame);
     }
 
     /**
