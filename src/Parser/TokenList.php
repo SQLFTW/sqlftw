@@ -372,8 +372,7 @@ class TokenList
     {
         $position = $this->position;
         try {
-            $keywords = $this->consumeKeywords(...$keywords);
-            return $keywords;
+            return $this->consumeKeywords(...$keywords);
         } catch (UnexpectedTokenException $e) {
             $this->position = $position;
             return null;

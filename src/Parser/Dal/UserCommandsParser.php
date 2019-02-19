@@ -82,8 +82,9 @@ class UserCommandsParser
             $tokenList->consumeKeyword(Keyword::ROLE);
             $user = new UserName(...$tokenList->consumeUserName());
             /** @var \SqlFtw\Sql\Dal\User\RolesSpecification $roles */
-            $roles = $tokenList->mayConsumeKeywordEnum(RolesSpecification::class);
-            if ($roles !== null) {
+            $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::NONE, Keyword::ALL);
+            if ($keyword !== null) {
+                $roles = RolesSpecification::get($keyword);
                 return new AlterUserDefaultRoleCommand($user, $roles, null, $ifExists);
             } else {
                 $roles = $this->parseUserList($tokenList);
@@ -91,65 +92,39 @@ class UserCommandsParser
             }
         }
 
-        [$users, $tlsOptions, $resourceOptions, $passwordLockOptions] = $this->parseCreateOrAlterUserBody($tokenList);
+        $users = $this->parseIdentifiedUsers($tokenList);
+        $tlsOptions = $this->parseTlsOptions($tokenList);
+        $resourceOptions = $this->parseResourceOptions($tokenList);
+        $passwordLockOptions = $this->parsePasswordLockOptions($tokenList);
 
         return new AlterUserCommand($users, $tlsOptions, $resourceOptions, $passwordLockOptions, $ifExists);
     }
 
     /**
-     * body:
+     * CREATE USER [IF NOT EXISTS]
      *     user [auth_option] [, user [auth_option]] ...
+     *     DEFAULT ROLE role [, role ] ...
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH resource_option [resource_option] ...]
      *     [password_option | lock_option] ...
-     *
-     * password_option: {
-     *     PASSWORD EXPIRE
-     *   | PASSWORD EXPIRE DEFAULT
-     *   | PASSWORD EXPIRE NEVER
-     *   | PASSWORD EXPIRE INTERVAL N DAY
-     * }
-     *
-     * lock_option: {
-     *     ACCOUNT LOCK
-     *   | ACCOUNT UNLOCK
-     * }
-     *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return mixed[]
      */
-    private function parseCreateOrAlterUserBody(TokenList $tokenList): array
+    public function parseCreateUser(TokenList $tokenList): CreateUserCommand
     {
-        $users = $this->parseIdentifiedUsers($tokenList);
-        $tlsOptions = $this->parseTlsOptions($tokenList);
-        $resourceOptions = $this->parseResourceOptions($tokenList);
+        $tokenList->consumeKeywords(Keyword::CREATE, Keyword::USER);
+        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
 
-        $passwordLockOptions = null;
-        while ($keyword = $tokenList->mayConsumeAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT)) {
-            if ($keyword === Keyword::ACCOUNT) {
-                if ($tokenList->mayConsumeKeyword(Keyword::LOCK)) {
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
-                } else {
-                    $tokenList->consumeKeyword(Keyword::UNLOCK);
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
-                }
-            } else {
-                $tokenList->consumeKeyword(Keyword::EXPIRE);
-                if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_DEFAULT));
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::NEVER)) {
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_NEVER));
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
-                    $value = $tokenList->consumeInt();
-                    $tokenList->consumeKeyword(Keyword::DAY);
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_INTERVAL), $value);
-                } else {
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE));
-                }
-            }
+        $users = $this->parseIdentifiedUsers($tokenList);
+
+        $defaultRoles = null;
+        if ($tokenList->mayConsumeKeywords(Keyword::DEFAULT, Keyword::ROLE)) {
+            $defaultRoles = $this->parseUserList($tokenList);
         }
 
-        return [$users, $tlsOptions, $resourceOptions, $passwordLockOptions];
+        $tlsOptions = $this->parseTlsOptions($tokenList);
+        $resourceOptions = $this->parseResourceOptions($tokenList);
+        $passwordLockOptions = $this->parsePasswordLockOptions($tokenList);
+
+        return new CreateUserCommand($users, $defaultRoles, $tlsOptions, $resourceOptions, $passwordLockOptions, $ifExists);
     }
 
     /**
@@ -257,6 +232,52 @@ class UserCommandsParser
     }
 
     /**
+     * password_option: {
+     *     PASSWORD EXPIRE
+     *   | PASSWORD EXPIRE DEFAULT
+     *   | PASSWORD EXPIRE NEVER
+     *   | PASSWORD EXPIRE INTERVAL N DAY
+     * }
+     *
+     * lock_option: {
+     *     ACCOUNT LOCK
+     *   | ACCOUNT UNLOCK
+     * }
+     *
+     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @return \SqlFtw\Sql\Dal\User\UserPasswordLockOption[]
+     */
+    private function parsePasswordLockOptions(TokenList $tokenList): array
+    {
+        $passwordLockOptions = null;
+        while ($keyword = $tokenList->mayConsumeAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT)) {
+            if ($keyword === Keyword::ACCOUNT) {
+                if ($tokenList->mayConsumeKeyword(Keyword::LOCK)) {
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
+                } else {
+                    $tokenList->consumeKeyword(Keyword::UNLOCK);
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
+                }
+            } else {
+                $tokenList->consumeKeyword(Keyword::EXPIRE);
+                if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_DEFAULT));
+                } elseif ($tokenList->mayConsumeKeyword(Keyword::NEVER)) {
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_NEVER));
+                } elseif ($tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
+                    $value = $tokenList->consumeInt();
+                    $tokenList->consumeKeyword(Keyword::DAY);
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_INTERVAL), $value);
+                } else {
+                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE));
+                }
+            }
+        }
+
+        return $passwordLockOptions;
+    }
+
+    /**
      * CREATE ROLE [IF NOT EXISTS] role [, role ] ...
      */
     public function parseCreateRole(TokenList $tokenList): CreateRoleCommand
@@ -267,23 +288,6 @@ class UserCommandsParser
         $roles = $this->parseUserList($tokenList);
 
         return new CreateRoleCommand($roles, $ifNotExists);
-    }
-
-    /**
-     * CREATE USER [IF NOT EXISTS]
-     *     user [auth_option] [, user [auth_option]] ...
-     *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
-     *     [WITH resource_option [resource_option] ...]
-     *     [password_option | lock_option] ...
-     */
-    public function parseCreateUser(TokenList $tokenList): CreateUserCommand
-    {
-        $tokenList->consumeKeywords(Keyword::CREATE, Keyword::USER);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
-
-        [$users, $tlsOptions, $resourceOptions, $passwordLockOptions] = $this->parseCreateOrAlterUserBody($tokenList);
-
-        return new CreateUserCommand($users, $tlsOptions, $resourceOptions, $passwordLockOptions, $ifExists);
     }
 
     /**

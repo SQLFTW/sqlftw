@@ -19,6 +19,9 @@ class CreateUserCommand implements UserCommand
     /** @var \SqlFtw\Sql\Dal\User\IdentifiedUser[] */
     private $users;
 
+    /** @var \SqlFtw\Sql\UserName[]|null */
+    private $defaultRoles;
+
     /** @var \SqlFtw\Sql\Dal\User\UserTlsOption[]|null */
     private $tlsOptions;
 
@@ -33,14 +36,23 @@ class CreateUserCommand implements UserCommand
 
     /**
      * @param \SqlFtw\Sql\Dal\User\IdentifiedUser[] $users
+     * @param \SqlFtw\Sql\UserName[]|null $defaultRoles
      * @param \SqlFtw\Sql\Dal\User\UserTlsOption[]|null $tlsOptions
      * @param \SqlFtw\Sql\Dal\User\UserResourceOption[]|null $resourceOptions
      * @param \SqlFtw\Sql\Dal\User\UserPasswordLockOption[]|null $passwordLockOptions
      * @param bool $ifExists
      */
-    public function __construct(array $users, ?array $tlsOptions, ?array $resourceOptions = null, ?array $passwordLockOptions = null, bool $ifExists = false)
+    public function __construct(
+        array $users,
+        ?array $defaultRoles = null,
+        ?array $tlsOptions = null,
+        ?array $resourceOptions = null,
+        ?array $passwordLockOptions = null,
+        bool $ifExists = false
+    )
     {
         $this->users = $users;
+        $this->defaultRoles = $defaultRoles;
         $this->tlsOptions = $tlsOptions;
         $this->resourceOptions = $resourceOptions;
         $this->passwordLockOptions = $passwordLockOptions;
@@ -53,6 +65,14 @@ class CreateUserCommand implements UserCommand
     public function getUsers(): array
     {
         return $this->users;
+    }
+
+    /**
+     * @return \SqlFtw\Sql\UserName[]|null
+     */
+    public function getDefaultRoles(): ?array
+    {
+        return $this->defaultRoles;
     }
 
     /**
@@ -91,6 +111,11 @@ class CreateUserCommand implements UserCommand
             $result .= 'IF EXISTS ';
         }
         $result .= $formatter->formatSerializablesList($this->users);
+
+        if ($this->defaultRoles !== null) {
+            $result .= ' DEFAULT ROLE ';
+            $result .= $formatter->formatSerializablesList($this->defaultRoles);
+        }
 
         if ($this->tlsOptions !== null) {
             $result .= ' REQUIRE';
