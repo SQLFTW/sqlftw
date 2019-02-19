@@ -233,10 +233,10 @@ class UserCommandsParser
 
     /**
      * password_option: {
-     *     PASSWORD EXPIRE
-     *   | PASSWORD EXPIRE DEFAULT
-     *   | PASSWORD EXPIRE NEVER
-     *   | PASSWORD EXPIRE INTERVAL N DAY
+     *     PASSWORD EXPIRE [DEFAULT | NEVER | INTERVAL N DAY]
+     *   | PASSWORD HISTORY {DEFAULT | N}
+     *   | PASSWORD REUSE INTERVAL {DEFAULT | N DAY}
+     *   | PASSWORD REQUIRE CURRENT [DEFAULT | OPTIONAL]
      * }
      *
      * lock_option: {
@@ -252,25 +252,37 @@ class UserCommandsParser
         $passwordLockOptions = null;
         while ($keyword = $tokenList->mayConsumeAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT)) {
             if ($keyword === Keyword::ACCOUNT) {
-                if ($tokenList->mayConsumeKeyword(Keyword::LOCK)) {
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
-                } else {
-                    $tokenList->consumeKeyword(Keyword::UNLOCK);
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT_LOCK));
-                }
-            } else {
-                $tokenList->consumeKeyword(Keyword::EXPIRE);
-                if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_DEFAULT));
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::NEVER)) {
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_NEVER));
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
+                $keyword = $tokenList->consumeAnyKeyword(Keyword::LOCK, Keyword::UNLOCK);
+                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT), $keyword);
+                continue;
+            }
+
+            $keyword = $tokenList->consumeAnyKeyword(Keyword::EXPIRE, Keyword::HISTORY, Keyword::REUSE, Keyword::REQUIRE);
+            if ($keyword === Keyword::EXPIRE) {
+                $value = $tokenList->mayConsumeAnyKeyword(Keyword::DEFAULT, Keyword::NEVER, Keyword::INTERVAL);
+                if ($value === Keyword::INTERVAL) {
                     $value = $tokenList->consumeInt();
                     $tokenList->consumeKeyword(Keyword::DAY);
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE_INTERVAL), $value);
-                } else {
-                    $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE));
                 }
+                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE), $value);
+            } elseif ($keyword === Keyword::HISTORY) {
+                $value = Keyword::DEFAULT;
+                if (!$tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                    $value = $tokenList->consumeInt();
+                }
+                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_HISTORY), $value);
+            } elseif ($keyword === Keyword::REUSE) {
+                $tokenList->consumeKeyword(Keyword::INTERVAL);
+                $value = Keyword::DEFAULT;
+                if (!$tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                    $value = $tokenList->consumeInt();
+                    $tokenList->consumeKeyword(Keyword::DAY);
+                }
+                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_REUSE_INTERVAL), $value);
+            } else {
+                $tokenList->consumeKeyword(Keyword::CURRENT);
+                $value = $tokenList->mayConsumeAnyKeyword(Keyword::DEFAULT, Keyword::OPTIONAL);
+                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_REQUIRE_CURRENT), $value);
             }
         }
 

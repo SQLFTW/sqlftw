@@ -356,6 +356,7 @@ class Keyword extends SqlEnum implements Feature
     public const HELP = 'HELP';
     public const HIERARCHY = 'HIERARCHY';
     public const HIGH_PRIORITY = 'HIGH_PRIORITY';
+    public const HISTORY = 'HISTORY';
     public const HOLD = 'HOLD';
     public const HOST = 'HOST';
     public const HOSTS = 'HOSTS';
@@ -631,6 +632,7 @@ class Keyword extends SqlEnum implements Feature
     public const OPTIMIZE = 'OPTIMIZE';
     public const OPTIMIZER_COSTS = 'OPTIMIZER_COSTS';
     public const OPTION = 'OPTION';
+    public const OPTIONAL = 'OPTIONAL';
     public const OPTIONALLY = 'OPTIONALLY';
     public const OPTIONS = 'OPTIONS';
     public const OR = 'OR';
@@ -791,6 +793,7 @@ class Keyword extends SqlEnum implements Feature
     public const RETURNED_SQLSTATE = 'RETURNED_SQLSTATE';
     public const RETURNING = 'RETURNING';
     public const RETURNS = 'RETURNS';
+    public const REUSE = 'REUSE';
     public const REVERSE = 'REVERSE';
     public const REVOKE = 'REVOKE';
     public const RIGHT = 'RIGHT';

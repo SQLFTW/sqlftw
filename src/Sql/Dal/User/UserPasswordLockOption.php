@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dal\User;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
+use function is_int;
 
 class UserPasswordLockOption implements SqlSerializable
 {
@@ -23,8 +24,14 @@ class UserPasswordLockOption implements SqlSerializable
     /** @var int|null */
     private $value;
 
-    public function __construct(UserPasswordLockOptionType $type, ?int $value = null)
+    /**
+     * @param \SqlFtw\Sql\Dal\User\UserPasswordLockOptionType $type
+     * @param string|int|null $value
+     */
+    public function __construct(UserPasswordLockOptionType $type, $value = null)
     {
+        UserPasswordLockOptionType::validate($type->getValue(), $value);
+
         $this->type = $type;
         $this->value = $value;
     }
@@ -41,7 +48,17 @@ class UserPasswordLockOption implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->type->serialize($formatter) . ($this->value !== null ? ' ' . $this->value . ' DAY' : '');
+        $result = $this->type->serialize($formatter);
+
+        if (is_int($this->value) &&
+            ($this->type->equals(UserPasswordLockOptionType::PASSWORD_EXPIRE) || $this->type->equals(UserPasswordLockOptionType::PASSWORD_REUSE_INTERVAL))
+        ) {
+            $result .= ' ' . $this->value . ' DAY';
+        } elseif ($this->value !== null) {
+            $result .= ' ' . $this->value;
+        }
+
+        return $result;
     }
 
 }
