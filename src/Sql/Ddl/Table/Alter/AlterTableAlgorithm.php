@@ -18,5 +18,6 @@ class AlterTableAlgorithm extends SqlEnum
     public const DEFAULT = Keyword::DEFAULT;
     public const INPLACE = Keyword::INPLACE;
     public const COPY = Keyword::COPY;
+    public const INSTANT = Keyword::INSTANT;
 
 }

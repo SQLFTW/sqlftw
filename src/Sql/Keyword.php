@@ -418,6 +418,7 @@ class Keyword extends SqlEnum implements Feature
     public const INSERT_METHOD = 'INSERT_METHOD';
     public const INSTALL = 'INSTALL';
     public const INSTANCE = 'INSTANCE';
+    public const INSTANT = 'INSTANT';
     public const INSTANTIABLE = 'INSTANTIABLE';
     public const INSTEAD = 'INSTEAD';
     public const INT = 'INT';
