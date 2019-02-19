@@ -627,6 +627,7 @@ class FeaturesMysql80 extends PlatformFeatures
         BuiltInFunction::JSON_SET,
         BuiltInFunction::JSON_STORAGE_FREE, // new in 8.0
         BuiltInFunction::JSON_STORAGE_SIZE, // new in 8.0
+        BuiltInFunction::JSON_TABLE, // new in 8.0
         BuiltInFunction::JSON_TYPE,
         BuiltInFunction::JSON_UNQUOTE,
         BuiltInFunction::JSON_VALID,

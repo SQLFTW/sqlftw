@@ -426,6 +426,7 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const JSON_SET = 'JSON_SET';
     public const JSON_STORAGE_FREE = 'JSON_STORAGE_FREE';
     public const JSON_STORAGE_SIZE = 'JSON_STORAGE_SIZE';
+    public const JSON_TABLE = 'JSON_TABLE';
     public const JSON_TYPE = 'JSON_TYPE';
     public const JSON_UNQUOTE = 'JSON_UNQUOTE';
     public const JSON_VALID = 'JSON_VALID';
@@ -503,8 +504,9 @@ class BuiltInFunction extends SqlEnum implements Feature
 
     /** @var string[] */
     private static $namedParams = [
+        self::AVG, // AVG([DISTINCT] expr)
+        self::CHAR, // CHAR(N,... [USING charset_name])
         self::CAST, // CAST(expr AS type)
-
         self::CONVERT, // CONVERT(string, type), CONVERT(expr USING charset_name)
         // type:
         //   BINARY[(N)]
@@ -522,20 +524,19 @@ class BuiltInFunction extends SqlEnum implements Feature
         //   CHARACTER SET charset_name
         //   ASCII
         //   UNICODE
-
-        self::CHAR, // CHAR(N,... [USING charset_name])
+        self::COUNT, // COUNT(DISTINCT expr,[expr...])
+        self::EXTRACT, // EXTRACT(unit FROM date)
+        self::GET_FORMAT, // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
+        self::JSON_TABLE, // JSON_TABLE(expr, path COLUMNS column_list) AS alias
+        // Columns can be of the types FOR ORDINAL, PATH, EXISTS PATH, and NESTED PATH or NESTED
+        self::MAX, // MAX([DISTINCT] expr)
+        self::MIN, // MIN([DISTINCT] expr)
         self::POSITION, // POSITION(substr IN str)
         self::SUBSTR, // SUBSTR(str,pos), SUBSTR(str FROM pos), SUBSTR(str,pos,len), SUBSTR(str FROM pos FOR len)
         self::SUBSTRING, // SUBSTRING(str,pos), SUBSTRING(str FROM pos), SUBSTRING(str,pos,len), SUBSTRING(str FROM pos FOR len)
+        self::SUM, // SUM([DISTINCT] expr)
         self::TRIM, // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
         self::WEIGHT_STRING, // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags])
-        self::EXTRACT, // EXTRACT(unit FROM date)
-        self::GET_FORMAT, // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
-        self::AVG, // AVG([DISTINCT] expr)
-        self::COUNT, // COUNT(DISTINCT expr,[expr...])
-        self::MAX, // MAX([DISTINCT] expr)
-        self::MIN, // MIN([DISTINCT] expr)
-        self::SUM, // SUM([DISTINCT] expr)
     ];
 
     /** @var string[] */
