@@ -66,6 +66,10 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const ORD = 'ORD';
     public const POSITION = 'POSITION';
     public const QUOTE = 'QUOTE';
+    public const REGEXP_INSTR = 'REGEXP_INSTR';
+    public const REGEXP_LIKE = 'REGEXP_LIKE';
+    public const REGEXP_REPLACE = 'REGEXP_REPLACE';
+    public const REGEXP_SUBSTR = 'REGEXP_SUBSTR';
     public const REPEAT = 'REPEAT';
     public const REPLACE = 'REPLACE';
     public const REVERSE = 'REVERSE';
@@ -438,6 +442,7 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const DEFAULT = 'DEFAULT';
     public const GET_LOCK = 'GET_LOCK';
     public const GROUPING = 'GROUPING';
+    public const ICU_VERSION = 'ICU_VERSION';
     public const INET_ATON = 'INET_ATON';
     public const INET_NTOA = 'INET_NTOA';
     public const INET6_ATON = 'INET6_ATON';
@@ -454,6 +459,8 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const RELEASE_ALL_LOCKS = 'RELEASE_ALL_LOCKS';
     public const RELEASE_LOCK = 'RELEASE_LOCK';
     public const SLEEP = 'SLEEP';
+    public const STATEMENT_DIGEST = 'STATEMENT_DIGEST';
+    public const STATEMENT_DIGEST_NEXT = 'STATEMENT_DIGEST_NEXT';
     public const UUID = 'UUID';
     public const UUID_SHORT = 'UUID_SHORT';
     public const UUID_TO_BIN = 'UUID_TO_BIN';

@@ -587,6 +587,7 @@ class FeaturesMysql80 extends PlatformFeatures
         BuiltInFunction::GTID_SUBTRACT,
         BuiltInFunction::HEX,
         BuiltInFunction::HOUR,
+        BuiltInFunction::ICU_VERSION, // new in 8.0
         BuiltInFunction::IF,
         BuiltInFunction::IFNULL,
         BuiltInFunction::INET6_ATON,
@@ -692,6 +693,10 @@ class FeaturesMysql80 extends PlatformFeatures
         BuiltInFunction::RADIANS,
         BuiltInFunction::RAND,
         BuiltInFunction::RANDOM_BYTES,
+        BuiltInFunction::REGEXP_INSTR, // new in 8.0
+        BuiltInFunction::REGEXP_LIKE, // new in 8.0
+        BuiltInFunction::REGEXP_REPLACE, // new in 8.0
+        BuiltInFunction::REGEXP_SUBSTR, // new in 8.0
         BuiltInFunction::RELEASE_ALL_LOCKS,
         BuiltInFunction::RELEASE_LOCK,
         BuiltInFunction::REPEAT,
@@ -800,6 +805,8 @@ class FeaturesMysql80 extends PlatformFeatures
         BuiltInFunction::ST_Within,
         BuiltInFunction::ST_X,
         BuiltInFunction::ST_Y,
+        BuiltInFunction::STATEMENT_DIGEST, // new in 8.0
+        BuiltInFunction::STATEMENT_DIGEST_NEXT, // new in 8.0
         BuiltInFunction::STD,
         BuiltInFunction::STDDEV,
         BuiltInFunction::STDDEV_POP,
