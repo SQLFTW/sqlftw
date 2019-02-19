@@ -431,6 +431,9 @@ class Parser
                     return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                 }
                 break;
+            case Keyword::RESTART:
+                // RESTART
+                return $this->factory->getRestartCommandParser()->parseRestart($tokenList->resetPosition($start));
             case Keyword::REVOKE:
                 // REVOKE
                 return $this->factory->getUserCommandsParser()->parseRevoke($tokenList->resetPosition($start));
@@ -551,8 +554,8 @@ class Parser
                     Keyword::DO, Keyword::DROP, Keyword::EXECUTE, Keyword::EXPLAIN, Keyword::FLUSH, Keyword::GRANT,
                     Keyword::HANDLER, Keyword::HELP, Keyword::INSERT, Keyword::INSTALL, Keyword::KILL, Keyword::LOCK,
                     Keyword::LOAD, Keyword::OPTIMIZE, Keyword::PREPARE, Keyword::PURGE, Keyword::RELEASE, Keyword::RENAME,
-                    Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::REVOKE, Keyword::ROLLBACK, Keyword::SAVEPOINT,
-                    Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN, Keyword::START, Keyword::STOP,
+                    Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::RESTART, Keyword::REVOKE, Keyword::ROLLBACK,
+                    Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN, Keyword::START, Keyword::STOP,
                     Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
                 );
                 exit;

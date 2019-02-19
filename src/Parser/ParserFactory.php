@@ -21,6 +21,7 @@ use SqlFtw\Parser\Dal\PluginCommandsParser;
 use SqlFtw\Parser\Dal\ReplicationCommandsParser;
 use SqlFtw\Parser\Dal\ResetCommandParser;
 use SqlFtw\Parser\Dal\ResetPersistCommandParser;
+use SqlFtw\Parser\Dal\RestartCommandParser;
 use SqlFtw\Parser\Dal\SetCommandParser;
 use SqlFtw\Parser\Dal\ShowCommandsParser;
 use SqlFtw\Parser\Dal\ShutdownCommandParser;
@@ -256,6 +257,11 @@ class ParserFactory
     public function getResetPersistCommandParser(): ResetPersistCommandParser
     {
         return new ResetPersistCommandParser();
+    }
+
+    public function getRestartCommandParser(): RestartCommandParser
+    {
+        return new RestartCommandParser();
     }
 
     public function getRoutineCommandsParser(): RoutineCommandsParser

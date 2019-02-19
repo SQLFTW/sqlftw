@@ -7,19 +7,25 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Dal\Shutdown;
+namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dal\DalCommand;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\Dal\Shutdown\RestartCommand;
+use SqlFtw\Sql\Keyword;
 
-class ShutdownCommand implements DalCommand
+class RestartCommandParser
 {
     use StrictBehaviorMixin;
 
-    public function serialize(Formatter $formatter): string
+    /**
+     * RESTART
+     */
+    public function parseRestart(TokenList $tokenList): RestartCommand
     {
-        return 'SHUTDOWN';
+        $tokenList->consumeKeyword(Keyword::RESTART);
+
+        return new RestartCommand();
     }
 
 }

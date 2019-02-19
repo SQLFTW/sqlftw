@@ -13,13 +13,13 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 
-class ShutdownCommand implements DalCommand
+class RestartCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHUTDOWN';
+        return 'RESTART';
     }
 
 }
