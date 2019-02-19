@@ -504,12 +504,14 @@ class Keyword extends SqlEnum implements Feature
     public const MASTER_BIND = 'MASTER_BIND';
     public const MASTER_CONNECT_RETRY = 'MASTER_CONNECT_RETRY';
     public const MASTER_DELAY = 'MASTER_DELAY';
+    public const MASTER_GET_PUBLIC_KEY = 'MASTER_GET_PUBLIC_KEY';
     public const MASTER_HEARTBEAT_PERIOD = 'MASTER_HEARTBEAT_PERIOD';
     public const MASTER_HOST = 'MASTER_HOST';
     public const MASTER_LOG_FILE = 'MASTER_LOG_FILE';
     public const MASTER_LOG_POS = 'MASTER_LOG_POS';
     public const MASTER_PASSWORD = 'MASTER_PASSWORD';
     public const MASTER_PORT = 'MASTER_PORT';
+    public const MASTER_PUBLIC_KEY_PATH = 'MASTER_PUBLIC_KEY_PATH';
     public const MASTER_RETRY_COUNT = 'MASTER_RETRY_COUNT';
     public const MASTER_SERVER_ID = 'MASTER_SERVER_ID';
     public const MASTER_SSL = 'MASTER_SSL';

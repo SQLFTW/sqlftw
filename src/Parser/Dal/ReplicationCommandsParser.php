@@ -75,6 +75,8 @@ class ReplicationCommandsParser
      *   | MASTER_SSL_CIPHER = 'cipher_list'
      *   | MASTER_SSL_VERIFY_SERVER_CERT = {0|1}
      *   | MASTER_TLS_VERSION = 'protocol_list'
+     *   | MASTER_PUBLIC_KEY_PATH = 'key_file_name'
+     *   | GET_MASTER_PUBLIC_KEY = {0|1}
      *   | IGNORE_SERVER_IDS = (server_id_list)
      *
      * channel_option:

@@ -44,6 +44,9 @@ class SlaveOption extends SqlEnum
     public const MASTER_SSL_VERIFY_SERVER_CERT = Keyword::MASTER_SSL_VERIFY_SERVER_CERT;
     public const MASTER_TLS_VERSION = Keyword::MASTER_TLS_VERSION;
 
+    public const MASTER_PUBLIC_KEY_PATH = Keyword::MASTER_PUBLIC_KEY_PATH;
+    public const MASTER_GET_PUBLIC_KEY = Keyword::MASTER_GET_PUBLIC_KEY;
+
     public const IGNORE_SERVER_IDS = Keyword::IGNORE_SERVER_IDS;
 
     /** @var string[] */
