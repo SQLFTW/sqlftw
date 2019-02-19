@@ -18,7 +18,6 @@ use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use function count;
 use function is_array;
-use function rd;
 
 class Parser
 {
@@ -232,7 +231,6 @@ class Parser
                     // CREATE [OR REPLACE] [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
                     return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
                 }
-                rd($tokenList->seekKeyword(Keyword::SONAME, 8));
                 $tokenList->expectedAnyKeyword(
                     Keyword::DATABASE, Keyword::SCHEMA, Keyword::LOGFILE, Keyword::ROLE, Keyword::SERVER,
                     Keyword::TABLESPACE, Keyword::TABLE, Keyword::USER, Keyword::EVENT, Keyword::FUNCTION,
