@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Keyword;
 
 class CreateTablespaceCommand implements TablespaceCommand
 {
@@ -19,21 +20,24 @@ class CreateTablespaceCommand implements TablespaceCommand
     /** @var string */
     private $name;
 
-    /** @var string */
-    private $file;
+    /** @var mixed[] */
+    private $options;
 
-    /** @var int|null */
-    private $fileBlockSize;
+    /** @var bool */
+    private $undo;
 
-    /** @var string|null */
-    private $engine;
-
-    public function __construct(string $name, string $file, ?int $fileBlockSize = null, ?string $engine = null)
+    /**
+     * @param string $name
+     * @param mixed[] $options
+     * @param bool $undo
+     */
+    public function __construct(string $name, array $options, bool $undo = false)
     {
+        TablespaceOption::validate(Keyword::CREATE, $options);
+
         $this->name = $name;
-        $this->file = $file;
-        $this->fileBlockSize = $fileBlockSize;
-        $this->engine = $engine;
+        $this->options = $options;
+        $this->undo = $undo;
     }
 
     public function getName(): string
@@ -41,30 +45,35 @@ class CreateTablespaceCommand implements TablespaceCommand
         return $this->name;
     }
 
-    public function getFile(): string
+    /**
+     * @return mixed[]
+     */
+    public function getOptions(): array
     {
-        return $this->file;
+        return $this->options;
     }
 
-    public function getFileBlockSize(): ?int
+    public function getUndo(): bool
     {
-        return $this->fileBlockSize;
-    }
-
-    public function getEngine(): ?string
-    {
-        return $this->engine;
+        return $this->undo;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CREATE TABLESPACE ' . $formatter->formatName($this->name);
-        $result .= ' ADD DATAFILE ' . $formatter->formatString($this->file);
-        if ($this->fileBlockSize !== null) {
-            $result .= ' FILE_BLOCK_SIZE = ' . $this->fileBlockSize;
+        $result = 'CREATE ';
+        if ($this->undo) {
+            $result .= 'UNDO ';
         }
-        if ($this->engine !== null) {
-            $result .= ' ENGINE = ' . $formatter->formatName($this->engine);
+        $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
+
+        foreach ($this->options as $name => $value) {
+            if ($name === TablespaceOption::WAIT) {
+                $result .= $value ? "\n    " . $name : '';
+            } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::USE_LOGFILE_GROUP) {
+                $result .= "\n    " . $name . ' ' . $formatter->formatName($value);
+            } else {
+                $result .= "\n    " . $name . ' ' . $formatter->formatValue($value);
+            }
         }
 
         return $result;

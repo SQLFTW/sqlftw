@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Keyword;
 
 class AlterTablespaceCommand implements TablespaceCommand
 {
@@ -19,29 +20,24 @@ class AlterTablespaceCommand implements TablespaceCommand
     /** @var string */
     private $name;
 
-    /** @var string */
-    private $file;
+    /** @var mixed[] */
+    private $options;
 
     /** @var bool */
-    private $drop;
+    private $undo;
 
-    /** @var bool */
-    private $wait;
-
-    /** @var int|null */
-    private $initialSize;
-
-    /** @var string|null */
-    private $engine;
-
-    public function __construct(string $name, string $file, bool $drop, bool $wait, ?int $initialSize = null, ?string $engine = null)
+    /**
+     * @param string $name
+     * @param mixed[] $options
+     * @param bool $undo
+     */
+    public function __construct(string $name, array $options, bool $undo = false)
     {
+        TablespaceOption::validate(Keyword::ALTER, $options);
+
         $this->name = $name;
-        $this->file = $file;
-        $this->drop = $drop;
-        $this->wait = $wait;
-        $this->initialSize = $initialSize;
-        $this->engine = $engine;
+        $this->options = $options;
+        $this->undo = $undo;
     }
 
     public function getName(): string
@@ -49,47 +45,35 @@ class AlterTablespaceCommand implements TablespaceCommand
         return $this->name;
     }
 
-    public function getFile(): string
+    /**
+     * @return mixed[]
+     */
+    public function getOptions(): array
     {
-        return $this->file;
+        return $this->options;
     }
 
-    public function drop(): bool
+    public function getUndo(): bool
     {
-        return $this->drop;
-    }
-
-    public function wait(): bool
-    {
-        return $this->wait;
-    }
-
-    public function getInitialSize(): ?int
-    {
-        return $this->initialSize;
-    }
-
-    public function getEngine(): ?string
-    {
-        return $this->engine;
+        return $this->undo;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER TABLESPACE ' . $formatter->formatName($this->name);
-        if ($this->drop) {
-            $result .= ' DROP DATAFILE ' . $formatter->formatString($this->file);
-        } else {
-            $result .= ' ADD DATAFILE ' . $formatter->formatString($this->file);
+        $result = 'ALTER ';
+        if ($this->undo) {
+            $result .= 'UNDO ';
         }
-        if ($this->initialSize !== null) {
-            $result .= ' INITIAL_SIZE = ' . $this->initialSize;
-        }
-        if ($this->wait) {
-            $result .= ' WAIT';
-        }
-        if ($this->engine !== null) {
-            $result .= ' ENGINE = ' . $formatter->formatName($this->engine);
+        $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
+
+        foreach ($this->options as $name => $value) {
+            if ($name === TablespaceOption::WAIT) {
+                $result .= $value ? "\n    " . $name : '';
+            } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::RENAME_TO) {
+                $result .= "\n    " . $name . ' ' . $formatter->formatName($value);
+            } else {
+                $result .= "\n    " . $name . ' ' . $formatter->formatValue($value);
+            }
         }
 
         return $result;

@@ -22,10 +22,14 @@ class DropTablespaceCommand implements TablespaceCommand
     /** @var string|null */
     private $engine;
 
-    public function __construct(string $name, ?string $engine = null)
+    /** @var bool */
+    private $undo;
+
+    public function __construct(string $name, ?string $engine = null, bool $undo = false)
     {
         $this->name = $name;
         $this->engine = $engine;
+        $this->undo = $undo;
     }
 
     public function getName(): string
@@ -40,9 +44,14 @@ class DropTablespaceCommand implements TablespaceCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DROP TABLESPACE ' . $formatter->formatName($this->name);
+        $result = 'DROP ';
+        if ($this->undo) {
+            $result .= 'UNDO ';
+        }
+        $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
+
         if ($this->engine !== null) {
-            $result .= 'ENGINE = ' . $formatter->formatName($this->engine);
+            $result .= 'ENGINE ' . $formatter->formatName($this->engine);
         }
 
         return $result;
