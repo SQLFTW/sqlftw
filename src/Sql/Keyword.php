@@ -20,6 +20,7 @@ class Keyword extends SqlEnum implements Feature
     public const ACCESSIBLE = 'ACCESSIBLE';
     public const ACCOUNT = 'ACCOUNT';
     public const ACTION = 'ACTION';
+    public const ACTIVE = 'ACTIVE';
     public const ADA = 'ADA';
     public const ADD = 'ADD';
     public const ADMIN = 'ADMIN';
@@ -395,6 +396,7 @@ class Keyword extends SqlEnum implements Feature
     public const IMPLICIT = 'IMPLICIT';
     public const IMPORT = 'IMPORT';
     public const IN = 'IN';
+    public const INACTIVE = 'INACTIVE';
     public const INCLUDING = 'INCLUDING';
     public const INCREMENT = 'INCREMENT';
     public const INDEX = 'INDEX';
