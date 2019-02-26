@@ -681,6 +681,7 @@ class Keyword extends SqlEnum implements Feature
     public const PERCENTILE_DISC = 'PERCENTILE_DISC';
     public const PERIOD = 'PERIOD';
     public const PERSIST = 'PERSIST';
+    public const PERSIST_ONLY = 'PERSIST_ONLY';
     public const PHASE = 'PHASE';
     public const PLACING = 'PLACING';
     public const PLAN = 'PLAN';

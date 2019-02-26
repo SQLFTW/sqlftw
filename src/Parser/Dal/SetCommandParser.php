@@ -18,6 +18,7 @@ use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Dal\SystemVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Scope;
+use function strtoupper;
 use function substr;
 
 class SetCommandParser
@@ -39,10 +40,10 @@ class SetCommandParser
      *     user_var_name = expr
      *   | param_name = expr
      *   | local_var_name = expr
-     *   | [GLOBAL | SESSION | PERSIST]
-     *       system_var_name = expr
-     *   | [@@global. | @@session. | @@persist. | @@]
-     *       system_var_name = expr
+     *   | {GLOBAL | @@GLOBAL.} system_var_name
+     *   | {PERSIST | @@PERSIST.} system_var_name
+     *   | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name
+     *   | [SESSION | @@SESSION. | @@] system_var_name
      */
     public function parseSet(TokenList $tokenList): SetCommand
     {
@@ -59,19 +60,19 @@ class SetCommandParser
                 if ($variable !== null) {
                     // @
                     $variable = $variable->value;
-                    if ($variable === '@@global'
-                        || $variable === '@@session'
-                        || $variable === '@@persist'
-                        || substr($variable, 0, 2)
-                    ) {
+                    if (substr($variable, 0, 2) === '@@') {
                         // @@
-                        if ($variable === '@@global') {
+                        $variable = strtoupper($variable);
+                        if ($variable === '@@GLOBAL') {
                             $scope = Scope::get(Scope::GLOBAL);
                             $variable = null;
-                        } elseif ($variable === '@@persist') {
+                        } elseif ($variable === '@@PERSIST') {
                             $scope = Scope::get(Scope::PERSIST);
                             $variable = null;
-                        } elseif ($variable === '@@session') {
+                        } elseif ($variable === '@@PERSIST_ONLY') {
+                            $scope = Scope::get(Scope::PERSIST_ONLY);
+                            $variable = null;
+                        } elseif ($variable === '@@SESSION') {
                             $scope = Scope::get(Scope::SESSION);
                             $variable = null;
                         } else {
