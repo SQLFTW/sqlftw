@@ -125,9 +125,7 @@ class JoinParser
             if ($tokenList->mayConsumeKeyword(Keyword::NATURAL)) {
                 // NATURAL JOIN
                 $side = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::INNER)) {
-                    //
-                } else {
+                if ($tokenList->mayConsumeKeyword(Keyword::INNER) === null) {
                     /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide $side */
                     $side = $tokenList->mayConsumeKeywordEnum(JoinSide::class);
                     if ($side !== null) {
@@ -196,18 +194,37 @@ class JoinParser
     /**
      * table_factor:
      *     tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
-     *   | table_subquery [AS] alias [(col_list)]
+     *   | [LATERAL] [(] table_subquery [)] [AS] alias [(col_list)]
      *   | ( table_references )
      */
     private function parseTableFactor(TokenList $tokenList): TableReferenceNode
     {
+        $selectInParentheses = null;
         if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
-            $references = $this->parseTableReferences($tokenList);
-            $tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS);
+            $selectInParentheses = (bool) $tokenList->mayConsumeKeyword(Keyword::SELECT);
+            if ($selectInParentheses) {
+                $references = $this->parseTableReferences($tokenList);
+                $tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS);
 
-            return new TableReferenceParentheses($references);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::SELECT)) {
+                return new TableReferenceParentheses($references);
+            }
+        }
+
+        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::SELECT, Keyword::LATERAL);
+        if ($selectInParentheses || $keyword !== null) {
+            if ($keyword === Keyword::LATERAL) {
+                if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                    $selectInParentheses = true;
+                }
+                $tokenList->consumeKeyword(Keyword::SELECT);
+            }
+
             $query = $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList->resetPosition(-1));
+
+            if ($selectInParentheses) {
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            }
+
             $tokenList->mayConsumeKeyword(Keyword::AS);
             $alias = $tokenList->consumeName();
             $columns = null;
@@ -219,7 +236,7 @@ class JoinParser
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             }
 
-            return new TableReferenceSubquery($query, $alias, $columns);
+            return new TableReferenceSubquery($query, $alias, $columns, $selectInParentheses, $keyword === Keyword::LATERAL);
         } else {
             $table = new QualifiedName(...$tokenList->consumeQualifiedName());
             $partitions = null;
