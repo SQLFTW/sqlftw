@@ -80,6 +80,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::INSERT_METHOD,
         Keyword::INSTANCE,
         Keyword::LAST,
+        Keyword::LATERAL,
         Keyword::LINESTRING,
         Keyword::LOCKS,
         Keyword::LOGFILE,

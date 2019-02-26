@@ -28,12 +28,18 @@ class TableReferenceSubquery implements TableReferenceNode, \Countable
     /** @var string[]|null */
     private $columnList;
 
+    /** @var bool */
+    private $parentheses;
+
+    /** @var bool */
+    private $lateral;
+
     /**
      * @param \SqlFtw\Sql\Dml\Select\SelectCommand $query
      * @param string|null $alias
      * @param string[]|null $columnList
      */
-    public function __construct(SelectCommand $query, ?string $alias, ?array $columnList)
+    public function __construct(SelectCommand $query, ?string $alias, ?array $columnList, bool $parentheses = false, bool $lateral = false)
     {
         if ($columnList !== null) {
             Check::itemsOfType($columnList, Type::STRING);
@@ -41,6 +47,8 @@ class TableReferenceSubquery implements TableReferenceNode, \Countable
         $this->query = $query;
         $this->alias = $alias;
         $this->columnList = $columnList;
+        $this->parentheses = $parentheses;
+        $this->lateral = $lateral;
     }
 
     public function getType(): TableReferenceNodeType
@@ -73,7 +81,19 @@ class TableReferenceSubquery implements TableReferenceNode, \Countable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $this->query->serialize($formatter);
+        $result = '';
+        if ($this->lateral) {
+            $result .= 'LATERAL ';
+        }
+
+        if ($this->parentheses) {
+            $result .= '(';
+        }
+        $result .= $this->query->serialize($formatter);
+        if ($this->parentheses) {
+            $result .= ')';
+        }
+
         if ($this->alias !== null) {
             $result .= ' AS ' . $formatter->formatName($this->alias);
         }
