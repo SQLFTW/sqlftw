@@ -21,21 +21,35 @@ class IdentifiedUser implements SqlSerializable
     /** @var \SqlFtw\Sql\UserName */
     private $user;
 
-    /** @var string|null */
-    private $password;
+    /** @var \SqlFtw\Sql\Dal\User\IdentifiedUserAction|null */
+    private $action;
 
     /** @var string|null */
     private $plugin;
 
     /** @var string|null */
-    private $hash;
+    private $password;
 
-    public function __construct(UserName $user, ?string $password, ?string $plugin, ?string $hash)
-    {
+    /** @var string|null */
+    private $replace;
+
+    /** @var bool */
+    private $retainCurrent;
+
+    public function __construct(
+        UserName $user,
+        ?IdentifiedUserAction $action = null,
+        ?string $password = null,
+        ?string $plugin = null,
+        ?string $replace = null,
+        bool $retainCurrent = false
+    ) {
         $this->user = $user;
-        $this->password = $password;
+        $this->action = $action;
         $this->plugin = $plugin;
-        $this->hash = $hash;
+        $this->password = $password;
+        $this->replace = $replace;
+        $this->retainCurrent = $retainCurrent;
     }
 
     public function getUser(): UserName
@@ -43,9 +57,9 @@ class IdentifiedUser implements SqlSerializable
         return $this->user;
     }
 
-    public function getPassword(): ?string
+    public function getAction(): ?IdentifiedUserAction
     {
-        return $this->password;
+        return $this->action;
     }
 
     public function getPlugin(): ?string
@@ -53,26 +67,52 @@ class IdentifiedUser implements SqlSerializable
         return $this->plugin;
     }
 
-    public function getHash(): ?string
+    public function getPassword(): ?string
     {
-        return $this->hash;
+        return $this->password;
+    }
+
+    public function getReplace(): ?string
+    {
+        return $this->replace;
+    }
+
+    public function retainCurrent(): bool
+    {
+        return $this->retainCurrent;
     }
 
     public function serialize(Formatter $formatter): string
     {
         $result = $this->user->serialize($formatter);
-        if ($this->plugin !== null || $this->password !== null) {
-            $result .= ' IDENTIFIED';
+
+        if ($this->action === null) {
+            return $result;
+        }
+
+        if ($this->action->equals(IdentifiedUserAction::DISCARD_OLD_PASSWORD)) {
+            return $result . ' DISCARD OLD PASSWORD';
+        }
+
+        $result .= ' IDENTIFIED';
+        if ($this->action->equals(IdentifiedUserAction::SET_PLUGIN)) {
+            $result .= ' WITH ' . $this->action->serialize($formatter);
+        } elseif ($this->action->equals(IdentifiedUserAction::SET_HASH)) {
             if ($this->plugin !== null) {
-                $result .= ' WITH ' . $formatter->formatString($this->plugin);
+                $result .= ' WITH ' . $this->action->serialize($formatter);
             }
-            if ($this->password !== null) {
-                $result .= ' BY ' . $formatter->formatString($this->password);
-            } elseif ($this->hash !== null) {
-                $result .= ' AS ' . $formatter->formatString($this->hash);
+            $result .= ' AS ' . $formatter->formatString($this->password);
+        } else {
+            if ($this->plugin !== null) {
+                $result .= ' WITH ' . $this->action->serialize($formatter);
             }
-        } elseif ($this->hash !== null) {
-            $result .= ' IDENTIFIED BY PASSWORD ' . $formatter->formatString($this->hash);
+            if ($this->replace !== null) {
+                $result .= ' REPLACE ' . $formatter->formatString($this->replace);
+            }
+            if ($this->retainCurrent) {
+                $result .= ' RETAIN CURRENT PASSWORD';
+            }
+            $result .= ' BY ' . $formatter->formatString($this->password);
         }
 
         return $result;

@@ -788,6 +788,7 @@ class Keyword extends SqlEnum implements Feature
     public const RESTRICT = 'RESTRICT';
     public const RESULT = 'RESULT';
     public const RESUME = 'RESUME';
+    public const RETAIN = 'RETAIN';
     public const RETURN = 'RETURN';
     public const RETURNED_CARDINALITY = 'RETURNED_CARDINALITY';
     public const RETURNED_LENGTH = 'RETURNED_LENGTH';

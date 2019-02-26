@@ -24,6 +24,7 @@ use SqlFtw\Sql\Dal\User\GrantCommand;
 use SqlFtw\Sql\Dal\User\GrantProxyCommand;
 use SqlFtw\Sql\Dal\User\GrantRoleCommand;
 use SqlFtw\Sql\Dal\User\IdentifiedUser;
+use SqlFtw\Sql\Dal\User\IdentifiedUserAction;
 use SqlFtw\Sql\Dal\User\RenameUserCommand;
 use SqlFtw\Sql\Dal\User\RevokeAllCommand;
 use SqlFtw\Sql\Dal\User\RevokeCommand;
@@ -132,9 +133,14 @@ class UserCommandsParser
      *
      * auth_option: {
      *     IDENTIFIED BY 'auth_string'
+     *         [REPLACE 'current_auth_string']
+     *         [RETAIN CURRENT PASSWORD]
      *   | IDENTIFIED WITH auth_plugin
      *   | IDENTIFIED WITH auth_plugin BY 'auth_string'
+     *         [REPLACE 'current_auth_string']
+     *         [RETAIN CURRENT PASSWORD]
      *   | IDENTIFIED WITH auth_plugin AS 'hash_string'
+     *   | DISCARD OLD PASSWORD
      * }
      *
      * @param \SqlFtw\Parser\TokenList $tokenList
@@ -145,20 +151,39 @@ class UserCommandsParser
         $users = [];
         do {
             $user = new UserName(...$tokenList->consumeUserName());
-            $plugin = $password = $hash = null;
-            if ($tokenList->consumeKeyword(Keyword::IDENTIFIED)) {
-                if ($tokenList->mayConsumeKeyword(Keyword::BY)) {
+            if ($tokenList->mayConsumeKeywords(Keyword::DISCARD, Keyword::OLD, Keyword::PASSWORD)) {
+                $action = IdentifiedUserAction::DISCARD_OLD_PASSWORD;
+                $users[] = new IdentifiedUser($user, IdentifiedUserAction::get($action));
+                continue;
+            }
+
+            if (!$tokenList->mayConsumeKeyword(Keyword::IDENTIFIED)) {
+                $users[] = new IdentifiedUser($user);
+                continue;
+            }
+
+            $action = $plugin = $password = $replace = null;
+            $retainCurrent = false;
+            if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+                $action = IdentifiedUserAction::SET_PLUGIN;
+                $plugin = $tokenList->consumeString();
+                if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
+                    $action = IdentifiedUserAction::SET_PASSWORD;
                     $password = $tokenList->consumeString();
-                } else {
-                    $plugin = $tokenList->consumeString();
-                    if ($tokenList->mayConsumeKeyword(Keyword::BY)) {
-                        $password = $tokenList->consumeString();
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::AS)) {
-                        $hash = $tokenList->consumeString();
-                    }
                 }
             }
-            $users[] = new IdentifiedUser($user, $password, $plugin, $hash);
+            if ($action !== IdentifiedUserAction::SET_HASH) {
+                $tokenList->consumeKeyword(Keyword::BY);
+                $action = IdentifiedUserAction::SET_PASSWORD;
+                $password = $tokenList->consumeString();
+                if ($tokenList->mayConsumeKeyword(Keyword::REPLACE)) {
+                    $replace = $tokenList->consumeString();
+                }
+                if ($tokenList->mayConsumeKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD)) {
+                    $retainCurrent = true;
+                }
+            }
+            $users[] = new IdentifiedUser($user, IdentifiedUserAction::get($action), $plugin, $password, $replace, $retainCurrent);
         } while ($tokenList->mayConsumeComma());
 
         return $users;
@@ -372,7 +397,7 @@ class UserCommandsParser
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
             $tokenList->consumeKeyword(Keyword::TO);
-            $users = $this->parseIdentifiedUsers($tokenList);
+            $users = $this->parseIdentifiedUsersCreate($tokenList);
             $tlsOptions = $this->parseTlsOptions($tokenList);
             $withGrantOption = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
             $resourceOptions = $this->parseResourceOptions($tokenList);
