@@ -15,5 +15,6 @@ class Scope extends SqlEnum
     public const GLOBAL = Keyword::GLOBAL;
     public const SESSION = Keyword::SESSION;
     public const PERSIST = Keyword::PERSIST;
+    public const PERSIST_ONLY = Keyword::PERSIST_ONLY;
 
 }
