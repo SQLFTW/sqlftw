@@ -9,10 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
+use function is_string;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
+use function strval;
 
 class SimpleAction implements AlterTableAction
 {
@@ -21,7 +24,7 @@ class SimpleAction implements AlterTableAction
     /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType */
     private $type;
 
-    /** @var mixed */
+    /** @var mixed|null */
     private $value;
 
     /**
@@ -47,6 +50,15 @@ class SimpleAction implements AlterTableAction
         return $this->value;
     }
 
+    public function getStringValue(): string
+    {
+        if (!is_string($this->value)) {
+            throw new ShouldNotHappenException('Value of this action should be string. Are you sure what you are doing?');
+        }
+
+        return $this->value;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
@@ -56,7 +68,7 @@ class SimpleAction implements AlterTableAction
         } elseif ($this->value instanceof SqlSerializable) {
             $result .= ' ' . $this->value->serialize($formatter);
         } elseif ($type === Type::STRING) {
-            $result .= ' ' . $formatter->formatName($this->value);
+            $result .= ' ' . $formatter->formatName(strval($this->value));
         } elseif ($type === 'array<string>') {
             $result .= ' ' . $formatter->formatNamesList($this->value);
         }
