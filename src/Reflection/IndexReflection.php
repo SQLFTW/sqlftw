@@ -11,6 +11,7 @@ namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
+use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 
 class IndexReflection
@@ -44,6 +45,13 @@ class IndexReflection
         $self->columnDefinition = $columnDefinition;
 
         return $self;
+    }
+
+    public static function fromConstraint(TableReflection $table, ConstraintDefinition $constraintDefinition): self
+    {
+        $indexDefinition = $constraintDefinition->getBody();
+
+        return new self($table, $indexDefinition);
     }
 
     public function getTable(): TableReflection

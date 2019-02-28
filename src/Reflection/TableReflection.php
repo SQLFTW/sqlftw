@@ -95,12 +95,13 @@ class TableReflection
             } elseif ($item instanceof IndexDefinition) {
                 $this->addIndex(new IndexReflection($this, $item));
             } elseif ($item instanceof ConstraintDefinition) {
-                $this->addConstraint(new ForeignKeyReflection($this, $item));
                 $constraintType = $item->getType();
                 if ($constraintType->equals(ConstraintType::PRIMARY_KEY)) {
                     $this->addIndex(IndexReflection::fromConstraint($this, $item));
                 } elseif ($constraintType->equals(ConstraintType::UNIQUE_KEY)) {
                     $this->addIndex(IndexReflection::fromConstraint($this, $item));
+                } elseif ($constraintType->equals(ConstraintType::FOREIGN_KEY)) {
+                    $this->addForeignKey($item->getBody(), $item->getName());
                 }
             }
         }
@@ -179,16 +180,16 @@ class TableReflection
                 $type = $action->getType()->getValue();
                 switch ($type) {
                     case AlterTableActionType::DROP_COLUMN: // string $name
-                        $name = $action->getValue();
+                        $name = $action->getStringValue();
                         $this->getColumn($name);
                         unset($that->columns[$name]);
                         break;
                     case AlterTableActionType::DROP_INDEX: // string $name
-                        $name = $action->getValue();
+                        $name = $action->getStringValue();
                         $that->removeIndex($name);
                         break;
                     case AlterTableActionType::DROP_FOREIGN_KEY: // string $name
-                        $name = $action->getValue();
+                        $name = $action->getStringValue();
                         $this->getForeignKey($name);
                         unset($that->foreignKeys[$name]);
                         break;
@@ -322,9 +323,9 @@ class TableReflection
     {
         $that = clone($this);
         $name = $trigger->getName();
-        $trigger = $this->findTrigger($name);
+        $trigger = $this->findTrigger($name->getName());
         if ($trigger !== null) {
-            throw new TriggerAlreadyExistsException($name, $this->name->getSchema());
+            throw new TriggerAlreadyExistsException($name->getName(), $this->name->getSchema());
         }
         $that->triggers[$trigger->getName()->getName()] = $trigger;
 
@@ -341,6 +342,8 @@ class TableReflection
     }
 
     // internal setters ------------------------------------------------------------------------------------------------
+
+    // phpcs:disable SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod
 
     private function addColumn(ColumnDefinition $column): void
     {
@@ -390,6 +393,9 @@ class TableReflection
         } else {
             $name = $this->database->getPlatform()->getNamingStrategy()->createForeignKeyName($this, $foreignKey->getColumns());
         }
+
+        $constraint = new ConstraintDefinition(ConstraintType::get(ConstraintType::FOREIGN_KEY), $name, $foreignKey);
+        $this->foreignKeys[$name] = new ForeignKeyReflection($this, $constraint);
     }
 
     private function removeForeignKey(string $name): void
@@ -421,6 +427,8 @@ class TableReflection
     {
         ///
     }
+
+    // phpcs:enable SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod
 
     // getters ---------------------------------------------------------------------------------------------------------
 
@@ -484,7 +492,7 @@ class TableReflection
         return $this->indexes;
     }
 
-    public function getIndex(string $name): IndexReflection
+    public function getIndex(?string $name): IndexReflection
     {
         $index = $this->indexes[$name] ?? null;
         if ($index === null) {

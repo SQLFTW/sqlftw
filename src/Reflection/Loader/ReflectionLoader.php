@@ -7,11 +7,14 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Reflection;
+namespace SqlFtw\Reflection\Loader;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Reflection\Context\ContextProvider;
+use SqlFtw\Reflection\TableDoesNotExistException;
+use SqlFtw\Reflection\TableReflectionLoadingException;
+use SqlFtw\Reflection\ViewReflectionLoadingException;
 use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
@@ -19,8 +22,8 @@ use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
 use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
-use function count;
 use Throwable;
+use function count;
 
 class ReflectionLoader
 {

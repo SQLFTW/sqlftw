@@ -12,6 +12,7 @@ namespace SqlFtw\Reflection;
 use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Reflection\Loader\ReflectionLoader;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
@@ -51,7 +52,7 @@ class DatabaseReflection
     /** @var \SqlFtw\Platform\Platform */
     private $platform;
 
-    /** @var \SqlFtw\Reflection\ReflectionLoader */
+    /** @var \SqlFtw\Reflection\Loader\ReflectionLoader */
     private $loader;
 
     /** @var string */
@@ -84,8 +85,12 @@ class DatabaseReflection
     /** @var \SqlFtw\Reflection\VariablesReflection[] */
     private $variables = [];
 
-    public function __construct(Platform $platform, ReflectionLoader $loader, string $currentSchema, bool $trackHistory = true)
-    {
+    public function __construct(
+        Platform $platform,
+        ReflectionLoader $loader,
+        string $currentSchema,
+        bool $trackHistory = true
+    ) {
         $this->platform = $platform;
         $this->loader = $loader;
         $this->currentSchema = $currentSchema;
