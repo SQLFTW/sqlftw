@@ -11,8 +11,8 @@
         }
     ],
     "require": {
-        "php": ">=7.3.0",
-        "dogma/dogma": "~0.1.12",
+        "php": "^7.3.0",
+        "dogma/dogma": "~0.1.13",
         "tracy/tracy": "~2.4"
     },
     "require-dev": {
@@ -29,5 +29,7 @@
     },
     "autoload": {
         "classmap": ["src", "tests"]
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
