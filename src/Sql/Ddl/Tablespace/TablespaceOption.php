@@ -1,4 +1,4 @@
-<?php declare(strict_types = 10);
+<?php declare(strict_types = 1);
 /**
  * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
