@@ -33,12 +33,12 @@ class SchemaReflection
 
     public function alter(AlterDatabaseCommand $alterDatabaseCommand): self
     {
-        ///
+        // todo
     }
 
     public function drop(DropDatabaseCommand $dropDatabaseCommand): self
     {
-        ///
+        // todo
     }
 
     public function getName(): string

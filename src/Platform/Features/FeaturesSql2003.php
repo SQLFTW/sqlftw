@@ -14,8 +14,7 @@ use SqlFtw\Sql\Keyword;
 class FeaturesSql2003 extends PlatformFeatures
 {
 
-    /** @var string[] */
-    public static $reservedWords = [
+    public const RESERVED_WORDS = [
         Keyword::ABS,
         Keyword::ALL,
         Keyword::ALLOCATE,
@@ -306,8 +305,7 @@ class FeaturesSql2003 extends PlatformFeatures
         Keyword::YEAR,
     ];
 
-    /** @var string[] */
-    public static $nonReservedWords = [
+    public const NON_RESERVED_WORDS = [
         Keyword::A,
         Keyword::ABSOLUTE,
         Keyword::ACTION,
@@ -519,8 +517,7 @@ class FeaturesSql2003 extends PlatformFeatures
         Keyword::ZONE,
     ];
 
-    /** @var string[] */
-    public static $operatorKeywords = [
+    public const OPERATOR_KEYWORDS = [
         Keyword::AND,
         Keyword::OR,
         Keyword::XOR,
@@ -542,5 +539,74 @@ class FeaturesSql2003 extends PlatformFeatures
         Keyword::THAN,
         Keyword::ELSE,
     ];
+
+    /**
+     * @return string[]
+     */
+    public function getReservedWords(): array
+    {
+        return self::RESERVED_WORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNonReservedWords(): array
+    {
+        return self::NON_RESERVED_WORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperatorKeywords(): array
+    {
+        return self::OPERATOR_KEYWORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperators(): array
+    {
+        // todo
+        return [];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypes(): array
+    {
+        // todo
+        return [];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypeAliases(): array
+    {
+        // todo
+        return [];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBuiltInFunctions(): array
+    {
+        // todo
+        return [];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSystemVariables(): array
+    {
+        // todo
+        return [];
+    }
 
 }

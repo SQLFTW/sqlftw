@@ -19,7 +19,7 @@ class SchemaDoesNotExistException extends ReflectionException
 
     public function __construct(string $name, ?\Throwable $previous = null)
     {
-        parent::__construct(sprintf('Database `%s` does not exist.', $name), $previous);
+        parent::__construct(sprintf('Schema `%s` does not exist.', $name), $previous);
 
         $this->name = $name;
     }

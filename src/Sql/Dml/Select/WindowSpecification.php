@@ -9,14 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
-use function array_map;
 use Dogma\StrictBehaviorMixin;
-use function func_get_args;
-use function implode;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\SqlSerializable;
+use function array_map;
+use function implode;
 
 class WindowSpecification implements SqlSerializable
 {

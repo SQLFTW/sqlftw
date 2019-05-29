@@ -12,6 +12,6 @@ namespace SqlFtw\Parser\Lexer;
 class EndOfStringNotFoundException extends LexerException
 {
 
-    ///
+    // todo
 
 }

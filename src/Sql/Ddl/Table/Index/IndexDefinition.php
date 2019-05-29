@@ -62,7 +62,7 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public function duplicateWithNewName(string $newName): self
     {
-        $self = clone($this);
+        $self = clone $this;
         $self->name = $newName;
 
         return $self;
@@ -70,7 +70,7 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public function duplicateWithVisibility(bool $visible): self
     {
-        $self = clone($this);
+        $self = clone $this;
         $options = $self->options->getOptions();
         $options[IndexOption::VISIBLE] = $visible;
         $self->options = new IndexOptions($options);
@@ -80,7 +80,7 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public function duplicateAsPrimary(): self
     {
-        $self = clone($this);
+        $self = clone $this;
         $self->type = IndexType::get(IndexType::PRIMARY);
         $self->name = self::PRIMARY_KEY_NAME;
 

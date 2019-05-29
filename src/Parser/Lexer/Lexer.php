@@ -12,6 +12,7 @@
 namespace SqlFtw\Parser\Lexer;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Mode;
@@ -37,8 +38,7 @@ use function trim;
  * todo:
  * - Date and Time Literals?
  * - Mysql string charset declaration (_utf* & N)
- * - \N is synonymum for NULL (until 8.0)
- * - PostgreSql dollar strings
+ * - \N is synonym for NULL (until 8.0)
  */
 class Lexer
 {
@@ -81,8 +81,11 @@ class Lexer
      * @param bool $withComments
      * @param bool $withWhitespace
      */
-    public function __construct(PlatformSettings $settings, bool $withComments = true, bool $withWhitespace = false)
-    {
+    public function __construct(
+        PlatformSettings $settings,
+        bool $withComments = true,
+        bool $withWhitespace = false
+    ) {
         self::$numbersKey = array_flip(self::NUMBERS);
         self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
         self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
@@ -139,7 +142,8 @@ class Lexer
 
             if ($char === $delimiter[0]) {
                 do {
-                    for ($n = 1; $n < strlen($delimiter); $n++) {
+                    $delimiterLength = strlen($delimiter);
+                    for ($n = 1; $n < $delimiterLength; $n++) {
                         if ($position + $n >= $length || $string[$position + $n] !== $delimiter[$n]) {
                             break 2;
                         }
@@ -288,7 +292,9 @@ class Lexer
                             $column++;
                         }
                     }
-                    yield $previous = new Token(TokenType::COMMENT | TokenType::HASH_COMMENT, $startPosition, $value, null, $condition);
+                    if ($this->withComments) {
+                        yield $previous = new Token(TokenType::COMMENT | TokenType::HASH_COMMENT, $startPosition, $value, null, $condition);
+                    }
                     break;
                 case '/':
                     $next = $position < $length ? $string[$position] : '';
@@ -311,12 +317,14 @@ class Lexer
                                 $column++;
                             }
                         }
-                        yield $previous = new Token(TokenType::COMMENT | TokenType::DOUBLE_SLASH_COMMENT, $startPosition, $value, null, $condition);
+                        if ($this->withComments) {
+                            yield $previous = new Token(TokenType::COMMENT | TokenType::DOUBLE_SLASH_COMMENT, $startPosition, $value, null, $condition);
+                        }
                     } elseif ($next === '*') {
                         $position++;
                         $column++;
                         if ($condition !== null) {
-                            // todo: fail - starting comment inside a conditional comment
+                            throw new ParserException('Comment inside conditional comment');
                         }
                         //$column = $string->column;
                         //$row = $string->row;
@@ -343,7 +351,7 @@ class Lexer
                             }
                         }
                         if (!$ok) {
-                            throw new EndOfCommentNotFoundException(''); ///
+                            throw new EndOfCommentNotFoundException(''); // todo
                         }
 
                         if ($value[2] === '!') {
@@ -362,7 +370,9 @@ class Lexer
                             yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::HINT_COMMENT, $startPosition, $value);
                         } else {
                             // /* comment */
-                            yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT, $startPosition, $value);
+                            if ($this->withComments) {
+                                yield new Token(TokenType::COMMENT | TokenType::BLOCK_COMMENT, $startPosition, $value);
+                            }
                         }
                     } else {
                         yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $char, null, $condition);
@@ -529,6 +539,7 @@ class Lexer
                         $column++;
                         $bits = '';
                         while ($position < $length) {
+                            /** @var string $next */
                             $next = $string[$position];
                             if ($next === '0' || $next === '1') {
                                 $bits .= $next;
@@ -541,7 +552,7 @@ class Lexer
                                 yield $previous = new Token(TokenType::VALUE | TokenType::BINARY_LITERAL, $startPosition, $bits, $orig, $condition);
                                 break;
                             } else {
-                                throw new ExpectedTokenNotFoundException(''); ///
+                                throw new ExpectedTokenNotFoundException(''); // todo
                             }
                         }
                         break;
@@ -585,12 +596,12 @@ class Lexer
                                 $column++;
                                 $orig = $char . '\'' . $bits . '\'';
                                 if ((strlen($bits) % 2) === 1) {
-                                    throw new ExpectedTokenNotFoundException(''); ///
+                                    throw new ExpectedTokenNotFoundException(''); // todo
                                 }
                                 yield $previous = new Token(TokenType::VALUE | TokenType::HEXADECIMAL_LITERAL, $startPosition, strtolower($bits), $orig, $condition);
                                 break;
                             } else {
-                                throw new ExpectedTokenNotFoundException(''); ///
+                                throw new ExpectedTokenNotFoundException(''); // todo
                             }
                         }
                         break;
@@ -682,7 +693,7 @@ class Lexer
                             }
                         }
                         if ($del === '') {
-                            throw new ExpectedTokenNotFoundException(''); ///
+                            throw new ExpectedTokenNotFoundException(''); // todo
                         }
                         $delimiter = $del;
                         $this->settings->setDelimiter($delimiter);
@@ -695,7 +706,7 @@ class Lexer
                     // todo: charset declaration
                 default:
                     if (ord($char) < 32) {
-                        throw new InvalidCharacterException($char, $startPosition, ''); ///
+                        throw new InvalidCharacterException($char, $startPosition, ''); // todo
                     }
                     $value = $char;
                     while ($position < $length) {
@@ -783,7 +794,7 @@ class Lexer
             }
         }
         if (!$finished) {
-            throw new EndOfStringNotFoundException(''); ///
+            throw new EndOfStringNotFoundException(''); // todo
         }
         $orig = implode('', $orig);
         $value = $this->unescapeString($orig, $quote);
@@ -919,13 +930,13 @@ class Lexer
                             $expComplete = true;
                         } else {
                             if (strlen(trim($exp, 'e+-')) < 1 && strpos($base, '.') !== false) {
-                                throw new ExpectedTokenNotFoundException(''); ///
+                                throw new ExpectedTokenNotFoundException(''); // todo
                             }
                             break;
                         }
                     }
                     if (!$expComplete) {
-                        throw new ExpectedTokenNotFoundException(''); ///
+                        throw new ExpectedTokenNotFoundException(''); // todo
                     }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                     $num = false;

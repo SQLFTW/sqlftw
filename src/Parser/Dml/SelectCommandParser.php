@@ -16,7 +16,6 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Select\GroupByExpression;
-use SqlFtw\Sql\Dml\Select\WindowSpecification;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\Dml\Select\SelectDistinctOption;
 use SqlFtw\Sql\Dml\Select\SelectExpression;
@@ -28,6 +27,7 @@ use SqlFtw\Sql\Dml\Select\SelectOption;
 use SqlFtw\Sql\Dml\Select\WindowFrame;
 use SqlFtw\Sql\Dml\Select\WindowFrameType;
 use SqlFtw\Sql\Dml\Select\WindowFrameUnits;
+use SqlFtw\Sql\Dml\Select\WindowSpecification;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
@@ -264,7 +264,7 @@ class SelectCommandParser
         }
 
         if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
-            $orderBy[] = $this->expressionParser->parseOrderBy($tokenList);
+            $orderBy = $this->expressionParser->parseOrderBy($tokenList);
         }
 
         $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ROWS, Keyword::RANGE);

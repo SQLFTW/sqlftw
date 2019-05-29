@@ -11,13 +11,13 @@ namespace SqlFtw\Platform\Features;
 
 use SqlFtw\Sql\Ddl\BaseType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 
 class FeaturesMysql55 extends PlatformFeatures
 {
 
-    /** @var string[] */
-    public static $reservedWords = [
+    public const RESERVED_WORDS = [
         Keyword::ACCESSIBLE,
         Keyword::ADD,
         Keyword::ALL,
@@ -246,8 +246,7 @@ class FeaturesMysql55 extends PlatformFeatures
         Keyword::ZEROFILL,
     ];
 
-    /** @var string[] */
-    public static $nonReservedWords = [
+    public const NON_RESERVED_WORDS = [
         Keyword::ACTION,
         Keyword::AFTER,
         Keyword::AGAINST,
@@ -589,8 +588,7 @@ class FeaturesMysql55 extends PlatformFeatures
         Keyword::YEAR,
     ];
 
-    /** @var string[] */
-    public static $operatorKeywords = [
+    public const OPERATOR_KEYWORDS = [
         Keyword::AND,
         Keyword::OR,
         Keyword::XOR,
@@ -613,11 +611,55 @@ class FeaturesMysql55 extends PlatformFeatures
         Keyword::ELSE,
     ];
 
-    /** @var string[] */
-    public static $buildInFunctions = [];
-
-    /** @var string[] */
-    public static $types = self::TYPES;
+    public const OPERATORS = [
+        Operator::ALL,
+        Operator::AMPERSANDS,
+        Operator::AND,
+        Operator::ANY,
+        Operator::ASSIGN,
+        Operator::BETWEEN,
+        Operator::BINARY,
+        Operator::BIT_AND,
+        Operator::BIT_INVERT,
+        Operator::BIT_OR,
+        Operator::BIT_XOR,
+        Operator::CASE,
+        Operator::DIV,
+        Operator::DIVIDE,
+        Operator::ELSE,
+        Operator::END,
+        Operator::EQUAL,
+        Operator::ESCAPE,
+        Operator::EXCLAMATION,
+        Operator::EXISTS,
+        Operator::GREATER,
+        Operator::GREATER_OR_EQUAL,
+        Operator::IN,
+        Operator::IS,
+        Operator::LEFT_SHIFT,
+        Operator::LESS,
+        Operator::LESS_OR_EQUAL,
+        Operator::LESS_OR_GREATER,
+        Operator::LIKE,
+        Operator::MINUS,
+        Operator::MOD,
+        Operator::MODULO,
+        Operator::MULTIPLY,
+        Operator::NON_EQUAL,
+        Operator::NOT,
+        Operator::OR,
+        Operator::PIPES,
+        Operator::PLUS,
+        Operator::REGEXP,
+        Operator::RIGHT_SHIFT,
+        Operator::RLIKE,
+        Operator::SAFE_EQUAL,
+        Operator::SOME,
+        Operator::SOUNDS,
+        Operator::THEN,
+        Operator::WHEN,
+        Operator::XOR,
+    ];
 
     public const TYPES = [
         // bitwise
@@ -679,9 +721,6 @@ class FeaturesMysql55 extends PlatformFeatures
         BaseType::MULTIPOLYGON,
     ];
 
-    /** @var string[] */
-    public static $typeAliases = self::TYPE_ALIASES;
-
     public const TYPE_ALIASES = [
         BaseType::BOOL => BaseType::TINYINT,
         BaseType::BOOLEAN => BaseType::TINYINT,
@@ -709,8 +748,7 @@ class FeaturesMysql55 extends PlatformFeatures
         BaseType::LONG_VARBINARY => BaseType::MEDIUMBLOB,
     ];
 
-    /** @var string[] */
-    public static $builtInFunctions = [
+    public const BUILT_IN_FUNCTIONS = [
         BuiltInFunction::ABS,
         BuiltInFunction::ACOS,
         BuiltInFunction::ADDDATE,
@@ -1122,5 +1160,70 @@ class FeaturesMysql55 extends PlatformFeatures
         BuiltInFunction::X,
         BuiltInFunction::Y,
     ];
+
+    /**
+     * @return string[]
+     */
+    public function getReservedWords(): array
+    {
+        return self::RESERVED_WORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNonReservedWords(): array
+    {
+        return self::NON_RESERVED_WORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperatorKeywords(): array
+    {
+        return self::OPERATOR_KEYWORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperators(): array
+    {
+        return self::OPERATORS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypes(): array
+    {
+        return self::TYPES;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypeAliases(): array
+    {
+        return self::TYPE_ALIASES;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBuiltInFunctions(): array
+    {
+        return self::BUILT_IN_FUNCTIONS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSystemVariables(): array
+    {
+        // todo
+        return [];
+    }
 
 }

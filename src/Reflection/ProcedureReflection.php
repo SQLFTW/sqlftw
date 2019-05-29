@@ -34,20 +34,20 @@ class ProcedureReflection
 
     public function alter(AlterProcedureCommand $alterProcedureCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $alterProcedureCommand;
 
-        ///
+        // todo
 
         return $that;
     }
 
     public function drop(DropProcedureCommand $dropProcedureCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $dropProcedureCommand;
 
-        ///
+        // todo
 
         return $that;
     }

@@ -21,6 +21,8 @@ class WithParser
 {
     use StrictBehaviorMixin;
 
+    // phpcs:disable
+
     /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
     private $selectParser;
 

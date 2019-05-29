@@ -22,48 +22,64 @@ abstract class PlatformFeatures
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
-    public static $reservedWords = [];
+    /**
+     * @return string[]
+     */
+    abstract public function getReservedWords(): array;
 
-    /** @var string[] */
-    public static $nonReservedWords = [];
+    /**
+     * @return string[]
+     */
+    abstract public function getNonReservedWords(): array;
 
-    /** @var string[] */
-    public static $operatorKeywords = [];
+    /**
+     * @return string[]
+     */
+    abstract public function getOperatorKeywords(): array;
 
-    /** @var string[] */
-    public static $operators = [];
+    /**
+     * @return string[]
+     */
+    abstract public function getOperators(): array;
 
-    /** @var string[] */
-    public static $types = [];
+    /**
+     * @return string[]
+     */
+    abstract public function getTypes(): array;
 
-    /** @var string[] */
-    public static $typeAliases = [];
+    /**
+     * @return string[]
+     */
+    abstract public function getTypeAliases(): array;
 
-    /** @var string[] */
-    public static $builtInFunctions = [];
+    /**
+     * @return string[]
+     */
+    abstract public function getBuiltInFunctions(): array;
 
-    /** @var string[] */
-    public static $systemVariables = [];
+    /**
+     * @return string[]
+     */
+    abstract public function getSystemVariables(): array;
 
     public function isKeyword(string $word): bool
     {
-        return in_array($word, static::$reservedWords, true) || in_array($word, static::$nonReservedWords, true);
+        return in_array($word, $this->getReservedWords(), true) || in_array($word, $this->getNonReservedWords(), true);
     }
 
     public function isReserved(string $word): bool
     {
-        return in_array($word, static::$reservedWords, true);
+        return in_array($word, $this->getReservedWords(), true);
     }
 
     public function isOperator(string $symbol): bool
     {
-        return in_array($symbol, static::$operators);
+        return in_array($symbol, $this->getOperators(), true);
     }
 
     public function isType(string $word): bool
     {
-        return in_array($word, static::$types);
+        return in_array($word, $this->getTypes(), true);
     }
 
     /**

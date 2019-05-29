@@ -17,10 +17,10 @@ Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 $queryAlternative = "PURGE MASTER LOGS TO 'foo.log'";
 Assert::same($query, $parser->parseCommand($queryAlternative)->serialize($formatter));
 
-$query = "PURGE BINARY LOGS BEFORE '2001-01-01 01:01:01'";
+$query = "PURGE BINARY LOGS BEFORE '2001-01-01 01:01:01.000000'";
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
-$queryAlternative = "PURGE MASTER LOGS BEFORE '2001-01-01 01:01:01'";
+$queryAlternative = "PURGE MASTER LOGS BEFORE '2001-01-01 01:01:01.000000'";
 Assert::same($query, $parser->parseCommand($queryAlternative)->serialize($formatter));
 
 // RESET MASTER

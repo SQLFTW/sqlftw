@@ -367,10 +367,7 @@ class TableCommandsParser
                             $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DROP_PRIMARY_KEY));
                             break;
                         default:
-                            $tokenList->expectedAnyKeyword(
-                                Keyword::COLUMN, Keyword::INDEX, Keyword::KEY,
-                                Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY
-                            );
+                            $tokenList->expectedAnyKeyword(Keyword::COLUMN, Keyword::INDEX, Keyword::KEY, Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY);
                     }
                     break;
                 case Keyword::ENABLE:

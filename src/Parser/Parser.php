@@ -7,7 +7,7 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-// phpcs:disable
+// phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
 
 namespace SqlFtw\Parser;
 

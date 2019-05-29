@@ -34,20 +34,20 @@ class FunctionReflection
 
     public function alter(AlterFunctionCommand $alterFunctionCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $alterFunctionCommand;
 
-        ///
+        // todo
 
         return $that;
     }
 
     public function drop(DropFunctionCommand $dropFunctionCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $dropFunctionCommand;
 
-        ///
+        // todo
 
         return $that;
     }

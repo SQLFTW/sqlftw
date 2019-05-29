@@ -33,7 +33,7 @@ class TriggerReflection
 
     public function drop(DropTriggerCommand $dropTriggerCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $dropTriggerCommand;
 
         return $that;

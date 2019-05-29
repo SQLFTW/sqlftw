@@ -12,9 +12,9 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
-use function is_string;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
+use function is_string;
 use function strval;
 
 class SimpleAction implements AlterTableAction

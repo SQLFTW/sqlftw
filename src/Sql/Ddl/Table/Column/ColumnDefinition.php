@@ -130,7 +130,7 @@ class ColumnDefinition implements TableItem
      */
     public function duplicateWithDefaultValue($defaultValue): self
     {
-        $self = clone($this);
+        $self = clone $this;
         $self->defaultValue = $defaultValue;
 
         return $self;
@@ -138,7 +138,7 @@ class ColumnDefinition implements TableItem
 
     public function duplicateWithNewName(string $newName): self
     {
-        $self = clone($this);
+        $self = clone $this;
         $self->name = $newName;
 
         return $self;

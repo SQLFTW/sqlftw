@@ -32,11 +32,11 @@ class SelectExpression implements SqlSerializable
     /**
      * @param \SqlFtw\Sql\Expression\ExpressionNode $expression
      * @param string|null $alias
-     * @param \SqlFtw\Sql\Dml\Select\WindowSpecification|string|null $window
+     * @param \SqlFtw\Sql\Dml\Select\WindowSpecification|string|mixed|null $window
      */
     public function __construct(ExpressionNode $expression, ?string $alias = null, $window = null)
     {
-        if (!is_string($window) && !$window instanceof WindowSpecification) {
+        if ($window !== null && !is_string($window) && !$window instanceof WindowSpecification) {
             throw new InvalidTypeException(WindowSpecification::class . '|string', $window);
         }
         $this->expression = $expression;

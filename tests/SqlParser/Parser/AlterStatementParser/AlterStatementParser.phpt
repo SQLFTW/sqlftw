@@ -19,6 +19,7 @@ use Tester\Assert;
 require '../../../bootstrap.php';
 
 \Tester\Environment::skip();
+// phpcs:disable
 exit;
 
 $parser = new Parser(new Lexer(), new ParserFactory());

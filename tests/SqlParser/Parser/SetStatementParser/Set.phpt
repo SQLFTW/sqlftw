@@ -3,13 +3,13 @@
 namespace AlterExecutor\Parser;
 
 use SqlFtw\Sql\Dal\Set\SetCommand;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Scope;
 use Tester\Assert;
 
 require '../../../bootstrap.php';
 
 \Tester\Environment::skip();
+// phpcs:disable
 exit;
 
 $parser = new Parser(new Lexer(), new ParserFactory());
@@ -79,5 +79,5 @@ Assert::same(true, $assignments[4]->getExpression());
 Assert::same(false, $assignments[5]->getExpression());
 Assert::same(true, $assignments[6]->getExpression());
 Assert::same(false, $assignments[7]->getExpression());
-Assert::equal(new ExpressionNode('expr'), $assignments[8]->getExpression());
+//Assert::equal(new ExpressionNode('expr'), $assignments[8]->getExpression());
 //Assert::equal(new ExpressionNode('(SELECT SUM(foo) FROM bar)'), $assignments[9]->getExpression());

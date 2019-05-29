@@ -20,4 +20,18 @@ class SqlEnum extends StringEnum implements SqlSerializable
         return $this->getValue();
     }
 
+    /**
+     * @param string|\Dogma\Enum\Enum ...$values
+     * @return bool
+     */
+    public function equalsAny(...$values): bool
+    {
+        foreach ($values as $value) {
+            if ($this->equals($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
