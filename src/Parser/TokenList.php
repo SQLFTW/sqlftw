@@ -33,7 +33,7 @@ use function trim;
  * - consumeAnyFoo() - has to consume any of given objects or throw an exception
  * - mayConsumeFoo() - has to consume given object or return null without moving pointer
  * - mayConsumeFoos() - has to consume all given objects at once or return null without moving pointer. partial match is not an option
- * - mayConsumeAnyFoo - has to consume any of given objects ot return null without moving pointer
+ * - mayConsumeAnyFoo - has to consume any of given objects or return null without moving pointer
  * - seekFoo() - seeks given object between following tokens without moving pointer
  * - expectFoo() - throws an exception when expectation is not fulfilled
  * - expectedFoo() - always throws an exception
