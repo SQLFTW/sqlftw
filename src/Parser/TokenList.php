@@ -509,7 +509,7 @@ class TokenList
     }
 
     /**
-     * @param string[] ...$keywords
+     * @param string ...$keywords
      * @throws \SqlFtw\Parser\UnexpectedTokenException
      */
     public function expectedAnyKeyword(string ...$keywords): void

@@ -81,8 +81,11 @@ class Lexer
      * @param bool $withComments
      * @param bool $withWhitespace
      */
-    public function __construct(PlatformSettings $settings, bool $withComments = true, bool $withWhitespace = false)
-    {
+    public function __construct(
+        PlatformSettings $settings,
+        bool $withComments = true,
+        bool $withWhitespace = false
+    ) {
         self::$numbersKey = array_flip(self::NUMBERS);
         self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
         self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
