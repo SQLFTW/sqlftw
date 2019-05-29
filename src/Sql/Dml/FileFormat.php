@@ -81,11 +81,6 @@ class FileFormat implements SqlSerializable
         return $this->linesTerminatedBy;
     }
 
-    public function getFiedsTerminatedBy(): ?string
-    {
-        return $this->fieldsTerminatedBy;
-    }
-
     public function serialize(Formatter $formatter): string
     {
         $result = '';
