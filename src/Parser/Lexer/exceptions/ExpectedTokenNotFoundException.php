@@ -12,6 +12,6 @@ namespace SqlFtw\Parser\Lexer;
 class ExpectedTokenNotFoundException extends LexerException
 {
 
-    ///
+    // todo
 
 }

@@ -102,7 +102,7 @@ class DatabaseReflection
     public function applyCommand(Command $command): self
     {
         if ($command instanceof CreateTableCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $table = $command->getTable();
             $name = $table->getName();
             $schema = $table->getSchema() ?: $this->currentSchema;
@@ -121,7 +121,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof AlterTableCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $table = $command->getTable();
             $name = $table->getName();
             $schema = $table->getSchema() ?: $this->currentSchema;
@@ -152,7 +152,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof RenameTableCommand) {
-            $that = clone($this);
+            $that = clone $this;
             /**
              * @var \SqlFtw\Sql\QualifiedName $oldTable
              * @var \SqlFtw\Sql\QualifiedName $newTable
@@ -180,7 +180,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof DropTableCommand) {
-            $that = clone($this);
+            $that = clone $this;
             if ($this->history !== null) {
                 $that->history = clone($this->history);
             }
@@ -196,7 +196,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof CreateIndexCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $table = $command->getTable();
             $name = $table->getName();
             $schema = $table->getSchema() ?: $this->currentSchema;
@@ -206,7 +206,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof DropIndexCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $table = $command->getTable();
             $name = $table->getName();
             $schema = $table->getSchema() ?: $this->currentSchema;
@@ -216,7 +216,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof CreateViewCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $view = $command->getName();
             $name = $view->getName();
             $schema = $view->getSchema() ?: $this->currentSchema;
@@ -235,7 +235,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof AlterViewCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $view = $command->getName();
             $name = $view->getName();
             $schema = $view->getSchema() ?: $this->currentSchema;
@@ -245,7 +245,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof DropViewCommand) {
-            $that = clone($this);
+            $that = clone $this;
             foreach ($command->getNames() as $view) {
                 $name = $view->getName();
                 $schema = $view->getSchema() ?: $this->currentSchema;
@@ -259,7 +259,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof CreateFunctionCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $function = $command->getName();
             $name = $function->getName();
             $schema = $function->getSchema() ?: $this->currentSchema;
@@ -283,7 +283,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof AlterFunctionCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $function = $command->getName();
             $name = $function->getName();
             $schema = $function->getSchema() ?: $this->currentSchema;
@@ -293,7 +293,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof DropFunctionCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $function = $command->getName();
             $name = $function->getName();
             $schema = $function->getSchema() ?: $this->currentSchema;
@@ -306,7 +306,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof CreateProcedureCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $procedure = $command->getName();
             $name = $procedure->getName();
             $schema = $procedure->getSchema() ?: $this->currentSchema;
@@ -330,7 +330,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof AlterProcedureCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $procedure = $command->getName();
             $name = $procedure->getName();
             $schema = $procedure->getSchema() ?: $this->currentSchema;
@@ -340,7 +340,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof DropProcedureCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $procedure = $command->getName();
             $name = $procedure->getName();
             $schema = $procedure->getSchema() ?: $this->currentSchema;
@@ -353,7 +353,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof CreateTriggerCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $name = $command->getName();
             $table = $command->getTable();
             $tableName = $table->getName();
@@ -375,7 +375,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof DropTriggerCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $trigger = $command->getName();
             $name = $trigger->getName();
             $schema = $trigger->getSchema() ?: $this->currentSchema;
@@ -394,7 +394,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof CreateEventCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $event = $command->getName();
             $name = $event->getName();
             $schema = $event->getSchema() ?: $this->currentSchema;
@@ -413,7 +413,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof AlterEventCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $event = $command->getName();
             $name = $event->getName();
             $schema = $event->getSchema() ?: $this->currentSchema;
@@ -423,7 +423,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof DropEventCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $event = $command->getName();
             $name = $event->getName();
             $schema = $event->getSchema() ?: $this->currentSchema;
@@ -437,7 +437,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof CreateDatabaseCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $name = $command->getName();
             $schema = $this->findSchema($name);
             if ($schema !== null) {
@@ -453,7 +453,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof AlterDatabaseCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $name = $command->getName();
 
             $reflection = $this->getSchema($name);
@@ -461,7 +461,7 @@ class DatabaseReflection
 
             return $that;
         } elseif ($command instanceof DropDatabaseCommand) {
-            $that = clone($this);
+            $that = clone $this;
             $name = $command->getName();
 
             $reflection = $this->getSchema($name);
@@ -799,6 +799,14 @@ class DatabaseReflection
         } catch (EventDoesNotExistException $e) {
             return null;
         }
+    }
+
+    /**
+     * @return \SqlFtw\Reflection\VariablesReflection[]
+     */
+    public function getVariables(): array
+    {
+        return $this->variables;
     }
 
 }

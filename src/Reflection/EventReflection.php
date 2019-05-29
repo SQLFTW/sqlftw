@@ -34,16 +34,16 @@ class EventReflection
 
     public function alter(AlterEventCommand $alterEventCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $alterEventCommand;
-        ///
+        // todo
 
         return $that;
     }
 
     public function drop(DropEventCommand $dropEventCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $dropEventCommand;
 
         return $that;

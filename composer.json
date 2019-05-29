@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": "^7.3.0",
+        "ext-pdo": "*",
         "dogma/dogma": "~0.1.13",
         "tracy/tracy": "~2.4"
     },
@@ -28,7 +29,7 @@
         "bin-dir": "bin"
     },
     "autoload": {
-        "classmap": ["src", "tests"]
+        "classmap": ["src", "tests", "build"]
     },
     "minimum-stability": "dev",
     "prefer-stable": true

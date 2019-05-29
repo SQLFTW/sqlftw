@@ -32,4 +32,19 @@ class UnrecognizedTokenException extends LexerException
         $this->context = $context;
     }
 
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function getContext(): string
+    {
+        return $this->context;
+    }
+
 }

@@ -33,4 +33,19 @@ class InvalidCharacterException extends LexerException
         $this->context = $context;
     }
 
+    public function getChar(): string
+    {
+        return $this->char;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function getContext(): string
+    {
+        return $this->context;
+    }
+
 }

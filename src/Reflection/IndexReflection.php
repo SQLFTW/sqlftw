@@ -49,9 +49,7 @@ class IndexReflection
 
     public static function fromConstraint(TableReflection $table, ConstraintDefinition $constraintDefinition): self
     {
-        $indexDefinition = $constraintDefinition->getBody();
-
-        return new self($table, $indexDefinition);
+        return new self($table, $constraintDefinition->getIndexDefinition());
     }
 
     public function getTable(): TableReflection

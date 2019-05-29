@@ -397,7 +397,7 @@ class UserCommandsParser
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
             $tokenList->consumeKeyword(Keyword::TO);
-            $users = $this->parseIdentifiedUsersCreate($tokenList);
+            $users = $this->parseIdentifiedUsers($tokenList);
             $tlsOptions = $this->parseTlsOptions($tokenList);
             $withGrantOption = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
             $resourceOptions = $this->parseResourceOptions($tokenList);

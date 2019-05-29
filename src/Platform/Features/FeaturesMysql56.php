@@ -15,8 +15,7 @@ use SqlFtw\Sql\Keyword;
 class FeaturesMysql56 extends PlatformFeatures
 {
 
-    /** @var string[] */
-    public static $reservedWords = [
+    public const RESERVED_WORDS = [
         Keyword::ACCESSIBLE,
         Keyword::ADD,
         Keyword::ALL,
@@ -250,8 +249,7 @@ class FeaturesMysql56 extends PlatformFeatures
         Keyword::ZEROFILL,
     ];
 
-    /** @var string[] */
-    public static $nonReservedWords = [
+    public const NON_RESERVED_WORDS = [
         Keyword::ACTION,
         Keyword::AFTER,
         Keyword::AGAINST,
@@ -615,35 +613,15 @@ class FeaturesMysql56 extends PlatformFeatures
         Keyword::YEAR,
     ];
 
-    /** @var string[] */
-    public static $operatorKeywords = [
-        Keyword::AND,
-        Keyword::OR,
-        Keyword::XOR,
-        Keyword::NOT,
-        Keyword::IN,
-        Keyword::IS,
-        Keyword::LIKE,
-        Keyword::RLIKE,
-        Keyword::REGEXP,
-        Keyword::SOUNDS,
-        Keyword::BETWEEN,
-        Keyword::DIV,
-        Keyword::MOD,
-        Keyword::INTERVAL,
-        Keyword::BINARY,
-        Keyword::COLLATE,
-        Keyword::CASE,
-        Keyword::WHEN,
-        Keyword::THAN,
-        Keyword::ELSE,
-    ];
+    public const OPERATOR_KEYWORDS = FeaturesMysql55::OPERATOR_KEYWORDS;
 
-    /** @var string[] */
-    public static $types = FeaturesMysql55::TYPES;
+    public const OPERATORS = FeaturesMysql55::OPERATORS;
 
-    /** @var string[] */
-    public static $builtInFunctions = [
+    public const TYPES = FeaturesMysql55::TYPES;
+
+    public const TYPE_ALIASES = FeaturesMysql55::TYPE_ALIASES;
+
+    public const BUILT_IN_FUNCTIONS = [
         BuiltInFunction::ABS,
         BuiltInFunction::ACOS,
         BuiltInFunction::ADDDATE,
@@ -1056,7 +1034,69 @@ class FeaturesMysql56 extends PlatformFeatures
         BuiltInFunction::Y,
     ];
 
-    /** @var string[] */
-    public static $typeAliases = FeaturesMysql55::TYPE_ALIASES;
+    /**
+     * @return string[]
+     */
+    public function getReservedWords(): array
+    {
+        return self::RESERVED_WORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNonReservedWords(): array
+    {
+        return self::NON_RESERVED_WORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperatorKeywords(): array
+    {
+        return self::OPERATOR_KEYWORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperators(): array
+    {
+        return self::OPERATORS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypes(): array
+    {
+        return self::TYPES;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypeAliases(): array
+    {
+        return self::TYPE_ALIASES;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBuiltInFunctions(): array
+    {
+        return self::BUILT_IN_FUNCTIONS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSystemVariables(): array
+    {
+        // todo
+        return [];
+    }
 
 }

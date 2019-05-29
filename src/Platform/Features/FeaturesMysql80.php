@@ -16,8 +16,7 @@ use SqlFtw\Sql\Keyword;
 class FeaturesMysql80 extends PlatformFeatures
 {
 
-    /** @var string[] */
-    public static $reservedWords = [
+    public const RESERVED_WORDS = [
         Keyword::ACCOUNT,
         Keyword::AGAINST,
         Keyword::AGGREGATE,
@@ -413,80 +412,15 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::YEAR,
     ];
 
-    public const OPERATOR_KEYWORDS = [
-        Keyword::AND,
-        Keyword::OR,
-        Keyword::XOR,
-        Keyword::NOT,
-        Keyword::IN,
-        Keyword::IS,
-        Keyword::LIKE,
-        Keyword::RLIKE,
-        Keyword::REGEXP,
-        Keyword::SOUNDS,
-        Keyword::BETWEEN,
-        Keyword::DIV,
-        Keyword::MOD,
-        Keyword::INTERVAL,
-        Keyword::BINARY,
-        Keyword::COLLATE,
-        Keyword::CASE,
-        Keyword::WHEN,
-        Keyword::THAN,
-        Keyword::ELSE,
+    public const OPERATOR_KEYWORDS = FeaturesMysql57::OPERATOR_KEYWORDS;
+
+    public const OPERATORS = FeaturesMysql57::OPERATORS + [
+        Operator::JSON_EXTRACT_UNQUOTE, // new in 8.0
     ];
 
-    public const OPERATORS = [
-        Operator::ALL,
-        Operator::AMPERSANDS,
-        Operator::AND,
-        Operator::ANY,
-        Operator::ASSIGN,
-        Operator::BETWEEN,
-        Operator::BINARY,
-        Operator::BIT_AND,
-        Operator::BIT_INVERT,
-        Operator::BIT_OR,
-        Operator::BIT_XOR,
-        Operator::CASE,
-        Operator::DIV,
-        Operator::DIVIDE,
-        Operator::ELSE,
-        Operator::END,
-        Operator::EQUAL,
-        Operator::ESCAPE,
-        Operator::EXCLAMATION,
-        Operator::EXISTS,
-        Operator::GREATER,
-        Operator::GREATER_OR_EQUAL,
-        Operator::IN,
-        Operator::IS,
-        Operator::JSON_EXTRACT,
-        Operator::JSON_EXTRACT_UNQUOTE, // new in 8.0
-        Operator::LEFT_SHIFT,
-        Operator::LESS,
-        Operator::LESS_OR_EQUAL,
-        Operator::LESS_OR_GREATER,
-        Operator::LIKE,
-        Operator::MINUS,
-        Operator::MOD,
-        Operator::MODULO,
-        Operator::MULTIPLY,
-        Operator::NON_EQUAL,
-        Operator::NOT,
-        Operator::OR,
-        Operator::PIPES,
-        Operator::PLUS,
-        Operator::REGEXP,
-        Operator::RIGHT_SHIFT,
-        Operator::RLIKE,
-        Operator::SAFE_EQUAL,
-        Operator::SOME,
-        Operator::SOUNDS,
-        Operator::THEN,
-        Operator::WHEN,
-        Operator::XOR,
-    ];
+    public const TYPES = FeaturesMysql57::TYPES;
+
+    public const TYPE_ALIASES = FeaturesMysql57::TYPE_ALIASES;
 
     public const BUILT_IN_FUNCTIONS = [
         BuiltInFunction::ABS,
@@ -866,8 +800,69 @@ class FeaturesMysql80 extends PlatformFeatures
         BuiltInFunction::YEARWEEK,
     ];
 
-    public const TYPES = FeaturesMysql55::TYPES;
+    /**
+     * @return string[]
+     */
+    public function getReservedWords(): array
+    {
+        return self::RESERVED_WORDS;
+    }
 
-    public const TYPE_ALIASES = FeaturesMysql55::TYPE_ALIASES;
+    /**
+     * @return string[]
+     */
+    public function getNonReservedWords(): array
+    {
+        return self::NON_RESERVED_WORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperatorKeywords(): array
+    {
+        return self::OPERATOR_KEYWORDS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperators(): array
+    {
+        return self::OPERATORS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypes(): array
+    {
+        return self::TYPES;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypeAliases(): array
+    {
+        return self::TYPE_ALIASES;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBuiltInFunctions(): array
+    {
+        return self::BUILT_IN_FUNCTIONS;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSystemVariables(): array
+    {
+        // todo
+        return [];
+    }
 
 }

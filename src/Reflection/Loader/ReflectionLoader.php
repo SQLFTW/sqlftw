@@ -43,7 +43,7 @@ class ReflectionLoader
 
     public function getCreateDatabaseCommand(string $name): CreateDatabaseCommand
     {
-        ///
+        // todo
     }
 
     public function getCreateTableCommand(string $name, string $schema): CreateTableCommand
@@ -96,22 +96,22 @@ class ReflectionLoader
 
     public function getCreateFunctionCommand(string $name, string $schema): CreateFunctionCommand
     {
-        ///
+        // todo
     }
 
     public function getCreateProcedureCommand(string $name, string $schema): CreateProcedureCommand
     {
-        ///
+        // todo
     }
 
     public function getCreateTriggerCommand(string $name, string $schema): CreateTriggerCommand
     {
-        ///
+        // todo
     }
 
     public function getCreateEventCommand(string $name, string $schema): CreateEventCommand
     {
-        ///
+        // todo
     }
 
 }

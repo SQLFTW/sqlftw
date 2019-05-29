@@ -37,10 +37,10 @@ class ViewReflection
 
     public function alter(AlterViewCommand $alterViewCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $alterViewCommand;
 
-        /// columns
+        // todo columns
         $that->columns = [];
 
         return $that;
@@ -48,7 +48,7 @@ class ViewReflection
 
     public function drop(DropViewCommand $dropViewCommand): self
     {
-        $that = clone($this);
+        $that = clone $this;
         $that->commands[] = $dropViewCommand;
         $that->columns = [];
 
@@ -66,6 +66,14 @@ class ViewReflection
     public function getCommands(): array
     {
         return $this->commands;
+    }
+
+    /**
+     * @return \SqlFtw\Reflection\ColumnReflection[]
+     */
+    public function getColumns(): array
+    {
+        return $this->columns;
     }
 
     public function wasDropped(): bool
