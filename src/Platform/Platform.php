@@ -36,7 +36,7 @@ class Platform
     /** @var string[] */
     private static $defaultVersions = [
         self::SQL => '2011',
-        self::MYSQL => '5.7',
+        self::MYSQL => '8.0',
         self::MARIA => '10.3',
     ];
 

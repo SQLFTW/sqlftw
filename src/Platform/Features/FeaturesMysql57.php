@@ -532,6 +532,7 @@ class FeaturesMysql57 extends PlatformFeatures
         Keyword::REPLICATE_WILD_IGNORE_TABLE,
         Keyword::REPLICATION,
         Keyword::RESET,
+        Keyword::RESTART, // undocumented
         Keyword::RESTORE,
         Keyword::RESUME,
         Keyword::RETURNED_SQLSTATE,

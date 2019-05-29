@@ -503,6 +503,7 @@ class FeaturesMysql56 extends PlatformFeatures
         Keyword::REPEATABLE,
         Keyword::REPLICATION,
         Keyword::RESET,
+        Keyword::RESTART, // undocumented
         Keyword::RESTORE,
         Keyword::RESUME,
         Keyword::RETURNED_SQLSTATE,
