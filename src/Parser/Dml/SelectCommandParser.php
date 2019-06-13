@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
@@ -28,6 +29,7 @@ use SqlFtw\Sql\Dml\Select\WindowFrame;
 use SqlFtw\Sql\Dml\Select\WindowFrameType;
 use SqlFtw\Sql\Dml\Select\WindowFrameUnits;
 use SqlFtw\Sql\Dml\Select\WindowSpecification;
+use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
@@ -36,6 +38,9 @@ use SqlFtw\Sql\QualifiedName;
 class SelectCommandParser
 {
     use StrictBehaviorMixin;
+
+    /** @var \SqlFtw\Parser\Dml\WithParser */
+    private $withParser;
 
     /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;
@@ -47,10 +52,12 @@ class SelectCommandParser
     private $fileFormatParser;
 
     public function __construct(
+        WithParser $withParser,
         ExpressionParser $expressionParser,
         JoinParser $joinParser,
         FileFormatParser $fileFormatParser
     ) {
+        $this->withParser = $withParser;
         $this->expressionParser = $expressionParser;
         $this->joinParser = $joinParser;
         $this->fileFormatParser = $fileFormatParser;
@@ -84,8 +91,15 @@ class SelectCommandParser
      *     [FOR {UPDATE | SHARE} [OF tbl_name [, tbl_name] ...] [NOWAIT | SKIP LOCKED]
      *       | LOCK IN SHARE MODE]]
      */
-    public function parseSelect(TokenList $tokenList): SelectCommand
+    public function parseSelect(TokenList $tokenList, ?WithClause $with = null): SelectCommand
     {
+        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+            if ($with !== null) {
+                throw new ParserException('WITH defined twice.');
+            }
+            return $this->withParser->parseWith($tokenList->resetPosition(-1));
+        }
+
         $tokenList->consumeKeyword(Keyword::SELECT);
 
         /** @var \SqlFtw\Sql\Dml\Select\SelectDistinctOption $distinct */
@@ -139,7 +153,8 @@ class SelectCommandParser
             $where = $this->expressionParser->parseExpression($tokenList);
         }
 
-        $groupBy = $withRollup = null;
+        $groupBy = null;
+        $withRollup = false;
         if ($tokenList->mayConsumeKeywords(Keyword::GROUP, Keyword::BY)) {
             $groupBy = [];
             do {
@@ -223,7 +238,7 @@ class SelectCommandParser
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
         }
 
-        return new SelectCommand($what, $from, $where, $groupBy, $having, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);
+        return new SelectCommand($what, $from, $where, $groupBy, $having, $with, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);
     }
 
     /**

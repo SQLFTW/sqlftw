@@ -31,7 +31,7 @@ class ShowCreateUserCommand implements ShowCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW ' . $formatter->formatName($this->name);
+        return 'SHOW CREATE USER ' . $formatter->formatName($this->name);
     }
 
 }

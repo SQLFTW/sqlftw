@@ -406,9 +406,9 @@ class ExpressionParser
                 $expression = new Identifier($variableName);
 
             } else {
-                $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
                 $name1 = $tokenList->mayConsumeName();
                 if ($name1 !== null) {
+                    $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
                     $name2 = $name3 = null;
                     if ($tokenList->mayConsume(TokenType::DOT)) {
                         $name2 = $tokenList->consumeName();

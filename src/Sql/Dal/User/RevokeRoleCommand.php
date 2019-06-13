@@ -9,31 +9,37 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
+use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
+use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
-class RevokeRolesCommand implements UserCommand
+class RevokeRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var string[] */
     private $roles;
 
     /** @var \SqlFtw\Sql\UserName[] */
     private $users;
 
     /**
-     * @param \SqlFtw\Sql\UserName[] $roles
+     * @param string[] $roles
      * @param \SqlFtw\Sql\UserName[] $users
      */
     public function __construct(array $roles, array $users)
     {
+        Check::itemsOfType($roles, Type::STRING);
+        Check::itemsOfType($users, UserName::class);
+
         $this->roles = $roles;
         $this->users = $users;
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return string[]
      */
     public function getRoles(): array
     {
@@ -50,7 +56,7 @@ class RevokeRolesCommand implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'REVOKE ' . $formatter->formatSerializablesList($this->roles)
+        return 'REVOKE ' . $formatter->formatNamesList($this->roles)
             . ' FROM ' . $formatter->formatSerializablesList($this->users);
     }
 

@@ -67,7 +67,7 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
     {
         $result = 'INSERT' . $this->serializeBody($formatter);
 
-        $result .= implode(', ', Arr::map($this->rows, function (array $values) use ($formatter): string {
+        $result .= ' VALUES ' . implode(', ', Arr::map($this->rows, function (array $values) use ($formatter): string {
             return '(' . implode(', ', Arr::map($values, function (ExpressionNode $value) use ($formatter): string {
                 return $value->serialize($formatter);
             })) . ')';

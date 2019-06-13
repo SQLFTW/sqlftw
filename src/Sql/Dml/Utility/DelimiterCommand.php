@@ -27,7 +27,7 @@ class DelimiterCommand implements DmlCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DELIMITER ' . $this->delimiter . "\n";
+        return 'DELIMITER ' . $this->delimiter;
     }
 
 }

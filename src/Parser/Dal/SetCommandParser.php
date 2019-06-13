@@ -51,10 +51,11 @@ class SetCommandParser
 
         $assignments = [];
         do {
+            $position = $tokenList->getPosition();
             /** @var \SqlFtw\Sql\Scope $scope */
             $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
             if ($scope !== null) {
-                $variable = $tokenList->consumeKeywordEnum(SystemVariable::class);
+                $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class)->getValue();
             } else {
                 $variable = $tokenList->mayConsume(TokenType::AT_VARIABLE);
                 if ($variable !== null) {
@@ -62,26 +63,27 @@ class SetCommandParser
                     $variable = $variable->value;
                     if (substr($variable, 0, 2) === '@@') {
                         // @@
-                        $variable = strtoupper($variable);
-                        if ($variable === '@@GLOBAL') {
+                        $upper = strtoupper($variable);
+                        if ($upper === '@@GLOBAL') {
                             $scope = Scope::get(Scope::GLOBAL);
                             $variable = null;
-                        } elseif ($variable === '@@PERSIST') {
+                        } elseif ($upper === '@@PERSIST') {
                             $scope = Scope::get(Scope::PERSIST);
                             $variable = null;
-                        } elseif ($variable === '@@PERSIST_ONLY') {
+                        } elseif ($upper === '@@PERSIST_ONLY') {
                             $scope = Scope::get(Scope::PERSIST_ONLY);
                             $variable = null;
-                        } elseif ($variable === '@@SESSION') {
+                        } elseif ($upper === '@@SESSION') {
                             $scope = Scope::get(Scope::SESSION);
                             $variable = null;
                         } else {
                             $scope = Scope::get(Scope::SESSION);
-                            $variable = substr($variable, 2);
+                            $tokenList->resetPosition($position);
+                            $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class, '@')->getValue();
                         }
                         if ($variable === null) {
                             $tokenList->consume(TokenType::DOT);
-                            $variable = $tokenList->consumeName();
+                            $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class)->getValue();
                         }
                     }
                 } else {
@@ -94,6 +96,7 @@ class SetCommandParser
 
             $assignments[] = new SetAssignment($variable, $expression, $scope);
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new SetCommand($assignments);
     }

@@ -52,11 +52,11 @@ class SetPasswordCommand implements UserCommand
     {
         $result = 'SET PASSWORD';
         if ($this->user !== null) {
-            $result .= ' FOR USER ' . $this->user->serialize($formatter);
+            $result .= ' FOR ' . $this->user->serialize($formatter);
         }
         $result .= $this->usePasswordFunction
-            ? ' PASSWORD(' . $formatter->formatString($this->password) . ')'
-            : $formatter->formatString($this->password);
+            ? ' = PASSWORD(' . $formatter->formatString($this->password) . ')'
+            : ' = ' . $formatter->formatString($this->password);
 
         return $result;
     }

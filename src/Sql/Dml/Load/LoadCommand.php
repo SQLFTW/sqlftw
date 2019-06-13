@@ -114,9 +114,11 @@ abstract class LoadCommand implements DmlCommand
         if ($this->charset !== null) {
             $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
         }
+
         $result .= $this->serializeFormat($formatter);
+
         if ($this->ignoreRows !== null) {
-            $result .= ' IGNORE ROWS ' . $this->ignoreRows;
+            $result .= ' IGNORE ' . $this->ignoreRows . ' LINES';
         }
         if ($this->fields !== null) {
             $result .= ' (' . $formatter->formatNamesList($this->fields) . ')';

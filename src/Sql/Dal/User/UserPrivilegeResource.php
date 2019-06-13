@@ -22,13 +22,13 @@ class UserPrivilegeResource implements SqlSerializable
     /** @var string|null */
     private $schema;
 
-    /** @var string */
+    /** @var string|null */
     private $objectName;
 
     /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeResourceType|null */
     private $objectType;
 
-    public function __construct(?string $schema, string $objectName, ?UserPrivilegeResourceType $objectType)
+    public function __construct(?string $schema, ?string $objectName, ?UserPrivilegeResourceType $objectType)
     {
         $this->schema = $schema;
         $this->objectName = $objectName;
@@ -40,7 +40,7 @@ class UserPrivilegeResource implements SqlSerializable
         return $this->schema;
     }
 
-    public function getObjectName(): string
+    public function getObjectName(): ?string
     {
         return $this->objectName;
     }
@@ -57,9 +57,14 @@ class UserPrivilegeResource implements SqlSerializable
             $result .= $this->objectType->serialize($formatter) . ' ';
         }
         if ($this->schema !== null) {
-            $result .= ($this->schema === self::ALL ? self::ALL : $formatter->formatName($this->schema)) . '.';
+            $result .= ($this->schema === self::ALL ? self::ALL : $formatter->formatName($this->schema));
         }
-        $result .= $this->objectName === self::ALL ? self::ALL : $formatter->formatName($this->objectName);
+        if ($this->schema !== null && $this->objectName !== null) {
+            $result .= '.';
+        }
+        if ($this->objectName !== null) {
+            $result .= $this->objectName === self::ALL ? self::ALL : $formatter->formatName($this->objectName);
+        }
 
         return $result;
     }

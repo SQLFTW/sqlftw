@@ -167,3 +167,8 @@ xmlparse
 xmlpi
 xmlroot
 xmlserialize
+geomcollection
+cte
+gtrid
+bqual
+vcpu

@@ -12,6 +12,10 @@ $formatter = new Formatter($parser->getSettings());
 
 // ALGORITHM
 $query = 'ALTER TABLE foo
+  ALGORITHM INSTANT';
+Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+
+$query = 'ALTER TABLE foo
   ALGORITHM INPLACE';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
@@ -22,6 +26,7 @@ Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 $query = 'ALTER TABLE foo
   ALGORITHM DEFAULT';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+
 
 // LOCK
 $query = 'ALTER TABLE foo
@@ -40,10 +45,12 @@ $query = 'ALTER TABLE foo
   LOCK EXCLUSIVE';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
+
 // FORCE
 $query = 'ALTER TABLE foo
   FORCE';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+
 
 // VALIDATION
 $query = 'ALTER TABLE foo

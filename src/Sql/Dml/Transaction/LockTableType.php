@@ -18,5 +18,6 @@ class LockTableType extends SqlEnum
     public const READ = Keyword::READ;
     public const READ_LOCAL = Keyword::READ . ' ' . Keyword::LOCAL;
     public const WRITE = Keyword::WRITE;
+    public const LOW_PRIORITY_WRITE = Keyword::LOW_PRIORITY . ' ' . Keyword::WRITE;
 
 }

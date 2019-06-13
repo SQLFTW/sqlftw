@@ -96,23 +96,23 @@ class IdentifiedUser implements SqlSerializable
 
         $result .= ' IDENTIFIED';
         if ($this->action->equals(IdentifiedUserAction::SET_PLUGIN)) {
-            $result .= ' WITH ' . $this->action->serialize($formatter);
+            $result .= ' WITH ' . $formatter->formatName($this->plugin);
         } elseif ($this->action->equals(IdentifiedUserAction::SET_HASH)) {
             if ($this->plugin !== null) {
-                $result .= ' WITH ' . $this->action->serialize($formatter);
+                $result .= ' WITH ' . $formatter->formatName($this->plugin);
             }
             $result .= ' AS ' . $formatter->formatString($this->password);
         } else {
             if ($this->plugin !== null) {
-                $result .= ' WITH ' . $this->action->serialize($formatter);
+                $result .= ' WITH ' . $formatter->formatName($this->plugin);
             }
+            $result .= ' BY ' . $formatter->formatString($this->password);
             if ($this->replace !== null) {
                 $result .= ' REPLACE ' . $formatter->formatString($this->replace);
             }
             if ($this->retainCurrent) {
                 $result .= ' RETAIN CURRENT PASSWORD';
             }
-            $result .= ' BY ' . $formatter->formatString($this->password);
         }
 
         return $result;

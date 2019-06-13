@@ -18,7 +18,7 @@ class UnlockTablesCommand implements TransactionCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'UNLOCK TABLES ...';
+        return 'UNLOCK TABLES';
     }
 
 }

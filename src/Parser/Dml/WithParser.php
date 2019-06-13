@@ -9,50 +9,73 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\NotImplementedException;
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Dml\WithClause;
+use SqlFtw\Sql\Dml\WithExpression;
+use SqlFtw\Sql\Keyword;
 
 class WithParser
 {
     use StrictBehaviorMixin;
 
-    // phpcs:disable
+    /** @var \SqlFtw\Parser\ParserFactory */
+    private $parserFactory;
 
-    /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
-    private $selectParser;
-
-    /** @var \SqlFtw\Parser\Dml\UpdateCommandParser */
-    private $updateParser;
-
-    /** @var \SqlFtw\Parser\Dml\DeleteCommandParser */
-    private $deleteParser;
-
-    public function __construct(
-        SelectCommandParser $selectParser,
-        UpdateCommandParser $updateParser,
-        DeleteCommandParser $deleteParser
-    ) {
-        $this->selectParser = $selectParser;
-        $this->updateParser = $updateParser;
-        $this->deleteParser = $deleteParser;
+    public function __construct(ParserFactory $parserFactory)
+    {
+        $this->parserFactory = $parserFactory;
     }
 
     /**
+     * with_clause:
+     *   WITH [RECURSIVE]
+     *     cte_name [(col_name [, col_name] ...)] AS (subquery)
+     *     [, cte_name [(col_name [, col_name] ...)] AS (subquery)] ...
+     *
      * @param \SqlFtw\Parser\TokenList $tokenList
      * @return \SqlFtw\Sql\Dml\Select\SelectCommand|\SqlFtw\Sql\Dml\Update\UpdateCommand|\SqlFtw\Sql\Dml\Delete\DeleteCommand
      */
     public function parseWith(TokenList $tokenList): Command
     {
-        // todo: WITH
-        if (true === true) {
-            throw new NotImplementedException('Common table expressions are not implemented yet.');
-        } else {
-            return new SelectCommand([], new TableReferenceTable(new QualifiedName('foo')));
+        $tokenList->consumeKeyword(Keyword::WITH);
+        $recursive = (bool) $tokenList->mayConsumeKeyword(Keyword::RECURSIVE);
+
+        $expressions = [];
+        do {
+            $name = $tokenList->consumeName();
+            $columns = null;
+            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                $columns = [];
+                do {
+                    $columns[] = $tokenList->consumeName();
+                } while ($tokenList->mayConsumeComma());
+                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            }
+            $tokenList->consumeKeyword(Keyword::AS);
+            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $query = $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList);
+            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+
+            $expressions[] = new WithExpression($query, $name, $columns);
+        } while ($tokenList->mayConsumeComma());
+
+        $with = new WithClause($expressions, $recursive);
+
+        $next = $tokenList->consumeAnyKeyword(Keyword::SELECT, Keyword::UPDATE, Keyword::DELETE);
+        switch ($next) {
+            case Keyword::SELECT:
+                return $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList->resetPosition(-1), $with);
+            case Keyword::UPDATE:
+                return $this->parserFactory->getUpdateCommandParser()->parseUpdate($tokenList->resetPosition(-1), $with);
+            case Keyword::DELETE:
+                return $this->parserFactory->getDeleteCommandParser()->parseDelete($tokenList->resetPosition(-1), $with);
+            default:
+                throw new ShouldNotHappenException('');
         }
     }
 

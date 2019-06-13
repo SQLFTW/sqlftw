@@ -17,19 +17,19 @@ class ResetPersistCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var string|null */
     private $variable;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(string $variable, bool $ifExists = false)
+    public function __construct(?string $variable, bool $ifExists = false)
     {
         $this->variable = $variable;
         $this->ifExists = $ifExists;
     }
 
-    public function getVariable(): string
+    public function getVariable(): ?string
     {
         return $this->variable;
     }
@@ -41,11 +41,13 @@ class ResetPersistCommand implements DalCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'RESET PERSIST ';
+        $result = 'RESET PERSIST';
         if ($this->ifExists) {
-            $result .= 'IF EXISTS ';
+            $result .= ' IF EXISTS';
         }
-        $result .= $formatter->formatName($this->variable);
+        if ($this->variable !== null) {
+            $result .= ' ' . $formatter->formatName($this->variable);
+        }
 
         return $result;
     }

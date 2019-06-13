@@ -63,7 +63,10 @@ class ShowTablesCommand implements ShowCommand
         if ($this->full) {
             $result .= ' FULL';
         }
-        $result .= ' TABLES FROM ' . $formatter->formatName($this->database);
+        $result .= ' TABLES';
+        if ($this->database) {
+            $result .= ' FROM ' . $formatter->formatName($this->database);
+        }
         if ($this->like !== null) {
             $result .= ' LIKE ' . $formatter->formatString($this->like);
         } elseif ($this->where) {

@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class GrantCommand implements UserCommand
 {
@@ -25,6 +26,12 @@ class GrantCommand implements UserCommand
     /** @var \SqlFtw\Sql\Dal\User\IdentifiedUser[] */
     private $users;
 
+    /** @var \SqlFtw\Sql\UserName|null */
+    private $asUser;
+
+    /** @var \SqlFtw\Sql\Dal\User\RolesSpecification|null */
+    private $withRole;
+
     /** @var \SqlFtw\Sql\Dal\User\UserTlsOption[]|null */
     private $tlsOptions;
 
@@ -38,6 +45,8 @@ class GrantCommand implements UserCommand
      * @param \SqlFtw\Sql\Dal\User\UserPrivilege[] $privileges
      * @param \SqlFtw\Sql\Dal\User\UserPrivilegeResource $resource
      * @param \SqlFtw\Sql\Dal\User\IdentifiedUser[] $users
+     * @param \SqlFtw\Sql\UserName|null $asUser
+     * @param \SqlFtw\Sql\Dal\User\RolesSpecification|null $withRole
      * @param \SqlFtw\Sql\Dal\User\UserTlsOption[]|null $tlsOptions
      * @param \SqlFtw\Sql\Dal\User\UserResourceOption[]|null $resourceOptions
      * @param bool $withGrantOption
@@ -46,6 +55,8 @@ class GrantCommand implements UserCommand
         array $privileges,
         UserPrivilegeResource $resource,
         array $users,
+        ?UserName $asUser = null,
+        ?RolesSpecification $withRole = null,
         ?array $tlsOptions = null,
         ?array $resourceOptions = null,
         bool $withGrantOption = false
@@ -53,6 +64,8 @@ class GrantCommand implements UserCommand
         $this->privileges = $privileges;
         $this->resource = $resource;
         $this->users = $users;
+        $this->asUser = $asUser;
+        $this->withRole = $withRole;
         $this->tlsOptions = $tlsOptions;
         $this->resourceOptions = $resourceOptions;
         $this->withGrantOption = $withGrantOption;
@@ -77,6 +90,16 @@ class GrantCommand implements UserCommand
     public function getUsers(): array
     {
         return $this->users;
+    }
+
+    public function getAsUser(): ?UserName
+    {
+        return $this->asUser;
+    }
+
+    public function getWithRole(): ?RolesSpecification
+    {
+        return $this->withRole;
     }
 
     /**
@@ -119,6 +142,12 @@ class GrantCommand implements UserCommand
         }
         if ($this->resourceOptions !== null) {
             $result .= ' WITH ' . $formatter->formatSerializablesList($this->resourceOptions);
+        }
+        if ($this->asUser !== null) {
+            $result .= ' AS ' . $this->asUser->serialize($formatter);
+            if ($this->withRole !== null) {
+                $result .= ' WITH ROLE ' . $this->withRole->serialize($formatter);
+            }
         }
 
         return $result;

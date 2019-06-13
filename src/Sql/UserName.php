@@ -40,9 +40,9 @@ class UserName implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $formatter->formatName($this->user);
+        $result = $formatter->formatString($this->user);
         if ($this->host) {
-            $result .= '@' . $formatter->formatName($this->host);
+            $result .= '@' . $formatter->formatString($this->host);
         }
         return $result;
     }

@@ -38,6 +38,7 @@ class DoCommandsParser
         do {
             $expressions[] = $this->expressionParser->parseExpression($tokenList);
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new DoCommand($expressions);
     }

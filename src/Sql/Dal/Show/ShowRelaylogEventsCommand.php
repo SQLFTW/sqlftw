@@ -20,14 +20,18 @@ class ShowRelaylogEventsCommand implements ShowCommand
     private $logName;
 
     /** @var int|null */
+    private $from;
+
+    /** @var int|null */
     private $limit;
 
     /** @var  int|null */
     private $offset;
 
-    public function __construct(?string $logName, ?int $limit, ?int $offset)
+    public function __construct(?string $logName, ?int $from, ?int $limit, ?int $offset)
     {
         $this->logName = $logName;
+        $this->from = $from;
         $this->limit = $limit;
         $this->offset = $offset;
     }
@@ -35,6 +39,11 @@ class ShowRelaylogEventsCommand implements ShowCommand
     public function getLogName(): ?string
     {
         return $this->logName;
+    }
+
+    public function getFrom(): ?int
+    {
+        return $this->from;
     }
 
     public function getLimit(): ?int
@@ -51,10 +60,10 @@ class ShowRelaylogEventsCommand implements ShowCommand
     {
         $result = 'SHOW RELAYLOG EVENTS';
         if ($this->logName) {
-            $result .= ' IN ' . $formatter->formatName($this->logName);
+            $result .= ' IN ' . $formatter->formatString($this->logName);
         }
-        if ($this->offset && !$this->limit) {
-            $result .= ' FROM ' . $this->offset;
+        if ($this->from) {
+            $result .= ' FROM ' . $this->from;
         }
         if ($this->limit) {
             $result .= ' LIMIT ';

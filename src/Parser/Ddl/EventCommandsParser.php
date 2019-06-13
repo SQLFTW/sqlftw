@@ -84,6 +84,7 @@ class EventCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::DO)) {
             $body = $this->doCommandsParser->parseDo($tokenList->resetPosition($tokenList->getPosition() - 1));
         }
+        $tokenList->expectEnd();
 
         return new AlterEventCommand($name, $schedule, $body, $definer, $state, $preserve, $comment, $newName);
     }
@@ -132,6 +133,7 @@ class EventCommandsParser
         }
 
         $body = $this->doCommandsParser->parseDo($tokenList->resetPosition($tokenList->getPosition() - 1));
+        $tokenList->expectEnd();
 
         return new CreateEventCommand($name, $schedule, $body, $definer, $state, $preserve, $comment, $ifNotExists);
     }
@@ -172,6 +174,7 @@ class EventCommandsParser
         $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
 
         $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectEnd();
 
         return new DropEventCommand($name, $ifExists);
     }

@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Reset\ResetPersistCommand;
 use SqlFtw\Sql\Keyword;
 
@@ -26,13 +25,15 @@ class ResetPersistCommandParser
     {
         $tokenList->consumeKeywords(Keyword::RESET, Keyword::PERSIST);
         $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
+        // todo: platform variables
         if ($ifExists) {
             $variable = $tokenList->consumeName();
         } else {
-            $variable = $tokenList->mayConsume(TokenType::NAME);
+            $variable = $tokenList->mayConsumeName();
         }
+        $tokenList->expectEnd();
 
-        return new ResetPersistCommand($variable->value, $ifExists);
+        return new ResetPersistCommand($variable, $ifExists);
     }
 
 }

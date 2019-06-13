@@ -25,6 +25,7 @@ class HelpCommandParser
     {
         $tokenList->consumeKeyword(Keyword::HELP);
         $term = $tokenList->consumeString();
+        $tokenList->expectEnd();
 
         return new HelpCommand($term);
     }

@@ -50,29 +50,35 @@ class XaTransactionCommandsParser
                 $xid = $this->parseXid($tokenList);
                 /** @var \SqlFtw\Sql\Dml\XaTransaction\XaStartOption $option */
                 $option = $tokenList->mayConsumeKeywordEnum(XaStartOption::class);
+                $tokenList->expectEnd();
 
                 return new XaStartCommand($xid, $option);
             case Keyword::END:
                 $xid = $this->parseXid($tokenList);
                 $suspend = (bool) $tokenList->mayConsumeKeyword(Keyword::SUSPEND);
                 $forMigrate = $suspend ? (bool) $tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::MIGRATE) : false;
+                $tokenList->expectEnd();
 
                 return new XaEndCommand($xid, $suspend, $forMigrate);
             case Keyword::PREPARE:
                 $xid = $this->parseXid($tokenList);
+                $tokenList->expectEnd();
 
                 return new XaPrepareCommand($xid);
             case Keyword::COMMIT:
                 $xid = $this->parseXid($tokenList);
                 $onePhase = (bool) $tokenList->mayConsumeKeywords(Keyword::ONE, Keyword::PHASE);
+                $tokenList->expectEnd();
 
                 return new XaCommitCommand($xid, $onePhase);
             case Keyword::ROLLBACK:
                 $xid = $this->parseXid($tokenList);
+                $tokenList->expectEnd();
 
                 return new XaRollbackCommand($xid);
             case Keyword::RECOVER:
                 $convertXid = (bool) $tokenList->mayConsumeKeywords(Keyword::CONVERT, Keyword::XID);
+                $tokenList->expectEnd();
 
                 return new XaRecoverCommand($convertXid);
             default:
@@ -89,6 +95,9 @@ class XaTransactionCommandsParser
         }
     }
 
+    /**
+     * xid: gtrid [, bqual [, formatID ]]
+     */
     private function parseXid(TokenList $tokenList): Xid
     {
         $transactionId = $tokenList->consumeString();
@@ -100,6 +109,7 @@ class XaTransactionCommandsParser
                 $format = $tokenList->consumeInt();
             }
         }
+
         return new Xid($transactionId, $branch, $format);
     }
 

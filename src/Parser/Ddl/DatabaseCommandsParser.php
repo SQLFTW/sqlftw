@@ -38,6 +38,7 @@ class DatabaseCommandsParser
         $database = $tokenList->mayConsumeName();
 
         [$charset, $collation] = $this->parseDefaults($tokenList);
+        $tokenList->expectEnd();
 
         return new AlterDatabaseCommand($database, $charset, $collation);
     }
@@ -58,6 +59,7 @@ class DatabaseCommandsParser
         $database = $tokenList->consumeName();
 
         [$charset, $collation] = $this->parseDefaults($tokenList);
+        $tokenList->expectEnd();
 
         return new CreateDatabaseCommand($database, $charset, $collation, $ifNotExists);
     }
@@ -108,6 +110,7 @@ class DatabaseCommandsParser
         $tokenList->consumeAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
         $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
         $database = $tokenList->consumeName();
+        $tokenList->expectEnd();
 
         return new DropDatabaseCommand($database, $ifExists);
     }

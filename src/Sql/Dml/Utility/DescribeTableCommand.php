@@ -47,9 +47,9 @@ class DescribeTableCommand implements DmlCommand
 
         if ($this->column) {
             if (strtr($this->column, '_%', 'xx') === $this->column) {
-                $result .= $formatter->formatName($this->column);
+                $result .= ' ' . $formatter->formatName($this->column);
             } else {
-                $result .= $formatter->formatString($this->column);
+                $result .= ' ' . $formatter->formatString($this->column);
             }
         }
 

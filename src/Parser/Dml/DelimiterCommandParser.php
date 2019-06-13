@@ -24,6 +24,7 @@ class DelimiterCommandParser
         $tokenList->consumeKeyword(Keyword::DELIMITER);
         /** @var string $delimiter */
         $delimiter = $tokenList->consume(TokenType::DELIMITER_DEFINITION)->value;
+        $tokenList->expectEnd();
 
         return new DelimiterCommand($delimiter);
     }

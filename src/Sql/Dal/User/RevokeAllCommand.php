@@ -37,7 +37,7 @@ class RevokeAllCommand implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'REVOKE ALL PRIVILEGES, GRANT OPTION FROM ' . $formatter->formatSerializablesList($this->users);
+        return 'REVOKE ALL, GRANT OPTION FROM ' . $formatter->formatSerializablesList($this->users);
     }
 
 }

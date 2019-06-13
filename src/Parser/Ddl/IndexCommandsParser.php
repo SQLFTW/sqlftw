@@ -74,6 +74,7 @@ class IndexCommandsParser
                 $alterLock = $tokenList->consumeKeywordEnum(AlterTableLock::class);
             }
         }
+        $tokenList->expectEnd();
 
         return new CreateIndexCommand($index, $alterAlgorithm, $alterLock);
     }
@@ -183,6 +184,7 @@ class IndexCommandsParser
             /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock $lock */
             $lock = $tokenList->consumeKeywordEnum(AlterTableLock::class);
         }
+        $tokenList->expectEnd();
 
         return new DropIndexCommand($name, $table, $algorithm, $lock);
     }

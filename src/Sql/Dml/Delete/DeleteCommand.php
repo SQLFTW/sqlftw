@@ -16,6 +16,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
+use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
@@ -36,6 +37,9 @@ class DeleteCommand implements DmlCommand
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $where;
 
+    /** @var \SqlFtw\Sql\Dml\WithClause|null */
+    private $with;
+
     /** @var \SqlFtw\Sql\Dml\OrderByExpression[]|null */
     private $orderBy;
 
@@ -54,6 +58,7 @@ class DeleteCommand implements DmlCommand
     /**
      * @param \SqlFtw\Sql\QualifiedName[] $tables
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
+     * @param \SqlFtw\Sql\Dml\WithClause|null $with
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param int|null $limit
      * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null $references
@@ -65,6 +70,7 @@ class DeleteCommand implements DmlCommand
     public function __construct(
         array $tables,
         ?ExpressionNode $where = null,
+        ?WithClause $with = null,
         ?array $orderBy = null,
         ?int $limit = null,
         ?TableReferenceNode $references = null,
@@ -89,6 +95,7 @@ class DeleteCommand implements DmlCommand
 
         $this->tables = $tables;
         $this->where = $where;
+        $this->with = $with;
         $this->orderBy = $orderBy;
         $this->limit = $limit;
         $this->references = $references;
@@ -124,6 +131,11 @@ class DeleteCommand implements DmlCommand
         return $this->where;
     }
 
+    public function getWith(): ?WithClause
+    {
+        return $this->with;
+    }
+
     /**
      * @return \SqlFtw\Sql\Dml\OrderByExpression[]|null
      */
@@ -154,7 +166,12 @@ class DeleteCommand implements DmlCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DELETE ';
+        $result = '';
+        if ($this->with !== null) {
+            $result .= $this->with->serialize($formatter) . "\n";
+        }
+
+        $result .= 'DELETE ';
         if ($this->lowPriority) {
             $result .= 'LOW_PRIORITY ';
         }

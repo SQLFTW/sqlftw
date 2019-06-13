@@ -43,6 +43,7 @@ class HandlerCommandsParser
 
         $tokenList->mayConsumeKeyword(Keyword::AS);
         $alias = $tokenList->mayConsumeName();
+        $tokenList->expectEnd();
 
         return new HandlerOpenCommand($table, $alias);
     }
@@ -63,6 +64,10 @@ class HandlerCommandsParser
 
         $values = null;
         $index = $tokenList->mayConsumeName();
+        if ($index === Keyword::FIRST || $index === Keyword::NEXT) {
+            $index = null;
+            $tokenList->resetPosition(-1);
+        }
         if ($index !== null) {
             $what = $tokenList->mayConsumeAnyKeyword(...HandlerReadTarget::getKeywords());
             if ($what === null) {
@@ -74,6 +79,7 @@ class HandlerCommandsParser
                 } while ($tokenList->mayConsumeComma());
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             }
+            $what = HandlerReadTarget::get($what);
         } else {
             /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadTarget $what */
             $what = $tokenList->consumeKeywordEnum(HandlerReadTarget::class);
@@ -86,6 +92,7 @@ class HandlerCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
             [$limit, $offset] = $this->expressionParser->parseLimitAndOffset($tokenList);
         }
+        $tokenList->expectEnd();
 
         return new HandlerReadCommand($table, $what, $index, $values, $where, $limit, $offset);
     }
@@ -98,6 +105,7 @@ class HandlerCommandsParser
         $tokenList->consumeKeyword(Keyword::HANDLER);
         $table = new QualifiedName(...$tokenList->consumeQualifiedName());
         $tokenList->consumeKeyword(Keyword::CLOSE);
+        $tokenList->expectEnd();
 
         return new HandlerCloseCommand($table);
     }

@@ -21,13 +21,13 @@ class LockTablesItem implements SqlSerializable
     /** @var \SqlFtw\Sql\QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Dml\Transaction\LockTableType */
+    /** @var \SqlFtw\Sql\Dml\Transaction\LockTableType|null */
     private $lock;
 
     /** @var string|null */
     private $alias;
 
-    public function __construct(QualifiedName $table, LockTableType $lock, ?string $alias)
+    public function __construct(QualifiedName $table, ?LockTableType $lock, ?string $alias)
     {
         $this->table = $table;
         $this->lock = $lock;
@@ -40,7 +40,9 @@ class LockTablesItem implements SqlSerializable
         if ($this->alias !== null) {
             $result .= ' AS ' . $formatter->formatName($this->alias);
         }
-        $result .= ' ' . $this->lock->serialize($formatter);
+        if ($this->lock !== null) {
+            $result .= ' ' . $this->lock->serialize($formatter);
+        }
 
         return $result;
     }

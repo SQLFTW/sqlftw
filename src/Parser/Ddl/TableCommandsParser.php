@@ -512,6 +512,7 @@ class TableCommandsParser
                     $tableOptions[$option] = $value;
             }
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new AlterTableCommand($name, $actions, $alterOptions, $tableOptions);
     }
@@ -581,6 +582,7 @@ class TableCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::AS) || $items === null || $duplicateOption !== null || !$tokenList->isFinished()) {
             $select = $this->selectCommandParser->parseSelect($tokenList);
         }
+        $tokenList->expectEnd();
 
         return new CreateTableCommand($table, $items, $options, $partitioning, $temporary, $ifNotExists, $duplicateOption, $select);
     }
@@ -1269,6 +1271,7 @@ class TableCommandsParser
 
         // ignored in MySQL 5.7, 8.0
         $tokenList->mayConsumeAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE);
+        $tokenList->expectEnd();
 
         return new DropTableCommand($tables, $temporary, $ifExists);
     }
@@ -1288,6 +1291,7 @@ class TableCommandsParser
             $tokenList->consumeKeyword(Keyword::TO);
             $newTables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new RenameTableCommand($tables, $newTables);
     }
@@ -1300,6 +1304,7 @@ class TableCommandsParser
         $tokenList->consumeKeyword(Keyword::TRUNCATE);
         $tokenList->mayConsumeKeyword(Keyword::TABLE);
         $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectEnd();
 
         return new TruncateTableCommand($table);
     }

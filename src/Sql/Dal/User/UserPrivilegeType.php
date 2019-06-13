@@ -15,7 +15,7 @@ use SqlFtw\Sql\SqlEnum;
 class UserPrivilegeType extends SqlEnum
 {
 
-    public const ALL = Keyword::ALL;
+    public const ALL = Keyword::ALL; // [PRIVILEGES]
     public const ALTER = Keyword::ALTER;
     public const ALTER_ROUTINE = Keyword::ALTER . ' ' . Keyword::ROUTINE;
     public const CREATE = Keyword::CREATE;
@@ -35,7 +35,7 @@ class UserPrivilegeType extends SqlEnum
     public const LOCK_TABLES = Keyword::LOCK . ' ' . Keyword::TABLES;
     public const PROCESS = Keyword::PROCESS;
     public const PROXY = Keyword::PROXY;
-    public const REFERENCES = Keyword::PREFERENCES;
+    public const REFERENCES = Keyword::REFERENCES;
     public const RELOAD = Keyword::RELOAD;
     public const REPLICATION_CLIENT = Keyword::REPLICATION . ' ' . Keyword::CLIENT;
     public const REPLICATION_SLAVE = Keyword::REPLICATION . ' ' . Keyword::SLAVE;
@@ -47,5 +47,38 @@ class UserPrivilegeType extends SqlEnum
     public const TRIGGER = Keyword::TRIGGER;
     public const UPDATE = Keyword::UPDATE;
     public const USAGE = Keyword::USAGE;
+
+    /**
+     * @return string[][]|null[]
+     */
+    public static function getFistAndSecondKeywords(): array
+    {
+        return [
+            Keyword::ALL => [Keyword::PRIVILEGES],
+            Keyword::ALTER => [Keyword::ROUTINE],
+            Keyword::CREATE => [Keyword::ROUTINE, Keyword::TABLESPACE, Keyword::TEMPORARY, Keyword::USER, Keyword::VIEW],
+            Keyword::DELETE => null,
+            Keyword::DROP => null,
+            Keyword::EVENT => null,
+            Keyword::EXECUTE => null,
+            Keyword::FILE => null,
+            Keyword::GRANT => [Keyword::OPTION],
+            Keyword::INDEX => null,
+            Keyword::INSERT => null,
+            Keyword::LOCK => [Keyword::TABLES],
+            Keyword::PROCESS => null,
+            Keyword::PROXY => null,
+            Keyword::REFERENCES => null,
+            Keyword::RELOAD => null,
+            Keyword::REPLICATION => [Keyword::CLIENT, Keyword::SLAVE],
+            Keyword::SELECT => null,
+            Keyword::SHOW => [Keyword::DATABASES, Keyword::VIEW],
+            Keyword::SHUTDOWN => null,
+            Keyword::SUPER => null,
+            Keyword::TRIGGER => null,
+            Keyword::UPDATE => null,
+            Keyword::USAGE => null,
+        ];
+    }
 
 }

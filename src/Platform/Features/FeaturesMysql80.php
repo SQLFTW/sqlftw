@@ -129,6 +129,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::INTEGER,
         Keyword::INTERVAL,
         Keyword::INTO,
+        Keyword::INSTANT,
         Keyword::IO_AFTER_GTIDS,
         Keyword::IO_BEFORE_GTIDS,
         Keyword::IS,
@@ -682,6 +683,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::TIMESTAMP,
         Keyword::TIMESTAMPADD,
         Keyword::TIMESTAMPDIFF,
+        Keyword::TRADITIONAL, // undocumented
         Keyword::TRANSACTION,
         Keyword::TRIGGERS,
         Keyword::TRUNCATE,

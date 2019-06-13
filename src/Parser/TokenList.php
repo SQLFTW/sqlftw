@@ -22,6 +22,7 @@ use function is_bool;
 use function is_int;
 use function preg_match;
 use function sprintf;
+use function str_replace;
 use function trim;
 
 /**
@@ -196,11 +197,13 @@ class TokenList
         return $this->consume(TokenType::NAME, $name)->original;
     }
 
-    public function mayConsumeName(): ?string
+    public function mayConsumeName(?string $name = null): ?string
     {
-        $token = $this->mayConsume(TokenType::NAME);
-
-        return $token !== null ? $token->original : null;
+        try {
+            return $this->consumeName($name);
+        } catch (UnexpectedTokenException $e) {
+            return null;
+        }
     }
 
     public function consumeString(): string
@@ -229,7 +232,8 @@ class TokenList
         if ($result !== null) {
             return $result;
         }
-        return $this->mayConsumeName();
+
+        return $this->mayConsumeName($name);
     }
 
     /**
@@ -316,7 +320,7 @@ class TokenList
     public function consumeAnyOperator(string ...$operators): string
     {
         $operator = $this->consume(TokenType::OPERATOR);
-        if (!in_array($operator, $operators)) {
+        if (!in_array($operator->value, $operators)) {
             throw new UnexpectedTokenException([TokenType::OPERATOR], $operators, $operator, $this);
         }
         return $operator->value;
@@ -328,9 +332,11 @@ class TokenList
      */
     public function mayConsumeAnyOperator(string ...$operators): ?string
     {
+        $position = $this->position;
         try {
             return $this->consumeAnyOperator(...$operators);
         } catch (UnexpectedTokenException $e) {
+            $this->position = $position;
             return null;
         }
     }
@@ -353,8 +359,7 @@ class TokenList
     public function mayConsumeKeyword(string $keyword): ?string
     {
         try {
-            $keyword = $this->consumeKeyword($keyword);
-            return $keyword;
+            return $this->consumeKeyword($keyword);
         } catch (UnexpectedTokenException $e) {
             return null;
         }
@@ -404,10 +409,13 @@ class TokenList
         return call_user_func([$className, 'get'], $this->consumeAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues']))));
     }
 
-    public function consumeNameOrStringEnum(string $className): SqlEnum
+    public function consumeNameOrStringEnum(string $className, ?string $filter = null): SqlEnum
     {
         $values = call_user_func([$className, 'getAllowedValues']);
         $value = $this->consumeNameOrString();
+        if ($filter !== null) {
+            $value = str_replace($filter, '', $value);
+        }
         if (in_array($value, $values)) {
             return call_user_func([$className, 'get'], $value);
         }
@@ -499,8 +507,10 @@ class TokenList
 
     public function expectEnd(): void
     {
-        // todo: expectEnd()
-        throw new NotImplementedException('expectEnd');
+        $this->doAutoSkip();
+        if ($this->position < count($this->tokens)) {
+            throw new UnexpectedTokenException([TokenType::END], null, $this->tokens[$this->position], $this);
+        }
     }
 
     public function expected(string $description): void

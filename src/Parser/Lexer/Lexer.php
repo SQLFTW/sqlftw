@@ -250,13 +250,13 @@ class Lexer
                             break;
                         }
                     }
-                    yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $char, null, $condition);
+                    yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $value, null, $condition);
                     break;
                 case '?':
                     yield $previous = new Token(TokenType::SYMBOL | TokenType::PLACEHOLDER, $startPosition, $char, null, $condition);
                     break;
                 case '@':
-                    if ($previous !== null && ($previous->type & TokenType::NAME)) {
+                    if ($previous !== null && ($previous->type & (TokenType::STRING | TokenType::NAME))) {
                         // user @ host
                         yield $previous = new Token(TokenType::SYMBOL | TokenType::OPERATOR, $startPosition, $char, null, $condition);
                         break;
@@ -784,6 +784,11 @@ class Lexer
                 $row++;
             } elseif ($backslashes && $next === '\\') {
                 $escaped = !$escaped;
+                $orig[] = $next;
+                $position++;
+                $column++;
+            } elseif ($escaped && $next !== '\\' && $next !== $quote) {
+                $escaped = false;
                 $orig[] = $next;
                 $position++;
                 $column++;

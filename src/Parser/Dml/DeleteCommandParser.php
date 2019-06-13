@@ -12,9 +12,11 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
+use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -23,14 +25,21 @@ class DeleteCommandParser
 {
     use StrictBehaviorMixin;
 
+    /** @var \SqlFtw\Parser\Dml\WithParser */
+    private $withParser;
+
     /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;
 
     /** @var \SqlFtw\Parser\JoinParser */
     private $joinParser;
 
-    public function __construct(ExpressionParser $expressionParser, JoinParser $joinParser)
-    {
+    public function __construct(
+        WithParser $withParser,
+        ExpressionParser $expressionParser,
+        JoinParser $joinParser
+    ) {
+        $this->withParser = $withParser;
         $this->expressionParser = $expressionParser;
         $this->joinParser = $joinParser;
     }
@@ -53,8 +62,15 @@ class DeleteCommandParser
      *     USING table_references
      *     [WHERE where_condition]
      */
-    public function parseDelete(TokenList $tokenList): DeleteCommand
+    public function parseDelete(TokenList $tokenList, ?WithClause $with = null): DeleteCommand
     {
+        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+            if ($with !== null) {
+                throw new ParserException('WITH defined twice.');
+            }
+            return $this->withParser->parseWith($tokenList->resetPosition(-1));
+        }
+
         $tokenList->consumeKeyword(Keyword::DELETE);
         $lowPriority = (bool) $tokenList->mayConsumeKeywords(Keyword::LOW_PRIORITY);
         $quick = (bool) $tokenList->mayConsumeKeyword(Keyword::QUICK);
@@ -93,8 +109,9 @@ class DeleteCommandParser
                 $limit = $tokenList->consumeInt();
             }
         }
+        $tokenList->expectEnd();
 
-        return new DeleteCommand($tables, $where, $orderBy, $limit, $references, $partitions, $lowPriority, $quick, $ignore);
+        return new DeleteCommand($tables, $where, $with, $orderBy, $limit, $references, $partitions, $lowPriority, $quick, $ignore);
     }
 
     /**

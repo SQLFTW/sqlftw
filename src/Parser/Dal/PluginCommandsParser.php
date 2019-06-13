@@ -28,6 +28,7 @@ class PluginCommandsParser
         $pluginName = $tokenList->consumeName();
         $tokenList->consumeKeyword(Keyword::SONAME);
         $libName = $tokenList->consumeString();
+        $tokenList->expectEnd();
 
         return new InstallPluginCommand($pluginName, $libName);
     }
@@ -39,6 +40,7 @@ class PluginCommandsParser
     {
         $tokenList->consumeKeywords(Keyword::UNINSTALL, Keyword::PLUGIN);
         $pluginName = $tokenList->consumeName();
+        $tokenList->expectEnd();
 
         return new UninstallPluginCommand($pluginName);
     }

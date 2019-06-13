@@ -44,6 +44,7 @@ class ResetCommandParser
                 $options[] = ResetOption::get($keyword);
             }
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new ResetCommand($options);
     }

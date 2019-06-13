@@ -18,10 +18,10 @@ class ParserHelper
 {
     use StrictBehaviorMixin;
 
-    public static function getParserFactory(?Platform $platform = null): ParserFactory
+    public static function getParserFactory(?Platform $platform = null, ?string $version = null): ParserFactory
     {
         if ($platform === null) {
-            $platform = Platform::get(Platform::MYSQL);
+            $platform = Platform::get(Platform::MYSQL, $version);
         }
 
         $settings = new PlatformSettings($platform);

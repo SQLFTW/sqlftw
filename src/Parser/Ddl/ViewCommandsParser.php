@@ -49,8 +49,10 @@ class ViewCommandsParser
     public function parseAlterView(TokenList $tokenList): AlterViewCommand
     {
         $tokenList->consumeKeyword(Keyword::ALTER);
+        $params = $this->parseViewDefinition($tokenList);
+        $tokenList->expectEnd();
 
-        return new AlterViewCommand(...$this->parseViewDefinition($tokenList));
+        return new AlterViewCommand(...$params);
     }
 
     /**
@@ -69,6 +71,7 @@ class ViewCommandsParser
         $orReplace = (bool) $tokenList->mayConsumeKeywords(Keyword::OR, Keyword::REPLACE);
 
         $params = $this->parseViewDefinition($tokenList) + [$orReplace];
+        $tokenList->expectEnd();
 
         return new CreateViewCommand(...$params);
     }
@@ -143,6 +146,7 @@ class ViewCommandsParser
         if ($option !== null) {
             $option = DropViewOption::get($option);
         }
+        $tokenList->expectEnd();
 
         return new DropViewCommand($names, $ifExists, $option);
     }
