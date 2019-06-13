@@ -37,6 +37,7 @@ class CharsetCommandsParser
         } else {
             $charset = Charset::get($tokenList->consumeNameOrString());
         }
+        $tokenList->expectEnd();
 
         return new SetCharacterSetCommand($charset);
     }
@@ -55,6 +56,7 @@ class CharsetCommandsParser
                 $collation = Collation::get($tokenList->consumeNameOrString());
             }
         }
+        $tokenList->expectEnd();
 
         return new SetNamesCommand($charset, $collation);
     }

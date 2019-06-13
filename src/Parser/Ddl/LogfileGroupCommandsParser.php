@@ -48,6 +48,7 @@ class LogfileGroupCommandsParser
         $tokenList->consumeKeyword(Keyword::ENGINE);
         $tokenList->mayConsumeOperator(Operator::EQUAL);
         $engine = $tokenList->consumeNameOrString();
+        $tokenList->expectEnd();
 
         return new AlterLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $wait);
     }
@@ -96,6 +97,7 @@ class LogfileGroupCommandsParser
         $tokenList->consumeKeyword(Keyword::ENGINE);
         $tokenList->mayConsumeOperator(Operator::EQUAL);
         $engine = $tokenList->consumeNameOrString();
+        $tokenList->expectEnd();
 
         return new CreateLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $undoBufferSize, $redoBufferSize, $nodeGroup, $wait, $comment);
     }
@@ -111,6 +113,7 @@ class LogfileGroupCommandsParser
         $tokenList->consumeKeyword(Keyword::ENGINE);
         $tokenList->mayConsumeOperator(Operator::EQUAL);
         $engine = $tokenList->consumeNameOrString();
+        $tokenList->expectEnd();
 
         return new DropLogfileGroupCommand($name, $engine);
     }

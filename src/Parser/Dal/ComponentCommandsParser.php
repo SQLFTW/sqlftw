@@ -29,6 +29,7 @@ class ComponentCommandsParser
         do {
             $components[] = $tokenList->consumeNameOrString();
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new InstallComponentCommand($components);
     }
@@ -43,6 +44,7 @@ class ComponentCommandsParser
         do {
             $components[] = $tokenList->consumeNameOrString();
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new UninstallComponentCommand($components);
     }

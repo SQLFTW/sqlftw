@@ -40,7 +40,18 @@ class StartTransactionCommand implements TransactionCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'START TRANSACTION';
+        $result = 'START TRANSACTION';
+        if ($this->consistent) {
+            $result .= ' WITH CONSISTENT SNAPSHOT';
+        }
+        if ($this->consistent && $this->write !== null) {
+            $result .= ',';
+        }
+        if ($this->write !== null) {
+            $result .= $this->write ? ' READ WRITE' : ' READ ONLY';
+        }
+
+        return $result;
     }
 
 }

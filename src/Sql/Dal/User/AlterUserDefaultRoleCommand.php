@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\UserName;
 
 class AlterUserDefaultRoleCommand implements UserCommand
@@ -25,31 +25,25 @@ class AlterUserDefaultRoleCommand implements UserCommand
     /** @var \SqlFtw\Sql\UserName */
     private $user;
 
-    /** @var \SqlFtw\Sql\Dal\User\RolesSpecification|null */
-    private $roles;
-
-    /** @var \SqlFtw\Sql\UserName[]|null */
-    private $rolesList;
+    /** @var \SqlFtw\Sql\Dal\User\RolesSpecification */
+    private $role;
 
     /** @var bool */
     private $ifExists;
 
     /**
      * @param \SqlFtw\Sql\UserName $user
-     * @param \SqlFtw\Sql\Dal\User\RolesSpecification|null $roles
-     * @param \SqlFtw\Sql\UserName[]|null $rolesList
+     * @param \SqlFtw\Sql\Dal\User\RolesSpecification $role
      * @param bool $ifExists
      */
-    public function __construct(UserName $user, ?RolesSpecification $roles = null, ?array $rolesList = null, bool $ifExists = false)
+    public function __construct(UserName $user, RolesSpecification $role, bool $ifExists = false)
     {
-        if ($rolesList !== null) {
-            Check::array($rolesList, 1);
-            Check::itemsOfType($rolesList, UserName::class);
+        if ($role->getType()->equalsAny(RolesSpecificationType::DEFAULT, RolesSpecificationType::ALL_EXCEPT)) {
+            throw new InvalidDefinitionException('Role specification for ALTER USER DEFAULT ROLE cannot be DEFAULT or ALL EXCEPT.');
         }
 
         $this->user = $user;
-        $this->roles = $roles;
-        $this->rolesList = $rolesList;
+        $this->role = $role;
         $this->ifExists = $ifExists;
     }
 
@@ -58,17 +52,9 @@ class AlterUserDefaultRoleCommand implements UserCommand
         return $this->user;
     }
 
-    public function getRoles(): ?RolesSpecification
+    public function getRole(): RolesSpecification
     {
-        return $this->roles;
-    }
-
-    /**
-     * @return \SqlFtw\Sql\UserName[]|null
-     */
-    public function getRolesList(): ?array
-    {
-        return $this->rolesList;
+        return $this->role;
     }
 
     public function ifExists(): bool
@@ -78,18 +64,12 @@ class AlterUserDefaultRoleCommand implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER USER ' . $this->user->serialize($formatter) . ' DEFAULT ROLE ';
-        if ($this->roles !== null) {
-            $result .= $this->roles->serialize($formatter);
-        }
-        if ($this->rolesList !== null) {
-            $result .= $formatter->formatSerializablesList($this->rolesList);
-        }
+        $result = 'ALTER USER ';
         if ($this->ifExists) {
-            $result .= ' IF EXISTS';
+            $result .= 'IF EXISTS ';
         }
 
-        return $result;
+        return $result . $this->user->serialize($formatter) . ' DEFAULT ROLE ' . $this->role->serialize($formatter);
     }
 
 }

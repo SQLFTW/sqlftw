@@ -51,7 +51,7 @@ class SetAssignment implements SqlSerializable
             ));
         }
         if ($scope === null) {
-            $scope = Scope::get(Scope::SESSION);
+            $scope = Scope::get(Scope::DEFAULT);
         }
         $this->scope = $scope;
         $this->variable = $variable;
@@ -78,7 +78,10 @@ class SetAssignment implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->scope->serialize($formatter) . ' ' . $this->variable . ' = ' . $this->formatExpression($formatter, $this->expression);
+        $scope = $this->scope->serialize($formatter);
+        $scope .= $scope ? ' ' : '';
+
+        return $scope . $this->variable . ' = ' . $this->formatExpression($formatter, $this->expression);
     }
 
     /**

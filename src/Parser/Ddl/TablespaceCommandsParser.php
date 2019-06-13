@@ -67,6 +67,7 @@ class TablespaceCommandsParser
             $tokenList->mayConsumeOperator(Operator::EQUAL);
             $options[TablespaceOption::ENGINE] = $tokenList->consumeName();
         }
+        $tokenList->expectEnd();
 
         return new AlterTablespaceCommand($name, $options, $undo);
     }
@@ -140,6 +141,7 @@ class TablespaceCommandsParser
             $tokenList->mayConsumeOperator(Operator::EQUAL);
             $options[TablespaceOption::ENGINE] = $tokenList->consumeName();
         }
+        $tokenList->expectEnd();
 
         return new CreateTablespaceCommand($name, $options, $undo);
     }
@@ -160,6 +162,7 @@ class TablespaceCommandsParser
             $tokenList->mayConsumeOperator(Operator::EQUAL);
             $engine = $tokenList->consumeName();
         }
+        $tokenList->expectEnd();
 
         return new DropTablespaceCommand($name, $engine, $undo);
     }

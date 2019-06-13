@@ -26,6 +26,7 @@ class InstanceCommandParser
         $tokenList->consumeKeywords(Keyword::ALTER, Keyword::INSTANCE, Keyword::ROTATE);
         $tokenList->consumeName('INNODB');
         $tokenList->consumeKeywords(Keyword::MASTER, Keyword::KEY);
+        $tokenList->expectEnd();
 
         return new AlterInstanceCommand();
     }

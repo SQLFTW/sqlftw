@@ -51,6 +51,8 @@ class TransactionCommandsParser
             ? $tokenList->consumeKeyword(Keyword::RELEASE)
             : $tokenList->mayConsumeKeyword(Keyword::RELEASE);
 
+        $tokenList->expectEnd();
+
         return new CommitCommand($chain ? !$noChain : null, $release ? !$noRelease : null);
     }
 
@@ -69,7 +71,7 @@ class TransactionCommandsParser
         $items = [];
         do {
             $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-            $alias = null;
+            $alias = $lock = null;
             if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
                 $alias = $tokenList->consumeName();
             }
@@ -79,14 +81,16 @@ class TransactionCommandsParser
                 } else {
                     $lock = LockTableType::get(LockTableType::READ);
                 }
-            } else {
-                // ignored
-                $tokenList->mayConsumeKeyword(Keyword::LOW_PRIORITY);
+            } elseif ($tokenList->mayConsumeKeyword(Keyword::LOW_PRIORITY)) {
                 $tokenList->consumeKeyword(Keyword::WRITE);
+                $lock = LockTableType::get(LockTableType::LOW_PRIORITY_WRITE);
+            } elseif ($tokenList->mayConsumeKeyword(Keyword::WRITE)) {
                 $lock = LockTableType::get(LockTableType::WRITE);
             }
             $items[] = new LockTablesItem($table, $lock, $alias);
         } while ($tokenList->mayConsumeComma());
+
+        $tokenList->expectEnd();
 
         return new LockTablesCommand($items);
     }
@@ -98,6 +102,7 @@ class TransactionCommandsParser
     {
         $tokenList->consumeKeywords(Keyword::RELEASE, Keyword::SAVEPOINT);
         $name = $tokenList->consumeName();
+        $tokenList->expectEnd();
 
         return new ReleaseSavepointCommand($name);
     }
@@ -122,6 +127,8 @@ class TransactionCommandsParser
             ? $tokenList->consumeKeyword(Keyword::RELEASE)
             : $tokenList->mayConsumeKeyword(Keyword::RELEASE);
 
+        $tokenList->expectEnd();
+
         return new RollbackCommand($chain ? !$noChain : null, $release ? !$noRelease : null);
     }
 
@@ -136,6 +143,7 @@ class TransactionCommandsParser
         $tokenList->mayConsumeKeyword(Keyword::SAVEPOINT);
 
         $name = $tokenList->consumeName();
+        $tokenList->expectEnd();
 
         return new RollbackToSavepointCommand($name);
     }
@@ -147,6 +155,7 @@ class TransactionCommandsParser
     {
         $tokenList->consumeKeyword(Keyword::SAVEPOINT);
         $name = $tokenList->consumeName();
+        $tokenList->expectEnd();
 
         return new SavepointCommand($name);
     }
@@ -173,6 +182,8 @@ class TransactionCommandsParser
         /** @var \SqlFtw\Sql\Scope $scope */
         $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
 
+        $tokenList->consumeKeyword(Keyword::TRANSACTION);
+
         $isolationLevel = $write = null;
         do {
             if ($tokenList->mayConsumeKeyword(Keyword::ISOLATION)) {
@@ -198,6 +209,8 @@ class TransactionCommandsParser
                 }
             }
         } while ($tokenList->mayConsumeComma());
+
+        $tokenList->expectEnd();
 
         return new SetTransactionCommand(
             $scope,
@@ -242,6 +255,8 @@ class TransactionCommandsParser
             }
         } while ($tokenList->mayConsumeComma());
 
+        $tokenList->expectEnd();
+
         return new StartTransactionCommand($consistent, $write);
     }
 
@@ -251,6 +266,8 @@ class TransactionCommandsParser
     public function parseUnlockTables(TokenList $tokenList): UnlockTablesCommand
     {
         $tokenList->consumeKeywords(Keyword::UNLOCK, Keyword::TABLES);
+
+        $tokenList->expectEnd();
 
         return new UnlockTablesCommand();
     }

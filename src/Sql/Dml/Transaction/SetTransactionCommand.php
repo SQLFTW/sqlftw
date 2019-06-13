@@ -35,15 +35,19 @@ class SetTransactionCommand implements TransactionCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'SET TRANSACTION';
+        $result = 'SET';
         if ($this->scope !== null) {
             $result .= ' ' . $this->scope->serialize($formatter);
         }
+        $result .= ' TRANSACTION';
         if ($this->isolationLevel !== null) {
             $result .= ' ISOLATION LEVEL ' . $this->isolationLevel->serialize($formatter);
         }
+        if ($this->isolationLevel !== null && $this->write !== null) {
+            $result .= ',';
+        }
         if ($this->write !== null) {
-            $result .= $this->write ? ' READ WRITE' : 'READ ONLY';
+            $result .= $this->write ? ' READ WRITE' : ' READ ONLY';
         }
 
         return $result;

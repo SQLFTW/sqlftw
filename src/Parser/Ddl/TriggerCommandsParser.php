@@ -84,6 +84,7 @@ class TriggerCommandsParser
             // SET, UPDATE, INSERT, DELETE, REPLACE...
             $body = $this->parser->parseTokenList($tokenList);
         }
+        $tokenList->expectEnd();
 
         return new CreateTriggerCommand($name, $event, $table, $body, $definer, $triggerPosition);
     }
@@ -97,6 +98,7 @@ class TriggerCommandsParser
         $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
 
         $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectEnd();
 
         return new DropTriggerCommand($name, $ifExists);
     }

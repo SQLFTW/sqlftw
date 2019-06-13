@@ -24,6 +24,7 @@ class ShutdownCommandParser
     public function parseShutdown(TokenList $tokenList): ShutdownCommand
     {
         $tokenList->consumeKeyword(Keyword::SHUTDOWN);
+        $tokenList->expectEnd();
 
         return new ShutdownCommand();
     }

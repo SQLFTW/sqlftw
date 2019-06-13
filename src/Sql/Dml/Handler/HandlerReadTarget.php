@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Handler;
 
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
@@ -21,11 +22,11 @@ class HandlerReadTarget extends SqlEnum
     public const NEXT = Keyword::NEXT;
     public const PREV = Keyword::PREV;
 
-    public const EQUAL = '=';
-    public const LESS_OR_EQUAL = '<=';
-    public const MORE_OR_EQUAL = '>=';
-    public const LESS = '<';
-    public const MORE = '>';
+    public const EQUAL = Operator::EQUAL;
+    public const LESS_OR_EQUAL = Operator::LESS_OR_EQUAL;
+    public const GREATER_OR_EQUAL = Operator::GREATER_OR_EQUAL;
+    public const LESS = Operator::LESS;
+    public const GREATER = Operator::GREATER;
 
     /**
      * @return string[]
@@ -40,7 +41,7 @@ class HandlerReadTarget extends SqlEnum
      */
     public static function getOperators(): array
     {
-        return [self::EQUAL, self::LESS_OR_EQUAL, self::MORE_OR_EQUAL, self::LESS, self::MORE];
+        return [self::EQUAL, self::LESS_OR_EQUAL, self::GREATER_OR_EQUAL, self::LESS, self::GREATER];
     }
 
     public function isKeyword(): bool

@@ -11,34 +11,34 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
+use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\UserName;
 
 class DropRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var string[] */
     private $roles;
 
     /** @var bool */
     private $ifExists;
 
     /**
-     * @param \SqlFtw\Sql\UserName[] $roles
+     * @param string[] $roles
      * @param bool $ifExists
      */
     public function __construct(array $roles, bool $ifExists = false)
     {
         Check::array($roles, 1);
-        Check::itemsOfType($roles, UserName::class);
+        Check::itemsOfType($roles, Type::STRING);
 
         $this->roles = $roles;
         $this->ifExists = $ifExists;
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return string[]
      */
     public function getRoles(): array
     {
@@ -52,10 +52,12 @@ class DropRoleCommand implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DROP';
-        $result .= ' USER ' . $formatter->formatSerializablesList($this->roles);
+        $result = 'DROP ROLE ';
+        if ($this->ifExists) {
+            $result .= 'IF EXISTS ';
+        }
 
-        return $result;
+        return $result . $formatter->formatNamesList($this->roles);
     }
 
 }

@@ -26,6 +26,7 @@ class KillCommandParser
         $tokenList->consumeKeyword(Keyword::KILL);
         $tokenList->mayConsumeAnyKeyword(Keyword::CONNECTION, Keyword::QUERY);
         $id = $tokenList->consumeInt();
+        $tokenList->expectEnd();
 
         return new KillCommand($id);
     }

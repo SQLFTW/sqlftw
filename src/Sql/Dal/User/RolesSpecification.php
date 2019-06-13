@@ -9,15 +9,59 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlEnum;
+use Dogma\Check;
+use Dogma\Type;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
-class RolesSpecification extends SqlEnum
+class RolesSpecification implements SqlSerializable
 {
 
-    public const DEFAULT = Keyword::DEFAULT;
-    public const NONE = Keyword::NONE;
-    public const ALL = Keyword::ALL;
-    public const ALL_EXCEPT = Keyword::ALL . ' ' . Keyword::EXCEPT;
+    /** @var \SqlFtw\Sql\Dal\User\RolesSpecificationType */
+    private $type;
+
+    /** @var string[]|null */
+    private $roles;
+
+    /**
+     * @param \SqlFtw\Sql\Dal\User\RolesSpecificationType $type
+     * @param string[]|null $roles
+     */
+    public function __construct(RolesSpecificationType $type, ?array $roles = null)
+    {
+        if ($roles !== null) {
+            Check::array($roles, 1);
+            Check::itemsOfType($roles, Type::STRING);
+        }
+
+        $this->type = $type;
+        $this->roles = $roles;
+    }
+
+    public function getType(): RolesSpecificationType
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        $result = $this->type->serialize($formatter);
+        if ($this->type->equals(RolesSpecificationType::ALL_EXCEPT)) {
+            $result .= ' ';
+        }
+        if ($this->roles !== null) {
+            $result .= $formatter->formatNamesList($this->roles);
+        }
+
+        return $result;
+    }
 
 }

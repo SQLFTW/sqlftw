@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
+use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
@@ -18,7 +19,7 @@ class GrantRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var string[] */
     private $roles;
 
     /** @var \SqlFtw\Sql\UserName[] */
@@ -28,13 +29,13 @@ class GrantRoleCommand implements UserCommand
     private $withAdminOption;
 
     /**
-     * @param \SqlFtw\Sql\UserName[] $roles
+     * @param string[] $roles
      * @param \SqlFtw\Sql\UserName[] $users
      * @param bool $withAdminOption
      */
     public function __construct(array $roles, array $users, bool $withAdminOption = false)
     {
-        Check::itemsOfType($roles, UserName::class);
+        Check::itemsOfType($roles, Type::STRING);
         Check::itemsOfType($users, UserName::class);
 
         $this->roles = $roles;
@@ -43,7 +44,7 @@ class GrantRoleCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return string[]
      */
     public function getRoles(): array
     {
@@ -65,8 +66,14 @@ class GrantRoleCommand implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'GRANT ' . $formatter->formatSerializablesList($this->roles)
-            . ' ON ' . $formatter->formatSerializablesList($this->users);
+        $result = 'GRANT ' . $formatter->formatNamesList($this->roles)
+            . ' TO ' . $formatter->formatSerializablesList($this->users);
+
+        if ($this->withAdminOption) {
+            $result .= ' WITH ADMIN OPTION';
+        }
+
+        return $result;
     }
 
 }

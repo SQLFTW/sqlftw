@@ -19,7 +19,7 @@ class CreateUserCommand implements UserCommand
     /** @var \SqlFtw\Sql\Dal\User\IdentifiedUser[] */
     private $users;
 
-    /** @var \SqlFtw\Sql\UserName[]|null */
+    /** @var string[]|null */
     private $defaultRoles;
 
     /** @var \SqlFtw\Sql\Dal\User\UserTlsOption[]|null */
@@ -32,15 +32,15 @@ class CreateUserCommand implements UserCommand
     private $passwordLockOptions;
 
     /** @var bool */
-    private $ifExists;
+    private $ifNotExists;
 
     /**
      * @param \SqlFtw\Sql\Dal\User\IdentifiedUser[] $users
-     * @param \SqlFtw\Sql\UserName[]|null $defaultRoles
+     * @param string[]|null $defaultRoles
      * @param \SqlFtw\Sql\Dal\User\UserTlsOption[]|null $tlsOptions
      * @param \SqlFtw\Sql\Dal\User\UserResourceOption[]|null $resourceOptions
      * @param \SqlFtw\Sql\Dal\User\UserPasswordLockOption[]|null $passwordLockOptions
-     * @param bool $ifExists
+     * @param bool $ifNotExists
      */
     public function __construct(
         array $users,
@@ -48,7 +48,7 @@ class CreateUserCommand implements UserCommand
         ?array $tlsOptions = null,
         ?array $resourceOptions = null,
         ?array $passwordLockOptions = null,
-        bool $ifExists = false
+        bool $ifNotExists = false
     )
     {
         $this->users = $users;
@@ -56,7 +56,7 @@ class CreateUserCommand implements UserCommand
         $this->tlsOptions = $tlsOptions;
         $this->resourceOptions = $resourceOptions;
         $this->passwordLockOptions = $passwordLockOptions;
-        $this->ifExists = $ifExists;
+        $this->ifNotExists = $ifNotExists;
     }
 
     /**
@@ -68,7 +68,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]|null
+     * @return string[]|null
      */
     public function getDefaultRoles(): ?array
     {
@@ -99,22 +99,21 @@ class CreateUserCommand implements UserCommand
         return $this->passwordLockOptions;
     }
 
-    public function ifExists(): bool
+    public function ifNotExists(): bool
     {
-        return $this->ifExists;
+        return $this->ifNotExists;
     }
 
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE USER ';
-        if ($this->ifExists) {
-            $result .= 'IF EXISTS ';
+        if ($this->ifNotExists) {
+            $result .= 'IF NOT EXISTS ';
         }
         $result .= $formatter->formatSerializablesList($this->users);
 
         if ($this->defaultRoles !== null) {
-            $result .= ' DEFAULT ROLE ';
-            $result .= $formatter->formatSerializablesList($this->defaultRoles);
+            $result .= ' DEFAULT ROLE ' . $formatter->formatNamesList($this->defaultRoles);
         }
 
         if ($this->tlsOptions !== null) {
@@ -122,14 +121,14 @@ class CreateUserCommand implements UserCommand
             if ($this->tlsOptions === []) {
                 $result .= ' NONE';
             } else {
-                $result .= $formatter->formatSerializablesList($this->tlsOptions);
+                $result .= ' ' . $formatter->formatSerializablesList($this->tlsOptions, ' AND ');
             }
         }
         if ($this->resourceOptions !== null) {
-            $result .= ' WITH ' . $formatter->formatSerializablesList($this->resourceOptions);
+            $result .= ' WITH ' . $formatter->formatSerializablesList($this->resourceOptions, ' ');
         }
         if ($this->passwordLockOptions !== null) {
-            $result .= ' ' . $formatter->formatSerializablesList($this->resourceOptions);
+            $result .= ' ' . $formatter->formatSerializablesList($this->passwordLockOptions, ' ');
         }
 
         return $result;

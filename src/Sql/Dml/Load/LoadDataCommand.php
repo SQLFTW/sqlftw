@@ -66,7 +66,7 @@ class LoadDataCommand extends LoadCommand
 
     protected function serializeFormat(Formatter $formatter): string
     {
-        return $this->format->serialize($formatter);
+        return $this->format !== null ? $this->format->serialize($formatter) : '';
     }
 
 }

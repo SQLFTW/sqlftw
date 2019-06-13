@@ -341,6 +341,9 @@ class Parser
             case Keyword::HELP:
                 // HELP
                 return $this->factory->getHelpCommandParser()->parseHelp($tokenList->resetPosition($start));
+            case Keyword::IMPORT:
+                // IMPORT
+                return $this->factory->getImportCommandParser()->parseImport($tokenList->resetPosition($start));
             case Keyword::INSERT:
                 // INSERT
                 return $this->factory->getInsertCommandParser()->parseInsert($tokenList->resetPosition($start));
@@ -437,7 +440,11 @@ class Parser
                 return $this->factory->getUserCommandsParser()->parseRevoke($tokenList->resetPosition($start));
             case Keyword::ROLLBACK:
                 // ROLLBACK
-                return $this->factory->getTransactionCommandsParser()->parseRollback($tokenList->resetPosition($start));
+                if ($tokenList->seekKeyword(Keyword::TO, 3)) {
+                    return $this->factory->getTransactionCommandsParser()->parseRollbackToSavepoint($tokenList->resetPosition($start));
+                } else {
+                    return $this->factory->getTransactionCommandsParser()->parseRollback($tokenList->resetPosition($start));
+                }
             case Keyword::SAVEPOINT:
                 // SAVEPOINT
                 return $this->factory->getTransactionCommandsParser()->parseSavepoint($tokenList->resetPosition($start));
@@ -445,7 +452,8 @@ class Parser
                 // SELECT
                 return $this->factory->getSelectCommandParser()->parseSelect($tokenList->resetPosition($start));
             case Keyword::SET:
-                $second = $tokenList->consume(TokenType::KEYWORD)->value;
+                $second = $tokenList->mayConsume(TokenType::KEYWORD);
+                $second = $second !== null ? $second->value : '';
                 switch ($second) {
                     case Keyword::CHARACTER:
                     case Keyword::CHARSET:

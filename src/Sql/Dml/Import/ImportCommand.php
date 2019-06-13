@@ -30,7 +30,7 @@ class ImportCommand implements DmlCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'IMPORT TABLES FROM ' . $formatter->formatStringList($this->files);
+        return 'IMPORT TABLE FROM ' . $formatter->formatStringList($this->files);
     }
 
 }

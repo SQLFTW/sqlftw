@@ -97,14 +97,14 @@ class AlterUserCommand implements UserCommand
             if ($this->tlsOptions === []) {
                 $result .= ' NONE';
             } else {
-                $result .= $formatter->formatSerializablesList($this->tlsOptions);
+                $result .= ' ' . $formatter->formatSerializablesList($this->tlsOptions, ' AND ');
             }
         }
         if ($this->resourceOptions !== null) {
-            $result .= ' WITH ' . $formatter->formatSerializablesList($this->resourceOptions);
+            $result .= ' WITH ' . $formatter->formatSerializablesList($this->resourceOptions, ' ');
         }
         if ($this->passwordLockOptions !== null) {
-            $result .= ' ' . $formatter->formatSerializablesList($this->resourceOptions);
+            $result .= ' ' . $formatter->formatSerializablesList($this->passwordLockOptions, ' ');
         }
 
         return $result;

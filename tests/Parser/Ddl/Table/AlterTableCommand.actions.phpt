@@ -164,7 +164,6 @@ $query = 'ALTER TABLE foo
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 
 // ALTER INDEX (MySQL 8.0+)
-/*
 $query = "ALTER TABLE foo
   ALTER INDEX foo VISIBLE";
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
@@ -172,7 +171,6 @@ Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
 $query = "ALTER TABLE foo
   ALTER INDEX foo INVISIBLE";
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-*/
 
 // DISABLE KEYS
 $query = 'ALTER TABLE foo

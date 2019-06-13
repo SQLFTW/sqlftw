@@ -10,6 +10,7 @@ require __DIR__ . '/../../bootstrap.php';
 $parser = ParserHelper::getParserFactory()->getParser();
 $formatter = new Formatter($parser->getSettings());
 
+// PRIMARY, UNIQUE, INDEX
 $query = 'CREATE TABLE test (
   id BIGINT,
   foo CHAR(10),
@@ -19,3 +20,7 @@ $query = 'CREATE TABLE test (
   INDEX key3 (bar) USING HASH
 )';
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+
+// CONSTRAINT
+
+// FOREIGN KEY

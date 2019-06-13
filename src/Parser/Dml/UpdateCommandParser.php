@@ -12,9 +12,11 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Update\SetColumnExpression;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
+use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 
@@ -22,14 +24,21 @@ class UpdateCommandParser
 {
     use StrictBehaviorMixin;
 
+    /** @var \SqlFtw\Parser\Dml\WithParser */
+    private $withParser;
+
     /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;
 
     /** @var \SqlFtw\Parser\JoinParser */
     private $joinParser;
 
-    public function __construct(ExpressionParser $expressionParser, JoinParser $joinParser)
-    {
+    public function __construct(
+        WithParser $withParser,
+        ExpressionParser $expressionParser,
+        JoinParser $joinParser
+    ) {
+        $this->withParser = $withParser;
         $this->expressionParser = $expressionParser;
         $this->joinParser = $joinParser;
     }
@@ -45,8 +54,15 @@ class UpdateCommandParser
      *     SET col_name1={expr1|DEFAULT} [, col_name2={expr2|DEFAULT}] ...
      *     [WHERE where_condition]
      */
-    public function parseUpdate(TokenList $tokenList): UpdateCommand
+    public function parseUpdate(TokenList $tokenList, ?WithClause $with = null): UpdateCommand
     {
+        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+            if ($with !== null) {
+                throw new ParserException('WITH defined twice.');
+            }
+            return $this->withParser->parseWith($tokenList->resetPosition(-1));
+        }
+
         $tokenList->consumeKeyword(Keyword::UPDATE);
         $lowPriority = (bool) $tokenList->mayConsumeKeyword(Keyword::LOW_PRIORITY);
         $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
@@ -80,8 +96,9 @@ class UpdateCommandParser
                 $limit = $tokenList->consumeInt();
             }
         }
+        $tokenList->expectEnd();
 
-        return new UpdateCommand($tableReferences, $values, $where, $orderBy, $limit, $ignore, $lowPriority);
+        return new UpdateCommand($tableReferences, $values, $where, $with, $orderBy, $limit, $ignore, $lowPriority);
     }
 
 }

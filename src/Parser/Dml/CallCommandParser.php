@@ -47,6 +47,7 @@ class CallCommandParser
             } while ($tokenList->mayConsumeComma());
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         }
+        $tokenList->expectEnd();
 
         return new CallCommand($name, $params);
     }

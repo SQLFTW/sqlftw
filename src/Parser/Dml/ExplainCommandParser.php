@@ -79,51 +79,53 @@ class ExplainCommandParser
     {
         $tokenList->consumeAnyKeyword(Keyword::EXPLAIN, Keyword::DESCRIBE, Keyword::DESC);
 
-        $qualifiedName = $tokenList->mayConsumeQualifiedName();
-        if ($qualifiedName !== null) {
-            $table = new QualifiedName(...$qualifiedName);
-            $column = $tokenList->mayConsumeName();
-            if ($column === null) {
-                $column = $tokenList->mayConsumeString();
-            }
-
-            return new DescribeTableCommand($table, $column);
-        }
-
-        $type = $tokenList->consumeAnyKeyword(Keyword::EXTENDED, Keyword::PARTITIONS, Keyword::FORMAT);
+        $type = $tokenList->mayConsumeAnyKeyword(Keyword::EXTENDED, Keyword::PARTITIONS, Keyword::FORMAT);
         if ($type !== null) {
             if ($type === Keyword::FORMAT) {
                 $tokenList->consumeOperator(Operator::EQUAL);
                 $format = $tokenList->consumeAnyKeyword(Keyword::JSON, Keyword::TRADITIONAL);
-                $type = ExplainType::get($type . ' = ' . $format);
+                $type = ExplainType::get($type . '=' . $format);
             } else {
                 $type = ExplainType::get($type);
             }
         }
 
+        $position = $tokenList->getPosition();
+        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::SELECT, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR);
         $statement = $connectionId = null;
-        switch ($tokenList->consumeAnyKeyword(Keyword::SELECT, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR)) {
+        switch ($keyword) {
             case Keyword::FOR:
                 $tokenList->consumeKeyword(Keyword::CONNECTION);
                 /** @var int $connectionId */
                 $connectionId = $tokenList->consumeInt();
                 break;
             case Keyword::SELECT:
-                $statement = $this->selectCommandParser->parseSelect($tokenList);
+                $statement = $this->selectCommandParser->parseSelect($tokenList->resetPosition($position));
                 break;
             case Keyword::INSERT:
-                $statement = $this->insertCommandParser->parseInsert($tokenList);
+                $statement = $this->insertCommandParser->parseInsert($tokenList->resetPosition($position));
                 break;
             case Keyword::UPDATE:
-                $statement = $this->updateCommandParser->parseUpdate($tokenList);
+                $statement = $this->updateCommandParser->parseUpdate($tokenList->resetPosition($position));
                 break;
             case Keyword::DELETE:
-                $statement = $this->deleteCommandParser->parseDelete($tokenList);
+                $statement = $this->deleteCommandParser->parseDelete($tokenList->resetPosition($position));
                 break;
             case Keyword::REPLACE:
-                $statement = $this->insertCommandParser->parseReplace($tokenList);
+                $statement = $this->insertCommandParser->parseReplace($tokenList->resetPosition($position));
                 break;
+            case null:
+                // DESCRIBE
+                $qualifiedName = $tokenList->mayConsumeQualifiedName();
+                $table = new QualifiedName(...$qualifiedName);
+                $column = $tokenList->mayConsumeName();
+                if ($column === null) {
+                    $column = $tokenList->mayConsumeString();
+                }
+
+                return new DescribeTableCommand($table, $column);
         }
+        $tokenList->expectEnd();
 
         return new ExplainStatementCommand($statement, $connectionId, $type);
     }

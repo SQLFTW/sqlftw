@@ -51,7 +51,7 @@ class ShowBinlogEventsCommand implements ShowCommand
     {
         $result = 'SHOW BINLOG EVENTS';
         if ($this->logName) {
-            $result .= ' IN ' . $formatter->formatName($this->logName);
+            $result .= ' IN ' . $formatter->formatString($this->logName);
         }
         if ($this->offset && !$this->limit) {
             $result .= ' FROM ' . $this->offset;

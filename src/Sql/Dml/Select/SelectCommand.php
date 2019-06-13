@@ -15,6 +15,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
+use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 
@@ -25,7 +26,7 @@ class SelectCommand implements DmlCommand
     /** @var \SqlFtw\Sql\Dml\Select\SelectExpression[] */
     private $columns;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
+    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null */
     private $from;
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
@@ -36,6 +37,9 @@ class SelectCommand implements DmlCommand
 
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $having;
+
+    /** @var \SqlFtw\Sql\Dml\WithClause|null */
+    private $with;
 
     /** @var \SqlFtw\Sql\Dml\Select\WindowSpecification[]|null */
     private $windows;
@@ -66,10 +70,11 @@ class SelectCommand implements DmlCommand
 
     /**
      * @param \SqlFtw\Sql\Dml\Select\SelectExpression[] $columns
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $from
+     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null $from
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
      * @param \SqlFtw\Sql\Dml\Select\GroupByExpression[]|null $groupBy
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $having
+     * @param \SqlFtw\Sql\Dml\WithClause|null $with
      * @param \SqlFtw\Sql\Dml\Select\WindowSpecification[]|null $windows ($name => $spec)
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param int|null $limit
@@ -82,10 +87,11 @@ class SelectCommand implements DmlCommand
      */
     public function __construct(
         array $columns,
-        TableReferenceNode $from,
+        ?TableReferenceNode $from,
         ?ExpressionNode $where = null,
         ?array $groupBy = null,
         ?ExpressionNode $having = null,
+        ?WithClause $with = null,
         ?array $windows = null,
         ?array $orderBy = null,
         ?int $limit = null,
@@ -114,6 +120,7 @@ class SelectCommand implements DmlCommand
         $this->where = $where;
         $this->groupBy = $groupBy;
         $this->having = $having;
+        $this->with = $with;
         $this->windows = $windows;
         $this->orderBy = $orderBy;
         $this->limit = $limit;
@@ -159,6 +166,11 @@ class SelectCommand implements DmlCommand
     public function getHaving(): ?ExpressionNode
     {
         return $this->having;
+    }
+
+    public function getWith(): ?WithClause
+    {
+        return $this->with;
     }
 
     /**
@@ -212,7 +224,12 @@ class SelectCommand implements DmlCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'SELECT';
+        $result = '';
+        if ($this->with !== null) {
+            $result .= $this->with->serialize($formatter) . "\n";
+        }
+
+        $result .= 'SELECT';
         if ($this->distinct !== null) {
             $result .= ' ' . $this->distinct->serialize($formatter);
         }
@@ -223,8 +240,10 @@ class SelectCommand implements DmlCommand
         }
 
         $result .= ' ' . $formatter->formatSerializablesList($this->columns);
-        $result .= "\nFROM " . $this->from->serialize($formatter);
 
+        if ($this->from !== null) {
+            $result .= "\nFROM " . $this->from->serialize($formatter);
+        }
         if ($this->where !== null) {
             $result .= "\nWHERE " . $this->where->serialize($formatter);
         }

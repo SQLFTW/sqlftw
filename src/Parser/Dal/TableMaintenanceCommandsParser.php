@@ -37,6 +37,7 @@ class TableMaintenanceCommandsParser
         do {
             $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new AnalyzeTableCommand($tables, $local);
     }
@@ -55,21 +56,21 @@ class TableMaintenanceCommandsParser
      */
     public function parseCheckTable(TokenList $tokenList): CheckTableCommand
     {
-        $tokenList->consumeKeywords(Keyword::REPAIR, Keyword::TABLE);
+        $tokenList->consumeKeywords(Keyword::CHECK, Keyword::TABLE);
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
 
-        $option = null;
         $option = $tokenList->mayConsumeAnyKeyword(Keyword::FOR, Keyword::QUICK, Keyword::FAST, Keyword::MEDIUM, Keyword::EXTENDED, Keyword::CHANGED);
         if ($option !== null) {
             if ($option === Keyword::FOR) {
-                $tokenList->consumeKeyword(Keyword::UPDATE);
-                $option .= ' UPDATE';
+                $tokenList->consumeKeyword(Keyword::UPGRADE);
+                $option .= ' UPGRADE';
             }
             $option = CheckTableOption::get($option);
         }
+        $tokenList->expectEnd();
 
         return new CheckTableCommand($tables, $option);
     }
@@ -79,7 +80,7 @@ class TableMaintenanceCommandsParser
      */
     public function parseChecksumTable(TokenList $tokenList): ChecksumTableCommand
     {
-        $tokenList->consumeKeywords(Keyword::REPAIR, Keyword::TABLE);
+        $tokenList->consumeKeywords(Keyword::CHECKSUM, Keyword::TABLE);
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
@@ -87,6 +88,7 @@ class TableMaintenanceCommandsParser
 
         $quick = (bool) $tokenList->mayConsumeKeyword(Keyword::QUICK);
         $extended = (bool) $tokenList->mayConsumeKeyword(Keyword::EXTENDED);
+        $tokenList->expectEnd();
 
         return new ChecksumTableCommand($tables, $quick, $extended);
     }
@@ -104,6 +106,7 @@ class TableMaintenanceCommandsParser
         do {
             $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new OptimizeTableCommand($tables, $local);
     }
@@ -126,6 +129,7 @@ class TableMaintenanceCommandsParser
         $quick = (bool) $tokenList->mayConsumeKeyword(Keyword::QUICK);
         $extended = (bool) $tokenList->mayConsumeKeyword(Keyword::EXTENDED);
         $useFrm = (bool) $tokenList->mayConsumeKeyword(Keyword::USE_FRM);
+        $tokenList->expectEnd();
 
         return new RepairTableCommand($tables, $local, $quick, $extended, $useFrm);
     }

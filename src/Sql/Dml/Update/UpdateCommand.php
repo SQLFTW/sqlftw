@@ -16,6 +16,7 @@ use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
+use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function count;
@@ -33,6 +34,9 @@ class UpdateCommand implements DmlCommand
     /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
     private $where;
 
+    /** @var \SqlFtw\Sql\Dml\WithClause|null */
+    private $with;
+
     /** @var \SqlFtw\Sql\Dml\OrderByExpression[]|null */
     private $orderBy;
 
@@ -49,6 +53,7 @@ class UpdateCommand implements DmlCommand
      * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $tableReferences
      * @param \SqlFtw\Sql\Dml\Update\SetColumnExpression[] $values
      * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
+     * @param \SqlFtw\Sql\Dml\WithClause|null $with
      * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
      * @param int|null $limit
      * @param bool $ignore
@@ -58,6 +63,7 @@ class UpdateCommand implements DmlCommand
         TableReferenceNode $tableReferences,
         array $values,
         ?ExpressionNode $where = null,
+        ?WithClause $with = null,
         ?array $orderBy = null,
         ?int $limit = null,
         bool $ignore = false,
@@ -74,6 +80,7 @@ class UpdateCommand implements DmlCommand
         $this->tableReferences = $tableReferences;
         $this->values = $values;
         $this->where = $where;
+        $this->with = $with;
         $this->orderBy = $orderBy;
         $this->limit = $limit;
         $this->ignore = $ignore;
@@ -96,6 +103,11 @@ class UpdateCommand implements DmlCommand
     public function getWhere(): ?ExpressionNode
     {
         return $this->where;
+    }
+
+    public function getWith(): ?WithClause
+    {
+        return $this->with;
     }
 
     /**
@@ -123,7 +135,12 @@ class UpdateCommand implements DmlCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'UPDATE ';
+        $result = '';
+        if ($this->with !== null) {
+            $result .= $this->with->serialize($formatter) . "\n";
+        }
+
+        $result .= 'UPDATE ';
         if ($this->lowPriority) {
             $result .= 'LOW_PRIORITY ';
         }

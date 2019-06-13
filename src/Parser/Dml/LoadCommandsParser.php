@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadPriority;
@@ -20,6 +21,7 @@ use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use function strtolower;
 
 class LoadCommandsParser
 {
@@ -59,12 +61,10 @@ class LoadCommandsParser
     public function parseLoadData(TokenList $tokenList): LoadDataCommand
     {
         $tokenList->consumeKeywords(Keyword::LOAD, Keyword::DATA);
-
         [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset] = $this->parseOptions($tokenList, true);
-
         $format = $this->fileFormatParser->parseFormat($tokenList);
-
         [$ignoreRows, $fields, $setters] = $this->parseRowsAndFields($tokenList);
+        $tokenList->expectEnd();
 
         return new LoadDataCommand($file, $table, $format, $charset, $fields, $setters, $ignoreRows, $priority, $local, $duplicateOption, $partitions);
     }
@@ -82,7 +82,6 @@ class LoadCommandsParser
     public function parseLoadXml(TokenList $tokenList): LoadXmlCommand
     {
         $tokenList->consumeKeywords(Keyword::LOAD, Keyword::XML);
-
         [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset] = $this->parseOptions($tokenList, false);
 
         $rowsTag = null;
@@ -91,6 +90,7 @@ class LoadCommandsParser
         }
 
         [$ignoreRows, $fields, $setters] = $this->parseRowsAndFields($tokenList);
+        $tokenList->expectEnd();
 
         return new LoadXmlCommand($file, $table, $rowsTag, $charset, $fields, $setters, $ignoreRows, $priority, $local, $duplicateOption);
     }
@@ -115,15 +115,17 @@ class LoadCommandsParser
 
         $partitions = null;
         if ($parsePartitions && $tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
+            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
             $partitions = [];
             do {
-                $partitions[] = $tokenList->consumeString();
+                $partitions[] = $tokenList->consumeName();
             } while ($tokenList->mayConsumeComma());
+            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         }
 
         $charset = null;
         if ($tokenList->mayConsumeKeywords(Keyword::CHARACTER, Keyword::SET)) {
-            $charset = $tokenList->consumeString();
+            $charset = Charset::get(strtolower($tokenList->consumeString()));
         }
 
         return [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset];

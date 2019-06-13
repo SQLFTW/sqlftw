@@ -29,6 +29,7 @@ class PreparedCommandsParser
         $tokenList->consumeAnyKeyword(Keyword::DEALLOCATE, Keyword::DROP);
         $tokenList->consumeKeyword(Keyword::PREPARE);
         $name = $tokenList->consumeName();
+        $tokenList->expectEnd();
 
         return new DeallocatePrepareCommand($name);
     }
@@ -48,6 +49,7 @@ class PreparedCommandsParser
                 $variables[] = $tokenList->consume(TokenType::AT_VARIABLE)->value;
             } while ($tokenList->mayConsumeComma());
         }
+        $tokenList->expectEnd();
 
         return new ExecuteCommand($name, $variables);
     }
@@ -67,6 +69,7 @@ class PreparedCommandsParser
         } else {
             $statement = $tokenList->consumeString();
         }
+        $tokenList->expectEnd();
 
         return new PrepareCommand($name, $statement);
     }

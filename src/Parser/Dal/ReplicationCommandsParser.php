@@ -203,6 +203,7 @@ class ReplicationCommandsParser
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             $filters[$filter] = $values;
         } while ($tokenList->mayConsumeComma());
+        $tokenList->expectEnd();
 
         return new ChangeReplicationFilterCommand($filters);
     }
@@ -224,6 +225,7 @@ class ReplicationCommandsParser
         } else {
             $tokenList->expectedAnyKeyword(Keyword::TO, Keyword::BEFORE);
         }
+        $tokenList->expectEnd();
 
         return new PurgeBinaryLogsCommand($log, $before);
     }
@@ -238,6 +240,7 @@ class ReplicationCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::TO)) {
             $position = $tokenList->consumeInt();
         }
+        $tokenList->expectEnd();
 
         return new ResetMasterCommand($position);
     }
@@ -256,6 +259,7 @@ class ReplicationCommandsParser
         if ($tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->consumeString();
         }
+        $tokenList->expectEnd();
 
         return new ResetSlaveCommand($all, $channel);
     }
@@ -266,6 +270,7 @@ class ReplicationCommandsParser
     public function parseStartGroupReplication(TokenList $tokenList): StartGroupReplicationCommand
     {
         $tokenList->consumeKeywords(Keyword::START, Keyword::GROUP_REPLICATION);
+        $tokenList->expectEnd();
 
         return new StartGroupReplicationCommand();
     }
@@ -363,6 +368,7 @@ class ReplicationCommandsParser
         if ($tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->consumeString();
         }
+        $tokenList->expectEnd();
 
         return new StartSlaveCommand($user, $password, $defaultAuth, $pluginDir, $until, $threadTypes, $channel);
     }
@@ -432,6 +438,7 @@ class ReplicationCommandsParser
     public function parseStopGroupReplication(TokenList $tokenList): StopGroupReplicationCommand
     {
         $tokenList->consumeKeywords(Keyword::STOP, Keyword::GROUP_REPLICATION);
+        $tokenList->expectEnd();
 
         return new StopGroupReplicationCommand();
     }
@@ -471,6 +478,7 @@ class ReplicationCommandsParser
         if ($tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->consumeString();
         }
+        $tokenList->expectEnd();
 
         return new StopSlaveCommand($ioThread, $sqlThread, $channel);
     }

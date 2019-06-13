@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
+use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
@@ -24,13 +25,13 @@ class SetDefaultRoleCommand implements UserCommand
     /** @var \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification|null */
     private $roles;
 
-    /** @var \SqlFtw\Sql\UserName[]|null */
+    /** @var string[]|null */
     private $rolesList;
 
     /**
      * @param \SqlFtw\Sql\UserName[] $users
      * @param \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification|null $roles
-     * @param \SqlFtw\Sql\UserName[]|null $rolesList
+     * @param string[]|null $rolesList
      */
     public function __construct(array $users, ?UserDefaultRolesSpecification $roles, ?array $rolesList = null)
     {
@@ -38,7 +39,7 @@ class SetDefaultRoleCommand implements UserCommand
         Check::itemsOfType($users, UserName::class);
         if ($rolesList !== null) {
             Check::array($rolesList, 1);
-            Check::itemsOfType($rolesList, UserName::class);
+            Check::itemsOfType($rolesList, Type::STRING);
         }
 
         $this->users = $users;
@@ -60,7 +61,7 @@ class SetDefaultRoleCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return string[]
      */
     public function getRolesList(): array
     {
@@ -74,7 +75,7 @@ class SetDefaultRoleCommand implements UserCommand
             $result .= $this->roles->serialize($formatter);
         }
         if ($this->rolesList !== null) {
-            $result .= $formatter->formatSerializablesList($this->rolesList);
+            $result .= $formatter->formatNamesList($this->rolesList);
         }
         $result .= ' TO ' . $formatter->formatSerializablesList($this->users);
 

@@ -37,7 +37,6 @@ class ShowProfileCommand implements ShowCommand
      */
     public function __construct(array $types, ?int $queryId, ?int $limit, ?int $offset)
     {
-        Check::array($types, 1);
         Check::itemsOfType($types, ShowProfileType::class);
 
         $this->types = $types;
@@ -71,7 +70,10 @@ class ShowProfileCommand implements ShowCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'SHOW PROFILE ' . $formatter->formatSerializablesList($this->types);
+        $result = 'SHOW PROFILE';
+        if ($this->types !== []) {
+            $result .= ' ' . $formatter->formatSerializablesList($this->types);
+        }
 
         if ($this->queryId !== null) {
             $result .= ' FOR QUERY ' . $this->queryId;

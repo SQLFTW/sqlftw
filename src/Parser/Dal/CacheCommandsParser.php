@@ -53,6 +53,7 @@ class CacheCommandsParser
 
         $tokenList->consumeKeyword(Keyword::IN);
         $keyCache = $tokenList->consumeName();
+        $tokenList->expectEnd();
 
         return new CacheIndexCommand($keyCache, $tableIndexLists, $partitions);
     }

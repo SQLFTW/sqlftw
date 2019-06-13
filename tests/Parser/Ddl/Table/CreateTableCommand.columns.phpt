@@ -10,6 +10,7 @@ require __DIR__ . '/../../bootstrap.php';
 $parser = ParserHelper::getParserFactory()->getParser();
 $formatter = new Formatter($parser->getSettings());
 
+// columns
 $query = "CREATE TABLE test (
   col_0 BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   col_1 INT NULL DEFAULT NULL,
@@ -42,3 +43,26 @@ $query = "CREATE TABLE test (
   col_27 SET('c', 'd')
 )";
 Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+
+// todo: type aliases
+
+// generated columns
+$query = 'CREATE TABLE test (
+  col_0 DATETIME,
+  col_1 INT AS (YEAR(col_0)),
+  col_2 INT AS (YEAR(col_0)) VIRTUAL,
+  col_3 INT AS (YEAR(col_0)) STORED,
+  col_4 INT GENERATED ALWAYS AS (YEAR(col_0)),
+  col_5 INT GENERATED ALWAYS AS (YEAR(col_0)) VIRTUAL,
+  col_6 INT GENERATED ALWAYS AS (YEAR(col_0)) STORED
+)';
+$result = 'CREATE TABLE test (
+  col_0 DATETIME,
+  col_1 INT GENERATED ALWAYS AS YEAR(col_0),
+  col_2 INT GENERATED ALWAYS AS YEAR(col_0) VIRTUAL,
+  col_3 INT GENERATED ALWAYS AS YEAR(col_0) STORED,
+  col_4 INT GENERATED ALWAYS AS YEAR(col_0),
+  col_5 INT GENERATED ALWAYS AS YEAR(col_0) VIRTUAL,
+  col_6 INT GENERATED ALWAYS AS YEAR(col_0) STORED
+)';
+Assert::same($result, $parser->parseCommand($query)->serialize($formatter));

@@ -59,6 +59,7 @@ class ServerCommandsParser
             }
         } while ($tokenList->mayConsumeComma());
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectEnd();
 
         return new AlterServerCommand($name, $host, $database, $user, $password, $socket, $owner, $port);
     }
@@ -104,6 +105,7 @@ class ServerCommandsParser
             }
         } while ($tokenList->mayConsumeComma());
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectEnd();
 
         return new CreateServerCommand($name, $wrapper, $host, $database, $user, $password, $socket, $owner, $port);
     }
@@ -116,6 +118,7 @@ class ServerCommandsParser
         $tokenList->consumeKeywords(Keyword::DROP, Keyword::SERVER);
         $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
         $name = $tokenList->consumeName();
+        $tokenList->expectEnd();
 
         return new DropServerCommand($name, $ifExists);
     }

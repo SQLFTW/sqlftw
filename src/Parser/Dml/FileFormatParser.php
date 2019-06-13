@@ -33,7 +33,7 @@ class FileFormatParser
     {
         $format = $fieldsTerminatedBy = $fieldsEnclosedBy = $fieldsEscapedBy = null;
         $optionallyEnclosed = false;
-        if ($tokenList->consumeAnyKeyword(Keyword::FIELDS, Keyword::COLUMNS)) {
+        if ($tokenList->mayConsumeAnyKeyword(Keyword::FIELDS, Keyword::COLUMNS)) {
             if ($tokenList->mayConsumeKeywords(Keyword::TERMINATED, Keyword::BY)) {
                 $fieldsTerminatedBy = $tokenList->consumeString();
             }

@@ -17,7 +17,7 @@ class ExplainType extends SqlEnum
 
     public const EXTENDED = Keyword::EXTENDED;
     public const PARTITIONS = Keyword::PARTITIONS;
-    public const FORMAT_TRADITIONAL = Keyword::FORMAT . ' = ' . Keyword::TRADITIONAL;
-    public const FORMAT_JSON = Keyword::FORMAT . ' = ' . Keyword::JSON;
+    public const FORMAT_TRADITIONAL = Keyword::FORMAT . '=' . Keyword::TRADITIONAL;
+    public const FORMAT_JSON = Keyword::FORMAT . '=' . Keyword::JSON;
 
 }
