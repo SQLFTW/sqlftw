@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Ddl\View;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
+use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
@@ -29,7 +30,7 @@ class CreateViewCommand implements ViewCommand
     /** @var string[]|null */
     private $columns;
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
     private $definer;
 
     /** @var \SqlFtw\Sql\Ddl\SqlSecurity|null */
@@ -48,7 +49,7 @@ class CreateViewCommand implements ViewCommand
      * @param \SqlFtw\Sql\QualifiedName $name
      * @param \SqlFtw\Sql\Dml\Select\SelectCommand $body
      * @param string[]|null $columns
-     * @param \SqlFtw\Sql\UserName|null $definer
+     * @param \SqlFtw\Sql\Ddl\UserExpression|null $definer
      * @param \SqlFtw\Sql\Ddl\SqlSecurity|null $security
      * @param \SqlFtw\Sql\Ddl\View\ViewAlgorithm|null $algorithm
      * @param \SqlFtw\Sql\Ddl\View\ViewCheckOption|null $checkOption
@@ -58,7 +59,7 @@ class CreateViewCommand implements ViewCommand
         QualifiedName $name,
         SelectCommand $body,
         ?array $columns = null,
-        ?UserName $definer = null,
+        ?UserExpression $definer = null,
         ?SqlSecurity $security = null,
         ?ViewAlgorithm $algorithm = null,
         ?ViewCheckOption $checkOption = null,
@@ -92,7 +93,7 @@ class CreateViewCommand implements ViewCommand
         return $this->columns;
     }
 
-    public function getDefiner(): ?UserName
+    public function getDefiner(): ?UserExpression
     {
         return $this->definer;
     }

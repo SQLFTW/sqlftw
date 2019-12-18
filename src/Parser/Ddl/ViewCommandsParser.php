@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\SelectCommandParser;
+use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\SqlSecurity;
@@ -29,11 +30,17 @@ class ViewCommandsParser
 {
     use StrictBehaviorMixin;
 
+    /** @var \SqlFtw\Parser\ExpressionParser */
+    private $expressionParser;
+
     /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
     private $selectCommandParser;
 
-    public function __construct(SelectCommandParser $selectCommandParser)
-    {
+    public function __construct(
+        ExpressionParser $expressionParser,
+        SelectCommandParser $selectCommandParser
+    ) {
+        $this->expressionParser = $expressionParser;
         $this->selectCommandParser = $selectCommandParser;
     }
 
@@ -71,6 +78,7 @@ class ViewCommandsParser
         $orReplace = (bool) $tokenList->mayConsumeKeywords(Keyword::OR, Keyword::REPLACE);
 
         $params = $this->parseViewDefinition($tokenList) + [$orReplace];
+        $params[] = $orReplace;
         $tokenList->expectEnd();
 
         return new CreateViewCommand(...$params);
@@ -82,15 +90,17 @@ class ViewCommandsParser
      */
     private function parseViewDefinition(TokenList $tokenList): array
     {
+        rd($tokenList);
         $algorithm = $definer = $sqlSecurity = $checkOption = null;
         if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
             $tokenList->consumeOperator(Operator::EQUAL);
             /** @var \SqlFtw\Sql\Ddl\View\ViewAlgorithm $algorithm */
             $algorithm = $tokenList->consumeKeywordEnum(ViewAlgorithm::class);
         }
+        rd($tokenList->getPosition());
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
             $tokenList->consumeOperator(Operator::EQUAL);
-            $definer = new UserName(...$tokenList->consumeUserName());
+            $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         if ($tokenList->mayConsumeKeyword(Keyword::SQL)) {
             $tokenList->consumeKeyword(Keyword::SECURITY);

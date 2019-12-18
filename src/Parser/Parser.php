@@ -119,6 +119,9 @@ class Parser
                     case Keyword::LOGFILE:
                         // ALTER LOGFILE GROUP
                         return $this->factory->getLogfileGroupCommandsParser()->parseAlterLogfileGroup($tokenList->resetPosition($start));
+                    case Keyword::PROCEDURE:
+                        // ALTER PROCEDURE
+                        return $this->factory->getRoutineCommandsParser()->parseAlterProcedure($tokenList->resetPosition($start));
                     case Keyword::SERVER:
                         // ALTER SERVER
                         return $this->factory->getServerCommandsParser()->parseAlterServer($tokenList->resetPosition($start));
@@ -126,24 +129,33 @@ class Parser
                         // ALTER TABLE
                         return $this->factory->getTableCommandsParser()->parseAlterTable($tokenList->resetPosition($start));
                     case Keyword::TABLESPACE:
-                        // ALTER TABLESPACE
+                    case Keyword::UNDO:
+                        // ALTER [UNDO] TABLESPACE
                         return $this->factory->getTablespaceCommandsParser()->parseAlterTablespace($tokenList->resetPosition($start));
                     case Keyword::USER:
                         // ALTER USER
                         return $this->factory->getUserCommandsParser()->parseAlterUser($tokenList->resetPosition($start));
+                    case Keyword::EVENT:
+                        // ALTER [DEFINER = { user | CURRENT_USER }] EVENT
+                        return $this->factory->getEventCommandsParser()->parseAlterEvent($tokenList->resetPosition($start));
+                    case Keyword::VIEW:
+                    case Keyword::ALGORITHM:
+                    case Keyword::SQL:
+                        // ALTER [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
+                        return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->resetPosition($start));
+                    default:
+                        if ($tokenList->seekKeyword(Keyword::EVENT, 8)) {
+                            return $this->factory->getEventCommandsParser()->parseAlterEvent($tokenList->resetPosition($start));
+                        } elseif ($tokenList->seekKeyword(Keyword::VIEW, 15)) {
+                            return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->resetPosition($start));
+                        }
+                        $tokenList->expectedAnyKeyword(
+                            Keyword::DATABASE, Keyword::SCHEMA, Keyword::FUNCTION, Keyword::INSTANCE, Keyword::LOGFILE,
+                            Keyword::SERVER, Keyword::TABLE, Keyword::TABLESPACE, Keyword::USER, Keyword::EVENT, Keyword::VIEW,
+                            Keyword::DEFINER, Keyword::ALGORITHM, Keyword::SQL
+                        );
+                        exit;
                 }
-                if ($tokenList->seekKeyword(Keyword::EVENT, 5)) {
-                    // ALTER [DEFINER = { user | CURRENT_USER }] EVENT
-                    return $this->factory->getEventCommandsParser()->parseAlterEvent($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::VIEW, 15)) {
-                    // ALTER [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
-                    return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->resetPosition($start));
-                }
-                $tokenList->expectedAnyKeyword(
-                    Keyword::DATABASE, Keyword::SCHEMA, Keyword::FUNCTION, Keyword::INSTANCE, Keyword::LOGFILE,
-                    Keyword::SERVER, Keyword::TABLE, Keyword::TABLESPACE, Keyword::USER, Keyword::EVENT, Keyword::VIEW
-                );
-                exit;
             case Keyword::ANALYZE:
                 // ANALYZE
                 return $this->factory->getTableMaintenanceCommandsParser()->parseAnalyzeTable($tokenList->resetPosition($start));
@@ -196,7 +208,8 @@ class Parser
                         // CREATE SERVER
                         return $this->factory->getServerCommandsParser()->parseCreateServer($tokenList->resetPosition($start));
                     case Keyword::TABLESPACE:
-                        // CREATE TABLESPACE
+                    case Keyword::UNDO:
+                        // CREATE [UNDO] TABLESPACE
                         return $this->factory->getTablespaceCommandsParser()->parseCreateTablespace($tokenList->resetPosition($start));
                     case Keyword::USER:
                         // CREATE USER
@@ -212,19 +225,20 @@ class Parser
                         // CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX
                         return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->resetPosition($start));
                 }
-                if ($tokenList->seekKeyword(Keyword::EVENT, 5)) {
+                $tokenList->resetPosition(-1);
+                if ($tokenList->seekKeyword(Keyword::EVENT, 8)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] EVENT
                     return $this->factory->getEventCommandsParser()->parseCreateEvent($tokenList->resetPosition($start));
                 } elseif ($tokenList->seekKeyword(Keyword::SONAME, 8)) {
                     // CREATE [AGGREGATE] FUNCTION function_name RETURNS {STRING|INTEGER|REAL|DECIMAL} SONAME
                     return $this->factory->getCreateFunctionCommandParser()->parseCreateFunction($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::FUNCTION, 5)) {
+                } elseif ($tokenList->seekKeyword(Keyword::FUNCTION, 8)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] FUNCTION
                     return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::PROCEDURE, 5)) {
+                } elseif ($tokenList->seekKeyword(Keyword::PROCEDURE, 8)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] PROCEDURE
                     return $this->factory->getRoutineCommandsParser()->parseCreateProcedure($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::TRIGGER, 5)) {
+                } elseif ($tokenList->seekKeyword(Keyword::TRIGGER, 8)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] TRIGGER
                     return $this->factory->getTriggerCommandsParser($this)->parseCreateTrigger($tokenList->resetPosition($start));
                 } elseif ($tokenList->seekKeyword(Keyword::VIEW, 15)) {
@@ -234,7 +248,7 @@ class Parser
                 $tokenList->expectedAnyKeyword(
                     Keyword::DATABASE, Keyword::SCHEMA, Keyword::LOGFILE, Keyword::ROLE, Keyword::SERVER,
                     Keyword::TABLESPACE, Keyword::TABLE, Keyword::USER, Keyword::EVENT, Keyword::FUNCTION,
-                    Keyword::INDEX, Keyword::PROCEDURE, Keyword::TABLE, Keyword::TRIGGER, Keyword::VIEW
+                    Keyword::INDEX, Keyword::PROCEDURE, Keyword::TABLE, Keyword::TRIGGER, Keyword::VIEW, Keyword::DEFINER,
                 );
                 exit;
             case Keyword::DEALLOCATE:
@@ -291,7 +305,8 @@ class Parser
                         // DROP [TEMPORARY] TABLE
                         return $this->factory->getTableCommandsParser()->parseDropTable($tokenList->resetPosition($start));
                     case Keyword::TABLESPACE:
-                        // DROP TABLESPACE
+                    case Keyword::UNDO:
+                        // DROP [UNDO] TABLESPACE
                         return $this->factory->getTablespaceCommandsParser()->parseDropTablespace($tokenList->resetPosition($start));
                     case Keyword::TRIGGER:
                         // DROP TRIGGER

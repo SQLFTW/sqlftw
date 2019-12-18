@@ -2,37 +2,22 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // {DEALLOCATE | DROP} PREPARE stmt_name
-$query = "DEALLOCATE PREPARE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DROP PREPARE foo";
-$result = "DEALLOCATE PREPARE foo";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("DEALLOCATE PREPARE foo");
+Assert::parse("DROP PREPARE foo", "DEALLOCATE PREPARE foo");
 
 
 // EXECUTE stmt_name [USING @var_name [, @var_name] ...]
-$query = "EXECUTE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXECUTE foo USING @bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXECUTE foo USING @bar, @baz";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("EXECUTE foo");
+Assert::parse("EXECUTE foo USING @bar");
+Assert::parse("EXECUTE foo USING @bar, @baz");
 
 
 // PREPARE stmt_name FROM preparable_stmt
-$query = "PREPARE foo FROM 'SELECT 1'";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "PREPARE foo FROM @bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("PREPARE foo FROM 'SELECT 1'");
+Assert::parse("PREPARE foo FROM @bar");

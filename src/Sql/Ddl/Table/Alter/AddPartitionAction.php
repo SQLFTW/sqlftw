@@ -37,7 +37,7 @@ class AddPartitionAction implements AlterTableAction
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ADD ' . $this->partition->serialize($formatter);
+        return 'ADD PARTITION (' . $this->partition->serialize($formatter) . ')';
     }
 
 }

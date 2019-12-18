@@ -26,16 +26,25 @@ class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
     /** @var bool */
     private $ifExists;
 
+    /** @var bool|null */
+    private $cascadeRestrict;
+
     /**
      * @param \SqlFtw\Sql\QualifiedName[] $tables
      * @param bool $temporary
      * @param bool $ifExists
+     * @param bool|null $cascadeRestrict
      */
-    public function __construct(array $tables, bool $temporary = false, bool $ifExists = false)
-    {
+    public function __construct(
+        array $tables,
+        bool $temporary = false,
+        bool $ifExists = false,
+        ?bool $cascadeRestrict = null
+    ) {
         $this->tables = $tables;
         $this->temporary = $temporary;
         $this->ifExists = $ifExists;
+        $this->cascadeRestrict = $cascadeRestrict;
     }
 
     /**
@@ -56,13 +65,34 @@ class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
         return $this->ifExists;
     }
 
+    public function cascade(): bool
+    {
+        return $this->cascadeRestrict === true;
+    }
+
+    public function restrict(): bool
+    {
+        return $this->cascadeRestrict === false;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DROP';
+        $result = 'DROP ';
         if ($this->temporary) {
-            $result .= ' TEMPORARY';
+            $result .= 'TEMPORARY ';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->tables);
+        $result .= 'TABLE ';
+        if ($this->ifExists) {
+            $result .= 'IF EXISTS ';
+        }
+
+        $result .= $formatter->formatSerializablesList($this->tables);
+
+        if ($this->cascadeRestrict === true) {
+            $result .= ' CASCADE';
+        } elseif ($this->cascadeRestrict === false) {
+            $result .= ' RESTRICT';
+        }
 
         return $result;
     }

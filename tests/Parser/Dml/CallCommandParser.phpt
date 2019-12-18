@@ -2,20 +2,12 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // CALL sp_name[([parameter[,...]])]
-$query = "CALL foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CALL foo(bar)";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CALL foo(bar, baz)";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("CALL foo");
+Assert::parse("CALL foo(bar)");
+Assert::parse("CALL foo(bar, baz)");

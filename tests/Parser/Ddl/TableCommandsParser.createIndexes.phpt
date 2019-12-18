@@ -2,13 +2,10 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // PRIMARY, UNIQUE, INDEX
 $query = 'CREATE TABLE test (
@@ -19,8 +16,10 @@ $query = 'CREATE TABLE test (
   UNIQUE KEY key2 (foo(5), bar(10)),
   INDEX key3 (bar) USING HASH
 )';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse($query);
 
 // CONSTRAINT
+// todo
 
 // FOREIGN KEY
+// todo

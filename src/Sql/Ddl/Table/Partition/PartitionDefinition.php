@@ -48,12 +48,18 @@ class PartitionDefinition implements SqlSerializable
      */
     public function __construct(string $name, $lessThan, ?array $values = null, ?array $options = null, ?array $subpartitions = null)
     {
-        foreach ($options as $option => $value) {
-            PartitionOption::get($option);
-        }
-        foreach ($subpartitions as $subpartitionOptions) {
-            foreach ($subpartitionOptions as $option => $value) {
+        if ($options !== null) {
+            foreach ($options as $option => $value) {
                 PartitionOption::get($option);
+            }
+        }
+        if ($subpartitions !== null) {
+            foreach ($subpartitions as $subpartitionOptions) {
+                if ($subpartitionOptions !== null) {
+                    foreach ($subpartitionOptions as $option => $value) {
+                        PartitionOption::get($option);
+                    }
+                }
             }
         }
 
@@ -108,7 +114,7 @@ class PartitionDefinition implements SqlSerializable
         if ($this->lessThan !== null) {
             $result .= ' VALUES LESS THAN ';
             if ($this->lessThan instanceof ExpressionNode) {
-                $result .= $this->lessThan->serialize($formatter);
+                $result .= '(' . $this->lessThan->serialize($formatter) . ')';
             } elseif (is_array($this->lessThan)) {
                 $result .= '(' . $formatter->formatValuesList($this->lessThan) . ')';
             } else {
@@ -123,10 +129,14 @@ class PartitionDefinition implements SqlSerializable
             }
         }
         if ($this->subpartitions !== null) {
+            rd($this->subpartitions);
             $result .= ' (' . implode(', ', Arr::mapPairs($this->subpartitions, function ($name, $options) use ($formatter): string {
                 $sub = 'SUBPARTITION ' . $formatter->formatName($name);
-                foreach ($options as $option => $value) {
-                    $sub .= ' ' . $option . ' = ' . (is_int($value) ? $value : $formatter->formatString($value));
+                rd($name);rd($options);
+                if ($options !== null) {
+                    foreach ($options as $option => $value) {
+                        $sub .= ' ' . $option . ' = ' . (is_int($value) ? $value : $formatter->formatString($value));
+                    }
                 }
                 return $sub;
             })) . ')';

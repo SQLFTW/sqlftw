@@ -16,7 +16,6 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\TableStructureCommand;
 use SqlFtw\Sql\QualifiedName;
-use function substr;
 
 class CreateIndexCommand implements IndexCommand, TableStructureCommand
 {
@@ -60,15 +59,16 @@ class CreateIndexCommand implements IndexCommand, TableStructureCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CREATE';
-        // remove "ADD "
-        $result .= substr($this->index->serialize($formatter), 4);
+        $result = 'CREATE ';
+        $result .= $this->index->serializeHead($formatter);
+        $result .= ' ON ' . $this->index->getTable()->serialize($formatter);
+        $result .= $this->index->serializeTail($formatter);
 
         if ($this->algorithm !== null) {
-            $result .= ' ALGORITHM = ' . $this->algorithm->serialize($formatter);
+            $result .= ' ALGORITHM ' . $this->algorithm->serialize($formatter);
         }
         if ($this->lock !== null) {
-            $result .= ' LOCK = ' . $this->lock->serialize($formatter);
+            $result .= ' LOCK ' . $this->lock->serialize($formatter);
         }
 
         return $result;

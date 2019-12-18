@@ -129,7 +129,7 @@ class SelectCommandParser
             if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
                 $alias = $tokenList->consumeName();
             } else {
-                $alias = $tokenList->mayConsumeName();
+                $alias = $tokenList->mayConsumeNonKeywordName();
             }
             $what[] = new SelectExpression($value, $alias, $window);
         } while ($tokenList->mayConsumeComma());

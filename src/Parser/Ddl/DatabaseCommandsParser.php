@@ -72,7 +72,7 @@ class DatabaseCommandsParser
     {
         $charset = $collation = null;
         $tokenList->mayConsumeKeyword(Keyword::DEFAULT);
-        $token = $tokenList->consumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATION);
+        $token = $tokenList->consumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
         if ($token === Keyword::CHARACTER) {
             $tokenList->consumeKeyword(Keyword::SET);
             $tokenList->mayConsumeOperator(Operator::EQUAL);
@@ -84,7 +84,11 @@ class DatabaseCommandsParser
             $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
         }
 
-        $token = $tokenList->mayConsumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATION);
+        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+            $token = $tokenList->consumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
+        } else {
+            $token = $tokenList->mayConsumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
+        }
         if ($token) {
             if ($token === Keyword::CHARACTER) {
                 $tokenList->consumeKeyword(Keyword::SET);

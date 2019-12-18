@@ -43,7 +43,7 @@ class DropTriggerCommand implements TriggerCommand
     {
         $result = 'DROP TRIGGER ';
         if ($this->ifExists) {
-            $result .= 'IF EXISTS';
+            $result .= 'IF EXISTS ';
         }
         $result .= $this->name->serialize($formatter);
 

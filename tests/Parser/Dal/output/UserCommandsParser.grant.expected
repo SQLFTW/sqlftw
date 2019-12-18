@@ -1,1 +1,0 @@
-GRANT ALL ON * TO 'admin'@'localhost' AS 'developer'@'localhost' WITH ROLE DEFAULT

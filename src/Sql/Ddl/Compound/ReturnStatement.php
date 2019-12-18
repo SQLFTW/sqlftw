@@ -11,28 +11,29 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Statement;
 
 class ReturnStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Statement */
-    private $statement;
+    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    private $expression;
 
-    public function __construct(Statement $statement)
+    public function __construct(ExpressionNode $expression)
     {
-        $this->statement = $statement;
+        $this->expression = $expression;
     }
 
-    public function getStatement(): Statement
+    public function getExpression(): ExpressionNode
     {
-        return $this->statement;
+        return $this->expression;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'RETURN ' . $this->statement->serialize($formatter) . ";\n";
+        return 'RETURN ' . $this->expression->serialize($formatter);
     }
 
 }

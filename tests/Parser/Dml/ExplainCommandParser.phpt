@@ -2,68 +2,29 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // {EXPLAIN | DESCRIBE | DESC} tbl_name [col_name | wild]
-$query = "DESCRIBE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DESC foo";
-$result = "DESCRIBE foo";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN foo";
-$result = "DESCRIBE foo";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DESCRIBE foo bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DESCRIBE foo 'bar%'";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("DESCRIBE foo");
+Assert::parse("DESC foo", "DESCRIBE foo");
+Assert::parse("EXPLAIN foo", "DESCRIBE foo");
+Assert::parse("DESCRIBE foo bar");
+Assert::parse("DESCRIBE foo 'bar%'");
 
 
 // {EXPLAIN | DESCRIBE | DESC} [explain_type] {explainable_stmt | FOR CONNECTION connection_id}
-$query = "EXPLAIN SELECT 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DESCRIBE SELECT 1";
-$result = "EXPLAIN SELECT 1";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DESC SELECT 1";
-$result = "EXPLAIN SELECT 1";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN EXTENDED SELECT 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN PARTITIONS SELECT 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN FORMAT=TRADITIONAL SELECT 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN FORMAT=JSON SELECT 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN INSERT INTO foo VALUES (1)";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN REPLACE INTO foo VALUES (1)";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN DELETE FROM foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN UPDATE foo SET bar = baz";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "EXPLAIN FOR CONNECTION 123";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("EXPLAIN SELECT 1");
+Assert::parse("DESCRIBE SELECT 1", "EXPLAIN SELECT 1");
+Assert::parse("DESC SELECT 1", "EXPLAIN SELECT 1");
+Assert::parse("EXPLAIN EXTENDED SELECT 1");
+Assert::parse("EXPLAIN PARTITIONS SELECT 1");
+Assert::parse("EXPLAIN FORMAT=TRADITIONAL SELECT 1");
+Assert::parse("EXPLAIN FORMAT=JSON SELECT 1");
+Assert::parse("EXPLAIN INSERT INTO foo VALUES (1)");
+Assert::parse("EXPLAIN REPLACE INTO foo VALUES (1)");
+Assert::parse("EXPLAIN DELETE FROM foo");
+Assert::parse("EXPLAIN UPDATE foo SET bar = baz");
+Assert::parse("EXPLAIN FOR CONNECTION 123");

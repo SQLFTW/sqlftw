@@ -105,7 +105,6 @@ class TablespaceOption extends SqlEnum
             } elseif ($allowedValues === Type::BOOL) {
                 Check::bool($value);
             } else {
-                $value = strtoupper($value);
                 if (!in_array($value, $allowedValues)) {
                     throw new InvalidDefinitionException(
                         sprintf('Invalid values "%s" for option %s.', $value, $key)

@@ -67,6 +67,8 @@ class SimpleAction implements AlterTableAction
             return $result;
         } elseif ($this->value instanceof SqlSerializable) {
             $result .= ' ' . $this->value->serialize($formatter);
+        } elseif ($type === Type::INT) {
+            $result .= ' ' . strval($this->value);
         } elseif ($type === Type::STRING) {
             $result .= ' ' . $formatter->formatName(strval($this->value));
         } elseif ($type === 'array<string>') {

@@ -80,11 +80,14 @@ class CompoundStatementParser
      */
     public function parseCompoundStatement(TokenList $tokenList): CompoundStatement
     {
-        $label = $tokenList->mayConsumeName();
-        if ($label !== null) {
-            $tokenList->consume(TokenType::DOUBLE_COLON);
+        $label = null;
+        if (!$tokenList->mayConsumeKeyword(Keyword::BEGIN)) {
+            $label = $tokenList->mayConsumeName();
+            if ($label !== null) {
+                $tokenList->consume(TokenType::DOUBLE_COLON);
+            }
+            $tokenList->consumeKeyword(Keyword::BEGIN);
         }
-        $tokenList->consumeKeyword(Keyword::BEGIN);
 
         return $this->parseBlock($tokenList, $label);
     }
@@ -128,22 +131,9 @@ class CompoundStatementParser
             $keyword = $tokenList->consumeAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE);
         } else {
             $keyword = $tokenList->mayConsumeAnyKeyword(
-                Keyword::BEGIN,
-                Keyword::LOOP,
-                Keyword::REPEAT,
-                Keyword::WHILE,
-                Keyword::CASE,
-                Keyword::IF,
-                Keyword::DECLARE,
-                Keyword::OPEN,
-                Keyword::FETCH,
-                Keyword::CLOSE,
-                Keyword::GET,
-                Keyword::SIGNAL,
-                Keyword::RESIGNAL,
-                Keyword::RETURN,
-                Keyword::LEAVE,
-                Keyword::ITERATE
+                Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF,
+                Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::GET, Keyword::SIGNAL,
+                Keyword::RESIGNAL, Keyword::RETURN, Keyword::LEAVE, Keyword::ITERATE
             );
         }
         switch ($keyword) {
@@ -173,7 +163,7 @@ class CompoundStatementParser
             case Keyword::RESIGNAL:
                 return $this->parseSignalResignal($tokenList, $keyword);
             case Keyword::RETURN:
-                return new ReturnStatement($this->parseStatement($tokenList));
+                return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
             case Keyword::LEAVE:
                 return new LeaveStatement($tokenList->consumeName());
             case Keyword::ITERATE:

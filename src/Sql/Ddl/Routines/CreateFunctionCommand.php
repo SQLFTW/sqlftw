@@ -15,6 +15,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
 use SqlFtw\Sql\Ddl\DataType;
 use SqlFtw\Sql\Ddl\SqlSecurity;
+use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 use function implode;
@@ -35,7 +36,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     /** @var \SqlFtw\Sql\Ddl\DataType */
     private $returnType;
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
     private $definer;
 
     /** @var bool|null */
@@ -58,7 +59,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
      * @param \SqlFtw\Sql\Ddl\Compound\CompoundStatement $body
      * @param \SqlFtw\Sql\Ddl\DataType[] $params
      * @param \SqlFtw\Sql\Ddl\DataType $returnType
-     * @param \SqlFtw\Sql\UserName|null $definer
+     * @param \SqlFtw\Sql\Ddl\UserExpression|null $definer
      * @param bool|null $deterministic
      * @param \SqlFtw\Sql\Ddl\SqlSecurity|null $security
      * @param \SqlFtw\Sql\Ddl\Routines\RoutineSideEffects|null $sideEffects
@@ -70,7 +71,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         CompoundStatement $body,
         array $params,
         DataType $returnType,
-        ?UserName $definer = null,
+        ?UserExpression $definer = null,
         ?bool $deterministic = null,
         ?SqlSecurity $security = null,
         ?RoutineSideEffects $sideEffects = null,
@@ -112,7 +113,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         return $this->returnType;
     }
 
-    public function getDefiner(): ?UserName
+    public function getDefiner(): ?UserExpression
     {
         return $this->definer;
     }
@@ -159,7 +160,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         }
         if ($this->language !== null) {
-            $result .= ' LANGUAGE ' . $formatter->formatString($this->language);
+            $result .= ' LANGUAGE ' . $this->language;
         }
         if ($this->deterministic !== null) {
             $result .= $this->deterministic ? ' DETERMINISTIC' : ' NOT DETERMINISTIC';
@@ -171,7 +172,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
             $result .= ' SQL SECURITY ' . $this->security->serialize($formatter);
         }
 
-        $result .= $this->body->serialize($formatter);
+        $result .= ' ' . $this->body->serialize($formatter);
 
         return $result;
     }

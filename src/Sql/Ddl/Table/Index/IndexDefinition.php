@@ -14,6 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\QualifiedName;
 use function array_keys;
 use function count;
 use function is_int;
@@ -35,20 +36,30 @@ class IndexDefinition implements TableItem, ConstraintBody
     /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexColumn[] */
     private $columns;
 
+    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexAlgorithm|null */
+    private $algorithm;
+
     /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexOptions */
     private $options;
+
+    /** @var \SqlFtw\Sql\QualifiedName|null */
+    private $table;
 
     /**
      * @param string|null $name
      * @param \SqlFtw\Sql\Ddl\Table\Index\IndexType $type
      * @param \SqlFtw\Sql\Ddl\Table\Index\IndexColumn[]|int[]|string[]|null[] $columns
+     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexAlgorithm|null $algorithm
      * @param \SqlFtw\Sql\Ddl\Table\Index\IndexOptions $options
+     * @param \SqlFtw\Sql\QualifiedName|null $table
      */
     public function __construct(
         ?string $name,
         IndexType $type,
         array $columns,
-        ?IndexOptions $options = null
+        ?IndexAlgorithm $algorithm = null,
+        ?IndexOptions $options = null,
+        ?QualifiedName $table = null
     ) {
         if (count($columns) < 1) {
             throw new InvalidDefinitionException('Index must contain at least one column. None given.');
@@ -57,7 +68,9 @@ class IndexDefinition implements TableItem, ConstraintBody
         $this->name = $name;
         $this->type = $type;
         $this->setColumns($columns);
+        $this->algorithm = $algorithm;
         $this->options = $options;
+        $this->table = $table;
     }
 
     public function duplicateWithNewName(string $newName): self
@@ -142,9 +155,19 @@ class IndexDefinition implements TableItem, ConstraintBody
         return count($this->columns) > 1;
     }
 
+    public function getAlgorithm(): ?IndexAlgorithm
+    {
+        return $this->algorithm;
+    }
+
     public function getOptions(): IndexOptions
     {
         return $this->options;
+    }
+
+    public function getTable(): ?QualifiedName
+    {
+        return $this->table;
     }
 
     /**
@@ -165,13 +188,26 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public function serialize(Formatter $formatter): string
     {
+        return $this->serializeHead($formatter) . ' ' . $this->serializeTail($formatter);
+    }
+
+    public function serializeHead(Formatter $formatter): string
+    {
         $result = $this->type->serialize($formatter);
 
         if ($this->name !== null) {
             $result .= ' ' . $formatter->formatName($this->name);
         }
+        if ($this->algorithm !== null) {
+            $result .= ' USING ' . $this->algorithm->serialize($formatter);
+        }
 
-        $result .= ' (' . $formatter->formatSerializablesList($this->columns) . ')';
+        return $result;
+    }
+
+    public function serializeTail(Formatter $formatter): string
+    {
+        $result = ' (' . $formatter->formatSerializablesList($this->columns) . ')';
 
         if (!$this->options->isEmpty()) {
             $result .= ' ' . $this->options->serialize($formatter);

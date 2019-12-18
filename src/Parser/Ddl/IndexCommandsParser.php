@@ -83,7 +83,7 @@ class IndexCommandsParser
     {
         $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::UNIQUE, Keyword::FULLTEXT, Keyword::SPATIAL);
         if ($keyword === Keyword::UNIQUE) {
-            $type = IndexType::get($keyword . ' KEY');
+            $type = IndexType::get($keyword . ' INDEX');
         } elseif ($keyword !== null) {
             $type = IndexType::get($keyword . ' INDEX');
         } else {
@@ -122,10 +122,7 @@ class IndexCommandsParser
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
 
         $options = [];
-        if (!$inTable) {
-            $options = [IndexOption::TABLE => $table];
-        }
-        $keywords = [Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE];
+        $keywords = [Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE, Keyword::INVISIBLE];
         while ($keyword = $tokenList->mayConsumeAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::USING) {
                 $algorithm = $tokenList->consumeKeywordEnum(IndexAlgorithm::class);
@@ -149,11 +146,8 @@ class IndexCommandsParser
                 $options[IndexOption::VISIBLE] = false;
             }
         }
-        if ($algorithm !== null) {
-            $options[IndexOption::ALGORITHM] = $algorithm;
-        }
 
-        return new IndexDefinition($name, $type, $columns, new IndexOptions($options));
+        return new IndexDefinition($name, $type, $columns, $algorithm, new IndexOptions($options), $table);
     }
 
     /**

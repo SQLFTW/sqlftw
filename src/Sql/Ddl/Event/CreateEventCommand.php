@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Event;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\DoCommand\DoCommand;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
@@ -28,7 +29,7 @@ class CreateEventCommand implements EventCommand
     /** @var \SqlFtw\Sql\Dml\DoCommand\DoCommand */
     private $body;
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
     private $definer;
 
     /** @var \SqlFtw\Sql\Ddl\Event\EventState|null */
@@ -47,7 +48,7 @@ class CreateEventCommand implements EventCommand
         QualifiedName $name,
         ?EventSchedule $schedule,
         ?DoCommand $body = null,
-        ?UserName $definer = null,
+        ?UserExpression $definer = null,
         ?EventState $state = null,
         ?bool $preserve = null,
         ?string $comment = null,
@@ -78,7 +79,7 @@ class CreateEventCommand implements EventCommand
         return $this->body;
     }
 
-    public function getDefiner(): ?UserName
+    public function getDefiner(): ?UserExpression
     {
         return $this->definer;
     }
@@ -107,7 +108,7 @@ class CreateEventCommand implements EventCommand
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
-            $result .= ' DEFINER ' . $this->definer->serialize($formatter);
+            $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
         $result .= ' EVENT';
         if ($this->ifNotExists) {

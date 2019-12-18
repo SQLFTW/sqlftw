@@ -2,148 +2,72 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // COMMIT [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
-$query = "COMMIT";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "COMMIT WORK";
-$result = "COMMIT";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "COMMIT AND CHAIN";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "COMMIT AND NO CHAIN";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "COMMIT RELEASE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "COMMIT NO RELEASE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("COMMIT");
+Assert::parse("COMMIT WORK", "COMMIT");
+Assert::parse("COMMIT AND CHAIN");
+Assert::parse("COMMIT AND NO CHAIN");
+Assert::parse("COMMIT RELEASE");
+Assert::parse("COMMIT NO RELEASE");
 
 
 // LOCK TABLES tbl_name [[AS] alias] lock_type [, tbl_name [[AS] alias] lock_type] ...
-$query = "LOCK TABLES foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "LOCK TABLES foo AS foo1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "LOCK TABLES foo, bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "LOCK TABLES foo AS foo1, bar AS bar1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "LOCK TABLES foo AS foo1 READ, bar AS bar1 READ LOCAL";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "LOCK TABLES foo AS foo1 WRITE, bar AS bar1 LOW_PRIORITY WRITE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("LOCK TABLES tbl1");
+Assert::parse("LOCK TABLES tbl1 AS foo1");
+Assert::parse("LOCK TABLES tbl1, tbl2");
+Assert::parse("LOCK TABLES tbl1 AS foo, tbl2 AS bar");
+Assert::parse("LOCK TABLES tbl1 AS foo READ, tbl2 AS bar READ LOCAL");
+Assert::parse("LOCK TABLES tbl1 AS foo WRITE, tbl2 AS bar LOW_PRIORITY WRITE");
 
 
 // RELEASE SAVEPOINT identifier
-$query = "RELEASE SAVEPOINT foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("RELEASE SAVEPOINT svp1");
 
 
 // ROLLBACK [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
-$query = "ROLLBACK";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ROLLBACK WORK";
-$result = "ROLLBACK";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ROLLBACK AND CHAIN";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ROLLBACK AND NO CHAIN";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ROLLBACK RELEASE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ROLLBACK NO RELEASE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("ROLLBACK");
+Assert::parse("ROLLBACK WORK", "ROLLBACK");
+Assert::parse("ROLLBACK AND CHAIN");
+Assert::parse("ROLLBACK AND NO CHAIN");
+Assert::parse("ROLLBACK RELEASE");
+Assert::parse("ROLLBACK NO RELEASE");
 
 
 // ROLLBACK [WORK] TO [SAVEPOINT] identifier
-$query = "ROLLBACK TO SAVEPOINT foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ROLLBACK WORK TO SAVEPOINT foo";
-$result = "ROLLBACK TO SAVEPOINT foo";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ROLLBACK TO foo";
-$result = "ROLLBACK TO SAVEPOINT foo";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("ROLLBACK TO SAVEPOINT svp1");
+Assert::parse("ROLLBACK WORK TO SAVEPOINT svp1", "ROLLBACK TO SAVEPOINT svp1");
+Assert::parse("ROLLBACK TO svp1", "ROLLBACK TO SAVEPOINT svp1");
 
 
 // SAVEPOINT identifier
-$query = "SAVEPOINT foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("SAVEPOINT svp1");
 
 
 // SET [GLOBAL | SESSION] TRANSACTION transaction_characteristic [, transaction_characteristic] ...
-$query = "SET GLOBAL TRANSACTION READ ONLY";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET SESSION TRANSACTION READ WRITE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET TRANSACTION ISOLATION LEVEL READ COMMITTED";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE, READ WRITE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("SET GLOBAL TRANSACTION READ ONLY");
+Assert::parse("SET SESSION TRANSACTION READ WRITE");
+Assert::parse("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+Assert::parse("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
+Assert::parse("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+Assert::parse("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
+Assert::parse("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE, READ WRITE");
 
 
 // START TRANSACTION [transaction_characteristic [, transaction_characteristic] ...]
 // BEGIN [WORK]
-$query = "START TRANSACTION";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "START TRANSACTION WITH CONSISTENT SNAPSHOT";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "START TRANSACTION READ ONLY";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "START TRANSACTION READ WRITE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "START TRANSACTION WITH CONSISTENT SNAPSHOT, READ WRITE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "BEGIN";
-$result = "START TRANSACTION";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "BEGIN WORK";
-$result = "START TRANSACTION";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("START TRANSACTION");
+Assert::parse("START TRANSACTION WITH CONSISTENT SNAPSHOT");
+Assert::parse("START TRANSACTION READ ONLY");
+Assert::parse("START TRANSACTION READ WRITE");
+Assert::parse("START TRANSACTION WITH CONSISTENT SNAPSHOT, READ WRITE");
+Assert::parse("BEGIN", "START TRANSACTION");
+Assert::parse("BEGIN WORK", "START TRANSACTION");
 
 
 // UNLOCK TABLES
-$query = "UNLOCK TABLES";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("UNLOCK TABLES");

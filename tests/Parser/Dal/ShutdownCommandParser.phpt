@@ -2,14 +2,10 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // SHUTDOWN
-$query = "SHUTDOWN";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("SHUTDOWN");

@@ -18,6 +18,7 @@ use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
@@ -55,7 +56,7 @@ class EventCommandsParser
         $definer = $schedule = $preserve = $newName = $state = $comment = $body = null;
 
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $definer = new UserName(...$tokenList->consumeUserName());
+            $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->consumeKeyword(Keyword::EVENT);
         $name = new QualifiedName(...$tokenList->consumeQualifiedName());
@@ -103,11 +104,12 @@ class EventCommandsParser
      */
     public function parseCreateEvent(TokenList $tokenList): CreateEventCommand
     {
-        $tokenList->consumeKeyword(Keyword::ALTER);
+        $tokenList->consumeKeyword(Keyword::CREATE);
         $definer = $schedule = $preserve = $state = $comment = $body = null;
 
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $definer = new UserName(...$tokenList->consumeUserName());
+            $tokenList->mayConsumeOperator(Operator::EQUAL);
+            $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->consumeKeyword(Keyword::EVENT);
         $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
@@ -132,7 +134,7 @@ class EventCommandsParser
             $comment = $tokenList->consumeString();
         }
 
-        $body = $this->doCommandsParser->parseDo($tokenList->resetPosition($tokenList->getPosition() - 1));
+        $body = $this->doCommandsParser->parseDo($tokenList);
         $tokenList->expectEnd();
 
         return new CreateEventCommand($name, $schedule, $body, $definer, $state, $preserve, $comment, $ifNotExists);
@@ -149,10 +151,12 @@ class EventCommandsParser
     {
         $every = $at = $startTime = $endTime = null;
 
-        if ($tokenList->consumeKeyword(Keyword::EVERY)) {
+        if ($tokenList->mayConsumeKeyword(Keyword::EVERY)) {
             $every = $this->expressionParser->parseInterval($tokenList);
         } elseif ($tokenList->mayConsumeKeyword(Keyword::AT)) {
             $at = $this->expressionParser->parseTimeExpression($tokenList);
+        } else {
+            $tokenList->expectedAnyKeyword(Keyword::ON, Keyword::EVERY);
         }
 
         if ($tokenList->mayConsumeKeyword(Keyword::STARTS)) {

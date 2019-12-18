@@ -103,7 +103,7 @@ class AlterServerCommand implements ServerCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CREATE SERVER ' . $formatter->formatName($this->name) . ' OPTIONS (';
+        $result = 'ALTER SERVER ' . $formatter->formatName($this->name) . ' OPTIONS (';
 
         if ($this->host !== null) {
             $result .= 'HOST ' . $formatter->formatString($this->host) . ', ';

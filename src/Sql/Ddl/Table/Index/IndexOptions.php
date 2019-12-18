@@ -11,7 +11,6 @@ namespace SqlFtw\Sql\Ddl\Table\Index;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
 use function ltrim;
 
@@ -41,16 +40,6 @@ class IndexOptions implements SqlSerializable
     public function isEmpty(): bool
     {
         return $this->options === [];
-    }
-
-    public function getTable(): ?QualifiedName
-    {
-        return $this->options[IndexOption::TABLE] ?? null;
-    }
-
-    public function getAlgorithm(): ?IndexAlgorithm
-    {
-        return $this->options[IndexOption::ALGORITHM] ?? null;
     }
 
     public function getKeyBlockSize(): ?int
@@ -83,16 +72,12 @@ class IndexOptions implements SqlSerializable
         $result = '';
         /** @var \SqlFtw\Sql\SqlSerializable|int|string $value */
         foreach ($this->options as $option => $value) {
-            if ($option === IndexOption::TABLE) {
-                $result .= ' ON ' . $value->serialize($formatter);
-            } elseif ($option === IndexOption::ALGORITHM) {
-                $result .= ' USING ' . $value->serialize($formatter);
-            } elseif ($option === IndexOption::KEY_BLOCK_SIZE) {
+            if ($option === IndexOption::KEY_BLOCK_SIZE) {
                 $result .= ' KEY_BLOCK_SIZE ' . $value;
             } elseif ($option === IndexOption::WITH_PARSER) {
-                $result .= ' WITH PARSER ' . $value->serialize($formatter);
+                $result .= ' WITH PARSER ' . $formatter->formatName($value);
             } elseif ($option === IndexOption::VISIBLE) {
-                $result .= ' ' . $value->serialize($formatter);
+                $result .= ' ' . ($value ? 'VISIBLE' : 'INVISIBLE');
             } elseif ($option === IndexOption::COMMENT) {
                 $result .= ' COMMENT ' . $formatter->formatString($value);
             } elseif ($option === IndexOption::MERGE_THRESHOLD) {

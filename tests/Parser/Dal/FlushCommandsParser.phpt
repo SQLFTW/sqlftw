@@ -2,58 +2,24 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // FLUSH
-$query = 'FLUSH NO_WRITE_TO_BINLOG DES_KEY_FILE';
-$result = 'FLUSH LOCAL DES_KEY_FILE';
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH LOCAL HOSTS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH BINARY LOGS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH ENGINE LOGS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH ERROR LOGS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH GENERAL LOGS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH RELAY LOGS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH SLOW LOGS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH RELAY LOGS FOR CHANNEL foo';
-$result = "FLUSH RELAY LOGS FOR CHANNEL 'foo'";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH OPTIMIZER_COSTS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH PRIVILEGES';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH QUERY CACHE';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH STATUS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH USER_RESOURCES';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = 'FLUSH PRIVILEGES, STATUS';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("FLUSH NO_WRITE_TO_BINLOG DES_KEY_FILE", "FLUSH LOCAL DES_KEY_FILE");
+Assert::parse("FLUSH LOCAL HOSTS");
+Assert::parse("FLUSH BINARY LOGS");
+Assert::parse("FLUSH ENGINE LOGS");
+Assert::parse("FLUSH ERROR LOGS");
+Assert::parse("FLUSH GENERAL LOGS");
+Assert::parse("FLUSH RELAY LOGS");
+Assert::parse("FLUSH SLOW LOGS");
+Assert::parse("FLUSH RELAY LOGS FOR CHANNEL foo", "FLUSH RELAY LOGS FOR CHANNEL 'foo'");
+Assert::parse("FLUSH OPTIMIZER_COSTS");
+Assert::parse("FLUSH PRIVILEGES");
+Assert::parse("FLUSH QUERY CACHE");
+Assert::parse("FLUSH STATUS");
+Assert::parse("FLUSH USER_RESOURCES");
+Assert::parse("FLUSH PRIVILEGES, STATUS");

@@ -30,7 +30,9 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Alter\ChangeColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\ConvertToCharsetAction;
+use SqlFtw\Sql\Ddl\Table\Alter\PartitionsAction;
 use SqlFtw\Sql\Ddl\Table\Alter\ExchangePartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\ImportPartitionTablespaceAction;
 use SqlFtw\Sql\Ddl\Table\Alter\ModifyColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\RenameIndexAction;
 use SqlFtw\Sql\Ddl\Table\Alter\ReorganizePartitionAction;
@@ -280,7 +282,7 @@ class TableCommandsParser
                     // ANALYZE PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::ANALYZE_PARTITION), $partitions);
+                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::ANALYZE_PARTITION), $partitions);
                     break;
                 case Keyword::CHANGE:
                     // CHANGE [COLUMN] old_col_name new_col_name column_definition [FIRST|AFTER col_name]
@@ -299,7 +301,7 @@ class TableCommandsParser
                     // CHECK PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::CHECK_PARTITION), $partitions);
+                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::CHECK_PARTITION), $partitions);
                     break;
                 case Keyword::COALESCE:
                     // COALESCE PARTITION number
@@ -325,7 +327,8 @@ class TableCommandsParser
                     } else {
                         // DISCARD PARTITION {partition_names | ALL} TABLESPACE
                         $partitions = $this->parsePartitionNames($tokenList);
-                        $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DISCARD_PARTITION_TABLESPACE), $partitions);
+                        $action = AlterTableActionType::get(AlterTableActionType::DISCARD_PARTITION_TABLESPACE);
+                        $actions[] = new PartitionsAction($action, $partitions);
                         $tokenList->consumeKeyword(Keyword::TABLESPACE);
                     }
                     break;
@@ -364,6 +367,7 @@ class TableCommandsParser
                             break;
                         case Keyword::PRIMARY:
                             // DROP PRIMARY KEY
+                            $tokenList->consumeKeyword(Keyword::KEY);
                             $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DROP_PRIMARY_KEY));
                             break;
                         default:
@@ -383,8 +387,10 @@ class TableCommandsParser
                     $table = new QualifiedName(...$tokenList->consumeQualifiedName());
                     $validation = $tokenList->mayConsumeAnyKeyword(Keyword::WITH, Keyword::WITHOUT);
                     if ($validation === Keyword::WITH) {
+                        $tokenList->consumeKeyword(Keyword::VALIDATION);
                         $validation = true;
                     } elseif ($validation === Keyword::WITHOUT) {
+                        $tokenList->consumeKeyword(Keyword::VALIDATION);
                         $validation = false;
                     }
                     $actions[] = new ExchangePartitionAction($partition, $table, $validation);
@@ -401,7 +407,8 @@ class TableCommandsParser
                     } else {
                         // IMPORT PARTITION {partition_names | ALL} TABLESPACE
                         $partitions = $this->parsePartitionNames($tokenList);
-                        $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::IMPORT_PARTITION_TABLESPACE), $partitions);
+                        $action = AlterTableActionType::get(AlterTableActionType::IMPORT_PARTITION_TABLESPACE);
+                        $actions[] = new PartitionsAction($action, $partitions);
                         $tokenList->consumeKeyword(Keyword::TABLESPACE);
                     }
                     break;
@@ -426,7 +433,7 @@ class TableCommandsParser
                     // OPTIMIZE PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::OPTIMIZE_PARTITION), $partitions);
+                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::OPTIMIZE_PARTITION), $partitions);
                     break;
                 case Keyword::ORDER:
                     // ORDER BY col_name [, col_name] ...
@@ -441,7 +448,7 @@ class TableCommandsParser
                     // REBUILD PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::REBUILD_PARTITION), $partitions);
+                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::REBUILD_PARTITION), $partitions);
                     break;
                 case Keyword::REMOVE:
                     // REMOVE PARTITIONING
@@ -479,13 +486,13 @@ class TableCommandsParser
                     // REPAIR PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::REPAIR_PARTITION), $partitions);
+                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::REPAIR_PARTITION), $partitions);
                     break;
                 case Keyword::TRUNCATE:
                     // TRUNCATE PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::TRUNCATE_PARTITION), $partitions);
+                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::TRUNCATE_PARTITION), $partitions);
                     break;
                 case Keyword::UPGRADE:
                     // UPGRADE PARTITIONING
@@ -592,16 +599,11 @@ class TableCommandsParser
      *
      * create_definition:
      *     col_name column_definition
-     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...)
-     *         [index_option] ...
-     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...)
-     *         [index_option] ...
-     *   | {INDEX|KEY} [index_name] [index_type] (index_col_name,...)
-     *         [index_option] ...
-     *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...)
-     *         [index_option] ...
-     *   | [CONSTRAINT [symbol]] FOREIGN KEY
-     *        [index_name] (index_col_name,...) reference_definition
+     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
+     *   | {INDEX|KEY} [index_name] [index_type] (index_col_name,...) [index_option] ...
+     *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
      *   | CHECK (expr)
      *
      * @param \SqlFtw\Parser\TokenList $tokenList
@@ -735,14 +737,10 @@ class TableCommandsParser
 
     /**
      * create_definition:
-     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...)
-     *         [index_option] ...
-     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...)
-     *         [index_option] ...
-     *   | {INDEX|KEY} [index_name] [index_type] (index_col_name,...)
-     *         [index_option] ...
-     *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...)
-     *         [index_option] ...
+     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
+     *   | {INDEX|KEY} [index_name] [index_type] (index_col_name,...) [index_option] ...
+     *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
      */
     private function parseIndex(TokenList $tokenList, bool $primary = false): IndexDefinition
     {
@@ -756,12 +754,9 @@ class TableCommandsParser
 
     /**
      * create_definition:
-     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...)
-     *         [index_option] ...
-     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...)
-     *         [index_option] ...
-     *   | [CONSTRAINT [symbol]] FOREIGN KEY
-     *         [index_name] (index_col_name,...) reference_definition
+     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
      */
     private function parseConstraint(TokenList $tokenList): ConstraintDefinition
     {
@@ -1155,9 +1150,10 @@ class TableCommandsParser
         if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
             $subpartitions = [];
             do {
-                $name = $tokenList->consumeName();
-                $options = $this->parsePartitionOptions($tokenList);
-                $subpartitions[$name] = $options;
+                $tokenList->consumeKeyword(Keyword::SUBPARTITION);
+                $subName = $tokenList->consumeName();
+                $subOptions = $this->parsePartitionOptions($tokenList);
+                $subpartitions[$subName] = $subOptions;
             } while ($tokenList->mayConsumeComma());
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         }
@@ -1177,7 +1173,7 @@ class TableCommandsParser
      *
      * @return mixed[]
      */
-    private function parsePartitionOptions(TokenList $tokenList): array
+    private function parsePartitionOptions(TokenList $tokenList): ?array
     {
         $options = [];
 
@@ -1270,10 +1266,11 @@ class TableCommandsParser
         } while ($tokenList->mayConsumeComma());
 
         // ignored in MySQL 5.7, 8.0
-        $tokenList->mayConsumeAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE);
+        $cascadeRestrict = $tokenList->mayConsumeAnyKeyword(Keyword::CASCADE, Keyword::RESTRICT);
+        $cascadeRestrict = $cascadeRestrict === Keyword::CASCADE ? true : ($cascadeRestrict === Keyword::RESTRICT ? false : null);
         $tokenList->expectEnd();
 
-        return new DropTableCommand($tables, $temporary, $ifExists);
+        return new DropTableCommand($tables, $temporary, $ifExists, $cascadeRestrict);
     }
 
     /**

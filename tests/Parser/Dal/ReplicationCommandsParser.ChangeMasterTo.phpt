@@ -2,16 +2,13 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // CHANGE MASTER TO
-$query = "CHANGE MASTER TO 
+Assert::parse("CHANGE MASTER TO
   MASTER_BIND = 'interface_name',
   MASTER_HOST = 'host_name',
   MASTER_USER = 'user_name',
@@ -37,5 +34,4 @@ $query = "CHANGE MASTER TO
   MASTER_SSL_VERIFY_SERVER_CERT = 1,
   MASTER_TLS_VERSION = 'protocol_list',
   IGNORE_SERVER_IDS = (1, 2, 3)
-FOR CHANNEL 'channel_name'";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+FOR CHANNEL 'channel_name'");

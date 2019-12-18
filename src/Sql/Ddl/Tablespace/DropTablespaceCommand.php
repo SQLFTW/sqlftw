@@ -51,7 +51,7 @@ class DropTablespaceCommand implements TablespaceCommand
         $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
 
         if ($this->engine !== null) {
-            $result .= 'ENGINE ' . $formatter->formatName($this->engine);
+            $result .= ' ENGINE ' . $formatter->formatName($this->engine);
         }
 
         return $result;

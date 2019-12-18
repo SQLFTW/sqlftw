@@ -56,6 +56,61 @@ class Charset extends SqlEnum
     public const UTF_8_OLD = 'utf8';
     public const UTF_8 = 'utf8mb4';
 
+    /** @var int[] */
+    private static $ids = [
+        self::BIG_5 => 1,
+        self::DEC_8 => 3,
+        self::CP850 => 4,
+        self::HP_8 => 6,
+        self::KOI8_R => 7,
+        self::LATIN_1 => 8,
+        self::LATIN_2 => 9,
+        self::SWE_7 => 10,
+        self::ASCII => 11,
+        self::UJIS => 12,
+        self::SJIS => 13,
+        self::HEBREW => 16,
+        self::TIS_620 => 18,
+        self::EUC_KR => 19,
+        self::KOI8_U => 22,
+        self::GB2312 => 24,
+        self::GREEK => 25,
+        self::CP1250 => 26,
+        self::GBK => 28,
+        self::LATIN_5 => 30,
+        self::ARMSCII_8 => 32,
+        self::UTF_8_OLD => 33,
+        self::UCS_2 => 35,
+        self::CP866 => 36,
+        self::KEYBCS_2 => 37,
+        self::MAC_CE => 38,
+        self::MAC_ROMAN => 39,
+        self::CP852 => 40,
+        self::LATIN_7 => 41,
+        self::CP1251 => 51,
+        self::UTF_16 => 54,
+        self::UTF_16LE => 56,
+        self::CP1256 => 57,
+        self::CP1257 => 59,
+        self::UTF_32 => 60,
+        self::BINARY => 63,
+        self::GEOSTD_8 => 92,
+        self::CP932 => 95,
+        self::EUC_JP_MS => 97,
+        self::GB18030 => 248,
+        self::UTF_8 => 255,
+    ];
+
+    public function getId(): int
+    {
+        return self::$ids[$this->getValue()];
+    }
+
+    public static function getById(int $id): self
+    {
+        return self::get(array_search($id, self::$ids));
+    }
+
     public function serialize(Formatter $formatter): string
     {
         return "'" . $this->getValue() . "'";

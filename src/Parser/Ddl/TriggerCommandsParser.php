@@ -10,16 +10,19 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\TriggerEvent;
 use SqlFtw\Sql\Ddl\Trigger\TriggerOrder;
 use SqlFtw\Sql\Ddl\Trigger\TriggerPosition;
+use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 
 class TriggerCommandsParser
 {
@@ -28,12 +31,19 @@ class TriggerCommandsParser
     /** @var \SqlFtw\Parser\Parser */
     private $parser;
 
+    /** @var \SqlFtw\Parser\ExpressionParser */
+    private $expressionParser;
+
     /** @var \SqlFtw\Parser\Ddl\CompoundStatementParser */
     private $compoundStatementParser;
 
-    public function __construct(Parser $parser, CompoundStatementParser $compoundStatementParser)
-    {
+    public function __construct(
+        Parser $parser,
+        ExpressionParser $expressionParser,
+        CompoundStatementParser $compoundStatementParser
+    ) {
         $this->parser = $parser;
+        $this->expressionParser = $expressionParser;
         $this->compoundStatementParser = $compoundStatementParser;
     }
 
@@ -56,8 +66,9 @@ class TriggerCommandsParser
     {
         $tokenList->consumeKeyword(Keyword::CREATE);
         $definer = null;
-        if ($tokenList->consumeKeyword(Keyword::DEFINER)) {
-            $definer = new UserName(...$tokenList->consumeUserName());
+        if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
+            $tokenList->consumeOperator(Operator::EQUAL);
+            $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->consumeKeyword(Keyword::TRIGGER);
         $name = $tokenList->consumeName();
@@ -80,9 +91,15 @@ class TriggerCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::BEGIN)) {
             // BEGIN ... END
             $body = $this->compoundStatementParser->parseCompoundStatement($tokenList->resetPosition(-1));
-        } else {
+        } elseif ($tokenList->mayConsumeAnyKeyword(Keyword::SET, Keyword::UPDATE, Keyword::INSERT, Keyword::DELETE, Keyword::REPLACE, Keyword::WITH)) {
             // SET, UPDATE, INSERT, DELETE, REPLACE...
-            $body = $this->parser->parseTokenList($tokenList);
+            $body = $this->parser->parseTokenList($tokenList->resetPosition(-1));
+            if ($body instanceof SelectCommand) {
+                // WITH ... SELECT ...
+                throw new ParserException('Cannot use SELECT as trigger action.');
+            }
+        } else {
+            $tokenList->expectedAnyKeyword(Keyword::SET, Keyword::UPDATE, Keyword::INSERT, Keyword::DELETE, Keyword::REPLACE, Keyword::WITH, Keyword::BEGIN);
         }
         $tokenList->expectEnd();
 

@@ -2,19 +2,14 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use SqlFtw\Platform\Platform;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory(Platform::get(Platform::MYSQL, '8.0'))->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // INSTALL COMPONENT
-$query = 'INSTALL COMPONENT foo, bar';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("INSTALL COMPONENT foo, bar");
+
 
 // UNINSTALL COMPONENT
-$query = 'UNINSTALL COMPONENT foo, bar';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("UNINSTALL COMPONENT foo, bar");

@@ -2,13 +2,10 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // columns
 $query = "CREATE TABLE test (
@@ -42,7 +39,7 @@ $query = "CREATE TABLE test (
   col_26 ENUM('a', 'b'),
   col_27 SET('c', 'd')
 )";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse($query);
 
 // todo: type aliases
 
@@ -65,4 +62,4 @@ $result = 'CREATE TABLE test (
   col_5 INT GENERATED ALWAYS AS YEAR(col_0) VIRTUAL,
   col_6 INT GENERATED ALWAYS AS YEAR(col_0) STORED
 )';
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse($query, $result);

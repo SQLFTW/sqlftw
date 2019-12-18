@@ -40,7 +40,7 @@ class DropDatabaseCommand implements DatabaseCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CREATE DATABASE ';
+        $result = 'DROP DATABASE ';
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }

@@ -2,14 +2,13 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
-// reset_option [, reset_option] ...
-$query = "RESET MASTER, SLAVE, QUERY CACHE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+// RESET reset_option [, reset_option] ...
+Assert::parse("RESET MASTER");
+Assert::parse("RESET SLAVE");
+Assert::parse("RESET QUERY CACHE");
+Assert::parse("RESET MASTER, SLAVE, QUERY CACHE");

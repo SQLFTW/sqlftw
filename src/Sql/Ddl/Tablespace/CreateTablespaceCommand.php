@@ -68,11 +68,15 @@ class CreateTablespaceCommand implements TablespaceCommand
 
         foreach ($this->options as $name => $value) {
             if ($name === TablespaceOption::WAIT) {
-                $result .= $value ? "\n    " . $name : '';
+                $result .= $value ? ' ' . $name : '';
             } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::USE_LOGFILE_GROUP) {
-                $result .= "\n    " . $name . ' ' . $formatter->formatName($value);
+                $result .= ' ' . $name . ' ' . $formatter->formatName($value);
+            } elseif ($name === TablespaceOption::FILE_BLOCK_SIZE) {
+                $result .= ' ' . $name . ' = ' . $formatter->formatValue($value);
+            } elseif ($name === TablespaceOption::ENCRYPTION) {
+                $result .= ' ' . $name . ' ' . $formatter->formatString($value ? 'Y' : 'N');
             } else {
-                $result .= "\n    " . $name . ' ' . $formatter->formatValue($value);
+                $result .= ' ' . $name . ' ' . $formatter->formatValue($value);
             }
         }
 

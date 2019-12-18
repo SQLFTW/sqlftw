@@ -130,7 +130,7 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
             $result .= ' WAIT';
         }
         if ($this->comment !== null) {
-            $result .= ' COMMENT = ' . $this->redoBufferSize;
+            $result .= ' COMMENT = ' . $formatter->formatString($this->comment);
         }
         $result .= ' ENGINE = ' . $formatter->formatName($this->engine);
 

@@ -48,9 +48,9 @@ class Formatter
     {
         return $this->settings->quoteAllNames()
             ? '`' . $name . '`'
-            : $this->settings->getPlatform()->getFeatures()->isReserved($name)
+            : ($this->settings->getPlatform()->getFeatures()->isReserved($name)
                 ? '`' . $name . '`'
-                : $name;
+                : $name);
     }
 
     /**

@@ -66,7 +66,7 @@ class LogfileGroupCommandsParser
      */
     public function parseCreateLogfileGroup(TokenList $tokenList): CreateLogfileGroupCommand
     {
-        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::LOGFILE, Keyword::GROUP);
+        $tokenList->consumeKeywords(Keyword::CREATE, Keyword::LOGFILE, Keyword::GROUP);
         $name = $tokenList->consumeName();
         $tokenList->consumeKeywords(Keyword::ADD, Keyword::UNDOFILE);
         $undoFile = $tokenList->consumeString();

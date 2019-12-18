@@ -272,7 +272,7 @@ class ParserFactory
 
     public function getRoutineCommandsParser(): RoutineCommandsParser
     {
-        return new RoutineCommandsParser($this->getTypeParser(), $this->getCompoundStatementParser());
+        return new RoutineCommandsParser($this->getTypeParser(), $this->getExpressionParser(), $this->getCompoundStatementParser());
     }
 
     public function getSelectCommandParser(): SelectCommandParser
@@ -327,7 +327,7 @@ class ParserFactory
 
     public function getTriggerCommandsParser(Parser $parser): TriggerCommandsParser
     {
-        return new TriggerCommandsParser($parser, $this->getCompoundStatementParser());
+        return new TriggerCommandsParser($parser, $this->getExpressionParser(), $this->getCompoundStatementParser());
     }
 
     public function getUpdateCommandParser(): UpdateCommandParser
@@ -347,7 +347,7 @@ class ParserFactory
 
     public function getViewCommandsParser(): ViewCommandsParser
     {
-        return new ViewCommandsParser($this->getSelectCommandParser());
+        return new ViewCommandsParser($this->getExpressionParser(), $this->getSelectCommandParser());
     }
 
     public function getXaTransactionCommandsParser(): XaTransactionCommandsParser
