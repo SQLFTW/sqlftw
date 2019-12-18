@@ -40,7 +40,7 @@ class DropLogfileGroupCommand implements LogfileGroupCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ALTER LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ENGINE = ' . $formatter->formatName($this->engine);
+        return 'DROP LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ENGINE = ' . $formatter->formatName($this->engine);
     }
 
 }

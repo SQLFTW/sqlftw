@@ -52,7 +52,7 @@ class WithClause implements SqlSerializable
         if ($this->recursive) {
             $result .= ' RECURSIVE';
         }
-
+rd($this->expressions);
         return $result . "\n    " . $formatter->formatSerializablesList($this->expressions, ",\n    ");
     }
 

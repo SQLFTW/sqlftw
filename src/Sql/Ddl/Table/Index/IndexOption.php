@@ -15,8 +15,6 @@ use SqlFtw\Sql\SqlEnum;
 class IndexOption extends SqlEnum
 {
 
-    public const TABLE = Keyword::ON;
-    public const ALGORITHM = Keyword::USING;
     public const KEY_BLOCK_SIZE = Keyword::KEY_BLOCK_SIZE;
     public const WITH_PARSER = Keyword::WITH . ' ' . Keyword::PARSER;
     public const COMMENT = Keyword::COMMENT;

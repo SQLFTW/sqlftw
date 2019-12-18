@@ -64,7 +64,7 @@ class WithExpression implements SqlSerializable
             $result .= ' (' . $formatter->formatNamesList($this->columns) . ')';
         }
 
-        return $result . ' AS ' . $formatter->formatName($this->name);
+        return $result . ' AS (' . $this->query->serialize($formatter) . ')';
     }
 
 }

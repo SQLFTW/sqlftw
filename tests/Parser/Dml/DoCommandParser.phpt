@@ -2,23 +2,13 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // DO expr [, expr] ...
-$query = "DO foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DO foo(bar)";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DO foo(bar, baz)";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "DO foo(), bar()";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("DO foo");
+Assert::parse("DO foo(bar)");
+Assert::parse("DO foo(bar, baz)");
+Assert::parse("DO foo(), bar()");

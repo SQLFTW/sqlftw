@@ -62,9 +62,9 @@ class DropViewCommand implements ViewCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DROP TRIGGER ';
+        $result = 'DROP VIEW ';
         if ($this->ifExists) {
-            $result .= 'IF EXISTS';
+            $result .= 'IF EXISTS ';
         }
         $result .= $formatter->formatSerializablesList($this->names);
         if ($this->option !== null) {

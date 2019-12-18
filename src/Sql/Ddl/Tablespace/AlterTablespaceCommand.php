@@ -68,11 +68,15 @@ class AlterTablespaceCommand implements TablespaceCommand
 
         foreach ($this->options as $name => $value) {
             if ($name === TablespaceOption::WAIT) {
-                $result .= $value ? "\n    " . $name : '';
+                $result .= $value ? ' ' . $name : '';
             } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::RENAME_TO) {
-                $result .= "\n    " . $name . ' ' . $formatter->formatName($value);
+                $result .= ' ' . $name . ' ' . $formatter->formatName($value);
+            } elseif ($name === TablespaceOption::ENCRYPTION) {
+                $result .= ' ' . $name . ' ' . $formatter->formatString($value ? 'Y' : 'N');
+            } elseif ($name === TablespaceOption::SET) {
+                $result .= ' ' . $name . ' ' . $value;
             } else {
-                $result .= "\n    " . $name . ' ' . $formatter->formatValue($value);
+                $result .= ' ' . $name . ' ' . $formatter->formatValue($value);
             }
         }
 

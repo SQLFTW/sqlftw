@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
@@ -22,6 +23,7 @@ use SqlFtw\Sql\Ddl\Routines\InOutParamFlag;
 use SqlFtw\Sql\Ddl\Routines\ProcedureParam;
 use SqlFtw\Sql\Ddl\Routines\RoutineSideEffects;
 use SqlFtw\Sql\Ddl\SqlSecurity;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
@@ -33,14 +35,18 @@ class RoutineCommandsParser
     /** @var \SqlFtw\Parser\Ddl\TypeParser */
     private $typeParser;
 
+    private $expressionParser;
+
     /** @var \SqlFtw\Parser\Ddl\CompoundStatementParser */
     private $compoundStatementParser;
 
     public function __construct(
         TypeParser $typeParser,
+        ExpressionParser $expressionParser,
         CompoundStatementParser $compoundStatementParser
     ) {
         $this->typeParser = $typeParser;
+        $this->expressionParser = $expressionParser;
         $this->compoundStatementParser = $compoundStatementParser;
     }
 
@@ -103,7 +109,7 @@ class RoutineCommandsParser
             if ($keyword === Keyword::COMMENT) {
                 $comment = $tokenList->consumeString();
             } elseif ($keyword === Keyword::LANGUAGE) {
-                $language = $tokenList->consumeName();
+                $language = $tokenList->consumeKeyword(Keyword::SQL);
             } elseif ($keyword === Keyword::CONTAINS) {
                 $tokenList->consumeKeyword(Keyword::SQL);
                 $sideEffects = RoutineSideEffects::get(RoutineSideEffects::CONTAINS_SQL);
@@ -158,10 +164,11 @@ class RoutineCommandsParser
         $tokenList->consumeKeyword(Keyword::CREATE);
         $definer = null;
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $definer = new UserName(...$tokenList->consumeUserName());
+            $tokenList->consumeOperator(Operator::EQUAL);
+            $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->consumeKeyword(Keyword::FUNCTION);
-        $name = new QualifiedName(...$tokenList->consumeName());
+        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         $params = [];
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
@@ -212,10 +219,11 @@ class RoutineCommandsParser
         $tokenList->consumeKeyword(Keyword::CREATE);
         $definer = null;
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $definer = new UserName(...$tokenList->consumeUserName());
+            $tokenList->consumeOperator(Operator::EQUAL);
+            $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
-        $tokenList->consumeKeyword(Keyword::FUNCTION);
-        $name = new QualifiedName(...$tokenList->consumeName());
+        $tokenList->consumeKeyword(Keyword::PROCEDURE);
+        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
 
         $params = [];
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);

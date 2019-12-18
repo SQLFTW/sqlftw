@@ -102,7 +102,7 @@ abstract class InsertOrReplaceCommand implements DmlCommand
             $result .= ' PARTITION (' . $formatter->formatNamesList($this->partitions) . ')';
         }
         if ($this->columns !== null) {
-            $result .= '(' . $formatter->formatNamesList($this->columns) . ')';
+            $result .= ' (' . $formatter->formatNamesList($this->columns) . ')';
         }
 
         return $result;

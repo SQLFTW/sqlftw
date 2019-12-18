@@ -2,52 +2,21 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // SET ...
-$query = "SET foo = 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET foo = 1, bar = 2";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET @foo = 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET @@basedir = 1";
-$result = "SET SESSION basedir = 1";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET @@SESSION.basedir = 1";
-$result = "SET SESSION basedir = 1";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET @@GLOBAL.basedir = 1";
-$result = "SET GLOBAL basedir = 1";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET @@PERSIST.basedir = 1";
-$result = "SET PERSIST basedir = 1";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET @@PERSIST_ONLY.basedir = 1";
-$result = "SET PERSIST_ONLY basedir = 1";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET SESSION basedir = 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET GLOBAL basedir = 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET PERSIST basedir = 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "SET PERSIST_ONLY basedir = 1";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("SET foo = 1");
+Assert::parse("SET foo = 1, bar = 2");
+Assert::parse("SET @foo = 1");
+Assert::parse("SET @@basedir = 1", "SET SESSION basedir = 1");
+Assert::parse("SET @@SESSION.basedir = 1", "SET SESSION basedir = 1");
+Assert::parse("SET @@GLOBAL.basedir = 1", "SET GLOBAL basedir = 1");
+Assert::parse("SET @@PERSIST.basedir = 1", "SET PERSIST basedir = 1");
+Assert::parse("SET @@PERSIST_ONLY.basedir = 1", "SET PERSIST_ONLY basedir = 1");
+Assert::parse("SET SESSION basedir = 1");
+Assert::parse("SET GLOBAL basedir = 1");
+Assert::parse("SET PERSIST basedir = 1");
+Assert::parse("SET PERSIST_ONLY basedir = 1");

@@ -199,9 +199,32 @@ class TokenList
 
     public function mayConsumeName(?string $name = null): ?string
     {
+        $position = $this->position;
         try {
             return $this->consumeName($name);
         } catch (UnexpectedTokenException $e) {
+            $this->position = $position;
+            return null;
+        }
+    }
+
+    public function consumeNonKeywordName(?string $name = null): string
+    {
+        $token = $this->consume(TokenType::NAME, $name);
+        if ($token->type & TokenType::KEYWORD) {
+            throw new UnexpectedTokenException([TokenType::NAME], null, $token, $this);
+        }
+
+        return $token->original;
+    }
+
+    public function mayConsumeNonKeywordName(?string $name = null): ?string
+    {
+        $position = $this->position;
+        try {
+            return $this->consumeNonKeywordName($name);
+        } catch (UnexpectedTokenException $e) {
+            $this->position = $position;
             return null;
         }
     }
@@ -434,8 +457,22 @@ class TokenList
 
     public function seek(int $type, int $maxOffset): ?Token
     {
-        // todo: seek()
-        throw new NotImplementedException('seek');
+        $position = $this->position;
+        for ($n = 0; $n < $maxOffset; $n++) {
+            $this->doAutoSkip();
+            $token = $this->tokens[$this->position] ?? null;
+            if ($token === null) {
+                break;
+            }
+            $this->position++;
+            if ($token->type & $type) {
+                $this->position = $position;
+                return $token;
+            }
+        }
+        $this->position = $position;
+
+        return null;
     }
 
     public function seekKeyword(string $keyword, int $maxOffset): bool

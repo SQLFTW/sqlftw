@@ -61,7 +61,7 @@ class IndexColumn implements SqlSerializable
             $result .= '(' . $this->length . ')';
         }
         if ($this->order !== null) {
-            $result .= $this->order->serialize($formatter);
+            $result .= ' ' . $this->order->serialize($formatter);
         }
         return $result;
     }

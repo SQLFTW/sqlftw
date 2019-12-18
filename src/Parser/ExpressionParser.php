@@ -15,6 +15,7 @@ use Dogma\Time\DateTime;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
+use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
@@ -50,6 +51,7 @@ use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
 use function preg_match;
 use function sprintf;
+use SqlFtw\Sql\UserName;
 use function strlen;
 use function substr;
 
@@ -712,6 +714,15 @@ class ExpressionParser
         $unit = $tokenList->consumeKeywordEnum(TimeIntervalUnit::class);
 
         return new TimeInterval($value, $unit);
+    }
+
+    public function parseUserExpression(TokenList $tokenList): UserExpression
+    {
+        if ($tokenList->mayConsumeKeyword(Keyword::CURRENT_USER)) {
+            return new UserExpression(null, Keyword::CURRENT_USER);
+        } else {
+            return new UserExpression(new UserName(...$tokenList->consumeUserName()));
+        }
     }
 
 }

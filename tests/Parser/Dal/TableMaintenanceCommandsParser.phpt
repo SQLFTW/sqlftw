@@ -2,103 +2,48 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // ANALYZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE tbl_name [, tbl_name] ...
-$query = "ANALYZE TABLE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ANALYZE TABLE foo, bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ANALYZE NO_WRITE_TO_BINLOG TABLE foo";
-$result = "ANALYZE LOCAL TABLE foo";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "ANALYZE LOCAL TABLE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("ANALYZE TABLE foo");
+Assert::parse("ANALYZE TABLE foo, bar");
+Assert::parse("ANALYZE NO_WRITE_TO_BINLOG TABLE foo", "ANALYZE LOCAL TABLE foo");
+Assert::parse("ANALYZE LOCAL TABLE foo");
 
 
 // CHECK TABLE tbl_name [, tbl_name] ... [option] ...
-$query = "CHECK TABLE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECK TABLE foo, bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECK TABLE foo FOR UPGRADE";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECK TABLE foo QUICK";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECK TABLE foo FAST";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECK TABLE foo MEDIUM";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECK TABLE foo EXTENDED";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECK TABLE foo CHANGED";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("CHECK TABLE foo");
+Assert::parse("CHECK TABLE foo, bar");
+Assert::parse("CHECK TABLE foo FOR UPGRADE");
+Assert::parse("CHECK TABLE foo QUICK");
+Assert::parse("CHECK TABLE foo FAST");
+Assert::parse("CHECK TABLE foo MEDIUM");
+Assert::parse("CHECK TABLE foo EXTENDED");
+Assert::parse("CHECK TABLE foo CHANGED");
 
 
 // CHECKSUM TABLE tbl_name [, tbl_name] ... [QUICK | EXTENDED]
-$query = "CHECKSUM TABLE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECKSUM TABLE foo, bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECKSUM TABLE foo QUICK";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "CHECKSUM TABLE foo EXTENDED";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("CHECKSUM TABLE foo");
+Assert::parse("CHECKSUM TABLE foo, bar");
+Assert::parse("CHECKSUM TABLE foo QUICK");
+Assert::parse("CHECKSUM TABLE foo EXTENDED");
 
 
 // OPTIMIZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE tbl_name [, tbl_name] ...
-$query = "OPTIMIZE TABLE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "OPTIMIZE TABLE foo, bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "OPTIMIZE NO_WRITE_TO_BINLOG TABLE foo";
-$result = "OPTIMIZE LOCAL TABLE foo";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "OPTIMIZE LOCAL TABLE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("OPTIMIZE TABLE foo");
+Assert::parse("OPTIMIZE TABLE foo, bar");
+Assert::parse("OPTIMIZE NO_WRITE_TO_BINLOG TABLE foo", "OPTIMIZE LOCAL TABLE foo");
+Assert::parse("OPTIMIZE LOCAL TABLE foo");
 
 
 // REPAIR [NO_WRITE_TO_BINLOG | LOCAL] TABLE tbl_name [, tbl_name] ... [QUICK] [EXTENDED] [USE_FRM]
-$query = "REPAIR TABLE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "REPAIR TABLE foo, bar";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "REPAIR NO_WRITE_TO_BINLOG TABLE foo";
-$result = "REPAIR LOCAL TABLE foo";
-Assert::same($result, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "REPAIR LOCAL TABLE foo";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "REPAIR TABLE foo QUICK";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "REPAIR TABLE foo QUICK USE_FRM";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
-
-$query = "REPAIR TABLE foo QUICK EXTENDED USE_FRM";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("REPAIR TABLE foo");
+Assert::parse("REPAIR TABLE foo, bar");
+Assert::parse("REPAIR NO_WRITE_TO_BINLOG TABLE foo", "REPAIR LOCAL TABLE foo");
+Assert::parse("REPAIR LOCAL TABLE foo");
+Assert::parse("REPAIR TABLE foo QUICK");
+Assert::parse("REPAIR TABLE foo QUICK USE_FRM");
+Assert::parse("REPAIR TABLE foo QUICK EXTENDED USE_FRM");

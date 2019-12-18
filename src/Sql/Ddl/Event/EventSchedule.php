@@ -39,7 +39,7 @@ class EventSchedule implements SqlSerializable
      */
     public function __construct($interval, ?TimeExpression $time = null, ?TimeExpression $startTime = null, ?TimeExpression $endTime = null)
     {
-        if (!$interval instanceof TimeInterval) {
+        if ($interval !== null && !$interval instanceof TimeInterval) {
             $interval = TimeInterval::create($interval);
         }
 

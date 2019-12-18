@@ -13,8 +13,8 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
 use SqlFtw\Sql\Ddl\SqlSecurity;
+use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 
 class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCommand
 {
@@ -29,7 +29,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
     /** @var \SqlFtw\Sql\Ddl\Routines\ProcedureParam[] */
     private $params;
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
     private $definer;
 
     /** @var bool|null */
@@ -51,7 +51,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
      * @param \SqlFtw\Sql\QualifiedName $name
      * @param \SqlFtw\Sql\Ddl\Compound\CompoundStatement $body
      * @param \SqlFtw\Sql\Ddl\Routines\ProcedureParam[] $params
-     * @param \SqlFtw\Sql\UserName|null $definer
+     * @param \SqlFtw\Sql\Ddl\UserExpression|null $definer
      * @param bool|null $deterministic
      * @param \SqlFtw\Sql\Ddl\SqlSecurity|null $security
      * @param \SqlFtw\Sql\Ddl\Routines\RoutineSideEffects|null $sideEffects
@@ -62,7 +62,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
         QualifiedName $name,
         CompoundStatement $body,
         array $params,
-        ?UserName $definer = null,
+        ?UserExpression $definer = null,
         ?bool $deterministic = null,
         ?SqlSecurity $security = null,
         ?RoutineSideEffects $sideEffects = null,
@@ -98,7 +98,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
         return $this->params;
     }
 
-    public function getDefiner(): ?UserName
+    public function getDefiner(): ?UserExpression
     {
         return $this->definer;
     }
@@ -142,7 +142,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         }
         if ($this->language !== null) {
-            $result .= ' LANGUAGE ' . $formatter->formatString($this->language);
+            $result .= ' LANGUAGE ' . $this->language;
         }
         if ($this->deterministic !== null) {
             $result .= $this->deterministic ? ' DETERMINISTIC' : ' NOT DETERMINISTIC';
@@ -154,7 +154,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
             $result .= ' SQL SECURITY ' . $this->security->serialize($formatter);
         }
 
-        $result .= $this->body->serialize($formatter);
+        $result .= ' ' . $this->body->serialize($formatter);
 
         return $result;
     }

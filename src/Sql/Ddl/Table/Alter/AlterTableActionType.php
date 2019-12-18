@@ -87,7 +87,7 @@ class AlterTableActionType extends SqlEnum
         self::RENAME_TO => QualifiedName::class,
 
         self::DISCARD_TABLESPACE => null,
-        self::DISCARD_PARTITION_TABLESPACE => Type::STRING,
+        self::DISCARD_PARTITION_TABLESPACE => 'array<string>',
         self::IMPORT_TABLESPACE => null,
         self::IMPORT_PARTITION_TABLESPACE => Type::STRING,
 

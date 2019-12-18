@@ -43,7 +43,7 @@ class DropEventCommand implements EventCommand
     {
         $result = 'DROP EVENT ';
         if ($this->ifExists) {
-            $result .= 'IF EXISTS';
+            $result .= 'IF EXISTS ';
         }
         $result .= $this->name->serialize($formatter);
 

@@ -57,7 +57,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'INSERT' . $this->serializeBody($formatter);
+        $result = 'REPLACE' . $this->serializeBody($formatter);
 
         $result .= ' SET ' . implode(', ', Arr::mapPairs($this->values, function (string $column, ExpressionNode $value) use ($formatter): string {
             return $formatter->formatName($column) . ' = ' . $value->serialize($formatter);

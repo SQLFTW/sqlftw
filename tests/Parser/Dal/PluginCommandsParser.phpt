@@ -2,18 +2,13 @@
 
 namespace SqlFtw\Parser;
 
-use SqlFtw\Formatter\Formatter;
-use Tester\Assert;
+use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-$parser = ParserHelper::getParserFactory()->getParser();
-$formatter = new Formatter($parser->getSettings());
 
 // INSTALL PLUGIN
-$query = "INSTALL PLUGIN foo SONAME 'library.so'";
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("INSTALL PLUGIN foo SONAME 'library.so'");
 
 // UNINSTALL PLUGIN
-$query = 'UNINSTALL PLUGIN foo';
-Assert::same($query, $parser->parseCommand($query)->serialize($formatter));
+Assert::parse("UNINSTALL PLUGIN foo");

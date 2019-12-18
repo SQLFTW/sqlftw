@@ -17,7 +17,7 @@ class IndexType extends SqlEnum
 {
 
     public const PRIMARY = Keyword::PRIMARY . ' ' . Keyword::KEY;
-    public const UNIQUE = Keyword::UNIQUE . ' ' . Keyword::KEY;
+    public const UNIQUE = Keyword::UNIQUE . ' ' . Keyword::INDEX;
     public const INDEX = Keyword::INDEX;
     public const FULLTEXT = Keyword::FULLTEXT . ' ' . Keyword::INDEX;
     public const SPATIAL = Keyword::SPATIAL . ' ' . Keyword::INDEX;

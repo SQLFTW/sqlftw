@@ -66,10 +66,10 @@ class CreateDatabaseCommand implements DatabaseCommand
         }
         $result .= $formatter->formatName($this->name);
         if ($this->charset !== null) {
-            $result .= ' CHARACTER SET = ' . $this->charset->serialize($formatter);
+            $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
         }
         if ($this->collation !== null) {
-            $result .= ' COLLATION = ' . $this->collation->serialize($formatter);
+            $result .= ' COLLATE ' . $this->collation->serialize($formatter);
         }
 
         return $result;

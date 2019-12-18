@@ -36,13 +36,14 @@ class ServerCommandsParser
      */
     public function parseAlterServer(TokenList $tokenList): AlterServerCommand
     {
-        $tokenList->consumeKeywords(Keyword::CREATE, Keyword::SERVER);
+        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::SERVER);
         $name = $tokenList->consumeName();
 
+        $tokenList->consumeKeyword(Keyword::OPTIONS);
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
         $host = $database = $user = $password = $socket = $owner = $port = null;
         do {
-            if ($tokenList->mayConsumeKeyword(Keyword::HOSTS)) {
+            if ($tokenList->mayConsumeKeyword(Keyword::HOST)) {
                 $host = $tokenList->consumeString();
             } elseif ($tokenList->mayConsumeKeyword(Keyword::DATABASE)) {
                 $database = $tokenList->consumeString();
@@ -58,6 +59,10 @@ class ServerCommandsParser
                 $port = $tokenList->consumeInt();
             }
         } while ($tokenList->mayConsumeComma());
+        if ($host === null && $database === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
+            $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
+        }
+
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         $tokenList->expectEnd();
 
@@ -85,10 +90,11 @@ class ServerCommandsParser
         $tokenList->consumeKeywords(Keyword::FOREIGN, Keyword::DATA, Keyword::WRAPPER);
         $wrapper = $tokenList->consumeNameOrString();
 
+        $tokenList->consumeKeyword(Keyword::OPTIONS);
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
         $host = $database = $user = $password = $socket = $owner = $port = null;
         do {
-            if ($tokenList->mayConsumeKeyword(Keyword::HOSTS)) {
+            if ($tokenList->mayConsumeKeyword(Keyword::HOST)) {
                 $host = $tokenList->consumeString();
             } elseif ($tokenList->mayConsumeKeyword(Keyword::DATABASE)) {
                 $database = $tokenList->consumeString();
@@ -104,6 +110,9 @@ class ServerCommandsParser
                 $port = $tokenList->consumeInt();
             }
         } while ($tokenList->mayConsumeComma());
+        if ($host === null && $database === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
+            $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
+        }
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         $tokenList->expectEnd();
 

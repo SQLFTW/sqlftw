@@ -79,7 +79,7 @@ class AlterProcedureCommand implements StoredProcedureCommand, AlterRoutineComma
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         }
         if ($this->language !== null) {
-            $result .= ' LANGUAGE ' . $formatter->formatString($this->language);
+            $result .= ' LANGUAGE ' . $this->language;
         }
         if ($this->sideEffects !== null) {
             $result .= ' ' . $this->sideEffects->serialize($formatter);

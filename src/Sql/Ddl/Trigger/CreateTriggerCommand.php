@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Trigger;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
@@ -31,7 +32,7 @@ class CreateTriggerCommand implements TriggerCommand
     /** @var \SqlFtw\Sql\Statement */
     private $body;
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
     private $definer;
 
     /** @var \SqlFtw\Sql\Ddl\Trigger\TriggerPosition|null */
@@ -42,7 +43,7 @@ class CreateTriggerCommand implements TriggerCommand
         TriggerEvent $event,
         QualifiedName $table,
         Statement $body,
-        ?UserName $definer = null,
+        ?UserExpression $definer = null,
         ?TriggerPosition $position = null
     ) {
         $this->name = $name;
@@ -76,7 +77,7 @@ class CreateTriggerCommand implements TriggerCommand
         return $this->body;
     }
 
-    public function getDefiner(): ?UserName
+    public function getDefiner(): ?UserExpression
     {
         return $this->definer;
     }
@@ -90,7 +91,7 @@ class CreateTriggerCommand implements TriggerCommand
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
-            $result .= ' DEFINER ' . $this->definer->serialize($formatter);
+            $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
         $result .= ' TRIGGER ' . $formatter->formatName($this->name) . ' ' . $this->event->serialize($formatter);
         $result .= ' ON ' . $this->table->serialize($formatter) . ' FOR EACH ROW';
