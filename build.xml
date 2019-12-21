@@ -68,6 +68,7 @@
         <exec executable="${path.phplint.executable}" logoutput="true" passthru="true" checkreturn="true">
             <arg path="${path.src}"/>
             <arg path="${path.tests}"/>
+            <!--arg line="-p 'c:/tools/php72/php.exe'"/-->
         </exec>
     </target>
 
