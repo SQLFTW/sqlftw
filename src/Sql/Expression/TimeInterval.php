@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use DateInterval;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
@@ -49,6 +50,7 @@ class TimeInterval implements SqlSerializable
         if (count($intervals) !== 1) {
             throw new InvalidDefinitionException('Invalid interval. Only a single value expected.');
         }
+
         return $intervals[0];
     }
 
@@ -58,9 +60,9 @@ class TimeInterval implements SqlSerializable
      */
     public static function createIntervals($interval): array
     {
-        Check::types($interval, [\DateInterval::class, DateTimeSpan::class]);
+        Check::types($interval, [DateInterval::class, DateTimeSpan::class]);
 
-        if ($interval instanceof \DateInterval) {
+        if ($interval instanceof DateInterval) {
             $interval = DateTimeSpan::createFromDateInterval($interval);
         }
 

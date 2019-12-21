@@ -129,15 +129,14 @@ class PartitionDefinition implements SqlSerializable
             }
         }
         if ($this->subpartitions !== null) {
-            rd($this->subpartitions);
-            $result .= ' (' . implode(', ', Arr::mapPairs($this->subpartitions, function ($name, $options) use ($formatter): string {
+            $result .= ' (' . implode(', ', Arr::mapPairs($this->subpartitions, static function ($name, $options) use ($formatter): string {
                 $sub = 'SUBPARTITION ' . $formatter->formatName($name);
-                rd($name);rd($options);
                 if ($options !== null) {
                     foreach ($options as $option => $value) {
                         $sub .= ' ' . $option . ' = ' . (is_int($value) ? $value : $formatter->formatString($value));
                     }
                 }
+
                 return $sub;
             })) . ')';
         }

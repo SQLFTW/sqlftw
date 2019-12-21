@@ -26,7 +26,6 @@ use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 
 class RoutineCommandsParser
 {
@@ -35,6 +34,7 @@ class RoutineCommandsParser
     /** @var \SqlFtw\Parser\Ddl\TypeParser */
     private $typeParser;
 
+    /** @var \SqlFtw\Parser\ExpressionParser */
     private $expressionParser;
 
     /** @var \SqlFtw\Parser\Ddl\CompoundStatementParser */
@@ -133,6 +133,7 @@ class RoutineCommandsParser
                 $deterministic = true;
             }
         }
+
         return [$comment, $language, $sideEffects, $sqlSecurity, $deterministic];
     }
 

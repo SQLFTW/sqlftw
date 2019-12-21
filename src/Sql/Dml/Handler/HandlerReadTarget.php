@@ -46,12 +46,12 @@ class HandlerReadTarget extends SqlEnum
 
     public function isKeyword(): bool
     {
-        return in_array($this->getValue(), self::getKeywords());
+        return in_array($this->getValue(), self::getKeywords(), true);
     }
 
     public function isOperator(): bool
     {
-        return in_array($this->getValue(), self::getOperators());
+        return in_array($this->getValue(), self::getOperators(), true);
     }
 
 }

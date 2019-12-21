@@ -36,7 +36,7 @@ class DropProcedureCommand implements StoredProcedureCommand, DropRoutineCommand
 
     public function ifExists(): bool
     {
-        return $this->ifExists();
+        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

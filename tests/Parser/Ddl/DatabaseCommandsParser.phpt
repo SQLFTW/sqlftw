@@ -15,7 +15,7 @@ Assert::parse("ALTER DATABASE foo COLLATE 'ascii_general_ci'");
 Assert::parse("ALTER DATABASE foo CHARACTER SET 'ascii' COLLATE 'ascii_general_ci'");
 Assert::parse(
     "ALTER DATABASE foo DEFAULT CHARACTER SET 'ascii' DEFAULT COLLATE 'ascii_general_ci'",
-    "ALTER DATABASE foo CHARACTER SET 'ascii' COLLATE 'ascii_general_ci'",
+    "ALTER DATABASE foo CHARACTER SET 'ascii' COLLATE 'ascii_general_ci'"
 );
 
 
@@ -28,7 +28,7 @@ Assert::parse("CREATE DATABASE foo COLLATE 'ascii_general_ci'");
 Assert::parse("CREATE DATABASE foo CHARACTER SET 'ascii' COLLATE 'ascii_general_ci'");
 Assert::parse(
     "CREATE DATABASE foo DEFAULT CHARACTER SET 'ascii' DEFAULT COLLATE 'ascii_general_ci'",
-    "CREATE DATABASE foo CHARACTER SET 'ascii' COLLATE 'ascii_general_ci'",
+    "CREATE DATABASE foo CHARACTER SET 'ascii' COLLATE 'ascii_general_ci'"
 );
 
 

@@ -43,9 +43,11 @@ class BinaryLiteral implements Literal
     {
         $value = str_repeat('0', 8 - (strlen($this->value) % 8)) . $this->value;
         $string = '';
-        for ($n = 0; $n < strlen($value); $n += 8) {
+        $length = strlen($value);
+        for ($n = 0; $n < $length; $n += 8) {
             $string .= chr(bindec(substr($value, $n, 8)));
         }
+
         return $string;
     }
 

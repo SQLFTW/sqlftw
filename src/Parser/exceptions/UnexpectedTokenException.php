@@ -11,6 +11,7 @@ namespace SqlFtw\Parser;
 
 use Dogma\Arr;
 use Dogma\ExceptionValueFormatter;
+use Throwable;
 use function array_map;
 use function array_slice;
 use function implode;
@@ -27,14 +28,14 @@ class UnexpectedTokenException extends ParserException
      * @param \SqlFtw\Parser\TokenList $tokenList
      * @param \Throwable|null $previous
      */
-    public function __construct(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?\Throwable $previous = null)
+    public function __construct(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null)
     {
-        $expectedToken = implode(', ', Arr::map($expectedTokens, function (int $type) {
+        $expectedToken = implode(', ', Arr::map($expectedTokens, static function (int $type) {
             return implode('|', TokenType::get($type)->getConstantNames());
         }));
         if ($expectedValue !== null) {
             if (is_array($expectedValue)) {
-                $expectedValue = implode(' or ', array_map(function ($value): string {
+                $expectedValue = implode(' or ', array_map(static function ($value): string {
                     return ExceptionValueFormatter::format($value);
                 }, $expectedValue));
                 $expectedValue = sprintf(' with value %s', $expectedValue);
@@ -53,6 +54,7 @@ class UnexpectedTokenException extends ParserException
                 $tokenList->getPosition(),
                 $context
             ), $previous);
+
             return;
         }
 
@@ -73,13 +75,13 @@ class UnexpectedTokenException extends ParserException
     private function formatContext(TokenList $tokenList): string
     {
         $tokens = $tokenList->getTokens($tokenList->getPosition() - 10, 21);
-        $context = '"…' . implode('', array_map(function (Token $token) {
+        $context = '"…' . implode('', array_map(static function (Token $token) {
             return $token->original ?? $token->value;
         }, array_slice($tokens, 0, 10)));
 
         if (isset($tokens[10])) {
             $context .= '»' . ($tokens[10]->original ?? $tokens[10]->value) . '«';
-            $context .= implode('', array_map(function (Token $token) {
+            $context .= implode('', array_map(static function (Token $token) {
                 return $token->original ?? $token->value;
             }, array_slice($tokens, 11, 10))) . '…"';
         } else {

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class ViewWasDroppedException extends ViewDoesNotExistException
@@ -17,7 +18,7 @@ class ViewWasDroppedException extends ViewDoesNotExistException
     /** @var \SqlFtw\Reflection\ViewReflection */
     private $reflection;
 
-    public function __construct(ViewReflection $reflection, ?\Throwable $previous = null)
+    public function __construct(ViewReflection $reflection, ?Throwable $previous = null)
     {
         $name = $reflection->getName()->getName();
         $schema = $reflection->getName()->getSchema();

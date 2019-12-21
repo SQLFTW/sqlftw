@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use Dogma\Check;
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
@@ -46,7 +47,7 @@ class ChangeReplicationFilterCommand implements ReplicationCommand
 
         return "CHANGE REPLICATION FILTER\n  " . implode(",\n  ", Arr::mapPairs(
             $this->filters,
-            function (string $filter, array $values) use ($formatter, $types): string {
+            static function (string $filter, array $values) use ($formatter, $types): string {
                 switch ($types[$filter]) {
                     case 'array<string>':
                         if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
@@ -54,13 +55,14 @@ class ChangeReplicationFilterCommand implements ReplicationCommand
                         } else {
                             return $filter . ' = (' . $formatter->formatStringList($values) . ')';
                         }
-                        break;
                     case 'array<' . QualifiedName::class . '>':
                         return $filter . ' = (' . $formatter->formatSerializablesList($values) . ')';
                     case 'array<string,string>':
-                        return $filter . ' = (' . implode(', ', Arr::mapPairs($values, function (string $key, string $value) use ($formatter) {
+                        return $filter . ' = (' . implode(', ', Arr::mapPairs($values, static function (string $key, string $value) use ($formatter) {
                             return '(' . $formatter->formatName($key) . ', ' . $formatter->formatName($value) . ')';
                         })) . ')';
+                    default:
+                        throw new ShouldNotHappenException('');
                 }
             }
         ));

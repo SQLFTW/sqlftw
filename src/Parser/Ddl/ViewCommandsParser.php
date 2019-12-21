@@ -24,7 +24,6 @@ use SqlFtw\Sql\Ddl\View\ViewCheckOption;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 
 class ViewCommandsParser
 {
@@ -90,14 +89,12 @@ class ViewCommandsParser
      */
     private function parseViewDefinition(TokenList $tokenList): array
     {
-        rd($tokenList);
         $algorithm = $definer = $sqlSecurity = $checkOption = null;
         if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
             $tokenList->consumeOperator(Operator::EQUAL);
             /** @var \SqlFtw\Sql\Ddl\View\ViewAlgorithm $algorithm */
             $algorithm = $tokenList->consumeKeywordEnum(ViewAlgorithm::class);
         }
-        rd($tokenList->getPosition());
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
             $tokenList->consumeOperator(Operator::EQUAL);
             $definer = $this->expressionParser->parseUserExpression($tokenList);

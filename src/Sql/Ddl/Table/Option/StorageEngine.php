@@ -30,16 +30,18 @@ class StorageEngine extends SqlEnum
 
     public static function validateValue(string &$value): bool
     {
-        if (in_array($value, self::getAllowedValues())) {
+        if (in_array($value, self::getAllowedValues(), true)) {
             return true;
         } else {
             $lower = strtolower($value);
             foreach (self::getAllowedValues() as $allowedValue) {
                 if ($lower === strtolower($allowedValue)) {
                     $value = $allowedValue;
+
                     return true;
                 }
             }
+
             return false;
         }
     }

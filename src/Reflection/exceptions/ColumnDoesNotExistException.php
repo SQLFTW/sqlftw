@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class ColumnDoesNotExistException extends ReflectionException
@@ -23,7 +24,7 @@ class ColumnDoesNotExistException extends ReflectionException
     /** @var string */
     private $schema;
 
-    public function __construct(string $name, string $table, string $schema, ?\Throwable $previous = null)
+    public function __construct(string $name, string $table, string $schema, ?Throwable $previous = null)
     {
         parent::__construct(sprintf('Column `%s` in table `%s`.`%s` does not exist.', $name, $schema, $table), $previous);
 

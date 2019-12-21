@@ -84,7 +84,7 @@ class ChangeMasterToCommand implements ReplicationCommand
     {
         $result = "CHANGE MASTER TO \n  " . implode(",\n  ", Arr::filter(Arr::mapPairs(
             $this->options,
-            function (string $option, $value) use ($formatter): ?string {
+            static function (string $option, $value) use ($formatter): ?string {
                 if ($value === null) {
                     return null;
                 } elseif ($option === SlaveOption::IGNORE_SERVER_IDS) {

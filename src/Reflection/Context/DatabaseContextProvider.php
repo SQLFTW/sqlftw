@@ -34,6 +34,7 @@ class DatabaseContextProvider ///implements \SqlFtw\Reflection\ContextProvider
             if ($e->getCode() === self::TABLE_NOT_FOUND) {
                 throw new TableDoesNotExistException($schema, $tableName, $e);
             }
+
             throw $e;
         }
     }
@@ -54,6 +55,7 @@ class DatabaseContextProvider ///implements \SqlFtw\Reflection\ContextProvider
         if ($result->rowCount() < 1) {
             return null;
         }
+
         return (int) $result->fetchColumn();
     }
 
@@ -64,6 +66,7 @@ class DatabaseContextProvider ///implements \SqlFtw\Reflection\ContextProvider
         if ($result->rowCount() < 1) {
             return null;
         }
+
         return (int) $result->fetchColumn('Index_length');
     }
 

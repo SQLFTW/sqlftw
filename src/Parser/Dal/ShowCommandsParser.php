@@ -45,14 +45,14 @@ use SqlFtw\Sql\Dal\Show\ShowProcedureCodeCommand;
 use SqlFtw\Sql\Dal\Show\ShowProcedureStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowProcessListCommand;
 use SqlFtw\Sql\Dal\Show\ShowProfileCommand;
-use SqlFtw\Sql\Dal\Show\ShowProfileType;
 use SqlFtw\Sql\Dal\Show\ShowProfilesCommand;
+use SqlFtw\Sql\Dal\Show\ShowProfileType;
 use SqlFtw\Sql\Dal\Show\ShowRelaylogEventsCommand;
 use SqlFtw\Sql\Dal\Show\ShowSlaveHostsCommand;
 use SqlFtw\Sql\Dal\Show\ShowSlaveStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowStatusCommand;
-use SqlFtw\Sql\Dal\Show\ShowTableStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowTablesCommand;
+use SqlFtw\Sql\Dal\Show\ShowTableStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowTriggersCommand;
 use SqlFtw\Sql\Dal\Show\ShowVariablesCommand;
 use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
@@ -280,7 +280,6 @@ class ShowCommandsParser
 
                     return new ShowFunctionStatusCommand($like, $where);
                 }
-                break;
             case Keyword::GRANTS:
                 // SHOW GRANTS [FOR user_or_role [USING role [, role] ...]]
                 // todo: SHOW GRANTS FOR CURRENT_USER;
@@ -361,7 +360,6 @@ class ShowCommandsParser
 
                     return new ShowProcedureStatusCommand($like, $where);
                 }
-                break;
             case Keyword::PROFILE:
                 // SHOW PROFILE [type [, type] ... ] [FOR QUERY n] [LIMIT row_count [OFFSET offset]]
                 //
@@ -378,11 +376,13 @@ class ShowCommandsParser
                     Keyword::SOURCE => null,
                     Keyword::SWAPS => null,
                 ];
-                $continue = function (string $type) use ($tokenList, $keywords): string {
+                $continue = static function (string $type) use ($tokenList, $keywords): string {
                     if (isset($keywords[$type])) {
                         $tokenList->consumeKeyword($keywords[$type]);
+
                         return $type . ' ' . $keywords[$type];
                     }
+
                     return $type;
                 };
 
@@ -451,7 +451,6 @@ class ShowCommandsParser
 
                     return new ShowSlaveStatusCommand($channel);
                 }
-                break;
             case Keyword::TABLE:
                 // SHOW TABLE STATUS [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                 $tokenList->consumeKeyword(Keyword::STATUS);
@@ -593,6 +592,7 @@ class ShowCommandsParser
                     exit;
                 }
         }
+        exit;
     }
 
 }

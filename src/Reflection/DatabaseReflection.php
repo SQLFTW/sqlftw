@@ -95,7 +95,7 @@ class DatabaseReflection
         $this->loader = $loader;
         $this->currentSchema = $currentSchema;
         if ($trackHistory) {
-            $this->history = new static($platform, $loader, $currentSchema, false);
+            $this->history = new self($platform, $loader, $currentSchema, false);
         }
     }
 
@@ -543,6 +543,7 @@ class DatabaseReflection
     {
         if ($schema !== null) {
             $this->getSchema($schema);
+
             return $this->tables[$schema];
         } else {
             return Arr::flatten($this->tables);
@@ -589,6 +590,7 @@ class DatabaseReflection
     {
         if ($schema !== null) {
             $this->getSchema($schema);
+
             return $this->views[$schema];
         } else {
             return Arr::flatten($this->views);
@@ -633,6 +635,7 @@ class DatabaseReflection
     {
         if ($schema !== null) {
             $this->getSchema($schema);
+
             return $this->functions[$schema];
         } else {
             return Arr::flatten($this->functions);
@@ -677,6 +680,7 @@ class DatabaseReflection
     {
         if ($schema !== null) {
             $this->getSchema($schema);
+
             return $this->procedures[$schema];
         } else {
             return Arr::flatten($this->procedures);
@@ -721,6 +725,7 @@ class DatabaseReflection
     {
         if ($schema !== null) {
             $this->getSchema($schema);
+
             return $this->triggers[$schema];
         } else {
             return Arr::flatten($this->triggers);
@@ -765,6 +770,7 @@ class DatabaseReflection
     {
         if ($schema !== null) {
             $this->getSchema($schema);
+
             return $this->events[$schema];
         } else {
             return Arr::flatten($this->events);

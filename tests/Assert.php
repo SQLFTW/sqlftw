@@ -59,7 +59,7 @@ class Assert extends DogmaAssert
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
         $formatter = $formatter ?? new Formatter($parser->getSettings());
 
-
+        // todo?
 
         $actual = $parser->parseCommand($query)->serialize($formatter);
         $actual = preg_replace('/\\s+/', ' ', $actual);

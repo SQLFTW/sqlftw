@@ -12,6 +12,7 @@ use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
+use SqlFtw\Parser\TokenList;
 
 class TokenListDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -23,7 +24,7 @@ class TokenListDynamicReturnTypeExtension implements DynamicMethodReturnTypeExte
 
     public function getClass(): string
     {
-        return 'SqlFtw\Parser\TokenList';
+        return TokenList::class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool

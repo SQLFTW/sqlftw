@@ -162,6 +162,7 @@ class ForeignKeyDefinition implements ConstraintBody
         if ($this->onUpdate !== null) {
             $result .= ' ON UPDATE ' . $this->onUpdate->serialize($formatter);
         }
+
         return $result;
     }
 

@@ -39,7 +39,7 @@ class CreateIndexCommand implements IndexCommand, TableStructureCommand
 
     public function getTable(): QualifiedName
     {
-        return $this->index->getOptions()->getTable();
+        return $this->index->getTable();
     }
 
     public function getIndex(): IndexDefinition

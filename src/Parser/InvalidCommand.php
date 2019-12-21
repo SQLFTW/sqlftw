@@ -12,6 +12,7 @@ namespace SqlFtw\Parser;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
+use Throwable;
 
 class InvalidCommand implements Command
 {
@@ -23,7 +24,7 @@ class InvalidCommand implements Command
     /** @var \Throwable|null */
     private $exception;
 
-    public function __construct(TokenList $tokenList, ?\Throwable $exception = null)
+    public function __construct(TokenList $tokenList, ?Throwable $exception = null)
     {
         $this->tokenList = $tokenList;
         $this->exception = $exception;
@@ -34,7 +35,7 @@ class InvalidCommand implements Command
         return $this->tokenList;
     }
 
-    public function getException(): ?\Throwable
+    public function getException(): ?Throwable
     {
         return $this->exception;
     }

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class ProcedureWasDroppedException extends ProcedureDoesNotExistException
@@ -17,7 +18,7 @@ class ProcedureWasDroppedException extends ProcedureDoesNotExistException
     /** @var \SqlFtw\Reflection\ProcedureReflection */
     private $reflection;
 
-    public function __construct(ProcedureReflection $reflection, ?\Throwable $previous = null)
+    public function __construct(ProcedureReflection $reflection, ?Throwable $previous = null)
     {
         $name = $reflection->getName()->getName();
         $schema = $reflection->getName()->getSchema();

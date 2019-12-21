@@ -37,7 +37,7 @@ class TimeExpression implements SqlSerializable
         if ($value instanceof \DateTimeInterface && !$value instanceof DateTime) {
             $value = DateTime::createFromDateTimeInterface($value);
         }
-        /** @var \SqlFtw\Sql\Expression\TimeInterval[] $intervals */
+
         $int = [];
         foreach ($intervals as $i => $interval) {
             if ($interval instanceof TimeInterval) {

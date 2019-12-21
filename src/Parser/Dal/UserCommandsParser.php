@@ -239,7 +239,7 @@ class UserCommandsParser
      */
     private function parseResourceOptions(TokenList $tokenList): ?array
     {
-        if (!$tokenList->mayConsumeKeyword(Keyword::WITH)) {
+        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
             return null;
         }
 
@@ -499,6 +499,7 @@ class UserCommandsParser
                 $tokenList->consumeOperator(Operator::MULTIPLY);
                 $object = true;
             }
+
             return new UserPrivilegeResource(UserPrivilegeResource::ALL, $object ? UserPrivilegeResource::ALL : null, $resourceType);
         } else {
             $name = $tokenList->consumeName();
@@ -508,6 +509,7 @@ class UserCommandsParser
                     return new UserPrivilegeResource($database, UserPrivilegeResource::ALL, $resourceType);
                 } else {
                     $name = $tokenList->consumeName();
+
                     return new UserPrivilegeResource($database, $name, $resourceType);
                 }
             } else {
@@ -662,10 +664,8 @@ class UserCommandsParser
     {
         $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::DEFAULT, Keyword::NONE, Keyword::ALL);
         $except = null;
-        if ($keyword !== null) {
-            if ($keyword === Keyword::ALL) {
-                $except = $tokenList->mayConsumeKeyword(Keyword::EXCEPT);
-            }
+        if ($keyword === Keyword::ALL) {
+            $except = $tokenList->mayConsumeKeyword(Keyword::EXCEPT);
         }
         $type = $keyword
             ? ($except ? RolesSpecificationType::ALL_EXCEPT : $keyword)

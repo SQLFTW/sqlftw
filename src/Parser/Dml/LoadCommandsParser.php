@@ -82,7 +82,7 @@ class LoadCommandsParser
     public function parseLoadXml(TokenList $tokenList): LoadXmlCommand
     {
         $tokenList->consumeKeywords(Keyword::LOAD, Keyword::XML);
-        [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset] = $this->parseOptions($tokenList, false);
+        [$priority, $local, $file, $duplicateOption, $table, , $charset] = $this->parseOptions($tokenList, false);
 
         $rowsTag = null;
         if ($tokenList->mayConsumeKeywords(Keyword::ROWS, Keyword::IDENTIFIED, Keyword::BY)) {

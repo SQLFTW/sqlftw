@@ -17,7 +17,6 @@ use SqlFtw\Sql\Ddl\DataType;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 use function implode;
 
 class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineCommand
@@ -151,7 +150,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         }
         $result .= ' FUNCTION ' . $this->name->serialize($formatter);
 
-        $result .= '(' . implode(', ', Arr::mapPairs($this->params, function (string $name, DataType $type) use ($formatter) {
+        $result .= '(' . implode(', ', Arr::mapPairs($this->params, static function (string $name, DataType $type) use ($formatter) {
             return $formatter->formatName($name) . ' ' . $type->serialize($formatter);
         })) . ')';
         $result .= ' RETURNS ' . $this->returnType->serialize($formatter);

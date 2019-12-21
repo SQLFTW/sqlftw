@@ -69,6 +69,7 @@ class Parser
         if (count($tokenLists) > 1) {
             throw new ParserException('More than one command found in given SQL code.');
         }
+
         return $this->parseTokenList($tokenLists[0]);
     }
 
@@ -154,8 +155,8 @@ class Parser
                             Keyword::SERVER, Keyword::TABLE, Keyword::TABLESPACE, Keyword::USER, Keyword::EVENT, Keyword::VIEW,
                             Keyword::DEFINER, Keyword::ALGORITHM, Keyword::SQL
                         );
-                        exit;
                 }
+                break;
             case Keyword::ANALYZE:
                 // ANALYZE
                 return $this->factory->getTableMaintenanceCommandsParser()->parseAnalyzeTable($tokenList->resetPosition($start));
@@ -248,7 +249,7 @@ class Parser
                 $tokenList->expectedAnyKeyword(
                     Keyword::DATABASE, Keyword::SCHEMA, Keyword::LOGFILE, Keyword::ROLE, Keyword::SERVER,
                     Keyword::TABLESPACE, Keyword::TABLE, Keyword::USER, Keyword::EVENT, Keyword::FUNCTION,
-                    Keyword::INDEX, Keyword::PROCEDURE, Keyword::TABLE, Keyword::TRIGGER, Keyword::VIEW, Keyword::DEFINER,
+                    Keyword::INDEX, Keyword::PROCEDURE, Keyword::TABLE, Keyword::TRIGGER, Keyword::VIEW, Keyword::DEFINER
                 );
                 exit;
             case Keyword::DEALLOCATE:
@@ -336,6 +337,7 @@ class Parser
                     // FLUSH TABLES
                     return $this->factory->getFlushCommandParser()->parseFlushTables($tokenList->resetPosition($start));
                 }
+
                 // FLUSH
                 return $this->factory->getFlushCommandParser()->parseFlush($tokenList->resetPosition($start));
             case Keyword::GRANT:
@@ -352,7 +354,6 @@ class Parser
                 } else {
                     return $this->factory->getHandlerCommandParser()->parseHandlerClose($tokenList->resetPosition($start));
                 }
-                break;
             case Keyword::HELP:
                 // HELP
                 return $this->factory->getHelpCommandParser()->parseHelp($tokenList->resetPosition($start));
@@ -433,6 +434,7 @@ class Parser
                         // RESET MASTER, SLAVE, QUERY CACHE
                         return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                     }
+
                     // RESET MASTER
                     return $this->factory->getReplicationCommandsParser()->parseResetMaster($tokenList->resetPosition($start));
                 } elseif ($keyword === Keyword::SLAVE) {
@@ -440,13 +442,13 @@ class Parser
                         // RESET MASTER, SLAVE, QUERY CACHE
                         return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                     }
+
                     // RESET SLAVE
                     return $this->factory->getReplicationCommandsParser()->parseResetSlave($tokenList->resetPosition($start));
                 } else {
                     // RESET MASTER, SLAVE, QUERY CACHE
                     return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                 }
-                break;
             case Keyword::RESTART:
                 // RESTART
                 return $this->factory->getRestartCommandParser()->parseRestart($tokenList->resetPosition($start));
@@ -496,7 +498,6 @@ class Parser
                             // SET
                             return $this->factory->getSetCommandParser()->parseSet($tokenList->resetPosition($start));
                         }
-                        break;
                     default:
                         // SET
                         return $this->factory->getSetCommandParser()->parseSet($tokenList->resetPosition($start));

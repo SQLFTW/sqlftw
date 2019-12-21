@@ -59,7 +59,7 @@ class UuidSet implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->uuid . ':' . implode(':', Arr::map($this->intervals, function (array $interval) {
+        return $this->uuid . ':' . implode(':', Arr::map($this->intervals, static function (array $interval) {
             return $interval[0] . ($interval[1] !== null ? '-' . $interval[1] : '');
         }));
     }

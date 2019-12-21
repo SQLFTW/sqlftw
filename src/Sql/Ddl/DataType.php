@@ -105,7 +105,6 @@ class DataType implements SqlSerializable
             if ($params !== null && !is_int($params)) {
                 throw new InvalidDefinitionException(sprintf('An integer size parameter or null required for type "%s".', $type->getValue()));
             }
-            /** @var int $params */
             $this->size = $params;
         } elseif ($type->needsLength()) {
             if (!is_int($params)) {

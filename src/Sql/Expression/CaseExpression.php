@@ -33,7 +33,7 @@ class CaseExpression implements Statement
      * @param \SqlFtw\Sql\Expression\Literal[]|\SqlFtw\Sql\Expression\ExpressionNode[] $values
      * @param \SqlFtw\Sql\Expression\Literal[] $results
      */
-    public function __construct(?ExpressionNode $condition, array $values, array $results)
+    public function __construct(?Literal $condition, array $values, array $results)
     {
         Check::array($values, 1);
         if ($condition !== null) {

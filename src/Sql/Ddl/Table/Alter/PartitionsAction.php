@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Keyword;
+use function substr;
 
 class PartitionsAction implements AlterTableAction
 {

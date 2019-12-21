@@ -426,6 +426,7 @@ class TableReflection
         foreach ($newOptions as $name => $value) {
             $options[$name] = $value;
         }
+
         return new TableOptionsList($options);
     }
 
@@ -550,6 +551,7 @@ class TableReflection
         if ($trigger === null) {
             throw new TriggerDoesNotExistException($name, $this->name->getSchema());
         }
+
         return $trigger;
     }
 

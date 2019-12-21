@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class TableReflectionLoadingException extends ReflectionException
@@ -20,7 +21,7 @@ class TableReflectionLoadingException extends ReflectionException
     /** @var string */
     private $schema;
 
-    public function __construct(string $name, string $schema, string $message, ?\Throwable $previous = null)
+    public function __construct(string $name, string $schema, string $message, ?Throwable $previous = null)
     {
         parent::__construct(sprintf('Reflection for table `%s`.`%s` cannot be loaded: %s.', $schema, $name, $message), $previous);
 

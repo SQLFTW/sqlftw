@@ -402,6 +402,7 @@ class ReplicationCommandsParser
             if ($empty !== '') {
                 throw new ParserException('Expected UUID or empty string.');
             }
+
             return '';
         }
 

@@ -46,12 +46,13 @@ class UserPasswordLockOptionType extends SqlEnum
         if (is_string($value)) {
             $value = strtoupper($value);
         }
-        if (in_array($value, self::$values[$type])) {
+        if (in_array($value, self::$values[$type], true)) {
             return;
         }
-        if (is_int($value) && in_array(1, self::$values[$type])) {
+        if (is_int($value) && in_array(1, self::$values[$type], true)) {
             return;
         }
+
         throw new InvalidDefinitionException(sprintf('Invalid value %s for user password or lock option %s.', $value, $type));
     }
 

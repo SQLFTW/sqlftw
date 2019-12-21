@@ -15,7 +15,6 @@ use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 
 class CreateViewCommand implements ViewCommand
 {

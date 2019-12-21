@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class EventWasDroppedException extends EventDoesNotExistException
@@ -17,7 +18,7 @@ class EventWasDroppedException extends EventDoesNotExistException
     /** @var \SqlFtw\Reflection\EventReflection */
     private $reflection;
 
-    public function __construct(EventReflection $reflection, ?\Throwable $previous = null)
+    public function __construct(EventReflection $reflection, ?Throwable $previous = null)
     {
         $name = $reflection->getName()->getName();
         $schema = $reflection->getName()->getSchema();

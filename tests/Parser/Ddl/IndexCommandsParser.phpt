@@ -55,4 +55,3 @@ Assert::parse("DROP INDEX idx1 ON tbl1 LOCK DEFAULT");
 Assert::parse("DROP INDEX idx1 ON tbl1 LOCK NONE");
 Assert::parse("DROP INDEX idx1 ON tbl1 LOCK SHARED");
 Assert::parse("DROP INDEX idx1 ON tbl1 LOCK EXCLUSIVE");
-Assert::parse("DROP INDEX idx1 ON tbl1 ALGORITHM INPLACE LOCK NONE");

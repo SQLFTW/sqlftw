@@ -44,6 +44,7 @@ class UserName implements SqlSerializable
         if ($this->host) {
             $result .= '@' . $formatter->formatString($this->host);
         }
+
         return $result;
     }
 

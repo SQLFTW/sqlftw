@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Formatter;
 
+use DateTimeInterface;
 use Dogma\Arr;
 use Dogma\NotImplementedException;
 use Dogma\StrictBehaviorMixin;
@@ -73,6 +74,7 @@ class Formatter
 
     /**
      * @param string[] $strings
+     * @param string $separator
      * @return string
      */
     public function formatStringList(array $strings, string $separator = ', '): string
@@ -84,6 +86,7 @@ class Formatter
 
     /**
      * @param \SqlFtw\Sql\SqlSerializable[] $serializables
+     * @param string $separator
      * @return string
      */
     public function formatSerializablesList(array $serializables, string $separator = ', '): string
@@ -115,14 +118,16 @@ class Formatter
             return $this->formatDate($value);
         } elseif ($value instanceof Time) {
             return $this->formatTime($value);
-        } elseif ($value instanceof \DateTimeInterface) {
+        } elseif ($value instanceof DateTimeInterface) {
             return $this->formatDateTime($value);
         }
+
         throw new NotImplementedException('Unknown type.');
     }
 
     /**
      * @param mixed[] $values
+     * @param string $separator
      * @return string
      */
     public function formatValuesList(array $values, string $separator = ', '): string

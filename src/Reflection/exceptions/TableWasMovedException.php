@@ -11,6 +11,7 @@ namespace SqlFtw\Reflection;
 
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
+use Throwable;
 use function end;
 use function sprintf;
 
@@ -23,7 +24,7 @@ class TableWasMovedException extends TableDoesNotExistException
     /** @var \SqlFtw\Sql\QualifiedName */
     private $newName;
 
-    public function __construct(TableReflection $reflection, ?\Throwable $previous = null)
+    public function __construct(TableReflection $reflection, ?Throwable $previous = null)
     {
         $table = $reflection->getName();
         $name = $table->getName();
@@ -37,7 +38,6 @@ class TableWasMovedException extends TableDoesNotExistException
         } else {
             /** @var \SqlFtw\Sql\Ddl\Table\Alter\SimpleAction $action */
             $action = $command->getActions()->getActionsByType(AlterTableActionType::get(AlterTableActionType::RENAME_TO));
-            /** @var \SqlFtw\Sql\QualifiedName $table */
             $this->newName = $action->getValue();
         }
 

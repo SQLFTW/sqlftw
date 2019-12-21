@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Countable;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
@@ -60,6 +61,7 @@ class UpdateCommandParser
             if ($with !== null) {
                 throw new ParserException('WITH defined twice.');
             }
+
             return $this->withParser->parseWith($tokenList->resetPosition(-1));
         }
 
@@ -88,7 +90,7 @@ class UpdateCommandParser
         }
 
         $orderBy = $limit = null;
-        if (!$tableReferences instanceof \Countable || $tableReferences->count() === 1) {
+        if (!$tableReferences instanceof Countable || $tableReferences->count() === 1) {
             if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
                 $orderBy = $this->expressionParser->parseOrderBy($tokenList);
             }

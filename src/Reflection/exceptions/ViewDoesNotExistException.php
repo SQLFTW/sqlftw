@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class ViewDoesNotExistException extends ReflectionException
@@ -20,7 +21,7 @@ class ViewDoesNotExistException extends ReflectionException
     /** @var string */
     private $schema;
 
-    public function __construct(string $name, string $schema, ?\Throwable $previous = null)
+    public function __construct(string $name, string $schema, ?Throwable $previous = null)
     {
         parent::__construct(sprintf('View `%s`.`%s` does not exist.', $schema, $name), $previous);
 

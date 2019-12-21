@@ -83,6 +83,7 @@ class JoinParser
             } else {
                 $reference = $this->parseTableReference($tokenList);
                 $tokenList->consume(TokenType::RIGHT_CURLY_BRACKET);
+
                 return new EscapedTableReference($reference);
             }
         } else {
@@ -138,7 +139,7 @@ class JoinParser
                 $left = new NaturalJoin($left, $right, $side);
                 continue;
             }
-            /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide $side */
+            /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide|null $side */
             $side = $tokenList->mayConsumeKeywordEnum(JoinSide::class);
             if ($side !== null) {
                 // OUTER JOIN
@@ -210,6 +211,7 @@ class JoinParser
             }
         }
 
+        // todo: bug. never accessed code
         $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::SELECT, Keyword::LATERAL);
         if ($selectInParentheses || $keyword !== null) {
             if ($keyword === Keyword::LATERAL) {

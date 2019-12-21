@@ -21,9 +21,9 @@ use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\Dml\Select\SelectDistinctOption;
 use SqlFtw\Sql\Dml\Select\SelectExpression;
 use SqlFtw\Sql\Dml\Select\SelectInto;
+use SqlFtw\Sql\Dml\Select\SelectLocking;
 use SqlFtw\Sql\Dml\Select\SelectLockOption;
 use SqlFtw\Sql\Dml\Select\SelectLockWaitOption;
-use SqlFtw\Sql\Dml\Select\SelectLocking;
 use SqlFtw\Sql\Dml\Select\SelectOption;
 use SqlFtw\Sql\Dml\Select\WindowFrame;
 use SqlFtw\Sql\Dml\Select\WindowFrameType;
@@ -97,6 +97,7 @@ class SelectCommandParser
             if ($with !== null) {
                 throw new ParserException('WITH defined twice.');
             }
+
             return $this->withParser->parseWith($tokenList->resetPosition(-1));
         }
 
@@ -230,7 +231,7 @@ class SelectCommandParser
             if ($tokenList->mayConsumeKeyword(Keyword::OF)) {
                 $lockTables = [];
                 do {
-                    $lockTables[] = new QualifiedName(...$tokenList->consumeName());
+                    $lockTables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
                 } while ($tokenList->mayConsumeComma());
             }
             /** @var \SqlFtw\Sql\Dml\Select\SelectLockWaitOption $lockWaitOption */

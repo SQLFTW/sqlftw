@@ -77,9 +77,10 @@ class ConstraintList
     public function getForeignKeys(): array
     {
         /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition[] $result */
-        $result = array_filter($this->constraints, function (ConstraintDefinition $constraint) {
+        $result = array_filter($this->constraints, static function (ConstraintDefinition $constraint) {
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });
+
         return $result;
     }
 
@@ -89,9 +90,10 @@ class ConstraintList
     public function getDroppedForeignKeys(): array
     {
         /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition[] $result */
-        $result = array_filter($this->droppedConstraints, function (ConstraintDefinition $constraint) {
+        $result = array_filter($this->droppedConstraints, static function (ConstraintDefinition $constraint) {
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });
+
         return $result;
     }
 

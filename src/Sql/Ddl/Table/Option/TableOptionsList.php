@@ -117,9 +117,10 @@ class TableOptionsList
         if ($this->isEmpty()) {
             return '';
         }
+
         return implode($itemSeparator, Arr::filter(Arr::mapPairs(
             $this->options,
-            function (string $option, $value) use ($formatter, $valueSeparator): ?string {
+            static function (string $option, $value) use ($formatter, $valueSeparator): ?string {
                 if ($value === null) {
                     return null;
                 } elseif ($value instanceof SqlSerializable) {

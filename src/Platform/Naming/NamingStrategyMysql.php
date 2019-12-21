@@ -32,6 +32,7 @@ class NamingStrategyMysql implements NamingStrategy
         while (isset($indexes[$name . '_' . $n])) {
             $n++;
         }
+
         return $name . '_' . $n;
     }
 
@@ -48,6 +49,7 @@ class NamingStrategyMysql implements NamingStrategy
         while (isset($foreignKeys[$name . '_' . $n])) {
             $n++;
         }
+
         return $name . '_' . $n;
     }
 

@@ -64,7 +64,7 @@ class SignalStatement implements CompoundStatementItem
             $result .= ' ' . (strlen($this->condition) > 4 ? 'SQLSTATE ' : '') . $formatter->formatValue($this->condition);
         }
         if ($this->items !== null) {
-            $result .= ' SET ' . implode(', ', Arr::mapPairs($this->items, function ($item, $value) use ($formatter): string {
+            $result .= ' SET ' . implode(', ', Arr::mapPairs($this->items, static function ($item, $value) use ($formatter): string {
                 return $item . ' = ' . $formatter->formatValue($value);
             }));
         }

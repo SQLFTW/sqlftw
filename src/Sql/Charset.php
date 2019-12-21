@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql;
 
 use SqlFtw\Formatter\Formatter;
+use function array_search;
 
 class Charset extends SqlEnum
 {

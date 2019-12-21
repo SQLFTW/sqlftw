@@ -17,7 +17,6 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
 use function sprintf;
-use function strtoupper;
 
 class TablespaceOption extends SqlEnum
 {
@@ -92,7 +91,7 @@ class TablespaceOption extends SqlEnum
     public static function validate(string $for, array &$values): void
     {
         foreach ($values as $key => $value) {
-            if (!in_array($key, self::$usage[$for])) {
+            if (!in_array($key, self::$usage[$for], true)) {
                 throw new InvalidDefinitionException(
                     sprintf('Option %s cannot be used in %s TABLESPACE command.', $key, $for)
                 );
@@ -105,7 +104,7 @@ class TablespaceOption extends SqlEnum
             } elseif ($allowedValues === Type::BOOL) {
                 Check::bool($value);
             } else {
-                if (!in_array($value, $allowedValues)) {
+                if (!in_array($value, $allowedValues, true)) {
                     throw new InvalidDefinitionException(
                         sprintf('Invalid values "%s" for option %s.', $value, $key)
                     );

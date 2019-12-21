@@ -45,7 +45,7 @@ class AlterTableCommand implements SingleTableCommand, TableStructureCommand
     public function __construct(
         QualifiedName $table,
         $actions = [],
-        $alterOptions = [],
+        array $alterOptions = [],
         $tableOptions = null
     ) {
         Check::types($actions, [AlterActionsList::class, Type::PHP_ARRAY]);
@@ -91,7 +91,7 @@ class AlterTableCommand implements SingleTableCommand, TableStructureCommand
 
         $result .= $this->actions->serialize($formatter);
 
-        if (!$this->actions->isEmpty() && $this->tableOptions !== null) {
+        if ($this->tableOptions !== null && !$this->actions->isEmpty()) {
             $result .= ',';
         }
 

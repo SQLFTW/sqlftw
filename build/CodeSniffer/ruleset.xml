@@ -3,5 +3,6 @@
     <rule ref="../../vendor/dogma/dogma-dev/src/CodeSniffer/ruleset.xml">
         <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
         <exclude name="Squiz.Strings.DoubleQuoteUsage.NotRequired"/>
+        <exclude name="PSR2.Methods.FunctionCallSignature.MultipleArguments"/>
     </rule>
 </ruleset>

@@ -73,6 +73,7 @@ class IndexList
                 return true;
             }
         }
+
         return false;
     }
 
@@ -83,6 +84,7 @@ class IndexList
                 return $index;
             }
         }
+
         return null;
     }
 
@@ -101,6 +103,7 @@ class IndexList
                 }
             }
         }
+
         return $keys;
     }
 

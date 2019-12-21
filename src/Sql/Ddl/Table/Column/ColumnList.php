@@ -44,11 +44,7 @@ class ColumnList
 
     public function getColumn(string $name): ?ColumnDefinition
     {
-        if (isset($this->columns[$name])) {
-            return $this->columns[$name];
-        } else {
-            return null;
-        }
+        return $this->columns[$name] ?? null;
     }
 
     public function containsColumn(ColumnDefinition $searchedColumn): bool

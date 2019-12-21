@@ -62,6 +62,7 @@ class ShowGrantsCommand implements ShowCommand
                 $result .= ' USING ' . $formatter->formatStringList($this->roles);
             }
         }
+
         return $result;
     }
 

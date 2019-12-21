@@ -89,36 +89,30 @@ class Operator extends SqlEnum implements Feature
 
     public function isUnary(): bool
     {
-        return in_array($this->getValue(), [
-            self::PLUS,
-            self::MINUS,
-            self::EXCLAMATION,
-            self::BIT_INVERT,
-            self::EXISTS,
-            self::BINARY,
-        ]);
+        return in_array(
+            $this->getValue(),
+            [self::PLUS, self::MINUS, self::EXCLAMATION, self::BIT_INVERT, self::EXISTS, self::BINARY],
+            true
+        );
     }
 
     public function isBinary(): bool
     {
-        return !in_array($this->getValue(), [
-            self::EXCLAMATION,
-            self::BIT_INVERT,
-            self::EXISTS,
-            self::BINARY,
-            self::BETWEEN,
-            self::ESCAPE,
-        ]);
+        return !in_array(
+            $this->getValue(),
+            [self::EXCLAMATION, self::BIT_INVERT, self::EXISTS, self::BINARY, self::BETWEEN, self::ESCAPE],
+            true
+        );
     }
 
     public function isTernaryLeft(): bool
     {
-        return in_array($this->getValue(), [self::BETWEEN, self::LIKE]);
+        return in_array($this->getValue(), [self::BETWEEN, self::LIKE], true);
     }
 
     public function isTernaryRight(): bool
     {
-        return in_array($this->getValue(), [self::AND, self::ESCAPE]);
+        return in_array($this->getValue(), [self::AND, self::ESCAPE], true);
     }
 
     /**

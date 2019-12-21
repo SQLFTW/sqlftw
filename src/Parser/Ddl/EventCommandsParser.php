@@ -21,7 +21,6 @@ use SqlFtw\Sql\Ddl\Event\EventState;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 
 class EventCommandsParser
 {

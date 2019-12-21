@@ -22,18 +22,13 @@ class ConstraintDefinition implements TableItem
     /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType */
     private $type;
 
-    /** @var string */
+    /** @var string|null */
     private $name;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody */
     private $body;
 
-    /**
-     * @param \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType $type
-     * @param string $name
-     * @param \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody $body
-     */
-    public function __construct(ConstraintType $type, string $name, ConstraintBody $body)
+    public function __construct(ConstraintType $type, ?string $name, ConstraintBody $body)
     {
         $this->type = $type;
         $this->name = $name;
@@ -63,6 +58,7 @@ class ConstraintDefinition implements TableItem
         if (!$this->body instanceof ForeignKeyDefinition) {
             throw new ShouldNotHappenException('Foreign key definition expected.');
         }
+
         return $this->body;
     }
 
@@ -71,12 +67,18 @@ class ConstraintDefinition implements TableItem
         if (!$this->body instanceof IndexDefinition) {
             throw new ShouldNotHappenException('Index definition expected.');
         }
+
         return $this->body;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'CONSTRAINT ' . $formatter->formatName($this->name) . ' ' . $this->body->serialize($formatter);
+        $result = 'CONSTRAINT';
+        if ($this->name !== null) {
+            $result .= ' ' . $formatter->formatName($this->name);
+        }
+
+        return $result . ' ' . $this->body->serialize($formatter);
     }
 
 }

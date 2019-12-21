@@ -19,6 +19,7 @@ use function get_class;
 use function gettype;
 use function is_float;
 use function is_int;
+use function is_object;
 use function is_scalar;
 use function sprintf;
 use function str_replace;
@@ -39,7 +40,7 @@ class SetAssignment implements SqlSerializable
 
     /**
      * @param string $variable
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|string|int|float $expression
+     * @param \SqlFtw\Sql\Expression\ExpressionNode|string|int|float|bool|mixed $expression
      * @param \SqlFtw\Sql\Scope|null $scope
      */
     public function __construct(string $variable, $expression, ?Scope $scope = null)
@@ -47,7 +48,7 @@ class SetAssignment implements SqlSerializable
         if (!$expression instanceof ExpressionNode && !is_scalar($expression)) {
             throw new InvalidDefinitionException(sprintf(
                 'ExpressionNode assigned to variable must be a scalar value or an ExpressionNode. %s given.',
-                gettype($expression) === 'object' ? get_class($expression) : ucfirst(gettype($expression))
+                is_object($expression) ? get_class($expression) : ucfirst(gettype($expression))
             ));
         }
         if ($scope === null) {

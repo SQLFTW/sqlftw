@@ -125,6 +125,7 @@ class IndexCommandsParser
         $keywords = [Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE, Keyword::INVISIBLE];
         while ($keyword = $tokenList->mayConsumeAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::USING) {
+                /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexAlgorithm $algorithm */
                 $algorithm = $tokenList->consumeKeywordEnum(IndexAlgorithm::class);
             } elseif ($keyword === Keyword::KEY_BLOCK_SIZE) {
                 $options[IndexOption::KEY_BLOCK_SIZE] = $tokenList->consumeInt();

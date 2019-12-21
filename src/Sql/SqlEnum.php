@@ -31,6 +31,7 @@ class SqlEnum extends StringEnum implements SqlSerializable
                 return true;
             }
         }
+
         return false;
     }
 

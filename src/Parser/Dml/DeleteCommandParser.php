@@ -68,6 +68,7 @@ class DeleteCommandParser
             if ($with !== null) {
                 throw new ParserException('WITH defined twice.');
             }
+
             return $this->withParser->parseWith($tokenList->resetPosition(-1));
         }
 

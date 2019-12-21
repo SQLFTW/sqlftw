@@ -80,12 +80,12 @@ class WindowSpecification implements SqlSerializable
             $parts[] = $formatter->formatName($this->reference);
         }
         if ($this->partitionBy !== null) {
-            $parts[] = 'PARTITION BY ' . implode(', ', array_map(function (ExpressionNode $expression) use ($formatter): string {
+            $parts[] = 'PARTITION BY ' . implode(', ', array_map(static function (ExpressionNode $expression) use ($formatter): string {
                 return $expression->serialize($formatter);
             }, $this->partitionBy));
         }
         if ($this->orderBy !== null) {
-            $parts[] = 'ORDER BY ' . implode(', ', array_map(function (OrderByExpression $expression) use ($formatter): string {
+            $parts[] = 'ORDER BY ' . implode(', ', array_map(static function (OrderByExpression $expression) use ($formatter): string {
                 return $expression->serialize($formatter);
             }, $this->orderBy));
         }

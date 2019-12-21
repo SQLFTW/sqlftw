@@ -49,9 +49,9 @@ use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\UserName;
 use function preg_match;
 use function sprintf;
-use SqlFtw\Sql\UserName;
 use function strlen;
 use function substr;
 
@@ -119,7 +119,7 @@ class ExpressionParser
             $keyword = $tokenList->consumeAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
             $right = $keyword === Keyword::UNKNOWN
                 ? new UnknownLiteral()
-                : new ValueLiteral($keyword === Keyword::TRUE ? true : false);
+                : new ValueLiteral($keyword === Keyword::TRUE);
 
             return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IS] : [Operator::IS], $right);
         } else {
@@ -579,10 +579,12 @@ class ExpressionParser
         if ($token->type & TokenType::BINARY_LITERAL) {
             /** @var string $value */
             $value = $token->value;
+
             return new BinaryLiteral($value);
         } elseif ($token->type & TokenType::HEXADECIMAL_LITERAL) {
             /** @var string $value */
             $value = $token->value;
+
             return new HexadecimalLiteral($value);
         } elseif ($token->type & TokenType::KEYWORD) {
             if ($token->value === 'NULL') {
@@ -655,6 +657,7 @@ class ExpressionParser
             $tokenList->consumeKeyword(Keyword::INTERVAL);
             $intervals[] = $this->parseInterval($tokenList);
         }
+
         return new TimeExpression($time, $intervals);
     }
 
@@ -668,6 +671,7 @@ class ExpressionParser
             if (strlen($string) === 12) {
                 $string = '20' . $string;
             }
+
             return new DateTime(sprintf(
                 '%s-%s-%s %s:%s:%s',
                 substr($string, 0, 4),
@@ -683,6 +687,7 @@ class ExpressionParser
             if (strlen($string) === 17) {
                 $string = '20' . $string;
             }
+
             return new DateTime(sprintf(
                 '%s-%s-%s %s:%s:%s%s',
                 substr($string, 0, 4),

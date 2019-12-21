@@ -36,7 +36,7 @@ class DropFunctionCommand implements StoredFunctionCommand, DropRoutineCommand
 
     public function ifExists(): bool
     {
-        return $this->ifExists();
+        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

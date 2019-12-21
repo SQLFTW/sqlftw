@@ -56,8 +56,8 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
     {
         $result = 'REPLACE' . $this->serializeBody($formatter);
 
-        $result .= ' VALUES ' . implode(', ', Arr::map($this->rows, function (array $values) use ($formatter): string {
-            return '(' . implode(', ', Arr::map($values, function (ExpressionNode $value) use ($formatter): string {
+        $result .= ' VALUES ' . implode(', ', Arr::map($this->rows, static function (array $values) use ($formatter): string {
+            return '(' . implode(', ', Arr::map($values, static function (ExpressionNode $value) use ($formatter): string {
                 return $value->serialize($formatter);
             })) . ')';
         }));

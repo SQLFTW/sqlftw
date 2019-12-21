@@ -1,8 +1,19 @@
 
 parameters:
     ignoreErrors:
-        - '~SqlFtw\\Reflection\\SchemaWasDroppedException::__construct\(\) does not call parent constructor~'
-        - '~Negated boolean is always false~' # path: sqlftw\src\Parser\Lexer\Lexer.php
+        # conflicts with CS and PhpStorm
+        - '~Unreachable statement - code above always terminates.~'
+
+        # WFT?
+        - '~Else branch is unreachable because previous condition is always true.~'
+
+        # WTF?
+        - '~Method SqlFtw\\Parser\\Dal\\UserCommandsParser::parseResourceOptions\(\) never returns array<SqlFtw\\Sql\\Dal\\User\\UserResourceOption> so it can be removed from the return typehint.~'
+    earlyTerminatingMethodCalls:
+        SqlFtw\Parser\TokenList:
+            - expected
+            - expectedAnyKeyword
+
 
 services:
 	-

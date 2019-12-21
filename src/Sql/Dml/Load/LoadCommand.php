@@ -124,7 +124,7 @@ abstract class LoadCommand implements DmlCommand
             $result .= ' (' . $formatter->formatNamesList($this->fields) . ')';
         }
         if ($this->setters !== null) {
-            $result .= ' SET ' . implode(', ', Arr::mapPairs($this->setters, function (string $field, ExpressionNode $expression) use ($formatter): string {
+            $result .= ' SET ' . implode(', ', Arr::mapPairs($this->setters, static function (string $field, ExpressionNode $expression) use ($formatter): string {
                 return $formatter->formatName($field) . ' = ' . $expression->serialize($formatter);
             }));
         }

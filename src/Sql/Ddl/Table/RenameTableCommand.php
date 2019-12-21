@@ -76,10 +76,11 @@ class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
             }
             $oldSchema = $old->getSchema();
             $targetSchema = $new->getSchema();
-            if ($oldSchema === $targetSchema() || $oldSchema === null) {
+            if ($oldSchema === null || $oldSchema === $targetSchema()) {
                 return $new->getSchema() === null ? new QualifiedName($new->getName(), $targetSchema) : $new;
             }
         }
+
         return null;
     }
 

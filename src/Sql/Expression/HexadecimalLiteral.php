@@ -44,9 +44,11 @@ class HexadecimalLiteral implements Literal
     {
         $value = str_repeat('0', 2 - (strlen($this->value) % 2)) . $this->value;
         $string = '';
-        for ($n = 0; $n < strlen($value); $n += 2) {
+        $length = strlen($value);
+        for ($n = 0; $n < $length; $n += 2) {
             $string .= chr(bindec(substr($value, $n, 2)));
         }
+
         return $string;
     }
 

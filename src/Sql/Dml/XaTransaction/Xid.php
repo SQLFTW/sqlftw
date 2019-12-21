@@ -57,6 +57,7 @@ class Xid implements SqlSerializable
                 $result .= ', ' . $this->formatId;
             }
         }
+
         return $result;
     }
 

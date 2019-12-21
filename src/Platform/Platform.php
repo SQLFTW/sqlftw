@@ -60,7 +60,7 @@ class Platform
         if (!isset(self::$versions[$name])) {
             throw new InvalidArgumentException(sprintf('Unknown platform %s.', $name));
         }
-        if ($version !== null && !in_array($version, self::$versions[$name])) {
+        if ($version !== null && !in_array($version, self::$versions[$name], true)) {
             throw new InvalidArgumentException(sprintf('Unknown version %s for platform %s.', $version, $name));
         }
         if ($version === null) {
@@ -73,6 +73,7 @@ class Platform
         if (!isset(self::$instances[$key])) {
             self::$instances[$key] = new self($name, $version);
         }
+
         return self::$instances[$key];
     }
 
@@ -84,10 +85,8 @@ class Platform
         if ($version === null) {
             return true;
         }
-        if ($this->version->getId() !== $version->getId()) {
-            return false;
-        }
-        return true;
+
+        return $this->version->getId() !== $version->getId();
     }
 
     public function getName(): string

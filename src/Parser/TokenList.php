@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\NotImplementedException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\SqlEnum;
@@ -123,6 +122,7 @@ class TokenList
                 $tokens[] = $this->tokens[$position + $n];
             }
         }
+
         return $tokens;
     }
 
@@ -146,16 +146,13 @@ class TokenList
         return $token;
     }
 
-    /**
-     * @param int $tokenType
-     * @return \SqlFtw\Parser\Token|null
-     */
     public function mayConsume(int $tokenType): ?Token
     {
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
         if ($token !== null && ($token->type & $tokenType)) {
             $this->position++;
+
             return $token;
         } else {
             return null;
@@ -204,6 +201,7 @@ class TokenList
             return $this->consumeName($name);
         } catch (UnexpectedTokenException $e) {
             $this->position = $position;
+
             return null;
         }
     }
@@ -225,6 +223,7 @@ class TokenList
             return $this->consumeNonKeywordName($name);
         } catch (UnexpectedTokenException $e) {
             $this->position = $position;
+
             return null;
         }
     }
@@ -302,6 +301,7 @@ class TokenList
             return $this->consumeInt();
         } catch (UnexpectedTokenException $e) {
             $this->position = $position;
+
             return null;
         }
     }
@@ -318,6 +318,7 @@ class TokenList
         } elseif ($value === 0 || $value === 'N' || $value === 'F') {
             return false;
         }
+
         throw new ParserException(sprintf('Boolean-like value expected. "%s" found.', $value));
     }
 
@@ -336,23 +337,16 @@ class TokenList
         return $token->value === $operator ? $token->value : null;
     }
 
-    /**
-     * @param string ...$operators
-     * @return string
-     */
     public function consumeAnyOperator(string ...$operators): string
     {
         $operator = $this->consume(TokenType::OPERATOR);
-        if (!in_array($operator->value, $operators)) {
+        if (!in_array($operator->value, $operators, true)) {
             throw new UnexpectedTokenException([TokenType::OPERATOR], $operators, $operator, $this);
         }
+
         return $operator->value;
     }
 
-    /**
-     * @param string ...$operators
-     * @return string|null
-     */
     public function mayConsumeAnyOperator(string ...$operators): ?string
     {
         $position = $this->position;
@@ -360,6 +354,7 @@ class TokenList
             return $this->consumeAnyOperator(...$operators);
         } catch (UnexpectedTokenException $e) {
             $this->position = $position;
+
             return null;
         }
     }
@@ -393,6 +388,7 @@ class TokenList
         foreach ($keywords as $keyword) {
             $this->consumeKeyword($keyword);
         }
+
         return implode(' ', $keywords);
     }
 
@@ -403,6 +399,7 @@ class TokenList
             return $this->consumeKeywords(...$keywords);
         } catch (UnexpectedTokenException $e) {
             $this->position = $position;
+
             return null;
         }
     }
@@ -410,9 +407,10 @@ class TokenList
     public function consumeAnyKeyword(string ...$keywords): string
     {
         $keyword = $this->consume(TokenType::KEYWORD)->value;
-        if (!in_array($keyword, $keywords)) {
+        if (!in_array($keyword, $keywords, true)) {
             $this->expectedAnyKeyword(...$keywords);
         }
+
         return $keyword;
     }
 
@@ -423,6 +421,7 @@ class TokenList
             return $this->consumeAnyKeyword(...$keywords);
         } catch (UnexpectedTokenException $e) {
             $this->position = $position;
+
             return null;
         }
     }
@@ -439,9 +438,10 @@ class TokenList
         if ($filter !== null) {
             $value = str_replace($filter, '', $value);
         }
-        if (in_array($value, $values)) {
+        if (in_array($value, $values, true)) {
             return call_user_func([$className, 'get'], $value);
         }
+
         throw new UnexpectedTokenException([TokenType::NAME], $values, $this->tokens[$this->position], $this);
     }
 
@@ -467,6 +467,7 @@ class TokenList
             $this->position++;
             if ($token->type & $type) {
                 $this->position = $position;
+
                 return $token;
             }
         }
@@ -487,6 +488,7 @@ class TokenList
             $this->position++;
             if (($token->type & TokenType::KEYWORD) && $token->value === $keyword) {
                 $this->position = $position;
+
                 return true;
             }
         }
@@ -512,6 +514,7 @@ class TokenList
 
             return [$second, $first];
         }
+
         return [$first, null];
     }
 

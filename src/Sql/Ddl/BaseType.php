@@ -149,18 +149,19 @@ class BaseType extends SqlEnum implements Feature
             [
                 self::TINYINT, self::SMALLINT, self::MEDIUMINT, self::INT, self::BIGINT, self::YEAR,
                 self::MIDDLEINT, self::INTEGER, self::INT1, self::INT2, self::INT3, self::INT4, self::INT8, self::BOOL, self::BOOLEAN,
-            ]
+            ],
+            true
         );
     }
 
     public function isFloatingPointNumber(): bool
     {
-        return in_array($this->getValue(), [self::FLOAT, self::DOUBLE, self::REAL, self::FLOAT4, self::FLOAT8]);
+        return in_array($this->getValue(), [self::FLOAT, self::DOUBLE, self::REAL, self::FLOAT4, self::FLOAT8], true);
     }
 
     public function isDecimal(): bool
     {
-        return in_array($this->getValue(), [self::DECIMAL, self::DEC, self::NUMERIC, self::FIXED]);
+        return in_array($this->getValue(), [self::DECIMAL, self::DEC, self::NUMERIC, self::FIXED], true);
     }
 
     public function isNumber(): bool
@@ -176,7 +177,8 @@ class BaseType extends SqlEnum implements Feature
                 self::CHAR, self::VARCHAR, self::TINYTEXT, self::TEXT, self::MEDIUMTEXT, self::LONGTEXT,
                 self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR, self::CHARACTER_VARYING, self::NVARCHAR,
                 self::NATIONAL_VARCHAR, self::LONG, self::LONG_VARCHAR,
-            ]
+            ],
+            true
         );
     }
 
@@ -187,7 +189,8 @@ class BaseType extends SqlEnum implements Feature
             [
                 self::BINARY, self::VARBINARY, self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB,
                 self::CHAR_BYTE, self::LONG_VARBINARY,
-            ]
+            ],
+            true
         );
     }
 
@@ -203,7 +206,8 @@ class BaseType extends SqlEnum implements Feature
             [
                 self::GEOMETRY, self::POINT, self::LINESTRING, self::POLYGON,
                 self::GEOMETRYCOLLECTION, self::MULTIPOINT, self::MULTILINESTRING, self::MULTIPOLYGON,
-            ]
+            ],
+            true
         );
     }
 
@@ -211,7 +215,8 @@ class BaseType extends SqlEnum implements Feature
     {
         return in_array(
             $this->getValue(),
-            [self::DATE, self::TIME, self::DATETIME, self::TIMESTAMP]
+            [self::DATE, self::TIME, self::DATETIME, self::TIMESTAMP],
+            true
         );
     }
 
@@ -222,10 +227,14 @@ class BaseType extends SqlEnum implements Feature
 
     public function needsLength(): bool
     {
-        return in_array($this->getValue(), [
-            self::CHAR, self::VARCHAR, self::BINARY, self::VARBINARY,
-            self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR, self::CHARACTER_VARYING, self::NVARCHAR, self::NATIONAL_VARCHAR, self::CHAR_BYTE,
-        ]);
+        return in_array(
+            $this->getValue(),
+            [
+                self::CHAR, self::VARCHAR, self::BINARY, self::VARBINARY,
+                self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR, self::CHARACTER_VARYING, self::NVARCHAR, self::NATIONAL_VARCHAR, self::CHAR_BYTE,
+            ],
+            true
+        );
     }
 
     public function hasDecimals(): bool
@@ -240,7 +249,7 @@ class BaseType extends SqlEnum implements Feature
 
     public function hasValues(): bool
     {
-        return in_array($this->getValue(), [self::ENUM, self::SET]);
+        return in_array($this->getValue(), [self::ENUM, self::SET], true);
     }
 
     public function hasCharset(): bool

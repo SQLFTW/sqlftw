@@ -35,6 +35,7 @@ class ShowErrorsCommand implements ShowCommand
     {
         $self = new self();
         $self->count = true;
+
         return $self;
     }
 

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class IndexAlreadyExistsException extends ReflectionException
@@ -23,7 +24,7 @@ class IndexAlreadyExistsException extends ReflectionException
     /** @var string */
     private $schema;
 
-    public function __construct(string $name, string $table, string $schema, ?\Throwable $previous = null)
+    public function __construct(string $name, string $table, string $schema, ?Throwable $previous = null)
     {
         parent::__construct(sprintf('Index `%s` in table `%s`.`%s` already exists.', $name, $table, $schema), $previous);
 

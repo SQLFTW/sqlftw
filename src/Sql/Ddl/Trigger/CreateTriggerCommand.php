@@ -14,7 +14,6 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\UserName;
 
 class CreateTriggerCommand implements TriggerCommand
 {
@@ -69,9 +68,6 @@ class CreateTriggerCommand implements TriggerCommand
         return $this->table;
     }
 
-    /**
-     * @return \SqlFtw\Sql\Statement
-     */
     public function getBody(): Statement
     {
         return $this->body;

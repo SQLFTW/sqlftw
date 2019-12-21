@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class TableWasDroppedException extends TableDoesNotExistException
@@ -17,7 +18,7 @@ class TableWasDroppedException extends TableDoesNotExistException
     /** @var \SqlFtw\Reflection\TableReflection */
     private $reflection;
 
-    public function __construct(TableReflection $reflection, ?\Throwable $previous = null)
+    public function __construct(TableReflection $reflection, ?Throwable $previous = null)
     {
         $name = $reflection->getName()->getName();
         $schema = $reflection->getName()->getSchema();

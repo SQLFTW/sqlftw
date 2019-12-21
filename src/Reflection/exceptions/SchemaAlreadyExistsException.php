@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class SchemaAlreadyExistsException extends ReflectionException
@@ -17,7 +18,7 @@ class SchemaAlreadyExistsException extends ReflectionException
     /** @var string */
     private $name;
 
-    public function __construct(string $name, ?\Throwable $previous = null)
+    public function __construct(string $name, ?Throwable $previous = null)
     {
         parent::__construct(sprintf('Schema `%s` already exists.', $name), $previous);
 

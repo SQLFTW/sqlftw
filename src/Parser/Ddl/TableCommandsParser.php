@@ -30,10 +30,9 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Alter\ChangeColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\ConvertToCharsetAction;
-use SqlFtw\Sql\Ddl\Table\Alter\PartitionsAction;
 use SqlFtw\Sql\Ddl\Table\Alter\ExchangePartitionAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ImportPartitionTablespaceAction;
 use SqlFtw\Sql\Ddl\Table\Alter\ModifyColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\PartitionsAction;
 use SqlFtw\Sql\Ddl\Table\Alter\RenameIndexAction;
 use SqlFtw\Sql\Ddl\Table\Alter\ReorganizePartitionAction;
 use SqlFtw\Sql\Ddl\Table\Alter\SimpleAction;
@@ -61,10 +60,10 @@ use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableRowFormat;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
-use SqlFtw\Sql\Ddl\Table\Partition\PartitionOption;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningConditionType;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
+use SqlFtw\Sql\Ddl\Table\Partition\PartitionOption;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
@@ -519,6 +518,7 @@ class TableCommandsParser
                     $tableOptions[$option] = $value;
             }
         } while ($tokenList->mayConsumeComma());
+
         $tokenList->expectEnd();
 
         return new AlterTableCommand($name, $actions, $alterOptions, $tableOptions);
@@ -558,6 +558,7 @@ class TableCommandsParser
             if ($bodyOpen !== null) {
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             }
+
             return new CreateTableLikeCommand($table, $oldTable, $temporary, $ifNotExists);
         }
 
@@ -746,6 +747,7 @@ class TableCommandsParser
     {
         if ($primary) {
             $index = $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
+
             return $index->duplicateAsPrimary();
         } else {
             return $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
@@ -761,20 +763,23 @@ class TableCommandsParser
     private function parseConstraint(TokenList $tokenList): ConstraintDefinition
     {
         $tokenList->mayConsumeKeyword(Keyword::CONSTRAINT);
-        $name = $tokenList->consumeName();
+        $name = $tokenList->mayConsumeName();
 
         $keyword = $tokenList->consumeAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN);
         if ($keyword === Keyword::PRIMARY) {
             $type = ConstraintType::get(ConstraintType::PRIMARY_KEY);
             $body = $this->parseIndex($tokenList, true);
+
             return new ConstraintDefinition($type, $name, $body);
         } elseif ($keyword === Keyword::UNIQUE) {
             $type = ConstraintType::get(ConstraintType::UNIQUE_KEY);
             $body = $this->parseIndex($tokenList->resetPosition(-1));
+
             return new ConstraintDefinition($type, $name, $body);
         } else {
             $type = ConstraintType::get(ConstraintType::FOREIGN_KEY);
             $body = $this->parseForeignKey($tokenList->resetPosition(-1));
+
             return new ConstraintDefinition($type, $name, $body);
         }
     }
@@ -868,68 +873,86 @@ class TableCommandsParser
         switch ($keyword) {
             case Keyword::AUTO_INCREMENT:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::AUTO_INCREMENT, $tokenList->consumeInt()];
             case Keyword::AVG_ROW_LENGTH:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::AVG_ROW_LENGTH, $tokenList->consumeInt()];
             case Keyword::CHARACTER:
                 $tokenList->consumeKeyword(Keyword::SET);
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::CHARACTER_SET, Charset::get($tokenList->consumeString())];
             case Keyword::CHECKSUM:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::CHECKSUM, $tokenList->consumeBool()];
             case Keyword::COLLATE:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::COLLATE, $tokenList->consumeString()];
             case Keyword::COMMENT:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::COMMENT, $tokenList->consumeString()];
             case Keyword::COMPRESSION:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::COMPRESSION, TableCompression::get($tokenList->consumeString())];
             case Keyword::CONNECTION:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::CONNECTION, $tokenList->consumeString()];
             case Keyword::DATA:
                 $tokenList->consumeKeyword(Keyword::DIRECTORY);
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::DATA_DIRECTORY, $tokenList->consumeString()];
             case Keyword::DEFAULT:
                 if ($tokenList->mayConsumeKeyword(Keyword::CHARACTER)) {
                     $tokenList->consumeKeyword(Keyword::SET);
                     $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                     return [TableOption::CHARACTER_SET, Charset::get($tokenList->consumeString())];
                 } else {
                     $tokenList->consumeKeyword(Keyword::COLLATE);
                     $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                     return [TableOption::COLLATE, $tokenList->consumeString()];
                 }
-                break;
             case Keyword::DELAY_KEY_WRITE:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::DELAY_KEY_WRITE, $tokenList->consumeBool()];
             case Keyword::ENCRYPTION:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::ENCRYPTION, $tokenList->consumeBool()];
             case Keyword::ENGINE:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::ENGINE, StorageEngine::get($tokenList->consumeNameOrString())];
             case Keyword::INDEX:
                 $tokenList->consumeKeyword(Keyword::DIRECTORY);
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::INDEX_DIRECTORY, $tokenList->consumeString()];
             case Keyword::INSERT_METHOD:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::INSERT_METHOD, $tokenList->consumeKeywordEnum(TableInsertMethod::class)];
             case Keyword::KEY_BLOCK_SIZE:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::KEY_BLOCK_SIZE, $tokenList->consumeInt()];
             case Keyword::MAX_ROWS:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::MAX_ROWS, $tokenList->consumeInt()];
             case Keyword::MIN_ROWS:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::MIN_ROWS, $tokenList->consumeInt()];
             case Keyword::PACK_KEYS:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
@@ -938,12 +961,13 @@ class TableCommandsParser
                 } else {
                     return [TableOption::PACK_KEYS, ThreeStateValue::get((string) $tokenList->consumeInt())];
                 }
-                break;
             case Keyword::PASSWORD:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::PASSWORD, $tokenList->consumeString()];
             case Keyword::ROW_FORMAT:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::ROW_FORMAT, $tokenList->consumeKeywordEnum(TableRowFormat::class)];
             case Keyword::STATS_AUTO_RECALC:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
@@ -952,7 +976,6 @@ class TableCommandsParser
                 } else {
                     return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get((string) $tokenList->consumeInt())];
                 }
-                break;
             case Keyword::STATS_PERSISTENT:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
                 if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
@@ -960,12 +983,13 @@ class TableCommandsParser
                 } else {
                     return [TableOption::STATS_PERSISTENT, ThreeStateValue::get((string) $tokenList->consumeInt())];
                 }
-                break;
             case Keyword::STATS_SAMPLE_PAGES:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::STATS_SAMPLE_PAGES, $tokenList->consumeInt()];
             case Keyword::TABLESPACE:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
+
                 return [TableOption::TABLESPACE, $tokenList->consumeNameOrString()];
             case Keyword::UNION:
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
@@ -975,6 +999,7 @@ class TableCommandsParser
                     $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
                 } while ($tokenList->mayConsumeComma());
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+
                 return [TableOption::UNION, $tables];
             default:
                 return [null, null];

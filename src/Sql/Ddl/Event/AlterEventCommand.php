@@ -14,7 +14,6 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\DoCommand\DoCommand;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 
 class AlterEventCommand implements EventCommand
 {

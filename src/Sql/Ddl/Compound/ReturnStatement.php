@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Statement;
 
 class ReturnStatement implements CompoundStatementItem
 {

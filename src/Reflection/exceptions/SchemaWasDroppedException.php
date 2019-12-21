@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class SchemaWasDroppedException extends SchemaDoesNotExistException
@@ -17,7 +18,7 @@ class SchemaWasDroppedException extends SchemaDoesNotExistException
     /** @var \SqlFtw\Reflection\SchemaReflection */
     private $reflection;
 
-    public function __construct(SchemaReflection $reflection, ?\Throwable $previous = null)
+    public function __construct(SchemaReflection $reflection, ?Throwable $previous = null)
     {
         ReflectionException::__construct(sprintf(
             'Schema `%s` was dropped by previous command.',

@@ -70,7 +70,7 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     {
         $result = 'INSERT' . $this->serializeBody($formatter);
 
-        $result .= ' SET ' . implode(', ', Arr::mapPairs($this->values, function (string $column, ExpressionNode $value) use ($formatter): string {
+        $result .= ' SET ' . implode(', ', Arr::mapPairs($this->values, static function (string $column, ExpressionNode $value) use ($formatter): string {
             return $formatter->formatName($column) . ' = ' . $value->serialize($formatter);
         }));
 

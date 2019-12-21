@@ -12,6 +12,7 @@
 namespace SqlFtw\Parser\Lexer;
 
 use Dogma\StrictBehaviorMixin;
+use Generator;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
@@ -76,11 +77,6 @@ class Lexer
     /** @var bool */
     private $withWhitespace;
 
-    /**
-     * @param \SqlFtw\Platform\PlatformSettings $settings
-     * @param bool $withComments
-     * @param bool $withWhitespace
-     */
     public function __construct(
         PlatformSettings $settings,
         bool $withComments = true,
@@ -116,7 +112,7 @@ class Lexer
      * @param string $string
      * @return \SqlFtw\Parser\Token[]|\Generator
      */
-    public function tokenize(string $string): \Generator
+    public function tokenize(string $string): Generator
     {
         $length = strlen($string);
         $position = 0;
@@ -869,6 +865,7 @@ class Lexer
         $offset = 0;
         $num = isset(self::$numbersKey[$start]);
         $base = $start;
+        $exp = '';
         do {
             // integer
             $next = '';
@@ -883,7 +880,6 @@ class Lexer
                 }
             }
             if ($position + $offset >= $length) {
-                $exp = '';
                 break;
             }
 
@@ -907,13 +903,11 @@ class Lexer
                 }
             }
             if ($position + $offset >= $length) {
-                $exp = '';
                 break;
             }
 
             // exponent
             $next = $string[$position + $offset];
-            $exp = '';
             do {
                 if ($next === 'e' || $next === 'E') {
                     $exp = $next;
@@ -934,7 +928,7 @@ class Lexer
                             $offset++;
                             $expComplete = true;
                         } else {
-                            if (strlen(trim($exp, 'e+-')) < 1 && strpos($base, '.') !== false) {
+                            if (trim($exp, 'e+-') === '' && strpos($base, '.') !== false) {
                                 throw new ExpectedTokenNotFoundException(''); // todo
                             }
                             break;

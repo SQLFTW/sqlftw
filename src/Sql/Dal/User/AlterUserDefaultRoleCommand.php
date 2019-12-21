@@ -31,11 +31,6 @@ class AlterUserDefaultRoleCommand implements UserCommand
     /** @var bool */
     private $ifExists;
 
-    /**
-     * @param \SqlFtw\Sql\UserName $user
-     * @param \SqlFtw\Sql\Dal\User\RolesSpecification $role
-     * @param bool $ifExists
-     */
     public function __construct(UserName $user, RolesSpecification $role, bool $ifExists = false)
     {
         if ($role->getType()->equalsAny(RolesSpecificationType::DEFAULT, RolesSpecificationType::ALL_EXCEPT)) {

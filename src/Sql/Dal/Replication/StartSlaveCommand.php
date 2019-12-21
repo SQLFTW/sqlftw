@@ -105,7 +105,7 @@ class StartSlaveCommand implements ReplicationCommand
 
     public function getChannel(): ?string
     {
-        return $this->getChannel();
+        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string
@@ -117,7 +117,7 @@ class StartSlaveCommand implements ReplicationCommand
         }
 
         if ($this->until !== null) {
-            $result .= ' UNTIL ' . implode(', ', Arr::mapPairs($this->until, function (string $name, $value) use ($formatter) {
+            $result .= ' UNTIL ' . implode(', ', Arr::mapPairs($this->until, static function (string $name, $value) use ($formatter) {
                 if ($value === true) {
                     return $name;
                 } elseif (is_array($value)) {

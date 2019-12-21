@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Reflection;
 
+use Throwable;
 use function sprintf;
 
 class TableAlreadyExistsException extends ReflectionException
@@ -20,7 +21,7 @@ class TableAlreadyExistsException extends ReflectionException
     /** @var string */
     private $schema;
 
-    public function __construct(string $name, string $schema, ?\Throwable $previous = null)
+    public function __construct(string $name, string $schema, ?Throwable $previous = null)
     {
         parent::__construct(sprintf('Table `%s`.`%s` already exists.', $schema, $name), $previous);
 

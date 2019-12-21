@@ -18,8 +18,8 @@ use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Dal\SystemVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Scope;
+use function strpos;
 use function strtoupper;
-use function substr;
 
 class SetCommandParser
 {
@@ -52,7 +52,7 @@ class SetCommandParser
         $assignments = [];
         do {
             $position = $tokenList->getPosition();
-            /** @var \SqlFtw\Sql\Scope $scope */
+            /** @var \SqlFtw\Sql\Scope|null $scope */
             $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
             if ($scope !== null) {
                 $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class)->getValue();
@@ -61,7 +61,7 @@ class SetCommandParser
                 if ($variable !== null) {
                     // @
                     $variable = $variable->value;
-                    if (substr($variable, 0, 2) === '@@') {
+                    if (strpos($variable, '@@') === 0) {
                         // @@
                         $upper = strtoupper($variable);
                         if ($upper === '@@GLOBAL') {

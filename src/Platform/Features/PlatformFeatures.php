@@ -82,10 +82,6 @@ abstract class PlatformFeatures
         return in_array($word, $this->getTypes(), true);
     }
 
-    /**
-     * @param \SqlFtw\Sql\Feature $feature
-     * @return bool
-     */
     public function available(Feature $feature): bool
     {
         if ($feature instanceof Keyword) {
