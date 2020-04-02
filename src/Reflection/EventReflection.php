@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
+use SqlFtw\Sql\Ddl\Event\EventCommand;
 use SqlFtw\Sql\QualifiedName;
 use function end;
 
@@ -20,10 +21,10 @@ class EventReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Event\EventCommand[] */
+    /** @var EventCommand[] */
     private $commands = [];
 
     public function __construct(QualifiedName $name, CreateEventCommand $createEventCommand)
@@ -55,7 +56,7 @@ class EventReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Event\EventCommand[]
+     * @return EventCommand[]
      */
     public function getCommands(): array
     {

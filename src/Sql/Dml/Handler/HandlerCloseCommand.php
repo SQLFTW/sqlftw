@@ -17,7 +17,7 @@ class HandlerCloseCommand implements HandlerCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
     public function __construct(QualifiedName $table)

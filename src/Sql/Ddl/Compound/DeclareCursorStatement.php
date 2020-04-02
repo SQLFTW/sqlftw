@@ -20,7 +20,7 @@ class DeclareCursorStatement implements CompoundStatementItem
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
+    /** @var SelectCommand */
     private $select;
 
     public function __construct(string $name, SelectCommand $select)

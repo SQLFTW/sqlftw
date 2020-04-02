@@ -39,16 +39,16 @@ class SelectCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Dml\WithParser */
+    /** @var WithParser */
     private $withParser;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\JoinParser */
+    /** @var JoinParser */
     private $joinParser;
 
-    /** @var \SqlFtw\Parser\Dml\FileFormatParser */
+    /** @var FileFormatParser */
     private $fileFormatParser;
 
     public function __construct(
@@ -103,7 +103,7 @@ class SelectCommandParser
 
         $tokenList->consumeKeyword(Keyword::SELECT);
 
-        /** @var \SqlFtw\Sql\Dml\Select\SelectDistinctOption $distinct */
+        /** @var SelectDistinctOption $distinct */
         $distinct = $tokenList->mayConsumeKeywordEnum(SelectDistinctOption::class);
         $options = [];
         $options[SelectOption::HIGH_PRIORITY] = (bool) $tokenList->mayConsumeKeyword(Keyword::HIGH_PRIORITY);
@@ -160,7 +160,7 @@ class SelectCommandParser
             $groupBy = [];
             do {
                 $expression = $this->expressionParser->parseExpression($tokenList);
-                /** @var \SqlFtw\Sql\Order $order */
+                /** @var Order $order */
                 $order = $tokenList->mayConsumeKeywordEnum(Order::class);
                 $groupBy[] = new GroupByExpression($expression, $order);
             } while ($tokenList->mayConsumeComma());
@@ -234,7 +234,7 @@ class SelectCommandParser
                     $lockTables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
                 } while ($tokenList->mayConsumeComma());
             }
-            /** @var \SqlFtw\Sql\Dml\Select\SelectLockWaitOption $lockWaitOption */
+            /** @var SelectLockWaitOption $lockWaitOption */
             $lockWaitOption = $tokenList->mayConsumeKeywordEnum(SelectLockWaitOption::class);
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
         }
@@ -264,8 +264,8 @@ class SelectCommandParser
      * frame_between:
      *   BETWEEN frame_start AND frame_end
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dml\Select\WindowSpecification
+     * @param TokenList $tokenList
+     * @return WindowSpecification
      */
     private function parseWindow(TokenList $tokenList): WindowSpecification
     {
@@ -310,9 +310,9 @@ class SelectCommandParser
      *   | expr FOLLOWING
      * }
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @param \SqlFtw\Sql\Dml\Select\WindowFrameType|null $type
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $expression
+     * @param TokenList $tokenList
+     * @param WindowFrameType|null $type
+     * @param ExpressionNode|null $expression
      */
     private function parseFrameBorder(TokenList $tokenList, ?WindowFrameType &$type, ?ExpressionNode &$expression): void
     {

@@ -21,14 +21,14 @@ class AddColumnAction implements AlterTableAction
 
     public const FIRST = true;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition */
+    /** @var ColumnDefinition */
     private $column;
 
     /** @var string|bool|null */
     private $after;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition $column
+     * @param ColumnDefinition $column
      * @param string|bool|null $after
      */
     public function __construct(ColumnDefinition $column, $after = null)

@@ -28,8 +28,8 @@ class ResetCommandParser
      *   | QUERY CACHE
      *   | SLAVE
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dal\Reset\ResetCommand|\SqlFtw\Sql\Dal\Replication\ResetMasterCommand|\SqlFtw\Sql\Dal\Replication\ResetSlaveCommand
+     * @param TokenList $tokenList
+     * @return ResetCommand
      */
     public function parseReset(TokenList $tokenList): Command
     {

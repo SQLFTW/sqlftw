@@ -20,7 +20,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
+    /** @var SelectCommand */
     private $query;
 
     /** @var string|null */
@@ -36,7 +36,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
     private $lateral;
 
     /**
-     * @param \SqlFtw\Sql\Dml\Select\SelectCommand $query
+     * @param SelectCommand $query
      * @param string|null $alias
      * @param string[]|null $columnList
      */

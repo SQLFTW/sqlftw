@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewCommand;
+use SqlFtw\Sql\Ddl\View\ViewCommand;
 use SqlFtw\Sql\QualifiedName;
 use function end;
 
@@ -20,13 +21,13 @@ class ViewReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\View\ViewCommand[] */
+    /** @var ViewCommand[] */
     private $commands = [];
 
-    /** @var \SqlFtw\Reflection\ColumnReflection[] */
+    /** @var ColumnReflection[] */
     private $columns = [];
 
     public function __construct(QualifiedName $name, CreateViewCommand $createViewCommand)
@@ -61,7 +62,7 @@ class ViewReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\View\ViewCommand[]
+     * @return ViewCommand[]
      */
     public function getCommands(): array
     {
@@ -69,7 +70,7 @@ class ViewReflection
     }
 
     /**
-     * @return \SqlFtw\Reflection\ColumnReflection[]
+     * @return ColumnReflection[]
      */
     public function getColumns(): array
     {

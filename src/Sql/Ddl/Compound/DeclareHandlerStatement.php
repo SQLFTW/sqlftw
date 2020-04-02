@@ -17,19 +17,19 @@ class DeclareHandlerStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Compound\HandlerAction */
+    /** @var HandlerAction */
     private $action;
 
-    /** @var \SqlFtw\Sql\Ddl\Compound\Condition[] */
+    /** @var Condition[] */
     private $conditions;
 
-    /** @var \SqlFtw\Sql\Statement */
+    /** @var Statement */
     private $statement;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Compound\HandlerAction $action
-     * @param \SqlFtw\Sql\Ddl\Compound\Condition[] $conditions
-     * @param \SqlFtw\Sql\Statement $statement
+     * @param HandlerAction $action
+     * @param Condition[] $conditions
+     * @param Statement $statement
      */
     public function __construct(HandlerAction $action, array $conditions, Statement $statement)
     {
@@ -44,7 +44,7 @@ class DeclareHandlerStatement implements CompoundStatementItem
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Compound\Condition[]
+     * @return Condition[]
      */
     public function getConditions(): array
     {

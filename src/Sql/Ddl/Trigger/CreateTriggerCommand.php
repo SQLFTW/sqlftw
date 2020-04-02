@@ -22,19 +22,19 @@ class CreateTriggerCommand implements TriggerCommand
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Trigger\TriggerEvent */
+    /** @var TriggerEvent */
     private $event;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Statement */
+    /** @var Statement */
     private $body;
 
-    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
+    /** @var UserExpression|null */
     private $definer;
 
-    /** @var \SqlFtw\Sql\Ddl\Trigger\TriggerPosition|null */
+    /** @var TriggerPosition|null */
     private $position;
 
     public function __construct(

@@ -17,14 +17,14 @@ class PartitionsAction implements AlterTableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType */
+    /** @var AlterTableActionType */
     private $type;
 
     /** @var string[]|null */
     private $partitions;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType $type
+     * @param AlterTableActionType $type
      * @param string[]|null $partitions
      */
     public function __construct(AlterTableActionType $type, ?array $partitions = null)

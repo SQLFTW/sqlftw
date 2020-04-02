@@ -19,13 +19,13 @@ class CreateFunctionSonameCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
     /** @var string */
     private $libName;
 
-    /** @var \SqlFtw\Sql\Ddl\Routines\UdfReturnDataType */
+    /** @var UdfReturnDataType */
     private $returnType;
 
     /** @var bool */

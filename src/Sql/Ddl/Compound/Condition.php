@@ -18,14 +18,14 @@ class Condition implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Compound\ConditionType */
+    /** @var ConditionType */
     private $type;
 
     /** @var int|string|null */
     private $value;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Compound\ConditionType $type
+     * @param ConditionType $type
      * @param int|string|null $value
      */
     public function __construct(ConditionType $type, $value = null)

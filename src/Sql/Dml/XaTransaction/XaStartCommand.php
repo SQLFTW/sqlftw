@@ -16,10 +16,10 @@ class XaStartCommand implements XaTransactionCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\XaTransaction\Xid */
+    /** @var Xid */
     private $xid;
 
-    /** @var \SqlFtw\Sql\Dml\XaTransaction\XaStartOption|null */
+    /** @var XaStartOption|null */
     private $option;
 
     public function __construct(Xid $xid, ?XaStartOption $option = null)

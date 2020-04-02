@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
+use DateInterval;
 use Dogma\StrictBehaviorMixin;
+use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeExpression;
 use SqlFtw\Sql\Expression\TimeInterval;
@@ -19,26 +21,30 @@ class EventSchedule implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\TimeInterval|null */
+    /** @var TimeInterval|null */
     private $interval;
 
-    /** @var \SqlFtw\Sql\Expression\TimeExpression|null */
+    /** @var TimeExpression|null */
     private $time;
 
-    /** @var \SqlFtw\Sql\Expression\TimeExpression|null */
+    /** @var TimeExpression|null */
     private $startTime;
 
-    /** @var \SqlFtw\Sql\Expression\TimeExpression|null */
+    /** @var TimeExpression|null */
     private $endTime;
 
     /**
-     * @param \SqlFtw\Sql\Expression\TimeInterval|\DateInterval|\Dogma\Time\Span\DateTimeSpan $interval
-     * @param \SqlFtw\Sql\Expression\TimeExpression|null $time
-     * @param \SqlFtw\Sql\Expression\TimeExpression|null $startTime
-     * @param \SqlFtw\Sql\Expression\TimeExpression|null $endTime
+     * @param TimeInterval|DateInterval|DateTimeSpan $interval
+     * @param TimeExpression|null $time
+     * @param TimeExpression|null $startTime
+     * @param TimeExpression|null $endTime
      */
-    public function __construct($interval, ?TimeExpression $time = null, ?TimeExpression $startTime = null, ?TimeExpression $endTime = null)
-    {
+    public function __construct(
+        $interval,
+        ?TimeExpression $time = null,
+        ?TimeExpression $startTime = null,
+        ?TimeExpression $endTime = null
+    ) {
         if ($interval !== null && !$interval instanceof TimeInterval) {
             $interval = TimeInterval::create($interval);
         }

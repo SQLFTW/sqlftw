@@ -23,13 +23,13 @@ class Parser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Lexer\Lexer */
+    /** @var Lexer */
     private $lexer;
 
-    /** @var \SqlFtw\Parser\ParserFactory */
+    /** @var ParserFactory */
     private $factory;
 
-    /** @var \SqlFtw\Platform\PlatformSettings */
+    /** @var PlatformSettings */
     private $settings;
 
     public function __construct(Lexer $lexer, PlatformSettings $settings)
@@ -46,7 +46,7 @@ class Parser
 
     /**
      * @param string $sql
-     * @return \SqlFtw\Sql\Command[]
+     * @return Command[]
      */
     public function parse(string $sql): array
     {
@@ -74,8 +74,8 @@ class Parser
     }
 
     /**
-     * @param \SqlFtw\Parser\Token[] $tokens
-     * @return \SqlFtw\Parser\TokenList[]
+     * @param Token[] $tokens
+     * @return TokenList[]
      */
     private function slice(array $tokens): array
     {

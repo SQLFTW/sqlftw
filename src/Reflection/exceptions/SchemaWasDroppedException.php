@@ -15,7 +15,7 @@ use function sprintf;
 class SchemaWasDroppedException extends SchemaDoesNotExistException
 {
 
-    /** @var \SqlFtw\Reflection\SchemaReflection */
+    /** @var SchemaReflection */
     private $reflection;
 
     public function __construct(SchemaReflection $reflection, ?Throwable $previous = null)

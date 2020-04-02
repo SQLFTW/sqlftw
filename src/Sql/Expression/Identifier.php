@@ -11,17 +11,19 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\ColumnName;
+use SqlFtw\Sql\QualifiedName;
 use function is_string;
 
 class Identifier implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var string|\SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\ColumnName */
+    /** @var string|QualifiedName|ColumnName */
     private $name;
 
     /**
-     * @param string|\SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\ColumnName $name
+     * @param string|QualifiedName|ColumnName $name
      */
     public function __construct($name)
     {
@@ -34,7 +36,7 @@ class Identifier implements ExpressionNode
     }
 
     /**
-     * @return string|\SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\ColumnName
+     * @return string|QualifiedName|ColumnName
      */
     public function getName()
     {

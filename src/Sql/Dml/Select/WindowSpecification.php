@@ -24,20 +24,20 @@ class WindowSpecification implements SqlSerializable
     /** @var string|null */
     private $reference;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[]|null */
+    /** @var ExpressionNode[]|null */
     private $partitionBy;
 
-    /** @var \SqlFtw\Sql\Dml\OrderByExpression[]|null */
+    /** @var OrderByExpression[]|null */
     private $orderBy;
 
-    /** @var \SqlFtw\Sql\Dml\Select\WindowFrame|null */
+    /** @var WindowFrame|null */
     private $frame;
 
     /**
      * @param string|null $reference
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $partitionBy
-     * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
-     * @param \SqlFtw\Sql\Dml\Select\WindowFrame|null $frame
+     * @param ExpressionNode[]|null $partitionBy
+     * @param OrderByExpression[]|null $orderBy
+     * @param WindowFrame|null $frame
      */
     public function __construct(?string $reference, ?array $partitionBy, ?array $orderBy, ?WindowFrame $frame)
     {
@@ -53,7 +53,7 @@ class WindowSpecification implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]|null
+     * @return ExpressionNode[]|null
      */
     public function getPartitionBy(): ?array
     {
@@ -61,7 +61,7 @@ class WindowSpecification implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\OrderByExpression[]|null
+     * @return OrderByExpression[]|null
      */
     public function getOrderBy(): ?array
     {

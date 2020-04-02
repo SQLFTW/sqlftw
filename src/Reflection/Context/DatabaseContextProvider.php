@@ -13,12 +13,12 @@ use Dogma\Database\SimplePdo;
 use PDOException;
 use SqlFtw\Reflection\TableDoesNotExistException;
 
-class DatabaseContextProvider ///implements \SqlFtw\Reflection\ContextProvider
+class DatabaseContextProvider ///implements ContextProvider
 {
 
     private const TABLE_NOT_FOUND = 1146;
 
-    /** @var \Dogma\Database\SimplePdo */
+    /** @var SimplePdo */
     private $connection;
 
     public function __construct(SimplePdo $connection)

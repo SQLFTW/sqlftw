@@ -19,7 +19,7 @@ class CurlyExpression implements ExpressionNode
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $expression;
 
     public function __construct(string $name, ExpressionNode $expression)

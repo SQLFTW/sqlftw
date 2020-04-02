@@ -27,12 +27,12 @@ class TimeInterval implements SqlSerializable
     /** @var int|string */
     private $value;
 
-    /** @var \SqlFtw\Sql\Expression\TimeIntervalUnit */
+    /** @var TimeIntervalUnit */
     private $unit;
 
     /**
      * @param int|string $value
-     * @param \SqlFtw\Sql\Expression\TimeIntervalUnit $unit
+     * @param TimeIntervalUnit $unit
      */
     public function __construct($value, TimeIntervalUnit $unit)
     {
@@ -41,7 +41,7 @@ class TimeInterval implements SqlSerializable
     }
 
     /**
-     * @param \DateInterval|\Dogma\Time\Span\DateTimeSpan $interval
+     * @param DateInterval|DateTimeSpan $interval
      * @return self
      */
     public static function create($interval): self
@@ -55,7 +55,7 @@ class TimeInterval implements SqlSerializable
     }
 
     /**
-     * @param \DateInterval|\Dogma\Time\Span\DateTimeSpan $interval
+     * @param DateInterval|DateTimeSpan $interval
      * @return self[]
      */
     public static function createIntervals($interval): array

@@ -19,14 +19,14 @@ class ShowGrantsCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var UserName|null */
     private $user;
 
     /** @var string[]|null */
     private $roles;
 
     /**
-     * @param \SqlFtw\Sql\UserName|null $user
+     * @param UserName|null $user
      * @param string[] $roles
      */
     public function __construct(?UserName $user = null, ?array $roles = null)

@@ -22,10 +22,10 @@ class AlterUserDefaultRoleCommand implements UserCommand
     public const ALL_ROLES = true;
     public const LIST_ROLES = null;
 
-    /** @var \SqlFtw\Sql\UserName */
+    /** @var UserName */
     private $user;
 
-    /** @var \SqlFtw\Sql\Dal\User\RolesSpecification */
+    /** @var RolesSpecification */
     private $role;
 
     /** @var bool */

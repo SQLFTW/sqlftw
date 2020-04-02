@@ -17,10 +17,10 @@ class CreateTableLikeCommand implements AnyCreateTableCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $templateTable;
 
     /** @var bool */

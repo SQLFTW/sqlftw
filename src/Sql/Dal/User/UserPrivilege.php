@@ -17,14 +17,14 @@ class UserPrivilege implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeType */
+    /** @var UserPrivilegeType */
     private $type;
 
     /** @var string[]|null */
     private $columns;
 
     /**
-     * @param \SqlFtw\Sql\Dal\User\UserPrivilegeType $type
+     * @param UserPrivilegeType $type
      * @param string[]|null $columns
      */
     public function __construct(UserPrivilegeType $type, ?array $columns)

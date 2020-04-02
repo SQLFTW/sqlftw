@@ -19,11 +19,11 @@ class SetCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\Set\SetAssignment[] */
+    /** @var SetAssignment[] */
     private $assignments;
 
     /**
-     * @param \SqlFtw\Sql\Dal\Set\SetAssignment[] $assignments
+     * @param SetAssignment[] $assignments
      */
     public function __construct(array $assignments)
     {
@@ -34,7 +34,7 @@ class SetCommand implements DalCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\Set\SetAssignment[]
+     * @return SetAssignment[]
      */
     public function getAssignments(): array
     {
@@ -42,8 +42,8 @@ class SetCommand implements DalCommand
     }
 
     /**
-     * @param \SqlFtw\Sql\Scope $scope
-     * @return \SqlFtw\Sql\Dal\Set\SetAssignment[]
+     * @param Scope $scope
+     * @return SetAssignment[]
      */
     public function getAssignmentsByScope(?Scope $scope = null): array
     {

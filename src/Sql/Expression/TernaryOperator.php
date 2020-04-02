@@ -22,27 +22,27 @@ class TernaryOperator implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $left;
 
     /** @var string[] */
     private $leftOperator;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $middle;
 
     /** @var string */
     private $rightOperator;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $right;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode $left
+     * @param ExpressionNode $left
      * @param string|string[] $leftOperator
-     * @param \SqlFtw\Sql\Expression\ExpressionNode $middle
+     * @param ExpressionNode $middle
      * @param string $rightOperator
-     * @param \SqlFtw\Sql\Expression\ExpressionNode $right
+     * @param ExpressionNode $right
      */
     public function __construct(
         ExpressionNode $left,

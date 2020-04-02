@@ -25,19 +25,19 @@ class UpdateCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
+    /** @var TableReferenceNode */
     private $tableReferences;
 
-    /** @var \SqlFtw\Sql\Dml\Update\SetColumnExpression[] */
+    /** @var SetColumnExpression[] */
     private $values;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $where;
 
-    /** @var \SqlFtw\Sql\Dml\WithClause|null */
+    /** @var WithClause|null */
     private $with;
 
-    /** @var \SqlFtw\Sql\Dml\OrderByExpression[]|null */
+    /** @var OrderByExpression[]|null */
     private $orderBy;
 
     /** @var int|null */
@@ -50,11 +50,11 @@ class UpdateCommand implements DmlCommand
     private $lowPriority;
 
     /**
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $tableReferences
-     * @param \SqlFtw\Sql\Dml\Update\SetColumnExpression[] $values
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
-     * @param \SqlFtw\Sql\Dml\WithClause|null $with
-     * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
+     * @param TableReferenceNode $tableReferences
+     * @param SetColumnExpression[] $values
+     * @param ExpressionNode|null $where
+     * @param WithClause|null $with
+     * @param OrderByExpression[]|null $orderBy
      * @param int|null $limit
      * @param bool $ignore
      * @param bool $lowPriority
@@ -93,7 +93,7 @@ class UpdateCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\Update\SetColumnExpression[]
+     * @return SetColumnExpression[]
      */
     public function getValues(): array
     {
@@ -111,7 +111,7 @@ class UpdateCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\OrderByExpression[]|null
+     * @return OrderByExpression[]|null
      */
     public function getOrderBy(): ?array
     {

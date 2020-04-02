@@ -9,18 +9,22 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use DateTimeInterface;
 use Dogma\StrictBehaviorMixin;
+use Dogma\Time\Date;
+use Dogma\Time\Span\DateTimeSpan;
+use Dogma\Time\Time;
 use SqlFtw\Formatter\Formatter;
 
 class ValueLiteral implements Literal
 {
     use StrictBehaviorMixin;
 
-    /** @var bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\Span\DateTimeSpan|\SqlFtw\Sql\Expression\TimeInterval */
+    /** @var bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval */
     private $value;
 
     /**
-     * @param bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\Span\DateTimeSpan|\SqlFtw\Sql\Expression\TimeInterval $value
+     * @param bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval $value
      */
     public function __construct($value)
     {
@@ -33,7 +37,7 @@ class ValueLiteral implements Literal
     }
 
     /**
-     * @return bool|int|float|string|\DateTimeInterface|\Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\Span\DateTimeSpan|\SqlFtw\Sql\Expression\TimeInterval
+     * @return bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval
      */
     public function getValue()
     {

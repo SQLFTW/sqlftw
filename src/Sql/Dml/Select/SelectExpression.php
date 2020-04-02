@@ -20,19 +20,19 @@ class SelectExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $expression;
 
     /** @var string|null */
     private $alias;
 
-    /** @var \SqlFtw\Sql\Dml\Select\WindowSpecification|string|null */
+    /** @var WindowSpecification|string|null */
     private $window;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode $expression
+     * @param ExpressionNode $expression
      * @param string|null $alias
-     * @param \SqlFtw\Sql\Dml\Select\WindowSpecification|string|mixed|null $window
+     * @param WindowSpecification|string|mixed|null $window
      */
     public function __construct(ExpressionNode $expression, ?string $alias = null, $window = null)
     {
@@ -55,7 +55,7 @@ class SelectExpression implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\Select\WindowSpecification|string|null
+     * @return WindowSpecification|string|null
      */
     public function getWindow()
     {

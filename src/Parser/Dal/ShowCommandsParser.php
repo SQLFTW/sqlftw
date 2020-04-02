@@ -67,7 +67,7 @@ class ShowCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
@@ -219,7 +219,7 @@ class ShowCommandsParser
             case Keyword::ENGINE:
                 // SHOW ENGINE engine_name {STATUS | MUTEX}
                 $engine = $tokenList->consumeName();
-                /** @var \SqlFtw\Sql\Dal\Show\ShowEngineOption $what */
+                /** @var ShowEngineOption $what */
                 $what = $tokenList->consumeKeywordEnum(ShowEngineOption::class);
                 $tokenList->expectEnd();
 

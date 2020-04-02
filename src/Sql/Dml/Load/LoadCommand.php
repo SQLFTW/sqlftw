@@ -26,28 +26,28 @@ abstract class LoadCommand implements DmlCommand
     /** @var string */
     private $file;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Charset|null */
+    /** @var Charset|null */
     private $charset;
 
     /** @var string[]|null */
     private $fields;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[]|null */
+    /** @var ExpressionNode[]|null */
     private $setters;
 
     /** @var int|null */
     private $ignoreRows;
 
-    /** @var \SqlFtw\Sql\Dml\Load\LoadPriority|null */
+    /** @var LoadPriority|null */
     private $priority;
 
     /** @var bool */
     private $local;
 
-    /** @var \SqlFtw\Sql\Dml\DuplicateOption|null */
+    /** @var DuplicateOption|null */
     private $duplicateOption;
 
     /** @var string[]|null */
@@ -55,14 +55,14 @@ abstract class LoadCommand implements DmlCommand
 
     /**
      * @param string $file
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Charset|null $charset
+     * @param QualifiedName $table
+     * @param Charset|null $charset
      * @param string[]|null $fields
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $setters
+     * @param ExpressionNode[]|null $setters
      * @param int|null $ignoreRows
-     * @param \SqlFtw\Sql\Dml\Load\LoadPriority|null $priority
+     * @param LoadPriority|null $priority
      * @param bool $local
-     * @param \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption
+     * @param DuplicateOption|null $duplicateOption
      * @param string[]|null $partitions
      */
     public function __construct(

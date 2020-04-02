@@ -21,7 +21,7 @@ class SqlEnum extends StringEnum implements SqlSerializable
     }
 
     /**
-     * @param string|\Dogma\Enum\Enum ...$values
+     * @param string|StringEnum ...$values
      * @return bool
      */
     public function equalsAny(...$values): bool

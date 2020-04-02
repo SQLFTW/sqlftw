@@ -23,13 +23,13 @@ class DropIndexCommand implements IndexCommand, TableStructureCommand
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm|null */
+    /** @var AlterTableAlgorithm|null */
     private $algorithm;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock|null */
+    /** @var AlterTableLock|null */
     private $lock;
 
     public function __construct(

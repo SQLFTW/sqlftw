@@ -18,13 +18,13 @@ class ShowStatusCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Scope|null */
+    /** @var Scope|null */
     private $scope;
 
     /** @var string|null */
     private $like;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $where;
 
     public function __construct(?Scope $scope = null, ?string $like = null, ?ExpressionNode $where = null)

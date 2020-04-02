@@ -25,16 +25,16 @@ class CreateTableCommand implements AnyCreateTableCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\TableItem[] */
+    /** @var TableItem[] */
     private $items;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList */
+    /** @var TableOptionsList */
     private $options;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition|null */
+    /** @var PartitioningDefinition|null */
     private $partitioning;
 
     /** @var bool */
@@ -43,21 +43,21 @@ class CreateTableCommand implements AnyCreateTableCommand
     /** @var bool */
     private $ifNotExists;
 
-    /** @var \SqlFtw\Sql\Dml\DuplicateOption|null */
+    /** @var DuplicateOption|null */
     private $duplicateOption;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectCommand|null */
+    /** @var SelectCommand|null */
     private $select;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Ddl\Table\TableItem[] $items
-     * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[]|null $options
-     * @param \SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition|null $partitioning
+     * @param QualifiedName $table
+     * @param TableItem[] $items
+     * @param TableOptionsList|mixed[]|null $options
+     * @param PartitioningDefinition|null $partitioning
      * @param bool $temporary
      * @param bool $ifNotExists
-     * @param \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption
-     * @param \SqlFtw\Sql\Dml\Select\SelectCommand|null $select
+     * @param DuplicateOption|null $duplicateOption
+     * @param SelectCommand|null $select
      */
     public function __construct(
         QualifiedName $table,
@@ -90,7 +90,7 @@ class CreateTableCommand implements AnyCreateTableCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\TableItem[]
+     * @return TableItem[]
      */
     public function getItems(): array
     {

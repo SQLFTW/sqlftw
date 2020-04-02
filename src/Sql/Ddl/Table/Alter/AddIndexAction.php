@@ -17,7 +17,7 @@ class AddIndexAction implements AlterTableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition */
+    /** @var IndexDefinition */
     private $index;
 
     public function __construct(IndexDefinition $index)

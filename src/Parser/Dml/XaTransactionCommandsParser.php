@@ -48,7 +48,7 @@ class XaTransactionCommandsParser
             case Keyword::START:
             case Keyword::BEGIN:
                 $xid = $this->parseXid($tokenList);
-                /** @var \SqlFtw\Sql\Dml\XaTransaction\XaStartOption $option */
+                /** @var XaStartOption $option */
                 $option = $tokenList->mayConsumeKeywordEnum(XaStartOption::class);
                 $tokenList->expectEnd();
 

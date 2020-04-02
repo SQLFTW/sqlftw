@@ -17,10 +17,10 @@ class CollateExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Collation */
+    /** @var Collation */
     private $collation;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $expression;
 
     public function __construct(ExpressionNode $expression, Collation $collation)

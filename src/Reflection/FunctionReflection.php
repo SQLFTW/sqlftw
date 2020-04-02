@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\DropFunctionCommand;
+use SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand;
 use SqlFtw\Sql\QualifiedName;
 use function end;
 
@@ -20,10 +21,10 @@ class FunctionReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand[] */
+    /** @var StoredFunctionCommand[] */
     private $commands = [];
 
     public function __construct(QualifiedName $name, CreateFunctionCommand $createFunctionCommand)
@@ -58,7 +59,7 @@ class FunctionReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand[]
+     * @return StoredFunctionCommand[]
      */
     public function getCommands(): array
     {

@@ -20,7 +20,7 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
     /** @var string|null */
     private $toLog;
 
-    /** @var \Dogma\Time\DateTime|null */
+    /** @var DateTime|null */
     private $before;
 
     public function __construct(?string $toLog, ?DateTime $before)

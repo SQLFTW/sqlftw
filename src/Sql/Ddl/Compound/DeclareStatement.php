@@ -22,7 +22,7 @@ class DeclareStatement implements CompoundStatementItem
     /** @var string[] */
     private $names;
 
-    /** @var \SqlFtw\Sql\Ddl\DataType */
+    /** @var DataType */
     private $type;
 
     /** @var string|int|float|bool|null */
@@ -30,7 +30,7 @@ class DeclareStatement implements CompoundStatementItem
 
     /**
      * @param string[] $names
-     * @param \SqlFtw\Sql\Ddl\DataType $type
+     * @param DataType $type
      * @param mixed|null $default
      */
     public function __construct(array $names, DataType $type, $default = null)

@@ -16,30 +16,30 @@ class CreateUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\User\IdentifiedUser[] */
+    /** @var IdentifiedUser[] */
     private $users;
 
     /** @var string[]|null */
     private $defaultRoles;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserTlsOption[]|null */
+    /** @var UserTlsOption[]|null */
     private $tlsOptions;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserResourceOption[]|null */
+    /** @var UserResourceOption[]|null */
     private $resourceOptions;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserPasswordLockOption[]|null */
+    /** @var UserPasswordLockOption[]|null */
     private $passwordLockOptions;
 
     /** @var bool */
     private $ifNotExists;
 
     /**
-     * @param \SqlFtw\Sql\Dal\User\IdentifiedUser[] $users
+     * @param IdentifiedUser[] $users
      * @param string[]|null $defaultRoles
-     * @param \SqlFtw\Sql\Dal\User\UserTlsOption[]|null $tlsOptions
-     * @param \SqlFtw\Sql\Dal\User\UserResourceOption[]|null $resourceOptions
-     * @param \SqlFtw\Sql\Dal\User\UserPasswordLockOption[]|null $passwordLockOptions
+     * @param UserTlsOption[]|null $tlsOptions
+     * @param UserResourceOption[]|null $resourceOptions
+     * @param UserPasswordLockOption[]|null $passwordLockOptions
      * @param bool $ifNotExists
      */
     public function __construct(
@@ -60,7 +60,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\IdentifiedUser[]
+     * @return IdentifiedUser[]
      */
     public function getUsers(): array
     {
@@ -76,7 +76,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\UserTlsOption[]|null
+     * @return UserTlsOption[]|null
      */
     public function getTlsOptions(): ?array
     {
@@ -84,7 +84,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\UserResourceOption[]|null
+     * @return UserResourceOption[]|null
      */
     public function getResourceOptions(): ?array
     {
@@ -92,7 +92,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\UserPasswordLockOption[]|null
+     * @return UserPasswordLockOption[]|null
      */
     public function getPasswordLockOptions(): ?array
     {

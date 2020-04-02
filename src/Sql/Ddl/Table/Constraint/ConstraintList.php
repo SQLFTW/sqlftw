@@ -16,14 +16,14 @@ class ConstraintList
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition[] (string|int $name => $constraint) */
+    /** @var ConstraintDefinition[] (string|int $name => $constraint) */
     private $constraints = [];
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition[] (string|int $name => $constraint) */
+    /** @var ConstraintDefinition[] (string|int $name => $constraint) */
     private $droppedConstraints = [];
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition[] $constraints
+     * @param ConstraintDefinition[] $constraints
      */
     public function __construct(array $constraints)
     {
@@ -56,7 +56,7 @@ class ConstraintList
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition[]
+     * @return ConstraintDefinition[]
      */
     public function getConstraints(): array
     {
@@ -64,7 +64,7 @@ class ConstraintList
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition[]
+     * @return ConstraintDefinition[]
      */
     public function getDroppedConstraints(): array
     {
@@ -72,11 +72,11 @@ class ConstraintList
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition[]
+     * @return ForeignKeyDefinition[]
      */
     public function getForeignKeys(): array
     {
-        /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition[] $result */
+        /** @var ForeignKeyDefinition[] $result */
         $result = array_filter($this->constraints, static function (ConstraintDefinition $constraint) {
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });
@@ -85,11 +85,11 @@ class ConstraintList
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition[]
+     * @return ForeignKeyDefinition[]
      */
     public function getDroppedForeignKeys(): array
     {
-        /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition[] $result */
+        /** @var ForeignKeyDefinition[] $result */
         $result = array_filter($this->droppedConstraints, static function (ConstraintDefinition $constraint) {
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });

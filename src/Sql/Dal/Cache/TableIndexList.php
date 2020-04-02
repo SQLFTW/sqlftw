@@ -21,7 +21,7 @@ class TableIndexList implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
     /** @var string[]|null */
@@ -34,7 +34,7 @@ class TableIndexList implements SqlSerializable
     private $ignoreLeaves;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
+     * @param QualifiedName $table
      * @param string[]|null $indexes
      * @param string[]|bool|null $partitions
      * @param bool $ignoreLeaves

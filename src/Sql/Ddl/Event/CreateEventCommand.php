@@ -19,19 +19,19 @@ class CreateEventCommand implements EventCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Event\EventSchedule */
+    /** @var EventSchedule */
     private $schedule;
 
-    /** @var \SqlFtw\Sql\Dml\DoCommand\DoCommand */
+    /** @var DoCommand */
     private $body;
 
-    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
+    /** @var UserExpression|null */
     private $definer;
 
-    /** @var \SqlFtw\Sql\Ddl\Event\EventState|null */
+    /** @var EventState|null */
     private $state;
 
     /** @var bool|null */

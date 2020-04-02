@@ -19,11 +19,11 @@ class IntervalLiteral implements Literal
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\Span\DateTimeSpan|\DateInterval */
+    /** @var TimeInterval|DateTimeSpan|DateInterval */
     private $value;
 
     /**
-     * @param \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\Span\DateTimeSpan|\DateInterval $value
+     * @param TimeInterval|DateTimeSpan|DateInterval $value
      */
     public function __construct($value)
     {
@@ -38,7 +38,7 @@ class IntervalLiteral implements Literal
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\TimeInterval|\Dogma\Time\Span\DateTimeSpan|\DateInterval
+     * @return TimeInterval|DateTimeSpan|DateInterval
      */
     public function getValue()
     {

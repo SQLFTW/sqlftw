@@ -21,14 +21,14 @@ class SimpleAction implements AlterTableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType */
+    /** @var AlterTableActionType */
     private $type;
 
     /** @var mixed|null */
     private $value;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType $type
+     * @param AlterTableActionType $type
      * @param mixed|null $value
      */
     public function __construct(AlterTableActionType $type, $value = null)

@@ -16,7 +16,7 @@ class SetRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\User\RolesSpecification */
+    /** @var RolesSpecification */
     private $role;
 
     public function __construct(RolesSpecification $role)

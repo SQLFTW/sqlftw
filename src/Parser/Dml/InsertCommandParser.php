@@ -23,6 +23,7 @@ use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -31,10 +32,10 @@ class InsertCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
+    /** @var SelectCommandParser */
     private $selectCommandParser;
 
     public function __construct(
@@ -72,7 +73,7 @@ class InsertCommandParser
     public function parseInsert(TokenList $tokenList): InsertCommand
     {
         $tokenList->consumeKeyword(Keyword::INSERT);
-        /** @var \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority */
+        /** @var InsertPriority|null $priority */
         $priority = $tokenList->mayConsumeKeywordEnum(InsertPriority::class);
         $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
         $tokenList->mayConsumeKeyword(Keyword::INTO);
@@ -124,7 +125,7 @@ class InsertCommandParser
     public function parseReplace(TokenList $tokenList): ReplaceCommand
     {
         $tokenList->consumeKeyword(Keyword::REPLACE);
-        /** @var \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority */
+        /** @var InsertPriority|null $priority */
         $priority = $tokenList->mayConsumeKeywordEnum(InsertPriority::class);
         $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
         $tokenList->mayConsumeKeyword(Keyword::INTO);
@@ -153,7 +154,7 @@ class InsertCommandParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return string[]|null
      */
     private function parsePartitionsList(TokenList $tokenList): ?array
@@ -172,7 +173,7 @@ class InsertCommandParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return string[]|null
      */
     private function parseColumnList(TokenList $tokenList): ?array
@@ -201,8 +202,8 @@ class InsertCommandParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @param TokenList $tokenList
+     * @return ExpressionNode[]
      */
     private function parseAssignments(TokenList $tokenList): array
     {
@@ -218,8 +219,8 @@ class InsertCommandParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[][]
+     * @param TokenList $tokenList
+     * @return ExpressionNode[][]
      */
     private function parseRows(TokenList $tokenList): array
     {

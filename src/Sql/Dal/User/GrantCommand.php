@@ -17,38 +17,38 @@ class GrantCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserPrivilege[] */
+    /** @var UserPrivilege[] */
     private $privileges;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeResource */
+    /** @var UserPrivilegeResource */
     private $resource;
 
-    /** @var \SqlFtw\Sql\Dal\User\IdentifiedUser[] */
+    /** @var IdentifiedUser[] */
     private $users;
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var UserName|null */
     private $asUser;
 
-    /** @var \SqlFtw\Sql\Dal\User\RolesSpecification|null */
+    /** @var RolesSpecification|null */
     private $withRole;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserTlsOption[]|null */
+    /** @var UserTlsOption[]|null */
     private $tlsOptions;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserResourceOption[]|null */
+    /** @var UserResourceOption[]|null */
     private $resourceOptions;
 
     /** @var bool */
     private $withGrantOption;
 
     /**
-     * @param \SqlFtw\Sql\Dal\User\UserPrivilege[] $privileges
-     * @param \SqlFtw\Sql\Dal\User\UserPrivilegeResource $resource
-     * @param \SqlFtw\Sql\Dal\User\IdentifiedUser[] $users
-     * @param \SqlFtw\Sql\UserName|null $asUser
-     * @param \SqlFtw\Sql\Dal\User\RolesSpecification|null $withRole
-     * @param \SqlFtw\Sql\Dal\User\UserTlsOption[]|null $tlsOptions
-     * @param \SqlFtw\Sql\Dal\User\UserResourceOption[]|null $resourceOptions
+     * @param UserPrivilege[] $privileges
+     * @param UserPrivilegeResource $resource
+     * @param IdentifiedUser[] $users
+     * @param UserName|null $asUser
+     * @param RolesSpecification|null $withRole
+     * @param UserTlsOption[]|null $tlsOptions
+     * @param UserResourceOption[]|null $resourceOptions
      * @param bool $withGrantOption
      */
     public function __construct(
@@ -72,7 +72,7 @@ class GrantCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\UserPrivilege[]
+     * @return UserPrivilege[]
      */
     public function getPrivileges(): array
     {
@@ -85,7 +85,7 @@ class GrantCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\IdentifiedUser[]
+     * @return IdentifiedUser[]
      */
     public function getUsers(): array
     {
@@ -103,7 +103,7 @@ class GrantCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\UserTlsOption[]|null
+     * @return UserTlsOption[]|null
      */
     public function getTlsOptions(): ?array
     {
@@ -111,7 +111,7 @@ class GrantCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\UserResourceOption[]|null
+     * @return UserResourceOption[]|null
      */
     public function getResourceOptions(): ?array
     {

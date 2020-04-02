@@ -18,10 +18,10 @@ class InvalidCommand implements Command
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\TokenList */
+    /** @var TokenList */
     private $tokenList;
 
-    /** @var \Throwable|null */
+    /** @var Throwable|null */
     private $exception;
 
     public function __construct(TokenList $tokenList, ?Throwable $exception = null)

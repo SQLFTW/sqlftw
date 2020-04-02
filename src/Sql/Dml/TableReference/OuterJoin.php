@@ -19,20 +19,20 @@ class OuterJoin extends Join
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide */
+    /** @var JoinSide */
     private $joinSide;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $condition;
 
     /** @var string[]|null */
     private $using;
 
     /**
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $left
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $right
-     * @param \SqlFtw\Sql\Dml\TableReference\JoinSide $joinSide
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $condition
+     * @param TableReferenceNode $left
+     * @param TableReferenceNode $right
+     * @param JoinSide $joinSide
+     * @param ExpressionNode|null $condition
      * @param string[]|null $using
      */
     public function __construct(

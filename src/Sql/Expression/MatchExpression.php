@@ -18,22 +18,22 @@ class MatchExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\ColumnName[] */
+    /** @var ColumnName[] */
     private $columns;
 
     /** @var string */
     private $query;
 
-    /** @var \SqlFtw\Sql\Expression\MatchMode|null */
+    /** @var MatchMode|null */
     private $mode;
 
     /** @var bool */
     private $queryExpansion;
 
     /**
-     * @param \SqlFtw\Sql\ColumnName[] $columns
+     * @param ColumnName[] $columns
      * @param string $query
-     * @param \SqlFtw\Sql\Expression\MatchMode|null $mode
+     * @param MatchMode|null $mode
      * @param bool $queryExpansion
      */
     public function __construct(array $columns, string $query, ?MatchMode $mode, bool $queryExpansion = false)
@@ -52,7 +52,7 @@ class MatchExpression implements ExpressionNode
     }
 
     /**
-     * @return \SqlFtw\Sql\ColumnName[]
+     * @return ColumnName[]
      */
     public function getColumns(): array
     {

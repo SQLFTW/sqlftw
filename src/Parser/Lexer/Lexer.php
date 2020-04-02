@@ -8,7 +8,7 @@
  */
 
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
-// phpcs:disable SlevomatCodingStandard.Whitespaces.DuplicateSpaces
+// phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
 
 namespace SqlFtw\Parser\Lexer;
 
@@ -69,7 +69,7 @@ class Lexer
     /** @var int[] */
     private static $operatorSymbolsKey;
 
-    /** @var \SqlFtw\Platform\PlatformSettings */
+    /** @var PlatformSettings */
     private $settings;
 
     /** @var bool */
@@ -96,7 +96,7 @@ class Lexer
     /**
      * Tokenize SQL code. Expects line endings to be converted to "\n" and UTF-8 encoding.
      * @param string $string
-     * @return \SqlFtw\Parser\Token[]
+     * @return Token[]
      */
     public function tokenizeAll(string $string): array
     {
@@ -111,7 +111,7 @@ class Lexer
     /**
      * Tokenize SQL code. Expects line endings to be converted to "\n" and UTF-8 encoding.
      * @param string $string
-     * @return \SqlFtw\Parser\Token[]|\Generator
+     * @return Token[]|Generator
      */
     public function tokenize(string $string): Generator
     {
@@ -126,7 +126,7 @@ class Lexer
         $operatorKeywordsKey = array_flip($features->getOperatorKeywords());
 
         $delimiter = $this->settings->getDelimiter();
-        /** @var \SqlFtw\Parser\Token|null $previous */
+        /** @var Token|null $previous */
         $previous = null;
         $condition = null;
 

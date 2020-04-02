@@ -25,13 +25,13 @@ class UpdateCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Dml\WithParser */
+    /** @var WithParser */
     private $withParser;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\JoinParser */
+    /** @var JoinParser */
     private $joinParser;
 
     public function __construct(

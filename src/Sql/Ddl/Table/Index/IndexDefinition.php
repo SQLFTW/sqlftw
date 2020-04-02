@@ -30,28 +30,28 @@ class IndexDefinition implements TableItem, ConstraintBody
     /** @var string|null */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexType */
+    /** @var IndexType */
     private $type;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexColumn[] */
+    /** @var IndexColumn[] */
     private $columns;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexAlgorithm|null */
+    /** @var IndexAlgorithm|null */
     private $algorithm;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexOptions */
+    /** @var IndexOptions */
     private $options;
 
-    /** @var \SqlFtw\Sql\QualifiedName|null */
+    /** @var QualifiedName|null */
     private $table;
 
     /**
      * @param string|null $name
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexType $type
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexColumn[]|int[]|string[]|null[] $columns
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexAlgorithm|null $algorithm
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexOptions $options
-     * @param \SqlFtw\Sql\QualifiedName|null $table
+     * @param IndexType $type
+     * @param IndexColumn[]|int[]|string[]|null[] $columns
+     * @param IndexAlgorithm|null $algorithm
+     * @param IndexOptions $options
+     * @param QualifiedName|null $table
      */
     public function __construct(
         ?string $name,
@@ -101,7 +101,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexColumn[]|int[]|string[]|null[] $columns
+     * @param IndexColumn[]|int[]|string[]|null[] $columns
      */
     private function setColumns(array $columns): void
     {
@@ -179,7 +179,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Index\IndexColumn[]
+     * @return IndexColumn[]
      */
     public function getColumns(): array
     {

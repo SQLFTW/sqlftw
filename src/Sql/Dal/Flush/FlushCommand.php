@@ -20,7 +20,7 @@ class FlushCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\Flush\FlushOption[] */
+    /** @var FlushOption[] */
     private $options;
 
     /** @var string|null */
@@ -30,7 +30,7 @@ class FlushCommand implements DalCommand
     private $local;
 
     /**
-     * @param \SqlFtw\Sql\Dal\Flush\FlushOption[] $options
+     * @param FlushOption[] $options
      * @param string|null $channel
      * @param bool $local
      */
@@ -45,7 +45,7 @@ class FlushCommand implements DalCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\Flush\FlushOption[]
+     * @return FlushOption[]
      */
     public function getOptions(): array
     {

@@ -24,7 +24,7 @@ class IndexColumn implements SqlSerializable
     /** @var int|null */
     private $length;
 
-    /** @var \SqlFtw\Sql\Order|null */
+    /** @var Order|null */
     private $order;
 
     public function __construct(string $name, ?int $length = null, ?Order $order = null)

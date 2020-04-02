@@ -19,18 +19,18 @@ class IndexHint implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\IndexHintAction */
+    /** @var IndexHintAction */
     private $action;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\IndexHintTarget */
+    /** @var IndexHintTarget */
     private $target;
 
     /** @var string[] */
     private $indexes;
 
     /**
-     * @param \SqlFtw\Sql\Dml\TableReference\IndexHintAction $action
-     * @param \SqlFtw\Sql\Dml\TableReference\IndexHintTarget $target
+     * @param IndexHintAction $action
+     * @param IndexHintTarget $target
      * @param string[] $indexes
      */
     public function __construct(IndexHintAction $action, IndexHintTarget $target, array $indexes)

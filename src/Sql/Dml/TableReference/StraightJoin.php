@@ -17,7 +17,7 @@ class StraightJoin extends Join
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $condition;
 
     public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?ExpressionNode $condition)

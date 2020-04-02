@@ -17,7 +17,7 @@ class SetCharacterSetCommand implements CharsetCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Charset|null */
+    /** @var Charset|null */
     private $charset;
 
     public function __construct(?Charset $charset)

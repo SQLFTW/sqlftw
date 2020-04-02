@@ -18,15 +18,15 @@ class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceComm
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
+    /** @var SelectCommand */
     private $select;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Dml\Select\SelectCommand $select
+     * @param QualifiedName $table
+     * @param SelectCommand $select
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority
+     * @param InsertPriority|null $priority
      * @param bool $ignore
      */
     public function __construct(

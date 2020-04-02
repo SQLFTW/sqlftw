@@ -18,20 +18,20 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
+    /** @var SelectCommand */
     private $select;
 
-    /** @var \SqlFtw\Sql\Dml\Insert\OnDuplicateKeyActions|null */
+    /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Dml\Select\SelectCommand $select
+     * @param QualifiedName $table
+     * @param SelectCommand $select
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority
+     * @param InsertPriority|null $priority
      * @param bool $ignore
-     * @param \SqlFtw\Sql\Dml\Insert\OnDuplicateKeyActions|null $onDuplicateKeyActions
+     * @param OnDuplicateKeyActions|null $onDuplicateKeyActions
      */
     public function __construct(
         QualifiedName $table,

@@ -17,7 +17,7 @@ class UserResourceOption implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserResourceOptionType */
+    /** @var UserResourceOptionType */
     private $type;
 
     /** @var int */

@@ -20,11 +20,11 @@ class OnDuplicateKeyActions implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var ExpressionNode[] */
     private $expressions;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[] $expressions (string $column => ExpressionNode $value)
+     * @param ExpressionNode[] $expressions (string $column => ExpressionNode $value)
      */
     public function __construct(array $expressions)
     {

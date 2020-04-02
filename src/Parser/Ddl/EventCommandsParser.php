@@ -26,10 +26,10 @@ class EventCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Dml\DoCommandsParser */
+    /** @var DoCommandsParser */
     private $doCommandsParser;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
     public function __construct(DoCommandsParser $doCommandsParser, ExpressionParser $expressionParser)

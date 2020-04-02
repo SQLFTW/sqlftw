@@ -17,7 +17,7 @@ class HandlerOpenCommand implements HandlerCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
     /** @var string|null */

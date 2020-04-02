@@ -23,16 +23,16 @@ class ExplainCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
+    /** @var SelectCommandParser */
     private $selectCommandParser;
 
-    /** @var \SqlFtw\Parser\Dml\InsertCommandParser */
+    /** @var InsertCommandParser */
     private $insertCommandParser;
 
-    /** @var \SqlFtw\Parser\Dml\UpdateCommandParser */
+    /** @var UpdateCommandParser */
     private $updateCommandParser;
 
-    /** @var \SqlFtw\Parser\Dml\DeleteCommandParser */
+    /** @var DeleteCommandParser */
     private $deleteCommandParser;
 
     public function __construct(

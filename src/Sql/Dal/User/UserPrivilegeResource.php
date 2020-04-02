@@ -25,7 +25,7 @@ class UserPrivilegeResource implements SqlSerializable
     /** @var string|null */
     private $objectName;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeResourceType|null */
+    /** @var UserPrivilegeResourceType|null */
     private $objectType;
 
     public function __construct(?string $schema, ?string $objectName, ?UserPrivilegeResourceType $objectType)

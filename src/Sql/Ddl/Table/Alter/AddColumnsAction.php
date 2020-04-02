@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 
 class AddColumnsAction implements AlterTableAction
 {
@@ -18,11 +19,11 @@ class AddColumnsAction implements AlterTableAction
 
     public const FIRST = true;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition[] */
+    /** @var ColumnDefinition[] */
     private $columns;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition[] $columns
+     * @param ColumnDefinition[] $columns
      */
     public function __construct(array $columns)
     {
@@ -35,7 +36,7 @@ class AddColumnsAction implements AlterTableAction
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getColumns(): array
     {

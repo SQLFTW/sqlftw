@@ -5,23 +5,24 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Statement;
 
 class WhileStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Statement[] */
+    /** @var Statement[] */
     private $statements;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $condition;
 
     /** @var string|null */
     private $label;
 
     /**
-     * @param \SqlFtw\Sql\Statement[] $statements
-     * @param \SqlFtw\Sql\Expression\ExpressionNode $condition
+     * @param Statement[] $statements
+     * @param ExpressionNode $condition
      * @param string|null $label
      */
     public function __construct(array $statements, ExpressionNode $condition, ?string $label)
@@ -32,7 +33,7 @@ class WhileStatement implements CompoundStatementItem
     }
 
     /**
-     * @return \SqlFtw\Sql\Statement[]
+     * @return Statement[]
      */
     public function getStatements(): array
     {

@@ -14,26 +14,27 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\FileFormat;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
 
 class LoadDataCommand extends LoadCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\FileFormat|null */
+    /** @var FileFormat|null */
     private $format;
 
     /**
      * @param string $file
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Dml\FileFormat|null $format
-     * @param \SqlFtw\Sql\Charset|null $charset
+     * @param QualifiedName $table
+     * @param FileFormat|null $format
+     * @param Charset|null $charset
      * @param string[]|null $fields
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $setters
+     * @param ExpressionNode[]|null $setters
      * @param int|null $ignoreRows
-     * @param \SqlFtw\Sql\Dml\Load\LoadPriority|null $priority
+     * @param LoadPriority|null $priority
      * @param bool $local
-     * @param \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption
+     * @param DuplicateOption|null $duplicateOption
      * @param string[]|null $partitions
      */
     public function __construct(

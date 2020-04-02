@@ -18,7 +18,7 @@ class ShowColumnsCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
     /** @var bool */
@@ -27,7 +27,7 @@ class ShowColumnsCommand implements ShowCommand
     /** @var string|null */
     private $like;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $where;
 
     public function __construct(QualifiedName $table, bool $full = false, ?string $like = null, ?ExpressionNode $where = null)

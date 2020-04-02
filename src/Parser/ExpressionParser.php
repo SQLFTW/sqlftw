@@ -71,7 +71,7 @@ class ExpressionParser
         . self::PUNCTUATION . '(?:[0-5][0-9]))'
         . '(\\.[0-9]+)?$/';
 
-    /** @var \SqlFtw\Parser\ParserFactory */
+    /** @var ParserFactory */
     private $parserFactory;
 
     public function __construct(ParserFactory $parserFactory)
@@ -128,8 +128,8 @@ class ExpressionParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @param TokenList $tokenList
+     * @return ExpressionNode[]
      */
     private function parseExpressionList(TokenList $tokenList): array
     {
@@ -522,7 +522,7 @@ class ExpressionParser
         $tokenList->consumeKeyword(Keyword::AGAINST);
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
         $query = $tokenList->consumeString();
-        /** @var \SqlFtw\Sql\Expression\MatchMode|null $mode */
+        /** @var MatchMode|null $mode */
         $mode = $tokenList->mayConsumeKeywordEnum(MatchMode::class);
         $expansion = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
@@ -569,8 +569,8 @@ class ExpressionParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return string|int|float|bool|\SqlFtw\Sql\Expression\Literal
+     * @param TokenList $tokenList
+     * @return string|int|float|bool|Literal
      */
     public function parseLiteralValue(TokenList $tokenList)
     {
@@ -606,8 +606,8 @@ class ExpressionParser
      * order_by:
      *     [ORDER BY {col_name | expr | position} [ASC | DESC], ...]
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dml\OrderByExpression[]
+     * @param TokenList $tokenList
+     * @return OrderByExpression[]
      */
     public function parseOrderBy(TokenList $tokenList): array
     {
@@ -616,7 +616,7 @@ class ExpressionParser
             $expression = $this->parseExpression($tokenList);
             // todo: extract column name or position from expression
 
-            /** @var \SqlFtw\Sql\Order $order */
+            /** @var Order $order */
             $order = $tokenList->mayConsumeKeywordEnum(Order::class);
             $orderBy[] = new OrderByExpression($order, null, $expression);
         } while ($tokenList->mayConsumeComma());
@@ -628,7 +628,7 @@ class ExpressionParser
      * limit:
      *     [LIMIT {[offset,] row_count | row_count OFFSET offset}]
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return int[] ($limit, $offset)
      */
     public function parseLimitAndOffset(TokenList $tokenList): array
@@ -715,7 +715,7 @@ class ExpressionParser
         if ($value === null) {
             $value = $tokenList->consumeInt();
         }
-        /** @var \SqlFtw\Sql\Expression\TimeIntervalUnit $unit */
+        /** @var TimeIntervalUnit $unit */
         $unit = $tokenList->consumeKeywordEnum(TimeIntervalUnit::class);
 
         return new TimeInterval($value, $unit);

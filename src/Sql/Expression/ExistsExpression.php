@@ -16,7 +16,7 @@ class ExistsExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\Subquery */
+    /** @var Subquery */
     private $subquery;
 
     public function __construct(Subquery $subquery)

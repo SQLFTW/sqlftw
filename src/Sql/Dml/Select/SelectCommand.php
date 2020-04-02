@@ -23,28 +23,28 @@ class SelectCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectExpression[] */
+    /** @var SelectExpression[] */
     private $columns;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null */
+    /** @var TableReferenceNode|null */
     private $from;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $where;
 
-    /** @var \SqlFtw\Sql\Dml\Select\GroupByExpression[]|null */
+    /** @var GroupByExpression[]|null */
     private $groupBy;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $having;
 
-    /** @var \SqlFtw\Sql\Dml\WithClause|null */
+    /** @var WithClause|null */
     private $with;
 
-    /** @var \SqlFtw\Sql\Dml\Select\WindowSpecification[]|null */
+    /** @var WindowSpecification[]|null */
     private $windows;
 
-    /** @var \SqlFtw\Sql\Dml\OrderByExpression[]|null */
+    /** @var OrderByExpression[]|null */
     private $orderBy;
 
     /** @var int|null */
@@ -53,36 +53,36 @@ class SelectCommand implements DmlCommand
     /** @var int|null */
     private $offset;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectDistinctOption|null */
+    /** @var SelectDistinctOption|null */
     private $distinct;
 
     /** @var bool[] */
     private $options;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectInto|null */
+    /** @var SelectInto|null */
     private $into;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectLocking|null */
+    /** @var SelectLocking|null */
     private $locking;
 
     /** @var bool */
     private $withRollup;
 
     /**
-     * @param \SqlFtw\Sql\Dml\Select\SelectExpression[] $columns
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null $from
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
-     * @param \SqlFtw\Sql\Dml\Select\GroupByExpression[]|null $groupBy
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $having
-     * @param \SqlFtw\Sql\Dml\WithClause|null $with
-     * @param \SqlFtw\Sql\Dml\Select\WindowSpecification[]|null $windows ($name => $spec)
-     * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
+     * @param SelectExpression[] $columns
+     * @param TableReferenceNode|null $from
+     * @param ExpressionNode|null $where
+     * @param GroupByExpression[]|null $groupBy
+     * @param ExpressionNode|null $having
+     * @param WithClause|null $with
+     * @param WindowSpecification[]|null $windows ($name => $spec)
+     * @param OrderByExpression[]|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
-     * @param \SqlFtw\Sql\Dml\Select\SelectDistinctOption|null $distinct
+     * @param SelectDistinctOption|null $distinct
      * @param bool[] $options
-     * @param \SqlFtw\Sql\Dml\Select\SelectInto|null $into
-     * @param \SqlFtw\Sql\Dml\Select\SelectLocking|null $locking
+     * @param SelectInto|null $into
+     * @param SelectLocking|null $locking
      * @param bool $withRollup
      */
     public function __construct(
@@ -133,7 +133,7 @@ class SelectCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\Select\SelectExpression[]
+     * @return SelectExpression[]
      */
     public function getColumns(): array
     {
@@ -151,7 +151,7 @@ class SelectCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\Select\GroupByExpression[]|null
+     * @return GroupByExpression[]|null
      */
     public function getGroupBy(): ?array
     {
@@ -174,7 +174,7 @@ class SelectCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\Select\WindowSpecification[]|null
+     * @return WindowSpecification[]|null
      */
     public function getWindows(): ?array
     {
@@ -182,7 +182,7 @@ class SelectCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\OrderByExpression[]|null
+     * @return OrderByExpression[]|null
      */
     public function getOrderBy(): ?array
     {

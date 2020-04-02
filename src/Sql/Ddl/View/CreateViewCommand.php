@@ -20,38 +20,38 @@ class CreateViewCommand implements ViewCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
+    /** @var SelectCommand */
     private $body;
 
     /** @var string[]|null */
     private $columns;
 
-    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
+    /** @var UserExpression|null */
     private $definer;
 
-    /** @var \SqlFtw\Sql\Ddl\SqlSecurity|null */
+    /** @var SqlSecurity|null */
     private $security;
 
-    /** @var \SqlFtw\Sql\Ddl\View\ViewAlgorithm|null */
+    /** @var ViewAlgorithm|null */
     private $algorithm;
 
-    /** @var \SqlFtw\Sql\Ddl\View\ViewCheckOption|null */
+    /** @var ViewCheckOption|null */
     private $checkOption;
 
     /** @var bool */
     private $orReplace;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $name
-     * @param \SqlFtw\Sql\Dml\Select\SelectCommand $body
+     * @param QualifiedName $name
+     * @param SelectCommand $body
      * @param string[]|null $columns
-     * @param \SqlFtw\Sql\Ddl\UserExpression|null $definer
-     * @param \SqlFtw\Sql\Ddl\SqlSecurity|null $security
-     * @param \SqlFtw\Sql\Ddl\View\ViewAlgorithm|null $algorithm
-     * @param \SqlFtw\Sql\Ddl\View\ViewCheckOption|null $checkOption
+     * @param UserExpression|null $definer
+     * @param SqlSecurity|null $security
+     * @param ViewAlgorithm|null $algorithm
+     * @param ViewCheckOption|null $checkOption
      * @param bool $orReplace
      */
     public function __construct(

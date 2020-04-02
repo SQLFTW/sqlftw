@@ -17,7 +17,7 @@ class AddPartitionAction implements AlterTableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition */
+    /** @var PartitionDefinition */
     private $partition;
 
     public function __construct(PartitionDefinition $partition)

@@ -178,7 +178,7 @@ class TokenType extends IntSet
     /** Token following the DELIMITER keyword and consisting of symbols */
     public const DELIMITER_DEFINITION = 0x4000000000;
 
-    /** Not a real token. Indicates expectation of end of list of tokens */
+    /** Not a real token. Indicates expectation of end of token list */
     public const END = 0x8000000000;
 
 }

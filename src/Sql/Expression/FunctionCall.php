@@ -18,15 +18,15 @@ class FunctionCall implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var ExpressionNode[] */
     private $arguments;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\Expression\BuiltInFunction $name
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[] $arguments
+     * @param QualifiedName|BuiltInFunction $name
+     * @param ExpressionNode[] $arguments
      */
     public function __construct($name, array $arguments = [])
     {
@@ -43,7 +43,7 @@ class FunctionCall implements ExpressionNode
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName|\SqlFtw\Sql\Expression\BuiltInFunction
+     * @return QualifiedName|BuiltInFunction
      */
     public function getName()
     {
@@ -51,7 +51,7 @@ class FunctionCall implements ExpressionNode
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @return ExpressionNode[]
      */
     public function getArguments(): array
     {

@@ -16,11 +16,11 @@ class RowExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var ExpressionNode[] */
     private $contents;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[] $contents
+     * @param ExpressionNode[] $contents
      */
     public function __construct(array $contents)
     {
@@ -33,7 +33,7 @@ class RowExpression implements ExpressionNode
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @return ExpressionNode[]
      */
     public function getContents(): array
     {

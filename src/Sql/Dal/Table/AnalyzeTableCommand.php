@@ -19,14 +19,14 @@ class AnalyzeTableCommand implements MultipleTablesCommand, DalTableCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     private $tables;
 
     /** @var bool */
     private $local;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[] $tables
+     * @param QualifiedName[] $tables
      * @param bool $local
      */
     public function __construct(array $tables, bool $local = false)
@@ -39,7 +39,7 @@ class AnalyzeTableCommand implements MultipleTablesCommand, DalTableCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getTables(): array
     {

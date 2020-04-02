@@ -17,7 +17,7 @@ class TriggerPosition implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Trigger\TriggerOrder */
+    /** @var TriggerOrder */
     private $order;
 
     /** @var string */

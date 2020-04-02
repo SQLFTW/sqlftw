@@ -17,7 +17,7 @@ class DropFunctionCommand implements StoredFunctionCommand, DropRoutineCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
     /** @var bool */

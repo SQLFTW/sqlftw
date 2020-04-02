@@ -15,11 +15,11 @@ class ColumnList
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition[] (string $name => $column) */
+    /** @var ColumnDefinition[] (string $name => $column) */
     private $columns = [];
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition[] $columns
+     * @param ColumnDefinition[] $columns
      */
     public function __construct(array $columns)
     {
@@ -35,7 +35,7 @@ class ColumnList
 
     /**
      * All column actions except DROP
-     * @return \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition[]
+     * @return ColumnDefinition[]
      */
     public function getColumns(): array
     {

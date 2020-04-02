@@ -18,10 +18,10 @@ class PartitioningCondition implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningConditionType */
+    /** @var PartitioningConditionType */
     private $type;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $expression;
 
     /** @var string[]|null */
@@ -31,8 +31,8 @@ class PartitioningCondition implements SqlSerializable
     private $algorithm;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Partition\PartitioningConditionType $type
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $expression
+     * @param PartitioningConditionType $type
+     * @param ExpressionNode|null $expression
      * @param string[]|null $columns
      * @param int|null $algorithm
      */

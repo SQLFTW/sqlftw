@@ -18,10 +18,10 @@ class ShowIndexesCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $where;
 
     public function __construct(QualifiedName $table, ?ExpressionNode $where = null)

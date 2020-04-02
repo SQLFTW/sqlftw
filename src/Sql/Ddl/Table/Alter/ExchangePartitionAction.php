@@ -20,7 +20,7 @@ class ExchangePartitionAction implements AlterTableAction
     /** @var string */
     private $partition;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
     /** @var bool|null */

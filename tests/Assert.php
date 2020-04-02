@@ -17,7 +17,7 @@ class Assert extends DogmaAssert
 {
 
     /**
-     * @param \SqlFtw\Parser\Token $token
+     * @param Token $token
      * @param int $type
      * @param mixed|null $value
      * @param int|null $position

@@ -49,16 +49,16 @@ class CompoundStatementParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Parser */
+    /** @var Parser */
     private $parser;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\Ddl\TypeParser */
+    /** @var TypeParser */
     private $typeParser;
 
-    /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
+    /** @var SelectCommandParser */
     private $selectCommandParser;
 
     public function __construct(
@@ -93,8 +93,8 @@ class CompoundStatementParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Statement[]
+     * @param TokenList $tokenList
+     * @return Statement[]
      */
     private function parseStatementList(TokenList $tokenList): array
     {
@@ -337,14 +337,14 @@ class CompoundStatementParser
      *   | NOT FOUND
      *   | SQLEXCEPTION
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Ddl\Compound\DeclareStatement|\SqlFtw\Sql\Ddl\Compound\DeclareCursorStatement|\SqlFtw\Sql\Ddl\Compound\DeclareConditionStatement|\SqlFtw\Sql\Ddl\Compound\DeclareHandlerStatement
+     * @param TokenList $tokenList
+     * @return DeclareStatement|DeclareCursorStatement|DeclareConditionStatement|DeclareHandlerStatement
      */
     private function parseDeclare(TokenList $tokenList)
     {
         $tokenList->consumeKeyword(Keyword::DECLARE);
 
-        /** @var \SqlFtw\Sql\Ddl\Compound\HandlerAction|null $action */
+        /** @var HandlerAction|null $action */
         $action = $tokenList->mayConsumeKeywordEnum(HandlerAction::class);
         if ($action !== null) {
             $tokenList->consumeKeywords(Keyword::HANDLER, Keyword::FOR);
@@ -476,7 +476,7 @@ class CompoundStatementParser
      */
     private function parseGetDiagnostics(TokenList $tokenList): GetDiagnosticsStatement
     {
-        /** @var \SqlFtw\Sql\Ddl\Compound\DiagnosticsArea|null $area */
+        /** @var DiagnosticsArea|null $area */
         $area = $tokenList->mayConsumeKeywordEnum(DiagnosticsArea::class);
         $tokenList->consumeKeyword(Keyword::DIAGNOSTICS);
 
@@ -486,7 +486,7 @@ class CompoundStatementParser
             do {
                 $target = $tokenList->consumeName();
                 $tokenList->consumeOperator(Operator::EQUAL);
-                /** @var \SqlFtw\Sql\Ddl\Compound\ConditionInformationItem $item */
+                /** @var ConditionInformationItem $item */
                 $item = $tokenList->consumeKeywordEnum(ConditionInformationItem::class);
                 $conditionItems[] = new DiagnosticsItem($target, $item);
             } while ($tokenList->mayConsumeComma());
@@ -495,7 +495,7 @@ class CompoundStatementParser
             do {
                 $target = $tokenList->consumeName();
                 $tokenList->consumeOperator(Operator::EQUAL);
-                /** @var \SqlFtw\Sql\Ddl\Compound\StatementInformationItem $item */
+                /** @var StatementInformationItem $item */
                 $item = $tokenList->consumeKeywordEnum(StatementInformationItem::class);
                 $statementItems[] = new DiagnosticsItem($target, $item);
             } while ($tokenList->mayConsumeComma());
@@ -537,9 +537,9 @@ class CompoundStatementParser
      * condition_name, simple_value_specification:
      *     (see following discussion)
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @param string $keyword
-     * @return \SqlFtw\Sql\Ddl\Compound\SignalStatement|\SqlFtw\Sql\Ddl\Compound\ResignalStatement
+     * @return SignalStatement|ResignalStatement
      */
     private function parseSignalResignal(TokenList $tokenList, string $keyword)
     {

@@ -17,7 +17,7 @@ class Subquery implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
+    /** @var SelectCommand */
     private $subquery;
 
     public function __construct(SelectCommand $subquery)

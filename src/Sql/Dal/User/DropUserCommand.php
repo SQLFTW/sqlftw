@@ -18,14 +18,14 @@ class DropUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $users;
 
     /** @var bool */
     private $ifExists;
 
     /**
-     * @param \SqlFtw\Sql\UserName[] $users
+     * @param UserName[] $users
      * @param bool $ifExists
      */
     public function __construct(array $users, bool $ifExists = false)
@@ -38,7 +38,7 @@ class DropUserCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {

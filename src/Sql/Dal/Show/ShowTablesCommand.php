@@ -26,7 +26,7 @@ class ShowTablesCommand implements ShowCommand
     /** @var string|null */
     private $like;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $where;
 
     public function __construct(?string $database = null, bool $full = false, ?string $like = null, ?ExpressionNode $where = null)

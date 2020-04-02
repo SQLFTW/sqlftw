@@ -16,17 +16,17 @@ class IndexList
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[] (string|int $name => $index) */
+    /** @var IndexDefinition[] (string|int $name => $index) */
     private $indexes = [];
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[] (string|int $name => $index) */
+    /** @var IndexDefinition[] (string|int $name => $index) */
     private $renamedIndexes = [];
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[] (string|int $name => $index) */
+    /** @var IndexDefinition[] (string|int $name => $index) */
     private $droppedIndexes = [];
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[] $indexes
+     * @param IndexDefinition[] $indexes
      */
     public function __construct(array $indexes)
     {
@@ -59,7 +59,7 @@ class IndexList
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[]
+     * @return IndexDefinition[]
      */
     public function getIndexes(): array
     {
@@ -89,7 +89,7 @@ class IndexList
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[]
+     * @return IndexDefinition[]
      */
     public function getUniqueKeys(): array
     {
@@ -108,7 +108,7 @@ class IndexList
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[]
+     * @return IndexDefinition[]
      */
     public function getRenamedIndexes(): array
     {
@@ -116,7 +116,7 @@ class IndexList
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition[]
+     * @return IndexDefinition[]
      */
     public function getDroppedIndexes(): array
     {

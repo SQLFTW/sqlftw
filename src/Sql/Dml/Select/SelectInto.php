@@ -28,18 +28,18 @@ class SelectInto implements SqlSerializable
     /** @var string|null */
     private $outFile;
 
-    /** @var \SqlFtw\Sql\Charset|null */
+    /** @var Charset|null */
     private $charset;
 
-    /** @var \SqlFtw\Sql\Dml\FileFormat|null */
+    /** @var FileFormat|null */
     private $format;
 
     /**
      * @param string[]|null $variables
      * @param string|null $dumpFile
      * @param string|null $outFile
-     * @param \SqlFtw\Sql\Charset|null $charset
-     * @param \SqlFtw\Sql\Dml\FileFormat|null $format
+     * @param Charset|null $charset
+     * @param FileFormat|null $format
      */
     public function __construct(
         ?array $variables,

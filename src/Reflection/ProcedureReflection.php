@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
+use SqlFtw\Sql\Ddl\Routines\StoredProcedureCommand;
 use SqlFtw\Sql\QualifiedName;
 use function end;
 
@@ -20,10 +21,10 @@ class ProcedureReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Routines\StoredProcedureCommand[] */
+    /** @var StoredProcedureCommand[] */
     private $commands = [];
 
     public function __construct(QualifiedName $name, CreateProcedureCommand $createProcedureCommand)
@@ -58,7 +59,7 @@ class ProcedureReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Routines\StoredProcedureCommand[]
+     * @return StoredProcedureCommand[]
      */
     public function getCommands(): array
     {

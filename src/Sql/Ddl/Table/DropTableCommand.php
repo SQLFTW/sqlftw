@@ -12,12 +12,13 @@ namespace SqlFtw\Sql\Ddl\Table;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\MultipleTablesCommand;
+use SqlFtw\Sql\QualifiedName;
 
 class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     private $tables;
 
     /** @var bool */
@@ -30,7 +31,7 @@ class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
     private $cascadeRestrict;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[] $tables
+     * @param QualifiedName[] $tables
      * @param bool $temporary
      * @param bool $ifExists
      * @param bool|null $cascadeRestrict
@@ -48,7 +49,7 @@ class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getTables(): array
     {

@@ -18,7 +18,7 @@ class WithExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectCommand */
+    /** @var SelectCommand */
     private $query;
 
     /** @var string */
@@ -28,7 +28,7 @@ class WithExpression implements SqlSerializable
     private $columns;
 
     /**
-     * @param \SqlFtw\Sql\Dml\Select\SelectCommand $query
+     * @param SelectCommand $query
      * @param string $name
      * @param string[]|null $columns
      */

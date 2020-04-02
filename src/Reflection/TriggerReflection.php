@@ -19,10 +19,10 @@ class TriggerReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand[]|\SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand[] */
+    /** @var CreateTriggerCommand[]|DropTriggerCommand[] */
     private $commands = [];
 
     public function __construct(QualifiedName $name, CreateTriggerCommand $createTriggerCommand)
@@ -50,7 +50,7 @@ class TriggerReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand[]|\SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand[]
+     * @return CreateTriggerCommand[]|DropTriggerCommand[]
      */
     public function getCommands(): array
     {

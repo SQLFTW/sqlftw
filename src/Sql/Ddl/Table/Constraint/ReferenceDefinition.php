@@ -18,27 +18,27 @@ class ReferenceDefinition implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName|null */
+    /** @var QualifiedName|null */
     private $sourceTable;
 
     /** @var string[] */
     private $sourceColumns;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null */
+    /** @var ForeignKeyAction|null */
     private $onUpdate;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null */
+    /** @var ForeignKeyAction|null */
     private $onDelete;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyMatchType|null */
+    /** @var ForeignKeyMatchType|null */
     private $matchType;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $sourceTable
+     * @param QualifiedName $sourceTable
      * @param string[] $sourceColumns
-     * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onDelete
-     * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction|null $onUpdate
-     * @param \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyMatchType|null $matchType
+     * @param ForeignKeyAction|null $onDelete
+     * @param ForeignKeyAction|null $onUpdate
+     * @param ForeignKeyMatchType|null $matchType
      */
     public function __construct(
         QualifiedName $sourceTable,

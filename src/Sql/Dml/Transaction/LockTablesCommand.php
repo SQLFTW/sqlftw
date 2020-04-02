@@ -17,11 +17,11 @@ class LockTablesCommand implements TransactionCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Transaction\LockTablesItem[] */
+    /** @var LockTablesItem[] */
     private $items;
 
     /**
-     * @param \SqlFtw\Sql\Dml\Transaction\LockTablesItem[] $items
+     * @param LockTablesItem[] $items
      */
     public function __construct(array $items)
     {
@@ -31,7 +31,7 @@ class LockTablesCommand implements TransactionCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\Transaction\LockTablesItem[]
+     * @return LockTablesItem[]
      */
     public function getItems(): array
     {

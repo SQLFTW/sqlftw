@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
 
 class LoadXmlCommand extends LoadCommand
@@ -24,15 +25,15 @@ class LoadXmlCommand extends LoadCommand
 
     /**
      * @param string $file
-     * @param \SqlFtw\Sql\QualifiedName $table
+     * @param QualifiedName $table
      * @param string|null $rowsTag
-     * @param \SqlFtw\Sql\Charset|null $charset
+     * @param Charset|null $charset
      * @param string[]|null $fields
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $setters
+     * @param ExpressionNode[]|null $setters
      * @param int|null $ignoreRows
-     * @param \SqlFtw\Sql\Dml\Load\LoadPriority|null $priority
+     * @param LoadPriority|null $priority
      * @param bool $local
-     * @param \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption
+     * @param DuplicateOption|null $duplicateOption
      */
     public function __construct(
         string $file,

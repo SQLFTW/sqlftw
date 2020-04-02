@@ -18,10 +18,10 @@ class ConvertToCharsetAction implements AlterTableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Charset */
+    /** @var Charset */
     private $charset;
 
-    /** @var \SqlFtw\Sql\Collation|null */
+    /** @var Collation|null */
     private $collation;
 
     public function __construct(Charset $charset, ?Collation $collation)

@@ -24,7 +24,7 @@ class ChangeColumnAction implements AlterTableAction
     /** @var string */
     private $oldName;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition */
+    /** @var ColumnDefinition */
     private $column;
 
     /** @var string|bool|null */
@@ -32,7 +32,7 @@ class ChangeColumnAction implements AlterTableAction
 
     /**
      * @param string $oldName
-     * @param \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition $column
+     * @param ColumnDefinition $column
      * @param string|bool|null $after
      */
     public function __construct(string $oldName, ColumnDefinition $column, $after = null)

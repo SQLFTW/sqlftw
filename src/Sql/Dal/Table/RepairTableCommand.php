@@ -19,7 +19,7 @@ class RepairTableCommand implements MultipleTablesCommand, DalTableCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     private $tables;
 
     /** @var bool */
@@ -35,7 +35,7 @@ class RepairTableCommand implements MultipleTablesCommand, DalTableCommand
     private $useFrm;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[] $tables
+     * @param QualifiedName[] $tables
      * @param bool $local
      * @param bool $quick
      * @param bool $extended
@@ -54,7 +54,7 @@ class RepairTableCommand implements MultipleTablesCommand, DalTableCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getTables(): array
     {

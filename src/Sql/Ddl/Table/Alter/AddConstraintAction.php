@@ -17,7 +17,7 @@ class AddConstraintAction implements AlterTableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition */
+    /** @var ConstraintDefinition */
     private $constraint;
 
     public function __construct(ConstraintDefinition $constraint)

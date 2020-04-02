@@ -12,21 +12,22 @@ namespace SqlFtw\Sql\Dml\Call;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
 
 class CallCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $procedure;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[]|null */
+    /** @var ExpressionNode[]|null */
     private $params;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $procedure
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[]|null $params
+     * @param QualifiedName $procedure
+     * @param ExpressionNode[]|null $params
      */
     public function __construct(QualifiedName $procedure, ?array $params = null)
     {
@@ -40,7 +41,7 @@ class CallCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]|null
+     * @return ExpressionNode[]|null
      */
     public function getParams(): ?array
     {

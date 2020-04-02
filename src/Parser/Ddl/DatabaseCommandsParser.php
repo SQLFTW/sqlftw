@@ -65,8 +65,8 @@ class DatabaseCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Charset[]|\SqlFtw\Sql\Collation[]|null[]
+     * @param TokenList $tokenList
+     * @return Charset[]|Collation[]|null[]
      */
     private function parseDefaults(TokenList $tokenList): array
     {
@@ -76,11 +76,11 @@ class DatabaseCommandsParser
         if ($token === Keyword::CHARACTER) {
             $tokenList->consumeKeyword(Keyword::SET);
             $tokenList->mayConsumeOperator(Operator::EQUAL);
-            /** @var \SqlFtw\Sql\Charset $charset */
+            /** @var Charset $charset */
             $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
         } else {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
-            /** @var \SqlFtw\Sql\Collation $collation */
+            /** @var Collation $collation */
             $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
         }
 
@@ -93,11 +93,11 @@ class DatabaseCommandsParser
             if ($token === Keyword::CHARACTER) {
                 $tokenList->consumeKeyword(Keyword::SET);
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
-                /** @var \SqlFtw\Sql\Charset $charset */
+                /** @var Charset $charset */
                 $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
             } else {
                 $tokenList->mayConsumeOperator(Operator::EQUAL);
-                /** @var \SqlFtw\Sql\Collation $collation */
+                /** @var Collation $collation */
                 $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
             }
         }

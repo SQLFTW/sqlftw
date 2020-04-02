@@ -19,7 +19,7 @@ class ChecksumTableCommand implements MultipleTablesCommand, DalTableCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     private $tables;
 
     /** @var bool */
@@ -29,7 +29,7 @@ class ChecksumTableCommand implements MultipleTablesCommand, DalTableCommand
     private $extended;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[] $tables
+     * @param QualifiedName[] $tables
      * @param bool $quick
      * @param bool $extended
      */
@@ -44,7 +44,7 @@ class ChecksumTableCommand implements MultipleTablesCommand, DalTableCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getTables(): array
     {

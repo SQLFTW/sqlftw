@@ -27,7 +27,7 @@ class DataType implements SqlSerializable
 
     public const UNSIGNED = true;
 
-    /** @var \SqlFtw\Sql\Ddl\BaseType */
+    /** @var BaseType */
     private $type;
 
     /** @var int|int[]|null */
@@ -42,18 +42,18 @@ class DataType implements SqlSerializable
     /** @var bool */
     private $zerofill;
 
-    /** @var \SqlFtw\Sql\Charset|null */
+    /** @var Charset|null */
     private $charset;
 
-    /** @var \SqlFtw\Sql\Collation|null */
+    /** @var Collation|null */
     private $collation;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\BaseType $type
+     * @param BaseType $type
      * @param int|int[]|string[]|null $params
      * @param bool $unsigned
-     * @param \SqlFtw\Sql\Charset|null $charset
-     * @param \SqlFtw\Sql\Collation|null $collation
+     * @param Charset|null $charset
+     * @param Collation|null $collation
      * @param bool $zerofill
      */
     public function __construct(
@@ -86,7 +86,7 @@ class DataType implements SqlSerializable
     }
 
     /**
-     * @param \SqlFtw\Sql\Ddl\BaseType $type
+     * @param BaseType $type
      * @param int|int[]|string[]|null $params
      */
     private function setParams(BaseType $type, $params = null): void

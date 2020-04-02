@@ -27,7 +27,7 @@ class PartitionDefinition implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var mixed[]|\SqlFtw\Sql\Expression\ExpressionNode|bool|null */
+    /** @var mixed[]|ExpressionNode|bool|null */
     private $lessThan;
 
     /** @var mixed[]|null */
@@ -41,7 +41,7 @@ class PartitionDefinition implements SqlSerializable
 
     /**
      * @param string $name
-     * @param mixed[]|\SqlFtw\Sql\Expression\ExpressionNode|bool|null $lessThan
+     * @param mixed[]|ExpressionNode|bool|null $lessThan
      * @param mixed[]|null $values
      * @param mixed[]|null $options
      * @param mixed[][]|null $subpartitions
@@ -76,7 +76,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return mixed[]|\SqlFtw\Sql\Expression\ExpressionNode|bool|null
+     * @return mixed[]|ExpressionNode|bool|null
      */
     public function getLessThan()
     {

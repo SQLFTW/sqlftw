@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
 
 class ReorganizePartitionAction implements AlterTableAction
 {
@@ -21,12 +22,12 @@ class ReorganizePartitionAction implements AlterTableAction
     /** @var string[]|null */
     private $partitions;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition[] */
+    /** @var PartitionDefinition[] */
     private $newPartitions;
 
     /**
      * @param string[]|null $partitions (where null means ALL)
-     * @param \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition[] $newPartitions
+     * @param PartitionDefinition[] $newPartitions
      */
     public function __construct(?array $partitions, array $newPartitions)
     {
@@ -51,7 +52,7 @@ class ReorganizePartitionAction implements AlterTableAction
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition[]
+     * @return PartitionDefinition[]
      */
     public function getNewPartitions(): array
     {

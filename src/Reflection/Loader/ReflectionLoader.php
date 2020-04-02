@@ -29,10 +29,10 @@ class ReflectionLoader
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Parser */
+    /** @var Parser */
     private $parser;
 
-    /** @var \SqlFtw\Reflection\Context\ContextProvider */
+    /** @var ContextProvider */
     private $provider;
 
     public function __construct(Parser $parser, ContextProvider $provider)
@@ -56,7 +56,7 @@ class ReflectionLoader
             throw new TableReflectionLoadingException($name, $schema, 'Loading error.', $e);
         }
 
-        /** @var \SqlFtw\Sql\Ddl\Table\CreateTableCommand[] $commands */
+        /** @var CreateTableCommand[] $commands */
         $commands = $this->parser->parse($sql);
 
         if (count($commands) > 1) {
@@ -80,7 +80,7 @@ class ReflectionLoader
             throw new ViewReflectionLoadingException($name, $schema, 'Loading error.', $e);
         }
 
-        /** @var \SqlFtw\Sql\Ddl\View\CreateViewCommand[] $commands */
+        /** @var CreateViewCommand[] $commands */
         $commands = $this->parser->parse($sql);
 
         if (count($commands) > 1) {

@@ -16,6 +16,7 @@ use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\Literal;
 
 class ColumnDefinition implements TableItem
 {
@@ -32,46 +33,46 @@ class ColumnDefinition implements TableItem
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\DataType|null */
+    /** @var DataType|null */
     private $type;
 
     /** @var bool */
     private $nullable;
 
-    /** @var string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null */
+    /** @var string|int|float|bool|Literal|null */
     private $defaultValue;
 
     /** @var bool */
     private $autoincrement;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType|null */
+    /** @var GeneratedColumnType|null */
     private $generatedColumnType;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $expression;
 
     /** @var string|null */
     private $comment;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexType|null */
+    /** @var IndexType|null */
     private $indexType;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnFormat|null */
+    /** @var ColumnFormat|null */
     private $columnFormat;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition|null */
+    /** @var ReferenceDefinition|null */
     private $reference;
 
     /**
      * @param string $name
-     * @param \SqlFtw\Sql\Ddl\DataType $type
-     * @param string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null $defaultValue
+     * @param DataType $type
+     * @param string|int|float|bool|Literal|null $defaultValue
      * @param bool|null $nullable
      * @param bool $autoincrement
      * @param string|null $comment
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexType $indexType
-     * @param \SqlFtw\Sql\Ddl\Table\Column\ColumnFormat|null $columnFormat
-     * @param \SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition $reference
+     * @param IndexType $indexType
+     * @param ColumnFormat|null $columnFormat
+     * @param ReferenceDefinition $reference
      */
     public function __construct(
         string $name,
@@ -98,13 +99,13 @@ class ColumnDefinition implements TableItem
 
     /**
      * @param string $name
-     * @param \SqlFtw\Sql\Ddl\DataType $type
-     * @param \SqlFtw\Sql\Expression\ExpressionNode $expression
-     * @param \SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType $generatedColumnType
+     * @param DataType $type
+     * @param ExpressionNode $expression
+     * @param GeneratedColumnType $generatedColumnType
      * @param bool $nullable
      * @param string|null $comment
-     * @param \SqlFtw\Sql\Ddl\Table\Index\IndexType $indexType
-     * @return \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition
+     * @param IndexType $indexType
+     * @return ColumnDefinition
      */
     public static function createGenerated(
         string $name,
@@ -125,8 +126,8 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @param string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null $defaultValue
-     * @return \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition
+     * @param string|int|float|bool|Literal|null $defaultValue
+     * @return ColumnDefinition
      */
     public function duplicateWithDefaultValue($defaultValue): self
     {
@@ -165,7 +166,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @return string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null
+     * @return string|int|float|bool|Literal|null
      */
     public function getDefaultValue()
     {

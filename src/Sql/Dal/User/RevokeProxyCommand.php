@@ -17,15 +17,15 @@ class RevokeProxyCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName */
+    /** @var UserName */
     private $proxy;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $users;
 
     /**
-     * @param \SqlFtw\Sql\UserName $proxy
-     * @param \SqlFtw\Sql\UserName[] $users
+     * @param UserName $proxy
+     * @param UserName[] $users
      */
     public function __construct(UserName $proxy, array $users)
     {
@@ -39,7 +39,7 @@ class RevokeProxyCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {

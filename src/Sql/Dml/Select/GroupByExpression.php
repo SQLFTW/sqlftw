@@ -19,10 +19,10 @@ class GroupByExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $expression;
 
-    /** @var \SqlFtw\Sql\Order|null */
+    /** @var Order|null */
     private $order;
 
     public function __construct(ExpressionNode $expression, ?Order $order = null)

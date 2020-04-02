@@ -19,10 +19,10 @@ class SetNamesCommand implements CharsetCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Charset|null */
+    /** @var Charset|null */
     private $charset;
 
-    /** @var \SqlFtw\Sql\Collation|null */
+    /** @var Collation|null */
     private $collation;
 
     public function __construct(?Charset $charset, ?Collation $collation)

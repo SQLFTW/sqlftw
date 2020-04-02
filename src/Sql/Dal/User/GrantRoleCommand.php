@@ -22,7 +22,7 @@ class GrantRoleCommand implements UserCommand
     /** @var string[] */
     private $roles;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $users;
 
     /** @var bool */
@@ -30,7 +30,7 @@ class GrantRoleCommand implements UserCommand
 
     /**
      * @param string[] $roles
-     * @param \SqlFtw\Sql\UserName[] $users
+     * @param UserName[] $users
      * @param bool $withAdminOption
      */
     public function __construct(array $roles, array $users, bool $withAdminOption = false)
@@ -52,7 +52,7 @@ class GrantRoleCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {

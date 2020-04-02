@@ -21,10 +21,10 @@ class ProcedureParam implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\DataType */
+    /** @var DataType */
     private $type;
 
-    /** @var \SqlFtw\Sql\Ddl\Routines\InOutParamFlag|null */
+    /** @var InOutParamFlag|null */
     private $inOutFlag;
 
     public function __construct(string $name, DataType $type, ?InOutParamFlag $inOutFlag = null)

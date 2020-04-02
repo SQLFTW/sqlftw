@@ -21,13 +21,13 @@ class CreateIndexCommand implements IndexCommand, TableStructureCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition */
+    /** @var IndexDefinition */
     private $index;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm|null */
+    /** @var AlterTableAlgorithm|null */
     private $algorithm;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock|null */
+    /** @var AlterTableLock|null */
     private $lock;
 
     public function __construct(IndexDefinition $index, ?AlterTableAlgorithm $algorithm = null, ?AlterTableLock $lock = null)

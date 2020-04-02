@@ -19,18 +19,18 @@ class SetDefaultRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $users;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification|null */
+    /** @var UserDefaultRolesSpecification|null */
     private $roles;
 
     /** @var string[]|null */
     private $rolesList;
 
     /**
-     * @param \SqlFtw\Sql\UserName[] $users
-     * @param \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification|null $roles
+     * @param UserName[] $users
+     * @param UserDefaultRolesSpecification|null $roles
      * @param string[]|null $rolesList
      */
     public function __construct(array $users, ?UserDefaultRolesSpecification $roles, ?array $rolesList = null)
@@ -48,7 +48,7 @@ class SetDefaultRoleCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {

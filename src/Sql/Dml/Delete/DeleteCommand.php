@@ -25,22 +25,22 @@ class DeleteCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     private $tables;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null */
+    /** @var TableReferenceNode|null */
     private $references;
 
     /** @var string[]|null */
     private $partitions;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $where;
 
-    /** @var \SqlFtw\Sql\Dml\WithClause|null */
+    /** @var WithClause|null */
     private $with;
 
-    /** @var \SqlFtw\Sql\Dml\OrderByExpression[]|null */
+    /** @var OrderByExpression[]|null */
     private $orderBy;
 
     /** @var int|null */
@@ -56,12 +56,12 @@ class DeleteCommand implements DmlCommand
     private $ignore;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[] $tables
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
-     * @param \SqlFtw\Sql\Dml\WithClause|null $with
-     * @param \SqlFtw\Sql\Dml\OrderByExpression[]|null $orderBy
+     * @param QualifiedName[] $tables
+     * @param ExpressionNode|null $where
+     * @param WithClause|null $with
+     * @param OrderByExpression[]|null $orderBy
      * @param int|null $limit
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode|null $references
+     * @param TableReferenceNode|null $references
      * @param string[]|null $partitions
      * @param bool $lowPriority
      * @param bool $quick
@@ -106,7 +106,7 @@ class DeleteCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getTables(): array
     {
@@ -137,7 +137,7 @@ class DeleteCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\OrderByExpression[]|null
+     * @return OrderByExpression[]|null
      */
     public function getOrderBy(): ?array
     {

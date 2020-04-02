@@ -19,7 +19,7 @@ class DoCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)

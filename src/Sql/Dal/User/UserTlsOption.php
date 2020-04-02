@@ -18,7 +18,7 @@ class UserTlsOption implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserTlsOptionType */
+    /** @var UserTlsOptionType */
     private $type;
 
     /** @var string|null */

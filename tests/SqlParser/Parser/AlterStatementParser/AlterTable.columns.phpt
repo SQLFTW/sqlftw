@@ -10,8 +10,8 @@ use Tester\Assert;
 
 require '../../../bootstrap.php';
 
-\Tester\Environment::skip();
 // phpcs:disable
+\Tester\Environment::skip();
 exit;
 
 $parser = new Parser(new Lexer(), new ParserFactory());

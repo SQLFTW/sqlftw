@@ -141,8 +141,8 @@ class UserCommandsParser
      *   | DISCARD OLD PASSWORD
      * }
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dal\User\IdentifiedUser[]
+     * @param TokenList $tokenList
+     * @return IdentifiedUser[]
      */
     private function parseIdentifiedUsers(TokenList $tokenList): array
     {
@@ -197,8 +197,8 @@ class UserCommandsParser
      *   | SUBJECT 'subject'
      * }
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dal\User\UserTlsOption[]|null
+     * @param TokenList $tokenList
+     * @return UserTlsOption[]|null
      */
     private function parseTlsOptions(TokenList $tokenList): ?array
     {
@@ -209,7 +209,7 @@ class UserCommandsParser
             } else {
                 $tlsOptions = [];
                 do {
-                    /** @var \SqlFtw\Sql\Dal\User\UserTlsOptionType $type */
+                    /** @var UserTlsOptionType $type */
                     $type = $tokenList->consumeKeywordEnum(UserTlsOptionType::class);
                     $value = $tokenList->mayConsumeString();
                     $tlsOptions[] = new UserTlsOption($type, $value);
@@ -234,8 +234,8 @@ class UserCommandsParser
      *   | MAX_USER_CONNECTIONS count
      * }
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dal\User\UserResourceOption[]|null
+     * @param TokenList $tokenList
+     * @return UserResourceOption[]|null
      */
     private function parseResourceOptions(TokenList $tokenList): ?array
     {
@@ -244,7 +244,7 @@ class UserCommandsParser
         }
 
         $resourceOptions = [];
-        /** @var \SqlFtw\Sql\Dal\User\UserResourceOptionType $type */
+        /** @var UserResourceOptionType $type */
         $type = $tokenList->consumeKeywordEnum(UserResourceOptionType::class);
         while ($type !== null) {
             $value = $tokenList->consumeInt();
@@ -268,8 +268,8 @@ class UserCommandsParser
      *   | ACCOUNT UNLOCK
      * }
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dal\User\UserPasswordLockOption[]|null
+     * @param TokenList $tokenList
+     * @return UserPasswordLockOption[]|null
      */
     private function parsePasswordLockOptions(TokenList $tokenList): ?array
     {
@@ -428,8 +428,8 @@ class UserCommandsParser
     /**
      * priv_type [(column_list)] [, priv_type [(column_list)]] ...
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dal\User\UserPrivilege[]
+     * @param TokenList $tokenList
+     * @return UserPrivilege[]
      */
     private function parsePrivilegesList(TokenList $tokenList): array
     {
@@ -491,7 +491,7 @@ class UserCommandsParser
     private function parseResource(TokenList $tokenList): UserPrivilegeResource
     {
         $tokenList->consumeKeyword(Keyword::ON);
-        /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeResourceType|null $resourceType */
+        /** @var UserPrivilegeResourceType|null $resourceType */
         $resourceType = $tokenList->mayConsumeKeywordEnum(UserPrivilegeResourceType::class);
         if ($tokenList->mayConsumeOperator(Operator::MULTIPLY)) {
             $object = false;
@@ -599,7 +599,7 @@ class UserCommandsParser
     public function parseSetDefaultRole(TokenList $tokenList): SetDefaultRoleCommand
     {
         $tokenList->consumeKeywords(Keyword::SET, Keyword::DEFAULT, Keyword::ROLE);
-        /** @var \SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification|null $roles */
+        /** @var UserDefaultRolesSpecification|null $roles */
         $roles = $tokenList->mayConsumeKeywordEnum(UserDefaultRolesSpecification::class);
         $rolesList = null;
         if ($roles === null) {
@@ -680,8 +680,8 @@ class UserCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\UserName[]
+     * @param TokenList $tokenList
+     * @return UserName[]
      */
     private function parseUserList(TokenList $tokenList): array
     {
@@ -694,7 +694,7 @@ class UserCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return string[]
      */
     private function parseRolesList(TokenList $tokenList): array

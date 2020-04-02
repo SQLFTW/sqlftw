@@ -54,19 +54,19 @@ class BinaryOperator implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $left;
 
     /** @var string|string[] */
     private $operator;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $right;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode $left
+     * @param ExpressionNode $left
      * @param string|string[] $operator
-     * @param \SqlFtw\Sql\Expression\ExpressionNode $right
+     * @param ExpressionNode $right
      */
     public function __construct(
         ExpressionNode $left,

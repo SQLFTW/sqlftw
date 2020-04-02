@@ -23,15 +23,15 @@ class RenameUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     protected $users;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $newUsers;
 
     /**
-     * @param \SqlFtw\Sql\UserName[] $users
-     * @param \SqlFtw\Sql\UserName[] $newUsers
+     * @param UserName[] $users
+     * @param UserName[] $newUsers
      */
     public function __construct(array $users, array $newUsers)
     {
@@ -48,7 +48,7 @@ class RenameUserCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {
@@ -56,7 +56,7 @@ class RenameUserCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getNewUsers(): array
     {

@@ -18,14 +18,14 @@ class UserPasswordLockOption implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserPasswordLockOptionType */
+    /** @var UserPasswordLockOptionType */
     private $type;
 
     /** @var int|null */
     private $value;
 
     /**
-     * @param \SqlFtw\Sql\Dal\User\UserPasswordLockOptionType $type
+     * @param UserPasswordLockOptionType $type
      * @param string|int|null $value
      */
     public function __construct(UserPasswordLockOptionType $type, $value = null)

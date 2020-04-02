@@ -31,13 +31,13 @@ class RoutineCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Ddl\TypeParser */
+    /** @var TypeParser */
     private $typeParser;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\Ddl\CompoundStatementParser */
+    /** @var CompoundStatementParser */
     private $compoundStatementParser;
 
     public function __construct(
@@ -91,7 +91,7 @@ class RoutineCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @param bool $procedure
      * @return mixed[]
      */
@@ -124,7 +124,7 @@ class RoutineCommandsParser
                 $sideEffects = RoutineSideEffects::get(RoutineSideEffects::MODIFIES_SQL_DATA);
             } elseif ($keyword === Keyword::SQL) {
                 $tokenList->consumeKeyword(Keyword::SECURITY);
-                /** @var \SqlFtw\Sql\Ddl\SqlSecurity $sqlSecurity */
+                /** @var SqlSecurity $sqlSecurity */
                 $sqlSecurity = $tokenList->consumeKeywordEnum(SqlSecurity::class);
             } elseif ($keyword === Keyword::NOT) {
                 $tokenList->consumeKeyword(Keyword::DETERMINISTIC);
@@ -230,7 +230,7 @@ class RoutineCommandsParser
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
         if (!$tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS)) {
             do {
-                /** @var \SqlFtw\Sql\Ddl\Routines\InOutParamFlag $inOut */
+                /** @var InOutParamFlag $inOut */
                 $inOut = $tokenList->mayConsumeKeywordEnum(InOutParamFlag::class);
                 $param = $tokenList->consumeName();
                 $type = $this->typeParser->parseType($tokenList);

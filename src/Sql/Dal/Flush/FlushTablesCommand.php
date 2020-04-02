@@ -19,7 +19,7 @@ class FlushTablesCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[]|null */
+    /** @var QualifiedName[]|null */
     private $tables;
 
     /** @var bool */
@@ -29,7 +29,7 @@ class FlushTablesCommand implements DalCommand
     private $forExport;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[]|null $tables
+     * @param QualifiedName[]|null $tables
      * @param bool $withReadLock
      * @param bool $forExport
      */
@@ -46,7 +46,7 @@ class FlushTablesCommand implements DalCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]|null
+     * @return QualifiedName[]|null
      */
     public function getTables(): ?array
     {

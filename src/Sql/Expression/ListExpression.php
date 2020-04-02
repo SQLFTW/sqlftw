@@ -16,11 +16,11 @@ class ListExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var ExpressionNode[] */
     private $items;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[] $items
+     * @param ExpressionNode[] $items
      */
     public function __construct(array $items)
     {
@@ -33,7 +33,7 @@ class ListExpression implements ExpressionNode
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @return ExpressionNode[]
      */
     public function getItems(): array
     {

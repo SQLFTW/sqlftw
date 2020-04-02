@@ -22,7 +22,7 @@ class SetColumnExpression implements SqlSerializable
     /** @var string */
     private $column;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $value;
 
     /** @var bool */

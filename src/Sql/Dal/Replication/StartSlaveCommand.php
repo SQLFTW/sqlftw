@@ -31,10 +31,10 @@ class StartSlaveCommand implements ReplicationCommand
     /** @var string|null */
     private $pluginDir;
 
-    /** @var string[]|int[]|bool[]|\SqlFtw\Sql\Dal\Replication\UuidSet[][]|null */
+    /** @var string[]|int[]|bool[]|UuidSet[][]|null */
     private $until;
 
-    /** @var \SqlFtw\Sql\Dal\Replication\ReplicationThreadType[]|null */
+    /** @var ReplicationThreadType[]|null */
     private $threadTypes;
 
     /** @var string|null */
@@ -45,8 +45,8 @@ class StartSlaveCommand implements ReplicationCommand
      * @param string|null $password
      * @param string|null $defaultAuth
      * @param string|null $pluginDir
-     * @param string[]|int[]|bool[]|\SqlFtw\Sql\Dal\Replication\UuidSet[][]|null $until
-     * @param \SqlFtw\Sql\Dal\Replication\ReplicationThreadType[]|null $threadTypes
+     * @param string[]|int[]|bool[]|UuidSet[][]|null $until
+     * @param ReplicationThreadType[]|null $threadTypes
      * @param string|null $channel
      */
     public function __construct(
@@ -88,7 +88,7 @@ class StartSlaveCommand implements ReplicationCommand
     }
 
     /**
-     * @return string[]|int[]|bool[]|\SqlFtw\Sql\Dal\Replication\UuidSet[][]|null
+     * @return string[]|int[]|bool[]|UuidSet[][]|null
      */
     public function getUntil(): ?array
     {
@@ -96,7 +96,7 @@ class StartSlaveCommand implements ReplicationCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\Replication\ReplicationThreadType[]|null
+     * @return ReplicationThreadType[]|null
      */
     public function getThreadTypes(): ?array
     {

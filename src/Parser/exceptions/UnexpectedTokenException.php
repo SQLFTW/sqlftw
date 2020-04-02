@@ -24,9 +24,9 @@ class UnexpectedTokenException extends ParserException
     /**
      * @param int[] $expectedTokens
      * @param mixed $expectedValue
-     * @param \SqlFtw\Parser\Token|null $token
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @param \Throwable|null $previous
+     * @param Token|null $token
+     * @param TokenList $tokenList
+     * @param Throwable|null $previous
      */
     public function __construct(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null)
     {

@@ -18,10 +18,10 @@ class IdentifiedUser implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName */
+    /** @var UserName */
     private $user;
 
-    /** @var \SqlFtw\Sql\Dal\User\IdentifiedUserAction|null */
+    /** @var IdentifiedUserAction|null */
     private $action;
 
     /** @var string|null */

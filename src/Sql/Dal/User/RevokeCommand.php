@@ -11,24 +11,25 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class RevokeCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserPrivilege[] */
+    /** @var UserPrivilege[] */
     private $privileges;
 
-    /** @var \SqlFtw\Sql\Dal\User\UserPrivilegeResource */
+    /** @var UserPrivilegeResource */
     private $resource;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $users;
 
     /**
-     * @param \SqlFtw\Sql\Dal\User\UserPrivilege[] $privileges
-     * @param \SqlFtw\Sql\Dal\User\UserPrivilegeResource $resource
-     * @param \SqlFtw\Sql\UserName[] $users
+     * @param UserPrivilege[] $privileges
+     * @param UserPrivilegeResource $resource
+     * @param UserName[] $users
      */
     public function __construct(array $privileges, UserPrivilegeResource $resource, array $users)
     {
@@ -38,7 +39,7 @@ class RevokeCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\User\UserPrivilege[]
+     * @return UserPrivilege[]
      */
     public function getPrivileges(): array
     {
@@ -51,7 +52,7 @@ class RevokeCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {

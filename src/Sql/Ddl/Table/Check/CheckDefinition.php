@@ -18,7 +18,7 @@ class CheckDefinition implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $expression;
 
     public function __construct(ExpressionNode $expression)

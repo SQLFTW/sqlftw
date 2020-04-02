@@ -21,10 +21,10 @@ class CreateDatabaseCommand implements DatabaseCommand
     /** @var string|null */
     private $name;
 
-    /** @var \SqlFtw\Sql\Charset|null */
+    /** @var Charset|null */
     private $charset;
 
-    /** @var \SqlFtw\Sql\Collation|null */
+    /** @var Collation|null */
     private $collation;
 
     /** @var bool */

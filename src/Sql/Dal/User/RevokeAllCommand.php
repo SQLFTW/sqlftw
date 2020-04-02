@@ -11,16 +11,17 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class RevokeAllCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $users;
 
     /**
-     * @param \SqlFtw\Sql\UserName[] $users
+     * @param UserName[] $users
      */
     public function __construct(array $users)
     {
@@ -28,7 +29,7 @@ class RevokeAllCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {

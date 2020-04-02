@@ -18,11 +18,11 @@ class IndexOptions implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\SqlSerializable[]|int[]|string[]|bool[] */
+    /** @var SqlSerializable[]|int[]|string[]|bool[] */
     private $options;
 
     /**
-     * @param \SqlFtw\Sql\SqlSerializable[]|int[]|string[]|bool[] $options
+     * @param SqlSerializable[]|int[]|string[]|bool[] $options
      */
     public function __construct(array $options)
     {
@@ -30,7 +30,7 @@ class IndexOptions implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\SqlSerializable[]|int[]|string[]|bool[]
+     * @return SqlSerializable[]|int[]|string[]|bool[]
      */
     public function getOptions(): array
     {
@@ -70,7 +70,7 @@ class IndexOptions implements SqlSerializable
     public function serialize(Formatter $formatter): string
     {
         $result = '';
-        /** @var \SqlFtw\Sql\SqlSerializable|int|string $value */
+        /** @var SqlSerializable|int|string $value */
         foreach ($this->options as $option => $value) {
             if ($option === IndexOption::KEY_BLOCK_SIZE) {
                 $result .= ' KEY_BLOCK_SIZE ' . $value;

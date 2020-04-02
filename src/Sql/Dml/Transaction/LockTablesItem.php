@@ -18,10 +18,10 @@ class LockTablesItem implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Dml\Transaction\LockTableType|null */
+    /** @var LockTableType|null */
     private $lock;
 
     /** @var string|null */

@@ -19,7 +19,7 @@ class TableReferenceTable implements TableReferenceNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
     /** @var string|null */
@@ -28,14 +28,14 @@ class TableReferenceTable implements TableReferenceNode
     /** @var string[]|null */
     private $partitions;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\IndexHint[]|null */
+    /** @var IndexHint[]|null */
     private $indexHints;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
+     * @param QualifiedName $table
      * @param string|null $alias
      * @param string[]|null $partitions
-     * @param \SqlFtw\Sql\Dml\TableReference\IndexHint[]|null $indexHints
+     * @param IndexHint[]|null $indexHints
      */
     public function __construct(QualifiedName $table, ?string $alias = null, ?array $partitions = null, ?array $indexHints = null)
     {
@@ -75,7 +75,7 @@ class TableReferenceTable implements TableReferenceNode
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\TableReference\IndexHint[]|null
+     * @return IndexHint[]|null
      */
     public function getIndexHints(): ?array
     {

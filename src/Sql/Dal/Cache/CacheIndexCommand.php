@@ -25,7 +25,7 @@ class CacheIndexCommand implements CacheCommand
     /** @var string */
     private $keyCache;
 
-    /** @var \SqlFtw\Sql\Dal\Cache\TableIndexList[] */
+    /** @var TableIndexList[] */
     private $tableIndexLists;
 
     /** @var string[]|bool|null */
@@ -33,7 +33,7 @@ class CacheIndexCommand implements CacheCommand
 
     /**
      * @param string $keyCache
-     * @param \SqlFtw\Sql\Dal\Cache\TableIndexList[] $tableIndexLists
+     * @param TableIndexList[] $tableIndexLists
      * @param string[]|bool|null $partitions
      */
     public function __construct(string $keyCache, array $tableIndexLists, $partitions = null)
@@ -54,7 +54,7 @@ class CacheIndexCommand implements CacheCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\Cache\TableIndexList[]
+     * @return TableIndexList[]
      */
     public function getTableIndexLists(): array
     {

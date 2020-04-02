@@ -17,7 +17,7 @@ class AddForeignKeyAction implements AlterTableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition */
+    /** @var ForeignKeyDefinition */
     private $foreignKey;
 
     public function __construct(ForeignKeyDefinition $foreignKey)

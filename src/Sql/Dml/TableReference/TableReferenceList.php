@@ -19,11 +19,11 @@ class TableReferenceList implements TableReferenceNode, Countable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode[] */
+    /** @var TableReferenceNode[] */
     private $references;
 
     /**
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode[] $references
+     * @param TableReferenceNode[] $references
      */
     public function __construct(array $references)
     {
@@ -43,7 +43,7 @@ class TableReferenceList implements TableReferenceNode, Countable
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\TableReference\TableReferenceNode[]
+     * @return TableReferenceNode[]
      */
     public function getReferences(): array
     {

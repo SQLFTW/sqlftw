@@ -26,7 +26,7 @@ class UnaryOperator implements ExpressionNode
     /** @var string */
     private $operator;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $right;
 
     public function __construct(string $operator, ExpressionNode $right)

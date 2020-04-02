@@ -20,11 +20,11 @@ class AlterActionsList implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] */
+    /** @var AlterTableAction[] */
     private $actions;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] $actions
+     * @param AlterTableAction[] $actions
      */
     public function __construct(array $actions)
     {
@@ -34,7 +34,7 @@ class AlterActionsList implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[]
+     * @return AlterTableAction[]
      */
     public function getActions(): array
     {
@@ -42,8 +42,8 @@ class AlterActionsList implements SqlSerializable
     }
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType $type
-     * @return \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[]
+     * @param AlterTableActionType $type
+     * @return AlterTableAction[]
      */
     public function getActionsByType(AlterTableActionType $type): array
     {

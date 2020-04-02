@@ -67,10 +67,10 @@ class IndexCommandsParser
         $alterAlgorithm = $alterLock = null;
         while ($keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ALGORITHM, Keyword::LOCK)) {
             if ($keyword === Keyword::ALGORITHM) {
-                /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm $alterAlgorithm */
+                /** @var AlterTableAlgorithm $alterAlgorithm */
                 $alterAlgorithm = $tokenList->consumeKeywordEnum(AlterTableAlgorithm::class);
             } elseif ($keyword === Keyword::LOCK) {
-                /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock $alterLock */
+                /** @var AlterTableLock $alterLock */
                 $alterLock = $tokenList->consumeKeywordEnum(AlterTableLock::class);
             }
         }
@@ -115,7 +115,7 @@ class IndexCommandsParser
                 $length = $tokenList->consumeInt();
                 $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
             }
-            /** @var \SqlFtw\Sql\Order $order */
+            /** @var Order $order */
             $order = $tokenList->mayConsumeKeywordEnum(Order::class);
             $columns[] = new IndexColumn($column, $length, $order);
         } while ($tokenList->mayConsumeComma());
@@ -125,7 +125,7 @@ class IndexCommandsParser
         $keywords = [Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE, Keyword::INVISIBLE];
         while ($keyword = $tokenList->mayConsumeAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::USING) {
-                /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexAlgorithm $algorithm */
+                /** @var IndexAlgorithm $algorithm */
                 $algorithm = $tokenList->consumeKeywordEnum(IndexAlgorithm::class);
             } elseif ($keyword === Keyword::KEY_BLOCK_SIZE) {
                 $options[IndexOption::KEY_BLOCK_SIZE] = $tokenList->consumeInt();
@@ -170,13 +170,13 @@ class IndexCommandsParser
         $algorithm = null;
         if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
-            /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm $algorithm */
+            /** @var AlterTableAlgorithm $algorithm */
             $algorithm = $tokenList->consumeKeywordEnum(AlterTableAlgorithm::class);
         }
         $lock = null;
         if ($tokenList->mayConsumeKeyword(Keyword::LOCK)) {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
-            /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock $lock */
+            /** @var AlterTableLock $lock */
             $lock = $tokenList->consumeKeywordEnum(AlterTableLock::class);
         }
         $tokenList->expectEnd();

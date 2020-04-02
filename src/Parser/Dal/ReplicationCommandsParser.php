@@ -39,7 +39,7 @@ class ReplicationCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
@@ -301,7 +301,7 @@ class ReplicationCommandsParser
         $tokenList->consumeKeywords(Keyword::START, Keyword::SLAVE);
 
         $threadTypes = null;
-        /** @var \SqlFtw\Sql\Dal\Replication\ReplicationThreadType $threadType|null */
+        /** @var ReplicationThreadType $threadType|null */
         $threadType = $tokenList->mayConsumeKeywordEnum(ReplicationThreadType::class);
         if ($threadType !== null) {
             $threadTypes = [$threadType];
@@ -392,7 +392,7 @@ class ReplicationCommandsParser
      *
      *     (n >= 1)
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return mixed[]|string
      */
     private function parseGtidSet(TokenList $tokenList)

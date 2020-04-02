@@ -15,7 +15,7 @@ use function sprintf;
 class TriggerWasDroppedException extends TriggerDoesNotExistException
 {
 
-    /** @var \SqlFtw\Reflection\TriggerReflection */
+    /** @var TriggerReflection */
     private $reflection;
 
     public function __construct(TriggerReflection $reflection, ?Throwable $previous = null)

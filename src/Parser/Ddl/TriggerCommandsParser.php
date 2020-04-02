@@ -28,13 +28,13 @@ class TriggerCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Parser */
+    /** @var Parser */
     private $parser;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\Ddl\CompoundStatementParser */
+    /** @var CompoundStatementParser */
     private $compoundStatementParser;
 
     public function __construct(

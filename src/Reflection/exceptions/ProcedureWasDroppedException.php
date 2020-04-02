@@ -15,7 +15,7 @@ use function sprintf;
 class ProcedureWasDroppedException extends ProcedureDoesNotExistException
 {
 
-    /** @var \SqlFtw\Reflection\ProcedureReflection */
+    /** @var ProcedureReflection */
     private $reflection;
 
     public function __construct(ProcedureReflection $reflection, ?Throwable $previous = null)

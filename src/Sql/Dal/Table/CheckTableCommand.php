@@ -19,15 +19,15 @@ class CheckTableCommand implements MultipleTablesCommand, DalTableCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     private $tables;
 
-    /** @var \SqlFtw\Sql\Dal\Table\CheckTableOption|null */
+    /** @var CheckTableOption|null */
     private $option;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[] $tables
-     * @param \SqlFtw\Sql\Dal\Table\CheckTableOption|null $option
+     * @param QualifiedName[] $tables
+     * @param CheckTableOption|null $option
      */
     public function __construct(array $tables, ?CheckTableOption $option = null)
     {
@@ -39,7 +39,7 @@ class CheckTableCommand implements MultipleTablesCommand, DalTableCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getTables(): array
     {

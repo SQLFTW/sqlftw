@@ -16,7 +16,7 @@ class Parentheses implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var ExpressionNode */
     private $contents;
 
     public function __construct(ExpressionNode $contents)

@@ -21,15 +21,15 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var ExpressionNode[] */
     private $values;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[] $values (string $column => ExpressionNode $value)
+     * @param QualifiedName $table
+     * @param ExpressionNode[] $values (string $column => ExpressionNode $value)
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority
+     * @param InsertPriority|null $priority
      * @param bool $ignore
      */
     public function __construct(
@@ -48,7 +48,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @return ExpressionNode[]
      */
     public function getValues(): array
     {

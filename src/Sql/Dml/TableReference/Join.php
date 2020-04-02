@@ -15,10 +15,10 @@ abstract class Join implements TableReferenceNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
+    /** @var TableReferenceNode */
     protected $left;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
+    /** @var TableReferenceNode */
     protected $right;
 
     public function __construct(TableReferenceNode $left, TableReferenceNode $right)

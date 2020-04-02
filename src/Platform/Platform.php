@@ -46,7 +46,7 @@ class Platform
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Platform\Version */
+    /** @var Version */
     private $version;
 
     final private function __construct(string $name, Version $version)

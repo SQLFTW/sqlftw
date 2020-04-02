@@ -15,7 +15,7 @@ use function sprintf;
 class TableWasDroppedException extends TableDoesNotExistException
 {
 
-    /** @var \SqlFtw\Reflection\TableReflection */
+    /** @var TableReflection */
     private $reflection;
 
     public function __construct(TableReflection $reflection, ?Throwable $previous = null)

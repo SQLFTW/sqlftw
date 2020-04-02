@@ -17,7 +17,7 @@ use SqlFtw\Sql\UserName;
 class UserExpression implements SqlSerializable
 {
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var UserName|null */
     private $userName;
 
     /** @var string|null */

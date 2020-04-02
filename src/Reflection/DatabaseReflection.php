@@ -29,6 +29,7 @@ use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\DropFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
+use SqlFtw\Sql\Ddl\Table\Alter\SimpleAction;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
 use SqlFtw\Sql\Ddl\Table\DropTableCommand;
@@ -49,40 +50,40 @@ class DatabaseReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Platform\Platform */
+    /** @var Platform */
     private $platform;
 
-    /** @var \SqlFtw\Reflection\Loader\ReflectionLoader */
+    /** @var ReflectionLoader */
     private $loader;
 
     /** @var string */
     private $currentSchema;
 
-    /** @var \SqlFtw\Reflection\DatabaseReflection */
+    /** @var DatabaseReflection */
     private $history;
 
-    /** @var \SqlFtw\Reflection\SchemaReflection[] */
+    /** @var SchemaReflection[] */
     private $schemas = [];
 
-    /** @var \SqlFtw\Reflection\TableReflection[][] */
+    /** @var TableReflection[][] */
     private $tables = [];
 
-    /** @var \SqlFtw\Reflection\ViewReflection[][] */
+    /** @var ViewReflection[][] */
     private $views = [];
 
-    /** @var \SqlFtw\Reflection\FunctionReflection[][] */
+    /** @var FunctionReflection[][] */
     private $functions = [];
 
-    /** @var \SqlFtw\Reflection\ProcedureReflection[][] */
+    /** @var ProcedureReflection[][] */
     private $procedures = [];
 
-    /** @var \SqlFtw\Reflection\TriggerReflection[][] */
+    /** @var TriggerReflection[][] */
     private $triggers = [];
 
-    /** @var \SqlFtw\Reflection\EventReflection[][] */
+    /** @var EventReflection[][] */
     private $events = [];
 
-    /** @var \SqlFtw\Reflection\VariablesReflection[] */
+    /** @var VariablesReflection[] */
     private $variables = [];
 
     public function __construct(
@@ -127,10 +128,10 @@ class DatabaseReflection
             $schema = $table->getSchema() ?: $this->currentSchema;
 
             $reflection = $this->getTable($name, $schema);
-            /** @var \SqlFtw\Sql\Ddl\Table\Alter\SimpleAction[] $actions */
+            /** @var SimpleAction[] $actions */
             $actions = $command->getActions()->getActionsByType(AlterTableActionType::get(AlterTableActionType::RENAME_TO));
             if (count($actions) > 0) {
-                /** @var \SqlFtw\Sql\QualifiedName $newTable */
+                /** @var QualifiedName $newTable */
                 $newTable = $actions[0]->getValue();
                 $newName = $newTable->getName();
                 $newSchema = $newTable->getSchema() ?: $this->currentSchema;
@@ -154,8 +155,8 @@ class DatabaseReflection
         } elseif ($command instanceof RenameTableCommand) {
             $that = clone $this;
             /**
-             * @var \SqlFtw\Sql\QualifiedName $oldTable
-             * @var \SqlFtw\Sql\QualifiedName $newTable
+             * @var QualifiedName $oldTable
+             * @var QualifiedName $newTable
              */
             foreach ($command->getIterator() as $oldTable => $newTable) {
                 $name = $oldTable->getName();
@@ -465,13 +466,15 @@ class DatabaseReflection
             $name = $command->getName();
 
             $reflection = $this->getSchema($name);
-            unset($that->schemas[$name]);
-            unset($that->tables[$name]);
-            unset($that->views[$name]);
-            unset($that->functions[$name]);
-            unset($that->procedures[$name]);
-            unset($that->triggers[$name]);
-            unset($that->events[$name]);
+            unset(
+                $that->schemas[$name],
+                $that->tables[$name],
+                $that->views[$name],
+                $that->functions[$name],
+                $that->procedures[$name],
+                $that->triggers[$name],
+                $that->events[$name],
+            );
             if ($this->history !== null) {
                 $that->history = clone($this->history);
                 $that->history->schemas[$name] = $reflection->drop($command);
@@ -500,7 +503,7 @@ class DatabaseReflection
     }
 
     /**
-     * @return \SqlFtw\Reflection\SchemaReflection[]
+     * @return SchemaReflection[]
      */
     public function getSchemas(): array
     {
@@ -537,7 +540,7 @@ class DatabaseReflection
 
     /**
      * @param string|null $schema
-     * @return \SqlFtw\Reflection\TableReflection[]
+     * @return TableReflection[]
      */
     public function getTables(?string $schema = null): array
     {
@@ -584,7 +587,7 @@ class DatabaseReflection
 
     /**
      * @param string|null $schema
-     * @return \SqlFtw\Reflection\ViewReflection[]
+     * @return ViewReflection[]
      */
     public function getViews(?string $schema = null): array
     {
@@ -629,7 +632,7 @@ class DatabaseReflection
 
     /**
      * @param string|null $schema
-     * @return \SqlFtw\Reflection\FunctionReflection[]
+     * @return FunctionReflection[]
      */
     public function getFunctions(?string $schema = null): array
     {
@@ -674,7 +677,7 @@ class DatabaseReflection
 
     /**
      * @param string|null $schema
-     * @return \SqlFtw\Reflection\ProcedureReflection[]
+     * @return ProcedureReflection[]
      */
     public function getProcedures(?string $schema = null): array
     {
@@ -719,7 +722,7 @@ class DatabaseReflection
 
     /**
      * @param string|null $schema
-     * @return \SqlFtw\Reflection\TriggerReflection[]
+     * @return TriggerReflection[]
      */
     public function getTriggers(?string $schema = null): array
     {
@@ -764,7 +767,7 @@ class DatabaseReflection
 
     /**
      * @param string|null $schema
-     * @return \SqlFtw\Reflection\EventReflection[]
+     * @return EventReflection[]
      */
     public function getEvents(?string $schema = null): array
     {
@@ -808,7 +811,7 @@ class DatabaseReflection
     }
 
     /**
-     * @return \SqlFtw\Reflection\VariablesReflection[]
+     * @return VariablesReflection[]
      */
     public function getVariables(): array
     {

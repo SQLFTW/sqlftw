@@ -17,16 +17,16 @@ class PlatformSettings
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Platform\Platform */
+    /** @var Platform */
     private $platform;
 
     /** @var string */
     private $delimiter;
 
-    /** @var \SqlFtw\Sql\Charset */
+    /** @var Charset */
     private $charset;
 
-    /** @var \SqlFtw\Platform\Mode */
+    /** @var Mode */
     private $mode;
 
     /** @var bool */

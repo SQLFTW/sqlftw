@@ -21,13 +21,13 @@ class OrderByExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Order */
+    /** @var Order */
     private $order;
 
-    /** @var \SqlFtw\Sql\ColumnName|null */
+    /** @var ColumnName|null */
     private $column;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $expression;
 
     /** @var int|null */

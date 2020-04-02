@@ -10,7 +10,10 @@
 namespace SqlFtw\Reflection;
 
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
+use SqlFtw\Sql\Ddl\Table\Alter\SimpleAction;
+use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
+use SqlFtw\Sql\QualifiedName;
 use Throwable;
 use function end;
 use function sprintf;
@@ -18,10 +21,10 @@ use function sprintf;
 class TableWasMovedException extends TableDoesNotExistException
 {
 
-    /** @var \SqlFtw\Reflection\TableReflection */
+    /** @var TableReflection */
     private $reflection;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $newName;
 
     public function __construct(TableReflection $reflection, ?Throwable $previous = null)
@@ -31,12 +34,12 @@ class TableWasMovedException extends TableDoesNotExistException
         $schema = $table->getSchema();
 
         $commands = $reflection->getCommands();
-        /** @var \SqlFtw\Sql\Ddl\Table\AlterTableCommand|\SqlFtw\Sql\Ddl\Table\RenameTableCommand $command */
+        /** @var AlterTableCommand|RenameTableCommand $command */
         $command = end($commands);
         if ($command instanceof RenameTableCommand) {
             $this->newName = $command->getNewNameForTable($table);
         } else {
-            /** @var \SqlFtw\Sql\Ddl\Table\Alter\SimpleAction $action */
+            /** @var SimpleAction $action */
             $action = $command->getActions()->getActionsByType(AlterTableActionType::get(AlterTableActionType::RENAME_TO));
             $this->newName = $action->getValue();
         }

@@ -14,7 +14,7 @@ use function file_exists;
 use function file_get_contents;
 use function str_replace;
 
-final class FilesContextProvider ///implements \SqlFtw\Reflection\ContextProvider
+final class FilesContextProvider ///implements ContextProvider
 {
 
     /** @var string */

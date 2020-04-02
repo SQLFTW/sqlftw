@@ -15,7 +15,7 @@ use function sprintf;
 class ViewWasDroppedException extends ViewDoesNotExistException
 {
 
-    /** @var \SqlFtw\Reflection\ViewReflection */
+    /** @var ViewReflection */
     private $reflection;
 
     public function __construct(ViewReflection $reflection, ?Throwable $previous = null)

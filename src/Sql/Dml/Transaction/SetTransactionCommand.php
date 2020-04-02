@@ -17,10 +17,10 @@ class SetTransactionCommand implements TransactionCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Scope|null */
+    /** @var Scope|null */
     private $scope;
 
-    /** @var \SqlFtw\Sql\Dml\Transaction\TransactionIsolationLevel|null */
+    /** @var TransactionIsolationLevel|null */
     private $isolationLevel;
 
     /** @var bool|null */

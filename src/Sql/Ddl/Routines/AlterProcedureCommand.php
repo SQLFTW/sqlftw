@@ -18,13 +18,13 @@ class AlterProcedureCommand implements StoredProcedureCommand, AlterRoutineComma
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\SqlSecurity|null */
+    /** @var SqlSecurity|null */
     private $security;
 
-    /** @var \SqlFtw\Sql\Ddl\Routines\RoutineSideEffects|null */
+    /** @var RoutineSideEffects|null */
     private $sideEffects;
 
     /** @var string|null */

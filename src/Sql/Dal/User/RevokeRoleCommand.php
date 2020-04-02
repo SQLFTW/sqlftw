@@ -22,12 +22,12 @@ class RevokeRoleCommand implements UserCommand
     /** @var string[] */
     private $roles;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $users;
 
     /**
      * @param string[] $roles
-     * @param \SqlFtw\Sql\UserName[] $users
+     * @param UserName[] $users
      */
     public function __construct(array $roles, array $users)
     {
@@ -47,7 +47,7 @@ class RevokeRoleCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {

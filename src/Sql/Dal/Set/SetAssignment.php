@@ -29,19 +29,19 @@ class SetAssignment implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Scope */
+    /** @var Scope */
     private $scope;
 
     /** @var string */
     private $variable;
 
-    /** @var bool|int|float|string|\SqlFtw\Sql\Expression\ExpressionNode */
+    /** @var bool|int|float|string|ExpressionNode */
     private $expression;
 
     /**
      * @param string $variable
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|string|int|float|bool|mixed $expression
-     * @param \SqlFtw\Sql\Scope|null $scope
+     * @param bool|int|float|string|ExpressionNode|mixed $expression
+     * @param Scope|null $scope
      */
     public function __construct(string $variable, $expression, ?Scope $scope = null)
     {
@@ -70,7 +70,7 @@ class SetAssignment implements SqlSerializable
     }
 
     /**
-     * @return bool|int|float|string|\SqlFtw\Sql\Expression\ExpressionNode
+     * @return bool|int|float|string|ExpressionNode
      */
     public function getExpression()
     {
@@ -86,8 +86,8 @@ class SetAssignment implements SqlSerializable
     }
 
     /**
-     * @param \SqlFtw\Formatter\Formatter $formatter
-     * @param bool|int|float|string|\SqlFtw\Sql\Expression\ExpressionNode $expression
+     * @param Formatter $formatter
+     * @param bool|int|float|string|ExpressionNode $expression
      * @return string
      */
     private function formatExpression(Formatter $formatter, $expression): string

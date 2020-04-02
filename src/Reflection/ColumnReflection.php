@@ -16,10 +16,10 @@ class ColumnReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Reflection\TableReflection */
+    /** @var TableReflection */
     private $table;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition */
+    /** @var ColumnDefinition */
     private $columnDefinition;
 
     public function __construct(TableReflection $table, ColumnDefinition $columnDefinition)

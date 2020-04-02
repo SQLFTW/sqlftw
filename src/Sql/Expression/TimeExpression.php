@@ -9,11 +9,13 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use DateInterval;
 use DateTimeInterface;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
+use Dogma\Time\Interval\DateTimeInterval;
 use Dogma\Time\Time;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
@@ -22,15 +24,15 @@ class TimeExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime|\SqlFtw\Sql\Expression\BuiltInFunction */
+    /** @var Date|Time|DateTime|BuiltInFunction */
     private $value;
 
-    /** @var \SqlFtw\Sql\Expression\TimeInterval[] */
+    /** @var TimeInterval[] */
     private $intervals;
 
     /**
-     * @param \Dogma\Time\Date|\Dogma\Time\Time|\DateTimeInterface|\SqlFtw\Sql\Expression\BuiltInFunction $value
-     * @param \Dogma\Time\Interval\DateTimeInterval[]|\DateInterval[]|\SqlFtw\Sql\Expression\TimeInterval[] $intervals
+     * @param Date|Time|DateTimeInterface|BuiltInFunction $value
+     * @param DateTimeInterval[]|DateInterval[]|TimeInterval[] $intervals
      */
     public function __construct($value, array $intervals = [])
     {
@@ -62,7 +64,7 @@ class TimeExpression implements SqlSerializable
     }
 
     /**
-     * @return \Dogma\Time\Date|\Dogma\Time\Time|\Dogma\Time\DateTime
+     * @return Date|Time|DateTime
      */
     public function getValue()
     {
@@ -70,7 +72,7 @@ class TimeExpression implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\TimeInterval[]
+     * @return TimeInterval[]
      */
     public function getIntervals(): array
     {

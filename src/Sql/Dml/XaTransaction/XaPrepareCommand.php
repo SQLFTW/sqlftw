@@ -16,7 +16,7 @@ class XaPrepareCommand implements XaTransactionCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\XaTransaction\Xid */
+    /** @var Xid */
     private $xid;
 
     public function __construct(Xid $xid)

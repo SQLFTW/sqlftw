@@ -179,7 +179,7 @@ class TransactionCommandsParser
     {
         $tokenList->consumeKeyword(Keyword::SET);
 
-        /** @var \SqlFtw\Sql\Scope $scope */
+        /** @var Scope $scope */
         $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
 
         $tokenList->consumeKeyword(Keyword::TRANSACTION);

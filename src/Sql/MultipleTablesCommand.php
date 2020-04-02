@@ -13,7 +13,7 @@ interface MultipleTablesCommand extends TableCommand
 {
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getTables(): array;
 

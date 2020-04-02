@@ -24,7 +24,7 @@ class HandlerCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
@@ -81,7 +81,7 @@ class HandlerCommandsParser
             }
             $what = HandlerReadTarget::get($what);
         } else {
-            /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadTarget $what */
+            /** @var HandlerReadTarget $what */
             $what = $tokenList->consumeKeywordEnum(HandlerReadTarget::class);
         }
 

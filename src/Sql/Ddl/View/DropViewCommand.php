@@ -18,19 +18,19 @@ class DropViewCommand implements ViewCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     private $names;
 
     /** @var bool */
     private $ifExists;
 
-    /** @var \SqlFtw\Sql\Ddl\View\DropViewOption */
+    /** @var DropViewOption */
     private $option;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[] $names
+     * @param QualifiedName[] $names
      * @param bool $ifExists
-     * @param \SqlFtw\Sql\Ddl\View\DropViewOption|null $option
+     * @param DropViewOption|null $option
      */
     public function __construct(array $names, bool $ifExists = false, ?DropViewOption $option = null)
     {
@@ -43,7 +43,7 @@ class DropViewCommand implements ViewCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getNames(): array
     {

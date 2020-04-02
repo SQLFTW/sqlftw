@@ -18,18 +18,18 @@ class GrantProxyCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName */
+    /** @var UserName */
     private $proxy;
 
-    /** @var \SqlFtw\Sql\UserName[] */
+    /** @var UserName[] */
     private $users;
 
     /** @var bool */
     private $withGrantOption;
 
     /**
-     * @param \SqlFtw\Sql\UserName $proxy
-     * @param \SqlFtw\Sql\UserName[] $users
+     * @param UserName $proxy
+     * @param UserName[] $users
      * @param bool $withGrantOption
      */
     public function __construct(UserName $proxy, array $users, bool $withGrantOption = false)
@@ -47,7 +47,7 @@ class GrantProxyCommand implements UserCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\UserName[]
+     * @return UserName[]
      */
     public function getUsers(): array
     {

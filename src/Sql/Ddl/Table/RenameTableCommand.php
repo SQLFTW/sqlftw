@@ -24,15 +24,15 @@ class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     protected $tables;
 
-    /** @var \SqlFtw\Sql\QualifiedName[] */
+    /** @var QualifiedName[] */
     private $newTables;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName[] $tables
-     * @param \SqlFtw\Sql\QualifiedName[] $newTables
+     * @param QualifiedName[] $tables
+     * @param QualifiedName[] $newTables
      */
     public function __construct(array $tables, array $newTables)
     {
@@ -49,7 +49,7 @@ class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getTables(): array
     {
@@ -57,7 +57,7 @@ class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @return QualifiedName[]
      */
     public function getNewTables(): array
     {
@@ -67,8 +67,8 @@ class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
     public function getNewNameForTable(QualifiedName $table): ?QualifiedName
     {
         /**
-         * @var \SqlFtw\Sql\QualifiedName $old
-         * @var \SqlFtw\Sql\QualifiedName $new
+         * @var QualifiedName $old
+         * @var QualifiedName $new
          */
         foreach ($this->getIterator() as $old => $new) {
             if ($old->getName() !== $table->getName()) {

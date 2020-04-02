@@ -12,6 +12,7 @@ namespace SqlFtw\Reflection;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
+use SqlFtw\Sql\Ddl\Database\DatabaseCommand;
 use SqlFtw\Sql\Ddl\Database\DropDatabaseCommand;
 use function end;
 
@@ -22,7 +23,7 @@ class SchemaReflection
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Database\DatabaseCommand[] */
+    /** @var DatabaseCommand[] */
     private $commands = [];
 
     public function __construct(string $name, CreateDatabaseCommand $createDatabaseCommand)
@@ -52,7 +53,7 @@ class SchemaReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Database\DatabaseCommand[]
+     * @return DatabaseCommand[]
      */
     public function getCommands(): array
     {

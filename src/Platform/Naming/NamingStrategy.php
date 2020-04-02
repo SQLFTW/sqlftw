@@ -15,14 +15,14 @@ interface NamingStrategy
 {
 
     /**
-     * @param \SqlFtw\Reflection\TableReflection $table
+     * @param TableReflection $table
      * @param string[] $columns
      * @return string
      */
     public function createIndexName(TableReflection $table, array $columns): string;
 
     /**
-     * @param \SqlFtw\Reflection\TableReflection $table
+     * @param TableReflection $table
      * @param string[] $columns
      * @return string
      */

@@ -19,7 +19,7 @@ class ShowEngineCommand implements ShowCommand
     /** @var string */
     private $name;
 
-    /** @var \SqlFtw\Sql\Dal\Show\ShowEngineOption */
+    /** @var ShowEngineOption */
     private $option;
 
     public function __construct(string $name, ShowEngineOption $option)

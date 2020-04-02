@@ -17,7 +17,7 @@ class TableReferenceParentheses implements TableReferenceNode, Countable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
+    /** @var TableReferenceNode */
     private $content;
 
     public function __construct(TableReferenceNode $content)

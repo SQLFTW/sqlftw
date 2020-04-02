@@ -64,10 +64,10 @@ class ParserFactory
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Platform\PlatformSettings */
+    /** @var PlatformSettings */
     private $settings;
 
-    /** @var \SqlFtw\Parser\Parser */
+    /** @var Parser */
     private $parser;
 
     public function __construct(PlatformSettings $settings, Parser $parser)

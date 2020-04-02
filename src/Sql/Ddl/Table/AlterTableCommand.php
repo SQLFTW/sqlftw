@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList;
+use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\QualifiedName;
@@ -24,23 +25,23 @@ use function trim;
 class AlterTableCommand implements SingleTableCommand, TableStructureCommand
 {
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList */
+    /** @var AlterActionsList */
     private $actions;
 
     /** @var mixed[] */
     private $alterOptions;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|null */
+    /** @var TableOptionsList|null */
     private $tableOptions;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList|\SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction[] $actions
+     * @param QualifiedName $table
+     * @param AlterActionsList|AlterTableAction[] $actions
      * @param mixed[] $alterOptions
-     * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList|mixed[]|null $tableOptions
+     * @param TableOptionsList|mixed[]|null $tableOptions
      */
     public function __construct(
         QualifiedName $table,

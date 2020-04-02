@@ -18,11 +18,11 @@ class ResetCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\Reset\ResetOption[] */
+    /** @var ResetOption[] */
     private $options;
 
     /**
-     * @param \SqlFtw\Sql\Dal\Reset\ResetOption[] $options
+     * @param ResetOption[] $options
      */
     public function __construct(array $options)
     {
@@ -33,7 +33,7 @@ class ResetCommand implements DalCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\Reset\ResetOption[]
+     * @return ResetOption[]
      */
     public function getOptions(): array
     {

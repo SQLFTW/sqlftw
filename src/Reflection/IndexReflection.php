@@ -18,13 +18,13 @@ class IndexReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Reflection\TableReflection */
+    /** @var TableReflection */
     private $table;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Index\IndexDefinition */
+    /** @var IndexDefinition */
     private $indexDefinition;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition|null */
+    /** @var ColumnDefinition|null */
     private $columnDefinition;
 
     public function __construct(TableReflection $table, IndexDefinition $indexDefinition)

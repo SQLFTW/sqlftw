@@ -20,15 +20,15 @@ class IfStatement implements Statement
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var ExpressionNode[] */
     private $conditions;
 
-    /** @var \SqlFtw\Sql\Statement[][] */
+    /** @var Statement[][] */
     private $statementLists;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[] $conditions
-     * @param \SqlFtw\Sql\Statement[][] $statementLists
+     * @param ExpressionNode[] $conditions
+     * @param Statement[][] $statementLists
      */
     public function __construct(array $conditions, array $statementLists)
     {
@@ -45,7 +45,7 @@ class IfStatement implements Statement
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @return ExpressionNode[]
      */
     public function getConditions(): array
     {
@@ -53,7 +53,7 @@ class IfStatement implements Statement
     }
 
     /**
-     * @return \SqlFtw\Sql\Statement[][]
+     * @return Statement[][]
      */
     public function getStatementLists(): array
     {

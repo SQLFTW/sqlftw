@@ -42,10 +42,10 @@ class TokenList
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Token[] */
+    /** @var Token[] */
     private $tokens;
 
-    /** @var \SqlFtw\Platform\PlatformSettings */
+    /** @var PlatformSettings */
     private $settings;
 
     /** @var bool */
@@ -58,8 +58,8 @@ class TokenList
     private $position = 0;
 
     /**
-     * @param \SqlFtw\Parser\Token[] $tokens
-     * @param \SqlFtw\Platform\PlatformSettings $settings
+     * @param Token[] $tokens
+     * @param PlatformSettings $settings
      * @param bool $whitespace
      */
     public function __construct(array $tokens, PlatformSettings $settings, bool $whitespace = true)
@@ -112,7 +112,7 @@ class TokenList
     /**
      * @param int $position
      * @param int $count
-     * @return \SqlFtw\Parser\Token[]
+     * @return Token[]
      */
     public function getTokens(int $position, int $count): array
     {
@@ -129,7 +129,7 @@ class TokenList
     /**
      * @param int $tokenType
      * @param mixed|null $value
-     * @return \SqlFtw\Parser\Token
+     * @return Token
      */
     public function consume(int $tokenType, $value = null): Token
     {
@@ -290,6 +290,7 @@ class TokenList
         if ($number !== null && preg_match('/^[0-9]+$/', $number)) {
             return (int) $number;
         }
+        // always fails
         $this->consume(TokenType::NUMBER);
         exit;
     }
@@ -560,7 +561,7 @@ class TokenList
 
     /**
      * @param string ...$keywords
-     * @throws \SqlFtw\Parser\UnexpectedTokenException
+     * @throws UnexpectedTokenException
      */
     public function expectedAnyKeyword(string ...$keywords): void
     {

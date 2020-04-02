@@ -9,13 +9,21 @@
 
 namespace SqlFtw\Reflection\Context;
 
+use SqlFtw\Reflection\EventDoesNotExistException;
+use SqlFtw\Reflection\FunctionDoesNotExistException;
+use SqlFtw\Reflection\ProcedureDoesNotExistException;
+use SqlFtw\Reflection\SchemaDoesNotExistException;
+use SqlFtw\Reflection\TableDoesNotExistException;
+use SqlFtw\Reflection\TriggerDoesNotExistException;
+use SqlFtw\Reflection\ViewDoesNotExistException;
+
 interface ContextProvider
 {
 
     /**
      * @param string $name
      * @return string
-     * @throws \SqlFtw\Reflection\SchemaDoesNotExistException
+     * @throws SchemaDoesNotExistException
      */
     public function getCreateDatabase(string $name): string;
 
@@ -23,7 +31,7 @@ interface ContextProvider
      * @param string $name
      * @param string $schema
      * @return string
-     * @throws \SqlFtw\Reflection\TableDoesNotExistException
+     * @throws TableDoesNotExistException
      */
     public function getCreateTable(string $name, string $schema): string;
 
@@ -31,7 +39,7 @@ interface ContextProvider
      * @param string $name
      * @param string $schema
      * @return string
-     * @throws \SqlFtw\Reflection\ViewDoesNotExistException
+     * @throws ViewDoesNotExistException
      */
     public function getCreateView(string $name, string $schema): string;
 
@@ -39,7 +47,7 @@ interface ContextProvider
      * @param string $name
      * @param string $schema
      * @return string
-     * @throws \SqlFtw\Reflection\FunctionDoesNotExistException
+     * @throws FunctionDoesNotExistException
      */
     public function getCreateFunction(string $name, string $schema): string;
 
@@ -47,7 +55,7 @@ interface ContextProvider
      * @param string $name
      * @param string $schema
      * @return string
-     * @throws \SqlFtw\Reflection\ProcedureDoesNotExistException
+     * @throws ProcedureDoesNotExistException
      */
     public function getCreateProcedure(string $name, string $schema): string;
 
@@ -55,7 +63,7 @@ interface ContextProvider
      * @param string $name
      * @param string $schema
      * @return string
-     * @throws \SqlFtw\Reflection\TriggerDoesNotExistException
+     * @throws TriggerDoesNotExistException
      */
     public function getCreateTrigger(string $name, string $schema): string;
 
@@ -63,7 +71,7 @@ interface ContextProvider
      * @param string $name
      * @param string $schema
      * @return string
-     * @throws \SqlFtw\Reflection\EventDoesNotExistException
+     * @throws EventDoesNotExistException
      */
     public function getCreateEvent(string $name, string $schema): string;
 

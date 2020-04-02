@@ -16,7 +16,7 @@ class EscapedTableReference implements TableReferenceNode
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\TableReferenceNode */
+    /** @var TableReferenceNode */
     private $node;
 
     public function __construct(TableReferenceNode $node)

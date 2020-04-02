@@ -18,7 +18,7 @@ abstract class InsertOrReplaceCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     protected $table;
 
     /** @var string[]|null */
@@ -27,17 +27,17 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     /** @var string[]|null */
     protected $partitions;
 
-    /** @var \SqlFtw\Sql\Dml\Insert\InsertPriority|null */
+    /** @var InsertPriority|null */
     protected $priority;
 
     /** @var bool */
     protected $ignore;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
+     * @param QualifiedName $table
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority
+     * @param InsertPriority|null $priority
      * @param bool $ignore
      */
     public function __construct(

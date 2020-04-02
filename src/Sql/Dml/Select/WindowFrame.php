@@ -19,19 +19,19 @@ class WindowFrame implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Select\WindowFrameUnits */
+    /** @var WindowFrameUnits */
     public $units;
 
-    /** @var \SqlFtw\Sql\Dml\Select\WindowFrameType */
+    /** @var WindowFrameType */
     public $startType;
 
-    /** @var \SqlFtw\Sql\Dml\Select\WindowFrameType|null */
+    /** @var WindowFrameType|null */
     public $endType;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     public $startExpression;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     public $endExpression;
 
     public function __construct(

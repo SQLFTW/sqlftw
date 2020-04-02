@@ -89,7 +89,7 @@ class CacheCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return string[]|null
      */
     private function parseIndexes(TokenList $tokenList): ?array
@@ -108,7 +108,7 @@ class CacheCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return string[]|bool|null
      */
     private function parsePartitions(TokenList $tokenList)

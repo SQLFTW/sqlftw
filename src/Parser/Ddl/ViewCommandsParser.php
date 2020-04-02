@@ -29,10 +29,10 @@ class ViewCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
+    /** @var SelectCommandParser */
     private $selectCommandParser;
 
     public function __construct(
@@ -84,7 +84,7 @@ class ViewCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return mixed[]
      */
     private function parseViewDefinition(TokenList $tokenList): array
@@ -92,7 +92,7 @@ class ViewCommandsParser
         $algorithm = $definer = $sqlSecurity = $checkOption = null;
         if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
             $tokenList->consumeOperator(Operator::EQUAL);
-            /** @var \SqlFtw\Sql\Ddl\View\ViewAlgorithm $algorithm */
+            /** @var ViewAlgorithm $algorithm */
             $algorithm = $tokenList->consumeKeywordEnum(ViewAlgorithm::class);
         }
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
@@ -101,7 +101,7 @@ class ViewCommandsParser
         }
         if ($tokenList->mayConsumeKeyword(Keyword::SQL)) {
             $tokenList->consumeKeyword(Keyword::SECURITY);
-            /** @var \SqlFtw\Sql\Ddl\SqlSecurity $sqlSecurity */
+            /** @var SqlSecurity $sqlSecurity */
             $sqlSecurity = $tokenList->consumeKeywordEnum(SqlSecurity::class);
         }
 

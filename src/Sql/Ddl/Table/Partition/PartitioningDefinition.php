@@ -18,26 +18,26 @@ class PartitioningDefinition implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition */
+    /** @var PartitioningCondition */
     private $condition;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition[]|null */
+    /** @var PartitionDefinition[]|null */
     private $partitions;
 
     /** @var int|null */
     private $partitionsNumber;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition|null */
+    /** @var PartitioningCondition|null */
     private $subpartitionsCondition;
 
     /** @var int|null */
     private $subpartitionsNumber;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition $condition
-     * @param \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition[]|null $partitions
+     * @param PartitioningCondition $condition
+     * @param PartitionDefinition[]|null $partitions
      * @param int|null $partitionsNumber
-     * @param \SqlFtw\Sql\Ddl\Table\Partition\PartitioningCondition|null $subpartitionsCondition
+     * @param PartitioningCondition|null $subpartitionsCondition
      * @param int|null $subpartitionsNumber
      */
     public function __construct(
@@ -63,7 +63,7 @@ class PartitioningDefinition implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition[]|null
+     * @return PartitionDefinition[]|null
      */
     public function getPartitions(): ?array
     {

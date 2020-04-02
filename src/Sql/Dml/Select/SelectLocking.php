@@ -19,19 +19,19 @@ class SelectLocking implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectLockOption */
+    /** @var SelectLockOption */
     private $for;
 
-    /** @var \SqlFtw\Sql\Dml\Select\SelectLockWaitOption|null */
+    /** @var SelectLockWaitOption|null */
     private $wait;
 
-    /** @var \SqlFtw\Sql\QualifiedName[]|null */
+    /** @var QualifiedName[]|null */
     private $tables;
 
     /**
-     * @param \SqlFtw\Sql\Dml\Select\SelectLockOption $for
-     * @param \SqlFtw\Sql\Dml\Select\SelectLockWaitOption|null $wait
-     * @param \SqlFtw\Sql\QualifiedName[]|null $tables
+     * @param SelectLockOption $for
+     * @param SelectLockWaitOption|null $wait
+     * @param QualifiedName[]|null $tables
      */
     public function __construct(SelectLockOption $for, ?SelectLockWaitOption $wait = null, ?array $tables = null)
     {
@@ -55,7 +55,7 @@ class SelectLocking implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\QualifiedName[]|null
+     * @return QualifiedName[]|null
      */
     public function getTables(): ?array
     {

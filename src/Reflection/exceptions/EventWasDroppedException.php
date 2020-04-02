@@ -15,7 +15,7 @@ use function sprintf;
 class EventWasDroppedException extends EventDoesNotExistException
 {
 
-    /** @var \SqlFtw\Reflection\EventReflection */
+    /** @var EventReflection */
     private $reflection;
 
     public function __construct(EventReflection $reflection, ?Throwable $previous = null)

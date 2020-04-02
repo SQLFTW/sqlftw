@@ -10,14 +10,14 @@ class CompoundStatement implements Statement
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Statement[] */
+    /** @var Statement[] */
     private $statements;
 
     /** @var string|null */
     private $label;
 
     /**
-     * @param \SqlFtw\Sql\Statement[] $statements
+     * @param Statement[] $statements
      * @param string|null $label
      */
     public function __construct(array $statements, ?string $label)
@@ -27,7 +27,7 @@ class CompoundStatement implements Statement
     }
 
     /**
-     * @return \SqlFtw\Sql\Statement[]
+     * @return Statement[]
      */
     public function getStatements(): array
     {

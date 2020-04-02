@@ -17,7 +17,7 @@ class ShowProcedureCodeCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
     public function __construct(QualifiedName $name)

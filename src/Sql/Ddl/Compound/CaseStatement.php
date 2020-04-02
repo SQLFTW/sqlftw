@@ -20,19 +20,19 @@ class CaseStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $condition;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var ExpressionNode[] */
     private $values;
 
-    /** @var \SqlFtw\Sql\Statement[][] */
+    /** @var Statement[][] */
     private $statementLists;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $condition
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[] $values
-     * @param \SqlFtw\Sql\Statement[][] $statementLists
+     * @param ExpressionNode|null $condition
+     * @param ExpressionNode[] $values
+     * @param Statement[][] $statementLists
      */
     public function __construct(?ExpressionNode $condition, array $values, array $statementLists)
     {
@@ -55,7 +55,7 @@ class CaseStatement implements CompoundStatementItem
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @return ExpressionNode[]
      */
     public function getValues(): array
     {
@@ -63,7 +63,7 @@ class CaseStatement implements CompoundStatementItem
     }
 
     /**
-     * @return \SqlFtw\Sql\Statement[][]
+     * @return Statement[][]
      */
     public function getStatementLists(): array
     {

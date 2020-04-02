@@ -27,10 +27,10 @@ class LoadCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\Dml\FileFormatParser */
+    /** @var FileFormatParser */
     private $fileFormatParser;
 
     public function __construct(ExpressionParser $expressionParser, FileFormatParser $fileFormatParser)
@@ -96,7 +96,7 @@ class LoadCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @param bool $parsePartitions
      * @return mixed[]
      */
@@ -132,7 +132,7 @@ class LoadCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return mixed[]
      */
     private function parseRowsAndFields(TokenList $tokenList): array

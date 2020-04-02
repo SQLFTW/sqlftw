@@ -31,7 +31,7 @@ class CreateFunctionCommandParser
         $tokenList->consumeKeyword(Keyword::FUNCTION);
         $name = new QualifiedName(...$tokenList->consumeQualifiedName());
         $tokenList->consumeKeyword(Keyword::RETURNS);
-        /** @var \SqlFtw\Sql\Ddl\Routines\UdfReturnDataType $type */
+        /** @var UdfReturnDataType $type */
         $type = $tokenList->consumeKeywordEnum(UdfReturnDataType::class);
         $tokenList->consumeKeyword(Keyword::SONAME);
         $libName = $tokenList->consumeNameOrString();

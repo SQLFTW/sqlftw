@@ -19,11 +19,11 @@ class DoCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var ExpressionNode[] */
     private $expressions;
 
     /**
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[] $expressions
+     * @param ExpressionNode[] $expressions
      */
     public function __construct(array $expressions)
     {
@@ -33,7 +33,7 @@ class DoCommand implements DmlCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]
+     * @return ExpressionNode[]
      */
     public function getExpressions(): array
     {

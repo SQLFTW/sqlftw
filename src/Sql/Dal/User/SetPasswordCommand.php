@@ -17,7 +17,7 @@ class SetPasswordCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\UserName|null */
+    /** @var UserName|null */
     private $user;
 
     /** @var string */

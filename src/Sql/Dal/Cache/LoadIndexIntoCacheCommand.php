@@ -20,11 +20,11 @@ class LoadIndexIntoCacheCommand implements CacheCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\Cache\TableIndexList[] */
+    /** @var TableIndexList[] */
     private $tableIndexLists;
 
     /**
-     * @param \SqlFtw\Sql\Dal\Cache\TableIndexList[] $tableIndexLists
+     * @param TableIndexList[] $tableIndexLists
      */
     public function __construct(array $tableIndexLists)
     {
@@ -34,7 +34,7 @@ class LoadIndexIntoCacheCommand implements CacheCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\Cache\TableIndexList[]
+     * @return TableIndexList[]
      */
     public function getTableIndexLists(): array
     {

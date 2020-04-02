@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\Literal;
 
 class AlterColumnAction implements AlterTableAction
 {
@@ -19,12 +20,12 @@ class AlterColumnAction implements AlterTableAction
     /** @var string */
     private $name;
 
-    /** @var string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null */
+    /** @var string|int|float|bool|Literal|null */
     private $default;
 
     /**
      * @param string $name
-     * @param string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null $default
+     * @param string|int|float|bool|Literal|null $default
      */
     public function __construct(string $name, $default)
     {
@@ -43,7 +44,7 @@ class AlterColumnAction implements AlterTableAction
     }
 
     /**
-     * @return string|int|float|bool|\SqlFtw\Sql\Expression\Literal|null
+     * @return string|int|float|bool|Literal|null
      */
     public function getDefault()
     {

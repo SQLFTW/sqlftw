@@ -17,7 +17,7 @@ class NamingStrategyMysql implements NamingStrategy
     use StrictBehaviorMixin;
 
     /**
-     * @param \SqlFtw\Reflection\TableReflection $table
+     * @param TableReflection $table
      * @param string[] $columns
      * @return string
      */
@@ -37,7 +37,7 @@ class NamingStrategyMysql implements NamingStrategy
     }
 
     /**
-     * @param \SqlFtw\Reflection\TableReflection $table
+     * @param TableReflection $table
      * @param string[] $columns
      * @return string
      */

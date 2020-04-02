@@ -16,7 +16,7 @@ class XaCommitCommand implements XaTransactionCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\XaTransaction\Xid */
+    /** @var Xid */
     private $xid;
 
     /** @var bool */

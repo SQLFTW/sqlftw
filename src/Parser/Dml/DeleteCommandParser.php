@@ -25,13 +25,13 @@ class DeleteCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Dml\WithParser */
+    /** @var WithParser */
     private $withParser;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\JoinParser */
+    /** @var JoinParser */
     private $joinParser;
 
     public function __construct(
@@ -116,8 +116,8 @@ class DeleteCommandParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\QualifiedName[]
+     * @param TokenList $tokenList
+     * @return QualifiedName[]
      */
     private function parseTablesList(TokenList $tokenList): array
     {

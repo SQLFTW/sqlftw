@@ -19,19 +19,19 @@ class CaseExpression implements Statement
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\Literal|null */
+    /** @var Literal|null */
     private $condition;
 
-    /** @var \SqlFtw\Sql\Expression\Literal[]|\SqlFtw\Sql\Expression\ExpressionNode[] */
+    /** @var Literal[]|ExpressionNode[] */
     private $values;
 
-    /** @var \SqlFtw\Sql\Expression\Literal[] */
+    /** @var Literal[] */
     private $results;
 
     /**
-     * @param \SqlFtw\Sql\Expression\Literal|null $condition
-     * @param \SqlFtw\Sql\Expression\Literal[]|\SqlFtw\Sql\Expression\ExpressionNode[] $values
-     * @param \SqlFtw\Sql\Expression\Literal[] $results
+     * @param Literal|null $condition
+     * @param Literal[]|ExpressionNode[] $values
+     * @param Literal[] $results
      */
     public function __construct(?Literal $condition, array $values, array $results)
     {
@@ -55,7 +55,7 @@ class CaseExpression implements Statement
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\Literal[]|\SqlFtw\Sql\Expression\ExpressionNode[]
+     * @return Literal[]|ExpressionNode[]
      */
     public function getValues(): array
     {
@@ -63,7 +63,7 @@ class CaseExpression implements Statement
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\Literal[]
+     * @return Literal[]
      */
     public function getResults(): array
     {

@@ -116,7 +116,7 @@ class Operator extends SqlEnum implements Feature
     }
 
     /**
-     * @throws \Dogma\InvalidValueException
+     * @throws InvalidValueException
      */
     public function checkUnary(): void
     {
@@ -126,7 +126,7 @@ class Operator extends SqlEnum implements Feature
     }
 
     /**
-     * @throws \Dogma\InvalidValueException
+     * @throws InvalidValueException
      */
     public function checkBinary(): void
     {
@@ -136,7 +136,7 @@ class Operator extends SqlEnum implements Feature
     }
 
     /**
-     * @throws \Dogma\InvalidValueException
+     * @throws InvalidValueException
      */
     public function checkTernaryLeft(): void
     {
@@ -146,7 +146,7 @@ class Operator extends SqlEnum implements Feature
     }
 
     /**
-     * @throws \Dogma\InvalidValueException
+     * @throws InvalidValueException
      */
     public function checkTernaryRight(): void
     {

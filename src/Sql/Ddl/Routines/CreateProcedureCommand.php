@@ -20,25 +20,25 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Compound\CompoundStatement */
+    /** @var CompoundStatement */
     private $body;
 
-    /** @var \SqlFtw\Sql\Ddl\Routines\ProcedureParam[] */
+    /** @var ProcedureParam[] */
     private $params;
 
-    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
+    /** @var UserExpression|null */
     private $definer;
 
     /** @var bool|null */
     private $deterministic;
 
-    /** @var \SqlFtw\Sql\Ddl\SqlSecurity|null */
+    /** @var SqlSecurity|null */
     private $security;
 
-    /** @var \SqlFtw\Sql\Ddl\Routines\RoutineSideEffects|null */
+    /** @var RoutineSideEffects|null */
     private $sideEffects;
 
     /** @var string|null */
@@ -48,13 +48,13 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
     private $language;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $name
-     * @param \SqlFtw\Sql\Ddl\Compound\CompoundStatement $body
-     * @param \SqlFtw\Sql\Ddl\Routines\ProcedureParam[] $params
-     * @param \SqlFtw\Sql\Ddl\UserExpression|null $definer
+     * @param QualifiedName $name
+     * @param CompoundStatement $body
+     * @param ProcedureParam[] $params
+     * @param UserExpression|null $definer
      * @param bool|null $deterministic
-     * @param \SqlFtw\Sql\Ddl\SqlSecurity|null $security
-     * @param \SqlFtw\Sql\Ddl\Routines\RoutineSideEffects|null $sideEffects
+     * @param SqlSecurity|null $security
+     * @param RoutineSideEffects|null $sideEffects
      * @param string|null $comment
      * @param string|null $language
      */
@@ -91,7 +91,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Routines\ProcedureParam[]
+     * @return ProcedureParam[]
      */
     public function getParams(): array
     {

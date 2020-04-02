@@ -17,14 +17,14 @@ use SqlFtw\Sql\SqlSerializable;
 class RolesSpecification implements SqlSerializable
 {
 
-    /** @var \SqlFtw\Sql\Dal\User\RolesSpecificationType */
+    /** @var RolesSpecificationType */
     private $type;
 
     /** @var string[]|null */
     private $roles;
 
     /**
-     * @param \SqlFtw\Sql\Dal\User\RolesSpecificationType $type
+     * @param RolesSpecificationType $type
      * @param string[]|null $roles
      */
     public function __construct(RolesSpecificationType $type, ?array $roles = null)

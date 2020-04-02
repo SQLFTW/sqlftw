@@ -25,7 +25,7 @@ class SetCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
@@ -52,7 +52,7 @@ class SetCommandParser
         $assignments = [];
         do {
             $position = $tokenList->getPosition();
-            /** @var \SqlFtw\Sql\Scope|null $scope */
+            /** @var Scope|null $scope */
             $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
             if ($scope !== null) {
                 $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class)->getValue();

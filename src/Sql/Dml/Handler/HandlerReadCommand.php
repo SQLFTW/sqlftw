@@ -18,10 +18,10 @@ class HandlerReadCommand implements HandlerCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $table;
 
-    /** @var \SqlFtw\Sql\Dml\Handler\HandlerReadTarget */
+    /** @var HandlerReadTarget */
     private $what;
 
     /** @var string|null */
@@ -30,7 +30,7 @@ class HandlerReadCommand implements HandlerCommand
     /** @var mixed[]|null */
     private $values;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $where;
 
     /** @var int|null */
@@ -40,11 +40,11 @@ class HandlerReadCommand implements HandlerCommand
     private $offset;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Dml\Handler\HandlerReadTarget $what
+     * @param QualifiedName $table
+     * @param HandlerReadTarget $what
      * @param string|null $index
      * @param mixed[]|null $values
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $where
+     * @param ExpressionNode|null $where
      * @param int|null $limit
      * @param int|null $offset
      */

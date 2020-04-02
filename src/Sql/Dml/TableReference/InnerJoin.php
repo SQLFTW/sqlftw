@@ -22,17 +22,17 @@ class InnerJoin extends Join
     /** @var bool */
     private $crossJoin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode|null */
+    /** @var ExpressionNode|null */
     private $condition;
 
     /** @var string[]|null */
     private $using;
 
     /**
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $left
-     * @param \SqlFtw\Sql\Dml\TableReference\TableReferenceNode $right
+     * @param TableReferenceNode $left
+     * @param TableReferenceNode $right
      * @param bool $crossJoin
-     * @param \SqlFtw\Sql\Expression\ExpressionNode|null $condition
+     * @param ExpressionNode|null $condition
      * @param string[]|null $using
      */
     public function __construct(

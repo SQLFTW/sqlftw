@@ -15,6 +15,9 @@ use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Dml\Delete\DeleteCommand;
+use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Dml\WithExpression;
 use SqlFtw\Sql\Keyword;
@@ -23,7 +26,7 @@ class WithParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\ParserFactory */
+    /** @var ParserFactory */
     private $parserFactory;
 
     public function __construct(ParserFactory $parserFactory)
@@ -37,8 +40,8 @@ class WithParser
      *     cte_name [(col_name [, col_name] ...)] AS (subquery)
      *     [, cte_name [(col_name [, col_name] ...)] AS (subquery)] ...
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Dml\Select\SelectCommand|\SqlFtw\Sql\Dml\Update\UpdateCommand|\SqlFtw\Sql\Dml\Delete\DeleteCommand
+     * @param TokenList $tokenList
+     * @return SelectCommand|UpdateCommand|DeleteCommand
      */
     public function parseWith(TokenList $tokenList): Command
     {

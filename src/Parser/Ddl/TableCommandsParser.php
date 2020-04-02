@@ -65,6 +65,7 @@ use SqlFtw\Sql\Ddl\Table\Partition\PartitioningConditionType;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionOption;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
+use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\Operator;
@@ -75,16 +76,16 @@ class TableCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Parser\Ddl\TypeParser */
+    /** @var TypeParser */
     private $typeParser;
 
-    /** @var \SqlFtw\Parser\ExpressionParser */
+    /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var \SqlFtw\Parser\Ddl\IndexCommandsParser */
+    /** @var IndexCommandsParser */
     private $indexCommandsParser;
 
-    /** @var \SqlFtw\Parser\Dml\SelectCommandParser */
+    /** @var SelectCommandParser */
     private $selectCommandParser;
 
     public function __construct(
@@ -310,7 +311,7 @@ class TableCommandsParser
                 case Keyword::CONVERT:
                     // CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]
                     $tokenList->consumeKeywords(Keyword::TO, Keyword::CHARACTER, Keyword::SET);
-                    /** @var \SqlFtw\Sql\Charset $charset */
+                    /** @var Charset $charset */
                     $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
                     $collation = null;
                     if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
@@ -584,7 +585,7 @@ class TableCommandsParser
             $partitioning = $this->parsePartitioning($tokenList->resetPosition(-1));
         }
 
-        /** @var \SqlFtw\Sql\Dml\DuplicateOption|null $duplicateOption */
+        /** @var DuplicateOption|null $duplicateOption */
         $duplicateOption = $tokenList->mayConsumeKeywordEnum(DuplicateOption::class);
         $select = null;
         if ($tokenList->mayConsumeKeyword(Keyword::AS) || $items === null || $duplicateOption !== null || !$tokenList->isFinished()) {
@@ -607,8 +608,8 @@ class TableCommandsParser
      *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
      *   | CHECK (expr)
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
-     * @return \SqlFtw\Sql\Ddl\Table\TableItem[]
+     * @param TokenList $tokenList
+     * @return TableItem[]
      */
     private function parseCreateTableBody(TokenList $tokenList): array
     {
@@ -667,7 +668,7 @@ class TableCommandsParser
             $expression = $this->expressionParser->parseExpression($tokenList);
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
 
-            /** @var \SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType $generatedType */
+            /** @var GeneratedColumnType $generatedType */
             $generatedType = $tokenList->mayConsumeKeywordEnum(GeneratedColumnType::class);
             $index = null;
             if ($tokenList->mayConsumeKeyword(Keyword::UNIQUE)) {
@@ -724,7 +725,7 @@ class TableCommandsParser
             }
             $columnFormat = null;
             if ($tokenList->mayConsumeKeyword(Keyword::COLUMN_FORMAT)) {
-                /** @var \SqlFtw\Sql\Ddl\Table\Column\ColumnFormat $columnFormat */
+                /** @var ColumnFormat $columnFormat */
                 $columnFormat = $tokenList->consumeKeywordEnum(ColumnFormat::class);
             }
             $reference = null;
@@ -819,17 +820,17 @@ class TableCommandsParser
 
         $matchType = null;
         if ($tokenList->mayConsumeKeyword(Keyword::MATCH)) {
-            /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyMatchType $matchType */
+            /** @var ForeignKeyMatchType $matchType */
             $matchType = $tokenList->consumeKeywordEnum(ForeignKeyMatchType::class);
         }
 
         $onDelete = $onUpdate = null;
         if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::DELETE)) {
-            /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction $onDelete */
+            /** @var ForeignKeyAction $onDelete */
             $onDelete = $tokenList->consumeKeywordEnum(ForeignKeyAction::class);
         }
         if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::UPDATE)) {
-            /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction $onUpdate */
+            /** @var ForeignKeyAction $onUpdate */
             $onUpdate = $tokenList->consumeKeywordEnum(ForeignKeyAction::class);
         }
 
@@ -864,7 +865,7 @@ class TableCommandsParser
      *   | TABLESPACE tablespace_name
      *   | UNION [=] (tbl_name[,tbl_name]...)
      *
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return mixed[] (string $name, mixed $value)
      */
     private function parseTableOption(TokenList $tokenList): array
@@ -1239,7 +1240,7 @@ class TableCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return string[]|null
      */
     private function parsePartitionNames(TokenList $tokenList): ?array
@@ -1256,7 +1257,7 @@ class TableCommandsParser
     }
 
     /**
-     * @param \SqlFtw\Parser\TokenList $tokenList
+     * @param TokenList $tokenList
      * @return string[]
      */
     private function parseColumnList(TokenList $tokenList): array

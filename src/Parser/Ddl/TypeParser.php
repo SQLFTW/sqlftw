@@ -92,7 +92,7 @@ class TypeParser
                 $dataType = BaseType::get(BaseType::LONG);
             }
         } else {
-            /** @var \SqlFtw\Sql\Ddl\BaseType $dataType */
+            /** @var BaseType $dataType */
             $dataType = $tokenList->consumeKeywordEnum(BaseType::class);
         }
 

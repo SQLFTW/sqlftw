@@ -18,13 +18,13 @@ class ExplainStatementCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Command|null */
+    /** @var Command|null */
     private $statement;
 
     /** @var int|null */
     private $connectionId;
 
-    /** @var \SqlFtw\Sql\Dml\Utility\ExplainType|null */
+    /** @var ExplainType|null */
     private $type;
 
     public function __construct(?Command $statement, ?int $connectionId = null, ?ExplainType $type = null)

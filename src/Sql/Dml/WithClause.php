@@ -17,14 +17,14 @@ class WithClause implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\WithExpression[] */
+    /** @var WithExpression[] */
     private $expressions;
 
     /** @var bool */
     private $recursive;
 
     /**
-     * @param \SqlFtw\Sql\Dml\WithExpression[] $expressions
+     * @param WithExpression[] $expressions
      * @param bool $recursive
      */
     public function __construct(array $expressions, bool $recursive = false)
@@ -34,7 +34,7 @@ class WithClause implements SqlSerializable
     }
 
     /**
-     * @return \SqlFtw\Sql\Dml\WithExpression[]
+     * @return WithExpression[]
      */
     public function getExpressions(): array
     {

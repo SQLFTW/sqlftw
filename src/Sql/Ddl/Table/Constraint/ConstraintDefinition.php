@@ -19,13 +19,13 @@ class ConstraintDefinition implements TableItem
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType */
+    /** @var ConstraintType */
     private $type;
 
     /** @var string|null */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody */
+    /** @var ConstraintBody */
     private $body;
 
     public function __construct(ConstraintType $type, ?string $name, ConstraintBody $body)
@@ -46,7 +46,7 @@ class ConstraintDefinition implements TableItem
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody|\SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition|\SqlFtw\Sql\Ddl\Table\Index\IndexDefinition
+     * @return ConstraintBody|ForeignKeyDefinition|IndexDefinition
      */
     public function getBody(): ConstraintBody
     {

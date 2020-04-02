@@ -19,19 +19,19 @@ class AlterEventCommand implements EventCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Event\EventSchedule|null */
+    /** @var EventSchedule|null */
     private $schedule;
 
-    /** @var \SqlFtw\Sql\Dml\DoCommand\DoCommand|null */
+    /** @var DoCommand|null */
     private $body;
 
-    /** @var \SqlFtw\Sql\Ddl\UserExpression|null */
+    /** @var UserExpression|null */
     private $definer;
 
-    /** @var \SqlFtw\Sql\Ddl\Event\EventState|null */
+    /** @var EventState|null */
     private $state;
 
     /** @var bool|null */
@@ -40,7 +40,7 @@ class AlterEventCommand implements EventCommand
     /** @var string|null */
     private $comment;
 
-    /** @var \SqlFtw\Sql\QualifiedName|null */
+    /** @var QualifiedName|null */
     private $newName;
 
     public function __construct(

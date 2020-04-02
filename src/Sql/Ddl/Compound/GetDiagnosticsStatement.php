@@ -17,19 +17,19 @@ class GetDiagnosticsStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Ddl\Compound\DiagnosticsItem[]|null */
+    /** @var DiagnosticsItem[]|null */
     private $conditionItems;
 
-    /** @var \SqlFtw\Sql\Ddl\Compound\DiagnosticsItem[]|null */
+    /** @var DiagnosticsItem[]|null */
     private $statementItems;
 
-    /** @var \SqlFtw\Sql\Ddl\Compound\DiagnosticsArea|null */
+    /** @var DiagnosticsArea|null */
     private $area;
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Compound\DiagnosticsItem[]|null $conditionItems
-     * @param \SqlFtw\Sql\Ddl\Compound\DiagnosticsItem[]|null $statementItems
-     * @param \SqlFtw\Sql\Ddl\Compound\DiagnosticsArea|null $area
+     * @param DiagnosticsItem[]|null $conditionItems
+     * @param DiagnosticsItem[]|null $statementItems
+     * @param DiagnosticsArea|null $area
      */
     public function __construct(?array $conditionItems, ?array $statementItems, ?DiagnosticsArea $area)
     {

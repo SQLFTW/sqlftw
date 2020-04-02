@@ -17,7 +17,7 @@ class ShowProfileCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dal\Show\ShowProfileType[] */
+    /** @var ShowProfileType[] */
     private $types;
 
     /** @var int|null */
@@ -30,7 +30,7 @@ class ShowProfileCommand implements ShowCommand
     private $offset;
 
     /**
-     * @param \SqlFtw\Sql\Dal\Show\ShowProfileType[] $types
+     * @param ShowProfileType[] $types
      * @param int|null $queryId
      * @param int|null $limit
      * @param int|null $offset
@@ -46,7 +46,7 @@ class ShowProfileCommand implements ShowCommand
     }
 
     /**
-     * @return \SqlFtw\Sql\Dal\Show\ShowProfileType[]
+     * @return ShowProfileType[]
      */
     public function getTypes(): array
     {

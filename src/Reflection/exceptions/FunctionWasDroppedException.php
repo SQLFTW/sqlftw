@@ -15,7 +15,7 @@ use function sprintf;
 class FunctionWasDroppedException extends FunctionDoesNotExistException
 {
 
-    /** @var \SqlFtw\Reflection\FunctionReflection */
+    /** @var FunctionReflection */
     private $reflection;
 
     public function __construct(FunctionReflection $reflection, ?Throwable $previous = null)

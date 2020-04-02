@@ -20,7 +20,7 @@ class DiagnosticsItem implements SqlSerializable
     /** @var string */
     private $target;
 
-    /** @var \SqlFtw\Sql\Ddl\Compound\InformationItem */
+    /** @var InformationItem */
     private $item;
 
     public function __construct(string $target, InformationItem $item)

@@ -16,7 +16,7 @@ class NaturalJoin extends Join
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Dml\TableReference\JoinSide|null */
+    /** @var JoinSide|null */
     private $joinSide;
 
     public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?JoinSide $joinSide)

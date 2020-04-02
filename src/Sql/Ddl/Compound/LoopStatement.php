@@ -4,19 +4,20 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
 class LoopStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Statement[] */
+    /** @var Statement[] */
     private $statements;
 
     /** @var string|null */
     private $label;
 
     /**
-     * @param \SqlFtw\Sql\Statement[] $statements
+     * @param Statement[] $statements
      * @param string|null $label
      */
     public function __construct(array $statements, ?string $label)
@@ -26,7 +27,7 @@ class LoopStatement implements CompoundStatementItem
     }
 
     /**
-     * @return \SqlFtw\Sql\Statement[]
+     * @return Statement[]
      */
     public function getStatements(): array
     {

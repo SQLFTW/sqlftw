@@ -28,7 +28,7 @@ class Formatter
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Platform\PlatformSettings */
+    /** @var PlatformSettings */
     private $settings;
 
     /** @var string */
@@ -85,7 +85,7 @@ class Formatter
     }
 
     /**
-     * @param \SqlFtw\Sql\SqlSerializable[] $serializables
+     * @param SqlSerializable[] $serializables
      * @param string $separator
      * @return string
      */
@@ -138,7 +138,7 @@ class Formatter
     }
 
     /**
-     * @param \Dogma\Time\Date|\DateTimeInterface $date
+     * @param Date|DateTimeInterface $date
      * @return string
      */
     public function formatDate($date): string
@@ -147,7 +147,7 @@ class Formatter
     }
 
     /**
-     * @param \Dogma\Time\Time|\DateTimeInterface $time
+     * @param Time|DateTimeInterface $time
      * @return string
      */
     public function formatTime($time): string

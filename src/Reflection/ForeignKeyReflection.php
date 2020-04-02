@@ -18,10 +18,10 @@ class ForeignKeyReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Reflection\TableReflection */
+    /** @var TableReflection */
     private $table;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition */
+    /** @var ConstraintDefinition */
     private $constraintDefinition;
 
     public function __construct(TableReflection $table, ConstraintDefinition $constraintDefinition)

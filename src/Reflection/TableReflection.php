@@ -37,9 +37,11 @@ use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
 use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
 use SqlFtw\Sql\Ddl\Table\DropTableCommand;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
+use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
+use SqlFtw\Sql\Ddl\Table\TableStructureCommand;
 use SqlFtw\Sql\QualifiedName;
 use function end;
 
@@ -47,38 +49,41 @@ class TableReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Reflection\DatabaseReflection */
+    /** @var DatabaseReflection */
     private $database;
 
-    /** @var \SqlFtw\Sql\QualifiedName */
+    /** @var QualifiedName */
     private $name;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\TableStructureCommand[] */
+    /** @var TableStructureCommand[] */
     private $commands = [];
 
-    /** @var \SqlFtw\Reflection\ColumnReflection[] */
+    /** @var ColumnReflection[] */
     private $columns = [];
 
     /**
      * All indexes including those created by columns (ADD COLUMN foo int PRIMARY) and constraints (ADD CONSTRAINT foo UNIQUE KEY ...).
      * Filter primary and unique keys from this array.
-     * @var \SqlFtw\Reflection\IndexReflection[]
+     * @var IndexReflection[]
      */
     private $indexes = [];
 
-    /** @var \SqlFtw\Reflection\ForeignKeyReflection[] */
+    /** @var ForeignKeyReflection[] */
     private $foreignKeys = [];
 
-    /** @var \SqlFtw\Reflection\TriggerReflection[] */
+    /** @var TriggerReflection[] */
     private $triggers = [];
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList */
+    /** @var TableOptionsList */
     private $options;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition|null */
+    /** @var PartitioningDefinition|null */
     private $partitioning;
 
     // todo $tablespace
+
+    // todo remove after todos:
+    // phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
 
     public function __construct(DatabaseReflection $database, QualifiedName $name, CreateTableCommand $createTableCommand)
     {
@@ -207,10 +212,8 @@ class TableReflection
                     case AlterTableActionType::RENAME_TO: // string $newName
                         // todo
                         break;
-                    case AlterTableActionType::DISABLE_KEYS:
-                        // pass
-                        break;
                     case AlterTableActionType::ENABLE_KEYS:
+                    case AlterTableActionType::DISABLE_KEYS:
                         // pass
                         break;
                     case AlterTableActionType::DISCARD_TABLESPACE:
@@ -226,8 +229,6 @@ class TableReflection
                         // todo
                         break;
                     case AlterTableActionType::ANALYZE_PARTITION: // string[] $partitions
-                        // pass
-                        break;
                     case AlterTableActionType::CHECK_PARTITION: // string[] $partitions
                         // pass
                         break;
@@ -244,11 +245,7 @@ class TableReflection
                         // todo
                         break;
                     case AlterTableActionType::OPTIMIZE_PARTITION: // string[] $partitions
-                        // pass
-                        break;
                     case AlterTableActionType::REBUILD_PARTITION: // string[] $partitions
-                        // pass
-                        break;
                     case AlterTableActionType::REPAIR_PARTITION: //string[] $partitions
                         // pass
                         break;
@@ -281,8 +278,8 @@ class TableReflection
     }
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\RenameTableCommand|\SqlFtw\Sql\Ddl\Table\AlterTableCommand $tableCommand
-     * @return \SqlFtw\Reflection\TableReflection
+     * @param RenameTableCommand|AlterTableCommand $tableCommand
+     * @return TableReflection
      */
     public function moveByRenaming($tableCommand): self
     {
@@ -416,9 +413,9 @@ class TableReflection
     }
 
     /**
-     * @param \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList $old
-     * @param \SqlFtw\Sql\Ddl\Table\Option\TableOption[] $newOptions
-     * @return \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList
+     * @param TableOptionsList $old
+     * @param TableOption[] $newOptions
+     * @return TableOptionsList
      */
     private function updateOptions(TableOptionsList $old, array $newOptions): TableOptionsList
     {
@@ -461,7 +458,7 @@ class TableReflection
     }
 
     /**
-     * @return \SqlFtw\Sql\Ddl\Table\TableStructureCommand[]
+     * @return TableStructureCommand[]
      */
     public function getCommands(): array
     {
@@ -469,7 +466,7 @@ class TableReflection
     }
 
     /**
-     * @return \SqlFtw\Reflection\ColumnReflection[]
+     * @return ColumnReflection[]
      */
     public function getColumns(): array
     {
@@ -492,7 +489,7 @@ class TableReflection
     }
 
     /**
-     * @return \SqlFtw\Reflection\IndexReflection[]
+     * @return IndexReflection[]
      */
     public function getIndexes(): array
     {
@@ -515,7 +512,7 @@ class TableReflection
     }
 
     /**
-     * @return \SqlFtw\Reflection\ForeignKeyReflection[]
+     * @return ForeignKeyReflection[]
      */
     public function getForeignKeys(): array
     {
@@ -538,7 +535,7 @@ class TableReflection
     }
 
     /**
-     * @return \SqlFtw\Reflection\TriggerReflection[]
+     * @return TriggerReflection[]
      */
     public function getTriggers(): array
     {

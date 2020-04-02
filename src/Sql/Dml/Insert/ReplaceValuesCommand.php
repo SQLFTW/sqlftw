@@ -20,15 +20,15 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[][] */
+    /** @var ExpressionNode[][] */
     private $rows;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[][] $rows
+     * @param QualifiedName $table
+     * @param ExpressionNode[][] $rows
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority
+     * @param InsertPriority|null $priority
      * @param bool $ignore
      */
     public function __construct(
@@ -45,7 +45,7 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]|\SqlFtw\Sql\Expression\ExpressionNode[][]
+     * @return ExpressionNode[]|ExpressionNode[][]
      */
     public function getRows(): array
     {

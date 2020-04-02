@@ -20,20 +20,20 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
 {
     use StrictBehaviorMixin;
 
-    /** @var \SqlFtw\Sql\Expression\ExpressionNode[][] */
+    /** @var ExpressionNode[][] */
     private $rows;
 
-    /** @var \SqlFtw\Sql\Dml\Insert\OnDuplicateKeyActions|null */
+    /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
 
     /**
-     * @param \SqlFtw\Sql\QualifiedName $table
-     * @param \SqlFtw\Sql\Expression\ExpressionNode[][] $rows
+     * @param QualifiedName $table
+     * @param ExpressionNode[][] $rows
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param \SqlFtw\Sql\Dml\Insert\InsertPriority|null $priority
+     * @param InsertPriority|null $priority
      * @param bool $ignore
-     * @param \SqlFtw\Sql\Dml\Insert\OnDuplicateKeyActions|null $onDuplicateKeyActions
+     * @param OnDuplicateKeyActions|null $onDuplicateKeyActions
      */
     public function __construct(
         QualifiedName $table,
@@ -51,7 +51,7 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
     }
 
     /**
-     * @return \SqlFtw\Sql\Expression\ExpressionNode[]|\SqlFtw\Sql\Expression\ExpressionNode[][]
+     * @return ExpressionNode[]|ExpressionNode[][]
      */
     public function getRows(): array
     {
