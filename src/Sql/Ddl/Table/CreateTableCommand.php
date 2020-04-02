@@ -31,7 +31,7 @@ class CreateTableCommand implements AnyCreateTableCommand
     /** @var \SqlFtw\Sql\Ddl\Table\TableItem[] */
     private $items;
 
-    /** @var \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList  */
+    /** @var \SqlFtw\Sql\Ddl\Table\Option\TableOptionsList */
     private $options;
 
     /** @var \SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition|null */

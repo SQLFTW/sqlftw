@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use DateInterval;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
@@ -26,7 +27,7 @@ class IntervalLiteral implements Literal
      */
     public function __construct($value)
     {
-        Check::types($value, [TimeInterval::class, DateTimeSpan::class, \DateInterval::class]);
+        Check::types($value, [TimeInterval::class, DateTimeSpan::class, DateInterval::class]);
 
         $this->value = $value;
     }

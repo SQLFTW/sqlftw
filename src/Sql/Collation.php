@@ -13,6 +13,7 @@ use SqlFtw\Formatter\Formatter;
 
 class Collation extends SqlEnum
 {
+
     public const ARMSCII8_BIN = 'armscii8_bin';
     public const ARMSCII8_GENERAL_CI = 'armscii8_general_ci';
 
@@ -276,6 +277,7 @@ class Collation extends SqlEnum
     public const UTF8_VIETNAMESE_CI = 'utf8mb4_vietnamese_ci';
 
     // MySQL 8.0
+    //public const UTF8_JAPANESE_0900_AI_CI = 'utf8mb4_ja_0900_ai_ci';
     public const UTF8_GENERAL_0900_AI_CI = 'utf8mb4_0900_ai_ci'; // good for: de, en, fr, ga, id, it, lb, ms, nl, pt, sw, zu
     public const UTF8_CROATIAN_0900_AI_CI = 'utf8mb4_hr_0900_ai_ci';
     public const UTF8_CZECH_0900_AI_CI = 'utf8mb4_cs_0900_ai_ci';
@@ -285,7 +287,6 @@ class Collation extends SqlEnum
     public const UTF8_GERMAN_PHONE_BOOK_0900_AI_CI = 'utf8mb4_de_pb_0900_ai_ci';
     public const UTF8_HUNGARIAN_0900_AI_CI = 'utf8mb4_hu_0900_ai_ci';
     public const UTF8_ICELANDIC_0900_AI_CI = 'utf8mb4_is_0900_ai_ci';
-    //public const UTF8_JAPANESE_0900_AI_CI = 'utf8mb4_ja_0900_ai_ci';
     public const UTF8_LATVIAN_0900_AI_CI = 'utf8mb4_lv_0900_ai_ci';
     public const UTF8_LITHUANIAN_0900_AI_CI = 'utf8mb4_lt_0900_ai_ci';
     public const UTF8_POLISH_0900_AI_CI = 'utf8mb4_pl_0900_ai_ci';

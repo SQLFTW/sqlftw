@@ -155,7 +155,7 @@ class Formatter
         return "'" . $time->format(Time::DEFAULT_FORMAT) . "'";
     }
 
-    public function formatDateTime(\DateTimeInterface $dateTime): string
+    public function formatDateTime(DateTimeInterface $dateTime): string
     {
         return "'" . $dateTime->format(DateTime::DEFAULT_FORMAT) . "'";
     }

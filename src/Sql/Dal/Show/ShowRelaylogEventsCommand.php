@@ -25,7 +25,7 @@ class ShowRelaylogEventsCommand implements ShowCommand
     /** @var int|null */
     private $limit;
 
-    /** @var  int|null */
+    /** @var int|null */
     private $offset;
 
     public function __construct(?string $logName, ?int $from, ?int $limit, ?int $offset)

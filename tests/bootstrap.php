@@ -16,6 +16,7 @@ require_once __DIR__ . '/../vendor/dogma/dogma-dev/src/debug-client.php';
 Debugger::$maxDepth = 9;
 Debugger::$strictMode = true;
 
+// phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable
 if (!empty($_SERVER['argv'])) {
     // may be running from command line, but under 'cgi-fcgi' SAPI
     header('Content-Type: text/plain');

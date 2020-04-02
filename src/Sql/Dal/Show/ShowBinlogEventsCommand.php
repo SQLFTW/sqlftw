@@ -22,7 +22,7 @@ class ShowBinlogEventsCommand implements ShowCommand
     /** @var int|null */
     private $limit;
 
-    /** @var  int|null */
+    /** @var int|null */
     private $offset;
 
     public function __construct(?string $logName, ?int $limit, ?int $offset)

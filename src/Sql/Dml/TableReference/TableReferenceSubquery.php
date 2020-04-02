@@ -9,13 +9,14 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
+use Countable;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 
-class TableReferenceSubquery implements TableReferenceNode, \Countable
+class TableReferenceSubquery implements TableReferenceNode, Countable
 {
     use StrictBehaviorMixin;
 
@@ -39,8 +40,13 @@ class TableReferenceSubquery implements TableReferenceNode, \Countable
      * @param string|null $alias
      * @param string[]|null $columnList
      */
-    public function __construct(SelectCommand $query, ?string $alias, ?array $columnList, bool $parentheses = false, bool $lateral = false)
-    {
+    public function __construct(
+        SelectCommand $query,
+        ?string $alias,
+        ?array $columnList,
+        bool $parentheses = false,
+        bool $lateral = false
+    ) {
         if ($columnList !== null) {
             Check::itemsOfType($columnList, Type::STRING);
         }
@@ -58,7 +64,7 @@ class TableReferenceSubquery implements TableReferenceNode, \Countable
 
     public function count(): int
     {
-        return $this->query instanceof \Countable ? $this->query->count() : 1;
+        return $this->query instanceof Countable ? $this->query->count() : 1;
     }
 
     public function getQuery(): SelectCommand

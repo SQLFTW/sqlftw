@@ -18,7 +18,7 @@
         "tracy/tracy": "~2.4"
     },
     "require-dev": {
-        "dogma/dogma-dev": "0.1.11"
+        "dogma/dogma-dev": "0.1.13"
     },
     "repositories": [
         {

@@ -8,6 +8,7 @@
  */
 
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
+// phpcs:disable SlevomatCodingStandard.Whitespaces.DuplicateSpaces
 
 namespace SqlFtw\Parser\Lexer;
 

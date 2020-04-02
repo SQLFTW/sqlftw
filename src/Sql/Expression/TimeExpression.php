@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use DateTimeInterface;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
@@ -34,12 +35,12 @@ class TimeExpression implements SqlSerializable
     public function __construct($value, array $intervals = [])
     {
         Check::types($value, [Date::class, Time::class, DateTime::class]);
-        if ($value instanceof \DateTimeInterface && !$value instanceof DateTime) {
+        if ($value instanceof DateTimeInterface && !$value instanceof DateTime) {
             $value = DateTime::createFromDateTimeInterface($value);
         }
 
         $int = [];
-        foreach ($intervals as $i => $interval) {
+        foreach ($intervals as $interval) {
             if ($interval instanceof TimeInterval) {
                 $int[] = $interval;
             } else {

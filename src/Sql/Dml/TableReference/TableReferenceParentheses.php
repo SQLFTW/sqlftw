@@ -9,10 +9,11 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
+use Countable;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class TableReferenceParentheses implements TableReferenceNode, \Countable
+class TableReferenceParentheses implements TableReferenceNode, Countable
 {
     use StrictBehaviorMixin;
 
@@ -31,7 +32,7 @@ class TableReferenceParentheses implements TableReferenceNode, \Countable
 
     public function count(): int
     {
-        return $this->content instanceof \Countable ? $this->content->count() : 1;
+        return $this->content instanceof Countable ? $this->content->count() : 1;
     }
 
     public function getContent(): TableReferenceNode

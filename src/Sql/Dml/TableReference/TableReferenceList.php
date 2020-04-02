@@ -9,12 +9,13 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
+use Countable;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use function count;
 
-class TableReferenceList implements TableReferenceNode, \Countable
+class TableReferenceList implements TableReferenceNode, Countable
 {
     use StrictBehaviorMixin;
 

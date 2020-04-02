@@ -26,7 +26,7 @@ class ShowProfileCommand implements ShowCommand
     /** @var int|null */
     private $limit;
 
-    /** @var  int|null */
+    /** @var int|null */
     private $offset;
 
     /**
