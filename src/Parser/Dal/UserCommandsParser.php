@@ -239,7 +239,7 @@ class UserCommandsParser
      */
     private function parseResourceOptions(TokenList $tokenList): ?array
     {
-        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+        if (!$tokenList->mayConsumeKeyword(Keyword::WITH)) {
             return null;
         }
 

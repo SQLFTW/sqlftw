@@ -23,8 +23,10 @@ Assert::parse(
 );
 Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 LINES STARTING BY ';' TERMINATED BY '~'");
 Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 IGNORE 10 LINES");
-Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 IGNORE 10 ROWS", "LOAD DATA INFILE 'foo' INTO TABLE bar IGNORE 10 LINES");
-Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 IGNORE 10", "LOAD DATA INFILE 'foo' INTO TABLE bar IGNORE 10 LINES");
+Assert::parse(
+    "LOAD DATA INFILE 'foo' INTO TABLE tbl1 IGNORE 10 ROWS",
+    "LOAD DATA INFILE 'foo' INTO TABLE tbl1 IGNORE 10 LINES"
+);
 Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 (bar, baz)");
 Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 SET bar = 1, baz = 2");
 
@@ -39,7 +41,9 @@ Assert::parse("LOAD XML INFILE 'foo' IGNORE INTO TABLE tbl1");
 Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 CHARACTER SET 'ascii'");
 Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 ROWS IDENTIFIED BY '<tr>'");
 Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 IGNORE 10 LINES");
-Assert::parse("LOAD XML INFILE 'foo' INTO TABLE bar IGNORE 10 ROWS", "LOAD XML INFILE 'foo' INTO TABLE bar IGNORE 10 LINES");
-Assert::parse("LOAD XML INFILE 'foo' INTO TABLE bar IGNORE 10", "LOAD XML INFILE 'foo' INTO TABLE bar IGNORE 10 LINES");
-Assert::parse("LOAD XML INFILE 'foo' INTO TABLE bar (bar, baz)");
-Assert::parse("LOAD XML INFILE 'foo' INTO TABLE bar SET bar = 1, baz = 2");
+Assert::parse(
+    "LOAD XML INFILE 'foo' INTO TABLE tbl1 IGNORE 10 ROWS",
+    "LOAD XML INFILE 'foo' INTO TABLE tbl1 IGNORE 10 LINES"
+);
+Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 (col1, col2)");
+Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 SET col1 = 1, col2 = 2");

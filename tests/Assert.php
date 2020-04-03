@@ -55,7 +55,15 @@ class Assert extends DogmaAssert
         ?Formatter $formatter = null
     ): void {
         $query = preg_replace('/\\s+/', ' ', $query);
-        $expected = $expected !== null ? preg_replace('/\\s+/', ' ', $expected) : $query;
+        $query = str_replace(['( ', ' )'], ['(', ')'], $query);
+
+        if ($expected !== null) {
+            $expected = preg_replace('/\\s+/', ' ', $expected);
+            $expected = str_replace(['( ', ' )'], ['(', ')'], $expected);
+        } else {
+            $expected = $query;
+        }
+
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
         $formatter = $formatter ?? new Formatter($parser->getSettings());
 
@@ -63,6 +71,7 @@ class Assert extends DogmaAssert
 
         $actual = $parser->parseCommand($query)->serialize($formatter);
         $actual = preg_replace('/\\s+/', ' ', $actual);
+        $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);
 
         self::same($expected, $actual);
     }

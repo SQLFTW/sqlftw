@@ -13,8 +13,8 @@ $query = 'CREATE TABLE test (
   foo CHAR(10),
   bar CHAR(20),
   PRIMARY KEY (id),
-  UNIQUE KEY key2 (foo(5), bar(10)),
-  INDEX key3 (bar) USING HASH
+  UNIQUE INDEX key2 (foo(5), bar(10)),
+  INDEX key3 USING HASH (bar)
 )';
 Assert::parse($query);
 
