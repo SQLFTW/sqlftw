@@ -215,7 +215,7 @@ class ColumnDefinition implements TableItem
         $result .= ' ' . $this->type->serialize($formatter);
 
         if ($this->expression !== null) {
-            $result .= ' GENERATED ALWAYS AS ' . $this->expression->serialize($formatter);
+            $result .= ' GENERATED ALWAYS AS (' . $this->expression->serialize($formatter) . ')';
             if ($this->generatedColumnType !== null) {
                 $result .= ' ' . $this->generatedColumnType->serialize($formatter);
             }
