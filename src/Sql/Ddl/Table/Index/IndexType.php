@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function strtoupper;
@@ -27,6 +28,11 @@ class IndexType extends SqlEnum
         $value = strtoupper($value);
 
         return parent::validateValue($value);
+    }
+
+    public function serializeIndexAsKey(Formatter $formatter): string
+    {
+        return str_replace('INDEX', 'KEY', $this->getValue());
     }
 
 }

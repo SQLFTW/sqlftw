@@ -7,13 +7,13 @@ use SqlFtw\Tests\Assert;
 require __DIR__ . '/../../bootstrap.php';
 
 
-// columns
-$query = "CREATE TABLE test (
-  col_0 BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  col_1 INT NULL DEFAULT NULL,
-  col_2 MEDIUMINT NULL,
-  col_3 SMALLINT DEFAULT NULL,
-  col_4 TINYINT(3) DEFAULT 10,
+// types
+Assert::parse("CREATE TABLE tbl1 (
+  col_0 BIGINT UNSIGNED,
+  col_1 INT,
+  col_2 MEDIUMINT,
+  col_3 SMALLINT,
+  col_4 TINYINT(3),
   col_5 BIT,
   col_6 FLOAT,
   col_7 DOUBLE(10, 2),
@@ -25,7 +25,7 @@ $query = "CREATE TABLE test (
   col_13 TIMESTAMP,
   col_14 CHAR(1) CHARACTER SET 'ascii',
   col_15 VARCHAR(10) COLLATE 'ascii_general_ci',
-  col_16 TINYTEXT CHARACTER SET 'ascii' COLLATE 'ascii_general_ci' DEFAULT 'foo',
+  col_16 TINYTEXT CHARACTER SET 'ascii' COLLATE 'ascii_general_ci',
   col_17 TEXT,
   col_18 MEDIUMTEXT,
   col_19 LONGTEXT,
@@ -38,13 +38,45 @@ $query = "CREATE TABLE test (
   col_28 JSON,
   col_26 ENUM('a', 'b'),
   col_27 SET('c', 'd')
-)";
-Assert::parse($query);
+)");
 
 // todo: type aliases
 
+// [NOT NULL | NULL]
+Assert::parse("CREATE TABLE tbl1 (col1 INT NOT NULL)");
+Assert::parse("CREATE TABLE tbl1 (col1 INT NULL)");
+
+// [DEFAULT default_value]
+Assert::parse("CREATE TABLE tbl1 (col1 INT DEFAULT 123)");
+Assert::parse("CREATE TABLE tbl1 (col1 INT DEFAULT '123')");
+Assert::parse("CREATE TABLE tbl1 (col1 INT DEFAULT NULL)");
+
+// [AUTO_INCREMENT]
+Assert::parse("CREATE TABLE tbl1 (col1 INT AUTO_INCREMENT)");
+
+// [UNIQUE [KEY] | [PRIMARY] KEY]
+Assert::parse("CREATE TABLE tbl1 (col1 INT PRIMARY KEY)");
+Assert::parse("CREATE TABLE tbl1 (col1 INT UNIQUE KEY)");
+Assert::parse("CREATE TABLE tbl1 (col1 INT UNIQUE)", "CREATE TABLE tbl1 (col1 INT UNIQUE KEY)");
+Assert::parse("CREATE TABLE tbl1 (col1 INT KEY)");
+
+// [COMMENT 'string']
+Assert::parse("CREATE TABLE tbl1 (col1 INT COMMENT 'foo')");
+
+// [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
+Assert::parse("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT FIXED)");
+Assert::parse("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT DYNAMIC)");
+Assert::parse("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT DEFAULT)");
+
+// [reference_definition]
+Assert::parse("CREATE TABLE tbl1 (col1 INT REFERENCES tbl1 (col1))");
+
+// [check_constraint_definition]
+Assert::parse("CREATE TABLE tbl1 (col1 INT CHECK (col1 > 0))");
+
+
 // generated columns
-$query = 'CREATE TABLE test (
+$query = 'CREATE TABLE tbl1 (
   col_0 DATETIME,
   col_1 INT AS (YEAR(col_0)),
   col_2 INT AS (YEAR(col_0)) VIRTUAL,
@@ -53,7 +85,7 @@ $query = 'CREATE TABLE test (
   col_5 INT GENERATED ALWAYS AS (YEAR(col_0)) VIRTUAL,
   col_6 INT GENERATED ALWAYS AS (YEAR(col_0)) STORED
 )';
-$result = 'CREATE TABLE test (
+$result = 'CREATE TABLE tbl1 (
   col_0 DATETIME,
   col_1 INT GENERATED ALWAYS AS (YEAR(col_0)),
   col_2 INT GENERATED ALWAYS AS (YEAR(col_0)) VIRTUAL,

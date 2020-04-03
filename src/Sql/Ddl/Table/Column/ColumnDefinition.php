@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Column;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\DataType;
+use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Ddl\Table\TableItem;
@@ -63,6 +64,9 @@ class ColumnDefinition implements TableItem
     /** @var ReferenceDefinition|null */
     private $reference;
 
+    /** @var CheckDefinition|null */
+    private $check;
+
     /**
      * @param string $name
      * @param DataType $type
@@ -73,6 +77,7 @@ class ColumnDefinition implements TableItem
      * @param IndexType $indexType
      * @param ColumnFormat|null $columnFormat
      * @param ReferenceDefinition $reference
+     * @param CheckDefinition|null $check
      */
     public function __construct(
         string $name,
@@ -83,7 +88,8 @@ class ColumnDefinition implements TableItem
         ?string $comment = null,
         ?IndexType $indexType = null,
         ?ColumnFormat $columnFormat = null,
-        ?ReferenceDefinition $reference = null
+        ?ReferenceDefinition $reference = null,
+        ?CheckDefinition $check = null
     )
     {
         $this->name = $name;
@@ -95,6 +101,7 @@ class ColumnDefinition implements TableItem
         $this->indexType = $indexType;
         $this->columnFormat = $columnFormat;
         $this->reference = $reference;
+        $this->check = $check;
     }
 
     /**
@@ -208,13 +215,43 @@ class ColumnDefinition implements TableItem
         return $this->reference;
     }
 
+    public function getCheck(): ?CheckDefinition
+    {
+        return $this->check;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = $formatter->formatName($this->name);
 
         $result .= ' ' . $this->type->serialize($formatter);
 
-        if ($this->expression !== null) {
+        if ($this->expression === null) {
+            if ($this->nullable !== null) {
+                $result .= $this->nullable ? ' NULL' : ' NOT NULL';
+            }
+            if ($this->defaultValue !== null) {
+                $result .= ' DEFAULT ' . $formatter->formatValue($this->defaultValue);
+            }
+            if ($this->autoincrement) {
+                $result .= ' AUTO_INCREMENT';
+            }
+            if ($this->indexType !== null) {
+                $result .= ' ' . $this->indexType->serializeIndexAsKey($formatter);
+            }
+            if ($this->comment !== null) {
+                $result .= ' COMMENT ' . $formatter->formatString($this->comment);
+            }
+            if ($this->columnFormat !== null) {
+                $result .= ' COLUMN_FORMAT ' . $this->columnFormat->serialize($formatter);
+            }
+            if ($this->reference !== null) {
+                $result .= ' ' . $this->reference->serialize($formatter);
+            }
+            if ($this->check !== null) {
+                $result .= ' ' . $this->check->serialize($formatter);
+            }
+        } else {
             $result .= ' GENERATED ALWAYS AS (' . $this->expression->serialize($formatter) . ')';
             if ($this->generatedColumnType !== null) {
                 $result .= ' ' . $this->generatedColumnType->serialize($formatter);
@@ -232,28 +269,6 @@ class ColumnDefinition implements TableItem
                 $result .= ' PRIMARY KEY';
             } elseif ($this->indexType === IndexType::get(IndexType::INDEX)) {
                 $result .= ' KEY';
-            }
-        } else {
-            if ($this->nullable !== null) {
-                $result .= $this->nullable ? ' NULL' : ' NOT NULL';
-            }
-            if ($this->defaultValue !== null) {
-                $result .= ' DEFAULT ' . $formatter->formatValue($this->defaultValue);
-            }
-            if ($this->autoincrement) {
-                $result .= ' AUTO_INCREMENT';
-            }
-            if ($this->indexType !== null) {
-                $result .= ' ' . $this->indexType->serialize($formatter);
-            }
-            if ($this->comment !== null) {
-                $result .= ' COMMENT ' . $formatter->formatString($this->comment);
-            }
-            if ($this->columnFormat !== null) {
-                $result .= ' COLUMN FORMAT ' . $this->columnFormat->serialize($formatter);
-            }
-            if ($this->reference !== null) {
-                $result .= ' REFERENCES ' . $this->reference->serialize($formatter);
             }
         }
 

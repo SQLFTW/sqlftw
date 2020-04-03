@@ -108,10 +108,10 @@ class Formatter
             return '1';
         } elseif ($value === false) {
             return '0';
-        } elseif (is_numeric($value)) {
-            return (string) $value;
         } elseif (is_string($value)) {
             return $this->formatString($value);
+        } elseif (is_numeric($value)) {
+            return (string) $value;
         } elseif ($value instanceof SqlSerializable) {
             return $value->serialize($this);
         } elseif ($value instanceof Date) {

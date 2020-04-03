@@ -7,23 +7,26 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Table\Check;
+namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\SqlSerializable;
 
-class CheckDefinition implements SqlSerializable
+class CheckDefinition implements ConstraintBody
 {
     use StrictBehaviorMixin;
 
     /** @var ExpressionNode */
     private $expression;
 
-    public function __construct(ExpressionNode $expression)
+    /** @var bool|null */
+    private $enforced;
+
+    public function __construct(ExpressionNode $expression, ?bool $enforced = null)
     {
         $this->expression = $expression;
+        $this->enforced = $enforced;
     }
 
     public function getExpression(): ExpressionNode
@@ -31,9 +34,20 @@ class CheckDefinition implements SqlSerializable
         return $this->expression;
     }
 
+    public function getEnforced(): ?bool
+    {
+        return $this->enforced;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'CHECK (' . $this->expression->serialize($formatter) . ')';
+        $result = 'CHECK (' . $this->expression->serialize($formatter) . ')';
+
+        if ($this->enforced !== null) {
+            $result .= ' ' . ($this->enforced ? 'ENFORCED' : 'NOT ENFORCED');
+        }
+
+        return $result;
     }
 
 }

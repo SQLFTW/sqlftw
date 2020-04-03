@@ -46,7 +46,7 @@ class ConstraintDefinition implements TableItem
     }
 
     /**
-     * @return ConstraintBody|ForeignKeyDefinition|IndexDefinition
+     * @return ConstraintBody
      */
     public function getBody(): ConstraintBody
     {

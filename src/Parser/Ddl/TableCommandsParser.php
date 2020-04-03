@@ -38,10 +38,10 @@ use SqlFtw\Sql\Ddl\Table\Alter\ReorganizePartitionAction;
 use SqlFtw\Sql\Ddl\Table\Alter\SimpleAction;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand;
-use SqlFtw\Sql\Ddl\Table\Check\CheckDefinition;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnFormat;
 use SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType;
+use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType;
 use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyAction;
@@ -606,7 +606,7 @@ class TableCommandsParser
      *   | {INDEX|KEY} [index_name] [index_type] (index_col_name,...) [index_option] ...
      *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
      *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
-     *   | CHECK (expr)
+     *   | check_constraint_definition
      *
      * @param TokenList $tokenList
      * @return TableItem[]
@@ -618,10 +618,7 @@ class TableCommandsParser
 
         do {
             if ($tokenList->mayConsumeKeyword(Keyword::CHECK)) {
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-                $expression = $this->expressionParser->parseExpression($tokenList);
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
-                $items[] = new CheckDefinition($expression);
+                $items[] = $this->parseCheck($tokenList);
             } elseif ($tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY, Keyword::FULLTEXT, Keyword::SPATIAL, Keyword::UNIQUE)) {
                 $items[] = $this->parseIndex($tokenList->resetPosition(-1));
             } elseif ($tokenList->mayConsumeKeyword(Keyword::PRIMARY)) {
@@ -650,6 +647,7 @@ class TableCommandsParser
      *       [COMMENT 'string']
      *       [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
      *       [reference_definition]
+     *       [check_constraint_definition]
      *   | data_type [GENERATED ALWAYS] AS (expression)
      *       [VIRTUAL | STORED] [UNIQUE [KEY]] [COMMENT comment]
      *       [NOT NULL | NULL] [[PRIMARY] KEY]
@@ -660,7 +658,66 @@ class TableCommandsParser
         $type = $this->typeParser->parseType($tokenList);
 
         $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::GENERATED, Keyword::AS);
-        if ($keyword !== null) {
+        if ($keyword === null) {
+            // [NOT NULL | NULL]
+            $null = null;
+            if ($tokenList->mayConsumeKeywords(Keyword::NOT, Keyword::NULL)) {
+                $null = false;
+            } elseif ($tokenList->mayConsumeKeyword(Keyword::NULL)) {
+                $null = true;
+            }
+
+            // [DEFAULT default_value]
+            $default = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                $default = $this->expressionParser->parseLiteralValue($tokenList);
+            }
+
+            // [AUTO_INCREMENT]
+            $autoIncrement = false;
+            if ($tokenList->mayConsumeKeyword(Keyword::AUTO_INCREMENT)) {
+                $autoIncrement = true;
+            }
+
+            // [UNIQUE [KEY] | [PRIMARY] KEY]
+            $index = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::UNIQUE)) {
+                $tokenList->mayConsumeKeyword(Keyword::KEY);
+                $index = IndexType::get(IndexType::UNIQUE);
+            } elseif ($tokenList->mayConsumeKeyword(Keyword::PRIMARY)) {
+                $tokenList->mayConsumeKeyword(Keyword::KEY);
+                $index = IndexType::get(IndexType::PRIMARY);
+            } elseif ($tokenList->mayConsumeKeyword(Keyword::KEY)) {
+                $index = IndexType::get(IndexType::INDEX);
+            }
+
+            // [COMMENT 'string']
+            $comment = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
+                $comment = $tokenList->consumeString();
+            }
+
+            // [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
+            $columnFormat = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::COLUMN_FORMAT)) {
+                /** @var ColumnFormat $columnFormat */
+                $columnFormat = $tokenList->consumeKeywordEnum(ColumnFormat::class);
+            }
+
+            // [reference_definition]
+            $reference = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::REFERENCES)) {
+                $reference = $this->parseReference($tokenList->resetPosition(-1));
+            }
+
+            // [check_constraint_definition]
+            $check = null;
+            if ($tokenList->mayConsumeKeyword(Keyword::CHECK)) {
+                $check = $this->parseCheck($tokenList);
+            }
+
+            return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $comment, $index, $columnFormat, $reference, $check);
+        } else {
             if ($keyword === Keyword::GENERATED) {
                 $tokenList->consumeKeywords(Keyword::ALWAYS, Keyword::AS);
             }
@@ -685,6 +742,7 @@ class TableCommandsParser
             } elseif ($tokenList->mayConsumeKeyword(Keyword::NULL)) {
                 $null = true;
             }
+
             if ($tokenList->mayConsumeKeyword(Keyword::PRIMARY)) {
                 $tokenList->mayConsumeKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::PRIMARY);
@@ -693,48 +751,27 @@ class TableCommandsParser
             }
 
             return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $comment, $index);
-        } else {
-
-            $null = null;
-            if ($tokenList->mayConsumeKeywords(Keyword::NOT, Keyword::NULL)) {
-                $null = false;
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::NULL)) {
-                $null = true;
-            }
-            $default = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
-                $default = $this->expressionParser->parseLiteralValue($tokenList);
-            }
-            $autoIncrement = false;
-            if ($tokenList->mayConsumeKeyword(Keyword::AUTO_INCREMENT)) {
-                $autoIncrement = true;
-            }
-            $index = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::UNIQUE)) {
-                $tokenList->mayConsumeKeyword(Keyword::KEY);
-                $index = IndexType::get(IndexType::UNIQUE);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::PRIMARY)) {
-                $tokenList->mayConsumeKeyword(Keyword::KEY);
-                $index = IndexType::get(IndexType::PRIMARY);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::KEY)) {
-                $index = IndexType::get(IndexType::INDEX);
-            }
-            $comment = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
-                $comment = $tokenList->consumeString();
-            }
-            $columnFormat = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::COLUMN_FORMAT)) {
-                /** @var ColumnFormat $columnFormat */
-                $columnFormat = $tokenList->consumeKeywordEnum(ColumnFormat::class);
-            }
-            $reference = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::REFERENCES)) {
-                $reference = $this->parseReference($tokenList);
-            }
-
-            return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $comment, $index, $columnFormat, $reference);
         }
+    }
+
+    /**
+     * check_constraint_definition:
+     *     [CONSTRAINT [symbol]] CHECK (expr) [[NOT] ENFORCED]
+     */
+    private function parseCheck(TokenList $tokenList): CheckDefinition
+    {
+        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $expression = $this->expressionParser->parseExpression($tokenList);
+        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+
+        $enforced = null;
+        if ($tokenList->mayConsumeKeyword(Keyword::ENFORCED)) {
+            $enforced = true;
+        } elseif ($tokenList->mayConsumeKeywords(Keyword::NOT, Keyword::ENFORCED)) {
+            $enforced = false;
+        }
+
+        return new CheckDefinition($expression, $enforced);
     }
 
     /**
@@ -760,13 +797,14 @@ class TableCommandsParser
      *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
      *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
      *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
+     *   | [CONSTRAINT [symbol]] CHECK (expr) [[NOT] ENFORCED]
      */
     private function parseConstraint(TokenList $tokenList): ConstraintDefinition
     {
         $tokenList->mayConsumeKeyword(Keyword::CONSTRAINT);
         $name = $tokenList->mayConsumeName();
 
-        $keyword = $tokenList->consumeAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN);
+        $keyword = $tokenList->consumeAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN, Keyword::CHECK);
         if ($keyword === Keyword::PRIMARY) {
             $type = ConstraintType::get(ConstraintType::PRIMARY_KEY);
             $body = $this->parseIndex($tokenList, true);
@@ -777,9 +815,14 @@ class TableCommandsParser
             $body = $this->parseIndex($tokenList->resetPosition(-1));
 
             return new ConstraintDefinition($type, $name, $body);
-        } else {
+        } elseif ($keyword === Keyword::FOREIGN) {
             $type = ConstraintType::get(ConstraintType::FOREIGN_KEY);
             $body = $this->parseForeignKey($tokenList->resetPosition(-1));
+
+            return new ConstraintDefinition($type, $name, $body);
+        } else {
+            $type = ConstraintType::get(ConstraintType::CHECK);
+            $body = $this->parseCheck($tokenList);
 
             return new ConstraintDefinition($type, $name, $body);
         }
@@ -826,15 +869,29 @@ class TableCommandsParser
 
         $onDelete = $onUpdate = null;
         if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::DELETE)) {
-            /** @var ForeignKeyAction $onDelete */
-            $onDelete = $tokenList->consumeKeywordEnum(ForeignKeyAction::class);
+            $onDelete = $this->parseForeignKeyAction($tokenList);
         }
         if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::UPDATE)) {
-            /** @var ForeignKeyAction $onUpdate */
-            $onUpdate = $tokenList->consumeKeywordEnum(ForeignKeyAction::class);
+            $onUpdate = $this->parseForeignKeyAction($tokenList);
         }
 
         return new ReferenceDefinition($table, $columns, $onDelete, $onUpdate, $matchType);
+    }
+
+    private function parseForeignKeyAction(TokenList $tokenList): ForeignKeyAction
+    {
+        $keyword = $tokenList->consumeAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE, Keyword::NO, Keyword::SET);
+        if ($keyword === Keyword::NO) {
+            $tokenList->consumeKeyword(Keyword::ACTION);
+
+            return ForeignKeyAction::get(ForeignKeyAction::NO_ACTION);
+        } elseif ($keyword === Keyword::SET) {
+            $keyword = $tokenList->consumeAnyKeyword(Keyword::NULL, Keyword::DEFAULT);
+
+            return ForeignKeyAction::get(Keyword::SET . ' ' . $keyword);
+        } else {
+            return ForeignKeyAction::get($keyword);
+        }
     }
 
     /**

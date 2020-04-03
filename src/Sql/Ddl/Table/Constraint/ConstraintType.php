@@ -18,5 +18,6 @@ class ConstraintType extends SqlEnum
     public const FOREIGN_KEY = Keyword::FOREIGN . ' ' . Keyword::KEY;
     public const PRIMARY_KEY = Keyword::PRIMARY . ' ' . Keyword::KEY;
     public const UNIQUE_KEY = Keyword::UNIQUE . ' ' . Keyword::KEY;
+    public const CHECK = Keyword::CHECK;
 
 }
