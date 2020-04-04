@@ -13,13 +13,13 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
-use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
-use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
-use SqlFtw\Sql\Ddl\Database\DropDatabaseCommand;
+use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 
-class DatabaseCommandsParser
+class SchemaCommandsParser
 {
     use StrictBehaviorMixin;
 
@@ -31,16 +31,16 @@ class DatabaseCommandsParser
      *     [DEFAULT] CHARACTER SET [=] charset_name
      *   | [DEFAULT] COLLATE [=] collation_name
      */
-    public function parseAlterDatabase(TokenList $tokenList): AlterDatabaseCommand
+    public function parseAlterSchema(TokenList $tokenList): AlterSchemaCommand
     {
         $tokenList->consumeKeyword(Keyword::ALTER);
         $tokenList->consumeAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
-        $database = $tokenList->mayConsumeName();
+        $schema = $tokenList->mayConsumeName();
 
         [$charset, $collation] = $this->parseDefaults($tokenList);
         $tokenList->expectEnd();
 
-        return new AlterDatabaseCommand($database, $charset, $collation);
+        return new AlterSchemaCommand($schema, $charset, $collation);
     }
 
     /**
@@ -51,17 +51,17 @@ class DatabaseCommandsParser
      *     [DEFAULT] CHARACTER SET [=] charset_name
      *   | [DEFAULT] COLLATE [=] collation_name
      */
-    public function parseCreateDatabase(TokenList $tokenList): CreateDatabaseCommand
+    public function parseCreateSchema(TokenList $tokenList): CreateSchemaCommand
     {
         $tokenList->consumeKeyword(Keyword::CREATE);
         $tokenList->consumeAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
         $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $database = $tokenList->consumeName();
+        $schema = $tokenList->consumeName();
 
         [$charset, $collation] = $this->parseDefaults($tokenList);
         $tokenList->expectEnd();
 
-        return new CreateDatabaseCommand($database, $charset, $collation, $ifNotExists);
+        return new CreateSchemaCommand($schema, $charset, $collation, $ifNotExists);
     }
 
     /**
@@ -108,15 +108,15 @@ class DatabaseCommandsParser
     /**
      * DROP {DATABASE | SCHEMA} [IF EXISTS] db_name
      */
-    public function parseDropDatabase(TokenList $tokenList): DropDatabaseCommand
+    public function parseDropSchema(TokenList $tokenList): DropSchemaCommand
     {
         $tokenList->consumeKeyword(Keyword::DROP);
         $tokenList->consumeAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
         $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
-        $database = $tokenList->consumeName();
+        $schema = $tokenList->consumeName();
         $tokenList->expectEnd();
 
-        return new DropDatabaseCommand($database, $ifExists);
+        return new DropSchemaCommand($schema, $ifExists);
     }
 
 }

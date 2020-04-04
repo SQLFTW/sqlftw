@@ -24,7 +24,7 @@ class AlterServerCommand implements ServerCommand
     private $host;
 
     /** @var string|null */
-    private $database;
+    private $schema;
 
     /** @var string|null */
     private $user;
@@ -44,7 +44,7 @@ class AlterServerCommand implements ServerCommand
     public function __construct(
         string $name,
         ?string $host = null,
-        ?string $database = null,
+        ?string $schema = null,
         ?string $user = null,
         ?string $password = null,
         ?string $socket = null,
@@ -53,7 +53,7 @@ class AlterServerCommand implements ServerCommand
     ) {
         $this->name = $name;
         $this->host = $host;
-        $this->database = $database;
+        $this->schema = $schema;
         $this->user = $user;
         $this->password = $password;
         $this->socket = $socket;
@@ -71,9 +71,9 @@ class AlterServerCommand implements ServerCommand
         return $this->host;
     }
 
-    public function getDatabase(): ?string
+    public function getSchema(): ?string
     {
-        return $this->database;
+        return $this->schema;
     }
 
     public function getUser(): ?string
@@ -108,8 +108,8 @@ class AlterServerCommand implements ServerCommand
         if ($this->host !== null) {
             $result .= 'HOST ' . $formatter->formatString($this->host) . ', ';
         }
-        if ($this->database !== null) {
-            $result .= 'DATABASE ' . $formatter->formatString($this->database) . ', ';
+        if ($this->schema !== null) {
+            $result .= 'DATABASE ' . $formatter->formatString($this->schema) . ', ';
         }
         if ($this->user !== null) {
             $result .= 'USER ' . $formatter->formatString($this->user) . ', ';

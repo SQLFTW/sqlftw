@@ -28,7 +28,7 @@ use SqlFtw\Parser\Dal\ShutdownCommandParser;
 use SqlFtw\Parser\Dal\TableMaintenanceCommandsParser;
 use SqlFtw\Parser\Dal\UserCommandsParser;
 use SqlFtw\Parser\Ddl\CompoundStatementParser;
-use SqlFtw\Parser\Ddl\DatabaseCommandsParser;
+use SqlFtw\Parser\Ddl\SchemaCommandsParser;
 use SqlFtw\Parser\Ddl\EventCommandsParser;
 use SqlFtw\Parser\Ddl\IndexCommandsParser;
 use SqlFtw\Parser\Ddl\InstanceCommandParser;
@@ -155,9 +155,9 @@ class ParserFactory
         return new CreateFunctionCommandParser();
     }
 
-    public function getDatabaseCommandsParser(): DatabaseCommandsParser
+    public function getSchemaCommandsParser(): SchemaCommandsParser
     {
-        return new DatabaseCommandsParser();
+        return new SchemaCommandsParser();
     }
 
     public function getDeleteCommandParser(): DeleteCommandParser

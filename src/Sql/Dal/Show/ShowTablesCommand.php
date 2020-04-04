@@ -18,7 +18,7 @@ class ShowTablesCommand implements ShowCommand
     use StrictBehaviorMixin;
 
     /** @var string|null */
-    private $database;
+    private $schema;
 
     /** @var bool */
     private $full;
@@ -29,17 +29,21 @@ class ShowTablesCommand implements ShowCommand
     /** @var ExpressionNode|null */
     private $where;
 
-    public function __construct(?string $database = null, bool $full = false, ?string $like = null, ?ExpressionNode $where = null)
-    {
-        $this->database = $database;
+    public function __construct(
+        ?string $schema = null,
+        bool $full = false,
+        ?string $like = null,
+        ?ExpressionNode $where = null
+    ) {
+        $this->schema = $schema;
         $this->full = $full;
         $this->like = $like;
         $this->where = $where;
     }
 
-    public function getDatabase(): ?string
+    public function getSchema(): ?string
     {
-        return $this->database;
+        return $this->schema;
     }
 
     public function isFull(): bool
@@ -64,8 +68,8 @@ class ShowTablesCommand implements ShowCommand
             $result .= ' FULL';
         }
         $result .= ' TABLES';
-        if ($this->database) {
-            $result .= ' FROM ' . $formatter->formatName($this->database);
+        if ($this->schema) {
+            $result .= ' FROM ' . $formatter->formatName($this->schema);
         }
         if ($this->like !== null) {
             $result .= ' LIKE ' . $formatter->formatString($this->like);

@@ -13,7 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
-class ShowDatabasesCommand implements ShowCommand
+class ShowSchemasCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 

@@ -7,14 +7,14 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Database;
+namespace SqlFtw\Sql\Ddl\Schema;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 
-class AlterDatabaseCommand implements DatabaseCommand
+class AlterSchemaCommand implements SchemaCommand
 {
     use StrictBehaviorMixin;
 

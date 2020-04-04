@@ -7,7 +7,7 @@ use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Sql\Dal\User\CreateUserCommand;
-use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
+use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
@@ -30,7 +30,7 @@ $parser = new Parser(new Lexer(), new ParserFactory());
 // create database
 $commands = $parser->parse('CREATE DATABASE db1');
 Assert::count(1, $commands);
-Assert::type(CreateDatabaseCommand::class, $commands[0]);
+Assert::type(CreateSchemaCommand::class, $commands[0]);
 
 // create event
 $commands = $parser->parse('CREATE EVENT event1');

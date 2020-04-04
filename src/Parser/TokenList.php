@@ -499,7 +499,7 @@ class TokenList
     }
 
     /**
-     * @return string[]|null[] (string $name, string|null $database)
+     * @return string[]|null[] (string $name, string|null $schema)
      */
     public function consumeQualifiedName(): array
     {
@@ -520,7 +520,7 @@ class TokenList
     }
 
     /**
-     * @return string[]|null[]|null (string|null $database, string $name)
+     * @return string[]|null[]|null (string $name, string|null $schema)
      */
     public function mayConsumeQualifiedName(): ?array
     {

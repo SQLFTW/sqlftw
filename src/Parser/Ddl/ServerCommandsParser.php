@@ -41,12 +41,12 @@ class ServerCommandsParser
 
         $tokenList->consumeKeyword(Keyword::OPTIONS);
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-        $host = $database = $user = $password = $socket = $owner = $port = null;
+        $host = $schema = $user = $password = $socket = $owner = $port = null;
         do {
             if ($tokenList->mayConsumeKeyword(Keyword::HOST)) {
                 $host = $tokenList->consumeString();
             } elseif ($tokenList->mayConsumeKeyword(Keyword::DATABASE)) {
-                $database = $tokenList->consumeString();
+                $schema = $tokenList->consumeString();
             } elseif ($tokenList->mayConsumeKeyword(Keyword::USER)) {
                 $user = $tokenList->consumeString();
             } elseif ($tokenList->mayConsumeKeyword(Keyword::PASSWORD)) {
@@ -59,14 +59,14 @@ class ServerCommandsParser
                 $port = $tokenList->consumeInt();
             }
         } while ($tokenList->mayConsumeComma());
-        if ($host === null && $database === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
+        if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
             $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
 
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         $tokenList->expectEnd();
 
-        return new AlterServerCommand($name, $host, $database, $user, $password, $socket, $owner, $port);
+        return new AlterServerCommand($name, $host, $schema, $user, $password, $socket, $owner, $port);
     }
 
     /**
@@ -92,12 +92,12 @@ class ServerCommandsParser
 
         $tokenList->consumeKeyword(Keyword::OPTIONS);
         $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-        $host = $database = $user = $password = $socket = $owner = $port = null;
+        $host = $schema = $user = $password = $socket = $owner = $port = null;
         do {
             if ($tokenList->mayConsumeKeyword(Keyword::HOST)) {
                 $host = $tokenList->consumeString();
             } elseif ($tokenList->mayConsumeKeyword(Keyword::DATABASE)) {
-                $database = $tokenList->consumeString();
+                $schema = $tokenList->consumeString();
             } elseif ($tokenList->mayConsumeKeyword(Keyword::USER)) {
                 $user = $tokenList->consumeString();
             } elseif ($tokenList->mayConsumeKeyword(Keyword::PASSWORD)) {
@@ -110,13 +110,13 @@ class ServerCommandsParser
                 $port = $tokenList->consumeInt();
             }
         } while ($tokenList->mayConsumeComma());
-        if ($host === null && $database === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
+        if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
             $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
         $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         $tokenList->expectEnd();
 
-        return new CreateServerCommand($name, $wrapper, $host, $database, $user, $password, $socket, $owner, $port);
+        return new CreateServerCommand($name, $wrapper, $host, $schema, $user, $password, $socket, $owner, $port);
     }
 
     /**

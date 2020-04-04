@@ -19,15 +19,14 @@ use SqlFtw\Sql\Dal\Show\ShowCharacterSetCommand;
 use SqlFtw\Sql\Dal\Show\ShowCollationCommand;
 use SqlFtw\Sql\Dal\Show\ShowColumnsCommand;
 use SqlFtw\Sql\Dal\Show\ShowCommand;
-use SqlFtw\Sql\Dal\Show\ShowCreateDatabaseCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateEventCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateFunctionCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateProcedureCommand;
+use SqlFtw\Sql\Dal\Show\ShowCreateSchemaCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateTableCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateTriggerCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateUserCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateViewCommand;
-use SqlFtw\Sql\Dal\Show\ShowDatabasesCommand;
 use SqlFtw\Sql\Dal\Show\ShowEngineCommand;
 use SqlFtw\Sql\Dal\Show\ShowEngineOption;
 use SqlFtw\Sql\Dal\Show\ShowEnginesCommand;
@@ -48,6 +47,7 @@ use SqlFtw\Sql\Dal\Show\ShowProfileCommand;
 use SqlFtw\Sql\Dal\Show\ShowProfilesCommand;
 use SqlFtw\Sql\Dal\Show\ShowProfileType;
 use SqlFtw\Sql\Dal\Show\ShowRelaylogEventsCommand;
+use SqlFtw\Sql\Dal\Show\ShowSchemasCommand;
 use SqlFtw\Sql\Dal\Show\ShowSlaveHostsCommand;
 use SqlFtw\Sql\Dal\Show\ShowSlaveStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowStatusCommand;
@@ -159,7 +159,7 @@ class ShowCommandsParser
                         $name = $tokenList->consumeName();
                         $tokenList->expectEnd();
 
-                        return new ShowCreateDatabaseCommand($name);
+                        return new ShowCreateSchemaCommand($name);
                     case Keyword::EVENT:
                         // SHOW CREATE EVENT event_name
                         $name = new QualifiedName(...$tokenList->consumeQualifiedName());
@@ -215,7 +215,7 @@ class ShowCommandsParser
                 }
                 $tokenList->expectEnd();
 
-                return new ShowDatabasesCommand($like, $where);
+                return new ShowSchemasCommand($like, $where);
             case Keyword::ENGINE:
                 // SHOW ENGINE engine_name {STATUS | MUTEX}
                 $engine = $tokenList->consumeName();

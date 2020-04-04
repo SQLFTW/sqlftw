@@ -110,7 +110,7 @@ class Parser
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // ALTER {DATABASE|SCHEMA}
-                        return $this->factory->getDatabaseCommandsParser()->parseAlterDatabase($tokenList->resetPosition($start));
+                        return $this->factory->getSchemaCommandsParser()->parseAlterSchema($tokenList->resetPosition($start));
                     case Keyword::FUNCTION:
                         // ALTER FUNCTION
                         return $this->factory->getRoutineCommandsParser()->parseAlterFunction($tokenList->resetPosition($start));
@@ -198,7 +198,7 @@ class Parser
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // CREATE {DATABASE | SCHEMA}
-                        return $this->factory->getDatabaseCommandsParser()->parseCreateDatabase($tokenList->resetPosition($start));
+                        return $this->factory->getSchemaCommandsParser()->parseCreateSchema($tokenList->resetPosition($start));
                     case Keyword::LOGFILE:
                         // CREATE LOGFILE GROUP
                         return $this->factory->getLogfileGroupCommandsParser()->parseCreateLogfileGroup($tokenList->resetPosition($start));
@@ -276,7 +276,7 @@ class Parser
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // DROP {DATABASE | SCHEMA}
-                        return $this->factory->getDatabaseCommandsParser()->parseDropDatabase($tokenList->resetPosition($start));
+                        return $this->factory->getSchemaCommandsParser()->parseDropSchema($tokenList->resetPosition($start));
                     case Keyword::EVENT:
                         // DROP EVENT
                         return $this->factory->getEventCommandsParser()->parseDropEvent($tokenList->resetPosition($start));

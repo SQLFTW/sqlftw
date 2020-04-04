@@ -7,11 +7,11 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Database;
+namespace SqlFtw\Sql\Ddl\Schema;
 
 use SqlFtw\Sql\Ddl\DdlCommand;
 
-interface DatabaseCommand extends DdlCommand
+interface SchemaCommand extends DdlCommand
 {
 
 }

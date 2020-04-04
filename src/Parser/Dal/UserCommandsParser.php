@@ -504,13 +504,13 @@ class UserCommandsParser
         } else {
             $name = $tokenList->consumeName();
             if ($tokenList->mayConsume(TokenType::DOT)) {
-                $database = $name;
+                $schema = $name;
                 if ($tokenList->mayConsumeOperator(Operator::MULTIPLY)) {
-                    return new UserPrivilegeResource($database, UserPrivilegeResource::ALL, $resourceType);
+                    return new UserPrivilegeResource($schema, UserPrivilegeResource::ALL, $resourceType);
                 } else {
                     $name = $tokenList->consumeName();
 
-                    return new UserPrivilegeResource($database, $name, $resourceType);
+                    return new UserPrivilegeResource($schema, $name, $resourceType);
                 }
             } else {
                 return new UserPrivilegeResource(null, $name, $resourceType);

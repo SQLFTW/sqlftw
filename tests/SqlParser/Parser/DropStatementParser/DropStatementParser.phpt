@@ -2,7 +2,7 @@
 
 namespace AlterExecutor\Parser;
 
-use SqlFtw\Sql\Ddl\Database\DropDatabaseCommand;
+use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\DropLogfileGroupCommand;
@@ -26,7 +26,7 @@ $parser = new Parser(new Lexer(), new ParserFactory());
 // drop database
 $commands = $parser->parse('DROP DATABASE db1');
 Assert::count(1, $commands);
-Assert::type(DropDatabaseCommand::class, $commands[0]);
+Assert::type(DropSchemaCommand::class, $commands[0]);
 
 // drop event
 $commands = $parser->parse('DROP EVENT event1');

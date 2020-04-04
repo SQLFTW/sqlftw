@@ -23,13 +23,13 @@ interfaces of commands in namespace "SqlFtw\Sql":
                 - User\UserCommand
         - [Ddl]
             - DdlCommand
-                - Database\DatabaseCommand
                 - Event\EventCommand
                 - Index\IndexCommand
                 - LogfileGroup\LogfileGroupCommand
                 - Routines\StoredRoutineCommand
                     - StoredFunctionCommand
                     - StoredProcedureCommand
+                - Schema\SchemaCommand
                 - Server\ServerCommand
                 - Table\DdlTableCommand
                 - Tablespace\TablespaceCommand

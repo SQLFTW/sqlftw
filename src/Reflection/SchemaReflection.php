@@ -10,10 +10,10 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
-use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
-use SqlFtw\Sql\Ddl\Database\DatabaseCommand;
-use SqlFtw\Sql\Ddl\Database\DropDatabaseCommand;
+use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\SchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use function end;
 
 class SchemaReflection
@@ -23,21 +23,21 @@ class SchemaReflection
     /** @var string */
     private $name;
 
-    /** @var DatabaseCommand[] */
+    /** @var SchemaCommand[] */
     private $commands = [];
 
-    public function __construct(string $name, CreateDatabaseCommand $createDatabaseCommand)
+    public function __construct(string $name, CreateSchemaCommand $createSchemaCommand)
     {
         $this->name = $name;
-        $this->commands[] = $createDatabaseCommand;
+        $this->commands[] = $createSchemaCommand;
     }
 
-    public function alter(AlterDatabaseCommand $alterDatabaseCommand): self
+    public function alter(AlterSchemaCommand $alterSchemaCommand): self
     {
         // todo
     }
 
-    public function drop(DropDatabaseCommand $dropDatabaseCommand): self
+    public function drop(DropSchemaCommand $dropSchemaCommand): self
     {
         // todo
     }
@@ -49,11 +49,11 @@ class SchemaReflection
 
     public function wasDropped(): bool
     {
-        return end($this->commands) instanceof DropDatabaseCommand;
+        return end($this->commands) instanceof DropSchemaCommand;
     }
 
     /**
-     * @return DatabaseCommand[]
+     * @return SchemaCommand[]
      */
     public function getCommands(): array
     {

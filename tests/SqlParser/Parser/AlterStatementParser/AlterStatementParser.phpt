@@ -6,7 +6,7 @@ use AlterExecutor\Parser\Sql\InvalidCommand;
 use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
-use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
+use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
@@ -27,7 +27,7 @@ $parser = new Parser(new Lexer(), new ParserFactory());
 // alter database
 $commands = $parser->parse('ALTER DATABASE db1');
 Assert::count(1, $commands);
-Assert::type(AlterDatabaseCommand::class, $commands[0]);
+Assert::type(AlterSchemaCommand::class, $commands[0]);
 
 // alter event
 $commands = $parser->parse('ALTER EVENT event1');

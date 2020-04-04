@@ -25,7 +25,7 @@ interface ContextProvider
      * @return string
      * @throws SchemaDoesNotExistException
      */
-    public function getCreateDatabase(string $name): string;
+    public function getCreateSchema(string $name): string;
 
     /**
      * @param string $name

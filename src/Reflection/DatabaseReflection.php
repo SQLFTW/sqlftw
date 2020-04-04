@@ -14,9 +14,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Reflection\Loader\ReflectionLoader;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Ddl\Database\AlterDatabaseCommand;
-use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
-use SqlFtw\Sql\Ddl\Database\DropDatabaseCommand;
+use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
@@ -437,7 +437,7 @@ class DatabaseReflection
             }
 
             return $that;
-        } elseif ($command instanceof CreateDatabaseCommand) {
+        } elseif ($command instanceof CreateSchemaCommand) {
             $that = clone $this;
             $name = $command->getName();
             $schema = $this->findSchema($name);
@@ -453,7 +453,7 @@ class DatabaseReflection
             }
 
             return $that;
-        } elseif ($command instanceof AlterDatabaseCommand) {
+        } elseif ($command instanceof AlterSchemaCommand) {
             $that = clone $this;
             $name = $command->getName();
 
@@ -461,7 +461,7 @@ class DatabaseReflection
             $that->schemas[$name] = $reflection->alter($command);
 
             return $that;
-        } elseif ($command instanceof DropDatabaseCommand) {
+        } elseif ($command instanceof DropSchemaCommand) {
             $that = clone $this;
             $name = $command->getName();
 
@@ -522,8 +522,8 @@ class DatabaseReflection
             }
         }
 
-        $createDatabaseCommand = $this->loader->getCreateDatabaseCommand($name);
-        $reflection = new SchemaReflection($name, $createDatabaseCommand);
+        $createSchemaCommand = $this->loader->getCreateSchemaCommand($name);
+        $reflection = new SchemaReflection($name, $createSchemaCommand);
         $this->schemas[$name] = $reflection;
 
         return $reflection;

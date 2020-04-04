@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\Show;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ShowCreateDatabaseCommand implements ShowCommand
+class ShowCreateSchemaCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 

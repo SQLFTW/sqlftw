@@ -15,7 +15,7 @@ use SqlFtw\Reflection\Context\ContextProvider;
 use SqlFtw\Reflection\TableDoesNotExistException;
 use SqlFtw\Reflection\TableReflectionLoadingException;
 use SqlFtw\Reflection\ViewReflectionLoadingException;
-use SqlFtw\Sql\Ddl\Database\CreateDatabaseCommand;
+use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
@@ -41,7 +41,7 @@ class ReflectionLoader
         $this->provider = $provider;
     }
 
-    public function getCreateDatabaseCommand(string $name): CreateDatabaseCommand
+    public function getCreateSchemaCommand(string $name): CreateSchemaCommand
     {
         // todo
     }
