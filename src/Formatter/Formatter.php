@@ -34,10 +34,18 @@ class Formatter
     /** @var string */
     public $indent;
 
-    public function __construct(PlatformSettings $settings, string $indent = '  ')
+    /** @var bool */
+    public $comments;
+
+    public function __construct(
+        PlatformSettings $settings,
+        string $indent = '  ',
+        bool $comments = false
+    )
     {
         $this->settings = $settings;
         $this->indent = $indent;
+        $this->comments = $comments;
     }
 
     public function getSettings(): PlatformSettings
@@ -63,36 +71,6 @@ class Formatter
     {
         return implode($separator, Arr::map($names, function (string $name): string {
             return $this->formatName($name);
-        }));
-    }
-
-    public function formatString(string $string): string
-    {
-        // todo: replace entities (\n...)
-        return "'" . str_replace("'", "''", $string) . "'";
-    }
-
-    /**
-     * @param string[] $strings
-     * @param string $separator
-     * @return string
-     */
-    public function formatStringList(array $strings, string $separator = ', '): string
-    {
-        return implode($separator, Arr::map($strings, function (string $string): string {
-            return $this->formatString($string);
-        }));
-    }
-
-    /**
-     * @param SqlSerializable[] $serializables
-     * @param string $separator
-     * @return string
-     */
-    public function formatSerializablesList(array $serializables, string $separator = ', '): string
-    {
-        return implode($separator, Arr::map($serializables, function (SqlSerializable $serializable): string {
-            return $serializable->serialize($this);
         }));
     }
 
@@ -134,6 +112,36 @@ class Formatter
     {
         return implode($separator, Arr::map($values, function ($value): string {
             return $this->formatValue($value);
+        }));
+    }
+
+    public function formatString(string $string): string
+    {
+        // todo: replace entities (\n...)
+        return "'" . str_replace("'", "''", $string) . "'";
+    }
+
+    /**
+     * @param string[] $strings
+     * @param string $separator
+     * @return string
+     */
+    public function formatStringList(array $strings, string $separator = ', '): string
+    {
+        return implode($separator, Arr::map($strings, function (string $string): string {
+            return $this->formatString($string);
+        }));
+    }
+
+    /**
+     * @param SqlSerializable[] $serializables
+     * @param string $separator
+     * @return string
+     */
+    public function formatSerializablesList(array $serializables, string $separator = ', '): string
+    {
+        return implode($separator, Arr::map($serializables, function (SqlSerializable $serializable): string {
+            return $serializable->serialize($this);
         }));
     }
 

@@ -35,13 +35,21 @@ class PlatformSettings
     /** @var bool */
     private $canonicalizeTypes;
 
+    /** @var bool */
+    private $verboseOutput;
+
+    /** @var bool */
+    private $optionalEquals;
+
     public function __construct(
         Platform $platform,
         string $delimiter = ';',
         ?Charset $charset = null,
         ?Mode $mode = null,
         bool $quoteAllNames = true,
-        bool $canonicalizeTypes = true
+        bool $canonicalizeTypes = true,
+        bool $verboseOutput = true,
+        bool $optionalEquals = true
     ) {
         $this->platform = $platform;
         $this->delimiter = $delimiter;
@@ -49,6 +57,8 @@ class PlatformSettings
         $this->mode = $mode ?: $platform->getDefaultMode();
         $this->quoteAllNames = $quoteAllNames;
         $this->canonicalizeTypes = $canonicalizeTypes;
+        $this->verboseOutput = $verboseOutput;
+        $this->optionalEquals = $optionalEquals;
     }
 
     public function getPlatform(): Platform
@@ -109,6 +119,16 @@ class PlatformSettings
     public function canonicalizeTypes(): bool
     {
         return $this->canonicalizeTypes;
+    }
+
+    public function verboseOutput(): bool
+    {
+        return $this->verboseOutput;
+    }
+
+    public function optionalEquals(): bool
+    {
+        return $this->optionalEquals;
     }
 
 }
