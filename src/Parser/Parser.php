@@ -155,6 +155,7 @@ class Parser
                             Keyword::SERVER, Keyword::TABLE, Keyword::TABLESPACE, Keyword::USER, Keyword::EVENT, Keyword::VIEW,
                             Keyword::DEFINER, Keyword::ALGORITHM, Keyword::SQL
                         );
+                        exit;
                 }
                 break;
             case Keyword::ANALYZE:
