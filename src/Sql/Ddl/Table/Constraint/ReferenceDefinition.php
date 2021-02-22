@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -47,6 +48,10 @@ class ReferenceDefinition implements SqlSerializable
         ?ForeignKeyAction $onUpdate = null,
         ?ForeignKeyMatchType $matchType = null
     ) {
+        if (count($sourceColumns) < 1) {
+            throw new InvalidDefinitionException('List of source columns must not be empty.');
+        }
+
         $this->sourceTable = $sourceTable;
         $this->sourceColumns = $sourceColumns;
         $this->onDelete = $onDelete;
@@ -94,7 +99,7 @@ class ReferenceDefinition implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = ' REFERENCES ' . $this->sourceTable->serialize($formatter) . ' (' . $formatter->formatNamesList($this->sourceColumns) . ')';
+        $result = 'REFERENCES ' . $this->sourceTable->serialize($formatter) . ' (' . $formatter->formatNamesList($this->sourceColumns) . ')';
 
         if ($this->matchType !== null) {
             $result .= ' MATCH ' . $this->matchType->serialize($formatter);

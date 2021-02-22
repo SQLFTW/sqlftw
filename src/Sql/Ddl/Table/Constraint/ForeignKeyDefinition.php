@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Ddl\Table\Constraint;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\QualifiedName;
 use function count;
 
 class ForeignKeyDefinition implements ConstraintBody
@@ -22,75 +21,32 @@ class ForeignKeyDefinition implements ConstraintBody
     /** @var string[] */
     private $columns;
 
-    /** @var QualifiedName|null */
-    private $sourceTable;
-
-    /** @var string[] */
-    private $sourceColumns;
-
-    /** @var ForeignKeyAction|null */
-    private $onUpdate;
-
-    /** @var ForeignKeyAction|null */
-    private $onDelete;
-
-    /** @var ForeignKeyMatchType|null */
-    private $matchType;
+    /** @var ReferenceDefinition|null */
+    private $reference;
 
     /** @var string|null */
     private $indexName;
 
     /**
      * @param string[] $columns
-     * @param QualifiedName $sourceTable
-     * @param string[] $sourceColumns
-     * @param ForeignKeyAction|null $onDelete
-     * @param ForeignKeyAction|null $onUpdate
-     * @param ForeignKeyMatchType|null $matchType
+     * @param ReferenceDefinition|null $reference
      * @param string|null $indexName
      */
     public function __construct(
         array $columns,
-        QualifiedName $sourceTable,
-        array $sourceColumns,
-        ?ForeignKeyAction $onDelete = null,
-        ?ForeignKeyAction $onUpdate = null,
-        ?ForeignKeyMatchType $matchType = null,
+        ReferenceDefinition $reference,
         ?string $indexName = null
     ) {
-        if (count($columns) < 1 || count($sourceColumns) < 1) {
-            throw new InvalidDefinitionException('List of columns and source columns must not be empty.');
+        if (count($columns) < 1) {
+            throw new InvalidDefinitionException('List of columns must not be empty.');
         }
-        if (count($columns) !== count($sourceColumns)) {
+        if (count($columns) !== count($reference->getSourceColumns())) {
             throw new InvalidDefinitionException('Number of foreign key columns and source columns does not match.');
         }
 
         $this->columns = $columns;
-        $this->sourceTable = $sourceTable;
-        $this->sourceColumns = $sourceColumns;
-        $this->onDelete = $onDelete;
-        $this->onUpdate = $onUpdate;
-        $this->matchType = $matchType;
+        $this->reference = $reference;
         $this->indexName = $indexName;
-    }
-
-    /**
-     * @param string[] $columns
-     * @param ReferenceDefinition $reference
-     * @param string|null $indexName
-     * @return self
-     */
-    public static function createFromReference(array $columns, ReferenceDefinition $reference, ?string $indexName = null): self
-    {
-        return new self(
-            $columns,
-            $reference->getSourceTable(),
-            $reference->getSourceColumns(),
-            $reference->getOnDelete(),
-            $reference->getOnUpdate(),
-            $reference->getMatchType(),
-            $indexName
-        );
     }
 
     /**
@@ -101,42 +57,9 @@ class ForeignKeyDefinition implements ConstraintBody
         return $this->columns;
     }
 
-    public function getSourceTable(): QualifiedName
+    public function getReference(): ?ReferenceDefinition
     {
-        return $this->sourceTable;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getSourceColumns(): array
-    {
-        return $this->sourceColumns;
-    }
-
-    public function getOnDelete(): ForeignKeyAction
-    {
-        return $this->onDelete;
-    }
-
-    public function setOnDelete(ForeignKeyAction $action): void
-    {
-        $this->onDelete = $action;
-    }
-
-    public function getOnUpdate(): ForeignKeyAction
-    {
-        return $this->onUpdate;
-    }
-
-    public function setOnUpdate(ForeignKeyAction $action): void
-    {
-        $this->onUpdate = $action;
-    }
-
-    public function getMatchType(): ?ForeignKeyMatchType
-    {
-        return $this->matchType;
+        return $this->reference;
     }
 
     public function getIndexName(): ?string
@@ -150,18 +73,7 @@ class ForeignKeyDefinition implements ConstraintBody
         if ($this->indexName !== null) {
             $result .= ' ' . $formatter->formatName($this->indexName);
         }
-        $result .= ' (' . $formatter->formatNamesList($this->columns) . ')';
-        $result .= ' REFERENCES ' . $this->getSourceTable()->serialize($formatter) . ' (' . $formatter->formatNamesList($this->sourceColumns) . ')';
-
-        if ($this->matchType !== null) {
-            $result .= ' MATCH ' . $this->matchType->serialize($formatter);
-        }
-        if ($this->onDelete !== null) {
-            $result .= ' ON DELETE ' . $this->onDelete->serialize($formatter);
-        }
-        if ($this->onUpdate !== null) {
-            $result .= ' ON UPDATE ' . $this->onUpdate->serialize($formatter);
-        }
+        $result .= ' (' . $formatter->formatNamesList($this->columns) . ') ' . $this->reference->serialize($formatter);
 
         return $result;
     }

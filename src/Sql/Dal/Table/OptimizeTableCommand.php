@@ -12,38 +12,37 @@ namespace SqlFtw\Sql\Dal\Table;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class OptimizeTableCommand implements MultipleTablesCommand, DalTableCommand
+class OptimizeTableCommand implements DalTablesCommand
 {
     use StrictBehaviorMixin;
 
     /** @var QualifiedName[] */
-    private $tables;
+    private $names;
 
     /** @var bool */
     private $local;
 
     /**
-     * @param QualifiedName[] $tables
+     * @param QualifiedName[] $names
      * @param bool $local
      */
-    public function __construct(array $tables, bool $local = false)
+    public function __construct(array $names, bool $local = false)
     {
-        Check::array($tables, 1);
-        Check::itemsOfType($tables, QualifiedName::class);
+        Check::array($names, 1);
+        Check::itemsOfType($names, QualifiedName::class);
 
-        $this->tables = $tables;
+        $this->names = $names;
         $this->local = $local;
     }
 
     /**
      * @return QualifiedName[]
      */
-    public function getTables(): array
+    public function getNames(): array
     {
-        return $this->tables;
+        return $this->names;
     }
 
     public function isLocal(): bool
@@ -57,7 +56,7 @@ class OptimizeTableCommand implements MultipleTablesCommand, DalTableCommand
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->tables);
+        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->names);
 
         return $result;
     }

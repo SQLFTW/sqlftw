@@ -12,9 +12,10 @@ namespace SqlFtw\Sql\Ddl\View;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\SchemaObjectsCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class DropViewCommand implements ViewCommand
+class DropViewCommand implements ViewCommand, SchemaObjectsCommand
 {
     use StrictBehaviorMixin;
 

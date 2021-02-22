@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Index;
 
-use SqlFtw\Sql\Ddl\DdlCommand;
+use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 
-interface IndexCommand extends DdlCommand
+interface IndexCommand extends SchemaObjectCommand
 {
 
 }

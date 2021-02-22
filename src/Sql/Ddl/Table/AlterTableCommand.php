@@ -12,21 +12,21 @@ namespace SqlFtw\Sql\Ddl\Table;
 use Dogma\Check;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterTableAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameToAction;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList;
-use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAction;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\SingleTableCommand;
 use function is_array;
 use function rtrim;
 use function trim;
 
-class AlterTableCommand implements SingleTableCommand, TableStructureCommand
+class AlterTableCommand implements DdlTableCommand
 {
 
     /** @var QualifiedName */
-    private $table;
+    private $name;
 
     /** @var AlterActionsList */
     private $actions;
@@ -38,13 +38,13 @@ class AlterTableCommand implements SingleTableCommand, TableStructureCommand
     private $tableOptions;
 
     /**
-     * @param QualifiedName $table
+     * @param QualifiedName $name
      * @param AlterActionsList|AlterTableAction[] $actions
      * @param mixed[] $alterOptions
      * @param TableOptionsList|mixed[]|null $tableOptions
      */
     public function __construct(
-        QualifiedName $table,
+        QualifiedName $name,
         $actions = [],
         array $alterOptions = [],
         $tableOptions = null
@@ -57,15 +57,15 @@ class AlterTableCommand implements SingleTableCommand, TableStructureCommand
             }
         }
 
-        $this->table = $table;
+        $this->name = $name;
         $this->actions = is_array($actions) ? new AlterActionsList($actions) : $actions;
         $this->alterOptions = $alterOptions;
         $this->tableOptions = is_array($tableOptions) ? new TableOptionsList($tableOptions) : $tableOptions;
     }
 
-    public function getTable(): QualifiedName
+    public function getName(): QualifiedName
     {
-        return $this->table;
+        return $this->name;
     }
 
     public function getActions(): AlterActionsList
@@ -86,9 +86,14 @@ class AlterTableCommand implements SingleTableCommand, TableStructureCommand
         return $this->tableOptions;
     }
 
+    public function getRenameAction(): ?RenameToAction
+    {
+        return $this->actions->filter(RenameToAction::class)[0] ?? null;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER TABLE ' . $this->table->serialize($formatter);
+        $result = 'ALTER TABLE ' . $this->name->serialize($formatter);
 
         $result .= $this->actions->serialize($formatter);
 

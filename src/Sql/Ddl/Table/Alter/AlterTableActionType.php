@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
-use Dogma\Type;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
 
 class AlterTableActionType extends SqlEnum
@@ -31,10 +29,17 @@ class AlterTableActionType extends SqlEnum
     public const ENABLE_KEYS = Keyword::ENABLE . ' ' . Keyword::KEYS;
     public const RENAME_INDEX = Keyword::RENAME . ' ' . Keyword::INDEX;
 
-    public const ADD_CONSTRAINT = Keyword::ADD . ' ' . Keyword::CONSTRAINT;
     public const ADD_FOREIGN_KEY = Keyword::ADD . ' ' . Keyword::FOREIGN . ' ' . Keyword::KEY;
     public const DROP_FOREIGN_KEY = Keyword::DROP . ' ' . Keyword::FOREIGN . ' ' . Keyword::KEY;
     public const DROP_PRIMARY_KEY = Keyword::DROP . ' ' . Keyword::PRIMARY . ' ' . Keyword::KEY;
+
+    public const ADD_CONSTRAINT = Keyword::ADD . ' ' . Keyword::CONSTRAINT;
+    public const ALTER_CONSTRAINT = Keyword::ALTER . ' ' . Keyword::CONSTRAINT;
+    public const DROP_CONSTRAINT = Keyword::DROP . ' ' . Keyword::CONSTRAINT;
+
+    public const ADD_CHECK = Keyword::ADD . ' ' . Keyword::CHECK;
+    public const ALTER_CHECK = Keyword::ALTER . ' ' . Keyword::CHECK;
+    public const DROP_CHECK = Keyword::DROP . ' ' . Keyword::CHECK;
 
     public const CONVERT_TO_CHARACTER_SET = Keyword::CONVERT . ' ' . Keyword::TO . ' ' . Keyword::CHARACTER . ' ' . Keyword::SET;
 
@@ -60,63 +65,5 @@ class AlterTableActionType extends SqlEnum
     public const REMOVE_PARTITIONING = Keyword::REMOVE . ' ' . Keyword::PARTITIONING;
     public const TRUNCATE_PARTITION = Keyword::TRUNCATE . ' ' . Keyword::PARTITION;
     public const UPGRADE_PARTITIONING = Keyword::UPGRADE . ' ' . Keyword::PARTITIONING;
-
-    /** @var string[]|null[] */
-    private static $types = [
-        self::ADD_COLUMN => AddColumnAction::class,
-        self::ALTER_COLUMN => AlterColumnAction::class,
-        self::CHANGE_COLUMN => ChangeColumnAction::class,
-        self::DROP_COLUMN => Type::STRING,
-        self::MODIFY_COLUMN => ModifyColumnAction::class,
-
-        self::ADD_INDEX => AddIndexAction::class,
-        self::ALTER_INDEX => AlterIndexAction::class,
-        self::DISABLE_KEYS => null,
-        self::DROP_INDEX => Type::STRING,
-        self::ENABLE_KEYS => null,
-        self::RENAME_INDEX => RenameIndexAction::class,
-
-        self::ADD_CONSTRAINT => AddConstraintAction::class,
-        self::DROP_FOREIGN_KEY => Type::STRING,
-        self::DROP_PRIMARY_KEY => null,
-
-        self::CONVERT_TO_CHARACTER_SET => ConvertToCharsetAction::class,
-
-        self::ORDER_BY => 'array<string>',
-
-        self::RENAME_TO => QualifiedName::class,
-
-        self::DISCARD_TABLESPACE => null,
-        self::DISCARD_PARTITION_TABLESPACE => 'array<string>',
-        self::IMPORT_TABLESPACE => null,
-        self::IMPORT_PARTITION_TABLESPACE => Type::STRING,
-
-        self::ADD_PARTITION => AddPartitionAction::class,
-        self::ANALYZE_PARTITION => 'array<string>',
-        self::CHECK_PARTITION => 'array<string>',
-        self::COALESCE_PARTITION => Type::INT,
-        self::DROP_PARTITION => 'array<string>',
-        self::EXCHANGE_PARTITION => ExchangePartitionAction::class,
-        self::OPTIMIZE_PARTITION => 'array<string>',
-        self::REBUILD_PARTITION => 'array<string>',
-        self::REORGANIZE_PARTITION => ReorganizePartitionAction::class,
-        self::REPAIR_PARTITION => 'array<string>',
-        self::REMOVE_PARTITIONING => null,
-        self::TRUNCATE_PARTITION => 'array<string>',
-        self::UPGRADE_PARTITIONING => null,
-    ];
-
-    /**
-     * @return string[]|null[]
-     */
-    public static function getTypes(): array
-    {
-        return self::$types;
-    }
-
-    public function getType(): ?string
-    {
-        return self::$types[$this->getValue()];
-    }
 
 }

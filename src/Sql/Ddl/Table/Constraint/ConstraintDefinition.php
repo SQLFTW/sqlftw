@@ -53,6 +53,15 @@ class ConstraintDefinition implements TableItem
         return $this->body;
     }
 
+    public function getIndexDefinition(): IndexDefinition
+    {
+        if (!$this->body instanceof IndexDefinition) {
+            throw new ShouldNotHappenException('Index definition expected.');
+        }
+
+        return $this->body;
+    }
+
     public function getForeignKeyDefinition(): ForeignKeyDefinition
     {
         if (!$this->body instanceof ForeignKeyDefinition) {
@@ -62,10 +71,10 @@ class ConstraintDefinition implements TableItem
         return $this->body;
     }
 
-    public function getIndexDefinition(): IndexDefinition
+    public function getCheckDefinition(): CheckDefinition
     {
-        if (!$this->body instanceof IndexDefinition) {
-            throw new ShouldNotHappenException('Index definition expected.');
+        if (!$this->body instanceof CheckDefinition) {
+            throw new ShouldNotHappenException('Check definition expected.');
         }
 
         return $this->body;

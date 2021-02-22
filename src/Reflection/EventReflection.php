@@ -10,6 +10,7 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
@@ -66,6 +67,16 @@ class EventReflection
     public function wasDropped(): bool
     {
         return end($this->commands) instanceof DropEventCommand;
+    }
+
+    public function wasRenamed(): bool
+    {
+        return false;
+    }
+
+    public function getLastCommand(): Command
+    {
+        return end($this->commands);
     }
 
 }

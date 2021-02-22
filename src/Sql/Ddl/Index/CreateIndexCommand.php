@@ -14,10 +14,10 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
-use SqlFtw\Sql\Ddl\Table\TableStructureCommand;
+use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class CreateIndexCommand implements IndexCommand, TableStructureCommand
+class CreateIndexCommand implements IndexCommand, DdlTableCommand
 {
     use StrictBehaviorMixin;
 
@@ -30,11 +30,19 @@ class CreateIndexCommand implements IndexCommand, TableStructureCommand
     /** @var AlterTableLock|null */
     private $lock;
 
-    public function __construct(IndexDefinition $index, ?AlterTableAlgorithm $algorithm = null, ?AlterTableLock $lock = null)
-    {
+    public function __construct(
+        IndexDefinition $index,
+        ?AlterTableAlgorithm $algorithm = null,
+        ?AlterTableLock $lock = null
+    ) {
         $this->index = $index;
         $this->algorithm = $algorithm;
         $this->lock = $lock;
+    }
+
+    public function getName(): QualifiedName
+    {
+        return new QualifiedName($this->getTable()->getSchema(), $this->index->getName());
     }
 
     public function getTable(): QualifiedName

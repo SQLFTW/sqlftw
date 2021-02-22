@@ -12,15 +12,14 @@ namespace SqlFtw\Sql\Dal\Table;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class ChecksumTableCommand implements MultipleTablesCommand, DalTableCommand
+class ChecksumTableCommand implements DalTablesCommand
 {
     use StrictBehaviorMixin;
 
     /** @var QualifiedName[] */
-    private $tables;
+    private $names;
 
     /** @var bool */
     private $quick;
@@ -29,16 +28,16 @@ class ChecksumTableCommand implements MultipleTablesCommand, DalTableCommand
     private $extended;
 
     /**
-     * @param QualifiedName[] $tables
+     * @param QualifiedName[] $names
      * @param bool $quick
      * @param bool $extended
      */
-    public function __construct(array $tables, bool $quick, bool $extended)
+    public function __construct(array $names, bool $quick, bool $extended)
     {
-        Check::array($tables, 1);
-        Check::itemsOfType($tables, QualifiedName::class);
+        Check::array($names, 1);
+        Check::itemsOfType($names, QualifiedName::class);
 
-        $this->tables = $tables;
+        $this->names = $names;
         $this->quick = $quick;
         $this->extended = $extended;
     }
@@ -46,9 +45,9 @@ class ChecksumTableCommand implements MultipleTablesCommand, DalTableCommand
     /**
      * @return QualifiedName[]
      */
-    public function getTables(): array
+    public function getNames(): array
     {
-        return $this->tables;
+        return $this->names;
     }
 
     public function isQuick(): bool
@@ -63,7 +62,7 @@ class ChecksumTableCommand implements MultipleTablesCommand, DalTableCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CHECKSUM TABLE ' . $formatter->formatSerializablesList($this->tables);
+        $result = 'CHECKSUM TABLE ' . $formatter->formatSerializablesList($this->names);
 
         if ($this->quick) {
             $result .= ' QUICK';

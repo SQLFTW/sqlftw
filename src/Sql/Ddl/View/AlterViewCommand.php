@@ -11,12 +11,13 @@ namespace SqlFtw\Sql\Ddl\View;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\Select\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class AlterViewCommand implements ViewCommand
+class AlterViewCommand implements ViewCommand, SchemaObjectCommand
 {
     use StrictBehaviorMixin;
 

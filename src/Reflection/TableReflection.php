@@ -9,39 +9,55 @@
 
 namespace SqlFtw\Reflection;
 
-use Dogma\NotImplementedException;
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
-use SqlFtw\Sql\Ddl\Table\Alter\AddColumnAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddColumnsAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddConstraintAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddForeignKeyAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddIndexAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddPartitionAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AlterColumnAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AlterIndexAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
-use SqlFtw\Sql\Ddl\Table\Alter\ChangeColumnAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ConvertToCharsetAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ExchangePartitionAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ModifyColumnAction;
-use SqlFtw\Sql\Ddl\Table\Alter\RenameIndexAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ReorganizePartitionAction;
-use SqlFtw\Sql\Ddl\Table\Alter\SimpleAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddCheckAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnsAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddConstraintAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddForeignKeyAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddPartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterCheckAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterConstraintAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ChangeColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ConvertToCharsetAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DisableKeysAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DiscardTablespaceAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropCheckAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropConstraintAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropForeignKeyAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropPrimaryKeyAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\EnableKeysAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ImportTablespaceAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ModifyColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\OrderByAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\PartitioningAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameToAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ReorganizePartitionAction;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
+use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType;
 use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
 use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
+use SqlFtw\Sql\Ddl\Table\DdlTablesCommand;
 use SqlFtw\Sql\Ddl\Table\DropTableCommand;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
-use SqlFtw\Sql\Ddl\Table\TableStructureCommand;
+use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
 use SqlFtw\Sql\QualifiedName;
 use function end;
 
@@ -49,14 +65,20 @@ class TableReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var DatabaseReflection */
-    private $database;
+    /** @var SchemaReflection */
+    private $schema;
+
+    /** @var bool */
+    private $trackHistory;
+
+    /** @var self|null */
+    private $previous;
+
+    /** @var DdlTableCommand|DdlTablesCommand */
+    private $lastCommand;
 
     /** @var QualifiedName */
     private $name;
-
-    /** @var TableStructureCommand[] */
-    private $commands = [];
 
     /** @var ColumnReflection[] */
     private $columns = [];
@@ -71,13 +93,16 @@ class TableReflection
     /** @var ForeignKeyReflection[] */
     private $foreignKeys = [];
 
+    /** @var CheckReflection[] */
+    private $checks = [];
+
     /** @var TriggerReflection[] */
     private $triggers = [];
 
     /** @var TableOptionsList */
     private $options;
 
-    /** @var PartitioningDefinition|null */
+    /** @var PartitioningReflection|null */
     private $partitioning;
 
     // todo $tablespace
@@ -85,40 +110,71 @@ class TableReflection
     // todo remove after todos:
     // phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
 
-    public function __construct(DatabaseReflection $database, QualifiedName $name, CreateTableCommand $createTableCommand)
-    {
-        $this->database = $database;
-        $this->name = $name;
-        $this->commands[] = $createTableCommand;
+    public function __construct(
+        SchemaReflection $schema,
+        CreateTableCommand $createTableCommand,
+        bool $trackHistory = true
+    ) {
+        $this->schema = $schema;
+        $this->trackHistory = $trackHistory;
+        $this->lastCommand = $createTableCommand;
+        $this->name = $createTableCommand->getName()->coalesce($schema->getName());
 
         foreach ($createTableCommand->getItems() as $item) {
             if ($item instanceof ColumnDefinition) {
-                $this->columns[$item->getName()] = new ColumnReflection($this, $item);
-                if ($item->getIndexType() !== null) {
-                    $this->addIndex(IndexReflection::fromColumn($this, $item));
-                }
+                $this->addColumn($item);
             } elseif ($item instanceof IndexDefinition) {
-                $this->addIndex(new IndexReflection($this, $item));
+                $this->addIndex($item);
             } elseif ($item instanceof ConstraintDefinition) {
                 $constraintType = $item->getType();
                 if ($constraintType->equals(ConstraintType::PRIMARY_KEY)) {
-                    $this->addIndex(IndexReflection::fromConstraint($this, $item));
+                    $this->addIndex($item->getIndexDefinition());
                 } elseif ($constraintType->equals(ConstraintType::UNIQUE_KEY)) {
-                    $this->addIndex(IndexReflection::fromConstraint($this, $item));
+                    $this->addIndex($item->getIndexDefinition());
                 } elseif ($constraintType->equals(ConstraintType::FOREIGN_KEY)) {
                     $this->addForeignKey($item->getForeignKeyDefinition(), $item->getName());
+                } elseif ($constraintType->equals(ConstraintType::CHECK)) {
+                    $this->addCheck($item->getCheckDefinition(), $item->getName());
                 }
+            } elseif ($item instanceof ForeignKeyDefinition) {
+                $this->addForeignKey($item);
+            } elseif ($item instanceof CheckDefinition) {
+                $this->addCheck($item);
             }
         }
 
         $this->options = $createTableCommand->getOptions() ?? new TableOptionsList([]);
-        $this->partitioning = $createTableCommand->getPartitioning();
+        $this->partitioning = new PartitioningReflection($this, $createTableCommand->getPartitioning());
     }
 
-    public function alter(AlterTableCommand $alterTableCommand): self
+    public function apply(Command $command): self
+    {
+        if ($command instanceof AlterTableCommand) {
+            return $this->alter($command);
+        } elseif ($command instanceof DropTableCommand) {
+            $that = clone $this;
+            $that->lastCommand = $command;
+
+            return $that;
+        } elseif ($command instanceof RenameTableCommand) {
+            // todo
+        } elseif ($command instanceof CreateIndexCommand) {
+            $that = clone $this;
+            $that->addIndex($command->getIndex());
+            $that->previous = $this;
+
+            return $that;
+        } elseif ($command instanceof DropIndexCommand) {
+
+        } else {
+            throw new ShouldNotHappenException('Unknown command.');
+        }
+    }
+
+    private function alter(AlterTableCommand $alterTableCommand): self
     {
         $that = clone $this;
-        $that->commands[] = $alterTableCommand;
+        $that->lastCommand[] = $alterTableCommand;
 
         foreach ($alterTableCommand->getActions()->getActions() as $action) {
             if ($action instanceof AddColumnAction) {
@@ -128,27 +184,41 @@ class TableReflection
                 foreach ($action->getColumns() as $column) {
                     $that->addColumn($column);
                 }
+            } elseif ($action instanceof AddIndexAction) {
+                $that->addIndex($action->getIndex());
             } elseif ($action instanceof AddConstraintAction) {
                 $constraint = $action->getConstraint();
                 $constraintType = $constraint->getType();
                 if ($constraintType->equals(ConstraintType::PRIMARY_KEY)) {
-                    $that->addIndex(new IndexReflection($that, $constraint->getIndexDefinition()));
+                    $that->addIndex($constraint->getIndexDefinition());
                     // MySQL ignores constraint name for indexes, no "constraint" is created, only index
                 } elseif ($constraintType->equals(ConstraintType::UNIQUE_KEY)) {
-                    $that->addIndex(new IndexReflection($that, $constraint->getIndexDefinition()));
+                    $that->addIndex($constraint->getIndexDefinition());
                     // MySQL ignores constraint name for indexes, no "constraint" is created, only index
                 } elseif ($constraintType->equals(ConstraintType::FOREIGN_KEY)) {
                     $that->addForeignKey($constraint->getForeignKeyDefinition(), $constraint->getName());
                     // MySQL ignores index name on foreign key, no index is created, only constraint
+                } elseif ($constraintType->equals(ConstraintType::CHECK)) {
+                    $that->addCheck($constraint->getCheckDefinition(), $constraint->getName());
                 }
             } elseif ($action instanceof AddForeignKeyAction) {
-                $that->addForeignKey($action->getForeignKey(), null);
+                $that->addForeignKey($action->getForeignKey());
                 // MySQL ignores index name on foreign key, no index is created
-            } elseif ($action instanceof AddIndexAction) {
-                $that->addIndex(new IndexReflection($that, $action->getIndex()));
+            } elseif ($action instanceof AddCheckAction) {
+                $that->addCheck($action->getCheck());
             } elseif ($action instanceof AddPartitionAction) {
                 // todo
                 continue;
+            } elseif ($action instanceof AlterCheckAction) {
+                $name = $action->getName();
+                $check = $this->getCheck($name);
+                $checkDefinition = $check->getCheckDefinition()->duplicateWithEnforced($action->isEnforced());
+                $that->checks[$name] = new CheckReflection($that, $checkDefinition);
+            } elseif ($action instanceof AlterConstraintAction) {
+                $name = $action->getName();
+                $check = $this->getCheck($name);
+                $checkDefinition = $check->getCheckDefinition()->duplicateWithEnforced($action->isEnforced());
+                $that->checks[$name] = new CheckReflection($that, $checkDefinition);
             } elseif ($action instanceof AlterColumnAction) {
                 $name = $action->getName();
                 $column = $this->getColumn($name);
@@ -167,9 +237,6 @@ class TableReflection
             } elseif ($action instanceof ConvertToCharsetAction) {
                 // todo
                 continue;
-            } elseif ($action instanceof ExchangePartitionAction) {
-                // todo
-                continue;
             } elseif ($action instanceof ModifyColumnAction) {
                 $name = $action->getColumn()->getName();
                 $that->getColumn($name);
@@ -178,85 +245,47 @@ class TableReflection
             } elseif ($action instanceof RenameIndexAction) {
                 $name = $action->getOldName();
                 $newName = $action->getNewName();
-                $index = $that->getIndex($name);
-                $indexDefinition = $index->getIndexDefinition()->duplicateWithNewName($newName);
-                unset($that->indexes[$name]);
-                $that->indexes[$newName] = new IndexReflection($that, $indexDefinition);
+                $index = $that->removeIndex($name);
+                $that->addIndex($index->getIndexDefinition()->duplicateWithNewName($newName));
             } elseif ($action instanceof ReorganizePartitionAction) {
                 // todo
                 continue;
-            } elseif ($action instanceof SimpleAction) {
-                $type = $action->getType()->getValue();
-                switch ($type) {
-                    case AlterTableActionType::DROP_COLUMN: // string $name
-                        $name = $action->getStringValue();
-                        $this->getColumn($name);
-                        unset($that->columns[$name]);
-                        break;
-                    case AlterTableActionType::DROP_INDEX: // string $name
-                        $name = $action->getStringValue();
-                        $that->removeIndex($name);
-                        break;
-                    case AlterTableActionType::DROP_FOREIGN_KEY: // string $name
-                        $name = $action->getStringValue();
-                        $this->getForeignKey($name);
-                        unset($that->foreignKeys[$name]);
-                        break;
-                    case AlterTableActionType::DROP_PRIMARY_KEY:
-                        $this->getIndex(IndexDefinition::PRIMARY_KEY_NAME);
-                        unset($that->indexes[IndexDefinition::PRIMARY_KEY_NAME]);
-                        break;
-                    case AlterTableActionType::ORDER_BY: // string[] $columns
-                        // ignore (MyISAM only)
-                        break;
-                    case AlterTableActionType::RENAME_TO: // string $newName
-                        // todo
-                        break;
-                    case AlterTableActionType::ENABLE_KEYS:
-                    case AlterTableActionType::DISABLE_KEYS:
-                        // pass
-                        break;
-                    case AlterTableActionType::DISCARD_TABLESPACE:
-                        // todo
-                        break;
-                    case AlterTableActionType::IMPORT_TABLESPACE:
-                        // todo
-                        break;
-                    case AlterTableActionType::REMOVE_PARTITIONING:
-                        // todo
-                        break;
-                    case AlterTableActionType::UPGRADE_PARTITIONING:
-                        // todo
-                        break;
-                    case AlterTableActionType::ANALYZE_PARTITION: // string[] $partitions
-                    case AlterTableActionType::CHECK_PARTITION: // string[] $partitions
-                        // pass
-                        break;
-                    case AlterTableActionType::COALESCE_PARTITION: // int $number
-                        // todo
-                        break;
-                    case AlterTableActionType::DISCARD_PARTITION_TABLESPACE: // string[] $partitions
-                        // todo
-                        break;
-                    case AlterTableActionType::DROP_PARTITION: // string[] $partitions
-                        // todo
-                        break;
-                    case AlterTableActionType::IMPORT_PARTITION_TABLESPACE: // string[] $partitions
-                        // todo
-                        break;
-                    case AlterTableActionType::OPTIMIZE_PARTITION: // string[] $partitions
-                    case AlterTableActionType::REBUILD_PARTITION: // string[] $partitions
-                    case AlterTableActionType::REPAIR_PARTITION: //string[] $partitions
-                        // pass
-                        break;
-                    case AlterTableActionType::TRUNCATE_PARTITION: // string[] $partitions
-                        // todo
-                        break;
-                    default:
-                        throw new NotImplementedException('Unknown action.');
+            } elseif ($action instanceof DropCheckAction) {
+                $this->removeCheck($action->getName());
+            } elseif ($action instanceof DropConstraintAction) {
+                $name = $action->getName();
+                if (isset($this->foreignKeys[$name])) {
+                    $this->removeForeignKey($name);
+                } elseif (isset($this->checks[$name])) {
+                    $this->removeCheck($name);
+                } else {
+                    throw new CheckDoesNotExistException($name, $this->name);
+                }
+            } elseif ($action instanceof DropColumnAction) {
+                $this->removeColumn($action->getName());
+            } elseif ($action instanceof DropIndexAction) {
+                $that->removeIndex($action->getName());
+            } elseif ($action instanceof DropForeignKeyAction) {
+                $this->removeForeignKey($action->getName());
+            } elseif ($action instanceof DropPrimaryKeyAction) {
+                $this->removeIndex(IndexDefinition::PRIMARY_KEY_NAME);
+            } elseif ($action instanceof OrderByAction) {
+                // ignore (MyISAM only)
+            } elseif ($action instanceof RenameToAction) {
+                // todo
+            } elseif ($action instanceof EnableKeysAction || $action instanceof DisableKeysAction) {
+                // pass
+            } elseif ($action instanceof DiscardTablespaceAction) {
+                // todo
+            } elseif ($action instanceof ImportTablespaceAction) {
+                // todo
+            } elseif ($action instanceof PartitioningAction) {
+                $newReflection = $this->partitioning->apply($action);
+                if ($newReflection !== $this->partitioning) {
+                    // todo
                 }
             } else {
-                throw new NotImplementedException('Unknown action.');
+                throw new ShouldNotHappenException('Unknown action.');
             }
         }
 
@@ -271,7 +300,7 @@ class TableReflection
     public function rename(RenameTableCommand $renameTableCommand): self
     {
         $that = clone $this;
-        $that->commands[] = $renameTableCommand;
+        $that->lastCommand[] = $renameTableCommand;
         $that->name = $renameTableCommand->getNewNameForTable($this->name);
 
         return $that;
@@ -284,7 +313,7 @@ class TableReflection
     public function moveByRenaming($tableCommand): self
     {
         $that = clone $this;
-        $that->commands[] = $tableCommand;
+        $that->lastCommand[] = $tableCommand;
         $that->columns = $that->indexes = $that->foreignKeys = [];
         $that->options = new TableOptionsList([]);
         $that->partitioning = null;
@@ -295,7 +324,7 @@ class TableReflection
     public function drop(DropTableCommand $dropTableCommand): self
     {
         $that = clone $this;
-        $that->commands[] = $dropTableCommand;
+        $that->lastCommand[] = $dropTableCommand;
         $that->columns = $that->indexes = $that->foreignKeys = [];
         $that->options = new TableOptionsList([]);
         $that->partitioning = null;
@@ -306,8 +335,8 @@ class TableReflection
     public function createIndex(CreateIndexCommand $createIndexCommand): self
     {
         $that = clone $this;
-        $that->commands[] = $createIndexCommand;
-        $that->addIndex(new IndexReflection($that, $createIndexCommand->getIndex()));
+        $that->lastCommand[] = $createIndexCommand;
+        $that->addIndex($createIndexCommand->getIndex());
 
         return $that;
     }
@@ -315,9 +344,9 @@ class TableReflection
     public function dropIndex(DropIndexCommand $dropIndexCommand): self
     {
         $that = clone $this;
-        $that->commands[] = $dropIndexCommand;
+        $that->lastCommand[] = $dropIndexCommand;
         $name = $dropIndexCommand->getName();
-        $that->removeIndex($name);
+        $that->removeIndex($name->getName());
 
         return $that;
     }
@@ -328,7 +357,7 @@ class TableReflection
         $name = $trigger->getName();
         $oldTrigger = $this->findTrigger($name->getName());
         if ($oldTrigger !== null) {
-            throw new TriggerAlreadyExistsException($name->getName(), $this->name->getSchema());
+            throw new TriggerAlreadyExistsException($name);
         }
         $that->triggers[$trigger->getName()->getName()] = $trigger;
 
@@ -353,63 +382,105 @@ class TableReflection
         $name = $column->getName();
         $currentColumn = $this->findColumn($name);
         if ($currentColumn !== null) {
-            throw new ColumnAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
+            throw new ColumnAlreadyExistsException($name, $this->name);
         }
-        $this->columns[$column->getName()] = new ColumnReflection($this, $column);
-        if ($column->getIndexType() !== null) {
-            $this->addIndex(IndexReflection::fromColumn($this, $column));
+        $columnReflection = new ColumnReflection($this, $column);
+        $this->columns[$column->getName()] = $columnReflection;
+
+        $indexType = $column->getIndexType();
+        if ($indexType !== null) {
+            $this->addIndex(new IndexDefinition(null, $indexType, [$column->getName()]));
+        }
+
+        $reference = $column->getReference();
+        if ($reference !== null) {
+            // todo: should also add an index?
+            $foreignKey = new ForeignKeyDefinition([$column->getName()], $reference);
+            $this->addForeignKey($foreignKey, null, $columnReflection);
+        }
+
+        $check = $column->getCheck();
+        if ($check !== null) {
+            $this->addCheck($check, null, $columnReflection);
         }
     }
 
-    private function addIndex(IndexReflection $reflection): void
+    private function removeColumn(string $name): ColumnReflection
     {
-        $index = $reflection->getIndexDefinition();
+        $column = $this->getColumn($name);
+        unset($this->columns[$name]);
+
+        return $column;
+    }
+
+    private function addIndex(IndexDefinition $index, ?ColumnReflection $column = null): void
+    {
         $name = $index->getName();
         if ($name === null) {
             $columns = $index->getColumnNames();
-            $name = $this->database->getPlatform()->getNamingStrategy()->createIndexName($this, $columns);
-            $this->indexes[$name] = $reflection;
+            $name = $this->schema->getPlatform()->getNamingStrategy()->createIndexName($this, $columns);
         } else {
             $currentIndex = $this->findIndex($name);
             if ($currentIndex !== null) {
-                throw new IndexAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
+                throw new IndexAlreadyExistsException($name, $this->name);
             }
-            $this->indexes[$name] = $reflection;
         }
+
+        $this->indexes[$name] = new IndexReflection($this, $index, $column);
     }
 
-    private function removeIndex(string $name): void
+    private function removeIndex(?string $name): IndexReflection
     {
-        $this->getIndex($name);
+        $index = $this->getIndex($name);
         unset($this->indexes[$name]);
 
         // todo remove associated constraint
+
+        return $index;
     }
 
-    private function addForeignKey(ForeignKeyDefinition $foreignKey, ?string $name): void
+    private function addForeignKey(ForeignKeyDefinition $foreignKey, ?string $name = null, ?ColumnReflection $column = null): void
     {
-        if ($name !== null) {
+        if ($name === null) {
+            $name = $this->schema->getPlatform()->getNamingStrategy()->createForeignKeyName($this, $foreignKey->getColumns());
+        } else {
             $currentForeignKey = $this->findForeignKey($name);
             if ($currentForeignKey !== null) {
-                throw new ForeignKeyAlreadyExistsException($name, $this->name->getName(), $this->name->getSchema());
+                throw new ForeignKeyAlreadyExistsException($name, $this->name);
             }
-        } else {
-            $name = $this->database->getPlatform()->getNamingStrategy()->createForeignKeyName($this, $foreignKey->getColumns());
         }
 
-        $constraint = new ConstraintDefinition(ConstraintType::get(ConstraintType::FOREIGN_KEY), $name, $foreignKey);
-        $this->foreignKeys[$name] = new ForeignKeyReflection($this, $constraint);
+        $this->foreignKeys[$name] = new ForeignKeyReflection($this, $foreignKey, $column);
     }
 
-    private function removeForeignKey(string $name): void
+    private function removeForeignKey(string $name): ForeignKeyReflection
     {
-        $constraint = $this->getForeignKey($name);
+        $foreignKey = $this->getForeignKey($name);
         unset($this->foreignKeys[$name]);
-        $definition = $constraint->getConstraintDefinition();
-        $constraintType = $definition->getType();
-        if ($constraintType->equals(ConstraintType::UNIQUE_KEY) || $constraintType->equals(ConstraintType::PRIMARY_KEY)) {
-            $this->removeIndex($definition->getIndexDefinition()->getName());
+
+        return $foreignKey;
+    }
+
+    private function addCheck(CheckDefinition $check, ?string $name = null, ?ColumnReflection $column = null): void
+    {
+        if ($name === null) {
+            $name = $this->schema->getPlatform()->getNamingStrategy()->createCheckName($this, []);
+        } else {
+            $currentCheck = $this->findCheck($name);
+            if ($currentCheck !== null) {
+                throw new CheckAlreadyExistsException($name, $this->name);
+            }
         }
+
+        $this->checks[$name] = new CheckReflection($this, $check, $column);
+    }
+
+    private function removeCheck(string $name): CheckReflection
+    {
+        $check = $this->getCheck($name);
+        unset($this->checks[$name]);
+
+        return $check;
     }
 
     /**
@@ -443,26 +514,28 @@ class TableReflection
 
     public function wasDropped(): bool
     {
-        return end($this->commands) instanceof DropTableCommand;
+        return end($this->lastCommand) instanceof DropTableCommand;
     }
 
-    public function wasMoved(): bool
+    public function wasRenamed(): bool
     {
-        if ($this->columns !== []) {
-            return false;
-        }
-        $command = end($this->commands);
+        $command = end($this->lastCommand);
 
         return $command instanceof RenameTableCommand
-            || ($command instanceof AlterTableCommand && $command->getActions()->getActionsByType(AlterTableActionType::get(AlterTableActionType::RENAME_TO)));
+            || ($command instanceof AlterTableCommand && $command->getActions()->filter(RenameToAction::class) !== []);
+    }
+
+    public function getLastCommand(): Command
+    {
+        return end($this->lastCommand);
     }
 
     /**
-     * @return TableStructureCommand[]
+     * @return DdlTableCommand[]
      */
     public function getCommands(): array
     {
-        return $this->commands;
+        return $this->lastCommand;
     }
 
     /**
@@ -477,8 +550,9 @@ class TableReflection
     {
         $column = $this->columns[$name] ?? null;
         if ($column === null) {
-            throw new ColumnDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
+            throw new ColumnNotFoundException($name, $this->name);
         }
+        // todo: moved / removed
 
         return $column;
     }
@@ -500,7 +574,7 @@ class TableReflection
     {
         $index = $this->indexes[$name] ?? null;
         if ($index === null) {
-            throw new IndexDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
+            throw new IndexDoesNotExistException($name, $this->name->getName());
         }
 
         return $index;
@@ -535,6 +609,29 @@ class TableReflection
     }
 
     /**
+     * @return CheckReflection[]
+     */
+    public function getChecks(): array
+    {
+        return $this->checks;
+    }
+
+    public function getCheck(string $name): CheckReflection
+    {
+        $check = $this->checks[$name] ?? null;
+        if ($check === null) {
+            throw new CheckDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
+        }
+
+        return $check;
+    }
+
+    public function findCheck(string $name): ?CheckReflection
+    {
+        return $this->checks[$name] ?? null;
+    }
+
+    /**
      * @return TriggerReflection[]
      */
     public function getTriggers(): array
@@ -562,7 +659,7 @@ class TableReflection
         return $this->options;
     }
 
-    public function getPartitioning(): ?PartitioningDefinition
+    public function getPartitioning(): ?PartitioningReflection
     {
         return $this->partitioning;
     }

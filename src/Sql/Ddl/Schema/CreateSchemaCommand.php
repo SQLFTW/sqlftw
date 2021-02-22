@@ -18,7 +18,7 @@ class CreateSchemaCommand implements SchemaCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string|null */
+    /** @var string */
     private $name;
 
     /** @var Charset|null */
@@ -30,15 +30,19 @@ class CreateSchemaCommand implements SchemaCommand
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(?string $name, ?Charset $charset, ?Collation $collation = null, bool $ifNotExists = false)
-    {
+    public function __construct(
+        string $name,
+        ?Charset $charset,
+        ?Collation $collation = null,
+        bool $ifNotExists = false
+    ) {
         $this->name = $name;
         $this->charset = $charset;
         $this->collation = $collation;
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -64,7 +68,9 @@ class CreateSchemaCommand implements SchemaCommand
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
+
         $result .= $formatter->formatName($this->name);
+
         if ($this->charset !== null) {
             $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
         }

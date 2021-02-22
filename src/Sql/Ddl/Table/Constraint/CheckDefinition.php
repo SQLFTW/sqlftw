@@ -29,12 +29,20 @@ class CheckDefinition implements ConstraintBody
         $this->enforced = $enforced;
     }
 
+    public function duplicateWithEnforced(bool $enforced): self
+    {
+        $that = clone $this;
+        $that->enforced = $enforced;
+
+        return $that;
+    }
+
     public function getExpression(): ExpressionNode
     {
         return $this->expression;
     }
 
-    public function getEnforced(): ?bool
+    public function isEnforced(): ?bool
     {
         return $this->enforced;
     }

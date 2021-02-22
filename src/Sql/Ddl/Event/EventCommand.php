@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
-use SqlFtw\Sql\Ddl\DdlCommand;
+use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\QualifiedName;
 
-interface EventCommand extends DdlCommand
+interface EventCommand extends SchemaObjectCommand
 {
 
     public function getName(): QualifiedName;

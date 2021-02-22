@@ -12,28 +12,27 @@ namespace SqlFtw\Sql\Ddl\Table;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\SingleTableCommand;
 
-class TruncateTableCommand implements SingleTableCommand, DdlTableCommand
+class TruncateTableCommand implements DdlTableCommand
 {
     use StrictBehaviorMixin;
 
     /** @var QualifiedName */
-    private $table;
+    private $name;
 
-    public function __construct(QualifiedName $table)
+    public function __construct(QualifiedName $name)
     {
-        $this->table = $table;
+        $this->name = $name;
     }
 
-    public function getTable(): QualifiedName
+    public function getName(): QualifiedName
     {
-        return $this->table;
+        return $this->name;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'TRUNCATE TABLE ' . $this->table->serialize($formatter);
+        return 'TRUNCATE TABLE ' . $this->name->serialize($formatter);
     }
 
 }

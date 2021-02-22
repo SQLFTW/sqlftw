@@ -26,7 +26,7 @@ class CreateTableCommand implements AnyCreateTableCommand
     use StrictBehaviorMixin;
 
     /** @var QualifiedName */
-    private $table;
+    private $name;
 
     /** @var TableItem[] */
     private $items;
@@ -50,7 +50,7 @@ class CreateTableCommand implements AnyCreateTableCommand
     private $select;
 
     /**
-     * @param QualifiedName $table
+     * @param QualifiedName $name
      * @param TableItem[] $items
      * @param TableOptionsList|mixed[]|null $options
      * @param PartitioningDefinition|null $partitioning
@@ -60,7 +60,7 @@ class CreateTableCommand implements AnyCreateTableCommand
      * @param SelectCommand|null $select
      */
     public function __construct(
-        QualifiedName $table,
+        QualifiedName $name,
         array $items,
         $options = null,
         ?PartitioningDefinition $partitioning = null,
@@ -74,7 +74,7 @@ class CreateTableCommand implements AnyCreateTableCommand
             throw new InvalidDefinitionException('IGNORE/REPLACE can be uses only with CREATE TABLE AS ... command.');
         }
 
-        $this->table = $table;
+        $this->name = $name;
         $this->items = $items;
         $this->options = is_array($options) ? new TableOptionsList($options) : $options;
         $this->partitioning = $partitioning;
@@ -84,9 +84,9 @@ class CreateTableCommand implements AnyCreateTableCommand
         $this->select = $select;
     }
 
-    public function getTable(): QualifiedName
+    public function getName(): QualifiedName
     {
-        return $this->table;
+        return $this->name;
     }
 
     /**
@@ -137,7 +137,7 @@ class CreateTableCommand implements AnyCreateTableCommand
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS';
         }
-        $result .= $this->table->serialize($formatter);
+        $result .= $this->name->serialize($formatter);
 
         if ($this->items !== null) {
             $result .= " (\n" . $formatter->indent . $formatter->formatSerializablesList($this->items, ",\n" . $formatter->indent) . "\n)";

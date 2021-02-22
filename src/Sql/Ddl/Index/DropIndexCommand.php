@@ -13,10 +13,10 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
-use SqlFtw\Sql\Ddl\Table\TableStructureCommand;
+use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class DropIndexCommand implements IndexCommand, TableStructureCommand
+class DropIndexCommand implements IndexCommand, DdlTableCommand
 {
     use StrictBehaviorMixin;
 
@@ -44,9 +44,9 @@ class DropIndexCommand implements IndexCommand, TableStructureCommand
         $this->lock = $lock;
     }
 
-    public function getName(): string
+    public function getName(): QualifiedName
     {
-        return $this->name;
+        return new QualifiedName($this->table->getSchema(), $this->name);
     }
 
     public function getTable(): QualifiedName

@@ -10,6 +10,8 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewCommand;
@@ -80,6 +82,16 @@ class ViewReflection
     public function wasDropped(): bool
     {
         return end($this->commands) instanceof DropViewCommand;
+    }
+
+    public function wasRenamed(): bool
+    {
+        return end($this->commands) instanceof RenameTableCommand;
+    }
+
+    public function getLastCommand(): Command
+    {
+        return end($this->commands);
     }
 
 }

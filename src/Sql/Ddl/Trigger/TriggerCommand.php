@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Trigger;
 
-use SqlFtw\Sql\Ddl\DdlCommand;
+use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 
-interface TriggerCommand extends DdlCommand
+interface TriggerCommand extends SchemaObjectCommand
 {
 
 }

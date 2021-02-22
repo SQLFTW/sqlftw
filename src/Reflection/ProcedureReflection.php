@@ -10,6 +10,7 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
@@ -69,6 +70,16 @@ class ProcedureReflection
     public function wasDropped(): bool
     {
         return end($this->commands) instanceof DropProcedureCommand;
+    }
+
+    public function wasRenamed(): bool
+    {
+        return false;
+    }
+
+    public function getLastCommand(): Command
+    {
+        return end($this->commands);
     }
 
 }

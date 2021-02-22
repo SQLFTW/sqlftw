@@ -12,4 +12,6 @@ namespace SqlFtw\Sql;
 interface TableCommand extends Command
 {
 
+    public function getName(): QualifiedName;
+
 }

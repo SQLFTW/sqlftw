@@ -12,38 +12,37 @@ namespace SqlFtw\Sql\Dal\Table;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class CheckTableCommand implements MultipleTablesCommand, DalTableCommand
+class CheckTableCommand implements DalTablesCommand
 {
     use StrictBehaviorMixin;
 
     /** @var QualifiedName[] */
-    private $tables;
+    private $names;
 
     /** @var CheckTableOption|null */
     private $option;
 
     /**
-     * @param QualifiedName[] $tables
+     * @param QualifiedName[] $names
      * @param CheckTableOption|null $option
      */
-    public function __construct(array $tables, ?CheckTableOption $option = null)
+    public function __construct(array $names, ?CheckTableOption $option = null)
     {
-        Check::array($tables, 1);
-        Check::itemsOfType($tables, QualifiedName::class);
+        Check::array($names, 1);
+        Check::itemsOfType($names, QualifiedName::class);
 
-        $this->tables = $tables;
+        $this->names = $names;
         $this->option = $option;
     }
 
     /**
      * @return QualifiedName[]
      */
-    public function getTables(): array
+    public function getNames(): array
     {
-        return $this->tables;
+        return $this->names;
     }
 
     public function getOption(): ?CheckTableOption
@@ -53,7 +52,7 @@ class CheckTableCommand implements MultipleTablesCommand, DalTableCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CHECK TABLE ' . $formatter->formatSerializablesList($this->tables);
+        $result = 'CHECK TABLE ' . $formatter->formatSerializablesList($this->names);
 
         if ($this->option) {
             $result .= ' ' . $this->option->serialize($formatter);

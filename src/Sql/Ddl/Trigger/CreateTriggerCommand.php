@@ -53,9 +53,9 @@ class CreateTriggerCommand implements TriggerCommand
         $this->position = $position;
     }
 
-    public function getName(): string
+    public function getName(): QualifiedName
     {
-        return $this->name;
+        return new QualifiedName($this->name, $this->table->getSchema());
     }
 
     public function getEvent(): TriggerEvent

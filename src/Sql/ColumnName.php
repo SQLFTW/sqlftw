@@ -32,6 +32,11 @@ class ColumnName implements SqlSerializable
         $this->schema = $schema;
     }
 
+    public function getTableName(): QualifiedName
+    {
+        return new QualifiedName($this->table, $this->schema);
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -45,6 +50,20 @@ class ColumnName implements SqlSerializable
     public function getSchema(): ?string
     {
         return $this->schema;
+    }
+
+    public function format(): string
+    {
+        $result = '';
+        if ($this->schema !== null) {
+            $result = $this->schema . '.';
+        }
+        if ($this->table !== null) {
+            $result .= $this->table . '.';
+        }
+        $result .= $this->name;
+
+        return $result;
     }
 
     public function serialize(Formatter $formatter): string

@@ -28,4 +28,11 @@ interface NamingStrategy
      */
     public function createForeignKeyName(TableReflection $table, array $columns): string;
 
+    /**
+     * @param TableReflection $table
+     * @param string[] $columns
+     * @return string
+     */
+    public function createCheckName(TableReflection $table, array $columns): string;
+
 }

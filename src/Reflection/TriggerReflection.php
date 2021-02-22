@@ -10,6 +10,7 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\QualifiedName;
@@ -60,6 +61,16 @@ class TriggerReflection
     public function wasDropped(): bool
     {
         return end($this->commands) instanceof DropTriggerCommand;
+    }
+
+    public function wasRenamed(): bool
+    {
+        return false;
+    }
+
+    public function getLastCommand(): Command
+    {
+        return end($this->commands);
     }
 
 }

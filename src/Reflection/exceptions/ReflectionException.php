@@ -12,7 +12,7 @@ namespace SqlFtw\Reflection;
 use Dogma\Exception;
 use Dogma\StrictBehaviorMixin;
 
-class ReflectionException extends Exception
+abstract class ReflectionException extends Exception
 {
     use StrictBehaviorMixin;
 

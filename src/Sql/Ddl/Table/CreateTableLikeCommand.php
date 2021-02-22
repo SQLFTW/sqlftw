@@ -18,7 +18,7 @@ class CreateTableLikeCommand implements AnyCreateTableCommand
     use StrictBehaviorMixin;
 
     /** @var QualifiedName */
-    private $table;
+    private $name;
 
     /** @var QualifiedName */
     private $templateTable;
@@ -29,17 +29,21 @@ class CreateTableLikeCommand implements AnyCreateTableCommand
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(QualifiedName $table, QualifiedName $templateTable, bool $temporary = false, bool $ifNotExists = false)
-    {
-        $this->table = $table;
+    public function __construct(
+        QualifiedName $name,
+        QualifiedName $templateTable,
+        bool $temporary = false,
+        bool $ifNotExists = false
+    ) {
+        $this->name = $name;
         $this->templateTable = $templateTable;
         $this->temporary = $temporary;
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getTable(): QualifiedName
+    public function getName(): QualifiedName
     {
-        return $this->table;
+        return $this->name;
     }
 
     public function getTemplateTable(): QualifiedName
@@ -67,7 +71,7 @@ class CreateTableLikeCommand implements AnyCreateTableCommand
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
-        $result .= $this->table->serialize($formatter);
+        $result .= $this->name->serialize($formatter);
 
         $result .= ' LIKE ' . $this->templateTable->serialize($formatter);
 

@@ -10,8 +10,6 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
-use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 
 class IndexReflection
@@ -24,32 +22,18 @@ class IndexReflection
     /** @var IndexDefinition */
     private $indexDefinition;
 
-    /** @var ColumnDefinition|null */
-    private $columnDefinition;
+    /** @var ColumnReflection|null */
+    private $originColumn;
 
-    public function __construct(TableReflection $table, IndexDefinition $indexDefinition)
+    public function __construct(
+        TableReflection $table,
+        IndexDefinition $indexDefinition,
+        ?ColumnReflection $originColumn = null
+    )
     {
         $this->table = $table;
         $this->indexDefinition = $indexDefinition;
-    }
-
-    public static function fromColumn(TableReflection $table, ColumnDefinition $columnDefinition): self
-    {
-        $indexDefinition = new IndexDefinition(
-            null,
-            $columnDefinition->getIndexType(),
-            [$columnDefinition->getName()]
-        );
-
-        $self = new self($table, $indexDefinition);
-        $self->columnDefinition = $columnDefinition;
-
-        return $self;
-    }
-
-    public static function fromConstraint(TableReflection $table, ConstraintDefinition $constraintDefinition): self
-    {
-        return new self($table, $constraintDefinition->getIndexDefinition());
+        $this->originColumn = $originColumn;
     }
 
     public function getTable(): TableReflection
@@ -62,9 +46,9 @@ class IndexReflection
         return $this->indexDefinition;
     }
 
-    public function getColumnDefinition(): ?ColumnDefinition
+    public function getOriginColumn(): ?ColumnReflection
     {
-        return $this->columnDefinition;
+        return $this->originColumn;
     }
 
 }

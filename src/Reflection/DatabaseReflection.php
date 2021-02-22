@@ -9,42 +9,32 @@
 
 namespace SqlFtw\Reflection;
 
-use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Reflection\Loader\ReflectionLoader;
+use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
-use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
-use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
-use SqlFtw\Sql\Ddl\Event\DropEventCommand;
-use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
-use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
-use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
-use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
-use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
-use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
-use SqlFtw\Sql\Ddl\Routines\DropFunctionCommand;
-use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
-use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
-use SqlFtw\Sql\Ddl\Table\Alter\SimpleAction;
-use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
-use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
-use SqlFtw\Sql\Ddl\Table\DropTableCommand;
+use SqlFtw\Sql\Ddl\SchemaObjectCommand;
+use SqlFtw\Sql\Ddl\SchemaObjectsCommand;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterTableAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameToAction;
 use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
-use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
-use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
-use SqlFtw\Sql\Ddl\View\AlterViewCommand;
-use SqlFtw\Sql\Ddl\View\CreateViewCommand;
-use SqlFtw\Sql\Ddl\View\DropViewCommand;
+use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;
+use SqlFtw\Sql\Ddl\Tablespace\CreateTablespaceCommand;
+use SqlFtw\Sql\Ddl\Tablespace\DropTablespaceCommand;
 use SqlFtw\Sql\Dml\Utility\UseCommand;
 use SqlFtw\Sql\QualifiedName;
-use function count;
 
 /**
- * Represents whole "database" layer, not just a single schema.
+ * Represents whole "database" or server layer, not just a single schema.
+ *
+ * DatabaseReflection is mutable and can change even with calling get... methods as it lazy loads database objects.
+ * All reflection objects under this level are immutable (SchemaReflection, TableReflection etc.).
+ * You can get snapshot of database structure at any point by cloning DatabaseReflection or iterating through
+ *   $history when history is enabled.
  */
 class DatabaseReflection
 {
@@ -56,32 +46,20 @@ class DatabaseReflection
     /** @var ReflectionLoader */
     private $loader;
 
+    /** @var bool */
+    private $trackHistory;
+
+    /** @var self|null */
+    private $previous;
+
     /** @var string */
     private $currentSchema;
-
-    /** @var DatabaseReflection */
-    private $history;
 
     /** @var SchemaReflection[] */
     private $schemas = [];
 
-    /** @var TableReflection[][] */
-    private $tables = [];
-
-    /** @var ViewReflection[][] */
-    private $views = [];
-
-    /** @var FunctionReflection[][] */
-    private $functions = [];
-
-    /** @var ProcedureReflection[][] */
-    private $procedures = [];
-
-    /** @var TriggerReflection[][] */
-    private $triggers = [];
-
-    /** @var EventReflection[][] */
-    private $events = [];
+    /** @var TablespaceReflection[] */
+    private $tablespaces = [];
 
     /** @var VariablesReflection[] */
     private $variables = [];
@@ -95,400 +73,131 @@ class DatabaseReflection
         $this->platform = $platform;
         $this->loader = $loader;
         $this->currentSchema = $currentSchema;
-        if ($trackHistory) {
-            $this->history = new self($platform, $loader, $currentSchema, false);
+        $this->trackHistory = $trackHistory;
+    }
+
+    public function apply(Command $command): void
+    {
+        if ($command instanceof UseCommand) {
+            $schema = $command->getSchema();
+            $this->getSchema($schema);
+            $this->currentSchema = $schema;
+
+        } elseif ($command instanceof CreateSchemaCommand) {
+            $schema = $command->getName();
+            $oldReflection = $this->findSchema($schema);
+            if ($oldReflection !== null) {
+                throw new SchemaAlreadyExistsException($schema);
+            }
+
+            $newReflection = new SchemaReflection($this, $command, $this->trackHistory);
+            if ($this->trackHistory) {
+                $this->previous = clone $this;
+            }
+            $this->schemas[$schema] = $newReflection;
+
+        } elseif ($command instanceof AlterSchemaCommand) {
+            $schema = $command->getName();
+
+            $oldReflection = $this->getSchema($schema);
+            if ($this->trackHistory) {
+                $this->previous = clone $this;
+            }
+            $this->schemas[$schema] = $oldReflection->apply($command);
+
+        } elseif ($command instanceof DropSchemaCommand) {
+            $schema = $command->getName();
+
+            if ($this->trackHistory) {
+                $oldReflection = $this->getSchema($schema);
+                $this->previous = clone $this;
+                $this->previous->schemas[$schema] = $oldReflection->apply($command);
+            }
+
+            unset($this->schemas[$schema]);
+
+        } elseif ($command instanceof CreateTablespaceCommand) {
+            $tablespace = $command->getName();
+            $oldReflection = $this->findTablespace($tablespace);
+            if ($oldReflection !== null) {
+                throw new TablespaceAlreadyExistsException($tablespace);
+            }
+
+            $newReflection = new TablespaceReflection($this, $command, $this->trackHistory);
+            if ($this->trackHistory) {
+                $this->previous = clone $this;
+            }
+            $this->tablespaces[$tablespace] = $newReflection;
+
+        } elseif ($command instanceof AlterTablespaceCommand) {
+            $tablespace = $command->getName();
+
+            $oldReflection = $this->getTablespace($tablespace);
+            if ($this->trackHistory) {
+                $this->previous = clone $this;
+            }
+            $this->tablespaces[$tablespace] = $oldReflection->apply($command);
+
+        } elseif ($command instanceof DropTablespaceCommand) {
+            $tablespace = $command->getName();
+
+            if ($this->trackHistory) {
+                $oldReflection = $this->getTablespace($tablespace);
+                $this->previous = clone $this;
+                $this->previous->tablespaces[$tablespace] = $oldReflection->apply($command);
+            }
+
+            unset($this->tablespaces[$tablespace]);
+        } elseif ($command instanceof SchemaObjectCommand) {
+            $schema = $command->getName()->getSchema() ?: $this->currentSchema;
+            $oldReflection = $this->getSchema($schema);
+            $newReflection = $oldReflection->apply($command);
+
+            if ($this->trackHistory && $oldReflection !== $newReflection) {
+                $this->previous = clone $this;
+            }
+            $this->schemas[$schema] = $newReflection;
+
+            /** @var RenameToAction $renameAction */
+            if ($command instanceof AlterTableAction && $renameAction = $command->getRenameAction() !== null) {
+                $targetSchema = $renameAction->getNewName()->getSchema() ?? $this->currentSchema;
+                $oldReflection = $this->getSchema($targetSchema);
+                $newReflection = $oldReflection->apply($command);
+
+                $this->schemas[$targetSchema] = $newReflection;
+            }
+
+        } elseif ($command instanceof SchemaObjectsCommand) {
+            $previous = clone $this;
+            $schemas = QualifiedName::uniqueSchemas($command->getNames(), $this->currentSchema);
+            foreach ($schemas as $schema) {
+                $oldReflection = $this->getSchema($schema);
+                $newReflection = $oldReflection->apply($command);
+
+                if ($this->trackHistory && $oldReflection !== $newReflection) {
+                    $this->previous = $previous;
+                }
+                $this->schemas[$schema] = $newReflection;
+            }
+            if ($command instanceof RenameTableCommand) {
+                $targetSchemas = QualifiedName::uniqueSchemas($command->getNewNames(), $this->currentSchema);
+                foreach ($targetSchemas as $schema) {
+                    if (in_array($schema, $schemas, true)) {
+                        // already updated in previous foreach
+                        continue;
+                    }
+                    $oldReflection = $this->getSchema($schema);
+                    $newReflection = $oldReflection->apply($command);
+
+                    $this->schemas[$schema] = $newReflection;
+                }
+            }
         }
     }
 
-    public function applyCommand(Command $command): self
+    public function getPrevious(): ?self
     {
-        if ($command instanceof CreateTableCommand) {
-            $that = clone $this;
-            $table = $command->getTable();
-            $name = $table->getName();
-            $schema = $table->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->findTable($name, $schema);
-            if ($reflection !== null) {
-                throw new TableAlreadyExistsException($name, $schema);
-            }
-
-            $reflection = new TableReflection($that, new QualifiedName($name, $schema), $command);
-            $that->tables[$schema][$name] = $reflection;
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                unset($that->history->tables[$schema][$name]);
-            }
-
-            return $that;
-        } elseif ($command instanceof AlterTableCommand) {
-            $that = clone $this;
-            $table = $command->getTable();
-            $name = $table->getName();
-            $schema = $table->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getTable($name, $schema);
-            /** @var SimpleAction[] $actions */
-            $actions = $command->getActions()->getActionsByType(AlterTableActionType::get(AlterTableActionType::RENAME_TO));
-            if (count($actions) > 0) {
-                /** @var QualifiedName $newTable */
-                $newTable = $actions[0]->getValue();
-                $newName = $newTable->getName();
-                $newSchema = $newTable->getSchema() ?: $this->currentSchema;
-                $newReflection = $this->findTable($newName, $newSchema);
-                if ($newReflection !== null) {
-                    throw new TableAlreadyExistsException($newTable->getName(), $newSchema);
-                }
-
-                $that->tables[$newSchema][$newName] = $reflection->alter($command);
-                unset($that->tables[$schema][$name]);
-                if ($this->history !== null) {
-                    $that->history = clone($this->history);
-                    $that->history->tables[$schema][$name] = $reflection->moveByRenaming($command);
-                    unset($that->history->tables[$newSchema][$newName]);
-                }
-            } else {
-                $that->tables[$schema][$name] = $reflection->alter($command);
-            }
-
-            return $that;
-        } elseif ($command instanceof RenameTableCommand) {
-            $that = clone $this;
-            /**
-             * @var QualifiedName $oldTable
-             * @var QualifiedName $newTable
-             */
-            foreach ($command->getIterator() as $oldTable => $newTable) {
-                $name = $oldTable->getName();
-                $schema = $oldTable->getSchema() ?: $this->currentSchema;
-                $reflection = $this->getTable($name, $schema);
-
-                $newName = $newTable->getName();
-                $newSchema = $newTable->getSchema() ?: $this->currentSchema;
-                $newReflection = $this->findTable($newName, $newSchema);
-                if ($newReflection !== null) {
-                    throw new TableAlreadyExistsException($newTable->getName(), $newSchema);
-                }
-
-                $that->tables[$newSchema][$newName] = $reflection->rename($command);
-                unset($that->tables[$schema][$name]);
-                if ($this->history !== null) {
-                    $that->history = clone($this->history);
-                    $that->history->tables[$schema][$name] = $reflection->moveByRenaming($command);
-                    unset($that->history->tables[$newSchema][$newName]);
-                }
-            }
-
-            return $that;
-        } elseif ($command instanceof DropTableCommand) {
-            $that = clone $this;
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-            }
-            foreach ($command->getTables() as $table) {
-                $name = $table->getName();
-                $schema = $table->getSchema() ?: $this->currentSchema;
-                $reflection = $this->getTable($name, $schema);
-                unset($that->tables[$schema][$name]);
-                if ($this->history !== null) {
-                    $that->tables[$schema][$name] = $reflection->drop($command);
-                }
-            }
-
-            return $that;
-        } elseif ($command instanceof CreateIndexCommand) {
-            $that = clone $this;
-            $table = $command->getTable();
-            $name = $table->getName();
-            $schema = $table->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getTable($name, $schema);
-            $that->tables[$schema][$name] = $reflection->createIndex($command);
-
-            return $that;
-        } elseif ($command instanceof DropIndexCommand) {
-            $that = clone $this;
-            $table = $command->getTable();
-            $name = $table->getName();
-            $schema = $table->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getTable($name, $schema);
-            $that->tables[$schema][$name] = $reflection->dropIndex($command);
-
-            return $that;
-        } elseif ($command instanceof CreateViewCommand) {
-            $that = clone $this;
-            $view = $command->getName();
-            $name = $view->getName();
-            $schema = $view->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->findView($name, $schema);
-            if ($reflection !== null) {
-                throw new ViewAlreadyExistsException($name, $schema);
-            }
-
-            $reflection = new ViewReflection(new QualifiedName($name, $schema), $command);
-            $that->views[$schema][$name] = $reflection;
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                unset($that->history->views[$schema][$name]);
-            }
-
-            return $that;
-        } elseif ($command instanceof AlterViewCommand) {
-            $that = clone $this;
-            $view = $command->getName();
-            $name = $view->getName();
-            $schema = $view->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getView($name, $schema);
-            $that->views[$schema][$name] = $reflection->alter($command);
-
-            return $that;
-        } elseif ($command instanceof DropViewCommand) {
-            $that = clone $this;
-            foreach ($command->getNames() as $view) {
-                $name = $view->getName();
-                $schema = $view->getSchema() ?: $this->currentSchema;
-                $reflection = $this->getView($name, $schema);
-                unset($that->views[$schema][$name]);
-                if ($this->history !== null) {
-                    $that->history = clone($this->history);
-                    $that->history->views[$schema][$name] = $reflection->drop($command);
-                }
-            }
-
-            return $that;
-        } elseif ($command instanceof CreateFunctionCommand) {
-            $that = clone $this;
-            $function = $command->getName();
-            $name = $function->getName();
-            $schema = $function->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->findFunction($name, $schema);
-            if ($reflection !== null) {
-                throw new FunctionAlreadyExistsException($name, $schema);
-            }
-            $reflection = $this->findProcedure($name, $schema);
-            if ($reflection !== null) {
-                throw new ProcedureAlreadyExistsException($name, $schema);
-            }
-
-            $reflection = new FunctionReflection(new QualifiedName($name, $schema), $command);
-            $that->functions[$schema][$name] = $reflection;
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                unset($that->history->functions[$schema][$name]);
-                unset($that->history->procedures[$schema][$name]);
-            }
-
-            return $that;
-        } elseif ($command instanceof AlterFunctionCommand) {
-            $that = clone $this;
-            $function = $command->getName();
-            $name = $function->getName();
-            $schema = $function->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getFunction($name, $schema);
-            $that->functions[$schema][$name] = $reflection->alter($command);
-
-            return $that;
-        } elseif ($command instanceof DropFunctionCommand) {
-            $that = clone $this;
-            $function = $command->getName();
-            $name = $function->getName();
-            $schema = $function->getSchema() ?: $this->currentSchema;
-            $reflection = $this->getFunction($name, $schema);
-            unset($this->functions[$schema][$name]);
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                $that->history->functions[$schema][$name] = $reflection->drop($command);
-            }
-
-            return $that;
-        } elseif ($command instanceof CreateProcedureCommand) {
-            $that = clone $this;
-            $procedure = $command->getName();
-            $name = $procedure->getName();
-            $schema = $procedure->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->findFunction($name, $schema);
-            if ($reflection !== null) {
-                throw new FunctionAlreadyExistsException($name, $schema);
-            }
-            $reflection = $this->findProcedure($name, $schema);
-            if ($reflection !== null) {
-                throw new ProcedureAlreadyExistsException($name, $schema);
-            }
-
-            $reflection = new ProcedureReflection(new QualifiedName($name, $schema), $command);
-            $that->procedures[$schema][$name] = $reflection;
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                unset($that->history->functions[$schema][$name]);
-                unset($that->history->procedures[$schema][$name]);
-            }
-
-            return $that;
-        } elseif ($command instanceof AlterProcedureCommand) {
-            $that = clone $this;
-            $procedure = $command->getName();
-            $name = $procedure->getName();
-            $schema = $procedure->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getProcedure($name, $schema);
-            $that->procedures[$schema][$name] = $reflection->alter($command);
-
-            return $that;
-        } elseif ($command instanceof DropProcedureCommand) {
-            $that = clone $this;
-            $procedure = $command->getName();
-            $name = $procedure->getName();
-            $schema = $procedure->getSchema() ?: $this->currentSchema;
-            $reflection = $this->getProcedure($name, $schema);
-            unset($that->procedures[$schema][$name]);
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                $that->procedures[$schema][$name] = $reflection->drop($command);
-            }
-
-            return $that;
-        } elseif ($command instanceof CreateTriggerCommand) {
-            $that = clone $this;
-            $name = $command->getName();
-            $table = $command->getTable();
-            $tableName = $table->getName();
-            $schema = $table->getSchema() ?: $this->currentSchema;
-
-            $tableReflection = $this->getTable($tableName, $schema);
-            $reflection = $this->findTrigger($name, $schema);
-            if ($reflection !== null) {
-                throw new TriggerAlreadyExistsException($name, $schema);
-            }
-
-            $reflection = new TriggerReflection(new QualifiedName($name, $schema), $command);
-            $that->triggers[$schema][$name] = $reflection;
-            $that->tables[$schema][$tableName] = $tableReflection->createTrigger($reflection);
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                unset($that->history->triggers[$schema][$name]);
-            }
-
-            return $that;
-        } elseif ($command instanceof DropTriggerCommand) {
-            $that = clone $this;
-            $trigger = $command->getName();
-            $name = $trigger->getName();
-            $schema = $trigger->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getTrigger($name, $schema);
-            $table = $reflection->getTable();
-            $tableName = $table->getName();
-            $tableReflection = $this->getTable($tableName, $schema);
-
-            unset($that->triggers[$schema][$name]);
-            $this->tables[$schema][$tableName] = $tableReflection->dropTrigger($name);
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                $that->triggers[$schema][$name] = $reflection->drop($command);
-            }
-
-            return $that;
-        } elseif ($command instanceof CreateEventCommand) {
-            $that = clone $this;
-            $event = $command->getName();
-            $name = $event->getName();
-            $schema = $event->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->findEvent($name, $schema);
-            if ($reflection !== null) {
-                throw new EventAlreadyExistsException($name, $schema);
-            }
-
-            $reflection = new EventReflection(new QualifiedName($name, $schema), $command);
-            $that->events[$schema][$name] = $reflection;
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                unset($that->history->events[$schema][$name]);
-            }
-
-            return $that;
-        } elseif ($command instanceof AlterEventCommand) {
-            $that = clone $this;
-            $event = $command->getName();
-            $name = $event->getName();
-            $schema = $event->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getEvent($name, $schema);
-            $that->events[$schema][$name] = $reflection->alter($command);
-
-            return $that;
-        } elseif ($command instanceof DropEventCommand) {
-            $that = clone $this;
-            $event = $command->getName();
-            $name = $event->getName();
-            $schema = $event->getSchema() ?: $this->currentSchema;
-
-            $reflection = $this->getEvent($name, $schema);
-            unset($that->events[$schema][$name]);
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                $that->events[$schema][$name] = $reflection->drop($command);
-            }
-
-            return $that;
-        } elseif ($command instanceof CreateSchemaCommand) {
-            $that = clone $this;
-            $name = $command->getName();
-            $schema = $this->findSchema($name);
-            if ($schema !== null) {
-                throw new SchemaAlreadyExistsException($name);
-            }
-
-            $reflection = new SchemaReflection($name, $command);
-            $that->schemas[$name] = $reflection;
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                unset($that->history->schemas[$name]);
-            }
-
-            return $that;
-        } elseif ($command instanceof AlterSchemaCommand) {
-            $that = clone $this;
-            $name = $command->getName();
-
-            $reflection = $this->getSchema($name);
-            $that->schemas[$name] = $reflection->alter($command);
-
-            return $that;
-        } elseif ($command instanceof DropSchemaCommand) {
-            $that = clone $this;
-            $name = $command->getName();
-
-            $reflection = $this->getSchema($name);
-            unset(
-                $that->schemas[$name],
-                $that->tables[$name],
-                $that->views[$name],
-                $that->functions[$name],
-                $that->procedures[$name],
-                $that->triggers[$name],
-                $that->events[$name],
-            );
-            if ($this->history !== null) {
-                $that->history = clone($this->history);
-                $that->history->schemas[$name] = $reflection->drop($command);
-            }
-
-            return $that;
-        } elseif ($command instanceof UseCommand) {
-            $schema = $command->getSchema();
-            $this->useSchema($schema);
-
-            return $this;
-        } else {
-            return $this;
-        }
+        return $this->previous;
     }
 
     public function getPlatform(): Platform
@@ -496,326 +205,458 @@ class DatabaseReflection
         return $this->platform;
     }
 
-    public function useSchema(string $schema): void
-    {
-        $this->getSchema($schema);
-        $this->currentSchema = $schema;
-    }
+    // exists ----------------------------------------------------------------------------------------------------------
 
-    /**
-     * @return SchemaReflection[]
-     */
-    public function getSchemas(): array
+    public function schemaExists(?string $name): bool
     {
-        return $this->schemas;
-    }
+        $name = $name ?? $this->currentSchema;
 
-    public function getSchema(string $name): SchemaReflection
-    {
         if (isset($this->schemas[$name])) {
-            return $this->schemas[$name];
+            return true;
         }
-        $previous = $this->history->schemas[$name] ?? null;
-        if ($previous !== null) {
-            if ($previous->wasDropped()) {
-                throw new SchemaWasDroppedException($previous);
+
+        return (bool) $this->loadSchema($name);
+    }
+
+    public function tablespaceExists(?string $name): bool
+    {
+        $name = $name ?? $this->currentSchema;
+
+        if (isset($this->tablespaces[$name])) {
+            return true;
+        }
+
+        return (bool) $this->loadTablespace($name);
+    }
+
+    public function tableExists(QualifiedName $name): bool
+    {
+        $schema = $this->findSchema($name->getSchema());
+        if ($schema === null) {
+            return false;
+        }
+
+        if ($schema->getTableIfLoaded($name->getName())) {
+            return true;
+        }
+
+        return $this->loadTable($name->coalesce($this->currentSchema), $schema) !== null;
+    }
+
+    public function columnExists(ColumnName $name): bool
+    {
+        $schema = $this->findSchema($name->getSchema());
+        if ($schema === null) {
+            return false;
+        }
+
+        $table = $schema->getTableIfLoaded($name->getTable());
+        if ($table === null) {
+            $table = $this->loadTable($name->getTableName()->coalesce($this->currentSchema), $schema);
+        }
+        if ($table === null) {
+            return false;
+        }
+
+        return (bool) $table->findColumn($name->getName());
+    }
+
+    public function viewExists(QualifiedName $name): bool
+    {
+        $schema = $this->findSchema($name->getSchema());
+        if ($schema === null) {
+            return false;
+        }
+
+        if ($schema->getViewIfLoaded($name->getName())) {
+            return true;
+        }
+
+        return $this->loadView($name->coalesce($this->currentSchema), $schema) !== null;
+    }
+
+    public function functionExists(QualifiedName $name): bool
+    {
+        $schema = $this->findSchema($name->getSchema());
+        if ($schema === null) {
+            return false;
+        }
+
+        if ($schema->getFunctionIfLoaded($name->getName())) {
+            return true;
+        }
+
+        return $this->loadFunction($name->coalesce($this->currentSchema), $schema) !== null;
+    }
+
+    public function procedureExists(QualifiedName $name): bool
+    {
+        $schema = $this->findSchema($name->getSchema());
+        if ($schema === null) {
+            return false;
+        }
+
+        if ($schema->getProcedureIfLoaded($name->getName())) {
+            return true;
+        }
+
+        return $this->loadProcedure($name->coalesce($this->currentSchema), $schema) !== null;
+    }
+
+    public function eventExists(QualifiedName $name): bool
+    {
+        $schema = $this->findSchema($name->getSchema());
+        if ($schema === null) {
+            return false;
+        }
+
+        if ($schema->getEventIfLoaded($name->getName())) {
+            return true;
+        }
+
+        return $this->loadEvent($name->coalesce($this->currentSchema), $schema) !== null;
+    }
+
+    public function triggerExists(QualifiedName $name): bool
+    {
+        $schema = $this->findSchema($name->getSchema());
+        if ($schema === null) {
+            return false;
+        }
+
+        if ($schema->getTriggerIfLoaded($name->getName())) {
+            return true;
+        }
+
+        return $this->loadTrigger($name->coalesce($this->currentSchema), $schema) !== null;
+    }
+
+    // find ------------------------------------------------------------------------------------------------------------
+
+    public function findSchema(?string $name): ?SchemaReflection
+    {
+        $name = $name ?? $this->currentSchema;
+
+        return $this->schemas[$name] ?? $this->loadSchema($name);
+    }
+
+    public function findTablespace(string $name): ?TablespaceReflection
+    {
+        return $this->tablespaces[$name] ?? $this->loadTablespace($name);
+    }
+
+    public function findTable(QualifiedName $name): ?TableReflection
+    {
+        $schema = $this->findSchema($name->getSchema());
+        if ($schema === null) {
+            return null;
+        }
+
+        // todo ?
+    }
+
+    // get -------------------------------------------------------------------------------------------------------------
+
+    public function getSchema(?string $name): SchemaReflection
+    {
+        $name = $name ?? $this->currentSchema;
+
+        $database = $this;
+        while ($database !== null) {
+            $schema = $database->schemas[$name] ?? null;
+            if ($schema === null) {
+                $database = $database->previous;
+            } elseif ($schema->wasDropped()) {
+                throw new SchemaDroppedException($name, $schema->getLastCommand());
+            } elseif ($schema->wasRenamed()) {
+                throw new SchemaRenamedException($name, $schema->getLastCommand());
+            } else {
+                return $schema;
             }
         }
 
-        $createSchemaCommand = $this->loader->getCreateSchemaCommand($name);
-        $reflection = new SchemaReflection($name, $createSchemaCommand);
+        $schema = $this->loadSchema($name);
+        if ($schema === null) {
+            throw new SchemaNotFoundException($name);
+        }
+
+        return $schema;
+    }
+
+    public function getTablespace(?string $name): TablespaceReflection
+    {
+        $name = $name ?? $this->currentSchema;
+
+        $database = $this;
+        while ($database !== null) {
+            $tablespace = $database->tablespaces[$name] ?? null;
+            if ($tablespace === null) {
+                $database = $database->previous;
+            } elseif ($tablespace->wasDropped()) {
+                throw new TablespaceDroppedException($name, $tablespace->getLastCommand());
+            } elseif ($tablespace->wasRenamed()) {
+                throw new TablespaceRenamedException($name, $tablespace->getLastCommand());
+            } else {
+                return $tablespace;
+            }
+        }
+
+        $tablespace = $this->loadTablespace($name);
+        if ($tablespace === null) {
+            throw new TablespaceNotFoundException($name);
+        }
+
+        return $tablespace;
+    }
+
+    public function getTable(QualifiedName $name): TableReflection
+    {
+        $schema = $current = $this->getSchema($name->getSchema());
+        while ($schema !== null) {
+            $table = $schema->getTableIfLoaded($name->getName());
+            if ($table === null) {
+                $schema = $schema->getPrevious();
+            } elseif ($table->wasDropped()) {
+                throw new TableDroppedException($name, $table->getLastCommand());
+            } elseif ($table->wasRenamed()) {
+                throw new TableRenamedException($name, $table->getLastCommand());
+            } else {
+                return $table;
+            }
+        }
+
+        $table = $this->loadTable($name, $current);
+        if ($table === null) {
+            throw new TableNotFoundException($name);
+        }
+
+        return $table;
+    }
+
+    public function getView(QualifiedName $name): ViewReflection
+    {
+        $schema = $current = $this->getSchema($name->getSchema());
+        while ($schema !== null) {
+            $view = $schema->getViewIfLoaded($name->getName());
+            if ($view === null) {
+                $schema = $schema->getPrevious();
+            } elseif ($view->wasDropped()) {
+                throw new ViewDroppedException($name, $view->getLastCommand());
+            } elseif ($view->wasRenamed()) {
+                throw new ViewRenamedException($name, $view->getLastCommand());
+            } else {
+                return $view;
+            }
+        }
+
+        $view = $this->loadView($name, $current);
+        if ($view === null) {
+            throw new ViewNotFoundException($name);
+        }
+
+        return $view;
+    }
+
+    public function getFunction(QualifiedName $name): FunctionReflection
+    {
+        $schema = $current = $this->getSchema($name->getSchema());
+        while ($schema !== null) {
+            $function = $schema->getFunctionIfLoaded($name->getName());
+            if ($function === null) {
+                $schema = $schema->getPrevious();
+            } elseif ($function->wasDropped()) {
+                throw new FunctionDroppedException($name, $function->getLastCommand());
+            } elseif ($function->wasRenamed()) {
+                throw new FunctionRenamedException($name, $function->getLastCommand());
+            } else {
+                return $function;
+            }
+        }
+
+        $function = $this->loadFunction($name, $current);
+        if ($function === null) {
+            throw new FunctionNotFoundException($name);
+        }
+
+        return $function;
+    }
+
+    public function getProcedure(QualifiedName $name): ProcedureReflection
+    {
+        $schema = $current = $this->getSchema($name->getSchema());
+        while ($schema !== null) {
+            $procedure = $schema->getProcedureIfLoaded($name->getName());
+            if ($procedure === null) {
+                $schema = $schema->getPrevious();
+            } elseif ($procedure->wasDropped()) {
+                throw new ProcedureDroppedException($name, $procedure->getLastCommand());
+            } elseif ($procedure->wasRenamed()) {
+                throw new ProcedureRenamedException($name, $procedure->getLastCommand());
+            } else {
+                return $procedure;
+            }
+        }
+
+        $procedure = $this->loadProcedure($name, $current);
+        if ($procedure === null) {
+            throw new ProcedureNotFoundException($name);
+        }
+
+        return $procedure;
+    }
+
+    public function getEvent(QualifiedName $name): EventReflection
+    {
+        $schema = $current = $this->getSchema($name->getSchema());
+        while ($schema !== null) {
+            $event = $schema->getEventIfLoaded($name->getName());
+            if ($event === null) {
+                $schema = $schema->getPrevious();
+            } elseif ($event->wasDropped()) {
+                throw new EventDroppedException($name, $event->getLastCommand());
+            } elseif ($event->wasRenamed()) {
+                throw new EventRenamedException($name, $event->getLastCommand());
+            } else {
+                return $event;
+            }
+        }
+
+        $event = $this->loadEvent($name, $current);
+        if ($event === null) {
+            throw new EventNotFoundException($name);
+        }
+
+        return $event;
+    }
+
+    public function getTrigger(QualifiedName $name): TriggerReflection
+    {
+        $schema = $current = $this->getSchema($name->getSchema());
+        while ($schema !== null) {
+            $trigger = $schema->getTriggerIfLoaded($name->getName());
+            if ($trigger === null) {
+                $schema = $schema->getPrevious();
+            } elseif ($trigger->wasDropped()) {
+                throw new TriggerDroppedException($name, $trigger->getLastCommand());
+            } elseif ($trigger->wasRenamed()) {
+                throw new TriggerRenamedException($name, $trigger->getLastCommand());
+            } else {
+                return $trigger;
+            }
+        }
+
+        $trigger = $this->loadTrigger($name, $current);
+        if ($trigger === null) {
+            throw new TriggerNotFoundException($name);
+        }
+
+        return $trigger;
+    }
+
+    // loaders ---------------------------------------------------------------------------------------------------------
+
+    private function loadSchema(string $name): ?SchemaReflection
+    {
+        $command = $this->loader->getCreateSchemaCommand($name);
+        if ($command === null) {
+            return null;
+        }
+
+        $reflection = new SchemaReflection($this, $command, $this->trackHistory);
         $this->schemas[$name] = $reflection;
 
         return $reflection;
     }
 
-    public function findSchema(string $name): ?SchemaReflection
+    private function loadTablespace(string $name): ?TablespaceReflection
     {
-        try {
-            return $this->getSchema($name);
-        } catch (SchemaDoesNotExistException $e) {
+        $command = $this->loader->getCreateTablespaceCommand($name);
+        if ($command === null) {
             return null;
         }
-    }
 
-    /**
-     * @param string|null $schema
-     * @return TableReflection[]
-     */
-    public function getTables(?string $schema = null): array
-    {
-        if ($schema !== null) {
-            $this->getSchema($schema);
-
-            return $this->tables[$schema];
-        } else {
-            return Arr::flatten($this->tables);
-        }
-    }
-
-    public function getTable(string $name, ?string $schema = null): TableReflection
-    {
-        $schema = ($schema ?: $this->currentSchema);
-
-        if (isset($this->tables[$schema][$name])) {
-            return $this->tables[$schema][$name];
-        }
-        $previous = $this->history->tables[$schema][$name] ?? null;
-        if ($previous !== null) {
-            if ($previous->wasDropped()) {
-                throw new TableWasDroppedException($previous);
-            } elseif ($previous->wasMoved()) {
-                throw new TableWasMovedException($previous);
-            }
-        }
-
-        $createTableCommand = $this->loader->getCreateTableCommand($name, $schema);
-        $reflection = new TableReflection($this, new QualifiedName($name, $schema), $createTableCommand);
-        $this->tables[$schema][$name] = $reflection;
+        $reflection = new TablespaceReflection($this, $command, $this->trackHistory);
+        $this->tablespaces[$name] = $reflection;
 
         return $reflection;
     }
 
-    public function findTable(string $name, ?string $schema = null): ?TableReflection
+    private function loadTable(QualifiedName $name, SchemaReflection $schema): ?TableReflection
     {
-        try {
-            return $this->getTable($name, $schema);
-        } catch (TableDoesNotExistException $e) {
+        $command = $this->loader->getCreateTableCommand($name);
+        if ($command === null) {
             return null;
         }
+
+        $newReflection = $schema->apply($command);
+        $this->schemas[$name->getSchema()] = $newReflection;
+
+        return $schema->getTableIfLoaded($name->getName());
     }
 
-    /**
-     * @param string|null $schema
-     * @return ViewReflection[]
-     */
-    public function getViews(?string $schema = null): array
+    private function loadView(QualifiedName $name, SchemaReflection $schema): ?ViewReflection
     {
-        if ($schema !== null) {
-            $this->getSchema($schema);
-
-            return $this->views[$schema];
-        } else {
-            return Arr::flatten($this->views);
-        }
-    }
-
-    public function getView(string $name, ?string $schema = null): ViewReflection
-    {
-        $schema = ($schema ?: $this->currentSchema);
-
-        if (isset($this->views[$schema][$name])) {
-            return $this->views[$schema][$name];
-        }
-        $previous = $this->history->views[$schema][$name] ?? null;
-        if ($previous !== null) {
-            if ($previous->wasDropped()) {
-                throw new ViewWasDroppedException($previous);
-            }
-        }
-
-        $createViewCommand = $this->loader->getCreateViewCommand($name, $schema);
-        $reflection = new ViewReflection(new QualifiedName($name, $schema), $createViewCommand);
-        $this->views[$schema][$name] = $reflection;
-
-        return $reflection;
-    }
-
-    public function findView(string $name, ?string $schema = null): ?ViewReflection
-    {
-        try {
-            return $this->getView($name, $schema);
-        } catch (ViewDoesNotExistException $e) {
+        $command = $this->loader->getCreateViewCommand($name);
+        if ($command === null) {
             return null;
         }
+
+        $newReflection = $schema->apply($command);
+        $this->schemas[$name->getSchema()] = $newReflection;
+
+        return $schema->getViewIfLoaded($name->getName());
     }
 
-    /**
-     * @param string|null $schema
-     * @return FunctionReflection[]
-     */
-    public function getFunctions(?string $schema = null): array
+    private function loadFunction(QualifiedName $name, SchemaReflection $schema): ?FunctionReflection
     {
-        if ($schema !== null) {
-            $this->getSchema($schema);
-
-            return $this->functions[$schema];
-        } else {
-            return Arr::flatten($this->functions);
-        }
-    }
-
-    public function getFunction(string $name, ?string $schema = null): FunctionReflection
-    {
-        $schema = ($schema ?: $this->currentSchema);
-
-        if (isset($this->functions[$schema][$name])) {
-            return $this->functions[$schema][$name];
-        }
-        $previous = $this->history->functions[$schema][$name] ?? null;
-        if ($previous !== null) {
-            if ($previous->wasDropped()) {
-                throw new FunctionWasDroppedException($previous);
-            }
-        }
-
-        $createFunctionCommand = $this->loader->getCreateFunctionCommand($name, $schema);
-        $reflection = new FunctionReflection(new QualifiedName($name, $schema), $createFunctionCommand);
-        $this->functions[$schema][$name] = $reflection;
-
-        return $reflection;
-    }
-
-    public function findFunction(string $name, ?string $schema = null): ?FunctionReflection
-    {
-        try {
-            return $this->getFunction($name, $schema);
-        } catch (FunctionDoesNotExistException $e) {
+        $command = $this->loader->getCreateFunctionCommand($name);
+        if ($command === null) {
             return null;
         }
+
+        $newReflection = $schema->apply($command);
+        $this->schemas[$name->getSchema()] = $newReflection;
+
+        return $schema->getFunctionIfLoaded($name->getName());
     }
 
-    /**
-     * @param string|null $schema
-     * @return ProcedureReflection[]
-     */
-    public function getProcedures(?string $schema = null): array
+    private function loadProcedure(QualifiedName $name, SchemaReflection $schema): ?ProcedureReflection
     {
-        if ($schema !== null) {
-            $this->getSchema($schema);
-
-            return $this->procedures[$schema];
-        } else {
-            return Arr::flatten($this->procedures);
-        }
-    }
-
-    public function getProcedure(string $name, ?string $schema = null): ProcedureReflection
-    {
-        $schema = ($schema ?: $this->currentSchema);
-
-        if (isset($this->procedures[$schema][$name])) {
-            return $this->procedures[$schema][$name];
-        }
-        $previous = $this->history->procedures[$schema][$name] ?? null;
-        if ($previous !== null) {
-            if ($previous->wasDropped()) {
-                throw new ProcedureWasDroppedException($previous);
-            }
-        }
-
-        $createProcedureCommand = $this->loader->getCreateProcedureCommand($name, $schema);
-        $reflection = new ProcedureReflection(new QualifiedName($name, $schema), $createProcedureCommand);
-        $this->procedures[$schema][$name] = $reflection;
-
-        return $reflection;
-    }
-
-    public function findProcedure(string $name, ?string $schema = null): ?ProcedureReflection
-    {
-        try {
-            return $this->getProcedure($name, $schema);
-        } catch (ProcedureDoesNotExistException $e) {
+        $command = $this->loader->getCreateFunctionCommand($name);
+        if ($command === null) {
             return null;
         }
+
+        $newReflection = $schema->apply($command);
+        $this->schemas[$name->getSchema()] = $newReflection;
+
+        return $schema->getProcedureIfLoaded($name->getName());
     }
 
-    /**
-     * @param string|null $schema
-     * @return TriggerReflection[]
-     */
-    public function getTriggers(?string $schema = null): array
+    private function loadEvent(QualifiedName $name, SchemaReflection $schema): ?EventReflection
     {
-        if ($schema !== null) {
-            $this->getSchema($schema);
-
-            return $this->triggers[$schema];
-        } else {
-            return Arr::flatten($this->triggers);
-        }
-    }
-
-    public function getTrigger(string $name, ?string $schema = null): TriggerReflection
-    {
-        $schema = ($schema ?: $this->currentSchema);
-
-        if (isset($this->triggers[$schema][$name])) {
-            return $this->triggers[$schema][$name];
-        }
-        $previous = $this->history->triggers[$schema][$name] ?? null;
-        if ($previous !== null) {
-            if ($previous->wasDropped()) {
-                throw new TriggerWasDroppedException($previous);
-            }
-        }
-
-        $createTriggerCommand = $this->loader->getCreateTriggerCommand($name, $schema);
-        $reflection = new TriggerReflection(new QualifiedName($name, $schema), $createTriggerCommand);
-        $this->triggers[$schema][$name] = $reflection;
-
-        return $reflection;
-    }
-
-    public function findTrigger(string $name, ?string $schema = null): ?TriggerReflection
-    {
-        try {
-            return $this->getTrigger($name, $schema);
-        } catch (TriggerDoesNotExistException $e) {
+        $command = $this->loader->getCreateFunctionCommand($name);
+        if ($command === null) {
             return null;
         }
+
+        $newReflection = $schema->apply($command);
+        $this->schemas[$name->getSchema()] = $newReflection;
+
+        return $schema->getEventIfLoaded($name->getName());
     }
 
-    /**
-     * @param string|null $schema
-     * @return EventReflection[]
-     */
-    public function getEvents(?string $schema = null): array
+    private function loadTrigger(QualifiedName $name, SchemaReflection $schema): ?TriggerReflection
     {
-        if ($schema !== null) {
-            $this->getSchema($schema);
-
-            return $this->events[$schema];
-        } else {
-            return Arr::flatten($this->events);
-        }
-    }
-
-    public function getEvent(string $name, ?string $schema = null): EventReflection
-    {
-        $schema = ($schema ?: $this->currentSchema);
-
-        if (isset($this->events[$schema][$name])) {
-            return $this->events[$schema][$name];
-        }
-        $previous = $this->history->events[$schema][$name] ?? null;
-        if ($previous !== null) {
-            if ($previous->wasDropped()) {
-                throw new EventWasDroppedException($previous);
-            }
-        }
-
-        $createEventCommand = $this->loader->getCreateEventCommand($name, $schema);
-        $reflection = new EventReflection(new QualifiedName($name, $schema), $createEventCommand);
-        $this->events[$schema][$name] = $reflection;
-
-        return $reflection;
-    }
-
-    public function findEvent(string $name, ?string $schema = null): ?EventReflection
-    {
-        try {
-            return $this->getEvent($name, $schema);
-        } catch (EventDoesNotExistException $e) {
+        $command = $this->loader->getCreateFunctionCommand($name);
+        if ($command === null) {
             return null;
         }
-    }
 
-    /**
-     * @return VariablesReflection[]
-     */
-    public function getVariables(): array
-    {
-        return $this->variables;
+        $newReflection = $schema->apply($command);
+        $this->schemas[$name->getSchema()] = $newReflection;
+
+        return $schema->getTriggerIfLoaded($name->getName());
     }
 
 }

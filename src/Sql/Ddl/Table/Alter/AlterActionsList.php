@@ -42,13 +42,13 @@ class AlterActionsList implements SqlSerializable
     }
 
     /**
-     * @param AlterTableActionType $type
+     * @param string $class
      * @return AlterTableAction[]
      */
-    public function getActionsByType(AlterTableActionType $type): array
+    public function filter(String $class): array
     {
-        return Arr::filter($this->actions, static function (AlterTableAction $action) use ($type) {
-            return $action->getType() === $type;
+        return Arr::filter($this->actions, static function (AlterTableAction $action) use ($class) {
+            return $action instanceof $class;
         });
     }
 

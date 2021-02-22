@@ -28,6 +28,22 @@ class QualifiedName implements SqlSerializable
         $this->schema = $schema;
     }
 
+    public function coalesce(string $schema): self
+    {
+        return $this->schema !== null ? $this : new self($this->name, $schema);
+    }
+
+    public static function uniqueSchemas(array $names, string $currentSchema): array
+    {
+        $schemas = [];
+        foreach ($names as $name) {
+            $schema = $name->getSchema() ?? $currentSchema;
+            $schemas[$schema] = $schema;
+        }
+
+        return $schemas;
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -44,6 +60,13 @@ class QualifiedName implements SqlSerializable
     public function toArray(): array
     {
         return [$this->name, $this->schema];
+    }
+
+    public function format(): string
+    {
+        return $this->schema !== null
+            ? $this->schema . '.' . $this->name
+            : $this->name;
     }
 
     public function serialize(Formatter $formatter): string

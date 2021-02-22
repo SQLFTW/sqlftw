@@ -11,15 +11,14 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
 
-class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
+class DropTableCommand implements DdlTablesCommand
 {
     use StrictBehaviorMixin;
 
     /** @var QualifiedName[] */
-    private $tables;
+    private $names;
 
     /** @var bool */
     private $temporary;
@@ -31,18 +30,18 @@ class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
     private $cascadeRestrict;
 
     /**
-     * @param QualifiedName[] $tables
+     * @param QualifiedName[] $names
      * @param bool $temporary
      * @param bool $ifExists
      * @param bool|null $cascadeRestrict
      */
     public function __construct(
-        array $tables,
+        array $names,
         bool $temporary = false,
         bool $ifExists = false,
         ?bool $cascadeRestrict = null
     ) {
-        $this->tables = $tables;
+        $this->names = $names;
         $this->temporary = $temporary;
         $this->ifExists = $ifExists;
         $this->cascadeRestrict = $cascadeRestrict;
@@ -51,9 +50,9 @@ class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
     /**
      * @return QualifiedName[]
      */
-    public function getTables(): array
+    public function getNames(): array
     {
-        return $this->tables;
+        return $this->names;
     }
 
     public function getTemporary(): bool
@@ -87,7 +86,7 @@ class DropTableCommand implements MultipleTablesCommand, TableStructureCommand
             $result .= 'IF EXISTS ';
         }
 
-        $result .= $formatter->formatSerializablesList($this->tables);
+        $result .= $formatter->formatSerializablesList($this->names);
 
         if ($this->cascadeRestrict === true) {
             $result .= ' CASCADE';

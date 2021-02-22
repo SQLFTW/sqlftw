@@ -53,7 +53,7 @@ class CreateTablespaceCommand implements TablespaceCommand
         return $this->options;
     }
 
-    public function getUndo(): bool
+    public function isUndo(): bool
     {
         return $this->undo;
     }

@@ -16,26 +16,50 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
-use SqlFtw\Sql\Ddl\Table\Alter\AddColumnAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddColumnsAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddConstraintAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddForeignKeyAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddIndexAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AddPartitionAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AlterColumnAction;
-use SqlFtw\Sql\Ddl\Table\Alter\AlterIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnsAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddConstraintAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddForeignKeyAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddPartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterCheckAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterConstraintAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AnalyzePartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ChangeColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\CheckPartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\CoalescePartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ConvertToCharsetAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DisableKeysAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DiscardPartitionTablespaceAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DiscardTablespaceAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropCheckAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropConstraintAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropForeignKeyAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropPartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\DropPrimaryKeyAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\EnableKeysAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ExchangePartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ImportPartitionTablespaceAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ImportTablespaceAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ModifyColumnAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\OptimizePartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\OrderByAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RebuildPartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RemovePartitioningAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameIndexAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameToAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\ReorganizePartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RepairPartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\TruncatePartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\UpgradePartitioningAction;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableActionType;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
-use SqlFtw\Sql\Ddl\Table\Alter\ChangeColumnAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ConvertToCharsetAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ExchangePartitionAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ModifyColumnAction;
-use SqlFtw\Sql\Ddl\Table\Alter\PartitionsAction;
-use SqlFtw\Sql\Ddl\Table\Alter\RenameIndexAction;
-use SqlFtw\Sql\Ddl\Table\Alter\ReorganizePartitionAction;
-use SqlFtw\Sql\Ddl\Table\Alter\SimpleAction;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
@@ -265,6 +289,24 @@ class TableCommandsParser
                         $index = $tokenList->consumeName();
                         $visible = $tokenList->consumeAnyKeyword(Keyword::VISIBLE, Keyword::INVISIBLE);
                         $actions[] = new AlterIndexAction($index, $visible === Keyword::VISIBLE);
+                    } elseif ($tokenList->mayConsumeKeyword(Keyword::CONSTRAINT)) {
+                        // ALTER CONSTRAINT symbol [NOT] ENFORCED
+                        $constraint = $tokenList->consumeName();
+                        $enforced = true;
+                        if ($tokenList->mayConsumeKeyword(Keyword::NOT)) {
+                            $enforced = false;
+                        }
+                        $tokenList->consumeKeyword(Keyword::ENFORCED);
+                        $actions[] = new AlterConstraintAction($constraint, $enforced);
+                    } elseif ($tokenList->mayConsumeKeyword(Keyword::CHECK)) {
+                        // ALTER CHECK symbol [NOT] ENFORCED
+                        $check = $tokenList->consumeName();
+                        $enforced = true;
+                        if ($tokenList->mayConsumeKeyword(Keyword::NOT)) {
+                            $enforced = false;
+                        }
+                        $tokenList->consumeKeyword(Keyword::ENFORCED);
+                        $actions[] = new AlterCheckAction($check, $enforced);
                     } else {
                         // ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT}
                         $tokenList->mayConsumeKeyword(Keyword::COLUMN);
@@ -282,7 +324,7 @@ class TableCommandsParser
                     // ANALYZE PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::ANALYZE_PARTITION), $partitions);
+                    $actions[] = new AnalyzePartitionAction($partitions);
                     break;
                 case Keyword::CHANGE:
                     // CHANGE [COLUMN] old_col_name new_col_name column_definition [FIRST|AFTER col_name]
@@ -301,12 +343,12 @@ class TableCommandsParser
                     // CHECK PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::CHECK_PARTITION), $partitions);
+                    $actions[] = new CheckPartitionAction($partitions);
                     break;
                 case Keyword::COALESCE:
                     // COALESCE PARTITION number
                     $tokenList->consumeKeyword(Keyword::PARTITION);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::COALESCE_PARTITION), $tokenList->consumeInt());
+                    $actions[] = new CoalescePartitionAction($tokenList->consumeInt());
                     break;
                 case Keyword::CONVERT:
                     // CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]
@@ -323,19 +365,18 @@ class TableCommandsParser
                     $second = $tokenList->consumeAnyKeyword(Keyword::TABLESPACE, Keyword::PARTITION);
                     if ($second === Keyword::TABLESPACE) {
                         // DISCARD TABLESPACE
-                        $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DISCARD_TABLESPACE));
+                        $actions[] = new DiscardTablespaceAction();
                     } else {
                         // DISCARD PARTITION {partition_names | ALL} TABLESPACE
                         $partitions = $this->parsePartitionNames($tokenList);
-                        $action = AlterTableActionType::get(AlterTableActionType::DISCARD_PARTITION_TABLESPACE);
-                        $actions[] = new PartitionsAction($action, $partitions);
                         $tokenList->consumeKeyword(Keyword::TABLESPACE);
+                        $actions[] = new DiscardPartitionTablespaceAction($partitions);
                     }
                     break;
                 case Keyword::DISABLE:
                     // DISABLE KEYS
                     $tokenList->consumeKeyword(Keyword::KEYS);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DISABLE_KEYS));
+                    $actions[] = new DisableKeysAction();
                     break;
                 case Keyword::DROP:
                     $second = $tokenList->mayConsume(TokenType::KEYWORD);
@@ -345,30 +386,35 @@ class TableCommandsParser
                         case Keyword::COLUMN:
                             // DROP [COLUMN] col_name
                             $tokenList->mayConsumeKeyword(Keyword::COLUMN);
-                            $column = $tokenList->consumeName();
-                            $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DROP_COLUMN), $column);
+                            $actions[] = new DropColumnAction($tokenList->consumeName());
                             break;
                         case Keyword::INDEX:
                         case Keyword::KEY:
                             // DROP {INDEX|KEY} index_name
-                            $index = $tokenList->consumeName();
-                            $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DROP_INDEX), $index);
+                            $actions[] = new DropIndexAction($tokenList->consumeName());
                             break;
                         case Keyword::FOREIGN:
                             // DROP FOREIGN KEY fk_symbol
                             $tokenList->consumeKeyword(Keyword::KEY);
-                            $foreignKey = $tokenList->consumeName();
-                            $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DROP_FOREIGN_KEY), $foreignKey);
+                            $actions[] = new DropForeignKeyAction($tokenList->consumeName());
+                            break;
+                        case Keyword::CONSTRAINT:
+                            // DROP CONSTRAINT symbol
+                            $actions[] = new DropConstraintAction($tokenList->consumeName());
+                            break;
+                        case Keyword::CHECK:
+                            // DROP CHECK symbol
+                            $actions[] = new DropCheckAction($tokenList->consumeName());
                             break;
                         case Keyword::PARTITION:
                             // DROP PARTITION partition_names
                             $partitions = $this->parsePartitionNames($tokenList);
-                            $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DROP_PARTITION), $partitions);
+                            $actions[] = new DropPartitionAction($partitions);
                             break;
                         case Keyword::PRIMARY:
                             // DROP PRIMARY KEY
                             $tokenList->consumeKeyword(Keyword::KEY);
-                            $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::DROP_PRIMARY_KEY));
+                            $actions[] = new DropPrimaryKeyAction();
                             break;
                         default:
                             $tokenList->expectedAnyKeyword(Keyword::COLUMN, Keyword::INDEX, Keyword::KEY, Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY);
@@ -377,7 +423,7 @@ class TableCommandsParser
                 case Keyword::ENABLE:
                     // ENABLE KEYS
                     $tokenList->consumeKeyword(Keyword::KEYS);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::ENABLE_KEYS));
+                    $actions[] = new EnableKeysAction();
                     break;
                 case Keyword::EXCHANGE:
                     // EXCHANGE PARTITION partition_name WITH TABLE tbl_name [{WITH|WITHOUT} VALIDATION]
@@ -403,13 +449,12 @@ class TableCommandsParser
                     $second = $tokenList->consumeAnyKeyword(Keyword::TABLESPACE, Keyword::PARTITION);
                     if ($second === Keyword::TABLESPACE) {
                         // IMPORT TABLESPACE
-                        $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::IMPORT_TABLESPACE));
+                        $actions[] = new ImportTablespaceAction();
                     } else {
                         // IMPORT PARTITION {partition_names | ALL} TABLESPACE
                         $partitions = $this->parsePartitionNames($tokenList);
-                        $action = AlterTableActionType::get(AlterTableActionType::IMPORT_PARTITION_TABLESPACE);
-                        $actions[] = new PartitionsAction($action, $partitions);
                         $tokenList->consumeKeyword(Keyword::TABLESPACE);
+                        $actions[] = new ImportPartitionTablespaceAction($partitions);
                     }
                     break;
                 case Keyword::LOCK:
@@ -433,27 +478,27 @@ class TableCommandsParser
                     // OPTIMIZE PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::OPTIMIZE_PARTITION), $partitions);
+                    $actions[] = new OptimizePartitionAction($partitions);
                     break;
                 case Keyword::ORDER:
                     // ORDER BY col_name [, col_name] ...
                     $tokenList->consumeKeyword(Keyword::BY);
-                    $orderByColumns = [];
+                    $columns = [];
                     do {
-                        $orderByColumns[] = $tokenList->consumeName();
+                        $columns[] = $tokenList->consumeName();
                     } while ($tokenList->mayConsumeComma());
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::ORDER_BY), $orderByColumns);
+                    $actions[] = new OrderByAction($columns);
                     break;
                 case Keyword::REBUILD:
                     // REBUILD PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::REBUILD_PARTITION), $partitions);
+                    $actions[] = new RebuildPartitionAction($partitions);
                     break;
                 case Keyword::REMOVE:
                     // REMOVE PARTITIONING
                     $tokenList->consumeKeyword(Keyword::PARTITIONING);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::REMOVE_PARTITIONING));
+                    $actions[] = new RemovePartitioningAction();
                     break;
                 case Keyword::RENAME:
                     if ($tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
@@ -466,7 +511,7 @@ class TableCommandsParser
                         // RENAME [TO|AS] new_tbl_name
                         $tokenList->mayConsumeAnyKeyword(Keyword::TO, Keyword::AS);
                         $newName = new QualifiedName(...$tokenList->consumeQualifiedName());
-                        $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::RENAME_TO), $newName);
+                        $actions[] = new RenameToAction($newName);
                     }
                     break;
                 case Keyword::REORGANIZE:
@@ -486,18 +531,18 @@ class TableCommandsParser
                     // REPAIR PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::REPAIR_PARTITION), $partitions);
+                    $actions[] = new RepairPartitionAction($partitions);
                     break;
                 case Keyword::TRUNCATE:
                     // TRUNCATE PARTITION {partition_names | ALL}
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
-                    $actions[] = new PartitionsAction(AlterTableActionType::get(AlterTableActionType::TRUNCATE_PARTITION), $partitions);
+                    $actions[] = new TruncatePartitionAction($partitions);
                     break;
                 case Keyword::UPGRADE:
                     // UPGRADE PARTITIONING
                     $tokenList->consumeKeyword(Keyword::PARTITIONING);
-                    $actions[] = new SimpleAction(AlterTableActionType::get(AlterTableActionType::UPGRADE_PARTITIONING));
+                    $actions[] = new UpgradePartitioningAction();
                     break;
                 case Keyword::WITH:
                     // {WITHOUT|WITH} VALIDATION
@@ -841,7 +886,7 @@ class TableCommandsParser
         $columns = $this->parseColumnList($tokenList);
         $reference = $this->parseReference($tokenList);
 
-        return ForeignKeyDefinition::createFromReference($columns, $reference, $indexName);
+        return new ForeignKeyDefinition($columns, $reference, $indexName);
     }
 
     /**

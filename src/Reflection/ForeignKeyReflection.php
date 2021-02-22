@@ -10,8 +10,6 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
-use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintType;
 use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
 
 class ForeignKeyReflection
@@ -21,24 +19,21 @@ class ForeignKeyReflection
     /** @var TableReflection */
     private $table;
 
-    /** @var ConstraintDefinition */
-    private $constraintDefinition;
+    /** @var ForeignKeyDefinition */
+    private $foreignKeyDefinition;
 
-    public function __construct(TableReflection $table, ConstraintDefinition $constraintDefinition)
+    /** @var ColumnReflection|null */
+    private $originColumn;
+
+    public function __construct(
+        TableReflection $table,
+        ForeignKeyDefinition $foreignKeyDefinition,
+        ?ColumnReflection $originColumn = null
+    )
     {
         $this->table = $table;
-        $this->constraintDefinition = $constraintDefinition;
-    }
-
-    public static function fromForeignKey(TableReflection $table, ForeignKeyDefinition $foreignKeyDefinition, string $constraintName): self
-    {
-        $constraintDefinition = new ConstraintDefinition(
-            ConstraintType::get(ConstraintType::FOREIGN_KEY),
-            $constraintName,
-            $foreignKeyDefinition
-        );
-
-        return new self($table, $constraintDefinition);
+        $this->foreignKeyDefinition = $foreignKeyDefinition;
+        $this->originColumn = $originColumn;
     }
 
     public function getTable(): TableReflection
@@ -46,9 +41,14 @@ class ForeignKeyReflection
         return $this->table;
     }
 
-    public function getConstraintDefinition(): ConstraintDefinition
+    public function getForeignKeyDefinition(): ForeignKeyDefinition
     {
-        return $this->constraintDefinition;
+        return $this->foreignKeyDefinition;
+    }
+
+    public function getOriginColumn(): ?ColumnReflection
+    {
+        return $this->originColumn;
     }
 
 }

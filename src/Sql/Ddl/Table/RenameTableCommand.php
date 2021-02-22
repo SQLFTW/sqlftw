@@ -14,54 +14,53 @@ use Dogma\CombineIterator;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\MultipleTablesCommand;
 use SqlFtw\Sql\QualifiedName;
 use function array_values;
 use function count;
 use function rtrim;
 
-class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
+class RenameTableCommand implements DdlTablesCommand
 {
     use StrictBehaviorMixin;
 
     /** @var QualifiedName[] */
-    protected $tables;
+    protected $names;
 
     /** @var QualifiedName[] */
-    private $newTables;
+    private $newNames;
 
     /**
-     * @param QualifiedName[] $tables
+     * @param QualifiedName[] $names
      * @param QualifiedName[] $newTables
      */
-    public function __construct(array $tables, array $newTables)
+    public function __construct(array $names, array $newTables)
     {
-        Check::array($tables, 1);
-        Check::itemsOfType($tables, QualifiedName::class);
+        Check::array($names, 1);
+        Check::itemsOfType($names, QualifiedName::class);
         Check::array($newTables, 1);
         Check::itemsOfType($newTables, QualifiedName::class);
-        if (count($tables) !== count($newTables)) {
+        if (count($names) !== count($newTables)) {
             throw new InvalidDefinitionException('Count of old table names and new table names do not match.');
         }
 
-        $this->tables = array_values($tables);
-        $this->newTables = array_values($newTables);
+        $this->names = array_values($names);
+        $this->newNames = array_values($newTables);
     }
 
     /**
      * @return QualifiedName[]
      */
-    public function getTables(): array
+    public function getNames(): array
     {
-        return $this->tables;
+        return $this->names;
     }
 
     /**
      * @return QualifiedName[]
      */
-    public function getNewTables(): array
+    public function getNewNames(): array
     {
-        return $this->newTables;
+        return $this->newNames;
     }
 
     public function getNewNameForTable(QualifiedName $table): ?QualifiedName
@@ -86,14 +85,14 @@ class RenameTableCommand implements MultipleTablesCommand, TableStructureCommand
 
     public function getIterator(): CombineIterator
     {
-        return new CombineIterator($this->tables, $this->newTables);
+        return new CombineIterator($this->names, $this->newNames);
     }
 
     public function serialize(Formatter $formatter): string
     {
         $result = 'RENAME TABLE';
-        foreach ($this->tables as $i => $table) {
-            $result .= ' ' . $table->serialize($formatter) . ' TO ' . $this->newTables[$i]->serialize($formatter) . ',';
+        foreach ($this->names as $i => $table) {
+            $result .= ' ' . $table->serialize($formatter) . ' TO ' . $this->newNames[$i]->serialize($formatter) . ',';
         }
 
         return rtrim($result, ',');

@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Routines;
 
-use SqlFtw\Sql\Ddl\DdlCommand;
+use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 
-interface StoredRoutineCommand extends DdlCommand
+interface StoredRoutineCommand extends SchemaObjectCommand
 {
 
 }
