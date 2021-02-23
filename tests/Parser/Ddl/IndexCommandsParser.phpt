@@ -7,7 +7,7 @@ use SqlFtw\Tests\Assert;
 require __DIR__ . '/../../bootstrap.php';
 
 
-// CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name [index_type] ON tbl_name (index_col_name,...) [index_option] [algorithm_option | lock_option] ...
+// CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name [index_type] ON tbl_name (index_col_name, ...) [index_option] [algorithm_option | lock_option] ...
 Assert::parse("CREATE INDEX idx1 ON tbl1 (col1)");
 Assert::parse("CREATE INDEX idx1 ON tbl1 (col1, col2)");
 Assert::parse("CREATE INDEX idx1 ON tbl1 (col1(10), col2(20))");

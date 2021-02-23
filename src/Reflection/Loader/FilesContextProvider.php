@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Reflection\Loader;
 
-use SqlFtw\Reflection\TableDoesNotExistException;
 use function file_exists;
 use function file_get_contents;
 use function str_replace;

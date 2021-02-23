@@ -30,6 +30,9 @@ class LogfileGroupCommandsParser
      *     [INITIAL_SIZE [=] size]
      *     [WAIT]
      *     ENGINE [=] engine_name
+     *
+     * @param TokenList $tokenList
+     * @return AlterLogfileGroupCommand
      */
     public function parseAlterLogfileGroup(TokenList $tokenList): AlterLogfileGroupCommand
     {
@@ -63,6 +66,9 @@ class LogfileGroupCommandsParser
      *     [WAIT]
      *     [COMMENT [=] comment_text]
      *     ENGINE [=] engine_name
+     *
+     * @param TokenList $tokenList
+     * @return CreateLogfileGroupCommand
      */
     public function parseCreateLogfileGroup(TokenList $tokenList): CreateLogfileGroupCommand
     {
@@ -105,6 +111,9 @@ class LogfileGroupCommandsParser
     /**
      * DROP LOGFILE GROUP logfile_group
      *     ENGINE [=] engine_name
+     *
+     * @param TokenList $tokenList
+     * @return DropLogfileGroupCommand
      */
     public function parseDropLogfileGroup(TokenList $tokenList): DropLogfileGroupCommand
     {

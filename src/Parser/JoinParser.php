@@ -73,6 +73,9 @@ class JoinParser
      * escaped_table_reference:
      *     table_reference
      *   | { OJ table_reference }
+     *
+     * @param TokenList $tokenList
+     * @return TableReferenceNode
      */
     public function parseTableReference(TokenList $tokenList): TableReferenceNode
     {
@@ -107,6 +110,9 @@ class JoinParser
      * join_condition:
      *     ON conditional_expr
      *   | USING (column_list)
+     *
+     * @param TokenList $tokenList
+     * @return TableReferenceNode
      */
     private function parseTableReferenceInternal(TokenList $tokenList): TableReferenceNode
     {
@@ -198,6 +204,9 @@ class JoinParser
      *     tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
      *   | [LATERAL] [(] table_subquery [)] [AS] alias [(col_list)]
      *   | ( table_references )
+     *
+     * @param TokenList $tokenList
+     * @return TableReferenceNode
      */
     private function parseTableFactor(TokenList $tokenList): TableReferenceNode
     {

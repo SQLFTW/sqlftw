@@ -20,6 +20,9 @@ class RestartCommandParser
 
     /**
      * RESTART
+     *
+     * @param TokenList $tokenList
+     * @return RestartCommand
      */
     public function parseRestart(TokenList $tokenList): RestartCommand
     {

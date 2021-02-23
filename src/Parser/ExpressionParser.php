@@ -90,11 +90,14 @@ class ExpressionParser
      *   | ! expr
      *   | boolean_primary IS [NOT] {TRUE | FALSE | UNKNOWN}
      *   | boolean_primary
+     *
+     * @param TokenList $tokenList
+     * @return ExpressionNode
      */
     public function parseExpression(TokenList $tokenList): ExpressionNode
     {
         $operators = [Operator::OR, Operator::XOR, Operator::AND, Operator::AMPERSANDS];
-        if (!$tokenList->getSettings()->getMode()->contains(Mode::PIPES_AS_CONCAT)) {
+        if (!$tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT)) {
             $operators[] = Operator::PIPES;
         }
 
@@ -150,6 +153,9 @@ class ExpressionParser
      *   | predicate
      *
      * comparison_operator: = | >= | > | <= | < | <> | !=
+     *
+     * @param TokenList $tokenList
+     * @return ExpressionNode
      */
     private function parseBooleanPrimary(TokenList $tokenList): ExpressionNode
     {
@@ -199,6 +205,9 @@ class ExpressionParser
      *   | bit_expr [NOT] LIKE simple_expr [ESCAPE simple_expr]
      *   | bit_expr [NOT] REGEXP bit_expr
      *   | bit_expr
+     *
+     * @param TokenList $tokenList
+     * @return ExpressionNode
      */
     private function parsePredicate(TokenList $tokenList): ExpressionNode
     {
@@ -266,6 +275,9 @@ class ExpressionParser
      *   | bit_expr + interval_expr
      *   | bit_expr - interval_expr
      *   | simple_expr
+     *
+     * @param TokenList $tokenList
+     * @return ExpressionNode
      */
     private function parseBitExpression(TokenList $tokenList): ExpressionNode
     {
@@ -325,6 +337,9 @@ class ExpressionParser
      *
      *   | simple_expr COLLATE collation_name
      *   | simple_expr || simple_expr
+     *
+     * @param TokenList $tokenList
+     * @return ExpressionNode
      */
     private function parseSimpleExpression(TokenList $tokenList): ExpressionNode
     {
@@ -458,7 +473,7 @@ class ExpressionParser
             $collation = Collation::get($tokenList->consumeString());
 
             return new CollateExpression($expression, $collation);
-        } elseif ($tokenList->getSettings()->getMode()->contains(Mode::PIPES_AS_CONCAT)
+        } elseif ($tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT)
             && $tokenList->mayConsumeOperator(Operator::PIPES)
         ) {
             // simple_expr || simple_expr
@@ -474,6 +489,9 @@ class ExpressionParser
      * CASE value WHEN [compare_value] THEN result [WHEN [compare_value] THEN result ...] [ELSE result] END
      *
      * CASE WHEN [condition] THEN result [WHEN [condition] THEN result ...] [ELSE result] END
+     *
+     * @param TokenList $tokenList
+     * @return CaseExpression
      */
     private function parseCase(TokenList $tokenList): CaseExpression
     {
@@ -502,13 +520,16 @@ class ExpressionParser
     }
 
     /**
-     * MATCH (col1,col2,...) AGAINST (expr [search_modifier])
+     * MATCH (col1, col2, ...) AGAINST (expr [search_modifier])
      *
      * search_modifier:
      *     IN NATURAL LANGUAGE MODE
      *   | IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION
      *   | IN BOOLEAN MODE
      *   | WITH QUERY EXPANSION
+     *
+     * @param TokenList $tokenList
+     * @return MatchExpression
      */
     private function parseMatch(TokenList $tokenList): MatchExpression
     {
@@ -648,6 +669,9 @@ class ExpressionParser
     /**
      * expression:
      *     timestamp [+ INTERVAL interval] ...
+     *
+     * @param TokenList $tokenList
+     * @return TimeExpression
      */
     public function parseTimeExpression(TokenList $tokenList): TimeExpression
     {
@@ -708,6 +732,9 @@ class ExpressionParser
      *     quantity {YEAR | QUARTER | MONTH | DAY | HOUR | MINUTE |
      *          WEEK | SECOND | YEAR_MONTH | DAY_HOUR | DAY_MINUTE |
      *          DAY_SECOND | HOUR_MINUTE | HOUR_SECOND | MINUTE_SECOND}
+     *
+     * @param TokenList $tokenList
+     * @return TimeInterval
      */
     public function parseInterval(TokenList $tokenList): TimeInterval
     {

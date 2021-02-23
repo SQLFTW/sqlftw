@@ -7,6 +7,9 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable Squiz.Classes.ClassFileName
+// phpcs:disable PSR1.Classes.ClassDeclaration
+
 namespace SqlFtw\Reflection;
 
 use Dogma\ShouldNotHappenException;
@@ -80,6 +83,7 @@ class ViewRenamedException extends ViewException implements ObjectRenamedExcepti
 
     /**
      * @param RenameTableCommand $command
+     * @param QualifiedName $oldName
      * @return QualifiedName
      */
     public static function getNewNameFromCommand(Command $command, QualifiedName $oldName): QualifiedName

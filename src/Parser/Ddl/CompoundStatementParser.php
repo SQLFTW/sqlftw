@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
+
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
@@ -77,6 +79,9 @@ class CompoundStatementParser
      * [begin_label:] BEGIN
      *     [statement_list]
      * END [end_label]
+     *
+     * @param TokenList $tokenList
+     * @return CompoundStatement
      */
     public function parseCompoundStatement(TokenList $tokenList): CompoundStatement
     {
@@ -122,6 +127,9 @@ class CompoundStatementParser
      * CLOSE cursor_name
      *
      * ...
+     *
+     * @param TokenList $tokenList
+     * @return Statement
      */
     private function parseStatement(TokenList $tokenList): Statement
     {
@@ -190,6 +198,10 @@ class CompoundStatementParser
      * [begin_label:] LOOP
      *     statement_list
      * END LOOP [end_label]
+     *
+     * @param TokenList $tokenList
+     * @param string|null $label
+     * @return LoopStatement
      */
     private function parseLoop(TokenList $tokenList, ?string $label): LoopStatement
     {
@@ -209,6 +221,10 @@ class CompoundStatementParser
      *     statement_list
      *     UNTIL search_condition
      * END REPEAT [end_label]
+     *
+     * @param TokenList $tokenList
+     * @param string|null $label
+     * @return RepeatStatement
      */
     private function parseRepeat(TokenList $tokenList, ?string $label): RepeatStatement
     {
@@ -229,6 +245,10 @@ class CompoundStatementParser
      * [begin_label:] WHILE search_condition DO
      *     statement_list
      * END WHILE [end_label]
+     *
+     * @param TokenList $tokenList
+     * @param string|null $label
+     * @return WhileStatement
      */
     private function parseWhile(TokenList $tokenList, ?string $label): WhileStatement
     {
@@ -257,6 +277,9 @@ class CompoundStatementParser
      *     [WHEN search_condition THEN statement_list] ...
      *     [ELSE statement_list]
      * END CASE
+     *
+     * @param TokenList $tokenList
+     * @return CaseStatement
      */
     private function parseCase(TokenList $tokenList): CaseStatement
     {
@@ -285,6 +308,9 @@ class CompoundStatementParser
      *     [ELSEIF search_condition THEN statement_list] ...
      *     [ELSE statement_list]
      * END IF
+     *
+     * @param TokenList $tokenList
+     * @return IfStatement
      */
     private function parseIf(TokenList $tokenList): IfStatement
     {
@@ -418,6 +444,9 @@ class CompoundStatementParser
 
     /**
      * FETCH [[NEXT] FROM] cursor_name INTO var_name [, var_name] ...
+     *
+     * @param TokenList $tokenList
+     * @return FetchStatement
      */
     private function parseFetch(TokenList $tokenList): FetchStatement
     {
@@ -473,6 +502,9 @@ class CompoundStatementParser
      *
      * condition_number, target:
      *     (see following discussion)
+     *
+     * @param TokenList $tokenList
+     * @return GetDiagnosticsStatement
      */
     private function parseGetDiagnostics(TokenList $tokenList): GetDiagnosticsStatement
     {

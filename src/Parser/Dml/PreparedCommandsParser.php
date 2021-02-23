@@ -23,6 +23,9 @@ class PreparedCommandsParser
 
     /**
      * {DEALLOCATE | DROP} PREPARE stmt_name
+     *
+     * @param TokenList $tokenList
+     * @return DeallocatePrepareCommand
      */
     public function parseDeallocatePrepare(TokenList $tokenList): DeallocatePrepareCommand
     {
@@ -37,6 +40,9 @@ class PreparedCommandsParser
     /**
      * EXECUTE stmt_name
      *     [USING @var_name [, @var_name] ...]
+     *
+     * @param TokenList $tokenList
+     * @return ExecuteCommand
      */
     public function parseExecute(TokenList $tokenList): ExecuteCommand
     {
@@ -56,6 +62,9 @@ class PreparedCommandsParser
 
     /**
      * PREPARE stmt_name FROM preparable_stmt
+     *
+     * @param TokenList $tokenList
+     * @return PrepareCommand
      */
     public function parsePrepare(TokenList $tokenList): PrepareCommand
     {

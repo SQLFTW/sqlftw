@@ -90,6 +90,10 @@ class SelectCommandParser
      *     [FOR UPDATE | LOCK IN SHARE MODE]]
      *     [FOR {UPDATE | SHARE} [OF tbl_name [, tbl_name] ...] [NOWAIT | SKIP LOCKED]
      *       | LOCK IN SHARE MODE]]
+     *
+     * @param TokenList $tokenList
+     * @param WithClause|null $with
+     * @return SelectCommand
      */
     public function parseSelect(TokenList $tokenList, ?WithClause $with = null): SelectCommand
     {

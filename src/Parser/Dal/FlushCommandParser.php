@@ -48,6 +48,9 @@ class FlushCommandParser
      *
      * channel_option:
      *     FOR CHANNEL channel
+     *
+     * @param TokenList $tokenList
+     * @return FlushCommand
      */
     public function parseFlush(TokenList $tokenList): FlushCommand
     {
@@ -79,6 +82,9 @@ class FlushCommandParser
 
     /**
      * FLUSH TABLES [tbl_name [, tbl_name] ...] [WITH READ LOCK | FOR EXPORT]
+     *
+     * @param TokenList $tokenList
+     * @return FlushTablesCommand
      */
     public function parseFlushTables(TokenList $tokenList): FlushTablesCommand
     {

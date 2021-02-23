@@ -7,6 +7,9 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable Squiz.Classes.ClassFileName
+// phpcs:disable PSR1.Classes.ClassDeclaration
+
 namespace SqlFtw\Reflection;
 
 use SqlFtw\Sql\Command;

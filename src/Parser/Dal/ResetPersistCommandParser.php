@@ -20,6 +20,9 @@ class ResetPersistCommandParser
 
     /**
      * RESET PERSIST [[IF EXISTS] system_var_name]
+     *
+     * @param TokenList $tokenList
+     * @return ResetPersistCommand
      */
     public function parseResetPersist(TokenList $tokenList): ResetPersistCommand
     {

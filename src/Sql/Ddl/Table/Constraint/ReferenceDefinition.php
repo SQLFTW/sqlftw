@@ -14,6 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
+use function count;
 
 class ReferenceDefinition implements SqlSerializable
 {

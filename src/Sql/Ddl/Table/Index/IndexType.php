@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Index;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
+use function str_replace;
 use function strtoupper;
 
 class IndexType extends SqlEnum

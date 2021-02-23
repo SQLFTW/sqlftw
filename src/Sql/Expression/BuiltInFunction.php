@@ -505,7 +505,7 @@ class BuiltInFunction extends SqlEnum implements Feature
     /** @var string[] */
     private static $namedParams = [
         self::AVG, // AVG([DISTINCT] expr)
-        self::CHAR, // CHAR(N,... [USING charset_name])
+        self::CHAR, // CHAR(N, ... [USING charset_name])
         self::CAST, // CAST(expr AS type)
         self::CONVERT, // CONVERT(string, type), CONVERT(expr USING charset_name)
         // type:

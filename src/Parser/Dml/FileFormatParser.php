@@ -28,6 +28,9 @@ class FileFormatParser
      *   [STARTING BY 'string']
      *   [TERMINATED BY 'string']
      * ]
+     *
+     * @param TokenList $tokenList
+     * @return FileFormat|null
      */
     public function parseFormat(TokenList $tokenList): ?FileFormat
     {

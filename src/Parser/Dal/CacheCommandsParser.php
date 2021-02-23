@@ -36,6 +36,9 @@ class CacheCommandsParser
      *
      * partition_list:
      *     partition_name[, partition_name][, ...]
+     *
+     * @param TokenList $tokenList
+     * @return CacheIndexCommand
      */
     public function parseCacheIndex(TokenList $tokenList): CacheIndexCommand
     {
@@ -70,6 +73,9 @@ class CacheCommandsParser
      *
      * partition_list:
      *     partition_name[, partition_name][, ...]
+     *
+     * @param TokenList $tokenList
+     * @return LoadIndexIntoCacheCommand
      */
     public function parseLoadIndexIntoCache(TokenList $tokenList): LoadIndexIntoCacheCommand
     {

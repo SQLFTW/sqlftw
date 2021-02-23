@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+// phpcs:disable SlevomatCodingStandard.Functions.RequireSingleLineCall
+
 namespace SqlFtw\Parser;
 
 use SqlFtw\Tests\Assert;
@@ -18,7 +20,7 @@ $query = 'CREATE TABLE test (
 )';
 Assert::parse($query);
 
-// [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
+// [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
 Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT PRIMARY KEY (col1))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT foo PRIMARY KEY (col1))");
@@ -36,7 +38,7 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) VISIBLE)");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) INVISIBLE)");
 
 
-// [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
+// [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
 Assert::parse("CREATE TABLE tbl1 (col1 INT, UNIQUE INDEX (col1))");
 Assert::parse(
     "CREATE TABLE tbl1 (col1 INT, UNIQUE KEY (col1))",
@@ -46,7 +48,7 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT UNIQUE INDEX (col1))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT foo UNIQUE INDEX (col1))");
 
 
-// {INDEX|KEY} [index_name] [index_type] (index_col_name,...) [index_option] ...
+// {INDEX|KEY} [index_name] [index_type] (index_col_name, ...) [index_option] ...
 Assert::parse("CREATE TABLE tbl1 (col1 INT, INDEX (col1))");
 Assert::parse(
     "CREATE TABLE tbl1 (col1 INT, KEY (col1))",
@@ -54,7 +56,7 @@ Assert::parse(
 );
 
 
-// {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
+// {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name, ...) [index_option] ...
 Assert::parse("CREATE TABLE tbl1 (col1 INT, FULLTEXT INDEX (col1))");
 Assert::parse(
     "CREATE TABLE tbl1 (col1 INT, FULLTEXT KEY (col1))",
@@ -68,7 +70,7 @@ Assert::parse(
 );
 
 
-// [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
+// [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
 Assert::parse("CREATE TABLE tbl1 (col1 INT, FOREIGN KEY (col1) REFERENCES tbl1 (col1))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, col2 INT, FOREIGN KEY (col1, col2) REFERENCES tbl1 (col1, col2))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT FOREIGN KEY (col1) REFERENCES tbl1 (col1))");

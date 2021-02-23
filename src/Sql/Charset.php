@@ -109,7 +109,7 @@ class Charset extends SqlEnum
 
     public static function getById(int $id): self
     {
-        return self::get(array_search($id, self::$ids));
+        return self::get(array_search($id, self::$ids, true));
     }
 
     public function serialize(Formatter $formatter): string

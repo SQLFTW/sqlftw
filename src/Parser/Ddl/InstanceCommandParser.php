@@ -20,6 +20,9 @@ class InstanceCommandParser
 
     /**
      * ALTER INSTANCE ROTATE INNODB MASTER KEY
+     *
+     * @param TokenList $tokenList
+     * @return AlterInstanceCommand
      */
     public function parseAlterInstance(TokenList $tokenList): AlterInstanceCommand
     {

@@ -45,9 +45,6 @@ class ConstraintDefinition implements TableItem
         return $this->name;
     }
 
-    /**
-     * @return ConstraintBody
-     */
     public function getBody(): ConstraintBody
     {
         return $this->body;

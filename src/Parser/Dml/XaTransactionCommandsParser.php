@@ -39,6 +39,9 @@ class XaTransactionCommandsParser
      * XA ROLLBACK xid
      *
      * XA RECOVER [CONVERT XID]
+     *
+     * @param TokenList $tokenList
+     * @return Command
      */
     public function parseXa(TokenList $tokenList): Command
     {
@@ -97,6 +100,9 @@ class XaTransactionCommandsParser
 
     /**
      * xid: gtrid [, bqual [, formatID ]]
+     *
+     * @param TokenList $tokenList
+     * @return Xid
      */
     private function parseXid(TokenList $tokenList): Xid
     {

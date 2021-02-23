@@ -134,20 +134,20 @@ class TableCommandsParser
      *     table_options
      *   | ADD [COLUMN] col_name column_definition
      *         [FIRST | AFTER col_name ]
-     *   | ADD [COLUMN] (col_name column_definition,...)
+     *   | ADD [COLUMN] (col_name column_definition, ...)
      *   | ADD {INDEX|KEY} [index_name]
-     *         [index_type] (index_col_name,...) [index_option] ...
+     *         [index_type] (index_col_name, ...) [index_option] ...
      *   | ADD [CONSTRAINT [symbol]] PRIMARY KEY
-     *         [index_type] (index_col_name,...) [index_option] ...
+     *         [index_type] (index_col_name, ...) [index_option] ...
      *   | ADD [CONSTRAINT [symbol]]
      *         UNIQUE [INDEX|KEY] [index_name]
-     *         [index_type] (index_col_name,...) [index_option] ...
+     *         [index_type] (index_col_name, ...) [index_option] ...
      *   | ADD FULLTEXT [INDEX|KEY] [index_name]
-     *         (index_col_name,...) [index_option] ...
+     *         (index_col_name, ...) [index_option] ...
      *   | ADD SPATIAL [INDEX|KEY] [index_name]
-     *         (index_col_name,...) [index_option] ...
+     *         (index_col_name, ...) [index_option] ...
      *   | ADD [CONSTRAINT [symbol]]
-     *         FOREIGN KEY [index_name] (index_col_name,...)
+     *         FOREIGN KEY [index_name] (index_col_name, ...)
      *         reference_definition
      *   | ALGORITHM [=] {DEFAULT|INPLACE|COPY}
      *   | ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT}
@@ -190,6 +190,9 @@ class TableCommandsParser
      *
      * table_options:
      *     table_option [[,] table_option] ...  (see CREATE TABLE options)
+     *
+     * @param TokenList $tokenList
+     * @return AlterTableCommand
      */
     public function parseAlterTable(TokenList $tokenList): AlterTableCommand
     {
@@ -230,17 +233,17 @@ class TableCommandsParser
                             }
                             break;
                         case Keyword::CONSTRAINT:
-                            // ADD [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
-                            // ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
-                            // ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
+                            // ADD [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
+                            // ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
+                            // ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
                             $actions[] = new AddConstraintAction($this->parseConstraint($tokenList->resetPosition(-1)));
                             break;
                         case Keyword::FOREIGN:
-                            // ADD [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
+                            // ADD [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
                             $actions[] = new AddForeignKeyAction($this->parseForeignKey($tokenList->resetPosition(-1)));
                             break;
                         case Keyword::PRIMARY:
-                            // ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
+                            // ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
                             $index = $this->parseIndex($tokenList, true);
                             $actions[] = new AddIndexAction($index);
                             break;
@@ -249,10 +252,10 @@ class TableCommandsParser
                         case Keyword::KEY:
                         case Keyword::SPATIAL:
                         case Keyword::UNIQUE:
-                            // ADD FULLTEXT [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
-                            // ADD {INDEX|KEY} [index_name] [index_type] (index_col_name,...) [index_option] ...
-                            // ADD SPATIAL [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
-                            // ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
+                            // ADD FULLTEXT [INDEX|KEY] [index_name] (index_col_name, ...) [index_option] ...
+                            // ADD {INDEX|KEY} [index_name] [index_type] (index_col_name, ...) [index_option] ...
+                            // ADD SPATIAL [INDEX|KEY] [index_name] (index_col_name, ...) [index_option] ...
+                            // ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
                             $index = $this->parseIndex($tokenList->resetPosition(-1));
                             $actions[] = new AddIndexAction($index);
                             break;
@@ -572,12 +575,12 @@ class TableCommandsParser
 
     /**
      * CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
-     *     (create_definition,...)
+     *     (create_definition, ...)
      *     [table_options]
      *     [partition_options]
      *
      * CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
-     *     [(create_definition,...)]
+     *     [(create_definition, ...)]
      *     [table_options]
      *     [partition_options]
      *     [IGNORE | REPLACE]
@@ -588,6 +591,9 @@ class TableCommandsParser
      *
      * query_expression:
      *     SELECT ...   (Some valid select or union statement)
+     *
+     * @param TokenList $tokenList
+     * @return AnyCreateTableCommand
      */
     public function parseCreateTable(TokenList $tokenList): AnyCreateTableCommand
     {
@@ -642,15 +648,15 @@ class TableCommandsParser
     }
 
     /**
-     * (create_definition,...)
+     * (create_definition, ...)
      *
      * create_definition:
      *     col_name column_definition
-     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
-     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
-     *   | {INDEX|KEY} [index_name] [index_type] (index_col_name,...) [index_option] ...
-     *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
-     *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
+     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
+     *   | {INDEX|KEY} [index_name] [index_type] (index_col_name, ...) [index_option] ...
+     *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name, ...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
      *   | check_constraint_definition
      *
      * @param TokenList $tokenList
@@ -696,6 +702,9 @@ class TableCommandsParser
      *   | data_type [GENERATED ALWAYS] AS (expression)
      *       [VIRTUAL | STORED] [UNIQUE [KEY]] [COMMENT comment]
      *       [NOT NULL | NULL] [[PRIMARY] KEY]
+     *
+     * @param TokenList $tokenList
+     * @return ColumnDefinition
      */
     private function parseColumn(TokenList $tokenList): ColumnDefinition
     {
@@ -802,6 +811,9 @@ class TableCommandsParser
     /**
      * check_constraint_definition:
      *     [CONSTRAINT [symbol]] CHECK (expr) [[NOT] ENFORCED]
+     *
+     * @param TokenList $tokenList
+     * @return CheckDefinition
      */
     private function parseCheck(TokenList $tokenList): CheckDefinition
     {
@@ -821,10 +833,14 @@ class TableCommandsParser
 
     /**
      * create_definition:
-     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
-     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
-     *   | {INDEX|KEY} [index_name] [index_type] (index_col_name,...) [index_option] ...
-     *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
+     *   | {INDEX|KEY} [index_name] [index_type] (index_col_name, ...) [index_option] ...
+     *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name, ...) [index_option] ...
+     *
+     * @param TokenList $tokenList
+     * @param bool $primary
+     * @return IndexDefinition
      */
     private function parseIndex(TokenList $tokenList, bool $primary = false): IndexDefinition
     {
@@ -839,10 +855,13 @@ class TableCommandsParser
 
     /**
      * create_definition:
-     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...) [index_option] ...
-     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...) [index_option] ...
-     *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name,...) reference_definition
+     *   | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
+     *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
      *   | [CONSTRAINT [symbol]] CHECK (expr) [[NOT] ENFORCED]
+     *
+     * @param TokenList $tokenList
+     * @return ConstraintDefinition
      */
     private function parseConstraint(TokenList $tokenList): ConstraintDefinition
     {
@@ -876,7 +895,10 @@ class TableCommandsParser
     /**
      * create_definition:
      *     [CONSTRAINT [symbol]] FOREIGN KEY
-     *         [index_name] (index_col_name,...) reference_definition
+     *         [index_name] (index_col_name, ...) reference_definition
+     *
+     * @param TokenList $tokenList
+     * @return ForeignKeyDefinition
      */
     private function parseForeignKey(TokenList $tokenList): ForeignKeyDefinition
     {
@@ -891,13 +913,16 @@ class TableCommandsParser
 
     /**
      * reference_definition:
-     *     REFERENCES tbl_name (index_col_name,...)
+     *     REFERENCES tbl_name (index_col_name, ...)
      *     [MATCH FULL | MATCH PARTIAL | MATCH SIMPLE]
      *     [ON DELETE reference_option]
      *     [ON UPDATE reference_option]
      *
      * reference_option:
      *     RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT
+     *
+     * @param TokenList $tokenList
+     * @return ReferenceDefinition
      */
     private function parseReference(TokenList $tokenList): ReferenceDefinition
     {
@@ -1124,6 +1149,9 @@ class TableCommandsParser
      *         [SUBPARTITIONS num]
      *     ]
      *     [(partition_definition [, partition_definition] ...)]
+     *
+     * @param TokenList $tokenList
+     * @return PartitioningDefinition
      */
     private function parsePartitioning(TokenList $tokenList): PartitioningDefinition
     {
@@ -1159,6 +1187,10 @@ class TableCommandsParser
      *   | [LINEAR] KEY [ALGORITHM={1|2}] (column_list)
      *   | RANGE{(expr) | COLUMNS(column_list)}
      *   | LIST{(expr) | COLUMNS(column_list)}
+     *
+     * @param TokenList $tokenList
+     * @param bool $subpartition
+     * @return PartitioningCondition
      */
     private function parsePartitionCondition(TokenList $tokenList, bool $subpartition = false): PartitioningCondition
     {
@@ -1235,6 +1267,9 @@ class TableCommandsParser
      *         [MAX_ROWS [=] max_number_of_rows]
      *         [MIN_ROWS [=] min_number_of_rows]
      *         [TABLESPACE [=] tablespace_name]
+     *
+     * @param TokenList $tokenList
+     * @return PartitionDefinition
      */
     private function parsePartitionDefinition(TokenList $tokenList): PartitionDefinition
     {
@@ -1299,6 +1334,7 @@ class TableCommandsParser
      *     [MIN_ROWS [=] min_number_of_rows]
      *     [TABLESPACE [=] tablespace_name]
      *
+     * @param TokenList $tokenList
      * @return mixed[]
      */
     private function parsePartitionOptions(TokenList $tokenList): ?array
@@ -1378,6 +1414,9 @@ class TableCommandsParser
      * DROP [TEMPORARY] TABLE [IF EXISTS]
      *     tbl_name [, tbl_name] ...
      *     [RESTRICT | CASCADE]
+     *
+     * @param TokenList $tokenList
+     * @return DropTableCommand
      */
     public function parseDropTable(TokenList $tokenList): DropTableCommand
     {
@@ -1404,6 +1443,9 @@ class TableCommandsParser
     /**
      * RENAME TABLE tbl_name TO new_tbl_name
      *     [, tbl_name2 TO new_tbl_name2] ...
+     *
+     * @param TokenList $tokenList
+     * @return RenameTableCommand
      */
     public function parseRenameTable(TokenList $tokenList): RenameTableCommand
     {
@@ -1423,6 +1465,9 @@ class TableCommandsParser
 
     /**
      * TRUNCATE [TABLE] tbl_name
+     *
+     * @param TokenList $tokenList
+     * @return TruncateTableCommand
      */
     public function parseTruncateTable(TokenList $tokenList): TruncateTableCommand
     {

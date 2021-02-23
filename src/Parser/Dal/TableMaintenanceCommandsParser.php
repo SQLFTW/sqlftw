@@ -27,6 +27,9 @@ class TableMaintenanceCommandsParser
     /**
      * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE
      *     tbl_name [, tbl_name] ...
+     *
+     * @param TokenList $tokenList
+     * @return AnalyzeTableCommand
      */
     public function parseAnalyzeTable(TokenList $tokenList): AnalyzeTableCommand
     {
@@ -53,6 +56,9 @@ class TableMaintenanceCommandsParser
      *   | EXTENDED
      *   | CHANGED
      * }
+     *
+     * @param TokenList $tokenList
+     * @return CheckTableCommand
      */
     public function parseCheckTable(TokenList $tokenList): CheckTableCommand
     {
@@ -77,6 +83,9 @@ class TableMaintenanceCommandsParser
 
     /**
      * CHECKSUM TABLE tbl_name [, tbl_name] ... [QUICK | EXTENDED]
+     *
+     * @param TokenList $tokenList
+     * @return ChecksumTableCommand
      */
     public function parseChecksumTable(TokenList $tokenList): ChecksumTableCommand
     {
@@ -96,6 +105,9 @@ class TableMaintenanceCommandsParser
     /**
      * OPTIMIZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE
      *     tbl_name [, tbl_name] ...
+     *
+     * @param TokenList $tokenList
+     * @return OptimizeTableCommand
      */
     public function parseOptimizeTable(TokenList $tokenList): OptimizeTableCommand
     {
@@ -115,6 +127,9 @@ class TableMaintenanceCommandsParser
      * REPAIR [NO_WRITE_TO_BINLOG | LOCAL] TABLE
      *     tbl_name [, tbl_name] ...
      *     [QUICK] [EXTENDED] [USE_FRM]
+     *
+     * @param TokenList $tokenList
+     * @return RepairTableCommand
      */
     public function parseRepairTable(TokenList $tokenList): RepairTableCommand
     {

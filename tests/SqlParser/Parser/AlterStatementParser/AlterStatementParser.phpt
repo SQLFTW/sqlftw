@@ -2,14 +2,14 @@
 
 namespace AlterExecutor\Parser;
 
-use AlterExecutor\Parser\Sql\InvalidCommand;
+use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
-use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
+use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Server\AlterServerCommand;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;

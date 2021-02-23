@@ -33,6 +33,11 @@ class QualifiedName implements SqlSerializable
         return $this->schema !== null ? $this : new self($this->name, $schema);
     }
 
+    /**
+     * @param self[] $names
+     * @param string $currentSchema
+     * @return self[]
+     */
     public static function uniqueSchemas(array $names, string $currentSchema): array
     {
         $schemas = [];

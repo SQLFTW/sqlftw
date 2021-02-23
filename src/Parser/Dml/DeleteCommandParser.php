@@ -47,7 +47,7 @@ class DeleteCommandParser
     /**
      * DELETE [LOW_PRIORITY] [QUICK] [IGNORE]
      *    FROM tbl_name
-     *    [PARTITION (partition_name,...)]
+     *    [PARTITION (partition_name, ...)]
      *    [WHERE where_condition]
      *    [ORDER BY ...]
      *    [LIMIT row_count]
@@ -61,6 +61,10 @@ class DeleteCommandParser
      *     FROM tbl_name[.*] [, tbl_name[.*]] ...
      *     USING table_references
      *     [WHERE where_condition]
+     *
+     * @param TokenList $tokenList
+     * @param WithClause|null $with
+     * @return DeleteCommand
      */
     public function parseDelete(TokenList $tokenList, ?WithClause $with = null): DeleteCommand
     {

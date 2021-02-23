@@ -20,6 +20,9 @@ class ImportCommandParser
 
     /**
      * IMPORT TABLE FROM sdi_file [, sdi_file] ...
+     *
+     * @param TokenList $tokenList
+     * @return ImportCommand
      */
     public function parseImport(TokenList $tokenList): ImportCommand
     {

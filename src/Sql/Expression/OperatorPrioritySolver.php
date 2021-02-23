@@ -23,6 +23,9 @@ class OperatorPrioritySolver
      *   <<, >>
      *   &
      *   |
+     *
+     * @param ExpressionNode $node
+     * @return ExpressionNode
      */
     public function orderArithmeticOperators(ExpressionNode $node): ExpressionNode
     {
@@ -36,6 +39,9 @@ class OperatorPrioritySolver
      *   AND, &&
      *   XOR
      *   OR, ||
+     *
+     * @param ExpressionNode $node
+     * @return ExpressionNode
      */
     public function orderLogicOperators(ExpressionNode $node): ExpressionNode
     {

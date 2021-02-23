@@ -21,6 +21,9 @@ class ComponentCommandsParser
 
     /**
      * INSTALL COMPONENT component_name [, component_name ] ...
+     *
+     * @param TokenList $tokenList
+     * @return InstallComponentCommand
      */
     public function parseInstallComponent(TokenList $tokenList): InstallComponentCommand
     {
@@ -36,6 +39,9 @@ class ComponentCommandsParser
 
     /**
      * UNINSTALL COMPONENT component_name [, component_name ] ...
+     *
+     * @param TokenList $tokenList
+     * @return  UninstallComponentCommand
      */
     public function parseUninstallComponent(TokenList $tokenList): UninstallComponentCommand
     {

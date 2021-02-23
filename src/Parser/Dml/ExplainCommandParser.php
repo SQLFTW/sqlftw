@@ -74,6 +74,9 @@ class ExplainCommandParser
      *   | REPLACE statement
      *   | UPDATE statement
      * }
+     *
+     * @param TokenList $tokenList
+     * @return Command
      */
     public function parseExplain(TokenList $tokenList): Command
     {
@@ -96,7 +99,6 @@ class ExplainCommandParser
         switch ($keyword) {
             case Keyword::FOR:
                 $tokenList->consumeKeyword(Keyword::CONNECTION);
-                /** @var int $connectionId */
                 $connectionId = $tokenList->consumeInt();
                 break;
             case Keyword::SELECT:

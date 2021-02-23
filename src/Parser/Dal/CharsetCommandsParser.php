@@ -24,6 +24,9 @@ class CharsetCommandsParser
     /**
      * SET {CHARACTER SET | CHARSET}
      *     {'charset_name' | DEFAULT}
+     *
+     * @param TokenList $tokenList
+     * @return SetCharacterSetCommand
      */
     public function parseSetCharacterSet(TokenList $tokenList): SetCharacterSetCommand
     {
@@ -45,6 +48,9 @@ class CharsetCommandsParser
     /**
      * SET NAMES {'charset_name'
      *     [COLLATE 'collation_name'] | DEFAULT}
+     *
+     * @param TokenList $tokenList
+     * @return SetNamesCommand
      */
     public function parseSetNames(TokenList $tokenList): SetNamesCommand
     {

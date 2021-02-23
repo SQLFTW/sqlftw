@@ -53,12 +53,15 @@ class TypeParser
      *   | TEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
      *   | MEDIUMTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
      *   | LONGTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | ENUM(value1,value2,value3,...) [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | SET(value1,value2,value3,...) [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | ENUM(value1,value2,value3, ...) [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | SET(value1,value2,value3, ...) [CHARACTER SET charset_name] [COLLATE collation_name]
      *   | JSON
      *   | spatial_type
      *
      *   + aliases defined in BaseType class
+     *
+     * @param TokenList $tokenList
+     * @return DataType
      */
     public function parseType(TokenList $tokenList): DataType
     {

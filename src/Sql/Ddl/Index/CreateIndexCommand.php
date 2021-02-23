@@ -13,8 +13,8 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
-use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
+use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\QualifiedName;
 
 class CreateIndexCommand implements IndexCommand, DdlTableCommand

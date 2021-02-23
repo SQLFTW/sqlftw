@@ -53,6 +53,11 @@ class NamingStrategyMysql implements NamingStrategy
         return $name . '_' . $n;
     }
 
+    /**
+     * @param TableReflection $table
+     * @param string[] $columns
+     * @return string
+     */
     public function createCheckName(TableReflection $table, array $columns): string
     {
         $name = $table->getName()->getName() . '_chk';

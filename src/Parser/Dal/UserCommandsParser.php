@@ -68,6 +68,9 @@ class UserCommandsParser
      * ALTER USER [IF EXISTS]
      *     user DEFAULT ROLE
      *     {NONE | ALL | role [, role ] ...}
+     *
+     * @param TokenList $tokenList
+     * @return Command
      */
     public function parseAlterUser(TokenList $tokenList): Command
     {
@@ -106,6 +109,9 @@ class UserCommandsParser
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH resource_option [resource_option] ...]
      *     [password_option | lock_option] ...
+     *
+     * @param TokenList $tokenList
+     * @return CreateUserCommand
      */
     public function parseCreateUser(TokenList $tokenList): CreateUserCommand
     {
@@ -315,6 +321,9 @@ class UserCommandsParser
 
     /**
      * CREATE ROLE [IF NOT EXISTS] role [, role ] ...
+     *
+     * @param TokenList $tokenList
+     * @return CreateRoleCommand
      */
     public function parseCreateRole(TokenList $tokenList): CreateRoleCommand
     {
@@ -328,6 +337,9 @@ class UserCommandsParser
 
     /**
      * DROP ROLE [IF EXISTS] role [, role ] ...
+     *
+     * @param TokenList $tokenList
+     * @return DropRoleCommand
      */
     public function parseDropRole(TokenList $tokenList): DropRoleCommand
     {
@@ -341,6 +353,9 @@ class UserCommandsParser
 
     /**
      * DROP USER [IF EXISTS] user [, user] ...
+     *
+     * @param TokenList $tokenList
+     * @return DropUserCommand
      */
     public function parseDropUser(TokenList $tokenList): DropUserCommand
     {
@@ -381,6 +396,9 @@ class UserCommandsParser
      *     TO user [auth_option] [, user [auth_option]] ...
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH {GRANT OPTION | resource_option} ...]
+     *
+     * @param TokenList $tokenList
+     * @return Command
      */
     public function parseGrant(TokenList $tokenList): Command
     {
@@ -487,6 +505,9 @@ class UserCommandsParser
      *   | tbl_name
      *   | db_name.routine_name
      * }
+     *
+     * @param TokenList $tokenList
+     * @return UserPrivilegeResource
      */
     private function parseResource(TokenList $tokenList): UserPrivilegeResource
     {
@@ -521,6 +542,9 @@ class UserCommandsParser
     /**
      * RENAME USER old_user TO new_user
      *     [, old_user TO new_user] ...
+     *
+     * @param TokenList $tokenList
+     * @return RenameUserCommand
      */
     public function parseRenameUser(TokenList $tokenList): RenameUserCommand
     {
@@ -552,6 +576,9 @@ class UserCommandsParser
      *
      * REVOKE role [, role ] ...
      *     FROM user [, user ] ...
+     *
+     * @param TokenList $tokenList
+     * @return Command
      */
     public function parseRevoke(TokenList $tokenList): Command
     {
@@ -595,6 +622,9 @@ class UserCommandsParser
      * SET DEFAULT ROLE
      *     {NONE | ALL | role [, role ] ...}
      *     TO user [, user ] ...
+     *
+     * @param TokenList $tokenList
+     * @return SetDefaultRoleCommand
      */
     public function parseSetDefaultRole(TokenList $tokenList): SetDefaultRoleCommand
     {
@@ -620,6 +650,9 @@ class UserCommandsParser
      *     PASSWORD('auth_string')
      *   | 'auth_string'
      * }
+     *
+     * @param TokenList $tokenList
+     * @return SetPasswordCommand
      */
     public function parseSetPassword(TokenList $tokenList): SetPasswordCommand
     {
@@ -650,6 +683,9 @@ class UserCommandsParser
      *   | ALL EXCEPT role [, role ] ...
      *   | role [, role ] ...
      * }
+     *
+     * @param TokenList $tokenList
+     * @return SetRoleCommand
      */
     public function parseSetRole(TokenList $tokenList): SetRoleCommand
     {

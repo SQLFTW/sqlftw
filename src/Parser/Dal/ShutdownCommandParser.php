@@ -20,6 +20,9 @@ class ShutdownCommandParser
 
     /**
      * SHUTDOWN
+     *
+     * @param TokenList $tokenList
+     * @return ShutdownCommand
      */
     public function parseShutdown(TokenList $tokenList): ShutdownCommand
     {

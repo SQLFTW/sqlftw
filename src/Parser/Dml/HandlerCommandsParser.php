@@ -34,6 +34,9 @@ class HandlerCommandsParser
 
     /**
      * HANDLER tbl_name OPEN [[AS] alias]
+     *
+     * @param TokenList $tokenList
+     * @return HandlerOpenCommand
      */
     public function parseHandlerOpen(TokenList $tokenList): HandlerOpenCommand
     {
@@ -49,12 +52,15 @@ class HandlerCommandsParser
     }
 
     /**
-     * HANDLER tbl_name READ index_name { = | <= | >= | < | > } (value1,value2,...)
+     * HANDLER tbl_name READ index_name { = | <= | >= | < | > } (value1,value2, ...)
      *     [ WHERE where_condition ] [LIMIT ... ]
      * HANDLER tbl_name READ index_name { FIRST | NEXT | PREV | LAST }
      *     [ WHERE where_condition ] [LIMIT ... ]
      * HANDLER tbl_name READ { FIRST | NEXT }
      *     [ WHERE where_condition ] [LIMIT ... ]
+     *
+     * @param TokenList $tokenList
+     * @return HandlerReadCommand
      */
     public function parseHandlerRead(TokenList $tokenList): HandlerReadCommand
     {
@@ -99,6 +105,9 @@ class HandlerCommandsParser
 
     /**
      * HANDLER tbl_name CLOSE
+     *
+     * @param TokenList $tokenList
+     * @return HandlerCloseCommand
      */
     public function parseHandlerClose(TokenList $tokenList): HandlerCloseCommand
     {

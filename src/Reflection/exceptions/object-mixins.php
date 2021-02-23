@@ -1,10 +1,21 @@
 <?php declare(strict_types = 1);
+/**
+ * This file is part of the SqlFtw library (https://github.com/sqlftw)
+ *
+ * Copyright (c) 2017 Vlasta Neubauer (@paranoiq)
+ *
+ * For the full copyright and license information read the file 'license.md', distributed with this source code
+ */
+
+// phpcs:disable Squiz.Classes.ClassFileName
+// phpcs:disable PSR1.Classes.ClassDeclaration
 
 namespace SqlFtw\Reflection;
 
-use Throwable;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\QualifiedName;
+use Throwable;
+use function rtrim;
 
 trait DatabaseObjectMixin
 {
@@ -202,7 +213,7 @@ trait SchemaObjectMovedMixin
     /** @var Command */
     private $command;
 
-    public function __construct(QualifiedName $name,  Command $command, ?Throwable $previous = null)
+    public function __construct(QualifiedName $name, Command $command, ?Throwable $previous = null)
     {
         $this->newName = self::getNewNameFromCommand($command, $name);
 

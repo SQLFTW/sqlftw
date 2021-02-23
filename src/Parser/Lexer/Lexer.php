@@ -755,7 +755,7 @@ class Lexer
     private function parseString(string &$string, int &$position, int &$column, int &$row, string $quote): array
     {
         $length = strlen($string);
-        $backslashes = !$this->settings->getMode()->contains(Mode::NO_BACKSLASH_ESCAPES);
+        $backslashes = !$this->settings->getMode()->containsAny(Mode::NO_BACKSLASH_ESCAPES);
 
         $orig = [$quote];
         $escaped = false;
@@ -825,6 +825,10 @@ class Lexer
      *
      * A ' inside a string quoted with ' may be written as ''.
      * A " inside a string quoted with " may be written as "".
+     *
+     * @param string $string
+     * @param string $quote
+     * @return string
      */
     private function unescapeString(string $string, string $quote): string
     {
@@ -843,7 +847,7 @@ class Lexer
         $string = substr($string, 1, -1);
 
         $string = str_replace($quote . $quote, $quote, $string);
-        if (!$this->settings->getMode()->contains(Mode::NO_BACKSLASH_ESCAPES)) {
+        if (!$this->settings->getMode()->containsAny(Mode::NO_BACKSLASH_ESCAPES)) {
             $string = str_replace(array_keys($translations), array_values($translations), $string);
 
             // todo: ???

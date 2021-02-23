@@ -48,6 +48,9 @@ class EventCommandsParser
      *   [ENABLE | DISABLE | DISABLE ON SLAVE]
      *   [COMMENT 'comment']
      *   [DO event_body]
+     *
+     * @param TokenList $tokenList
+     * @return AlterEventCommand
      */
     public function parseAlterEvent(TokenList $tokenList): AlterEventCommand
     {
@@ -100,6 +103,9 @@ class EventCommandsParser
      *     [ENABLE | DISABLE | DISABLE ON SLAVE]
      *     [COMMENT 'comment']
      *     DO event_body
+     *
+     * @param TokenList $tokenList
+     * @return CreateEventCommand
      */
     public function parseCreateEvent(TokenList $tokenList): CreateEventCommand
     {
@@ -145,6 +151,9 @@ class EventCommandsParser
      *   | EVERY interval
      *     [STARTS timestamp [+ INTERVAL interval] ...]
      *     [ENDS timestamp [+ INTERVAL interval] ...]
+     *
+     * @param TokenList $tokenList
+     * @return EventSchedule
      */
     private function parseSchedule(TokenList $tokenList): EventSchedule
     {
@@ -170,6 +179,9 @@ class EventCommandsParser
 
     /**
      * DROP EVENT [IF EXISTS] event_name
+     *
+     * @param TokenList $tokenList
+     * @return DropEventCommand
      */
     public function parseDropEvent(TokenList $tokenList): DropEventCommand
     {

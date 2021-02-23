@@ -39,6 +39,8 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
      * @param SelectCommand $query
      * @param string|null $alias
      * @param string[]|null $columnList
+     * @param bool $parentheses
+     * @param bool $lateral
      */
     public function __construct(
         SelectCommand $query,

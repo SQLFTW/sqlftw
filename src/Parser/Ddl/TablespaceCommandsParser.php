@@ -31,6 +31,9 @@ class TablespaceCommandsParser
      *     [SET {ACTIVE|INACTIVE}]      -- InnoDB only
      *     [ENCRYPTION [=] {'Y' | 'N'}] -- InnoDB only
      *     [ENGINE [=] engine_name]
+     *
+     * @param TokenList $tokenList
+     * @return AlterTablespaceCommand
      */
     public function parseAlterTablespace(TokenList $tokenList): AlterTablespaceCommand
     {
@@ -86,6 +89,9 @@ class TablespaceCommandsParser
      *     [WAIT]                           -- NDB only
      *     [COMMENT [=] 'string']           -- NDB only
      *     [ENGINE [=] engine_name]
+     *
+     * @param TokenList $tokenList
+     * @return CreateTablespaceCommand
      */
     public function parseCreateTablespace(TokenList $tokenList): CreateTablespaceCommand
     {
@@ -149,6 +155,9 @@ class TablespaceCommandsParser
     /**
      * DROP [UNDO] TABLESPACE tablespace_name
      *     [ENGINE [=] engine_name]
+     *
+     * @param TokenList $tokenList
+     * @return DropTablespaceCommand
      */
     public function parseDropTablespace(TokenList $tokenList): DropTablespaceCommand
     {

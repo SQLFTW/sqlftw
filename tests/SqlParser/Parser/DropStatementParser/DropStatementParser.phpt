@@ -2,12 +2,12 @@
 
 namespace AlterExecutor\Parser;
 
-use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\DropLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\Routines\DropFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
+use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use SqlFtw\Sql\Ddl\Server\DropServerCommand;
 use SqlFtw\Sql\Ddl\Table\DropTableCommand;
 use SqlFtw\Sql\Ddl\Tablespace\DropTablespaceCommand;

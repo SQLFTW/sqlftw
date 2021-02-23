@@ -12,7 +12,7 @@ Assert::parse("HANDLER foo OPEN");
 Assert::parse("HANDLER foo OPEN AS bar");
 
 
-// HANDLER tbl_name READ index_name { = | <= | >= | < | > } (value1,value2,...) [WHERE where_condition] [LIMIT ...]
+// HANDLER tbl_name READ index_name { = | <= | >= | < | > } (value1, value2, ...) [WHERE where_condition] [LIMIT ...]
 Assert::parse("HANDLER foo READ bar = (1)");
 Assert::parse("HANDLER foo READ bar <= (1)");
 Assert::parse("HANDLER foo READ bar >= (1)");

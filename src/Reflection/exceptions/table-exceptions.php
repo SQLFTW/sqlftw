@@ -7,6 +7,9 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable Squiz.Classes.ClassFileName
+// phpcs:disable PSR1.Classes.ClassDeclaration
+
 namespace SqlFtw\Reflection;
 
 use Dogma\ShouldNotHappenException;
@@ -82,6 +85,7 @@ class TableRenamedException extends TableException implements ObjectRenamedExcep
 
     /**
      * @param AlterTableCommand|RenameTableCommand $command
+     * @param QualifiedName $oldName
      * @return QualifiedName
      */
     public static function getNewNameFromCommand(Command $command, QualifiedName $oldName): QualifiedName
@@ -89,12 +93,12 @@ class TableRenamedException extends TableException implements ObjectRenamedExcep
         if ($command instanceof RenameTableCommand) {
             return $command->getNewNameForTable($oldName);
         } elseif ($command instanceof AlterTableCommand) {
-            /** @var RenameToAction $action */
+            /** @var RenameToAction[] $actions */
             $actions = $command->getActions()->filter(RenameToAction::class);
             if ($actions === []) {
                 throw new ShouldNotHappenException('AlterTableCommand with rename expected.');
             }
-            return $action->getNewName();
+            return $actions[0]->getNewName();
         } else {
             throw new ShouldNotHappenException('AlterTableCommand or RenameTableCommand expected.');
         }

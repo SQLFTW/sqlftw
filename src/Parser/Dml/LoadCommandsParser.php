@@ -43,7 +43,7 @@ class LoadCommandsParser
      * LOAD DATA [LOW_PRIORITY | CONCURRENT] [LOCAL] INFILE 'file_name'
      *     [REPLACE | IGNORE]
      *     INTO TABLE tbl_name
-     *     [PARTITION (partition_name,...)]
+     *     [PARTITION (partition_name, ...)]
      *     [CHARACTER SET charset_name]
      *     [{FIELDS | COLUMNS}
      *         [TERMINATED BY 'string']
@@ -55,8 +55,11 @@ class LoadCommandsParser
      *         [TERMINATED BY 'string']
      *     ]
      *     [IGNORE number {LINES | ROWS}]
-     *     [(col_name_or_user_var,...)]
-     *     [SET col_name = expr,...]
+     *     [(col_name_or_user_var, ...)]
+     *     [SET col_name = expr, ...]
+     *
+     * @param TokenList $tokenList
+     * @return LoadDataCommand
      */
     public function parseLoadData(TokenList $tokenList): LoadDataCommand
     {
@@ -76,8 +79,11 @@ class LoadCommandsParser
      *     [CHARACTER SET charset_name]
      *     [ROWS IDENTIFIED BY '<tagname>']
      *     [IGNORE number {LINES | ROWS}]
-     *     [(field_name_or_user_var,...)]
-     *     [SET col_name = expr,...]
+     *     [(field_name_or_user_var, ...)]
+     *     [SET col_name = expr, ...]
+     *
+     * @param TokenList $tokenList
+     * @return LoadXmlCommand
      */
     public function parseLoadXml(TokenList $tokenList): LoadXmlCommand
     {

@@ -12,8 +12,8 @@ namespace SqlFtw\Sql\Dal\Table;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\TablesCommand;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\TablesCommand;
 
 class AnalyzeTableCommand implements TablesCommand, DalTablesCommand
 {

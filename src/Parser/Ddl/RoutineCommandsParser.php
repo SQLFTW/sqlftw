@@ -58,6 +58,9 @@ class RoutineCommandsParser
      *   | LANGUAGE SQL
      *   | { CONTAINS SQL | NO SQL | READS SQL DATA | MODIFIES SQL DATA }
      *   | SQL SECURITY { DEFINER | INVOKER }
+     *
+     * @param TokenList $tokenList
+     * @return AlterFunctionCommand
      */
     public function parseAlterFunction(TokenList $tokenList): AlterFunctionCommand
     {
@@ -78,6 +81,9 @@ class RoutineCommandsParser
      *   | LANGUAGE SQL
      *   | { CONTAINS SQL | NO SQL | READS SQL DATA | MODIFIES SQL DATA }
      *   | SQL SECURITY { DEFINER | INVOKER }
+     *
+     * @param TokenList $tokenList
+     * @return AlterProcedureCommand
      */
     public function parseAlterProcedure(TokenList $tokenList): AlterProcedureCommand
     {
@@ -140,7 +146,7 @@ class RoutineCommandsParser
     /**
      * CREATE
      *   [DEFINER = { user | CURRENT_USER }]
-     *   FUNCTION sp_name ([func_parameter[,...]])
+     *   FUNCTION sp_name ([func_parameter[, ...]])
      *   RETURNS type
      *   [characteristic ...] routine_body
      *
@@ -159,6 +165,9 @@ class RoutineCommandsParser
      *
      * routine_body:
      *   Valid SQL routine statement
+     *
+     * @param TokenList $tokenList
+     * @return CreateFunctionCommand
      */
     public function parseCreateFunction(TokenList $tokenList): CreateFunctionCommand
     {
@@ -196,7 +205,7 @@ class RoutineCommandsParser
     /**
      * CREATE
      *     [DEFINER = { user | CURRENT_USER }]
-     *     PROCEDURE sp_name ([proc_parameter[,...]])
+     *     PROCEDURE sp_name ([proc_parameter[, ...]])
      *     [characteristic ...] routine_body
      *
      * proc_parameter:
@@ -214,6 +223,9 @@ class RoutineCommandsParser
      *
      * routine_body:
      *     Valid SQL routine statement
+     *
+     * @param TokenList $tokenList
+     * @return CreateProcedureCommand
      */
     public function parseCreateProcedure(TokenList $tokenList): CreateProcedureCommand
     {
@@ -249,6 +261,9 @@ class RoutineCommandsParser
 
     /**
      * DROP FUNCTION [IF EXISTS] sp_name
+     *
+     * @param TokenList $tokenList
+     * @return DropFunctionCommand
      */
     public function parseDropFunction(TokenList $tokenList): DropFunctionCommand
     {
@@ -262,6 +277,9 @@ class RoutineCommandsParser
 
     /**
      * DROP PROCEDURE [IF EXISTS] sp_name
+     *
+     * @param TokenList $tokenList
+     * @return DropProcedureCommand
      */
     public function parseDropProcedure(TokenList $tokenList): DropProcedureCommand
     {

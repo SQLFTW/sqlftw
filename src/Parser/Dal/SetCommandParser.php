@@ -44,6 +44,9 @@ class SetCommandParser
      *   | {PERSIST | @@PERSIST.} system_var_name
      *   | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name
      *   | [SESSION | @@SESSION. | @@] system_var_name
+     *
+     * @param TokenList $tokenList
+     * @return SetCommand
      */
     public function parseSet(TokenList $tokenList): SetCommand
     {

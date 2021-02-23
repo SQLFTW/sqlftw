@@ -29,6 +29,9 @@ class DoCommandsParser
 
     /**
      * DO expr [, expr] ...
+     *
+     * @param TokenList $tokenList
+     * @return DoCommand
      */
     public function parseDo(TokenList $tokenList): DoCommand
     {

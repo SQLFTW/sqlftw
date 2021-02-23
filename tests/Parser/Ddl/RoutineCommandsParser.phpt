@@ -36,7 +36,7 @@ Assert::parse("ALTER PROCEDURE foo COMMENT 'bar' LANGUAGE SQL");
 Assert::parse("ALTER PROCEDURE foo LANGUAGE SQL COMMENT 'bar'", "ALTER PROCEDURE foo COMMENT 'bar' LANGUAGE SQL");
 
 
-// CREATE [DEFINER = { user | CURRENT_USER }] FUNCTION sp_name ([func_parameter[,...]]) RETURNS type [characteristic ...] routine_body
+// CREATE [DEFINER = { user | CURRENT_USER }] FUNCTION sp_name ([func_parameter[, ...]]) RETURNS type [characteristic ...] routine_body
 Assert::parse("CREATE FUNCTION foo() RETURNS INT BEGIN RETURN 1 END");
 Assert::parse("CREATE DEFINER = CURRENT_USER FUNCTION foo() RETURNS INT BEGIN RETURN 1 END");
 Assert::parse("CREATE DEFINER = 'admin'@'localhost' FUNCTION foo() RETURNS INT BEGIN RETURN 1 END");
@@ -59,7 +59,7 @@ Assert::parse(
 );
 
 
-// CREATE [DEFINER = { user | CURRENT_USER }] PROCEDURE sp_name ([proc_parameter[,...]]) [characteristic ...] routine_body
+// CREATE [DEFINER = { user | CURRENT_USER }] PROCEDURE sp_name ([proc_parameter[, ...]]) [characteristic ...] routine_body
 Assert::parse("CREATE PROCEDURE foo() BEGIN SELECT 1 END");
 Assert::parse("CREATE DEFINER = CURRENT_USER PROCEDURE foo() BEGIN SELECT 1 END");
 Assert::parse("CREATE DEFINER = 'admin'@'localhost' PROCEDURE foo() BEGIN SELECT 1 END");

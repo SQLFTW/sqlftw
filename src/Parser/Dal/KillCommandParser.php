@@ -20,6 +20,9 @@ class KillCommandParser
 
     /**
      * KILL [CONNECTION | QUERY] processlist_id
+     *
+     * @param TokenList $tokenList
+     * @return KillCommand
      */
     public function parseKill(TokenList $tokenList): KillCommand
     {

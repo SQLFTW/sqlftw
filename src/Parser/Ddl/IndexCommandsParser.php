@@ -35,7 +35,7 @@ class IndexCommandsParser
     /**
      * CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
      *     [index_type]
-     *     ON tbl_name (index_col_name,...)
+     *     ON tbl_name (index_col_name, ...)
      *     [index_option]
      *     [algorithm_option | lock_option] ...
      *
@@ -57,6 +57,9 @@ class IndexCommandsParser
      *
      * lock_option:
      *     LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
+     *
+     * @param TokenList $tokenList
+     * @return CreateIndexCommand
      */
     public function parseCreateIndex(TokenList $tokenList): CreateIndexCommand
     {
@@ -160,6 +163,9 @@ class IndexCommandsParser
      *
      * lock_option:
      *     LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
+     *
+     * @param TokenList $tokenList
+     * @return DropIndexCommand
      */
     public function parseDropIndex(TokenList $tokenList): DropIndexCommand
     {

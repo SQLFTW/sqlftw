@@ -20,6 +20,9 @@ class HelpCommandParser
 
     /**
      * HELP 'search_string'
+     *
+     * @param TokenList $tokenList
+     * @return HelpCommand
      */
     public function parseHelp(TokenList $tokenList): HelpCommand
     {
