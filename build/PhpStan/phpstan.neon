@@ -9,6 +9,13 @@ parameters:
 
         # WTF?
         - '~Method SqlFtw\\Parser\\Dal\\UserCommandsParser::parseResourceOptions\(\) never returns array<SqlFtw\\Sql\\Dal\\User\\UserResourceOption> so it can be removed from the return typehint.~'
+
+        # old style static method callback
+        - '~Parameter #1 \$function of function call_user_func expects callable\(\): mixed, array\(string, ~'
+
+        # complicated...
+        - '~Property SqlFtw\\Sql\\Ddl\\DataType::\$(size|values) \(array<(int|string)>(\|int)?\|null\) does not accept~'
+        - '~Parameter #1 \$strings of method SqlFtw\\Formatter\\Formatter::formatStringList\(\) expects array<string>, array<int\|string> given.~'
     earlyTerminatingMethodCalls:
         SqlFtw\Parser\TokenList:
             - expected

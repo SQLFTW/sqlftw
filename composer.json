@@ -2,7 +2,7 @@
     "name": "sqlftw/sqlftw",
     "type": "library",
     "description": "Complete MySQL SQL dialect lexer, parser, syntax representation and database reflection in PHP",
-    "homepage": "http://github.com/sqlftw/sqlftw",
+    "homepage": "https://github.com/sqlftw/sqlftw",
     "license": ["proprietary"],
     "authors": [
         {
@@ -21,7 +21,7 @@
         "dogma/dogma-dev": "0.1.17"
     },
     "autoload": {
-        "classmap": ["src", "tests", "build"]
+        "classmap": ["sources", "tests", "build"]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -65,26 +65,26 @@
             "php73 vendor/nette/tester/src/tester tests -c tests --colors 1",
             "php72 vendor/nette/tester/src/tester tests -c tests --colors 1"
         ],
-        "test-coverage": "sh vendor/bin/tester tests -c tests --colors 1 -p phpdbg --coverage tests/coverage.html --coverage-src src",
+        "test-coverage": "sh vendor/bin/tester tests -c tests --colors 1 -p phpdbg --coverage tests/coverage.html --coverage-src sources",
 
-        "stan": "sh vendor/bin/phpstan analyse -c build/phpstan/phpstan.neon -l 7 src tests",
+        "stan": "sh vendor/bin/phpstan analyse -c build/phpstan/phpstan.neon -l 7 sources tests",
         "stan-all": [
-            "php80 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon -l 7 src tests",
-            "php74 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon -l 7 src tests"
+            "php80 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon -l 7 sources tests",
+            "php74 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon -l 7 sources tests"
         ],
 
-        "cs-src": "sh vendor/bin/phpcs --standard=vendor/dogma/dogma-dev/src/CodeSniffer/ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp src",
+        "cs-src": "sh vendor/bin/phpcs --standard=vendor/dogma/dogma-dev/sources/CodeSniffer/ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp sources",
         "cs-tests": "sh vendor/bin/phpcs --standard=vendor/dogma/dogma-dev/src/CodeSniffer/ruleset-tests.xml --extensions=php,phpt --encoding=utf-8 --tab-width=4 -sp tests",
-        "cs-fix": "sh vendor/bin/phpcbf --standard=vendor/dogma/dogma-dev/src/CodeSniffer/ruleset-tests.xml --extensions=php,phpt --encoding=utf-8 --tab-width=4 src tests",
+        "cs-fix": "sh vendor/bin/phpcbf --standard=vendor/dogma/dogma-dev/sources/CodeSniffer/ruleset-tests.xml --extensions=php,phpt --encoding=utf-8 --tab-width=4 sources tests",
 
         "spell": "sh vendor/bin/spell-checker -c build/spell-checker/spell-checker.neon --checkDictionaryFiles --memoryLimit 1024M --noLogo",
 
-        "lint": "sh vendor/bin/parallel-lint src tests",
+        "lint": "sh vendor/bin/parallel-lint sources tests",
         "lint-all": [
-            "php80 vendor/php-parallel-lint/php-parallel-lint/parallel-lint src tests",
-            "php74 vendor/php-parallel-lint/php-parallel-lint/parallel-lint src tests",
-            "php73 vendor/php-parallel-lint/php-parallel-lint/parallel-lint src tests",
-            "php72 vendor/php-parallel-lint/php-parallel-lint/parallel-lint src tests"
+            "php80 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
+            "php74 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
+            "php73 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
+            "php72 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests"
         ]
     },
     "scripts-descriptions": {
