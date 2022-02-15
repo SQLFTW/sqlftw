@@ -26,7 +26,6 @@ class CallCommand implements DmlCommand
     private $params;
 
     /**
-     * @param QualifiedName $procedure
      * @param ExpressionNode[]|null $params
      */
     public function __construct(QualifiedName $procedure, ?array $params = null)

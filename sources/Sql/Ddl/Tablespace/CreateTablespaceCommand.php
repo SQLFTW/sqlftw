@@ -27,9 +27,7 @@ class CreateTablespaceCommand implements TablespaceCommand
     private $undo;
 
     /**
-     * @param string $name
      * @param mixed[] $options
-     * @param bool $undo
      */
     public function __construct(string $name, array $options, bool $undo = false)
     {

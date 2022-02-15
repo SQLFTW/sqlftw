@@ -22,18 +22,16 @@ class IndexHint implements SqlSerializable
     /** @var IndexHintAction */
     private $action;
 
-    /** @var IndexHintTarget */
+    /** @var IndexHintTarget|null */
     private $target;
 
     /** @var string[] */
     private $indexes;
 
     /**
-     * @param IndexHintAction $action
-     * @param IndexHintTarget $target
      * @param string[] $indexes
      */
-    public function __construct(IndexHintAction $action, IndexHintTarget $target, array $indexes)
+    public function __construct(IndexHintAction $action, ?IndexHintTarget $target, array $indexes)
     {
         Check::itemsOfType($indexes, Type::STRING);
 
@@ -47,7 +45,7 @@ class IndexHint implements SqlSerializable
         return $this->action;
     }
 
-    public function getTarget(): IndexHintTarget
+    public function getTarget(): ?IndexHintTarget
     {
         return $this->target;
     }

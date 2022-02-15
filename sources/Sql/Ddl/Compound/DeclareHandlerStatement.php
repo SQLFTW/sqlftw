@@ -27,9 +27,7 @@ class DeclareHandlerStatement implements CompoundStatementItem
     private $statement;
 
     /**
-     * @param HandlerAction $action
      * @param Condition[] $conditions
-     * @param Statement $statement
      */
     public function __construct(HandlerAction $action, array $conditions, Statement $statement)
     {

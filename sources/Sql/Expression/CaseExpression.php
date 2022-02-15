@@ -29,7 +29,6 @@ class CaseExpression implements Statement, ExpressionNode
     private $results;
 
     /**
-     * @param Literal|null $condition
      * @param Literal[]|ExpressionNode[] $values
      * @param Literal[] $results
      */

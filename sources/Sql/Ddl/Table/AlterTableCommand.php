@@ -38,7 +38,6 @@ class AlterTableCommand implements DdlTableCommand
     private $tableOptions;
 
     /**
-     * @param QualifiedName $name
      * @param AlterActionsList|AlterTableAction[] $actions
      * @param mixed[] $alterOptions
      * @param TableOptionsList|mixed[]|null $tableOptions

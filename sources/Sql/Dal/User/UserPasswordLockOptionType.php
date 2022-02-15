@@ -38,7 +38,6 @@ class UserPasswordLockOptionType extends SqlEnum
     ];
 
     /**
-     * @param string $type
      * @param int|string|null $value
      */
     public static function validate(string $type, &$value): void

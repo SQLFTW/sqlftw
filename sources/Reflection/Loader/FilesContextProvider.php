@@ -28,6 +28,11 @@ final class FilesContextProvider implements ContextProvider
         $this->pathTemplate = $pathTemplate;
     }
 
+    public function getCreateSchema(string $name): ?string
+    {
+        // TODO: Implement getCreateSchema() method.
+    }
+
     public function getCreateTable(string $schema, string $tableName): ?string
     {
         $path = str_replace(['$basePath$', '$databaseName$', '$tableName$'], [$this->basePath, $schema, $tableName], $this->pathTemplate);
@@ -38,6 +43,33 @@ final class FilesContextProvider implements ContextProvider
 
         return file_get_contents($path);
     }
+
+    public function getCreateView(string $name, string $schema): ?string
+    {
+        // TODO: Implement getCreateView() method.
+    }
+
+    public function getCreateFunction(string $name, string $schema): ?string
+    {
+        // TODO: Implement getCreateFunction() method.
+    }
+
+    public function getCreateProcedure(string $name, string $schema): ?string
+    {
+        // TODO: Implement getCreateProcedure() method.
+    }
+
+    public function getCreateTrigger(string $name, string $schema): ?string
+    {
+        // TODO: Implement getCreateTrigger() method.
+    }
+
+    public function getCreateEvent(string $name, string $schema): ?string
+    {
+        // TODO: Implement getCreateEvent() method.
+    }
+
+    // not in interface
 
     public function getIndexSize(string $schema, string $tableName, string $indexName): ?int
     {

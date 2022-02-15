@@ -40,7 +40,6 @@ class CreateUserCommand implements UserCommand
      * @param UserTlsOption[]|null $tlsOptions
      * @param UserResourceOption[]|null $resourceOptions
      * @param UserPasswordLockOption[]|null $passwordLockOptions
-     * @param bool $ifNotExists
      */
     public function __construct(
         array $users,

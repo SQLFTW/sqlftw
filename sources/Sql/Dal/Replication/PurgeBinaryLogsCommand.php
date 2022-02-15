@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
+use Dogma\Check;
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Formatter\Formatter;
@@ -25,6 +27,8 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
 
     public function __construct(?string $toLog, ?DateTime $before)
     {
+        Check::oneOf($toLog, $before);
+
         $this->toLog = $toLog;
         $this->before = $before;
     }
@@ -44,8 +48,10 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
         $result = 'PURGE BINARY LOGS';
         if ($this->toLog !== null) {
             $result .= ' TO ' . $formatter->formatString($this->toLog);
-        } else {
+        } elseif ($this->before !== null) {
             $result .= ' BEFORE ' . $formatter->formatDateTime($this->before);
+        } else {
+            throw new ShouldNotHappenException('Either toLog or before should be set.');
         }
 
         return $result;

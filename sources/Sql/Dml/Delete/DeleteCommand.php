@@ -57,15 +57,8 @@ class DeleteCommand implements DmlCommand
 
     /**
      * @param QualifiedName[] $tables
-     * @param ExpressionNode|null $where
-     * @param WithClause|null $with
      * @param OrderByExpression[]|null $orderBy
-     * @param int|null $limit
-     * @param TableReferenceNode|null $references
      * @param string[]|null $partitions
-     * @param bool $lowPriority
-     * @param bool $quick
-     * @param bool $ignore
      */
     public function __construct(
         array $tables,

@@ -31,20 +31,20 @@ class RenameTableCommand implements DdlTablesCommand
 
     /**
      * @param QualifiedName[] $names
-     * @param QualifiedName[] $newTables
+     * @param QualifiedName[] $newNames
      */
-    public function __construct(array $names, array $newTables)
+    public function __construct(array $names, array $newNames)
     {
         Check::array($names, 1);
         Check::itemsOfType($names, QualifiedName::class);
-        Check::array($newTables, 1);
-        Check::itemsOfType($newTables, QualifiedName::class);
-        if (count($names) !== count($newTables)) {
+        Check::array($newNames, 1);
+        Check::itemsOfType($newNames, QualifiedName::class);
+        if (count($names) !== count($newNames)) {
             throw new InvalidDefinitionException('Count of old table names and new table names do not match.');
         }
 
         $this->names = array_values($names);
-        $this->newNames = array_values($newTables);
+        $this->newNames = array_values($newNames);
     }
 
     /**

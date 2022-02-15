@@ -2,6 +2,8 @@
 args
 armscii
 backtick
+cwd
+dll
 euc
 fk
 fn
@@ -24,7 +26,6 @@ tbl
 tls
 ucs
 unary
-wtf
 xyz
 
 hhhh
@@ -37,6 +38,7 @@ bitwise
 checksums
 decrypt
 deferrable
+designators
 destructor
 instantiable
 introducer
@@ -79,6 +81,7 @@ bitvar
 builtin
 calc
 capath
+chk
 clob
 cmp
 compat

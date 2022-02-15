@@ -24,12 +24,9 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
     private $rows;
 
     /**
-     * @param QualifiedName $table
      * @param ExpressionNode[][] $rows
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param InsertPriority|null $priority
-     * @param bool $ignore
      */
     public function __construct(
         QualifiedName $table,

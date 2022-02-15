@@ -90,10 +90,6 @@ class SelectCommandParser
      *     [FOR UPDATE | LOCK IN SHARE MODE]]
      *     [FOR {UPDATE | SHARE} [OF tbl_name [, tbl_name] ...] [NOWAIT | SKIP LOCKED]
      *       | LOCK IN SHARE MODE]]
-     *
-     * @param TokenList $tokenList
-     * @param WithClause|null $with
-     * @return SelectCommand
      */
     public function parseSelect(TokenList $tokenList, ?WithClause $with = null): SelectCommand
     {
@@ -125,7 +121,7 @@ class SelectCommandParser
         $what = [];
         do {
             $value = $this->expressionParser->parseExpression($tokenList);
-            $window = $alias = null;
+            $window = null;
             if ($tokenList->mayConsumeKeyword(Keyword::OVER)) {
                 if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
                     $window = $this->parseWindow($tokenList);
@@ -142,7 +138,7 @@ class SelectCommandParser
             $what[] = new SelectExpression($value, $alias, $window);
         } while ($tokenList->mayConsumeComma());
 
-        $from = $partitions = null;
+        $from = null;
         if ($tokenList->mayConsumeKeyword(Keyword::FROM)) {
             $from = $this->joinParser->parseTableReferences($tokenList);
             /*
@@ -205,7 +201,7 @@ class SelectCommandParser
             [$limit, $offset] = $this->expressionParser->parseLimitAndOffset($tokenList);
         }
 
-        $into = $outFile = $charset = $format = $dumpFile = $variables = null;
+        $into = $charset = null;
         if ($tokenList->mayConsumeKeywords(Keyword::INTO, Keyword::OUTFILE)) {
             $outFile = $tokenList->consumeString();
             if ($tokenList->mayConsumeKeywords(Keyword::CHARACTER, Keyword::SET)) {
@@ -225,9 +221,9 @@ class SelectCommandParser
             $into = new SelectInto($variables);
         }
 
-        $locking = $lockOption = $lockTables = $lockWaitOption = null;
+        $locking = $lockTables = null;
         if ($tokenList->mayConsumeKeywords(Keyword::LOCK, Keyword::IN, Keyword::SHARE, Keyword::MODE)) {
-            $lockOption = SelectLockOption::get(SelectLockOption::FOR_SHARE);
+            $lockOption = SelectLockOption::get(SelectLockOption::LOCK_IN_SHARE_MODE);
             $locking = new SelectLocking($lockOption);
         } elseif ($tokenList->mayConsumeKeyword(Keyword::FOR)) {
             if ($tokenList->mayConsumeKeyword(Keyword::UPDATE)) {
@@ -271,9 +267,6 @@ class SelectCommandParser
      *
      * frame_between:
      *   BETWEEN frame_start AND frame_end
-     *
-     * @param TokenList $tokenList
-     * @return WindowSpecification
      */
     private function parseWindow(TokenList $tokenList): WindowSpecification
     {
@@ -317,10 +310,6 @@ class SelectCommandParser
      *   | expr PRECEDING
      *   | expr FOLLOWING
      * }
-     *
-     * @param TokenList $tokenList
-     * @param WindowFrameType|null $type
-     * @param ExpressionNode|null $expression
      */
     private function parseFrameBorder(TokenList $tokenList, ?WindowFrameType &$type, ?ExpressionNode &$expression): void
     {

@@ -26,7 +26,6 @@ class CreateRoleCommand implements UserCommand
 
     /**
      * @param string[] $roles
-     * @param bool $ifNotExists
      */
     public function __construct(array $roles, bool $ifNotExists = false)
     {

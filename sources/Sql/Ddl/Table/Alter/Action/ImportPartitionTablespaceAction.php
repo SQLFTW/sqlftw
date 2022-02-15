@@ -37,7 +37,7 @@ class ImportPartitionTablespaceAction implements PartitioningAction, TablespaceA
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'IMPORT ';
+        $result = 'IMPORT PARTITION ';
 
         if ($this->partitions === null) {
             $result .= 'ALL';

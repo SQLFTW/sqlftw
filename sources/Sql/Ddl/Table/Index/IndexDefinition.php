@@ -39,19 +39,14 @@ class IndexDefinition implements TableItem, ConstraintBody
     /** @var IndexAlgorithm|null */
     private $algorithm;
 
-    /** @var IndexOptions */
+    /** @var IndexOptions|null */
     private $options;
 
     /** @var QualifiedName|null */
     private $table;
 
     /**
-     * @param string|null $name
-     * @param IndexType $type
      * @param IndexColumn[]|int[]|string[]|null[] $columns
-     * @param IndexAlgorithm|null $algorithm
-     * @param IndexOptions $options
-     * @param QualifiedName|null $table
      */
     public function __construct(
         ?string $name,
@@ -84,7 +79,9 @@ class IndexDefinition implements TableItem, ConstraintBody
     public function duplicateWithVisibility(bool $visible): self
     {
         $self = clone $this;
-        $self->options = $this->options->duplicateWithVisibility($visible);
+        $self->options = $this->options
+            ? $this->options->duplicateWithVisibility($visible)
+            : new IndexOptions(null, null, null, null, $visible);
 
         return $self;
     }
@@ -160,7 +157,7 @@ class IndexDefinition implements TableItem, ConstraintBody
         return $this->algorithm;
     }
 
-    public function getOptions(): IndexOptions
+    public function getOptions(): ?IndexOptions
     {
         return $this->options;
     }
@@ -207,8 +204,13 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public function serializeTail(Formatter $formatter): string
     {
-        $result = ' (' . $formatter->formatSerializablesList($this->columns) . ')';
-        $result .= ' ' . $this->options->serialize($formatter);
+        $result = '(' . $formatter->formatSerializablesList($this->columns) . ')';
+        if ($this->options !== null) {
+            $options = $this->options->serialize($formatter);
+            if ($options !== '') {
+                $result .= ' ' . $options;
+            }
+        }
 
         return $result;
     }

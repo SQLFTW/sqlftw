@@ -69,9 +69,6 @@ class InsertCommandParser
      *     SELECT ...
      *     [ ON DUPLICATE KEY UPDATE
      *       col_name=expr [, col_name=expr] ... ]
-     *
-     * @param TokenList $tokenList
-     * @return InsertCommand
      */
     public function parseInsert(TokenList $tokenList): InsertCommand
     {
@@ -124,9 +121,6 @@ class InsertCommandParser
      *     [PARTITION (partition_name, ...)]
      *     [(col_name, ...)]
      *     SELECT ...
-     *
-     * @param TokenList $tokenList
-     * @return ReplaceCommand
      */
     public function parseReplace(TokenList $tokenList): ReplaceCommand
     {
@@ -160,7 +154,6 @@ class InsertCommandParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return string[]|null
      */
     private function parsePartitionsList(TokenList $tokenList): ?array
@@ -179,7 +172,6 @@ class InsertCommandParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return string[]|null
      */
     private function parseColumnList(TokenList $tokenList): ?array
@@ -208,7 +200,6 @@ class InsertCommandParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return ExpressionNode[]
      */
     private function parseAssignments(TokenList $tokenList): array
@@ -225,7 +216,6 @@ class InsertCommandParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return ExpressionNode[][]
      */
     private function parseRows(TokenList $tokenList): array

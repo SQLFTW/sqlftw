@@ -29,10 +29,6 @@ class InnerJoin extends Join
     private $using;
 
     /**
-     * @param TableReferenceNode $left
-     * @param TableReferenceNode $right
-     * @param bool $crossJoin
-     * @param ExpressionNode|null $condition
      * @param string[]|null $using
      */
     public function __construct(

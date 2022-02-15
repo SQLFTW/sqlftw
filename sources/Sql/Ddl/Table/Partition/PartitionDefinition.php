@@ -40,7 +40,6 @@ class PartitionDefinition implements SqlSerializable
     private $subpartitions;
 
     /**
-     * @param string $name
      * @param mixed[]|ExpressionNode|bool|null $lessThan
      * @param mixed[]|null $values
      * @param mixed[]|null $options

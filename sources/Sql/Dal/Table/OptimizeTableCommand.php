@@ -26,7 +26,6 @@ class OptimizeTableCommand implements DalTablesCommand
 
     /**
      * @param QualifiedName[] $names
-     * @param bool $local
      */
     public function __construct(array $names, bool $local = false)
     {

@@ -43,9 +43,7 @@ class UserExpression implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->userName !== null
-            ? $this->userName->serialize($formatter)
-            : $this->variable;
+        return $this->userName !== null ? $this->userName->serialize($formatter) : $this->variable; // @phpstan-ignore-line non-null $variable is guaranteed
     }
 
 }

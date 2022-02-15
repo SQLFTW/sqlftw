@@ -1,0 +1,11 @@
+
+`RENAME DATABASE foo TO bar`
+
+`RENAME INDEX foo ON tbl`
+
+`RENAME FOREIGN KEY foo ON tbl`
+
+`RENAME CHECK foo ON tbl`
+
+`RENAME CONSTRAINT foo ON tbl`
+

@@ -43,7 +43,6 @@ class AlterActionsList implements SqlSerializable
     }
 
     /**
-     * @param string $class
      * @return AlterTableAction[]
      */
     public function filter(string $class): array

@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Sql\Dml\Select;
 
+use Dogma\Check;
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
@@ -36,10 +38,6 @@ class SelectInto implements SqlSerializable
 
     /**
      * @param string[]|null $variables
-     * @param string|null $dumpFile
-     * @param string|null $outFile
-     * @param Charset|null $charset
-     * @param FileFormat|null $format
      */
     public function __construct(
         ?array $variables,
@@ -48,6 +46,8 @@ class SelectInto implements SqlSerializable
         ?Charset $charset = null,
         ?FileFormat $format = null
     ) {
+        Check::oneOf($variables, $dumpFile, $outFile);
+
         $this->variables = $variables;
         $this->dumpFile = $dumpFile;
         $this->outFile = $outFile;
@@ -89,17 +89,19 @@ class SelectInto implements SqlSerializable
             return 'INTO ' . $formatter->formatNamesList($this->variables);
         } elseif ($this->dumpFile !== null) {
             return 'INTO DUMPFILE ' . $formatter->formatString($this->dumpFile);
-        }
+        } elseif ($this->outFile !== null) {
+            $result = 'INTO OUTFILE' . $formatter->formatString($this->outFile);
+            if ($this->charset !== null) {
+                $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
+            }
+            if ($this->format !== null) {
+                $result .= ' ' . $this->format->serialize($formatter);
+            }
 
-        $result = 'INTO OUTFILE' . $formatter->formatString($this->outFile);
-        if ($this->charset !== null) {
-            $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
+            return $result;
+        } else {
+            throw new ShouldNotHappenException('Either variables, dumpFile or outFile must be set.');
         }
-        if ($this->format !== null) {
-            $result .= ' ' . $this->format->serialize($formatter);
-        }
-
-        return $result;
     }
 
 }

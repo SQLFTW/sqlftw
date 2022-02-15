@@ -28,7 +28,6 @@ class RevokeCommand implements UserCommand
 
     /**
      * @param UserPrivilege[] $privileges
-     * @param UserPrivilegeResource $resource
      * @param UserName[] $users
      */
     public function __construct(array $privileges, UserPrivilegeResource $resource, array $users)

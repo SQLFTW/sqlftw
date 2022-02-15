@@ -16,24 +16,24 @@ class UserName implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var string|null */
+    /** @var string */
     protected $user;
 
-    /** @var string */
+    /** @var string|null */
     protected $host;
 
-    public function __construct(?string $user, string $host)
+    public function __construct(string $user, ?string $host)
     {
         $this->user = $user;
         $this->host = $host;
     }
 
-    public function getUser(): ?string
+    public function getUser(): string
     {
         return $this->user;
     }
 
-    public function getHost(): string
+    public function getHost(): ?string
     {
         return $this->host;
     }

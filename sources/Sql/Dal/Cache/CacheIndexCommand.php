@@ -32,7 +32,6 @@ class CacheIndexCommand implements CacheCommand
     private $partitions;
 
     /**
-     * @param string $keyCache
      * @param TableIndexList[] $tableIndexLists
      * @param string[]|bool|null $partitions
      */

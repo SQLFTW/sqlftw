@@ -44,9 +44,6 @@ class SetCommandParser
      *   | {PERSIST | @@PERSIST.} system_var_name
      *   | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name
      *   | [SESSION | @@SESSION. | @@] system_var_name
-     *
-     * @param TokenList $tokenList
-     * @return SetCommand
      */
     public function parseSet(TokenList $tokenList): SetCommand
     {
@@ -61,7 +58,6 @@ class SetCommandParser
                 $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class)->getValue();
             } else {
                 $variableToken = $tokenList->mayConsume(TokenType::AT_VARIABLE);
-                $variable = null;
                 if ($variableToken !== null) {
                     // @
                     /** @var string $variable */

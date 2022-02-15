@@ -50,9 +50,6 @@ class JoinParser
     /**
      * table_references:
      *     escaped_table_reference [, escaped_table_reference] ...
-     *
-     * @param TokenList $tokenList
-     * @return TableReferenceNode
      */
     public function parseTableReferences(TokenList $tokenList): TableReferenceNode
     {
@@ -72,9 +69,6 @@ class JoinParser
      * escaped_table_reference:
      *     table_reference
      *   | { OJ table_reference }
-     *
-     * @param TokenList $tokenList
-     * @return TableReferenceNode
      */
     public function parseTableReference(TokenList $tokenList): TableReferenceNode
     {
@@ -82,7 +76,6 @@ class JoinParser
             $token = $tokenList->consumeName();
             if ($token !== 'OJ') {
                 $tokenList->expected('Expected ODBC escaped table reference introducer "OJ".');
-                exit;
             } else {
                 $reference = $this->parseTableReference($tokenList);
                 $tokenList->consume(TokenType::RIGHT_CURLY_BRACKET);
@@ -109,9 +102,6 @@ class JoinParser
      * join_condition:
      *     ON conditional_expr
      *   | USING (column_list)
-     *
-     * @param TokenList $tokenList
-     * @return TableReferenceNode
      */
     private function parseTableReferenceInternal(TokenList $tokenList): TableReferenceNode
     {
@@ -178,7 +168,6 @@ class JoinParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return mixed[]|array{0: ExpressionNode, 1: string[]}
      */
     private function parseJoinCondition(TokenList $tokenList): array
@@ -203,16 +192,13 @@ class JoinParser
      *     tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
      *   | [LATERAL] [(] table_subquery [)] [AS] alias [(col_list)]
      *   | ( table_references )
-     *
-     * @param TokenList $tokenList
-     * @return TableReferenceNode
      */
     private function parseTableFactor(TokenList $tokenList): TableReferenceNode
     {
-        $selectInParentheses = null;
+        $selectInParentheses = false;
         if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
             $selectInParentheses = (bool) $tokenList->mayConsumeKeyword(Keyword::SELECT);
-            if ($selectInParentheses) {
+            if (!$selectInParentheses) {
                 $references = $this->parseTableReferences($tokenList);
                 $tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS);
 
@@ -220,7 +206,6 @@ class JoinParser
             }
         }
 
-        // todo: bug. never accessed code
         $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::SELECT, Keyword::LATERAL);
         if ($selectInParentheses || $keyword !== null) {
             if ($keyword === Keyword::LATERAL) {
@@ -285,7 +270,6 @@ class JoinParser
      * index_list:
      *     index_name [, index_name] ...
      *
-     * @param TokenList $tokenList
      * @return IndexHint[]
      */
     private function parseIndexHints(TokenList $tokenList): array

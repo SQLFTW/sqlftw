@@ -61,10 +61,6 @@ class DeleteCommandParser
      *     FROM tbl_name[.*] [, tbl_name[.*]] ...
      *     USING table_references
      *     [WHERE where_condition]
-     *
-     * @param TokenList $tokenList
-     * @param WithClause|null $with
-     * @return DeleteCommand
      */
     public function parseDelete(TokenList $tokenList, ?WithClause $with = null): DeleteCommand
     {
@@ -123,7 +119,6 @@ class DeleteCommandParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return QualifiedName[]
      */
     private function parseTablesList(TokenList $tokenList): array

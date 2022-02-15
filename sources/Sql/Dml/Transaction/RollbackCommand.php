@@ -33,7 +33,7 @@ class RollbackCommand implements TransactionCommand
         return $this->chain;
     }
 
-    public function release(): bool
+    public function release(): ?bool
     {
         return $this->release;
     }

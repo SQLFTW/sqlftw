@@ -41,13 +41,8 @@ class StartSlaveCommand implements ReplicationCommand
     private $channel;
 
     /**
-     * @param string|null $user
-     * @param string|null $password
-     * @param string|null $defaultAuth
-     * @param string|null $pluginDir
      * @param string[]|int[]|bool[]|UuidSet[][]|null $until
      * @param ReplicationThreadType[]|null $threadTypes
-     * @param string|null $channel
      */
     public function __construct(
         ?string $user,

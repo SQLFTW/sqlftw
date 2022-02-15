@@ -30,9 +30,6 @@ class SchemaCommandsParser
      * alter_specification:
      *     [DEFAULT] CHARACTER SET [=] charset_name
      *   | [DEFAULT] COLLATE [=] collation_name
-     *
-     * @param TokenList $tokenList
-     * @return AlterSchemaCommand
      */
     public function parseAlterSchema(TokenList $tokenList): AlterSchemaCommand
     {
@@ -53,9 +50,6 @@ class SchemaCommandsParser
      * create_specification:
      *     [DEFAULT] CHARACTER SET [=] charset_name
      *   | [DEFAULT] COLLATE [=] collation_name
-     *
-     * @param TokenList $tokenList
-     * @return CreateSchemaCommand
      */
     public function parseCreateSchema(TokenList $tokenList): CreateSchemaCommand
     {
@@ -71,8 +65,7 @@ class SchemaCommandsParser
     }
 
     /**
-     * @param TokenList $tokenList
-     * @return mixed[]|array{0: Charset|null, 1: Collation|null}
+     * @return array{Charset|null, Collation|null}
      */
     private function parseDefaults(TokenList $tokenList): array
     {
@@ -113,9 +106,6 @@ class SchemaCommandsParser
 
     /**
      * DROP {DATABASE | SCHEMA} [IF EXISTS] db_name
-     *
-     * @param TokenList $tokenList
-     * @return DropSchemaCommand
      */
     public function parseDropSchema(TokenList $tokenList): DropSchemaCommand
     {

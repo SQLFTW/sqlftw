@@ -57,7 +57,7 @@ class Charset extends SqlEnum
     public const UTF_8_OLD = 'utf8';
     public const UTF_8 = 'utf8mb4';
 
-    /** @var int[] */
+    /** @var array<string, int> */
     private static $ids = [
         self::BIG_5 => 1,
         self::DEC_8 => 3,
@@ -109,7 +109,12 @@ class Charset extends SqlEnum
 
     public static function getById(int $id): self
     {
-        return self::get(array_search($id, self::$ids, true));
+        $key = array_search($id, self::$ids, true);
+        if ($key === false) {
+            throw new InvalidDefinitionException("Unknown charset id: $id");
+        }
+
+        return self::get($key);
     }
 
     public function serialize(Formatter $formatter): string

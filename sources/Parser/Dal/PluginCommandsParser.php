@@ -21,9 +21,6 @@ class PluginCommandsParser
 
     /**
      * INSTALL PLUGIN plugin_name SONAME 'shared_library_name'
-     *
-     * @param TokenList $tokenList
-     * @return InstallPluginCommand
      */
     public function parseInstallPlugin(TokenList $tokenList): InstallPluginCommand
     {
@@ -38,9 +35,6 @@ class PluginCommandsParser
 
     /**
      * UNINSTALL PLUGIN plugin_name
-     *
-     * @param TokenList $tokenList
-     * @return UninstallPluginCommand
      */
     public function parseUninstallPlugin(TokenList $tokenList): UninstallPluginCommand
     {

@@ -74,9 +74,6 @@ class ExplainCommandParser
      *   | REPLACE statement
      *   | UPDATE statement
      * }
-     *
-     * @param TokenList $tokenList
-     * @return Command
      */
     public function parseExplain(TokenList $tokenList): Command
     {
@@ -118,7 +115,7 @@ class ExplainCommandParser
                 break;
             case null:
                 // DESCRIBE
-                $qualifiedName = $tokenList->mayConsumeQualifiedName();
+                $qualifiedName = $tokenList->consumeQualifiedName();
                 $table = new QualifiedName(...$qualifiedName);
                 $column = $tokenList->mayConsumeName();
                 if ($column === null) {

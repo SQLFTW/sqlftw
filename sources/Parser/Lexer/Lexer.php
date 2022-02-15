@@ -95,7 +95,6 @@ class Lexer
 
     /**
      * Tokenize SQL code. Expects line endings to be converted to "\n" and UTF-8 encoding.
-     * @param string $string
      * @return Token[]
      */
     public function tokenizeAll(string $string): array
@@ -110,7 +109,6 @@ class Lexer
 
     /**
      * Tokenize SQL code. Expects line endings to be converted to "\n" and UTF-8 encoding.
-     * @param string $string
      * @return Token[]|Generator
      */
     public function tokenize(string $string): Generator
@@ -147,7 +145,7 @@ class Lexer
                     }
                     yield new Token(T::SYMBOL | T::DELIMITER, $start, $delimiter, null, $condition);
                     continue 2;
-                } while (false);
+                } while (false); // @phpstan-ignore-line
             }
 
             switch ($char) {
@@ -745,11 +743,6 @@ class Lexer
     }
 
     /**
-     * @param string $string
-     * @param int $position
-     * @param int $column
-     * @param int $row
-     * @param string $quote
      * @return string[] ($value, $orig)
      */
     private function parseString(string &$string, int &$position, int &$column, int &$row, string $quote): array
@@ -825,10 +818,6 @@ class Lexer
      *
      * A ' inside a string quoted with ' may be written as ''.
      * A " inside a string quoted with " may be written as "".
-     *
-     * @param string $string
-     * @param string $quote
-     * @return string
      */
     private function unescapeString(string $string, string $quote): string
     {
@@ -857,12 +846,7 @@ class Lexer
     }
 
     /**
-     * @param string $string
-     * @param int $position
-     * @param int $column
-     * @param int $row
-     * @param string $start
-     * @return mixed[]|array{0: int|float|string|null, 1: string|null}
+     * @return mixed[]|array{int|float|string|null, string|null}
      */
     private function parseNumber(string &$string, int &$position, int &$column, int &$row, string $start): array
     {
@@ -946,8 +930,8 @@ class Lexer
                     $num = false;
                     break 2;
                 }
-            } while (false);
-        } while (false);
+            } while (false); // @phpstan-ignore-line
+        } while (false); // @phpstan-ignore-line
 
         if (!$num) {
             return [null, null];

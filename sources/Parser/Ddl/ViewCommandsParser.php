@@ -51,9 +51,6 @@ class ViewCommandsParser
      *     VIEW view_name [(column_list)]
      *     AS select_statement
      *     [WITH [CASCADED | LOCAL] CHECK OPTION]
-     *
-     * @param TokenList $tokenList
-     * @return AlterViewCommand
      */
     public function parseAlterView(TokenList $tokenList): AlterViewCommand
     {
@@ -73,9 +70,6 @@ class ViewCommandsParser
      *     VIEW view_name [(column_list)]
      *     AS select_statement
      *     [WITH [CASCADED | LOCAL] CHECK OPTION]
-     *
-     * @param TokenList $tokenList
-     * @return CreateViewCommand
      */
     public function parseCreateView(TokenList $tokenList): CreateViewCommand
     {
@@ -90,7 +84,6 @@ class ViewCommandsParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return mixed[]
      */
     private function parseViewDefinition(TokenList $tokenList): array
@@ -144,9 +137,6 @@ class ViewCommandsParser
      * DROP VIEW [IF EXISTS]
      *     view_name [, view_name] ...
      *     [RESTRICT | CASCADE]
-     *
-     * @param TokenList $tokenList
-     * @return DropViewCommand
      */
     public function parseDropView(TokenList $tokenList): DropViewCommand
     {

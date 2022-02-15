@@ -24,9 +24,6 @@ class UnexpectedTokenException extends ParserException
     /**
      * @param int[] $expectedTokens
      * @param mixed $expectedValue
-     * @param Token|null $token
-     * @param TokenList $tokenList
-     * @param Throwable|null $previous
      */
     public function __construct(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null)
     {
@@ -58,7 +55,7 @@ class UnexpectedTokenException extends ParserException
             return;
         }
 
-        $actualToken = implode('|', TokenType::get($token->type)->getConstantNames());
+        $actualToken = implode('|', TokenType::getByValue($token->type)->getConstantNames());
         $actualValue = ExceptionValueFormatter::format($token->value);
 
         parent::__construct(sprintf(

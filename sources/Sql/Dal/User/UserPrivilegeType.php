@@ -49,7 +49,7 @@ class UserPrivilegeType extends SqlEnum
     public const USAGE = Keyword::USAGE;
 
     /**
-     * @return string[][]|null[]
+     * @return array<string, string[]|null>
      */
     public static function getFistAndSecondKeywords(): array
     {

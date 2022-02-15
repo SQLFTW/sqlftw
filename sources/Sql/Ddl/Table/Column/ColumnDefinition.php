@@ -34,10 +34,10 @@ class ColumnDefinition implements TableItem
     /** @var string */
     private $name;
 
-    /** @var DataType|null */
+    /** @var DataType */
     private $type;
 
-    /** @var bool */
+    /** @var bool|null */
     private $nullable;
 
     /** @var string|int|float|bool|Literal|null */
@@ -68,16 +68,7 @@ class ColumnDefinition implements TableItem
     private $check;
 
     /**
-     * @param string $name
-     * @param DataType $type
      * @param string|int|float|bool|Literal|null $defaultValue
-     * @param bool|null $nullable
-     * @param bool $autoincrement
-     * @param string|null $comment
-     * @param IndexType $indexType
-     * @param ColumnFormat|null $columnFormat
-     * @param ReferenceDefinition $reference
-     * @param CheckDefinition|null $check
      */
     public function __construct(
         string $name,
@@ -104,16 +95,6 @@ class ColumnDefinition implements TableItem
         $this->check = $check;
     }
 
-    /**
-     * @param string $name
-     * @param DataType $type
-     * @param ExpressionNode $expression
-     * @param GeneratedColumnType $generatedColumnType
-     * @param bool $nullable
-     * @param string|null $comment
-     * @param IndexType $indexType
-     * @return ColumnDefinition
-     */
     public static function createGenerated(
         string $name,
         DataType $type,
@@ -134,7 +115,6 @@ class ColumnDefinition implements TableItem
 
     /**
      * @param string|int|float|bool|Literal|null $defaultValue
-     * @return ColumnDefinition
      */
     public function duplicateWithDefaultValue($defaultValue): self
     {
@@ -157,7 +137,7 @@ class ColumnDefinition implements TableItem
         return $this->name;
     }
 
-    public function getType(): ?DataType
+    public function getType(): DataType
     {
         return $this->type;
     }

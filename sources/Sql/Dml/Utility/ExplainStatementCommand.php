@@ -9,10 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class ExplainStatementCommand implements DmlCommand
 {
@@ -29,6 +31,9 @@ class ExplainStatementCommand implements DmlCommand
 
     public function __construct(?Command $statement, ?int $connectionId = null, ?ExplainType $type = null)
     {
+        if ($statement === null && $connectionId === null) {
+            throw new InvalidDefinitionException('Both statement and connectionId cannot be null.');
+        }
         $this->statement = $statement;
         $this->connectionId = $connectionId;
         $this->type = $type;
@@ -55,10 +60,12 @@ class ExplainStatementCommand implements DmlCommand
         if ($this->type !== null) {
             $result .= $this->type->serialize($formatter) . ' ';
         }
-        if ($this->connectionId !== null) {
+        if ($this->statement !== null) {
+            $result .= $this->statement->serialize($formatter);
+        } elseif ($this->connectionId !== null) {
             $result .= 'FOR CONNECTION ' . $this->connectionId;
         } else {
-            $result .= $this->statement->serialize($formatter);
+            throw new ShouldNotHappenException('Both statement and connectionId cannot be null.');
         }
 
         return $result;

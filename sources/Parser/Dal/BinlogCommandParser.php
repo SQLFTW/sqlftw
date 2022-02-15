@@ -20,9 +20,6 @@ class BinlogCommandParser
 
     /**
      * BINLOG 'str'
-     *
-     * @param TokenList $tokenList
-     * @return BinlogCommand
      */
     public function parseBinlog(TokenList $tokenList): BinlogCommand
     {

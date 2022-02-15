@@ -32,8 +32,6 @@ class TableReferenceTable implements TableReferenceNode
     private $indexHints;
 
     /**
-     * @param QualifiedName $table
-     * @param string|null $alias
      * @param string[]|null $partitions
      * @param IndexHint[]|null $indexHints
      */

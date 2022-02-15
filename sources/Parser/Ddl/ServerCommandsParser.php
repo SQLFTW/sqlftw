@@ -33,9 +33,6 @@ class ServerCommandsParser
      *   | SOCKET character-literal
      *   | OWNER character-literal
      *   | PORT numeric-literal
-     *
-     * @param TokenList $tokenList
-     * @return AlterServerCommand
      */
     public function parseAlterServer(TokenList $tokenList): AlterServerCommand
     {
@@ -85,9 +82,6 @@ class ServerCommandsParser
      *   | SOCKET character-literal
      *   | OWNER character-literal
      *   | PORT numeric-literal
-     *
-     * @param TokenList $tokenList
-     * @return CreateServerCommand
      */
     public function parseCreateServer(TokenList $tokenList): CreateServerCommand
     {
@@ -127,9 +121,6 @@ class ServerCommandsParser
 
     /**
      * DROP SERVER [ IF EXISTS ] server_name
-     *
-     * @param TokenList $tokenList
-     * @return DropServerCommand
      */
     public function parseDropServer(TokenList $tokenList): DropServerCommand
     {

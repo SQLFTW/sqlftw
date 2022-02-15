@@ -33,9 +33,6 @@ class TransactionCommandsParser
 
     /**
      * COMMIT [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
-     *
-     * @param TokenList $tokenList
-     * @return CommitCommand
      */
     public function parseCommit(TokenList $tokenList): CommitCommand
     {
@@ -67,9 +64,6 @@ class TransactionCommandsParser
      * lock_type:
      *     READ [LOCAL]
      *   | [LOW_PRIORITY] WRITE
-     *
-     * @param TokenList $tokenList
-     * @return LockTablesCommand
      */
     public function parseLockTables(TokenList $tokenList): LockTablesCommand
     {
@@ -103,9 +97,6 @@ class TransactionCommandsParser
 
     /**
      * RELEASE SAVEPOINT identifier
-     *
-     * @param TokenList $tokenList
-     * @return ReleaseSavepointCommand
      */
     public function parseReleaseSavepoint(TokenList $tokenList): ReleaseSavepointCommand
     {
@@ -118,9 +109,6 @@ class TransactionCommandsParser
 
     /**
      * ROLLBACK [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
-     *
-     * @param TokenList $tokenList
-     * @return RollbackCommand
      */
     public function parseRollback(TokenList $tokenList): RollbackCommand
     {
@@ -146,9 +134,6 @@ class TransactionCommandsParser
 
     /**
      * ROLLBACK [WORK] TO [SAVEPOINT] identifier
-     *
-     * @param TokenList $tokenList
-     * @return RollbackToSavepointCommand
      */
     public function parseRollbackToSavepoint(TokenList $tokenList): RollbackToSavepointCommand
     {
@@ -165,9 +150,6 @@ class TransactionCommandsParser
 
     /**
      * SAVEPOINT identifier
-     *
-     * @param TokenList $tokenList
-     * @return SavepointCommand
      */
     public function parseSavepoint(TokenList $tokenList): SavepointCommand
     {
@@ -192,9 +174,6 @@ class TransactionCommandsParser
      *   | READ COMMITTED
      *   | READ UNCOMMITTED
      *   | SERIALIZABLE
-     *
-     * @param TokenList $tokenList
-     * @return SetTransactionCommand
      */
     public function parseSetTransaction(TokenList $tokenList): SetTransactionCommand
     {
@@ -250,9 +229,6 @@ class TransactionCommandsParser
      *   | READ ONLY
      *
      * BEGIN [WORK]
-     *
-     * @param TokenList $tokenList
-     * @return StartTransactionCommand
      */
     public function parseStartTransaction(TokenList $tokenList): StartTransactionCommand
     {
@@ -286,9 +262,6 @@ class TransactionCommandsParser
 
     /**
      * UNLOCK TABLES
-     *
-     * @param TokenList $tokenList
-     * @return UnlockTablesCommand
      */
     public function parseUnlockTables(TokenList $tokenList): UnlockTablesCommand
     {

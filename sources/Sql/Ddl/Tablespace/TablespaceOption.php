@@ -85,7 +85,14 @@ class TablespaceOption extends SqlEnum
     ];
 
     /**
-     * @param string $for
+     * @return string[]
+     */
+    public static function getUsage(string $case): array
+    {
+        return self::$usage[$case];
+    }
+
+    /**
      * @param mixed[] $values
      */
     public static function validate(string $for, array &$values): void

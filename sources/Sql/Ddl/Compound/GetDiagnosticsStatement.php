@@ -10,45 +10,59 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Check;
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class GetDiagnosticsStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var DiagnosticsItem[]|null */
-    private $conditionItems;
+    /** @var DiagnosticsArea|null */
+    private $area;
 
     /** @var DiagnosticsItem[]|null */
     private $statementItems;
 
-    /** @var DiagnosticsArea|null */
-    private $area;
+    /** @var int|null */
+    private $conditionNumber;
+
+    /** @var DiagnosticsItem[]|null */
+    private $conditionItems;
 
     /**
-     * @param DiagnosticsItem[]|null $conditionItems
      * @param DiagnosticsItem[]|null $statementItems
-     * @param DiagnosticsArea|null $area
+     * @param DiagnosticsItem[]|null $conditionItems
      */
-    public function __construct(?array $conditionItems, ?array $statementItems, ?DiagnosticsArea $area)
-    {
+    public function __construct(
+        ?DiagnosticsArea $area,
+        ?array $statementItems,
+        ?int $conditionNumber,
+        ?array $conditionItems
+    ) {
         Check::oneOf($conditionItems, $statementItems);
+
+        if ($conditionNumber !== null ^ $conditionItems === null) {
+            throw new InvalidDefinitionException('When conditionNumber is set, conditionItems must be set.');
+        }
+
         if ($conditionItems !== null) {
             foreach ($conditionItems as $item) {
                 $item = $item->getItem();
                 Check::type($item, ConditionInformationItem::class);
             }
-        } else {
+        } elseif ($statementItems !== null) {
             foreach ($statementItems as $item) {
                 $item = $item->getItem();
                 Check::type($item, StatementInformationItem::class);
             }
         }
 
-        $this->conditionItems = $conditionItems;
-        $this->statementItems = $statementItems;
         $this->area = $area;
+        $this->statementItems = $statementItems;
+        $this->conditionNumber = $conditionNumber;
+        $this->conditionItems = $conditionItems;
     }
 
     public function serialize(Formatter $formatter): string
@@ -58,10 +72,12 @@ class GetDiagnosticsStatement implements CompoundStatementItem
             $result .= ' ' . $this->area->serialize($formatter);
         }
         $result .= ' DIAGNOSTICS ';
-        if ($this->conditionItems !== null) {
-            $result .= 'CONDITION ' . $formatter->formatSerializablesList($this->conditionItems);
-        } else {
+        if ($this->statementItems !== null) {
             $result .= $formatter->formatSerializablesList($this->statementItems);
+        } elseif ($this->conditionItems !== null) {
+            $result .= 'CONDITION ' . $this->conditionNumber . ' ' . $formatter->formatSerializablesList($this->conditionItems);
+        } else {
+            throw new ShouldNotHappenException('Either conditionItems or statementItems must be set.');
         }
 
         return $result;

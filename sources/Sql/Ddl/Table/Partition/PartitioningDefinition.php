@@ -34,11 +34,7 @@ class PartitioningDefinition implements SqlSerializable
     private $subpartitionsNumber;
 
     /**
-     * @param PartitioningCondition $condition
      * @param PartitionDefinition[]|null $partitions
-     * @param int|null $partitionsNumber
-     * @param PartitioningCondition|null $subpartitionsCondition
-     * @param int|null $subpartitionsNumber
      */
     public function __construct(
         PartitioningCondition $condition,

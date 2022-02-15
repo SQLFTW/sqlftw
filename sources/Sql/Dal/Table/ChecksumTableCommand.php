@@ -29,8 +29,6 @@ class ChecksumTableCommand implements DalTablesCommand
 
     /**
      * @param QualifiedName[] $names
-     * @param bool $quick
-     * @param bool $extended
      */
     public function __construct(array $names, bool $quick, bool $extended)
     {

@@ -1,7 +1,7 @@
 
 directories:
 	- build
-	- src
+	- sources
 	- tests
 	- //
 

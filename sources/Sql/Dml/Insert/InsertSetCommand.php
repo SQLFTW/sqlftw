@@ -28,13 +28,9 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     private $onDuplicateKeyActions;
 
     /**
-     * @param QualifiedName $table
      * @param ExpressionNode[] $values (string $column => ExpressionNode $value)
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param InsertPriority|null $priority
-     * @param bool $ignore
-     * @param OnDuplicateKeyActions|null $onDuplicateKeyActions
      */
     public function __construct(
         QualifiedName $table,

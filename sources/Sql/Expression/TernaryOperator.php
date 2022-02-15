@@ -38,11 +38,7 @@ class TernaryOperator implements ExpressionNode
     private $right;
 
     /**
-     * @param ExpressionNode $left
      * @param string|string[] $leftOperator
-     * @param ExpressionNode $middle
-     * @param string $rightOperator
-     * @param ExpressionNode $right
      */
     public function __construct(
         ExpressionNode $left,

@@ -79,9 +79,6 @@ class CompoundStatementParser
      * [begin_label:] BEGIN
      *     [statement_list]
      * END [end_label]
-     *
-     * @param TokenList $tokenList
-     * @return CompoundStatement
      */
     public function parseCompoundStatement(TokenList $tokenList): CompoundStatement
     {
@@ -98,7 +95,6 @@ class CompoundStatementParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return Statement[]
      */
     private function parseStatementList(TokenList $tokenList): array
@@ -127,9 +123,6 @@ class CompoundStatementParser
      * CLOSE cursor_name
      *
      * ...
-     *
-     * @param TokenList $tokenList
-     * @return Statement
      */
     private function parseStatement(TokenList $tokenList): Statement
     {
@@ -169,7 +162,7 @@ class CompoundStatementParser
                 return $this->parseGetDiagnostics($tokenList);
             case Keyword::SIGNAL:
             case Keyword::RESIGNAL:
-                return $this->parseSignalResignal($tokenList, $keyword);
+                return $this->parseSignalResignal($tokenList, $keyword); // @phpstan-ignore-line non-null
             case Keyword::RETURN:
                 return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
             case Keyword::LEAVE:
@@ -186,9 +179,11 @@ class CompoundStatementParser
         $statements = $this->parseStatementList($tokenList);
         $tokenList->consumeKeyword(Keyword::END);
 
-        $endLabel = $tokenList->mayConsumeName();
-        if ($endLabel !== null && $endLabel !== $label) {
-            $tokenList->expected($label);
+        if ($label !== null) {
+            $endLabel = $tokenList->mayConsumeName();
+            if ($endLabel !== null && $endLabel !== $label) {
+                $tokenList->expected($label);
+            }
         }
 
         return new CompoundStatement($statements, $label);
@@ -198,19 +193,17 @@ class CompoundStatementParser
      * [begin_label:] LOOP
      *     statement_list
      * END LOOP [end_label]
-     *
-     * @param TokenList $tokenList
-     * @param string|null $label
-     * @return LoopStatement
      */
     private function parseLoop(TokenList $tokenList, ?string $label): LoopStatement
     {
         $statements = $this->parseStatementList($tokenList);
         $tokenList->consumeKeywords(Keyword::END, Keyword::LOOP);
 
-        $endLabel = $tokenList->mayConsumeName();
-        if ($endLabel !== null && $endLabel !== $label) {
-            $tokenList->expected($label);
+        if ($label !== null) {
+            $endLabel = $tokenList->mayConsumeName();
+            if ($endLabel !== null && $endLabel !== $label) {
+                $tokenList->expected($label);
+            }
         }
 
         return new LoopStatement($statements, $label);
@@ -221,10 +214,6 @@ class CompoundStatementParser
      *     statement_list
      *     UNTIL search_condition
      * END REPEAT [end_label]
-     *
-     * @param TokenList $tokenList
-     * @param string|null $label
-     * @return RepeatStatement
      */
     private function parseRepeat(TokenList $tokenList, ?string $label): RepeatStatement
     {
@@ -233,9 +222,11 @@ class CompoundStatementParser
         $condition = $this->expressionParser->parseExpression($tokenList);
         $tokenList->consumeKeywords(Keyword::END, Keyword::REPEAT);
 
-        $endLabel = $tokenList->mayConsumeName();
-        if ($endLabel !== null && $endLabel !== $label) {
-            $tokenList->expected($label);
+        if ($label !== null) {
+            $endLabel = $tokenList->mayConsumeName();
+            if ($endLabel !== null && $endLabel !== $label) {
+                $tokenList->expected($label);
+            }
         }
 
         return new RepeatStatement($statements, $condition, $label);
@@ -245,10 +236,6 @@ class CompoundStatementParser
      * [begin_label:] WHILE search_condition DO
      *     statement_list
      * END WHILE [end_label]
-     *
-     * @param TokenList $tokenList
-     * @param string|null $label
-     * @return WhileStatement
      */
     private function parseWhile(TokenList $tokenList, ?string $label): WhileStatement
     {
@@ -257,9 +244,11 @@ class CompoundStatementParser
         $statements = $this->parseStatementList($tokenList);
         $tokenList->consumeKeywords(Keyword::END, Keyword::REPEAT);
 
-        $endLabel = $tokenList->mayConsumeName();
-        if ($endLabel !== null && $endLabel !== $label) {
-            $tokenList->expected($label);
+        if ($label !== null) {
+            $endLabel = $tokenList->mayConsumeName();
+            if ($endLabel !== null && $endLabel !== $label) {
+                $tokenList->expected($label);
+            }
         }
 
         return new WhileStatement($statements, $condition, $label);
@@ -277,9 +266,6 @@ class CompoundStatementParser
      *     [WHEN search_condition THEN statement_list] ...
      *     [ELSE statement_list]
      * END CASE
-     *
-     * @param TokenList $tokenList
-     * @return CaseStatement
      */
     private function parseCase(TokenList $tokenList): CaseStatement
     {
@@ -308,9 +294,6 @@ class CompoundStatementParser
      *     [ELSEIF search_condition THEN statement_list] ...
      *     [ELSE statement_list]
      * END IF
-     *
-     * @param TokenList $tokenList
-     * @return IfStatement
      */
     private function parseIf(TokenList $tokenList): IfStatement
     {
@@ -363,7 +346,6 @@ class CompoundStatementParser
      *   | NOT FOUND
      *   | SQLEXCEPTION
      *
-     * @param TokenList $tokenList
      * @return DeclareStatement|DeclareCursorStatement|DeclareConditionStatement|DeclareHandlerStatement
      */
     private function parseDeclare(TokenList $tokenList)
@@ -444,9 +426,6 @@ class CompoundStatementParser
 
     /**
      * FETCH [[NEXT] FROM] cursor_name INTO var_name [, var_name] ...
-     *
-     * @param TokenList $tokenList
-     * @return FetchStatement
      */
     private function parseFetch(TokenList $tokenList): FetchStatement
     {
@@ -502,9 +481,6 @@ class CompoundStatementParser
      *
      * condition_number, target:
      *     (see following discussion)
-     *
-     * @param TokenList $tokenList
-     * @return GetDiagnosticsStatement
      */
     private function parseGetDiagnostics(TokenList $tokenList): GetDiagnosticsStatement
     {
@@ -512,8 +488,9 @@ class CompoundStatementParser
         $area = $tokenList->mayConsumeKeywordEnum(DiagnosticsArea::class);
         $tokenList->consumeKeyword(Keyword::DIAGNOSTICS);
 
-        $statementItems = $conditionItems = null;
+        $statementItems = $conditionItems = $conditionNumber = null;
         if ($tokenList->mayConsumeKeyword(Keyword::CONDITION)) {
+            $conditionNumber = $tokenList->consumeInt();
             $conditionItems = [];
             do {
                 $target = $tokenList->consumeName();
@@ -533,7 +510,7 @@ class CompoundStatementParser
             } while ($tokenList->mayConsumeComma());
         }
 
-        return new GetDiagnosticsStatement($conditionItems, $statementItems, $area);
+        return new GetDiagnosticsStatement($area, $statementItems, $conditionNumber, $conditionItems);
     }
 
     /**
@@ -576,20 +553,18 @@ class CompoundStatementParser
      *  - system variables, or
      *  - literals. A character literal may include a _charset introducer.
      *
-     * @param TokenList $tokenList
-     * @param string $keyword
      * @return SignalStatement|ResignalStatement
      */
     private function parseSignalResignal(TokenList $tokenList, string $keyword)
     {
         $condition = $tokenList->mayConsumeInt();
-        if ($condition === null && $tokenList->consumeKeyword(Keyword::SQLSTATE)) {
+        if ($condition === null) {
+            $tokenList->consumeKeyword(Keyword::SQLSTATE);
             $tokenList->mayConsumeKeyword(Keyword::VALUE);
             $condition = $tokenList->consumeNameOrString();
         }
-        $items = null;
+        $items = [];
         if ($tokenList->mayConsumeKeyword(Keyword::SET)) {
-            $items = [];
             do {
                 $item = $tokenList->consumeKeywordEnum(ConditionInformationItem::class)->getValue();
                 $tokenList->consumeOperator(Operator::EQUAL);

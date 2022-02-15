@@ -26,7 +26,6 @@ class CheckTableCommand implements DalTablesCommand
 
     /**
      * @param QualifiedName[] $names
-     * @param CheckTableOption|null $option
      */
     public function __construct(array $names, ?CheckTableOption $option = null)
     {

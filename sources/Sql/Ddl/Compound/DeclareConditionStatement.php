@@ -26,7 +26,6 @@ class DeclareConditionStatement implements CompoundStatementItem
     private $value;
 
     /**
-     * @param string $name
      * @param int|string $value
      */
     public function __construct(string $name, $value)

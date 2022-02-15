@@ -30,7 +30,6 @@ class DeclareStatement implements CompoundStatementItem
 
     /**
      * @param string[] $names
-     * @param DataType $type
      * @param mixed|null $default
      */
     public function __construct(array $names, DataType $type, $default = null)

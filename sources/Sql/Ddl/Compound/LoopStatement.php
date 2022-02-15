@@ -18,7 +18,6 @@ class LoopStatement implements CompoundStatementItem
 
     /**
      * @param Statement[] $statements
-     * @param string|null $label
      */
     public function __construct(array $statements, ?string $label)
     {

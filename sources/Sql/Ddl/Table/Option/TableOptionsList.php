@@ -72,7 +72,6 @@ class TableOptionsList
     }
 
     /**
-     * @param string $option
      * @return mixed|null $option
      */
     public function get(string $option)
@@ -83,7 +82,6 @@ class TableOptionsList
     }
 
     /**
-     * @param string $option
      * @param mixed|null $value
      */
     public function set(string $option, $value): void
@@ -95,7 +93,6 @@ class TableOptionsList
     }
 
     /**
-     * @param string $option
      * @param mixed $value
      */
     public function setDefault(string $option, $value): void

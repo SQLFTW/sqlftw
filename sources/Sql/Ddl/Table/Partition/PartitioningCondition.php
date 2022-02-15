@@ -31,10 +31,7 @@ class PartitioningCondition implements SqlSerializable
     private $algorithm;
 
     /**
-     * @param PartitioningConditionType $type
-     * @param ExpressionNode|null $expression
      * @param string[]|null $columns
-     * @param int|null $algorithm
      */
     public function __construct(
         PartitioningConditionType $type,

@@ -28,8 +28,6 @@ class WithExpression implements SqlSerializable
     private $columns;
 
     /**
-     * @param SelectCommand $query
-     * @param string $name
      * @param string[]|null $columns
      */
     public function __construct(SelectCommand $query, string $name, ?array $columns = null)

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql;
 use Dogma\Enum\StringEnum;
 use SqlFtw\Formatter\Formatter;
 
-class SqlEnum extends StringEnum implements SqlSerializable
+abstract class SqlEnum extends StringEnum implements SqlSerializable
 {
 
     public function serialize(Formatter $formatter): string
@@ -20,11 +20,7 @@ class SqlEnum extends StringEnum implements SqlSerializable
         return $this->getValue();
     }
 
-    /**
-     * @param string ...$values
-     * @return bool
-     */
-    public function equalsAny(...$values): bool
+    public function equalsAny(string ...$values): bool
     {
         foreach ($values as $value) {
             if ($this->equalsValue($value)) {

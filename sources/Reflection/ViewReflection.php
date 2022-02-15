@@ -10,14 +10,11 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewCommand;
 use SqlFtw\Sql\Ddl\View\ViewCommand;
 use SqlFtw\Sql\QualifiedName;
-use function end;
 
 class ViewReflection
 {
@@ -26,34 +23,24 @@ class ViewReflection
     /** @var QualifiedName */
     private $name;
 
-    /** @var ViewCommand[] */
-    private $commands = [];
-
     /** @var ColumnReflection[] */
     private $columns = [];
 
-    public function __construct(QualifiedName $name, CreateViewCommand $createViewCommand)
+    public function __construct(QualifiedName $name, CreateViewCommand $command)
     {
         $this->name = $name;
-        $this->commands[] = $createViewCommand;
+        // todo
     }
 
-    public function alter(AlterViewCommand $alterViewCommand): self
+    public function apply(ViewCommand $command): self
     {
         $that = clone $this;
-        $that->commands[] = $alterViewCommand;
-
-        // todo columns
-        $that->columns = [];
-
-        return $that;
-    }
-
-    public function drop(DropViewCommand $dropViewCommand): self
-    {
-        $that = clone $this;
-        $that->commands[] = $dropViewCommand;
-        $that->columns = [];
+        if ($command instanceof AlterViewCommand) {
+            // todo: alter gives complete list of columns, so we should make a diff to not-recreate not changed ones
+            $that->columns = [];
+        }// elseif ($command instanceof DropViewCommand) {
+            // todo
+        //}
 
         return $that;
     }
@@ -64,34 +51,11 @@ class ViewReflection
     }
 
     /**
-     * @return ViewCommand[]
-     */
-    public function getCommands(): array
-    {
-        return $this->commands;
-    }
-
-    /**
      * @return ColumnReflection[]
      */
     public function getColumns(): array
     {
         return $this->columns;
-    }
-
-    public function wasDropped(): bool
-    {
-        return end($this->commands) instanceof DropViewCommand;
-    }
-
-    public function wasRenamed(): bool
-    {
-        return end($this->commands) instanceof RenameTableCommand;
-    }
-
-    public function getLastCommand(): Command
-    {
-        return end($this->commands);
     }
 
 }

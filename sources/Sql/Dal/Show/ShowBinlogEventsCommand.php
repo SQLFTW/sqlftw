@@ -32,7 +32,7 @@ class ShowBinlogEventsCommand implements ShowCommand
         $this->offset = $offset;
     }
 
-    public function getLogName(): string
+    public function getLogName(): ?string
     {
         return $this->logName;
     }

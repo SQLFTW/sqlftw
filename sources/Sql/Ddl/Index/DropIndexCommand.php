@@ -46,7 +46,7 @@ class DropIndexCommand implements IndexCommand, DdlTableCommand
 
     public function getName(): QualifiedName
     {
-        return new QualifiedName($this->table->getSchema(), $this->name);
+        return new QualifiedName($this->name, $this->table->getSchema());
     }
 
     public function getTable(): QualifiedName

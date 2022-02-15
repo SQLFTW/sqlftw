@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\NotImplementedException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Platform\Mode;
@@ -23,6 +22,7 @@ use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CaseExpression;
 use SqlFtw\Sql\Expression\CollateExpression;
 use SqlFtw\Sql\Expression\CurlyExpression;
+use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
@@ -34,6 +34,7 @@ use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
 use SqlFtw\Sql\Expression\NullLiteral;
+use SqlFtw\Sql\Expression\OnOffLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Placeholder;
@@ -90,9 +91,6 @@ class ExpressionParser
      *   | ! expr
      *   | boolean_primary IS [NOT] {TRUE | FALSE | UNKNOWN}
      *   | boolean_primary
-     *
-     * @param TokenList $tokenList
-     * @return ExpressionNode
      */
     public function parseExpression(TokenList $tokenList): ExpressionNode
     {
@@ -131,7 +129,6 @@ class ExpressionParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return ExpressionNode[]
      */
     private function parseExpressionList(TokenList $tokenList): array
@@ -153,9 +150,6 @@ class ExpressionParser
      *   | predicate
      *
      * comparison_operator: = | >= | > | <= | < | <> | !=
-     *
-     * @param TokenList $tokenList
-     * @return ExpressionNode
      */
     private function parseBooleanPrimary(TokenList $tokenList): ExpressionNode
     {
@@ -205,9 +199,6 @@ class ExpressionParser
      *   | bit_expr [NOT] LIKE simple_expr [ESCAPE simple_expr]
      *   | bit_expr [NOT] REGEXP bit_expr
      *   | bit_expr
-     *
-     * @param TokenList $tokenList
-     * @return ExpressionNode
      */
     private function parsePredicate(TokenList $tokenList): ExpressionNode
     {
@@ -275,9 +266,6 @@ class ExpressionParser
      *   | bit_expr + interval_expr
      *   | bit_expr - interval_expr
      *   | simple_expr
-     *
-     * @param TokenList $tokenList
-     * @return ExpressionNode
      */
     private function parseBitExpression(TokenList $tokenList): ExpressionNode
     {
@@ -337,13 +325,9 @@ class ExpressionParser
      *
      *   | simple_expr COLLATE collation_name
      *   | simple_expr || simple_expr
-     *
-     * @param TokenList $tokenList
-     * @return ExpressionNode
      */
     private function parseSimpleExpression(TokenList $tokenList): ExpressionNode
     {
-        $expression = null;
         $operator = $tokenList->mayConsumeAnyOperator(
             Operator::PLUS,
             Operator::MINUS,
@@ -489,9 +473,6 @@ class ExpressionParser
      * CASE value WHEN [compare_value] THEN result [WHEN [compare_value] THEN result ...] [ELSE result] END
      *
      * CASE WHEN [condition] THEN result [WHEN [condition] THEN result ...] [ELSE result] END
-     *
-     * @param TokenList $tokenList
-     * @return CaseExpression
      */
     private function parseCase(TokenList $tokenList): CaseExpression
     {
@@ -527,9 +508,6 @@ class ExpressionParser
      *   | IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION
      *   | IN BOOLEAN MODE
      *   | WITH QUERY EXPANSION
-     *
-     * @param TokenList $tokenList
-     * @return MatchExpression
      */
     private function parseMatch(TokenList $tokenList): MatchExpression
     {
@@ -592,7 +570,6 @@ class ExpressionParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return string|int|float|bool|Literal
      */
     public function parseLiteralValue(TokenList $tokenList)
@@ -610,26 +587,31 @@ class ExpressionParser
 
             return new HexadecimalLiteral($value);
         } elseif ($token->type & TokenType::KEYWORD) {
-            if ($token->value === 'NULL') {
+            if ($token->value === Keyword::NULL) {
                 return new NullLiteral();
-            } elseif ($token->value === 'TRUE') {
+            } elseif ($token->value === Keyword::TRUE) {
                 return true;
-            } elseif ($token->value === 'FALSE') {
+            } elseif ($token->value === Keyword::FALSE) {
                 return false;
+            } elseif ($token->value === Keyword::DEFAULT) {
+                return new DefaultLiteral();
+            } elseif ($token->value === Keyword::ON || $token->value === Keyword::OFF) {
+                return new OnOffLiteral($token->value);
             } else {
-                // todo: DEFAULT, ON, OFF ?
-                throw new NotImplementedException('DEFAULT, ON, OFF literals not implemented.');
+                $tokenList->expectedAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF);
             }
-        }
+        } else {
+            /** @var string|int|float $value */
+            $value = $token->value;
 
-        return $token->value;
+            return $value;
+        }
     }
 
     /**
      * order_by:
      *     [ORDER BY {col_name | expr | position} [ASC | DESC], ...]
      *
-     * @param TokenList $tokenList
      * @return OrderByExpression[]
      */
     public function parseOrderBy(TokenList $tokenList): array
@@ -651,7 +633,6 @@ class ExpressionParser
      * limit:
      *     [LIMIT {[offset,] row_count | row_count OFFSET offset}]
      *
-     * @param TokenList $tokenList
      * @return int[]|null[]|array{0: int, 1: int|null} ($limit, $offset)
      */
     public function parseLimitAndOffset(TokenList $tokenList): array
@@ -671,9 +652,6 @@ class ExpressionParser
     /**
      * expression:
      *     timestamp [+ INTERVAL interval] ...
-     *
-     * @param TokenList $tokenList
-     * @return TimeExpression
      */
     public function parseTimeExpression(TokenList $tokenList): TimeExpression
     {
@@ -734,9 +712,6 @@ class ExpressionParser
      *     quantity {YEAR | QUARTER | MONTH | DAY | HOUR | MINUTE |
      *          WEEK | SECOND | YEAR_MONTH | DAY_HOUR | DAY_MINUTE |
      *          DAY_SECOND | HOUR_MINUTE | HOUR_SECOND | MINUTE_SECOND}
-     *
-     * @param TokenList $tokenList
-     * @return TimeInterval
      */
     public function parseInterval(TokenList $tokenList): TimeInterval
     {

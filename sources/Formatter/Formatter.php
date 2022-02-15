@@ -64,8 +64,6 @@ class Formatter
 
     /**
      * @param string[] $names
-     * @param string $separator
-     * @return string
      */
     public function formatNamesList(array $names, string $separator = ', '): string
     {
@@ -76,7 +74,6 @@ class Formatter
 
     /**
      * @param mixed $value
-     * @return string
      */
     public function formatValue($value): string
     {
@@ -105,8 +102,6 @@ class Formatter
 
     /**
      * @param mixed[] $values
-     * @param string $separator
-     * @return string
      */
     public function formatValuesList(array $values, string $separator = ', '): string
     {
@@ -123,8 +118,6 @@ class Formatter
 
     /**
      * @param string[] $strings
-     * @param string $separator
-     * @return string
      */
     public function formatStringList(array $strings, string $separator = ', '): string
     {
@@ -135,8 +128,6 @@ class Formatter
 
     /**
      * @param SqlSerializable[] $serializables
-     * @param string $separator
-     * @return string
      */
     public function formatSerializablesList(array $serializables, string $separator = ', '): string
     {
@@ -147,7 +138,6 @@ class Formatter
 
     /**
      * @param Date|DateTimeInterface $date
-     * @return string
      */
     public function formatDate($date): string
     {
@@ -156,7 +146,6 @@ class Formatter
 
     /**
      * @param Time|DateTimeInterface $time
-     * @return string
      */
     public function formatTime($time): string
     {

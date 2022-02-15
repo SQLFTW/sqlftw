@@ -34,10 +34,8 @@ class TableIndexList implements SqlSerializable
     private $ignoreLeaves;
 
     /**
-     * @param QualifiedName $table
      * @param string[]|null $indexes
      * @param string[]|true|null $partitions
-     * @param bool $ignoreLeaves
      */
     public function __construct(
         QualifiedName $table,
@@ -45,7 +43,9 @@ class TableIndexList implements SqlSerializable
         $partitions = null,
         bool $ignoreLeaves = false
     ) {
-        Check::itemsOfType($indexes, Type::STRING, 1);
+        if ($indexes !== null) {
+            Check::itemsOfType($indexes, Type::STRING, 1);
+        }
         if ($partitions !== null && $partitions !== true) {
             Check::itemsOfType($partitions, Type::STRING);
         }

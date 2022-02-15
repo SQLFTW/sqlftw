@@ -34,11 +34,8 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     protected $ignore;
 
     /**
-     * @param QualifiedName $table
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param InsertPriority|null $priority
-     * @param bool $ignore
      */
     public function __construct(
         QualifiedName $table,

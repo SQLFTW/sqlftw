@@ -10,13 +10,11 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\DropFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\StoredFunctionCommand;
 use SqlFtw\Sql\QualifiedName;
-use function end;
 
 class FunctionReflection
 {
@@ -25,31 +23,20 @@ class FunctionReflection
     /** @var QualifiedName */
     private $name;
 
-    /** @var StoredFunctionCommand[] */
-    private $commands = [];
-
     public function __construct(QualifiedName $name, CreateFunctionCommand $createFunctionCommand)
     {
         $this->name = $name;
-        $this->commands[] = $createFunctionCommand;
+        // todo
     }
 
-    public function alter(AlterFunctionCommand $alterFunctionCommand): self
+    public function apply(StoredFunctionCommand $command): self
     {
         $that = clone $this;
-        $that->commands[] = $alterFunctionCommand;
-
-        // todo
-
-        return $that;
-    }
-
-    public function drop(DropFunctionCommand $dropFunctionCommand): self
-    {
-        $that = clone $this;
-        $that->commands[] = $dropFunctionCommand;
-
-        // todo
+        if ($command instanceof AlterFunctionCommand) {
+            // todo
+        } elseif ($command instanceof DropFunctionCommand) {
+            // todo
+        }
 
         return $that;
     }
@@ -57,29 +44,6 @@ class FunctionReflection
     public function getName(): QualifiedName
     {
         return $this->name;
-    }
-
-    /**
-     * @return StoredFunctionCommand[]
-     */
-    public function getCommands(): array
-    {
-        return $this->commands;
-    }
-
-    public function wasDropped(): bool
-    {
-        return end($this->commands) instanceof DropFunctionCommand;
-    }
-
-    public function wasRenamed(): bool
-    {
-        return false;
-    }
-
-    public function getLastCommand(): Command
-    {
-        return end($this->commands);
     }
 
 }

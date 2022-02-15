@@ -31,7 +31,6 @@ class GrantRoleCommand implements UserCommand
     /**
      * @param string[] $roles
      * @param UserName[] $users
-     * @param bool $withAdminOption
      */
     public function __construct(array $roles, array $users, bool $withAdminOption = false)
     {

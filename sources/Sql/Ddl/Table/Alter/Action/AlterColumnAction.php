@@ -24,7 +24,6 @@ class AlterColumnAction implements ColumnAction
     private $default;
 
     /**
-     * @param string $name
      * @param string|int|float|bool|Literal|null $default
      */
     public function __construct(string $name, $default)

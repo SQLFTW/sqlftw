@@ -16,6 +16,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\DropEventCommand;
+use SqlFtw\Sql\Ddl\Event\EventDefinition;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
 use SqlFtw\Sql\Expression\Operator;
@@ -48,9 +49,6 @@ class EventCommandsParser
      *   [ENABLE | DISABLE | DISABLE ON SLAVE]
      *   [COMMENT 'comment']
      *   [DO event_body]
-     *
-     * @param TokenList $tokenList
-     * @return AlterEventCommand
      */
     public function parseAlterEvent(TokenList $tokenList): AlterEventCommand
     {
@@ -103,14 +101,11 @@ class EventCommandsParser
      *     [ENABLE | DISABLE | DISABLE ON SLAVE]
      *     [COMMENT 'comment']
      *     DO event_body
-     *
-     * @param TokenList $tokenList
-     * @return CreateEventCommand
      */
     public function parseCreateEvent(TokenList $tokenList): CreateEventCommand
     {
         $tokenList->consumeKeyword(Keyword::CREATE);
-        $definer = $schedule = $preserve = $state = $comment = $body = null;
+        $definer = $preserve = $state = $comment = null;
 
         if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
             $tokenList->mayConsumeOperator(Operator::EQUAL);
@@ -142,7 +137,9 @@ class EventCommandsParser
         $body = $this->doCommandsParser->parseDo($tokenList);
         $tokenList->expectEnd();
 
-        return new CreateEventCommand($name, $schedule, $body, $definer, $state, $preserve, $comment, $ifNotExists);
+        $event = new EventDefinition($name, $schedule, $body, $definer, $state, $preserve, $comment);
+
+        return new CreateEventCommand($event, $ifNotExists);
     }
 
     /**
@@ -151,18 +148,15 @@ class EventCommandsParser
      *   | EVERY interval
      *     [STARTS timestamp [+ INTERVAL interval] ...]
      *     [ENDS timestamp [+ INTERVAL interval] ...]
-     *
-     * @param TokenList $tokenList
-     * @return EventSchedule
      */
     private function parseSchedule(TokenList $tokenList): EventSchedule
     {
-        $every = $at = $startTime = $endTime = null;
+        $at = $every = $startTime = $endTime = null;
 
-        if ($tokenList->mayConsumeKeyword(Keyword::EVERY)) {
-            $every = $this->expressionParser->parseInterval($tokenList);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::AT)) {
+        if ($tokenList->mayConsumeKeyword(Keyword::AT)) {
             $at = $this->expressionParser->parseTimeExpression($tokenList);
+        } elseif ($tokenList->mayConsumeKeyword(Keyword::EVERY)) {
+            $every = $this->expressionParser->parseInterval($tokenList);
         } else {
             $tokenList->expectedAnyKeyword(Keyword::ON, Keyword::EVERY);
         }
@@ -174,14 +168,11 @@ class EventCommandsParser
             $endTime = $this->expressionParser->parseTimeExpression($tokenList);
         }
 
-        return new EventSchedule($every, $at, $startTime, $endTime);
+        return new EventSchedule($at, $every, $startTime, $endTime);
     }
 
     /**
      * DROP EVENT [IF EXISTS] event_name
-     *
-     * @param TokenList $tokenList
-     * @return DropEventCommand
      */
     public function parseDropEvent(TokenList $tokenList): DropEventCommand
     {

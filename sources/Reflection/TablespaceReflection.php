@@ -11,27 +11,13 @@ namespace SqlFtw\Reflection;
 
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\CreateTablespaceCommand;
-use SqlFtw\Sql\Ddl\Tablespace\DropTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\TablespaceCommand;
 
 class TablespaceReflection
 {
     use StrictBehaviorMixin;
-
-    /** @var DatabaseReflection */
-    private $database;
-
-    /** @var bool */
-    private $trackHistory;
-
-    /** @var self|null */
-    private $previous;
-
-    /** @var TablespaceCommand */
-    private $lastCommand;
 
     /** @var string */
     private $name;
@@ -42,41 +28,23 @@ class TablespaceReflection
     /** @var bool */
     private $undo;
 
-    /** @var bool */
-    private $dropped = false;
-
-    public function __construct(
-        DatabaseReflection $database,
-        CreateTablespaceCommand $createCommand,
-        bool $trackHistory
-    )
+    public function __construct(CreateTablespaceCommand $command)
     {
-        $this->database = $database;
-        $this->trackHistory = $trackHistory;
-        $this->lastCommand = $createCommand;
-        $this->name = $createCommand->getName();
-        $this->options = $createCommand->getOptions();
-        $this->undo = $createCommand->isUndo();
+        $this->name = $command->getName();
+        $this->options = $command->getOptions();
+        $this->undo = $command->isUndo();
     }
 
     public function apply(TablespaceCommand $command): self
     {
-        if ($command instanceof CreateTablespaceCommand) {
-            // todo
-        } elseif ($command instanceof AlterTablespaceCommand) {
-            // todo
-        } elseif ($command instanceof DropTablespaceCommand) {
+        $that = clone $this;
+        if ($command instanceof AlterTablespaceCommand) {
             // todo
         } else {
             throw new ShouldNotHappenException('Unknown action.');
         }
 
-        return $this;
-    }
-
-    public function getDatabase(): DatabaseReflection
-    {
-        return $this->database;
+        return $that;
     }
 
     public function getName(): string
@@ -92,21 +60,6 @@ class TablespaceReflection
     public function isUndo(): bool
     {
         return $this->undo;
-    }
-
-    public function wasDropped(): bool
-    {
-        return $this->dropped;
-    }
-
-    public function wasRenamed(): bool
-    {
-        return false;
-    }
-
-    public function getLastCommand(): Command
-    {
-        return $this->lastCommand;
     }
 
 }

@@ -22,8 +22,6 @@ class WhileStatement implements CompoundStatementItem
 
     /**
      * @param Statement[] $statements
-     * @param ExpressionNode $condition
-     * @param string|null $label
      */
     public function __construct(array $statements, ExpressionNode $condition, ?string $label)
     {

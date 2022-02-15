@@ -25,13 +25,8 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
     private $onDuplicateKeyActions;
 
     /**
-     * @param QualifiedName $table
-     * @param SelectCommand $select
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param InsertPriority|null $priority
-     * @param bool $ignore
-     * @param OnDuplicateKeyActions|null $onDuplicateKeyActions
      */
     public function __construct(
         QualifiedName $table,

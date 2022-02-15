@@ -20,7 +20,7 @@ class ReferenceDefinition implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName|null */
+    /** @var QualifiedName */
     private $sourceTable;
 
     /** @var string[] */
@@ -36,11 +36,7 @@ class ReferenceDefinition implements SqlSerializable
     private $matchType;
 
     /**
-     * @param QualifiedName $sourceTable
      * @param string[] $sourceColumns
-     * @param ForeignKeyAction|null $onDelete
-     * @param ForeignKeyAction|null $onUpdate
-     * @param ForeignKeyMatchType|null $matchType
      */
     public function __construct(
         QualifiedName $sourceTable,

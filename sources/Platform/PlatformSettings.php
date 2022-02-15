@@ -23,7 +23,7 @@ class PlatformSettings
     /** @var string */
     private $delimiter;
 
-    /** @var Charset */
+    /** @var Charset|null */
     private $charset;
 
     /** @var Mode */

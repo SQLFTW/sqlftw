@@ -65,18 +65,6 @@ class TableReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var SchemaReflection */
-    private $schema;
-
-    /** @var bool */
-    private $trackHistory;
-
-    /** @var self|null */
-    private $previous;
-
-    /** @var DdlTableCommand|DdlTablesCommand */
-    private $lastCommand;
-
     /** @var QualifiedName */
     private $name;
 
@@ -107,33 +95,26 @@ class TableReflection
 
     // todo $tablespace
 
-    // todo remove after todos:
+    // todo remove after todo:
     // phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
 
-    public function __construct(
-        SchemaReflection $schema,
-        CreateTableCommand $createTableCommand,
-        bool $trackHistory = true
-    ) {
-        $this->schema = $schema;
-        $this->trackHistory = $trackHistory;
-        $this->lastCommand = $createTableCommand;
-        $this->name = $createTableCommand->getName()->coalesce($schema->getName());
+    public function __construct(string $schema, CreateTableCommand $command) {
+        $this->name = $command->getName()->coalesce($schema);
 
-        foreach ($createTableCommand->getItems() as $item) {
+        foreach ($command->getItems() as $item) {
             if ($item instanceof ColumnDefinition) {
                 $this->addColumn($item);
             } elseif ($item instanceof IndexDefinition) {
                 $this->addIndex($item);
             } elseif ($item instanceof ConstraintDefinition) {
                 $constraintType = $item->getType();
-                if ($constraintType->equals(ConstraintType::PRIMARY_KEY)) {
+                if ($constraintType->equalsValue(ConstraintType::PRIMARY_KEY)) {
                     $this->addIndex($item->getIndexDefinition());
-                } elseif ($constraintType->equals(ConstraintType::UNIQUE_KEY)) {
+                } elseif ($constraintType->equalsValue(ConstraintType::UNIQUE_KEY)) {
                     $this->addIndex($item->getIndexDefinition());
-                } elseif ($constraintType->equals(ConstraintType::FOREIGN_KEY)) {
+                } elseif ($constraintType->equalsValue(ConstraintType::FOREIGN_KEY)) {
                     $this->addForeignKey($item->getForeignKeyDefinition(), $item->getName());
-                } elseif ($constraintType->equals(ConstraintType::CHECK)) {
+                } elseif ($constraintType->equalsValue(ConstraintType::CHECK)) {
                     $this->addCheck($item->getCheckDefinition(), $item->getName());
                 }
             } elseif ($item instanceof ForeignKeyDefinition) {
@@ -143,8 +124,8 @@ class TableReflection
             }
         }
 
-        $this->options = $createTableCommand->getOptions() ?? new TableOptionsList([]);
-        $this->partitioning = new PartitioningReflection($this, $createTableCommand->getPartitioning());
+        $this->options = $command->getOptions() ?? new TableOptionsList([]);
+        $this->partitioning = new PartitioningReflection($this->name, $command->getPartitioning());
     }
 
     public function apply(Command $command): self
@@ -153,7 +134,6 @@ class TableReflection
             return $this->alter($command);
         } elseif ($command instanceof DropTableCommand) {
             $that = clone $this;
-            $that->lastCommand = $command;
 
             return $that;
         } elseif ($command instanceof RenameTableCommand) {
@@ -161,7 +141,6 @@ class TableReflection
         } elseif ($command instanceof CreateIndexCommand) {
             $that = clone $this;
             $that->addIndex($command->getIndex());
-            $that->previous = $this;
 
             return $that;
         } elseif ($command instanceof DropIndexCommand) {
@@ -174,7 +153,6 @@ class TableReflection
     private function alter(AlterTableCommand $alterTableCommand): self
     {
         $that = clone $this;
-        $that->lastCommand[] = $alterTableCommand;
 
         foreach ($alterTableCommand->getActions()->getActions() as $action) {
             if ($action instanceof AddColumnAction) {
@@ -189,16 +167,16 @@ class TableReflection
             } elseif ($action instanceof AddConstraintAction) {
                 $constraint = $action->getConstraint();
                 $constraintType = $constraint->getType();
-                if ($constraintType->equals(ConstraintType::PRIMARY_KEY)) {
+                if ($constraintType->equalsValue(ConstraintType::PRIMARY_KEY)) {
                     $that->addIndex($constraint->getIndexDefinition());
                     // MySQL ignores constraint name for indexes, no "constraint" is created, only index
-                } elseif ($constraintType->equals(ConstraintType::UNIQUE_KEY)) {
+                } elseif ($constraintType->equalsValue(ConstraintType::UNIQUE_KEY)) {
                     $that->addIndex($constraint->getIndexDefinition());
                     // MySQL ignores constraint name for indexes, no "constraint" is created, only index
-                } elseif ($constraintType->equals(ConstraintType::FOREIGN_KEY)) {
+                } elseif ($constraintType->equalsValue(ConstraintType::FOREIGN_KEY)) {
                     $that->addForeignKey($constraint->getForeignKeyDefinition(), $constraint->getName());
                     // MySQL ignores index name on foreign key, no index is created, only constraint
-                } elseif ($constraintType->equals(ConstraintType::CHECK)) {
+                } elseif ($constraintType->equalsValue(ConstraintType::CHECK)) {
                     $that->addCheck($constraint->getCheckDefinition(), $constraint->getName());
                 }
             } elseif ($action instanceof AddForeignKeyAction) {
@@ -213,26 +191,26 @@ class TableReflection
                 $name = $action->getName();
                 $check = $this->getCheck($name);
                 $checkDefinition = $check->getCheckDefinition()->duplicateWithEnforced($action->isEnforced());
-                $that->checks[$name] = new CheckReflection($that, $checkDefinition);
+                $that->checks[$name] = new CheckReflection($that->name, $checkDefinition);
             } elseif ($action instanceof AlterConstraintAction) {
                 $name = $action->getName();
                 $check = $this->getCheck($name);
                 $checkDefinition = $check->getCheckDefinition()->duplicateWithEnforced($action->isEnforced());
-                $that->checks[$name] = new CheckReflection($that, $checkDefinition);
+                $that->checks[$name] = new CheckReflection($that->name, $checkDefinition);
             } elseif ($action instanceof AlterColumnAction) {
                 $name = $action->getName();
                 $column = $this->getColumn($name);
                 $columnDefinition = $column->getColumnDefinition()->duplicateWithDefaultValue($action->getDefault());
-                $that->columns[$name] = new ColumnReflection($that, $columnDefinition);
+                $that->columns[$name] = new ColumnReflection($that->name, $columnDefinition);
             } elseif ($action instanceof AlterIndexAction) {
                 $name = $action->getName();
                 $index = $that->getIndex($name);
                 $indexDefinition = $index->getIndexDefinition()->duplicateWithVisibility($action->visible());
-                $that->indexes[$name] = new IndexReflection($that, $indexDefinition);
+                $that->indexes[$name] = new IndexReflection($that->name, $indexDefinition);
             } elseif ($action instanceof ChangeColumnAction) {
                 $name = $action->getOldName();
                 $that->getColumn($name);
-                $that->columns[$action->getColumn()->getName()] = new ColumnReflection($that, $action->getColumn());
+                $that->columns[$action->getColumn()->getName()] = new ColumnReflection($that->name, $action->getColumn());
                 // todo after, first?
             } elseif ($action instanceof ConvertToCharsetAction) {
                 // todo
@@ -240,7 +218,7 @@ class TableReflection
             } elseif ($action instanceof ModifyColumnAction) {
                 $name = $action->getColumn()->getName();
                 $that->getColumn($name);
-                $that->columns[$name] = new ColumnReflection($that, $action->getColumn());
+                $that->columns[$name] = new ColumnReflection($that->name, $action->getColumn());
                 // todo after, first?
             } elseif ($action instanceof RenameIndexAction) {
                 $name = $action->getOldName();
@@ -259,7 +237,7 @@ class TableReflection
                 } elseif (isset($this->checks[$name])) {
                     $this->removeCheck($name);
                 } else {
-                    throw new CheckDoesNotExistException($name, $this->name);
+                    throw new CheckNotFoundException($name, $this->name);
                 }
             } elseif ($action instanceof DropColumnAction) {
                 $this->removeColumn($action->getName());
@@ -308,12 +286,10 @@ class TableReflection
 
     /**
      * @param RenameTableCommand|AlterTableCommand $tableCommand
-     * @return TableReflection
      */
     public function moveByRenaming($tableCommand): self
     {
         $that = clone $this;
-        $that->lastCommand[] = $tableCommand;
         $that->columns = $that->indexes = $that->foreignKeys = [];
         $that->options = new TableOptionsList([]);
         $that->partitioning = null;
@@ -324,7 +300,6 @@ class TableReflection
     public function drop(DropTableCommand $dropTableCommand): self
     {
         $that = clone $this;
-        $that->lastCommand[] = $dropTableCommand;
         $that->columns = $that->indexes = $that->foreignKeys = [];
         $that->options = new TableOptionsList([]);
         $that->partitioning = null;
@@ -335,7 +310,6 @@ class TableReflection
     public function createIndex(CreateIndexCommand $createIndexCommand): self
     {
         $that = clone $this;
-        $that->lastCommand[] = $createIndexCommand;
         $that->addIndex($createIndexCommand->getIndex());
 
         return $that;
@@ -344,7 +318,6 @@ class TableReflection
     public function dropIndex(DropIndexCommand $dropIndexCommand): self
     {
         $that = clone $this;
-        $that->lastCommand[] = $dropIndexCommand;
         $name = $dropIndexCommand->getName();
         $that->removeIndex($name->getName());
 
@@ -401,7 +374,7 @@ class TableReflection
 
         $check = $column->getCheck();
         if ($check !== null) {
-            $this->addCheck($check, null, $columnReflection);
+            $this->addCheck($check, null, $columnReflection->getName());
         }
     }
 
@@ -413,7 +386,7 @@ class TableReflection
         return $column;
     }
 
-    private function addIndex(IndexDefinition $index, ?ColumnReflection $column = null): void
+    private function addIndex(IndexDefinition $index, ?string $columnName = null): void
     {
         $name = $index->getName();
         if ($name === null) {
@@ -426,7 +399,7 @@ class TableReflection
             }
         }
 
-        $this->indexes[$name] = new IndexReflection($this, $index, $column);
+        $this->indexes[$name] = new IndexReflection($this->name, $index, $columnName);
     }
 
     private function removeIndex(?string $name): IndexReflection
@@ -461,7 +434,7 @@ class TableReflection
         return $foreignKey;
     }
 
-    private function addCheck(CheckDefinition $check, ?string $name = null, ?ColumnReflection $column = null): void
+    private function addCheck(CheckDefinition $check, ?string $name = null, ?string $columnName = null): void
     {
         if ($name === null) {
             $name = $this->schema->getPlatform()->getNamingStrategy()->createCheckName($this, []);
@@ -472,7 +445,7 @@ class TableReflection
             }
         }
 
-        $this->checks[$name] = new CheckReflection($this, $check, $column);
+        $this->checks[$name] = new CheckReflection($this->name, $check, $columnName);
     }
 
     private function removeCheck(string $name): CheckReflection
@@ -484,9 +457,7 @@ class TableReflection
     }
 
     /**
-     * @param TableOptionsList $old
      * @param TableOption[] $newOptions
-     * @return TableOptionsList
      */
     private function updateOptions(TableOptionsList $old, array $newOptions): TableOptionsList
     {
@@ -517,12 +488,14 @@ class TableReflection
         return end($this->lastCommand) instanceof DropTableCommand;
     }
 
-    public function wasRenamed(): bool
+    public function wasRenamed(string $originalName): bool
     {
-        $command = end($this->lastCommand);
+        if ($this->name->getName() === $originalName) {
+            return false;
+        }
 
-        return $command instanceof RenameTableCommand
-            || ($command instanceof AlterTableCommand && $command->getActions()->filter(RenameToAction::class) !== []);
+        return $this->lastCommand instanceof RenameTableCommand
+            || ($this->lastCommand instanceof AlterTableCommand && $this->lastCommand->getActions()->filter(RenameToAction::class) !== []);
     }
 
     public function getLastCommand(): Command
@@ -574,7 +547,7 @@ class TableReflection
     {
         $index = $this->indexes[$name] ?? null;
         if ($index === null) {
-            throw new IndexDoesNotExistException($name, $this->name->getName());
+            throw new IndexNotFoundException($name, $this->name);
         }
 
         return $index;
@@ -597,7 +570,7 @@ class TableReflection
     {
         $foreignKey = $this->foreignKeys[$name] ?? null;
         if ($foreignKey === null) {
-            throw new ForeignKeyDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
+            throw new ForeignKeyNotFoundException($name, $this->name);
         }
 
         return $foreignKey;
@@ -620,7 +593,7 @@ class TableReflection
     {
         $check = $this->checks[$name] ?? null;
         if ($check === null) {
-            throw new CheckDoesNotExistException($name, $this->name->getName(), $this->name->getSchema());
+            throw new CheckNotFoundException($name, $this->name);
         }
 
         return $check;
@@ -643,7 +616,7 @@ class TableReflection
     {
         $trigger = $this->triggers[$name] ?? null;
         if ($trigger === null) {
-            throw new TriggerDoesNotExistException($name, $this->name->getSchema());
+            throw new TriggerNotFoundException(new QualifiedName($name, $this->name->getSchema()));
         }
 
         return $trigger;

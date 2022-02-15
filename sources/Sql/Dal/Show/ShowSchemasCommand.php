@@ -29,7 +29,7 @@ class ShowSchemasCommand implements ShowCommand
         $this->where = $where;
     }
 
-    public function getLike(): string
+    public function getLike(): ?string
     {
         return $this->like;
     }

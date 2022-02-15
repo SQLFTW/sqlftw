@@ -11,26 +11,32 @@ namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
+use SqlFtw\Sql\QualifiedName;
 
 class ColumnReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var TableReflection */
-    private $table;
+    /** @var QualifiedName */
+    private $tableName;
 
     /** @var ColumnDefinition */
     private $columnDefinition;
 
-    public function __construct(TableReflection $table, ColumnDefinition $columnDefinition)
+    public function __construct(QualifiedName $table, ColumnDefinition $columnDefinition)
     {
-        $this->table = $table;
+        $this->tableName = $table;
         $this->columnDefinition = $columnDefinition;
     }
 
-    public function getTable(): TableReflection
+    public function getTableName(): QualifiedName
     {
-        return $this->table;
+        return $this->tableName;
+    }
+
+    public function getName(): string
+    {
+        return $this->columnDefinition->getName();
     }
 
     public function getColumnDefinition(): ColumnDefinition

@@ -10,6 +10,8 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use DateInterval;
+use Dogma\Check;
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
@@ -21,11 +23,11 @@ class EventSchedule implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var TimeInterval|null */
-    private $interval;
-
     /** @var TimeExpression|null */
     private $time;
+
+    /** @var TimeInterval|null */
+    private $interval;
 
     /** @var TimeExpression|null */
     private $startTime;
@@ -34,17 +36,16 @@ class EventSchedule implements SqlSerializable
     private $endTime;
 
     /**
-     * @param TimeInterval|DateInterval|DateTimeSpan $interval
-     * @param TimeExpression|null $time
-     * @param TimeExpression|null $startTime
-     * @param TimeExpression|null $endTime
+     * @param TimeInterval|DateInterval|DateTimeSpan|null $interval
      */
     public function __construct(
-        $interval,
-        ?TimeExpression $time = null,
+        ?TimeExpression $time,
+        $interval = null,
         ?TimeExpression $startTime = null,
         ?TimeExpression $endTime = null
     ) {
+        Check::oneOf($time, $interval);
+
         if ($interval !== null && !$interval instanceof TimeInterval) {
             $interval = TimeInterval::create($interval);
         }
@@ -57,11 +58,14 @@ class EventSchedule implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        if ($this->interval !== null) {
+        if ($this->time !== null) {
+            $result = 'AT ' . $this->time->serialize($formatter);
+        } elseif ($this->interval !== null) {
             $result = 'EVERY ' . $this->interval->serialize($formatter);
         } else {
-            $result = 'AT ' . $this->time->serialize($formatter);
+            throw new ShouldNotHappenException('Either time or interval must be set.');
         }
+
         if ($this->startTime !== null) {
             $result .= ' STARTS ' . $this->startTime->serialize($formatter);
         }

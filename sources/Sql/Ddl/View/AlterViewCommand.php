@@ -43,13 +43,7 @@ class AlterViewCommand implements ViewCommand, SchemaObjectCommand
     private $checkOption;
 
     /**
-     * @param QualifiedName $name
-     * @param SelectCommand $body
      * @param string[]|null $columns
-     * @param UserExpression|null $definer
-     * @param SqlSecurity|null $security
-     * @param ViewAlgorithm|null $algorithm
-     * @param ViewCheckOption|null $checkOption
      */
     public function __construct(
         QualifiedName $name,

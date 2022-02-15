@@ -43,13 +43,9 @@ class GrantCommand implements UserCommand
 
     /**
      * @param UserPrivilege[] $privileges
-     * @param UserPrivilegeResource $resource
      * @param IdentifiedUser[] $users
-     * @param UserName|null $asUser
-     * @param RolesSpecification|null $withRole
      * @param UserTlsOption[]|null $tlsOptions
      * @param UserResourceOption[]|null $resourceOptions
-     * @param bool $withGrantOption
      */
     public function __construct(
         array $privileges,

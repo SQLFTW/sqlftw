@@ -15,6 +15,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 
 class CreateIndexCommand implements IndexCommand, DdlTableCommand
@@ -35,6 +36,13 @@ class CreateIndexCommand implements IndexCommand, DdlTableCommand
         ?AlterTableAlgorithm $algorithm = null,
         ?AlterTableLock $lock = null
     ) {
+        if ($index->getTable() === null) {
+            throw new InvalidDefinitionException('Index must have a table.');
+        }
+        if ($index->getName() === null) {
+            throw new InvalidDefinitionException('Index must have a name.');
+        }
+
         $this->index = $index;
         $this->algorithm = $algorithm;
         $this->lock = $lock;
@@ -42,12 +50,18 @@ class CreateIndexCommand implements IndexCommand, DdlTableCommand
 
     public function getName(): QualifiedName
     {
-        return new QualifiedName($this->getTable()->getSchema(), $this->index->getName());
+        /** @var string $name */
+        $name = $this->index->getName();
+
+        return new QualifiedName($name, $this->getTable()->getSchema());
     }
 
     public function getTable(): QualifiedName
     {
-        return $this->index->getTable();
+        /** @var QualifiedName $table */
+        $table = $this->index->getTable();
+
+        return $table;
     }
 
     public function getIndex(): IndexDefinition
@@ -69,8 +83,8 @@ class CreateIndexCommand implements IndexCommand, DdlTableCommand
     {
         $result = 'CREATE ';
         $result .= $this->index->serializeHead($formatter);
-        $result .= ' ON ' . $this->index->getTable()->serialize($formatter);
-        $result .= $this->index->serializeTail($formatter);
+        $result .= ' ON ' . $this->getTable()->serialize($formatter);
+        $result .= ' ' . $this->index->serializeTail($formatter);
 
         if ($this->algorithm !== null) {
             $result .= ' ALGORITHM ' . $this->algorithm->serialize($formatter);

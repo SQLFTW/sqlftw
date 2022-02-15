@@ -50,14 +50,8 @@ class UpdateCommand implements DmlCommand
     private $lowPriority;
 
     /**
-     * @param TableReferenceNode $tableReferences
      * @param SetColumnExpression[] $values
-     * @param ExpressionNode|null $where
-     * @param WithClause|null $with
      * @param OrderByExpression[]|null $orderBy
-     * @param int|null $limit
-     * @param bool $ignore
-     * @param bool $lowPriority
      */
     public function __construct(
         TableReferenceNode $tableReferences,

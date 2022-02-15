@@ -32,8 +32,12 @@ class ColumnName implements SqlSerializable
         $this->schema = $schema;
     }
 
-    public function getTableName(): QualifiedName
+    public function getTableName(): ?QualifiedName
     {
+        if ($this->table === null) {
+            return null;
+        }
+
         return new QualifiedName($this->table, $this->schema);
     }
 

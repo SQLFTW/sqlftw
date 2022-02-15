@@ -31,8 +31,6 @@ class FlushCommand implements DalCommand
 
     /**
      * @param FlushOption[] $options
-     * @param string|null $channel
-     * @param bool $local
      */
     public function __construct(array $options, ?string $channel = null, bool $local = false)
     {

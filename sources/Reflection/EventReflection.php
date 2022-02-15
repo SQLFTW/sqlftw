@@ -9,14 +9,13 @@
 
 namespace SqlFtw\Reflection;
 
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
-use SqlFtw\Sql\Ddl\Event\DropEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventCommand;
+use SqlFtw\Sql\Ddl\Event\EventDefinition;
 use SqlFtw\Sql\QualifiedName;
-use function end;
 
 class EventReflection
 {
@@ -25,28 +24,23 @@ class EventReflection
     /** @var QualifiedName */
     private $name;
 
-    /** @var EventCommand[] */
-    private $commands = [];
+    /** @var EventDefinition */
+    private $event;
 
-    public function __construct(QualifiedName $name, CreateEventCommand $createEventCommand)
+    public function __construct(QualifiedName $name, CreateEventCommand $command)
     {
         $this->name = $name;
-        $this->commands[] = $createEventCommand;
+        $this->event = $command->getDefinition();
     }
 
-    public function alter(AlterEventCommand $alterEventCommand): self
+    public function apply(EventCommand $command): self
     {
         $that = clone $this;
-        $that->commands[] = $alterEventCommand;
-        // todo
-
-        return $that;
-    }
-
-    public function drop(DropEventCommand $dropEventCommand): self
-    {
-        $that = clone $this;
-        $that->commands[] = $dropEventCommand;
+        if ($command instanceof AlterEventCommand) {
+            $that->event = $this->event->alter($command);
+        } else {
+            throw new ShouldNotHappenException('Unknown command.');
+        }
 
         return $that;
     }
@@ -56,27 +50,9 @@ class EventReflection
         return $this->name;
     }
 
-    /**
-     * @return EventCommand[]
-     */
-    public function getCommands(): array
+    public function getEvent(): EventDefinition
     {
-        return $this->commands;
-    }
-
-    public function wasDropped(): bool
-    {
-        return end($this->commands) instanceof DropEventCommand;
-    }
-
-    public function wasRenamed(): bool
-    {
-        return false;
-    }
-
-    public function getLastCommand(): Command
-    {
-        return end($this->commands);
+        return $this->event;
     }
 
 }

@@ -73,8 +73,6 @@ class IndexRenamedException extends IndexException implements ObjectRenamedExcep
 
     /**
      * @param AlterTableCommand $command
-     * @param string $oldName
-     * @return string
      */
     public static function getNewNameFromCommand(Command $command, string $oldName): string
     {

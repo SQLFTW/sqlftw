@@ -70,20 +70,10 @@ class SelectCommand implements DmlCommand
 
     /**
      * @param SelectExpression[] $columns
-     * @param TableReferenceNode|null $from
-     * @param ExpressionNode|null $where
      * @param GroupByExpression[]|null $groupBy
-     * @param ExpressionNode|null $having
-     * @param WithClause|null $with
      * @param WindowSpecification[]|null $windows ($name => $spec)
      * @param OrderByExpression[]|null $orderBy
-     * @param int|null $limit
-     * @param int|null $offset
-     * @param SelectDistinctOption|null $distinct
-     * @param bool[] $options
-     * @param SelectInto|null $into
-     * @param SelectLocking|null $locking
-     * @param bool $withRollup
+     * @param array<string, bool> $options
      */
     public function __construct(
         array $columns,
@@ -140,7 +130,7 @@ class SelectCommand implements DmlCommand
         return $this->columns;
     }
 
-    public function getFrom(): TableReferenceNode
+    public function getFrom(): ?TableReferenceNode
     {
         return $this->from;
     }

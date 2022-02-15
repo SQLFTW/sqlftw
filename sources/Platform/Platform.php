@@ -130,7 +130,7 @@ class Platform
     public function getDefaultMode(): Mode
     {
         if ($this->name === self::MYSQL || $this->name === self::MARIA) {
-            return Mode::get(0);
+            return Mode::getByValue(0);
         } else {
             return Mode::getAnsi();
         }
@@ -138,14 +138,16 @@ class Platform
 
     public function getFeatures(): PlatformFeatures
     {
-        $class = __NAMESPACE__ . '\\Features\\Features' . ucfirst($this->name) . str_replace('.', '', $this->version->getMajorMinor());
+        /** @var class-string<PlatformFeatures> $class */
+        $class = 'SqlFtw\\Platform\\Features\\Features' . ucfirst($this->name) . str_replace('.', '', $this->version->getMajorMinor());
 
         return new $class();
     }
 
     public function getNamingStrategy(): NamingStrategy
     {
-        $class = __NAMESPACE__ . '\\Naming\\NamingStrategy' . ucfirst($this->name);
+        /** @var class-string<NamingStrategy> $class */
+        $class = 'SqlFtw\\Platform\\Naming\\NamingStrategy' . ucfirst($this->name);
 
         return new $class();
     }

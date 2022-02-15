@@ -40,7 +40,6 @@ class WithParser
      *     cte_name [(col_name [, col_name] ...)] AS (subquery)
      *     [, cte_name [(col_name [, col_name] ...)] AS (subquery)] ...
      *
-     * @param TokenList $tokenList
      * @return SelectCommand|UpdateCommand|DeleteCommand
      */
     public function parseWith(TokenList $tokenList): Command

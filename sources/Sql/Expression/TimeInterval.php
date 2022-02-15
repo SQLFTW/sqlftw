@@ -32,7 +32,6 @@ class TimeInterval implements SqlSerializable
 
     /**
      * @param int|string $value
-     * @param TimeIntervalUnit $unit
      */
     public function __construct($value, TimeIntervalUnit $unit)
     {
@@ -42,7 +41,6 @@ class TimeInterval implements SqlSerializable
 
     /**
      * @param DateInterval|DateTimeSpan $interval
-     * @return self
      */
     public static function create($interval): self
     {

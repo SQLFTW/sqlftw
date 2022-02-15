@@ -25,7 +25,6 @@ class Condition implements SqlSerializable
     private $value;
 
     /**
-     * @param ConditionType $type
      * @param int|string|null $value
      */
     public function __construct(ConditionType $type, $value = null)

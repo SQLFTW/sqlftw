@@ -24,7 +24,6 @@ class RolesSpecification implements SqlSerializable
     private $roles;
 
     /**
-     * @param RolesSpecificationType $type
      * @param string[]|null $roles
      */
     public function __construct(RolesSpecificationType $type, ?array $roles = null)

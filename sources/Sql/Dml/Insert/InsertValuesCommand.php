@@ -27,13 +27,9 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
     private $onDuplicateKeyActions;
 
     /**
-     * @param QualifiedName $table
      * @param ExpressionNode[][] $rows
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param InsertPriority|null $priority
-     * @param bool $ignore
-     * @param OnDuplicateKeyActions|null $onDuplicateKeyActions
      */
     public function __construct(
         QualifiedName $table,

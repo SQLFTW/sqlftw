@@ -42,7 +42,6 @@ class SetCommand implements DalCommand
     }
 
     /**
-     * @param Scope $scope
      * @return SetAssignment[]
      */
     public function getAssignmentsByScope(?Scope $scope = null): array

@@ -64,9 +64,7 @@ class BinaryOperator implements ExpressionNode
     private $right;
 
     /**
-     * @param ExpressionNode $left
      * @param string|string[] $operator
-     * @param ExpressionNode $right
      */
     public function __construct(
         ExpressionNode $left,

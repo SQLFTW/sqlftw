@@ -26,7 +26,6 @@ class DropUserCommand implements UserCommand
 
     /**
      * @param UserName[] $users
-     * @param bool $ifExists
      */
     public function __construct(array $users, bool $ifExists = false)
     {

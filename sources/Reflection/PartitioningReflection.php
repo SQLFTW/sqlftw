@@ -26,20 +26,21 @@ use SqlFtw\Sql\Ddl\Table\Alter\Action\RepairPartitionAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\TruncatePartitionAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\UpgradePartitioningAction;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
+use SqlFtw\Sql\QualifiedName;
 
 class PartitioningReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var TableReflection */
-    private $table;
+    /** @var QualifiedName */
+    private $tableName;
 
     /** @var PartitioningDefinition|null */
     private $definition;
 
-    public function __construct(TableReflection $table, ?PartitioningDefinition $definition)
+    public function __construct(QualifiedName $tableName, ?PartitioningDefinition $definition)
     {
-        $this->table = $table;
+        $this->tableName = $tableName;
         $this->definition = $definition;
     }
 
@@ -74,9 +75,9 @@ class PartitioningReflection
         return $this;
     }
 
-    public function getTable(): TableReflection
+    public function getTableName(): QualifiedName
     {
-        return $this->table;
+        return $this->tableName;
     }
 
     public function getDefinition(): ?PartitioningDefinition

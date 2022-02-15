@@ -30,8 +30,6 @@ class SelectExpression implements SqlSerializable
     private $window;
 
     /**
-     * @param ExpressionNode $expression
-     * @param string|null $alias
      * @param WindowSpecification|string|mixed|null $window
      */
     public function __construct(ExpressionNode $expression, ?string $alias = null, $window = null)

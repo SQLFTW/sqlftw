@@ -31,9 +31,6 @@ class DropTableCommand implements DdlTablesCommand
 
     /**
      * @param QualifiedName[] $names
-     * @param bool $temporary
-     * @param bool $ifExists
-     * @param bool|null $cascadeRestrict
      */
     public function __construct(
         array $names,

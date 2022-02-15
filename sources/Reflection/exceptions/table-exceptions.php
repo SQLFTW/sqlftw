@@ -85,8 +85,6 @@ class TableRenamedException extends TableException implements ObjectRenamedExcep
 
     /**
      * @param AlterTableCommand|RenameTableCommand $command
-     * @param QualifiedName $oldName
-     * @return QualifiedName
      */
     public static function getNewNameFromCommand(Command $command, QualifiedName $oldName): QualifiedName
     {

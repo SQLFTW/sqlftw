@@ -11,34 +11,35 @@ namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
+use SqlFtw\Sql\QualifiedName;
 
 class CheckReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var TableReflection */
-    private $table;
+    /** @var QualifiedName */
+    private $tableName;
 
     /** @var CheckDefinition */
     private $checkDefinition;
 
-    /** @var ColumnReflection|null */
-    private $originColumn;
+    /** @var string|null */
+    private $originColumnName;
 
     public function __construct(
-        TableReflection $table,
+        QualifiedName $tableName,
         CheckDefinition $checkDefinition,
-        ?ColumnReflection $originColumn = null
+        ?string $originColumnName = null
     )
     {
-        $this->table = $table;
+        $this->tableName = $tableName;
         $this->checkDefinition = $checkDefinition;
-        $this->originColumn = $originColumn;
+        $this->originColumnName = $originColumnName;
     }
 
-    public function getTable(): TableReflection
+    public function getTableName(): QualifiedName
     {
-        return $this->table;
+        return $this->tableName;
     }
 
     public function getCheckDefinition(): CheckDefinition
@@ -46,9 +47,9 @@ class CheckReflection
         return $this->checkDefinition;
     }
 
-    public function getOriginColumn(): ?ColumnReflection
+    public function getOriginColumnName(): ?string
     {
-        return $this->originColumn;
+        return $this->originColumnName;
     }
 
 }

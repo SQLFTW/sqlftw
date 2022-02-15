@@ -36,7 +36,6 @@ class AlterUserCommand implements UserCommand
      * @param UserTlsOption[]|null $tlsOptions
      * @param UserResourceOption[]|null $resourceOptions
      * @param UserPasswordLockOption[]|null $passwordLockOptions
-     * @param bool $ifExists
      */
     public function __construct(array $users, ?array $tlsOptions, ?array $resourceOptions = null, ?array $passwordLockOptions = null, bool $ifExists = false)
     {

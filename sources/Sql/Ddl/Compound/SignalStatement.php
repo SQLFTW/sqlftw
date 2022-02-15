@@ -22,17 +22,17 @@ class SignalStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var int|string */
+    /** @var int|string|null */
     private $condition;
 
-    /** @var int[]|string[]|float[]|bool[]|Literal[]|null */
+    /** @var int[]|string[]|float[]|bool[]|Literal[] */
     private $items;
 
     /**
-     * @param int|string $condition
-     * @param int[]|string[]|float[]|bool[]|Literal[]|null $items
+     * @param int|string|null $condition
+     * @param int[]|string[]|float[]|bool[]|Literal[] $items
      */
-    public function __construct($condition, ?array $items)
+    public function __construct($condition, array $items)
     {
         Check::types($condition, [Type::INT, Type::STRING]);
         foreach ($items as $key => $value) {
@@ -43,7 +43,7 @@ class SignalStatement implements CompoundStatementItem
     }
 
     /**
-     * @return int|string
+     * @return int|string|null
      */
     public function getCondition()
     {
@@ -51,9 +51,9 @@ class SignalStatement implements CompoundStatementItem
     }
 
     /**
-     * @return int[]|string[]|float[]|bool[]|Literal[]|null
+     * @return int[]|string[]|float[]|bool[]|Literal[]
      */
-    public function getItems(): ?array
+    public function getItems(): array
     {
         return $this->items;
     }
@@ -64,7 +64,7 @@ class SignalStatement implements CompoundStatementItem
         if ($this->condition !== null) {
             $result .= ' ' . (strlen((string) $this->condition) > 4 ? 'SQLSTATE ' : '') . $formatter->formatValue($this->condition);
         }
-        if ($this->items !== null) {
+        if ($this->items !== []) {
             $result .= ' SET ' . implode(', ', Arr::mapPairs($this->items, static function ($item, $value) use ($formatter): string {
                 return $item . ' = ' . $formatter->formatValue($value);
             }));

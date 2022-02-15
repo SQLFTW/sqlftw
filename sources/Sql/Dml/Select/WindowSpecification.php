@@ -34,10 +34,8 @@ class WindowSpecification implements SqlSerializable
     private $frame;
 
     /**
-     * @param string|null $reference
      * @param ExpressionNode[]|null $partitionBy
      * @param OrderByExpression[]|null $orderBy
-     * @param WindowFrame|null $frame
      */
     public function __construct(?string $reference, ?array $partitionBy, ?array $orderBy, ?WindowFrame $frame)
     {

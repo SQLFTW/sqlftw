@@ -15,6 +15,23 @@ class VariablesReflection
 {
     use StrictBehaviorMixin;
 
-    // todo
+    /** @var array<string, mixed> */
+    private $variables;
+
+    /**
+     * @param array<string, mixed> $variables
+     */
+    public function __construct(array $variables)
+    {
+        $this->variables = $variables;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function get(string $name)
+    {
+        return $this->variables[$name] ?? null;
+    }
 
 }

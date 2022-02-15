@@ -73,8 +73,6 @@ class ColumnRenamedException extends ColumnException implements ObjectRenamedExc
 
     /**
      * @param AlterTableCommand $command
-     * @param string $oldName
-     * @return string
      */
     public static function getNewNameFromCommand(Command $command, string $oldName): string
     {

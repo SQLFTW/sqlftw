@@ -29,8 +29,6 @@ class SelectLocking implements SqlSerializable
     private $tables;
 
     /**
-     * @param SelectLockOption $for
-     * @param SelectLockWaitOption|null $wait
      * @param QualifiedName[]|null $tables
      */
     public function __construct(SelectLockOption $for, ?SelectLockWaitOption $wait = null, ?array $tables = null)
@@ -64,7 +62,7 @@ class SelectLocking implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'FOR ' . $this->wait->serialize($formatter);
+        $result = $this->for->serialize($formatter);
         if ($this->tables !== null) {
             $result .= ' OF ' . $formatter->formatSerializablesList($this->tables);
         }

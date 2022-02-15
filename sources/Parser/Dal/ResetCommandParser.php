@@ -27,9 +27,6 @@ class ResetCommandParser
      *     MASTER
      *   | QUERY CACHE
      *   | SLAVE
-     *
-     * @param TokenList $tokenList
-     * @return ResetCommand
      */
     public function parseReset(TokenList $tokenList): Command
     {

@@ -28,18 +28,14 @@ final class Token
     /** @var string|null */
     public $original;
 
-    /** @var string */
+    /** @var string|null */
     public $condition;
 
     /** @var string */
     public $typeDesc;
 
     /**
-     * @param int $type
-     * @param int $position
      * @param string|int|float|bool|null $value
-     * @param string|null $original
-     * @param string|null $condition
      */
     public function __construct(
         int $type,

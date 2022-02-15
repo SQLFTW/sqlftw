@@ -17,5 +17,6 @@ class SelectLockOption extends SqlEnum
 
     public const FOR_UPDATE = Keyword::FOR . ' ' . Keyword::UPDATE;
     public const FOR_SHARE = Keyword::FOR . ' ' . Keyword::SHARE;
+    public const LOCK_IN_SHARE_MODE = Keyword::LOCK . ' ' . Keyword::IN . ' ' . Keyword::SHARE . ' ' . Keyword::MODE;
 
 }

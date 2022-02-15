@@ -57,9 +57,6 @@ class LoadCommandsParser
      *     [IGNORE number {LINES | ROWS}]
      *     [(col_name_or_user_var, ...)]
      *     [SET col_name = expr, ...]
-     *
-     * @param TokenList $tokenList
-     * @return LoadDataCommand
      */
     public function parseLoadData(TokenList $tokenList): LoadDataCommand
     {
@@ -81,9 +78,6 @@ class LoadCommandsParser
      *     [IGNORE number {LINES | ROWS}]
      *     [(field_name_or_user_var, ...)]
      *     [SET col_name = expr, ...]
-     *
-     * @param TokenList $tokenList
-     * @return LoadXmlCommand
      */
     public function parseLoadXml(TokenList $tokenList): LoadXmlCommand
     {
@@ -102,8 +96,6 @@ class LoadCommandsParser
     }
 
     /**
-     * @param TokenList $tokenList
-     * @param bool $parsePartitions
      * @return mixed[]
      */
     private function parseOptions(TokenList $tokenList, bool $parsePartitions): array
@@ -138,7 +130,6 @@ class LoadCommandsParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return mixed[]
      */
     private function parseRowsAndFields(TokenList $tokenList): array

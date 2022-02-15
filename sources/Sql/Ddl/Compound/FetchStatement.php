@@ -24,7 +24,6 @@ class FetchStatement implements Statement
     private $variables;
 
     /**
-     * @param string $cursor
      * @param string[] $variables
      */
     public function __construct(string $cursor, array $variables)

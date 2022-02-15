@@ -24,7 +24,6 @@ class ExecuteCommand implements PreparedStatementCommand
     private $variables;
 
     /**
-     * @param string $name
      * @param string[]|null $variables
      */
     public function __construct(string $name, ?array $variables = null)

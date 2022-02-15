@@ -190,9 +190,6 @@ class TableCommandsParser
      *
      * table_options:
      *     table_option [[,] table_option] ...  (see CREATE TABLE options)
-     *
-     * @param TokenList $tokenList
-     * @return AlterTableCommand
      */
     public function parseAlterTable(TokenList $tokenList): AlterTableCommand
     {
@@ -412,6 +409,9 @@ class TableCommandsParser
                         case Keyword::PARTITION:
                             // DROP PARTITION partition_names
                             $partitions = $this->parsePartitionNames($tokenList);
+                            if ($partitions === null) {
+                                $tokenList->expected('Expected specific partition names, found "ALL".');
+                            }
                             $actions[] = new DropPartitionAction($partitions);
                             break;
                         case Keyword::PRIMARY:
@@ -523,6 +523,9 @@ class TableCommandsParser
                     // REORGANIZE PARTITION partition_names INTO (partition_definitions, ...)
                     $tokenList->consumeKeyword(Keyword::PARTITION);
                     $oldPartitions = $this->parsePartitionNames($tokenList);
+                    if ($oldPartitions === null) {
+                        $tokenList->expected('Expected specific partition names, found "ALL".');
+                    }
                     $tokenList->consumeKeyword(Keyword::INTO);
                     $tokenList->consume(TokenType::LEFT_PARENTHESIS);
                     $newPartitions = [];
@@ -593,9 +596,6 @@ class TableCommandsParser
      *
      * query_expression:
      *     SELECT ...   (Some valid select or union statement)
-     *
-     * @param TokenList $tokenList
-     * @return AnyCreateTableCommand
      */
     public function parseCreateTable(TokenList $tokenList): AnyCreateTableCommand
     {
@@ -616,7 +616,7 @@ class TableCommandsParser
             return new CreateTableLikeCommand($table, $oldTable, $temporary, $ifNotExists);
         }
 
-        $items = null;
+        $items = [];
         if ($bodyOpen !== null) {
             $items = $this->parseCreateTableBody($tokenList->resetPosition($position));
         }
@@ -641,7 +641,7 @@ class TableCommandsParser
         /** @var DuplicateOption|null $duplicateOption */
         $duplicateOption = $tokenList->mayConsumeKeywordEnum(DuplicateOption::class);
         $select = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::AS) || $items === null || $duplicateOption !== null || !$tokenList->isFinished()) {
+        if ($tokenList->mayConsumeKeyword(Keyword::AS) || $items === [] || $duplicateOption !== null || !$tokenList->isFinished()) {
             $select = $this->selectCommandParser->parseSelect($tokenList);
         }
         $tokenList->expectEnd();
@@ -661,7 +661,6 @@ class TableCommandsParser
      *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
      *   | check_constraint_definition
      *
-     * @param TokenList $tokenList
      * @return TableItem[]
      */
     private function parseCreateTableBody(TokenList $tokenList): array
@@ -704,9 +703,6 @@ class TableCommandsParser
      *   | data_type [GENERATED ALWAYS] AS (expression)
      *       [VIRTUAL | STORED] [UNIQUE [KEY]] [COMMENT comment]
      *       [NOT NULL | NULL] [[PRIMARY] KEY]
-     *
-     * @param TokenList $tokenList
-     * @return ColumnDefinition
      */
     private function parseColumn(TokenList $tokenList): ColumnDefinition
     {
@@ -813,9 +809,6 @@ class TableCommandsParser
     /**
      * check_constraint_definition:
      *     [CONSTRAINT [symbol]] CHECK (expr) [[NOT] ENFORCED]
-     *
-     * @param TokenList $tokenList
-     * @return CheckDefinition
      */
     private function parseCheck(TokenList $tokenList): CheckDefinition
     {
@@ -839,10 +832,6 @@ class TableCommandsParser
      *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
      *   | {INDEX|KEY} [index_name] [index_type] (index_col_name, ...) [index_option] ...
      *   | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name, ...) [index_option] ...
-     *
-     * @param TokenList $tokenList
-     * @param bool $primary
-     * @return IndexDefinition
      */
     private function parseIndex(TokenList $tokenList, bool $primary = false): IndexDefinition
     {
@@ -861,9 +850,6 @@ class TableCommandsParser
      *   | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
      *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
      *   | [CONSTRAINT [symbol]] CHECK (expr) [[NOT] ENFORCED]
-     *
-     * @param TokenList $tokenList
-     * @return ConstraintDefinition
      */
     private function parseConstraint(TokenList $tokenList): ConstraintDefinition
     {
@@ -898,9 +884,6 @@ class TableCommandsParser
      * create_definition:
      *     [CONSTRAINT [symbol]] FOREIGN KEY
      *         [index_name] (index_col_name, ...) reference_definition
-     *
-     * @param TokenList $tokenList
-     * @return ForeignKeyDefinition
      */
     private function parseForeignKey(TokenList $tokenList): ForeignKeyDefinition
     {
@@ -922,9 +905,6 @@ class TableCommandsParser
      *
      * reference_option:
      *     RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT
-     *
-     * @param TokenList $tokenList
-     * @return ReferenceDefinition
      */
     private function parseReference(TokenList $tokenList): ReferenceDefinition
     {
@@ -994,7 +974,6 @@ class TableCommandsParser
      *   | TABLESPACE tablespace_name
      *   | UNION [=] (tbl_name[,tbl_name]...)
      *
-     * @param TokenList $tokenList
      * @return mixed[] (string $name, mixed $value)
      */
     private function parseTableOption(TokenList $tokenList): array
@@ -1151,9 +1130,6 @@ class TableCommandsParser
      *         [SUBPARTITIONS num]
      *     ]
      *     [(partition_definition [, partition_definition] ...)]
-     *
-     * @param TokenList $tokenList
-     * @return PartitioningDefinition
      */
     private function parsePartitioning(TokenList $tokenList): PartitioningDefinition
     {
@@ -1189,10 +1165,6 @@ class TableCommandsParser
      *   | [LINEAR] KEY [ALGORITHM={1|2}] (column_list)
      *   | RANGE{(expr) | COLUMNS(column_list)}
      *   | LIST{(expr) | COLUMNS(column_list)}
-     *
-     * @param TokenList $tokenList
-     * @param bool $subpartition
-     * @return PartitioningCondition
      */
     private function parsePartitionCondition(TokenList $tokenList, bool $subpartition = false): PartitioningCondition
     {
@@ -1269,9 +1241,6 @@ class TableCommandsParser
      *         [MAX_ROWS [=] max_number_of_rows]
      *         [MIN_ROWS [=] min_number_of_rows]
      *         [TABLESPACE [=] tablespace_name]
-     *
-     * @param TokenList $tokenList
-     * @return PartitionDefinition
      */
     private function parsePartitionDefinition(TokenList $tokenList): PartitionDefinition
     {
@@ -1336,7 +1305,6 @@ class TableCommandsParser
      *     [MIN_ROWS [=] min_number_of_rows]
      *     [TABLESPACE [=] tablespace_name]
      *
-     * @param TokenList $tokenList
      * @return mixed[]
      */
     private function parsePartitionOptions(TokenList $tokenList): ?array
@@ -1380,7 +1348,6 @@ class TableCommandsParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return string[]|null
      */
     private function parsePartitionNames(TokenList $tokenList): ?array
@@ -1397,7 +1364,6 @@ class TableCommandsParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return string[]
      */
     private function parseColumnList(TokenList $tokenList): array
@@ -1416,9 +1382,6 @@ class TableCommandsParser
      * DROP [TEMPORARY] TABLE [IF EXISTS]
      *     tbl_name [, tbl_name] ...
      *     [RESTRICT | CASCADE]
-     *
-     * @param TokenList $tokenList
-     * @return DropTableCommand
      */
     public function parseDropTable(TokenList $tokenList): DropTableCommand
     {
@@ -1445,9 +1408,6 @@ class TableCommandsParser
     /**
      * RENAME TABLE tbl_name TO new_tbl_name
      *     [, tbl_name2 TO new_tbl_name2] ...
-     *
-     * @param TokenList $tokenList
-     * @return RenameTableCommand
      */
     public function parseRenameTable(TokenList $tokenList): RenameTableCommand
     {
@@ -1467,9 +1427,6 @@ class TableCommandsParser
 
     /**
      * TRUNCATE [TABLE] tbl_name
-     *
-     * @param TokenList $tokenList
-     * @return TruncateTableCommand
      */
     public function parseTruncateTable(TokenList $tokenList): TruncateTableCommand
     {

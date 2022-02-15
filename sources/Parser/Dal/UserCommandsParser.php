@@ -68,9 +68,6 @@ class UserCommandsParser
      * ALTER USER [IF EXISTS]
      *     user DEFAULT ROLE
      *     {NONE | ALL | role [, role ] ...}
-     *
-     * @param TokenList $tokenList
-     * @return Command
      */
     public function parseAlterUser(TokenList $tokenList): Command
     {
@@ -109,9 +106,6 @@ class UserCommandsParser
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH resource_option [resource_option] ...]
      *     [password_option | lock_option] ...
-     *
-     * @param TokenList $tokenList
-     * @return CreateUserCommand
      */
     public function parseCreateUser(TokenList $tokenList): CreateUserCommand
     {
@@ -147,7 +141,6 @@ class UserCommandsParser
      *   | DISCARD OLD PASSWORD
      * }
      *
-     * @param TokenList $tokenList
      * @return IdentifiedUser[]
      */
     private function parseIdentifiedUsers(TokenList $tokenList): array
@@ -186,7 +179,9 @@ class UserCommandsParser
                     $retainCurrent = true;
                 }
             }
-            $users[] = new IdentifiedUser($user, IdentifiedUserAction::get($action), $password, $plugin, $replace, $retainCurrent);
+
+            $action = $action ? IdentifiedUserAction::get($action) : null;
+            $users[] = new IdentifiedUser($user, $action, $password, $plugin, $replace, $retainCurrent);
         } while ($tokenList->mayConsumeComma());
 
         return $users;
@@ -203,7 +198,6 @@ class UserCommandsParser
      *   | SUBJECT 'subject'
      * }
      *
-     * @param TokenList $tokenList
      * @return UserTlsOption[]|null
      */
     private function parseTlsOptions(TokenList $tokenList): ?array
@@ -240,7 +234,6 @@ class UserCommandsParser
      *   | MAX_USER_CONNECTIONS count
      * }
      *
-     * @param TokenList $tokenList
      * @return UserResourceOption[]|null
      */
     private function parseResourceOptions(TokenList $tokenList): ?array
@@ -274,7 +267,6 @@ class UserCommandsParser
      *   | ACCOUNT UNLOCK
      * }
      *
-     * @param TokenList $tokenList
      * @return UserPasswordLockOption[]|null
      */
     private function parsePasswordLockOptions(TokenList $tokenList): ?array
@@ -321,9 +313,6 @@ class UserCommandsParser
 
     /**
      * CREATE ROLE [IF NOT EXISTS] role [, role ] ...
-     *
-     * @param TokenList $tokenList
-     * @return CreateRoleCommand
      */
     public function parseCreateRole(TokenList $tokenList): CreateRoleCommand
     {
@@ -337,9 +326,6 @@ class UserCommandsParser
 
     /**
      * DROP ROLE [IF EXISTS] role [, role ] ...
-     *
-     * @param TokenList $tokenList
-     * @return DropRoleCommand
      */
     public function parseDropRole(TokenList $tokenList): DropRoleCommand
     {
@@ -353,9 +339,6 @@ class UserCommandsParser
 
     /**
      * DROP USER [IF EXISTS] user [, user] ...
-     *
-     * @param TokenList $tokenList
-     * @return DropUserCommand
      */
     public function parseDropUser(TokenList $tokenList): DropUserCommand
     {
@@ -396,9 +379,6 @@ class UserCommandsParser
      *     TO user [auth_option] [, user [auth_option]] ...
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH {GRANT OPTION | resource_option} ...]
-     *
-     * @param TokenList $tokenList
-     * @return Command
      */
     public function parseGrant(TokenList $tokenList): Command
     {
@@ -446,7 +426,6 @@ class UserCommandsParser
     /**
      * priv_type [(column_list)] [, priv_type [(column_list)]] ...
      *
-     * @param TokenList $tokenList
      * @return UserPrivilege[]
      */
     private function parsePrivilegesList(TokenList $tokenList): array
@@ -455,20 +434,26 @@ class UserCommandsParser
         do {
             $types = UserPrivilegeType::getFistAndSecondKeywords();
             $type = $tokenList->consumeAnyKeyword(...array_keys($types));
-            $next = $types[$type];
             if ($type === Keyword::ALL) {
                 $tokenList->mayConsumeKeyword(Keyword::PRIVILEGES);
                 $next = null;
             } elseif ($type === Keyword::CREATE) {
+                /** @var string[] $next */
+                $next = $types[$type];
                 $next = $tokenList->mayConsumeAnyKeyword(...$next);
                 if ($next === Keyword::TEMPORARY) {
                     $tokenList->consumeKeyword(Keyword::TABLES);
                     $next .= ' ' . Keyword::TABLES;
                 }
             } elseif ($type === Keyword::ALTER) {
+                /** @var string[] $next */
+                $next = $types[$type];
                 $next = $tokenList->mayConsumeAnyKeyword(...$next);
-            } elseif ($next !== null) {
-                $next = $tokenList->consumeAnyKeyword(...$next);
+            } else {
+                $next = $types[$type];
+                if ($next !== null) {
+                    $next = $tokenList->consumeAnyKeyword(...$next);
+                }
             }
             if ($next !== null) {
                 $type .= ' ' . $next;
@@ -505,9 +490,6 @@ class UserCommandsParser
      *   | tbl_name
      *   | db_name.routine_name
      * }
-     *
-     * @param TokenList $tokenList
-     * @return UserPrivilegeResource
      */
     private function parseResource(TokenList $tokenList): UserPrivilegeResource
     {
@@ -542,9 +524,6 @@ class UserCommandsParser
     /**
      * RENAME USER old_user TO new_user
      *     [, old_user TO new_user] ...
-     *
-     * @param TokenList $tokenList
-     * @return RenameUserCommand
      */
     public function parseRenameUser(TokenList $tokenList): RenameUserCommand
     {
@@ -576,9 +555,6 @@ class UserCommandsParser
      *
      * REVOKE role [, role ] ...
      *     FROM user [, user ] ...
-     *
-     * @param TokenList $tokenList
-     * @return Command
      */
     public function parseRevoke(TokenList $tokenList): Command
     {
@@ -622,9 +598,6 @@ class UserCommandsParser
      * SET DEFAULT ROLE
      *     {NONE | ALL | role [, role ] ...}
      *     TO user [, user ] ...
-     *
-     * @param TokenList $tokenList
-     * @return SetDefaultRoleCommand
      */
     public function parseSetDefaultRole(TokenList $tokenList): SetDefaultRoleCommand
     {
@@ -650,9 +623,6 @@ class UserCommandsParser
      *     PASSWORD('auth_string')
      *   | 'auth_string'
      * }
-     *
-     * @param TokenList $tokenList
-     * @return SetPasswordCommand
      */
     public function parseSetPassword(TokenList $tokenList): SetPasswordCommand
     {
@@ -683,9 +653,6 @@ class UserCommandsParser
      *   | ALL EXCEPT role [, role ] ...
      *   | role [, role ] ...
      * }
-     *
-     * @param TokenList $tokenList
-     * @return SetRoleCommand
      */
     public function parseSetRole(TokenList $tokenList): SetRoleCommand
     {
@@ -716,7 +683,6 @@ class UserCommandsParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return UserName[]
      */
     private function parseUserList(TokenList $tokenList): array
@@ -730,7 +696,6 @@ class UserCommandsParser
     }
 
     /**
-     * @param TokenList $tokenList
      * @return string[]
      */
     private function parseRolesList(TokenList $tokenList): array

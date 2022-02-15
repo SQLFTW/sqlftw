@@ -11,7 +11,6 @@ namespace SqlFtw\Reflection;
 
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
@@ -27,7 +26,6 @@ use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
 use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
-use SqlFtw\Sql\Ddl\Schema\SchemaCommand;
 use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
 use SqlFtw\Sql\Ddl\Table\DropTableCommand;
@@ -38,23 +36,10 @@ use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewCommand;
 use SqlFtw\Sql\QualifiedName;
-use function end;
 
 class SchemaReflection
 {
     use StrictBehaviorMixin;
-
-    /** @var DatabaseReflection */
-    private $database;
-
-    /** @var bool */
-    private $trackHistory;
-
-    /** @var self|null */
-    private $previous;
-
-    /** @var SchemaCommand */
-    private $lastCommand;
 
     /** @var string */
     private $name;
@@ -77,15 +62,10 @@ class SchemaReflection
     /** @var TriggerReflection[] */
     private $triggers = [];
 
-    public function __construct(
-        DatabaseReflection $database,
-        CreateSchemaCommand $createSchemaCommand,
-        bool $trackHistory
-    ) {
-        $this->database = $database;
-        $this->name = $createSchemaCommand->getName();
-        $this->lastCommand = $createSchemaCommand;
-        $this->trackHistory = $trackHistory;
+    public function __construct(CreateSchemaCommand $command)
+    {
+        $this->name = $command->getName();
+        $this->lastCommand = $command;
     }
 
     public function apply(Command $command): self
@@ -97,23 +77,17 @@ class SchemaReflection
         } elseif ($command instanceof DropSchemaCommand) {
             $that = clone $this;
             $that->lastCommand = $command;
-            if ($this->trackHistory) {
-                $that->previous = $this;
-            }
 
             return $that;
         } elseif ($command instanceof CreateTableCommand) {
             $name = $command->getName();
-            if ($this->database->tableExists($name)) {
+            if ($this->provider->tableExists($name)) {
                 throw new TableAlreadyExistsException($name);
             }
 
             $that = clone $this;
-            $reflection = new TableReflection($that, $command, $this->trackHistory);
+            $reflection = new TableReflection($that->getName(), $command);
             $that->tables[$name->getName()] = $reflection;
-            if ($this->trackHistory) {
-                $that->previous = $this;
-            }
 
             return $that;
         } elseif ($command instanceof AlterTableCommand) {
@@ -127,20 +101,21 @@ class SchemaReflection
                 $newName = $newName->coalesce($this->name);
 
                 $newSchema = $newName->getSchema();
-                $oldReflection = $this->database->findTable($newName);
+                $oldReflection = $this->provider->findTable($newName);
                 if ($oldReflection !== null) {
                     throw new TableAlreadyExistsException($newName);
                 }
 
-                $that->tables[$newSchema][$newName] = $reflection->alter($command);
-                unset($that->tables[$schema][$name]);
-                if ($this->history !== null) {
-                    $that->history = clone($this->history);
-                    $that->history->tables[$schema][$name] = $reflection->moveByRenaming($command);
-                    unset($that->history->tables[$newSchema][$newName]);
-                }
+                $that->tables[$newSchema][$newName] = $oldReflection->alter($command);
+                unset($that->tables[$name->getSchema()][$name->getName()]);
+
             } else {
-                $that->tables[$schema][$name] = $reflection->alter($command);
+                $name = $command->getName();
+                $oldReflection = $this->provider->findTable($name);
+                if ($oldReflection !== null) {
+                    throw new TableAlreadyExistsException($name);
+                }
+                $that->tables[$name->getSchema()][$name->getName()] = $oldReflection->alter($command);
             }
 
             return $that;
@@ -153,7 +128,7 @@ class SchemaReflection
             foreach ($command->getIterator() as $oldTable => $newTable) {
                 $name = $oldTable->getName();
                 $schema = $oldTable->getSchema() ?: $this->currentSchema;
-                $reflection = $this->getTable($name, $schema);
+                $reflection = $this->getTable($name);
 
                 $newName = $newTable->getName();
                 $newSchema = $newTable->getSchema() ?: $this->currentSchema;
@@ -180,7 +155,7 @@ class SchemaReflection
             foreach ($command->getNames() as $table) {
                 $name = $table->getName();
                 $schema = $table->getSchema() ?: $this->currentSchema;
-                $reflection = $this->getTable($name, $schema);
+                $reflection = $this->getTable($name);
                 unset($that->tables[$schema][$name]);
                 if ($this->history !== null) {
                     $that->tables[$schema][$name] = $reflection->drop($command);
@@ -194,7 +169,7 @@ class SchemaReflection
             $name = $table->getName();
             $schema = $table->getSchema() ?: $this->currentSchema;
 
-            $reflection = $this->getTable($name, $schema);
+            $reflection = $this->getTable($name);
             $that->tables[$schema][$name] = $reflection->createIndex($command);
 
             return $that;
@@ -204,7 +179,7 @@ class SchemaReflection
             $name = $table->getName();
             $schema = $table->getSchema() ?: $this->currentSchema;
 
-            $reflection = $this->getTable($name, $schema);
+            $reflection = $this->getTable($name);
             $that->tables[$schema][$name] = $reflection->dropIndex($command);
 
             return $that;
@@ -233,8 +208,8 @@ class SchemaReflection
             $name = $view->getName();
             $schema = $view->getSchema() ?: $this->currentSchema;
 
-            $reflection = $this->getView($name, $schema);
-            $that->views[$schema][$name] = $reflection->alter($command);
+            $reflection = $this->getView($name);
+            $that->views[$schema][$name] = $reflection->apply($command);
 
             return $that;
         } elseif ($command instanceof DropViewCommand) {
@@ -242,7 +217,7 @@ class SchemaReflection
             foreach ($command->getNames() as $view) {
                 $name = $view->getName();
                 $schema = $view->getSchema() ?: $this->currentSchema;
-                $reflection = $this->getView($name, $schema);
+                $reflection = $this->getView($name);
                 unset($that->views[$schema][$name]);
                 if ($this->history !== null) {
                     $that->history = clone($this->history);
@@ -281,7 +256,7 @@ class SchemaReflection
             $name = $function->getName();
             $schema = $function->getSchema() ?: $this->currentSchema;
 
-            $reflection = $this->getFunction($name, $schema);
+            $reflection = $this->getFunction($name);
             $that->functions[$schema][$name] = $reflection->alter($command);
 
             return $that;
@@ -290,7 +265,7 @@ class SchemaReflection
             $function = $command->getName();
             $name = $function->getName();
             $schema = $function->getSchema() ?: $this->currentSchema;
-            $reflection = $this->getFunction($name, $schema);
+            $reflection = $this->getFunction($name);
             unset($this->functions[$schema][$name]);
             if ($this->history !== null) {
                 $that->history = clone($this->history);
@@ -328,7 +303,7 @@ class SchemaReflection
             $name = $procedure->getName();
             $schema = $procedure->getSchema() ?: $this->currentSchema;
 
-            $reflection = $this->getProcedure($name, $schema);
+            $reflection = $this->getProcedure($name);
             $that->procedures[$schema][$name] = $reflection->alter($command);
 
             return $that;
@@ -337,7 +312,7 @@ class SchemaReflection
             $procedure = $command->getName();
             $name = $procedure->getName();
             $schema = $procedure->getSchema() ?: $this->currentSchema;
-            $reflection = $this->getProcedure($name, $schema);
+            $reflection = $this->getProcedure($name);
             unset($that->procedures[$schema][$name]);
             if ($this->history !== null) {
                 $that->history = clone($this->history);
@@ -352,7 +327,7 @@ class SchemaReflection
             $tableName = $table->getName();
             $schema = $table->getSchema() ?: $this->currentSchema;
 
-            $tableReflection = $this->getTable($tableName, $schema);
+            $tableReflection = $this->getTable($tableName);
             $reflection = $this->findTrigger($name, $schema);
             if ($reflection !== null) {
                 throw new TriggerAlreadyExistsException($name, $schema);
@@ -373,10 +348,10 @@ class SchemaReflection
             $name = $trigger->getName();
             $schema = $trigger->getSchema() ?: $this->currentSchema;
 
-            $reflection = $this->getTrigger($name, $schema);
+            $reflection = $this->getTrigger($name);
             $table = $reflection->getTable();
             $tableName = $table->getName();
-            $tableReflection = $this->getTable($tableName, $schema);
+            $tableReflection = $this->getTable($tableName);
 
             unset($that->triggers[$schema][$name]);
             $this->tables[$schema][$tableName] = $tableReflection->dropTrigger($name);
@@ -411,8 +386,8 @@ class SchemaReflection
             $name = $event->getName();
             $schema = $event->getSchema() ?: $this->currentSchema;
 
-            $reflection = $this->getEvent($name, $schema);
-            $that->events[$schema][$name] = $reflection->alter($command);
+            $reflection = $this->getEvent($name);
+            $that->events[$schema][$name] = $reflection->apply($command);
 
             return $that;
         } elseif ($command instanceof DropEventCommand) {
@@ -421,7 +396,7 @@ class SchemaReflection
             $name = $event->getName();
             $schema = $event->getSchema() ?: $this->currentSchema;
 
-            $reflection = $this->getEvent($name, $schema);
+            $reflection = $this->getEvent($name);
             unset($that->events[$schema][$name]);
             if ($this->history !== null) {
                 $that->history = clone($this->history);
@@ -434,19 +409,32 @@ class SchemaReflection
         }
     }
 
-    public function getPrevious(): ?self
+    public function receiveTableByRenaming(AlterTableCommand $command, TableReflection $reflection): self
     {
-        return $this->previous;
+        $that = clone $this;
+        $that->tables[$reflection->getName()->getName()] = $reflection;
+
+        return $that;
     }
 
-    public function getDatabase(): DatabaseReflection
+    /**
+     * @param TableReflection[] $receive
+     * @param TableReflection[] $remove indexed by old name
+     */
+    public function moveTablesByRenaming(RenameTableCommand $command, array $receive, array $remove): self
     {
-        return $this->database;
-    }
+        $that = clone $this;
+        foreach ($receive as $reflection) {
 
-    public function getPlatform(): Platform
-    {
-        return $this->database->getPlatform();
+        }
+        foreach ($rename as $reflection) {
+
+        }
+        foreach ($remove as $reflection) {
+
+        }
+
+        return $that;
     }
 
     public function getName(): string
@@ -454,33 +442,9 @@ class SchemaReflection
         return $this->name;
     }
 
-    public function wasDropped(): bool
-    {
-        return end($this->lastCommand) instanceof DropSchemaCommand;
-    }
-
-    public function wasRenamed(): bool
-    {
-        // no way to do that in MySQL
-        return false;
-    }
-
-    public function getLastCommand(): Command
-    {
-        return end($this->lastCommand);
-    }
-
-    /**
-     * @return SchemaCommand[]
-     */
-    public function getCommands(): array
-    {
-        return $this->lastCommand;
-    }
-
     public function getTable(string $name): TableReflection
     {
-        return $this->tables[$name] ?? $this->database->getTable($name, $this->name);
+        return $this->tables[$name] ?? $this->provider->getTable($name, $this->name);
     }
 
     public function getTableIfLoaded(string $name): ?TableReflection
@@ -490,7 +454,7 @@ class SchemaReflection
 
     public function getView(string $name): ViewReflection
     {
-        return $this->views[$name] ?? $this->database->getView($name, $this->name);
+        return $this->views[$name] ?? $this->provider->getView($name, $this->name);
     }
 
     public function getViewIfLoaded(string $name): ?ViewReflection
@@ -500,7 +464,7 @@ class SchemaReflection
 
     public function getFunction(string $name): FunctionReflection
     {
-        return $this->functions[$name] ?? $this->database->getFunction($name, $this->name);
+        return $this->functions[$name] ?? $this->provider->getFunction($name, $this->name);
     }
 
     public function getFunctionIfLoaded(string $name): ?FunctionReflection
@@ -510,7 +474,7 @@ class SchemaReflection
 
     public function getProcedure(string $name): ProcedureReflection
     {
-        return $this->procedures[$name] ?? $this->database->getProcedure($name, $this->name);
+        return $this->procedures[$name] ?? $this->provider->getProcedure($name, $this->name);
     }
 
     public function getProcedureIfLoaded(string $name): ?ProcedureReflection
@@ -520,7 +484,7 @@ class SchemaReflection
 
     public function getTrigger(string $name): TriggerReflection
     {
-        return $this->triggers[$name] ?? $this->database->getTrigger($name, $this->name);
+        return $this->triggers[$name] ?? $this->provider->getTrigger($name, $this->name);
     }
 
     public function getTriggerIfLoaded(string $name): ?TriggerReflection
@@ -530,7 +494,7 @@ class SchemaReflection
 
     public function getEvent(string $name): EventReflection
     {
-        return $this->events[$name] ?? $this->database->getEvent($name, $this->name);
+        return $this->events[$name] ?? $this->provider->getEvent($name, $this->name);
     }
 
     public function getEventIfLoaded(string $name): ?EventReflection

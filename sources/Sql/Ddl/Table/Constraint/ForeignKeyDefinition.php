@@ -30,8 +30,6 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
 
     /**
      * @param string[] $columns
-     * @param ReferenceDefinition $reference
-     * @param string|null $indexName
      */
     public function __construct(
         array $columns,

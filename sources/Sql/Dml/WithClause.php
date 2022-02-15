@@ -25,7 +25,6 @@ class WithClause implements SqlSerializable
 
     /**
      * @param WithExpression[] $expressions
-     * @param bool $recursive
      */
     public function __construct(array $expressions, bool $recursive = false)
     {

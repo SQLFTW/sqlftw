@@ -28,7 +28,6 @@ class ChangeMasterToCommand implements ReplicationCommand
 
     /**
      * @param mixed[] $options
-     * @param string|null $channel
      */
     public function __construct(array $options, ?string $channel = null)
     {
@@ -53,7 +52,6 @@ class ChangeMasterToCommand implements ReplicationCommand
     }
 
     /**
-     * @param string $option
      * @return mixed|null $option
      */
     public function getOption(string $option)
@@ -64,7 +62,6 @@ class ChangeMasterToCommand implements ReplicationCommand
     }
 
     /**
-     * @param string $option
      * @param mixed|null $value
      */
     public function setOption(string $option, $value): void

@@ -35,10 +35,6 @@ class RepairTableCommand implements DalTablesCommand
 
     /**
      * @param QualifiedName[] $names
-     * @param bool $local
-     * @param bool $quick
-     * @param bool $extended
-     * @param bool $useFrm
      */
     public function __construct(
         array $names,

@@ -22,12 +22,8 @@ class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceComm
     private $select;
 
     /**
-     * @param QualifiedName $table
-     * @param SelectCommand $select
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param InsertPriority|null $priority
-     * @param bool $ignore
      */
     public function __construct(
         QualifiedName $table,

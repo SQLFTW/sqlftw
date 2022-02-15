@@ -16,19 +16,19 @@ class DropSchemaCommand implements SchemaCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string|null */
+    /** @var string */
     private $name;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(?string $name, bool $ifExists = false)
+    public function __construct(string $name, bool $ifExists = false)
     {
         $this->name = $name;
         $this->ifExists = $ifExists;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }

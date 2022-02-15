@@ -26,7 +26,6 @@ class ShowGrantsCommand implements ShowCommand
     private $roles;
 
     /**
-     * @param UserName|null $user
      * @param string[] $roles
      */
     public function __construct(?UserName $user = null, ?array $roles = null)

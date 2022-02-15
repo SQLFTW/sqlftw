@@ -303,7 +303,6 @@ class ShowCommandsParser
                 // SHOW {INDEX | INDEXES | KEYS} {FROM | IN} tbl_name [{FROM | IN} db_name] [WHERE expr]
                 $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
                 $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-                $schema = null;
                 if ($table->getSchema() === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
                     $schema = $tokenList->consumeName();
                     $table = new QualifiedName($table->getName(), $schema);
@@ -539,7 +538,6 @@ class ShowCommandsParser
                     $tokenList->consumeKeyword(Keyword::COLUMNS);
                     $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
                     $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-                    $schema = null;
                     if ($table->getSchema() === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
                         $schema = $tokenList->consumeName();
                         $table = new QualifiedName($table->getName(), $schema);
@@ -589,7 +587,6 @@ class ShowCommandsParser
                         Keyword::GLOBAL, Keyword::SESSION, Keyword::STATUS, Keyword::VARIABLES, Keyword::FULL,
                         Keyword::COLUMNS, Keyword::TABLES
                     );
-                    exit;
                 }
         }
         exit;

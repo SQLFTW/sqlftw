@@ -50,14 +50,8 @@ class CreateTableCommand implements AnyCreateTableCommand
     private $select;
 
     /**
-     * @param QualifiedName $name
      * @param TableItem[] $items
      * @param TableOptionsList|mixed[]|null $options
-     * @param PartitioningDefinition|null $partitioning
-     * @param bool $temporary
-     * @param bool $ifNotExists
-     * @param DuplicateOption|null $duplicateOption
-     * @param SelectCommand|null $select
      */
     public function __construct(
         QualifiedName $name,

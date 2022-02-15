@@ -24,7 +24,6 @@ class RevokeProxyCommand implements UserCommand
     private $users;
 
     /**
-     * @param UserName $proxy
      * @param UserName[] $users
      */
     public function __construct(UserName $proxy, array $users)

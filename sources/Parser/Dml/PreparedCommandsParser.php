@@ -23,9 +23,6 @@ class PreparedCommandsParser
 
     /**
      * {DEALLOCATE | DROP} PREPARE stmt_name
-     *
-     * @param TokenList $tokenList
-     * @return DeallocatePrepareCommand
      */
     public function parseDeallocatePrepare(TokenList $tokenList): DeallocatePrepareCommand
     {
@@ -40,9 +37,6 @@ class PreparedCommandsParser
     /**
      * EXECUTE stmt_name
      *     [USING @var_name [, @var_name] ...]
-     *
-     * @param TokenList $tokenList
-     * @return ExecuteCommand
      */
     public function parseExecute(TokenList $tokenList): ExecuteCommand
     {
@@ -52,8 +46,9 @@ class PreparedCommandsParser
         if ($tokenList->mayConsumeKeyword(Keyword::USING)) {
             $variables = [];
             do {
-                /** @var string[] $variables */
-                $variables[] = $tokenList->consume(TokenType::AT_VARIABLE)->value;
+                /** @var string $variable */
+                $variable = $tokenList->consume(TokenType::AT_VARIABLE)->value;
+                $variables[] = $variable;
             } while ($tokenList->mayConsumeComma());
         }
         $tokenList->expectEnd();
@@ -63,9 +58,6 @@ class PreparedCommandsParser
 
     /**
      * PREPARE stmt_name FROM preparable_stmt
-     *
-     * @param TokenList $tokenList
-     * @return PrepareCommand
      */
     public function parsePrepare(TokenList $tokenList): PrepareCommand
     {

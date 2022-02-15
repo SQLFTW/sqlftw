@@ -40,13 +40,7 @@ class HandlerReadCommand implements HandlerCommand
     private $offset;
 
     /**
-     * @param QualifiedName $table
-     * @param HandlerReadTarget $what
-     * @param string|null $index
      * @param mixed[]|null $values
-     * @param ExpressionNode|null $where
-     * @param int|null $limit
-     * @param int|null $offset
      */
     public function __construct(
         QualifiedName $table,

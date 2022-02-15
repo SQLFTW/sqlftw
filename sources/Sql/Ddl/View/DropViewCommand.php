@@ -25,13 +25,11 @@ class DropViewCommand implements ViewCommand, SchemaObjectsCommand
     /** @var bool */
     private $ifExists;
 
-    /** @var DropViewOption */
+    /** @var DropViewOption|null */
     private $option;
 
     /**
      * @param QualifiedName[] $names
-     * @param bool $ifExists
-     * @param DropViewOption|null $option
      */
     public function __construct(array $names, bool $ifExists = false, ?DropViewOption $option = null)
     {

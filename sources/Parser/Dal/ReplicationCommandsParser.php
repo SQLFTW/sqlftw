@@ -84,9 +84,6 @@ class ReplicationCommandsParser
      *
      * server_id_list:
      *     [server_id [, server_id] ... ]
-     *
-     * @param TokenList $tokenList
-     * @return ChangeMasterToCommand
      */
     public function parseChangeMasterTo(TokenList $tokenList): ChangeMasterToCommand
     {
@@ -161,9 +158,6 @@ class ReplicationCommandsParser
      *
      * db_pair:
      *     from_db, to_db
-     *
-     * @param TokenList $tokenList
-     * @return ChangeReplicationFilterCommand
      */
     public function parseChangeReplicationFilter(TokenList $tokenList): ChangeReplicationFilterCommand
     {
@@ -217,9 +211,6 @@ class ReplicationCommandsParser
     /**
      * PURGE { BINARY | MASTER } LOGS
      *     { TO 'log_name' | BEFORE datetime_expr }
-     *
-     * @param TokenList $tokenList
-     * @return PurgeBinaryLogsCommand
      */
     public function parsePurgeBinaryLogs(TokenList $tokenList): PurgeBinaryLogsCommand
     {
@@ -241,9 +232,6 @@ class ReplicationCommandsParser
 
     /**
      * RESET MASTER [TO binary_log_file_index_number]
-     *
-     * @param TokenList $tokenList
-     * @return ResetMasterCommand
      */
     public function parseResetMaster(TokenList $tokenList): ResetMasterCommand
     {
@@ -262,9 +250,6 @@ class ReplicationCommandsParser
      *
      * channel_option:
      *     FOR CHANNEL channel
-     *
-     * @param TokenList $tokenList
-     * @return ResetSlaveCommand
      */
     public function parseResetSlave(TokenList $tokenList): ResetSlaveCommand
     {
@@ -281,9 +266,6 @@ class ReplicationCommandsParser
 
     /**
      * START GROUP_REPLICATION
-     *
-     * @param TokenList $tokenList
-     * @return StartGroupReplicationCommand
      */
     public function parseStartGroupReplication(TokenList $tokenList): StartGroupReplicationCommand
     {
@@ -313,9 +295,6 @@ class ReplicationCommandsParser
      *
      * channel_option:
      *     FOR CHANNEL channel
-     *
-     * @param TokenList $tokenList
-     * @return StartSlaveCommand
      */
     public function parseStartSlave(TokenList $tokenList): StartSlaveCommand
     {
@@ -413,7 +392,6 @@ class ReplicationCommandsParser
      *
      *     (n >= 1)
      *
-     * @param TokenList $tokenList
      * @return mixed[]|string
      */
     private function parseGtidSet(TokenList $tokenList)
@@ -435,7 +413,6 @@ class ReplicationCommandsParser
             $tokenList->consume(TokenType::DOUBLE_COLON);
             do {
                 $start = $tokenList->consumeInt();
-                $end = null;
                 if ($tokenList->mayConsumeOperator(Operator::MINUS)) {
                     $end = $tokenList->consumeInt();
                     // phpcs:ignore
@@ -456,9 +433,6 @@ class ReplicationCommandsParser
 
     /**
      * STOP GROUP_REPLICATION
-     *
-     * @param TokenList $tokenList
-     * @return StopGroupReplicationCommand
      */
     public function parseStopGroupReplication(TokenList $tokenList): StopGroupReplicationCommand
     {
@@ -478,9 +452,6 @@ class ReplicationCommandsParser
      *
      * channel_option:
      *     FOR CHANNEL channel
-     *
-     * @param TokenList $tokenList
-     * @return StopSlaveCommand
      */
     public function parseStopSlave(TokenList $tokenList): StopSlaveCommand
     {

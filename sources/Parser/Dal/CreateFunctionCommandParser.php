@@ -23,9 +23,6 @@ class CreateFunctionCommandParser
     /**
      * CREATE [AGGREGATE] FUNCTION function_name RETURNS {STRING|INTEGER|REAL|DECIMAL}
      *     SONAME shared_library_name
-     *
-     * @param TokenList $tokenList
-     * @return CreateFunctionSonameCommand
      */
     public function parseCreateFunction(TokenList $tokenList): CreateFunctionSonameCommand
     {

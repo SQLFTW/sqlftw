@@ -17,9 +17,7 @@ class NamingStrategyMysql implements NamingStrategy
     use StrictBehaviorMixin;
 
     /**
-     * @param TableReflection $table
      * @param string[] $columns
-     * @return string
      */
     public function createIndexName(TableReflection $table, array $columns): string
     {
@@ -37,9 +35,7 @@ class NamingStrategyMysql implements NamingStrategy
     }
 
     /**
-     * @param TableReflection $table
      * @param string[] $columns
-     * @return string
      */
     public function createForeignKeyName(TableReflection $table, array $columns): string
     {
@@ -54,9 +50,7 @@ class NamingStrategyMysql implements NamingStrategy
     }
 
     /**
-     * @param TableReflection $table
      * @param string[] $columns
-     * @return string
      */
     public function createCheckName(TableReflection $table, array $columns): string
     {

@@ -46,14 +46,7 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
     private $orReplace;
 
     /**
-     * @param QualifiedName $name
-     * @param SelectCommand $body
      * @param string[]|null $columns
-     * @param UserExpression|null $definer
-     * @param SqlSecurity|null $security
-     * @param ViewAlgorithm|null $algorithm
-     * @param ViewCheckOption|null $checkOption
-     * @param bool $orReplace
      */
     public function __construct(
         QualifiedName $name,

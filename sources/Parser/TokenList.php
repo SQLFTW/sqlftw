@@ -52,15 +52,13 @@ class TokenList
     private $whitespace;
 
     /** @var int */
-    private $autoSkip;
+    private $autoSkip = 0;
 
     /** @var int */
     private $position = 0;
 
     /**
      * @param Token[] $tokens
-     * @param PlatformSettings $settings
-     * @param bool $whitespace
      */
     public function __construct(array $tokens, PlatformSettings $settings, bool $whitespace = true)
     {
@@ -110,8 +108,6 @@ class TokenList
     }
 
     /**
-     * @param int $position
-     * @param int $count
      * @return Token[]
      */
     public function getTokens(int $position, int $count): array
@@ -127,9 +123,7 @@ class TokenList
     }
 
     /**
-     * @param int $tokenType
      * @param mixed|null $value
-     * @return Token
      */
     public function consume(int $tokenType, $value = null): Token
     {
@@ -146,6 +140,9 @@ class TokenList
         return $token;
     }
 
+    /**
+     * @phpstan-impure
+     */
     public function mayConsume(int $tokenType): ?Token
     {
         $this->doAutoSkip();
@@ -176,6 +173,9 @@ class TokenList
         throw new UnexpectedTokenException($tokenTypes, null, $token, $this);
     }
 
+    /**
+     * @phpstan-impure
+     */
     public function mayConsumeComma(): bool
     {
         $this->doAutoSkip();
@@ -191,7 +191,7 @@ class TokenList
 
     public function consumeName(?string $name = null): string
     {
-        return $this->consume(TokenType::NAME, $name)->original;
+        return $this->consume(TokenType::NAME, $name)->original; // @phpstan-ignore-line non-null
     }
 
     public function mayConsumeName(?string $name = null): ?string
@@ -213,7 +213,7 @@ class TokenList
             throw new UnexpectedTokenException([TokenType::NAME], null, $token, $this);
         }
 
-        return $token->original;
+        return $token->original; // @phpstan-ignore-line non-null
     }
 
     public function mayConsumeNonKeywordName(?string $name = null): ?string
@@ -343,6 +343,9 @@ class TokenList
         return $value;
     }
 
+    /**
+     * @phpstan-impure
+     */
     public function mayConsumeOperator(string $operator): ?string
     {
         $token = $this->mayConsume(TokenType::OPERATOR);
@@ -442,11 +445,17 @@ class TokenList
         }
     }
 
+    /**
+     * @param class-string<SqlEnum> $className
+     */
     public function consumeKeywordEnum(string $className): SqlEnum
     {
         return call_user_func([$className, 'get'], $this->consumeAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues']))));
     }
 
+    /**
+     * @param class-string<SqlEnum> $className
+     */
     public function consumeNameOrStringEnum(string $className, ?string $filter = null): SqlEnum
     {
         $values = call_user_func([$className, 'getAllowedValues']);
@@ -461,6 +470,9 @@ class TokenList
         throw new UnexpectedTokenException([TokenType::NAME], $values, $this->tokens[$this->position], $this);
     }
 
+    /**
+     * @param class-string<SqlEnum> $className
+     */
     public function mayConsumeKeywordEnum(string $className): ?SqlEnum
     {
         $token = $this->mayConsumeAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues'])));
@@ -514,7 +526,7 @@ class TokenList
     }
 
     /**
-     * @return string[]|null[] (string $name, string|null $schema)
+     * @return array{string, string|null} ($name, $schema)
      */
     public function consumeQualifiedName(): array
     {
@@ -526,7 +538,7 @@ class TokenList
                 /** @var string $second */
                 $second = $secondToken->value;
             } else {
-                $second = $this->mayConsumeName();
+                $second = $this->consumeName();
             }
 
             return [$second, $first];
@@ -536,7 +548,7 @@ class TokenList
     }
 
     /**
-     * @return string[]|null[]|null (string $name, string|null $schema)
+     * @return array{string, string|null}|null ($name, $schema)
      */
     public function mayConsumeQualifiedName(): ?array
     {
@@ -548,7 +560,7 @@ class TokenList
     }
 
     /**
-     * @return string[]|null[] (string $name, string|null $host)
+     * @return array{string, string|null} ($name, $host)
      */
     public function consumeUserName(): array
     {
@@ -570,13 +582,16 @@ class TokenList
         }
     }
 
+    /**
+     * @return never
+     */
     public function expected(string $description): void
     {
         throw new ParserException($description);
     }
 
     /**
-     * @param string ...$keywords
+     * @return never
      * @throws UnexpectedTokenException
      */
     public function expectedAnyKeyword(string ...$keywords): void

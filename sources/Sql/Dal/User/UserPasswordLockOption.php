@@ -25,7 +25,6 @@ class UserPasswordLockOption implements SqlSerializable
     private $value;
 
     /**
-     * @param UserPasswordLockOptionType $type
      * @param string|int|null $value
      */
     public function __construct(UserPasswordLockOptionType $type, $value = null)

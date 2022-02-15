@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\Str;
+use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -56,9 +56,6 @@ class IndexCommandsParser
      *
      * lock_option:
      *     LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
-     *
-     * @param TokenList $tokenList
-     * @return CreateIndexCommand
      */
     public function parseCreateIndex(TokenList $tokenList): CreateIndexCommand
     {
@@ -137,7 +134,7 @@ class IndexCommandsParser
             } elseif ($keyword === Keyword::COMMENT) {
                 $commentString = $tokenList->consumeString();
                 // parse "COMMENT 'MERGE_THRESHOLD=40';"
-                $match = Str::match($commentString, '/^MERGE_THRESHOLD=([0-9]+)$/');
+                $match = Re::match($commentString, '/^MERGE_THRESHOLD=([0-9]+)$/');
                 if ($match) {
                     $mergeThreshold = (int) $match[1];
                 } else {
@@ -150,7 +147,9 @@ class IndexCommandsParser
             }
         }
 
-        $options = new IndexOptions($keyBlockSize, $withParser, $mergeThreshold, $comment, $visible);
+        $options = $keyBlockSize !== null || $withParser !== null || $mergeThreshold !== null || $comment !== null || $visible !== null
+            ? new IndexOptions($keyBlockSize, $withParser, $mergeThreshold, $comment, $visible)
+            : null;
 
         return new IndexDefinition($name, $type, $columns, $algorithm, $options, $table);
     }
@@ -164,9 +163,6 @@ class IndexCommandsParser
      *
      * lock_option:
      *     LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
-     *
-     * @param TokenList $tokenList
-     * @return DropIndexCommand
      */
     public function parseDropIndex(TokenList $tokenList): DropIndexCommand
     {

@@ -48,15 +48,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
     private $language;
 
     /**
-     * @param QualifiedName $name
-     * @param CompoundStatement $body
      * @param ProcedureParam[] $params
-     * @param UserExpression|null $definer
-     * @param bool|null $deterministic
-     * @param SqlSecurity|null $security
-     * @param RoutineSideEffects|null $sideEffects
-     * @param string|null $comment
-     * @param string|null $language
      */
     public function __construct(
         QualifiedName $name,
@@ -131,7 +123,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
-        if ($this->getDefiner() !== null) {
+        if ($this->definer !== null) {
             $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
         $result .= ' PROCEDURE ' . $this->name->serialize($formatter);

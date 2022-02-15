@@ -33,9 +33,6 @@ class CallCommandParser
      * CALL sp_name([parameter[, ...]])
      *
      * CALL sp_name[()]
-     *
-     * @param TokenList $tokenList
-     * @return CallCommand
      */
     public function parseCall(TokenList $tokenList): CallCommand
     {

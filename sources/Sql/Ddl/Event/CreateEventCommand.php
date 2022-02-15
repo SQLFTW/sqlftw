@@ -11,91 +11,34 @@ namespace SqlFtw\Sql\Ddl\Event;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Dml\DoCommand\DoCommand;
 use SqlFtw\Sql\QualifiedName;
 
 class CreateEventCommand implements EventCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName */
-    private $name;
-
-    /** @var EventSchedule */
-    private $schedule;
-
-    /** @var DoCommand */
-    private $body;
-
-    /** @var UserExpression|null */
-    private $definer;
-
-    /** @var EventState|null */
-    private $state;
-
-    /** @var bool|null */
-    private $preserve;
-
-    /** @var string|null */
-    private $comment;
+    /** @var EventDefinition */
+    private $event;
 
     /** @var bool */
     private $ifNotExists;
 
     public function __construct(
-        QualifiedName $name,
-        ?EventSchedule $schedule,
-        ?DoCommand $body = null,
-        ?UserExpression $definer = null,
-        ?EventState $state = null,
-        ?bool $preserve = null,
-        ?string $comment = null,
+        EventDefinition $event,
         bool $ifNotExists = false
     ) {
-        $this->name = $name;
-        $this->schedule = $schedule;
-        $this->body = $body;
-        $this->definer = $definer;
-        $this->state = $state;
-        $this->preserve = $preserve;
-        $this->comment = $comment;
+        $this->event = $event;
         $this->ifNotExists = $ifNotExists;
     }
 
     public function getName(): QualifiedName
     {
-        return $this->name;
+        return $this->event->getName();
     }
 
-    public function getSchedule(): ?EventSchedule
+    public function getDefinition(): EventDefinition
     {
-        return $this->schedule;
-    }
-
-    public function getBody(): ?DoCommand
-    {
-        return $this->body;
-    }
-
-    public function getDefiner(): ?UserExpression
-    {
-        return $this->definer;
-    }
-
-    public function getState(): ?EventState
-    {
-        return $this->state;
-    }
-
-    public function preserve(): ?bool
-    {
-        return $this->preserve;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
+        return $this->event;
     }
 
     public function ifNotExists(): bool
@@ -106,28 +49,33 @@ class CreateEventCommand implements EventCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
-        if ($this->definer !== null) {
-            $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
+        $definer = $this->event->getDefiner();
+        if ($definer !== null) {
+            $result .= ' DEFINER = ' . $definer->serialize($formatter);
         }
         $result .= ' EVENT';
         if ($this->ifNotExists) {
             $result .= ' IF NOT EXISTS';
         }
-        $result .= ' ' . $this->name->serialize($formatter);
+        $result .= ' ' . $this->event->getName()->serialize($formatter);
 
-        $result .= ' ON SCHEDULE ' . $this->schedule->serialize($formatter);
+        $result .= ' ON SCHEDULE ' . $this->event->getSchedule()->serialize($formatter);
 
-        if ($this->preserve !== null) {
-            $result .= $this->preserve ? ' ON COMPLETION PRESERVE' : ' ON COMPLETION NOT PRESERVE';
+        $preserve = $this->event->preserve();
+        if ($preserve !== null) {
+            $result .= $preserve ? ' ON COMPLETION PRESERVE' : ' ON COMPLETION NOT PRESERVE';
         }
-        if ($this->state !== null) {
-            $result .= ' ' . $this->state->serialize($formatter);
+        $state = $this->event->getState();
+        if ($state !== null) {
+            $result .= ' ' . $state->serialize($formatter);
         }
-        if ($this->comment !== null) {
-            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
+        $comment = $this->event->getComment();
+        if ($comment !== null) {
+            $result .= ' COMMENT ' . $formatter->formatString($comment);
         }
-        if ($this->body !== null) {
-            $result .= ' ' . $this->body->serialize($formatter);
+        $body = $this->event->getBody();
+        if ($body !== null) {
+            $result .= ' ' . $body->serialize($formatter);
         }
 
         return $result;

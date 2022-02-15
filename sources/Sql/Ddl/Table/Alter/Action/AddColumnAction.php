@@ -28,7 +28,6 @@ class AddColumnAction implements ColumnAction
     private $after;
 
     /**
-     * @param ColumnDefinition $column
      * @param string|bool|null $after
      */
     public function __construct(ColumnDefinition $column, $after = null)

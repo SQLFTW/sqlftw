@@ -25,16 +25,8 @@ class LoadDataCommand extends LoadCommand
     private $format;
 
     /**
-     * @param string $file
-     * @param QualifiedName $table
-     * @param FileFormat|null $format
-     * @param Charset|null $charset
      * @param string[]|null $fields
      * @param ExpressionNode[]|null $setters
-     * @param int|null $ignoreRows
-     * @param LoadPriority|null $priority
-     * @param bool $local
-     * @param DuplicateOption|null $duplicateOption
      * @param string[]|null $partitions
      */
     public function __construct(

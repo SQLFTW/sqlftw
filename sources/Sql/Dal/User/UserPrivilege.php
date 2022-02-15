@@ -24,7 +24,6 @@ class UserPrivilege implements SqlSerializable
     private $columns;
 
     /**
-     * @param UserPrivilegeType $type
      * @param string[]|null $columns
      */
     public function __construct(UserPrivilegeType $type, ?array $columns)

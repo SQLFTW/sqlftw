@@ -31,9 +31,6 @@ class ShowProfileCommand implements ShowCommand
 
     /**
      * @param ShowProfileType[] $types
-     * @param int|null $queryId
-     * @param int|null $limit
-     * @param int|null $offset
      */
     public function __construct(array $types, ?int $queryId, ?int $limit, ?int $offset)
     {

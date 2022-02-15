@@ -18,7 +18,6 @@ class CompoundStatement implements Statement
 
     /**
      * @param Statement[] $statements
-     * @param string|null $label
      */
     public function __construct(array $statements, ?string $label)
     {

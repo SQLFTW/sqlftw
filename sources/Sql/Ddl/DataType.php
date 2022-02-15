@@ -49,12 +49,7 @@ class DataType implements SqlSerializable
     private $collation;
 
     /**
-     * @param BaseType $type
      * @param int|int[]|string[]|null $params
-     * @param bool $unsigned
-     * @param Charset|null $charset
-     * @param Collation|null $collation
-     * @param bool $zerofill
      */
     public function __construct(
         BaseType $type,
@@ -86,7 +81,6 @@ class DataType implements SqlSerializable
     }
 
     /**
-     * @param BaseType $type
      * @param int|int[]|string[]|null $params
      */
     private function setParams(BaseType $type, $params = null): void

@@ -1,26 +1,32 @@
 
 parameters:
+    level: 8
+
+    paths:
+        - ../../sources
+        - ../../tests
+
+    excludePaths:
+        - ../../sources/Reflection/*
+
     ignoreErrors:
         # conflicts with CS and PhpStorm
         - '~Unreachable statement - code above always terminates.~'
 
-        # WFT?
-        - '~Else branch is unreachable because previous condition is always true.~'
-
-        # WTF?
-        - '~Method SqlFtw\\Parser\\Dal\\UserCommandsParser::parseResourceOptions\(\) never returns array<SqlFtw\\Sql\\Dal\\User\\UserResourceOption> so it can be removed from the return typehint.~'
-
-        # old style static method callback
-        - '~Parameter #1 \$function of function call_user_func expects callable\(\): mixed, array\(string, ~'
-
         # complicated...
         - '~Property SqlFtw\\Sql\\Ddl\\DataType::\$(size|values) \(array<(int|string)>(\|int)?\|null\) does not accept~'
         - '~Parameter #1 \$strings of method SqlFtw\\Formatter\\Formatter::formatStringList\(\) expects array<string>, array<int\|string> given.~'
+
+        # end() on non-empty array
+        #- '~Method .*Reflection::getLastCommand\(\) should return .*Command but returns .*Command\|false~'
+
+        # bullshit
+        - '~Method SqlFtw\\Parser\\Dal\\UserCommandsParser::parseResourceOptions\(\) never returns array<SqlFtw\\Sql\\Dal\\User\\UserResourceOption> so it can be removed from the return type~'
+
     earlyTerminatingMethodCalls:
         SqlFtw\Parser\TokenList:
             - expected
             - expectedAnyKeyword
-
 
 services:
 	-

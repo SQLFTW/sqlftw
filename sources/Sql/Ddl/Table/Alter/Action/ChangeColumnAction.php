@@ -31,8 +31,6 @@ class ChangeColumnAction implements ColumnAction
     private $after;
 
     /**
-     * @param string $oldName
-     * @param ColumnDefinition $column
      * @param string|bool|null $after
      */
     public function __construct(string $oldName, ColumnDefinition $column, $after = null)

@@ -61,9 +61,6 @@ class TriggerCommandsParser
      * trigger_event: { INSERT | UPDATE | DELETE }
      *
      * trigger_order: { FOLLOWS | PRECEDES } other_trigger_name
-     *
-     * @param TokenList $tokenList
-     * @return CreateTriggerCommand
      */
     public function parseCreateTrigger(TokenList $tokenList): CreateTriggerCommand
     {
@@ -111,9 +108,6 @@ class TriggerCommandsParser
 
     /**
      * DROP TRIGGER [IF EXISTS] [schema_name.] trigger_name
-     *
-     * @param TokenList $tokenList
-     * @return DropTriggerCommand
      */
     public function parseDropTrigger(TokenList $tokenList): DropTriggerCommand
     {

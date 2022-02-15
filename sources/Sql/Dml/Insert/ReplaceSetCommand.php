@@ -25,12 +25,9 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
     private $values;
 
     /**
-     * @param QualifiedName $table
      * @param ExpressionNode[] $values (string $column => ExpressionNode $value)
      * @param string[]|null $columns
      * @param string[]|null $partitions
-     * @param InsertPriority|null $priority
-     * @param bool $ignore
      */
     public function __construct(
         QualifiedName $table,

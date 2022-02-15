@@ -18,8 +18,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../vendor/nette/tester/src/bootstrap.php';
 require_once __DIR__ . '/Assert.php';
 
-require_once __DIR__ . '/../vendor/dogma/dogma-dev/src/debug-client.php';
-
 Debugger::$maxDepth = 9;
 Debugger::$strictMode = true;
 

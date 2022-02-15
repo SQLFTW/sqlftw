@@ -20,20 +20,12 @@ class LoadXmlCommand extends LoadCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var string|null */
     private $rowsTag;
 
     /**
-     * @param string $file
-     * @param QualifiedName $table
-     * @param string|null $rowsTag
-     * @param Charset|null $charset
      * @param string[]|null $fields
      * @param ExpressionNode[]|null $setters
-     * @param int|null $ignoreRows
-     * @param LoadPriority|null $priority
-     * @param bool $local
-     * @param DuplicateOption|null $duplicateOption
      */
     public function __construct(
         string $file,

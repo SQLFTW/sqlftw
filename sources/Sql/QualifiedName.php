@@ -35,7 +35,6 @@ class QualifiedName implements SqlSerializable
 
     /**
      * @param self[] $names
-     * @param string $currentSchema
      * @return string[]
      */
     public static function uniqueSchemas(array $names, string $currentSchema): array

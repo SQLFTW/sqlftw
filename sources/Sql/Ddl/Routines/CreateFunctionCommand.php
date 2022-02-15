@@ -54,16 +54,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     private $language;
 
     /**
-     * @param QualifiedName $name
-     * @param CompoundStatement $body
      * @param DataType[] $params
-     * @param DataType $returnType
-     * @param UserExpression|null $definer
-     * @param bool|null $deterministic
-     * @param SqlSecurity|null $security
-     * @param RoutineSideEffects|null $sideEffects
-     * @param string|null $comment
-     * @param string|null $language
      */
     public function __construct(
         QualifiedName $name,
@@ -145,7 +136,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
-        if ($this->getDefiner() !== null) {
+        if ($this->definer !== null) {
             $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
         $result .= ' FUNCTION ' . $this->name->serialize($formatter);

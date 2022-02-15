@@ -29,7 +29,6 @@ class UuidSet implements SqlSerializable
     private $intervals;
 
     /**
-     * @param string $uuid
      * @param int[][]|null[][] $intervals
      */
     public function __construct(string $uuid, array $intervals)

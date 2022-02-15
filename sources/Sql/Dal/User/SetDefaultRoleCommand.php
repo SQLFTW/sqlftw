@@ -30,7 +30,6 @@ class SetDefaultRoleCommand implements UserCommand
 
     /**
      * @param UserName[] $users
-     * @param UserDefaultRolesSpecification|null $roles
      * @param string[]|null $rolesList
      */
     public function __construct(array $users, ?UserDefaultRolesSpecification $roles, ?array $rolesList = null)
@@ -61,9 +60,9 @@ class SetDefaultRoleCommand implements UserCommand
     }
 
     /**
-     * @return string[]
+     * @return string[]|null
      */
-    public function getRolesList(): array
+    public function getRolesList(): ?array
     {
         return $this->rolesList;
     }

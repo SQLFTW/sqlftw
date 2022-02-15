@@ -39,9 +39,7 @@ class SetAssignment implements SqlSerializable
     private $expression;
 
     /**
-     * @param string $variable
      * @param bool|int|float|string|ExpressionNode|mixed $expression
-     * @param Scope|null $scope
      */
     public function __construct(string $variable, $expression, ?Scope $scope = null)
     {
@@ -86,9 +84,7 @@ class SetAssignment implements SqlSerializable
     }
 
     /**
-     * @param Formatter $formatter
      * @param bool|int|float|string|ExpressionNode $expression
-     * @return string
      */
     private function formatExpression(Formatter $formatter, $expression): string
     {

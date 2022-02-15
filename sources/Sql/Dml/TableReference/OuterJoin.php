@@ -29,10 +29,6 @@ class OuterJoin extends Join
     private $using;
 
     /**
-     * @param TableReferenceNode $left
-     * @param TableReferenceNode $right
-     * @param JoinSide $joinSide
-     * @param ExpressionNode|null $condition
      * @param string[]|null $using
      */
     public function __construct(

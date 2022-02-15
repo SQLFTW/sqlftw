@@ -30,7 +30,6 @@ class CaseStatement implements CompoundStatementItem
     private $statementLists;
 
     /**
-     * @param ExpressionNode|null $condition
      * @param ExpressionNode[] $values
      * @param Statement[][] $statementLists
      */

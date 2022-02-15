@@ -11,34 +11,35 @@ namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
+use SqlFtw\Sql\QualifiedName;
 
 class IndexReflection
 {
     use StrictBehaviorMixin;
 
-    /** @var TableReflection */
-    private $table;
+    /** @var QualifiedName */
+    private $tableName;
 
     /** @var IndexDefinition */
     private $indexDefinition;
 
-    /** @var ColumnReflection|null */
-    private $originColumn;
+    /** @var string|null */
+    private $originColumnName;
 
     public function __construct(
-        TableReflection $table,
+        QualifiedName $tableName,
         IndexDefinition $indexDefinition,
-        ?ColumnReflection $originColumn = null
+        ?string $originColumnName = null
     )
     {
-        $this->table = $table;
+        $this->tableName = $tableName;
         $this->indexDefinition = $indexDefinition;
-        $this->originColumn = $originColumn;
+        $this->originColumnName = $originColumnName;
     }
 
-    public function getTable(): TableReflection
+    public function getTableName(): QualifiedName
     {
-        return $this->table;
+        return $this->tableName;
     }
 
     public function getIndexDefinition(): IndexDefinition
@@ -46,9 +47,9 @@ class IndexReflection
         return $this->indexDefinition;
     }
 
-    public function getOriginColumn(): ?ColumnReflection
+    public function getOriginColumnName(): ?string
     {
-        return $this->originColumn;
+        return $this->originColumnName;
     }
 
 }

@@ -10,11 +10,10 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
+use SqlFtw\Sql\Ddl\Trigger\TriggerCommand;
 use SqlFtw\Sql\QualifiedName;
-use function end;
 
 class TriggerReflection
 {
@@ -23,19 +22,21 @@ class TriggerReflection
     /** @var QualifiedName */
     private $name;
 
-    /** @var CreateTriggerCommand[]|DropTriggerCommand[] */
-    private $commands = [];
+    // todo
+    private $definition;
 
-    public function __construct(QualifiedName $name, CreateTriggerCommand $createTriggerCommand)
+    public function __construct(QualifiedName $name, CreateTriggerCommand $command)
     {
         $this->name = $name;
-        $this->commands[] = $createTriggerCommand;
+        // todo
     }
 
-    public function drop(DropTriggerCommand $dropTriggerCommand): self
+    public function apply(TriggerCommand $command): self
     {
         $that = clone $this;
-        $that->commands[] = $dropTriggerCommand;
+        if ($command instanceof DropTriggerCommand) {
+            // todo
+        }
 
         return $that;
     }
@@ -48,29 +49,6 @@ class TriggerReflection
     public function getTable(): QualifiedName
     {
         return $this->commands[0]->getTable();
-    }
-
-    /**
-     * @return CreateTriggerCommand[]|DropTriggerCommand[]
-     */
-    public function getCommands(): array
-    {
-        return $this->commands;
-    }
-
-    public function wasDropped(): bool
-    {
-        return end($this->commands) instanceof DropTriggerCommand;
-    }
-
-    public function wasRenamed(): bool
-    {
-        return false;
-    }
-
-    public function getLastCommand(): Command
-    {
-        return end($this->commands);
     }
 
 }

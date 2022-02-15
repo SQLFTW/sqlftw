@@ -20,9 +20,6 @@ class UseCommandParser
 
     /**
      * USE db_name
-     *
-     * @param TokenList $tokenList
-     * @return UseCommand
      */
     public function parseUse(TokenList $tokenList): UseCommand
     {

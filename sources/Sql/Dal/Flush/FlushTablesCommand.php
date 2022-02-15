@@ -30,8 +30,6 @@ class FlushTablesCommand implements DalCommand
 
     /**
      * @param QualifiedName[]|null $tables
-     * @param bool $withReadLock
-     * @param bool $forExport
      */
     public function __construct(?array $tables = null, bool $withReadLock = false, bool $forExport = false)
     {

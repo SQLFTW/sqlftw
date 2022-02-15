@@ -17,10 +17,7 @@ class Assert extends DogmaAssert
 {
 
     /**
-     * @param Token $token
-     * @param int $type
      * @param mixed|null $value
-     * @param int|null $position
      */
     public static function token(Token $token, int $type, $value = null, ?int $position = null): void
     {
@@ -54,10 +51,12 @@ class Assert extends DogmaAssert
         ?Parser $parser = null,
         ?Formatter $formatter = null
     ): void {
+        /** @var string $query */
         $query = preg_replace('/\\s+/', ' ', $query);
         $query = str_replace(['( ', ' )'], ['(', ')'], $query);
 
         if ($expected !== null) {
+            /** @var string $expected */
             $expected = preg_replace('/\\s+/', ' ', $expected);
             $expected = str_replace(['( ', ' )'], ['(', ')'], $expected);
         } else {
@@ -70,6 +69,7 @@ class Assert extends DogmaAssert
         // todo?
 
         $actual = $parser->parseCommand($query)->serialize($formatter);
+        /** @var string $actual */
         $actual = preg_replace('/\\s+/', ' ', $actual);
         $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);
 

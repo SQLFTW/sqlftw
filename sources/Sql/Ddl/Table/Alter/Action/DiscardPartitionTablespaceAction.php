@@ -37,7 +37,7 @@ class DiscardPartitionTablespaceAction implements PartitioningAction, Tablespace
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DISCARD ';
+        $result = 'DISCARD PARTITION ';
 
         if ($this->partitions === null) {
             $result .= 'ALL';

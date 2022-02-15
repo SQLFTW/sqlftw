@@ -24,7 +24,7 @@ class ShowSlaveStatusCommand implements ShowCommand
         $this->channel = $channel;
     }
 
-    public function getChannel(): string
+    public function getChannel(): ?string
     {
         return $this->channel;
     }

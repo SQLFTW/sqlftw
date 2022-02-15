@@ -59,9 +59,6 @@ class TypeParser
      *   | spatial_type
      *
      *   + aliases defined in BaseType class
-     *
-     * @param TokenList $tokenList
-     * @return DataType
      */
     public function parseType(TokenList $tokenList): DataType
     {

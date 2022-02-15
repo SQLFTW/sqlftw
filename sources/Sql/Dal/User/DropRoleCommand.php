@@ -26,7 +26,6 @@ class DropRoleCommand implements UserCommand
 
     /**
      * @param string[] $roles
-     * @param bool $ifExists
      */
     public function __construct(array $roles, bool $ifExists = false)
     {

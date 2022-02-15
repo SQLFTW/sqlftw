@@ -44,7 +44,6 @@ class Parser
     }
 
     /**
-     * @param string $sql
      * @return Command[]
      */
     public function parse(string $sql): array

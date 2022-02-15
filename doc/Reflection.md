@@ -1,7 +1,19 @@
 
+## Reflection loading
+
+All objects in the reflection hierarchy are immutable from the outside, however all of them can change internally by 
+lazy loading already existing database objects from external reference source (database, structure exports).
+
+
+
 ## Reflection structure
 
-- ServerReflection
+- Session - holds session state
+    - **string** $schema
+    - **VariablesReflection** $variables
+    - **VariablesReflection** $userVariables
+
+- ServerReflection (not implemented yet. applicable on PostgreSQL)
     - **DatabaseReflection**[]
         - **SchemaReflection**[]
             - **TableReflection**[]
@@ -29,9 +41,9 @@
             - **TriggerReflection**[]
                 - TableReflection ???
             - **ViewReflection**[]
-        - VariablesReflection[] ???
-    - **TablespaceReflection**[]
-    - **UserReflection**[] ???
+    - **VariablesReflection** - persistent/server state
+    - **TablespaceReflection**[] (currently on Database level. should be on server level on PostgreSQL)
+    - **UserReflection**[] ??? (currently on Database level. should be on server level on PostgreSQL)
 
 
 ## Reflection exceptions
@@ -40,7 +52,7 @@ exceptions can be sorted by two parameters:
  - the object `<type>` they are related to (schema, table, index)
  - and the `<event>`, that caused the exception (not found, dropped, ...)
 
-additionally their interfaces differ by their `<container>` (which determines how they are addressed: simple name, qualified name or name and table name)
+additionally, their interfaces differ by their `<container>` (which determines how they are addressed: simple name, qualified name or name and table name)
 
 all exceptions:
  - extend abstract `ReflectionException` via abstract `<type>Exception`

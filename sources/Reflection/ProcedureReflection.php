@@ -10,13 +10,10 @@
 namespace SqlFtw\Reflection;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateProcedureCommand;
-use SqlFtw\Sql\Ddl\Routines\DropProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\StoredProcedureCommand;
 use SqlFtw\Sql\QualifiedName;
-use function end;
 
 class ProcedureReflection
 {
@@ -25,31 +22,22 @@ class ProcedureReflection
     /** @var QualifiedName */
     private $name;
 
-    /** @var StoredProcedureCommand[] */
-    private $commands = [];
+    // todo
 
-    public function __construct(QualifiedName $name, CreateProcedureCommand $createProcedureCommand)
+    public function __construct(QualifiedName $name, CreateProcedureCommand $command)
     {
         $this->name = $name;
-        $this->commands[] = $createProcedureCommand;
+        // todo
     }
 
-    public function alter(AlterProcedureCommand $alterProcedureCommand): self
+    public function apply(StoredProcedureCommand $command): self
     {
         $that = clone $this;
-        $that->commands[] = $alterProcedureCommand;
-
-        // todo
-
-        return $that;
-    }
-
-    public function drop(DropProcedureCommand $dropProcedureCommand): self
-    {
-        $that = clone $this;
-        $that->commands[] = $dropProcedureCommand;
-
-        // todo
+        if ($command instanceof AlterProcedureCommand) {
+            // todo
+        } else {
+            // todo
+        }
 
         return $that;
     }
@@ -57,29 +45,6 @@ class ProcedureReflection
     public function getName(): QualifiedName
     {
         return $this->name;
-    }
-
-    /**
-     * @return StoredProcedureCommand[]
-     */
-    public function getCommands(): array
-    {
-        return $this->commands;
-    }
-
-    public function wasDropped(): bool
-    {
-        return end($this->commands) instanceof DropProcedureCommand;
-    }
-
-    public function wasRenamed(): bool
-    {
-        return false;
-    }
-
-    public function getLastCommand(): Command
-    {
-        return end($this->commands);
     }
 
 }

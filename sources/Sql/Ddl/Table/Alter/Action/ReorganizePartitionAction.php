@@ -19,17 +19,17 @@ class ReorganizePartitionAction implements PartitioningAction
 {
     use StrictBehaviorMixin;
 
-    /** @var string[]|null */
+    /** @var string[] */
     private $partitions;
 
     /** @var PartitionDefinition[] */
     private $newPartitions;
 
     /**
-     * @param string[]|null $partitions (where null means ALL)
+     * @param string[] $partitions (where null means ALL)
      * @param PartitionDefinition[] $newPartitions
      */
-    public function __construct(?array $partitions, array $newPartitions)
+    public function __construct(array $partitions, array $newPartitions)
     {
         if ($partitions !== null) {
             Check::itemsOfType($partitions, Type::STRING);
@@ -39,9 +39,9 @@ class ReorganizePartitionAction implements PartitioningAction
     }
 
     /**
-     * @return string[]|null
+     * @return string[]
      */
-    public function getPartitions(): ?array
+    public function getPartitions(): array
     {
         return $this->partitions;
     }
@@ -56,7 +56,7 @@ class ReorganizePartitionAction implements PartitioningAction
 
     public function serialize(Formatter $formatter): string
     {
-        return 'REORGANIZE PARTITION ' . ($this->partitions === null ? 'ALL' : $formatter->formatNamesList($this->partitions))
+        return 'REORGANIZE PARTITION ' . $formatter->formatNamesList($this->partitions)
             . ' INTO (' . $formatter->formatSerializablesList($this->newPartitions) . ')';
     }
 

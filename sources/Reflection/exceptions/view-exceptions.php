@@ -83,8 +83,6 @@ class ViewRenamedException extends ViewException implements ObjectRenamedExcepti
 
     /**
      * @param RenameTableCommand $command
-     * @param QualifiedName $oldName
-     * @return QualifiedName
      */
     public static function getNewNameFromCommand(Command $command, QualifiedName $oldName): QualifiedName
     {

@@ -32,9 +32,6 @@ class MatchExpression implements ExpressionNode
 
     /**
      * @param ColumnName[] $columns
-     * @param string $query
-     * @param MatchMode|null $mode
-     * @param bool $queryExpansion
      */
     public function __construct(array $columns, string $query, ?MatchMode $mode, bool $queryExpansion = false)
     {
