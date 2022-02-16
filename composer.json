@@ -11,9 +11,7 @@
         }
     ],
     "require": {
-        "php": "^7.1.0|^8.0.0",
-        "ext-pdo": "*",
-        "ext-sockets": "*",
+        "php": "^7.1|^8.1",
         "dogma/dogma": "^0.2.10"
     },
     "require-dev": {
