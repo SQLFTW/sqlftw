@@ -27,15 +27,15 @@ class CharsetCommandsParser
      */
     public function parseSetCharacterSet(TokenList $tokenList): SetCharacterSetCommand
     {
-        $tokenList->consumeKeyword(Keyword::SET);
-        $keyword = $tokenList->consumeAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET);
+        $tokenList->expectKeyword(Keyword::SET);
+        $keyword = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET);
         if ($keyword === Keyword::CHARACTER) {
-            $tokenList->consumeKeyword(Keyword::SET);
+            $tokenList->expectKeyword(Keyword::SET);
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+        if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
             $charset = null;
         } else {
-            $charset = Charset::get($tokenList->consumeNameOrString());
+            $charset = Charset::get($tokenList->expectNameOrString());
         }
         $tokenList->expectEnd();
 
@@ -48,12 +48,12 @@ class CharsetCommandsParser
      */
     public function parseSetNames(TokenList $tokenList): SetNamesCommand
     {
-        $tokenList->consumeKeywords(Keyword::SET, Keyword::NAMES);
+        $tokenList->expectKeywords(Keyword::SET, Keyword::NAMES);
         $charset = $collation = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT) === null) {
-            $charset = Charset::get($tokenList->consumeNameOrString());
-            if ($tokenList->mayConsumeKeyword(Keyword::COLLATE) !== null) {
-                $collation = Collation::get($tokenList->consumeNameOrString());
+        if ($tokenList->hasKeyword(Keyword::DEFAULT) === null) {
+            $charset = Charset::get($tokenList->expectNameOrString());
+            if ($tokenList->hasKeyword(Keyword::COLLATE) !== null) {
+                $collation = Collation::get($tokenList->expectNameOrString());
             }
         }
         $tokenList->expectEnd();

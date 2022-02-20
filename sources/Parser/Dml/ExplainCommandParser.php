@@ -77,13 +77,13 @@ class ExplainCommandParser
      */
     public function parseExplain(TokenList $tokenList): Command
     {
-        $tokenList->consumeAnyKeyword(Keyword::EXPLAIN, Keyword::DESCRIBE, Keyword::DESC);
+        $tokenList->expectAnyKeyword(Keyword::EXPLAIN, Keyword::DESCRIBE, Keyword::DESC);
 
-        $type = $tokenList->mayConsumeAnyKeyword(Keyword::EXTENDED, Keyword::PARTITIONS, Keyword::FORMAT);
+        $type = $tokenList->getAnyKeyword(Keyword::EXTENDED, Keyword::PARTITIONS, Keyword::FORMAT);
         if ($type !== null) {
             if ($type === Keyword::FORMAT) {
-                $tokenList->consumeOperator(Operator::EQUAL);
-                $format = $tokenList->consumeAnyKeyword(Keyword::JSON, Keyword::TRADITIONAL);
+                $tokenList->expectOperator(Operator::EQUAL);
+                $format = $tokenList->expectAnyKeyword(Keyword::JSON, Keyword::TRADITIONAL);
                 $type = ExplainType::get($type . '=' . $format);
             } else {
                 $type = ExplainType::get($type);
@@ -91,12 +91,12 @@ class ExplainCommandParser
         }
 
         $position = $tokenList->getPosition();
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::SELECT, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR);
+        $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR);
         $statement = $connectionId = null;
         switch ($keyword) {
             case Keyword::FOR:
-                $tokenList->consumeKeyword(Keyword::CONNECTION);
-                $connectionId = $tokenList->consumeInt();
+                $tokenList->expectKeyword(Keyword::CONNECTION);
+                $connectionId = $tokenList->expectInt();
                 break;
             case Keyword::SELECT:
                 $statement = $this->selectCommandParser->parseSelect($tokenList->resetPosition($position));
@@ -115,11 +115,11 @@ class ExplainCommandParser
                 break;
             case null:
                 // DESCRIBE
-                $qualifiedName = $tokenList->consumeQualifiedName();
+                $qualifiedName = $tokenList->expectQualifiedName();
                 $table = new QualifiedName(...$qualifiedName);
-                $column = $tokenList->mayConsumeName();
+                $column = $tokenList->getName();
                 if ($column === null) {
-                    $column = $tokenList->mayConsumeString();
+                    $column = $tokenList->getString();
                 }
 
                 return new DescribeTableCommand($table, $column);

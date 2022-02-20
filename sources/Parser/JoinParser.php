@@ -56,7 +56,7 @@ class JoinParser
         $references = [];
         do {
             $references[] = $this->parseTableReference($tokenList);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         if (count($references) === 1) {
             return $references[0];
@@ -72,13 +72,13 @@ class JoinParser
      */
     public function parseTableReference(TokenList $tokenList): TableReferenceNode
     {
-        if ($tokenList->mayConsume(TokenType::LEFT_CURLY_BRACKET)) {
-            $token = $tokenList->consumeName();
+        if ($tokenList->has(TokenType::LEFT_CURLY_BRACKET)) {
+            $token = $tokenList->expectName();
             if ($token !== 'OJ') {
                 $tokenList->expected('Expected ODBC escaped table reference introducer "OJ".');
             } else {
                 $reference = $this->parseTableReference($tokenList);
-                $tokenList->consume(TokenType::RIGHT_CURLY_BRACKET);
+                $tokenList->expect(TokenType::RIGHT_CURLY_BRACKET);
 
                 return new EscapedTableReference($reference);
             }
@@ -108,52 +108,52 @@ class JoinParser
         $left = $this->parseTableFactor($tokenList);
 
         do {
-            if ($tokenList->mayConsumeKeyword(Keyword::STRAIGHT_JOIN)) {
+            if ($tokenList->hasKeyword(Keyword::STRAIGHT_JOIN)) {
                 // STRAIGHT_JOIN
                 $right = $this->parseTableFactor($tokenList);
                 $condition = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::ON)) {
+                if ($tokenList->hasKeyword(Keyword::ON)) {
                     $condition = $this->expressionParser->parseExpression($tokenList);
                 }
 
                 $left = new StraightJoin($left, $right, $condition);
                 continue;
             }
-            if ($tokenList->mayConsumeKeyword(Keyword::NATURAL)) {
+            if ($tokenList->hasKeyword(Keyword::NATURAL)) {
                 // NATURAL JOIN
                 $side = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::INNER) === null) {
-                    /** @var JoinSide $side */
-                    $side = $tokenList->mayConsumeKeywordEnum(JoinSide::class);
+                if ($tokenList->hasKeyword(Keyword::INNER) === null) {
+                    /** @var JoinSide|null $side */
+                    $side = $tokenList->getKeywordEnum(JoinSide::class);
                     if ($side !== null) {
-                        $tokenList->mayConsumeKeyword(Keyword::OUTER);
+                        $tokenList->hasKeyword(Keyword::OUTER);
                     }
                 }
-                $tokenList->consumeKeyword(Keyword::JOIN);
+                $tokenList->expectKeyword(Keyword::JOIN);
                 $right = $this->parseTableFactor($tokenList);
 
                 $left = new NaturalJoin($left, $right, $side);
                 continue;
             }
             /** @var JoinSide|null $side */
-            $side = $tokenList->mayConsumeKeywordEnum(JoinSide::class);
+            $side = $tokenList->getKeywordEnum(JoinSide::class);
             if ($side !== null) {
                 // OUTER JOIN
-                $tokenList->mayConsumeKeyword(Keyword::OUTER);
+                $tokenList->hasKeyword(Keyword::OUTER);
                 $right = $this->parseTableReferenceInternal($tokenList);
                 [$on, $using] = $this->parseJoinCondition($tokenList);
 
                 $left = new OuterJoin($left, $right, $side, $on, $using);
                 continue;
             }
-            $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::INNER, Keyword::CROSS, Keyword::JOIN);
+            $keyword = $tokenList->getAnyKeyword(Keyword::INNER, Keyword::CROSS, Keyword::JOIN);
             if ($keyword !== null) {
                 // INNER JOIN
                 $cross = false;
                 if ($keyword === Keyword::INNER) {
-                    $tokenList->consumeKeyword(Keyword::JOIN);
+                    $tokenList->expectKeyword(Keyword::JOIN);
                 } elseif ($keyword === Keyword::CROSS) {
-                    $tokenList->consumeKeyword(Keyword::JOIN);
+                    $tokenList->expectKeyword(Keyword::JOIN);
                     $cross = true;
                 }
                 $right = $this->parseTableFactor($tokenList);
@@ -173,15 +173,15 @@ class JoinParser
     private function parseJoinCondition(TokenList $tokenList): array
     {
         $on = $using = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::ON)) {
+        if ($tokenList->hasKeyword(Keyword::ON)) {
             $on = $this->expressionParser->parseExpression($tokenList);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::USING)) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        } elseif ($tokenList->hasKeyword(Keyword::USING)) {
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $using = [];
             do {
-                $using[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $using[] = $tokenList->expectName();
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         return [$on, $using];
@@ -196,61 +196,61 @@ class JoinParser
     private function parseTableFactor(TokenList $tokenList): TableReferenceNode
     {
         $selectInParentheses = false;
-        if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
-            $selectInParentheses = (bool) $tokenList->mayConsumeKeyword(Keyword::SELECT);
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            $selectInParentheses = $tokenList->hasKeyword(Keyword::SELECT);
             if (!$selectInParentheses) {
                 $references = $this->parseTableReferences($tokenList);
-                $tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->get(TokenType::RIGHT_PARENTHESIS);
 
                 return new TableReferenceParentheses($references);
             }
         }
 
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::SELECT, Keyword::LATERAL);
+        $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::LATERAL);
         if ($selectInParentheses || $keyword !== null) {
             if ($keyword === Keyword::LATERAL) {
-                if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                     $selectInParentheses = true;
                 }
-                $tokenList->consumeKeyword(Keyword::SELECT);
+                $tokenList->expectKeyword(Keyword::SELECT);
             }
 
             $query = $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList->resetPosition(-1));
 
             if ($selectInParentheses) {
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
 
-            $tokenList->mayConsumeKeyword(Keyword::AS);
-            $alias = $tokenList->consumeName();
+            $tokenList->hasKeyword(Keyword::AS);
+            $alias = $tokenList->expectName();
             $columns = null;
-            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                 $columns = [];
                 do {
-                    $columns[] = $tokenList->consumeName();
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    $columns[] = $tokenList->expectName();
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
 
             return new TableReferenceSubquery($query, $alias, $columns, $selectInParentheses, $keyword === Keyword::LATERAL);
         } else {
-            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+            $table = new QualifiedName(...$tokenList->expectQualifiedName());
             $partitions = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            if ($tokenList->hasKeyword(Keyword::PARTITION)) {
+                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $partitions = [];
                 do {
-                    $partitions[] = $tokenList->consumeName();
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    $partitions[] = $tokenList->expectName();
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
-            if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
-                $alias = $tokenList->consumeName();
+            if ($tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectName();
             } else {
-                $alias = $tokenList->mayConsumeName();
+                $alias = $tokenList->getName();
             }
             $indexHints = null;
-            if ($tokenList->mayConsumeAnyKeyword(Keyword::USE, Keyword::IGNORE, Keyword::FORCE)) {
+            if ($tokenList->hasAnyKeyword(Keyword::USE, Keyword::IGNORE, Keyword::FORCE)) {
                 $indexHints = $this->parseIndexHints($tokenList->resetPosition(-1));
             }
 
@@ -277,28 +277,28 @@ class JoinParser
         $hints = [];
         do {
             /** @var IndexHintAction $action */
-            $action = $tokenList->mayConsumeKeywordEnum(IndexHintAction::class);
-            $tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY);
+            $action = $tokenList->getKeywordEnum(IndexHintAction::class);
+            $tokenList->getAnyKeyword(Keyword::INDEX, Keyword::KEY);
             $target = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::FOR)) {
-                $keyword = $tokenList->consumeAnyKeyword(Keyword::JOIN, Keyword::ORDER, Keyword::GROUP);
+            if ($tokenList->hasKeyword(Keyword::FOR)) {
+                $keyword = $tokenList->expectAnyKeyword(Keyword::JOIN, Keyword::ORDER, Keyword::GROUP);
                 if ($keyword === Keyword::JOIN) {
                     $target = IndexHintTarget::get(IndexHintTarget::JOIN);
                 } else {
-                    $tokenList->consumeKeyword(Keyword::BY);
+                    $tokenList->expectKeyword(Keyword::BY);
                     $target = IndexHintTarget::get($keyword . ' ' . Keyword::BY);
                 }
             }
 
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $indexes = [];
             do {
-                $indexes[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $indexes[] = $tokenList->expectName();
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
             $hints[] = new IndexHint($action, $target, $indexes);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $hints;
     }

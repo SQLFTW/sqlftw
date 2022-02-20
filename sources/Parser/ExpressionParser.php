@@ -99,25 +99,25 @@ class ExpressionParser
             $operators[] = Operator::PIPES;
         }
 
-        if ($tokenList->mayConsumeOperator(Operator::NOT)) {
+        if ($tokenList->getOperator(Operator::NOT)) {
             $expr = $this->parseExpression($tokenList);
 
             return new UnaryOperator(Operator::NOT, $expr);
-        } elseif ($tokenList->mayConsumeOperator(Operator::EXCLAMATION)) {
+        } elseif ($tokenList->getOperator(Operator::EXCLAMATION)) {
             $expr = $this->parseExpression($tokenList);
 
             return new UnaryOperator(Operator::EXCLAMATION, $expr);
         }
 
         $left = $this->parseBooleanPrimary($tokenList);
-        $operator = $tokenList->mayConsumeAnyOperator(...$operators);
+        $operator = $tokenList->getAnyOperator(...$operators);
         if ($operator !== null) {
             $right = $this->parseExpression($tokenList);
 
             return new BinaryOperator($left, [$operator], $right);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::IS)) {
-            $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
-            $keyword = $tokenList->consumeAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
+        } elseif ($tokenList->hasKeyword(Keyword::IS)) {
+            $not = $tokenList->hasKeyword(Keyword::NOT);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
             $right = $keyword === Keyword::UNKNOWN
                 ? new UnknownLiteral()
                 : new ValueLiteral($keyword === Keyword::TRUE);
@@ -136,7 +136,7 @@ class ExpressionParser
         $expressions = [];
         do {
             $expressions[] = $this->parseExpression($tokenList);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $expressions;
     }
@@ -165,13 +165,13 @@ class ExpressionParser
         ];
 
         $left = $this->parsePredicate($tokenList);
-        $operator = $tokenList->mayConsumeAnyOperator(...$operators);
+        $operator = $tokenList->getAnyOperator(...$operators);
         if ($operator !== null) {
-            $quantifier = $tokenList->mayConsumeAnyKeyword(Keyword::ALL, Keyword::ANY);
+            $quantifier = $tokenList->getAnyKeyword(Keyword::ALL, Keyword::ANY);
             if ($quantifier !== null) {
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $subquery = new Parentheses($this->parseSubquery($tokenList));
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
                 return new BinaryOperator($left, [$operator, $quantifier], $subquery);
             } else {
@@ -179,9 +179,9 @@ class ExpressionParser
 
                 return new BinaryOperator($left, [$operator], $right);
             }
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::IS)) {
-            $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
-            $tokenList->consumeKeyword(Keyword::NULL);
+        } elseif ($tokenList->hasKeyword(Keyword::IS)) {
+            $not = $tokenList->hasKeyword(Keyword::NOT);
+            $tokenList->expectKeyword(Keyword::NULL);
             $right = new NullLiteral();
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
@@ -203,41 +203,41 @@ class ExpressionParser
     private function parsePredicate(TokenList $tokenList): ExpressionNode
     {
         $left = $this->parseBitExpression($tokenList);
-        if ($tokenList->mayConsumeKeywords(Keyword::SOUNDS, Keyword::LIKE)) {
+        if ($tokenList->hasKeywords(Keyword::SOUNDS, Keyword::LIKE)) {
             $right = $this->parseBitExpression($tokenList);
 
             return new BinaryOperator($left, [Operator::SOUNDS, Operator::LIKE], $right);
         }
 
-        $not = (bool) $tokenList->mayConsumeKeyword(Keyword::NOT);
+        $not = $tokenList->hasKeyword(Keyword::NOT);
 
-        $operator = $tokenList->mayConsumeAnyKeyword(Keyword::REGEXP, Keyword::RLIKE);
+        $operator = $tokenList->getAnyKeyword(Keyword::REGEXP, Keyword::RLIKE);
         if ($operator !== null) {
             $right = $this->parseBitExpression($tokenList);
 
             return new BinaryOperator($left, $not ? [Operator::NOT, $operator] : [$operator], $right);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::BETWEEN)) {
+        } elseif ($tokenList->hasKeyword(Keyword::BETWEEN)) {
             $middle = $this->parseBitExpression($tokenList);
-            $tokenList->consumeKeyword(Keyword::AND);
+            $tokenList->expectKeyword(Keyword::AND);
             $right = $this->parseBitExpression($tokenList);
 
             return new TernaryOperator($left, $not ? [Operator::NOT, Operator::BETWEEN] : [Operator::BETWEEN], $middle, Operator::AND, $right);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::IN)) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-            if ($tokenList->mayConsumeKeyword(Keyword::SELECT)) {
+        } elseif ($tokenList->hasKeyword(Keyword::IN)) {
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            if ($tokenList->hasKeyword(Keyword::SELECT)) {
                 $subquery = new Parentheses($this->parseSubquery($tokenList->resetPosition(-1)));
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
                 return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IN] : [Operator::IN], $subquery);
             } else {
                 $expressions = new Parentheses(new ListExpression($this->parseExpressionList($tokenList)));
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
                 return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IN] : [Operator::IN], $expressions);
             }
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
+        } elseif ($tokenList->hasKeyword(Keyword::LIKE)) {
             $second = $this->parseSimpleExpression($tokenList);
-            if ($tokenList->mayConsumeKeyword(Keyword::ESCAPE)) {
+            if ($tokenList->hasKeyword(Keyword::ESCAPE)) {
                 $third = $this->parseSimpleExpression($tokenList);
 
                 return new TernaryOperator($left, $not ? [Operator::NOT, Operator::LIKE] : [Operator::LIKE], $second, Operator::ESCAPE, $third);
@@ -285,12 +285,12 @@ class ExpressionParser
         ];
 
         $left = $this->parseSimpleExpression($tokenList);
-        $operator = $tokenList->mayConsumeAnyOperator(...$operators);
+        $operator = $tokenList->getAnyOperator(...$operators);
         if ($operator === null) {
             return $left;
         }
 
-        if (($operator === Operator::PLUS || $operator === Operator::MINUS) && $tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
+        if (($operator === Operator::PLUS || $operator === Operator::MINUS) && $tokenList->hasKeyword(Keyword::INTERVAL)) {
             $right = new IntervalLiteral($this->parseInterval($tokenList));
 
             return new BinaryOperator($left, [$operator], $right);
@@ -328,7 +328,7 @@ class ExpressionParser
      */
     private function parseSimpleExpression(TokenList $tokenList): ExpressionNode
     {
-        $operator = $tokenList->mayConsumeAnyOperator(
+        $operator = $tokenList->getAnyOperator(
             Operator::PLUS,
             Operator::MINUS,
             Operator::BIT_INVERT,
@@ -343,93 +343,93 @@ class ExpressionParser
             // BINARY simple_expr
             $expression = new UnaryOperator($operator, $this->parseSimpleExpression($tokenList));
 
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::EXISTS)) {
+        } elseif ($tokenList->hasKeyword(Keyword::EXISTS)) {
             // EXISTS (subquery)
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $subquery = $this->parseSubquery($tokenList);
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $expression = new ExistsExpression($subquery);
 
-        } elseif ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
-            if ($tokenList->mayConsumeAnyKeyword(Keyword::SELECT)) {
+        } elseif ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasAnyKeyword(Keyword::SELECT)) {
                 // (subquery)
                 $subquery = $this->parseSubquery($tokenList->resetPosition(-1));
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                 $expression = new Parentheses($subquery);
             } else {
                 // (expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
                 $expression = new Parentheses(new ListExpression($expressions));
             }
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::ROW)) {
+        } elseif ($tokenList->hasKeyword(Keyword::ROW)) {
             // ROW (expr, expr [, expr] ...)
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $expressions = $this->parseExpressionList($tokenList);
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $expression = new RowExpression($expressions);
 
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::INTERVAL)) {
+        } elseif ($tokenList->hasKeyword(Keyword::INTERVAL)) {
             // interval_expr
             $interval = $this->parseInterval($tokenList);
             $expression = new IntervalLiteral($interval);
 
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::CASE)) {
+        } elseif ($tokenList->hasKeyword(Keyword::CASE)) {
             // case_expr
             $expression = $this->parseCase($tokenList);
 
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::MATCH)) {
+        } elseif ($tokenList->hasKeyword(Keyword::MATCH)) {
             // match_expr
             $expression = $this->parseMatch($tokenList);
 
-        } elseif ($tokenList->mayConsume(TokenType::PLACEHOLDER)) {
+        } elseif ($tokenList->has(TokenType::PLACEHOLDER)) {
             // param_marker
             $expression = new Placeholder();
 
-        } elseif ($tokenList->mayConsume(TokenType::LEFT_CURLY_BRACKET)) {
+        } elseif ($tokenList->has(TokenType::LEFT_CURLY_BRACKET)) {
             // {identifier expr}
-            $name = $tokenList->consumeName();
+            $name = $tokenList->expectName();
             $expression = $this->parseExpression($tokenList);
-            $tokenList->consume(TokenType::RIGHT_CURLY_BRACKET);
+            $tokenList->expect(TokenType::RIGHT_CURLY_BRACKET);
             $expression = new CurlyExpression($name, $expression);
 
         } else {
-            $variable = $tokenList->mayConsume(TokenType::AT_VARIABLE);
+            $variable = $tokenList->get(TokenType::AT_VARIABLE);
             if ($variable !== null) {
                 /** @var string $variableName */
                 $variableName = $variable->value;
                 // variable
                 if ($variableName[1] === '@') {
                     // @@global.xyz
-                    $tokenList->consume(TokenType::DOT);
+                    $tokenList->expect(TokenType::DOT);
                     // todo: better type here
-                    $variableName .= '.' . $tokenList->consumeName();
+                    $variableName .= '.' . $tokenList->expectName();
                 }
                 $expression = new Identifier($variableName);
 
             } else {
-                $name1 = $tokenList->mayConsumeName();
+                $name1 = $tokenList->getName();
                 if ($name1 !== null) {
                     $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
                     $name2 = $name3 = null;
-                    if ($tokenList->mayConsume(TokenType::DOT)) {
-                        $name2 = $tokenList->consumeName();
-                        if ($tokenList->mayConsume(TokenType::DOT)) {
-                            $name3 = $tokenList->consumeName();
+                    if ($tokenList->has(TokenType::DOT)) {
+                        $name2 = $tokenList->expectName();
+                        if ($tokenList->has(TokenType::DOT)) {
+                            $name3 = $tokenList->expectName();
                         }
                     }
                     if ($name3 !== null) {
                         // identifier
                         $expression = new Identifier(new ColumnName($name1, $name2, $name3));
 
-                    } elseif ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                    } elseif ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                         // function_call
                         // todo: support for irregular arguments - eg "GROUP_CONCAT(DISTINCT foo ORDER BY bar)"
                         $arguments = [];
-                        if (!$tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS)) {
+                        if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
                             do {
                                 $arguments[] = $this->parseExpression($tokenList);
-                            } while ($tokenList->mayConsumeComma());
-                            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                            } while ($tokenList->hasComma());
+                            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                         }
                         $expression = new FunctionCall(new QualifiedName($name2 ?: $name1, $name2 ? $name1 : null), $arguments);
 
@@ -452,13 +452,13 @@ class ExpressionParser
             }
         }
 
-        if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
+        if ($tokenList->hasKeyword(Keyword::COLLATE)) {
             // simple_expr COLLATE collation_name
-            $collation = Collation::get($tokenList->consumeString());
+            $collation = Collation::get($tokenList->expectString());
 
             return new CollateExpression($expression, $collation);
         } elseif ($tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT)
-            && $tokenList->mayConsumeOperator(Operator::PIPES)
+            && $tokenList->getOperator(Operator::PIPES)
         ) {
             // simple_expr || simple_expr
             $right = $this->parseSimpleExpression($tokenList);
@@ -477,9 +477,9 @@ class ExpressionParser
     private function parseCase(TokenList $tokenList): CaseExpression
     {
         $condition = null;
-        if (!$tokenList->mayConsumeKeyword(Keyword::WHEN)) {
+        if (!$tokenList->hasKeyword(Keyword::WHEN)) {
             $condition = $this->parseLiteral($tokenList);
-            $tokenList->consumeKeyword(Keyword::WHEN);
+            $tokenList->expectKeyword(Keyword::WHEN);
         }
         $values = $results = [];
         do {
@@ -488,14 +488,14 @@ class ExpressionParser
             } else {
                 $values[] = $this->parseExpression($tokenList);
             }
-            $tokenList->consumeKeyword(Keyword::THEN);
+            $tokenList->expectKeyword(Keyword::THEN);
             $results[] = $this->parseLiteral($tokenList);
-        } while ($tokenList->mayConsumeKeyword(Keyword::WHEN));
+        } while ($tokenList->hasKeyword(Keyword::WHEN));
 
-        if ($tokenList->mayConsumeKeyword(Keyword::ELSE)) {
+        if ($tokenList->hasKeyword(Keyword::ELSE)) {
             $results[] = $this->parseLiteral($tokenList);
         }
-        $tokenList->consumeKeywords(Keyword::END, Keyword::CASE);
+        $tokenList->expectKeywords(Keyword::END, Keyword::CASE);
 
         return new CaseExpression($condition, $values, $results);
     }
@@ -511,45 +511,45 @@ class ExpressionParser
      */
     private function parseMatch(TokenList $tokenList): MatchExpression
     {
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         $columns = [];
         do {
             $columns[] = $this->parseColumnName($tokenList);
-        } while ($tokenList->mayConsumeComma());
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        } while ($tokenList->hasComma());
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
-        $tokenList->consumeKeyword(Keyword::AGAINST);
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-        $query = $tokenList->consumeString();
+        $tokenList->expectKeyword(Keyword::AGAINST);
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $query = $tokenList->expectString();
         /** @var MatchMode|null $mode */
-        $mode = $tokenList->mayConsumeKeywordEnum(MatchMode::class);
-        $expansion = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        $mode = $tokenList->getKeywordEnum(MatchMode::class);
+        $expansion = $tokenList->hasKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         return new MatchExpression($columns, $query, $mode, $expansion);
     }
 
     public function parseColumnName(TokenList $tokenList): ColumnName
     {
-        $first = $tokenList->consumeName();
+        $first = $tokenList->expectName();
         $second = $third = null;
-        if ($tokenList->mayConsume(TokenType::DOT)) {
+        if ($tokenList->has(TokenType::DOT)) {
             // a reserved keyword may follow after "." unescaped as we know it is a name context
-            $secondToken = $tokenList->mayConsume(TokenType::KEYWORD);
+            $secondToken = $tokenList->get(TokenType::KEYWORD);
             if ($secondToken !== null) {
                 /** @var string $second */
                 $second = $secondToken->value;
             } else {
-                $second = $tokenList->consumeName();
+                $second = $tokenList->expectName();
             }
-            if ($tokenList->mayConsume(TokenType::DOT)) {
+            if ($tokenList->has(TokenType::DOT)) {
                 // a reserved keyword may follow after "." unescaped as we know it is a name context
-                $thirdToken = $tokenList->mayConsume(TokenType::KEYWORD);
+                $thirdToken = $tokenList->get(TokenType::KEYWORD);
                 if ($thirdToken !== null) {
                     /** @var string $third */
                     $third = $thirdToken->value;
                 } else {
-                    $third = $tokenList->consumeName();
+                    $third = $tokenList->expectName();
                 }
             }
         }
@@ -574,7 +574,7 @@ class ExpressionParser
      */
     public function parseLiteralValue(TokenList $tokenList)
     {
-        $token = $tokenList->consume(TokenType::VALUE);
+        $token = $tokenList->expect(TokenType::VALUE);
 
         if ($token->type & TokenType::BINARY_LITERAL) {
             /** @var string $value */
@@ -622,9 +622,9 @@ class ExpressionParser
             // todo: extract column name or position from expression
 
             /** @var Order $order */
-            $order = $tokenList->mayConsumeKeywordEnum(Order::class);
+            $order = $tokenList->getKeywordEnum(Order::class);
             $orderBy[] = new OrderByExpression($order, null, $expression);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $orderBy;
     }
@@ -637,13 +637,13 @@ class ExpressionParser
      */
     public function parseLimitAndOffset(TokenList $tokenList): array
     {
-        $limit = $tokenList->consumeInt();
+        $limit = $tokenList->expectInt();
         $offset = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::OFFSET)) {
-            $offset = $tokenList->consumeInt();
-        } elseif ($tokenList->mayConsumeComma()) {
+        if ($tokenList->hasKeyword(Keyword::OFFSET)) {
+            $offset = $tokenList->expectInt();
+        } elseif ($tokenList->hasComma()) {
             $offset = $limit;
-            $limit = $tokenList->consumeInt();
+            $limit = $tokenList->expectInt();
         }
 
         return [$limit, $offset];
@@ -657,8 +657,8 @@ class ExpressionParser
     {
         $time = $this->parseDateTime($tokenList);
         $intervals = [];
-        while ($tokenList->mayConsumeOperator(Operator::PLUS)) {
-            $tokenList->consumeKeyword(Keyword::INTERVAL);
+        while ($tokenList->getOperator(Operator::PLUS)) {
+            $tokenList->expectKeyword(Keyword::INTERVAL);
             $intervals[] = $this->parseInterval($tokenList);
         }
 
@@ -667,9 +667,9 @@ class ExpressionParser
 
     public function parseDateTime(TokenList $tokenList): DateTime
     {
-        $string = (string) $tokenList->mayConsumeInt();
+        $string = (string) $tokenList->getInt();
         if ($string === '') {
-            $string = $tokenList->consumeString();
+            $string = $tokenList->expectString();
         }
         if (preg_match(self::INT_DATETIME_EXPRESSION, $string)) {
             if (strlen($string) === 12) {
@@ -715,22 +715,22 @@ class ExpressionParser
      */
     public function parseInterval(TokenList $tokenList): TimeInterval
     {
-        $value = $tokenList->mayConsumeString();
+        $value = $tokenList->getString();
         if ($value === null) {
-            $value = $tokenList->consumeInt();
+            $value = $tokenList->expectInt();
         }
         /** @var TimeIntervalUnit $unit */
-        $unit = $tokenList->consumeKeywordEnum(TimeIntervalUnit::class);
+        $unit = $tokenList->expectKeywordEnum(TimeIntervalUnit::class);
 
         return new TimeInterval($value, $unit);
     }
 
     public function parseUserExpression(TokenList $tokenList): UserExpression
     {
-        if ($tokenList->mayConsumeKeyword(Keyword::CURRENT_USER)) {
+        if ($tokenList->hasKeyword(Keyword::CURRENT_USER)) {
             return new UserExpression(null, Keyword::CURRENT_USER);
         } else {
-            return new UserExpression(new UserName(...$tokenList->consumeUserName()));
+            return new UserExpression(new UserName(...$tokenList->expectUserName()));
         }
     }
 

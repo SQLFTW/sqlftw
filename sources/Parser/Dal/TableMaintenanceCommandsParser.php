@@ -30,13 +30,13 @@ class TableMaintenanceCommandsParser
      */
     public function parseAnalyzeTable(TokenList $tokenList): AnalyzeTableCommand
     {
-        $tokenList->consumeKeyword(Keyword::ANALYZE);
-        $local = (bool) $tokenList->mayConsumeAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
-        $tokenList->consumeKeyword(Keyword::TABLE);
+        $tokenList->expectKeyword(Keyword::ANALYZE);
+        $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
+        $tokenList->expectKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-        } while ($tokenList->mayConsumeComma());
+            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new AnalyzeTableCommand($tables, $local);
@@ -56,16 +56,16 @@ class TableMaintenanceCommandsParser
      */
     public function parseCheckTable(TokenList $tokenList): CheckTableCommand
     {
-        $tokenList->consumeKeywords(Keyword::CHECK, Keyword::TABLE);
+        $tokenList->expectKeywords(Keyword::CHECK, Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-        } while ($tokenList->mayConsumeComma());
+            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+        } while ($tokenList->hasComma());
 
-        $option = $tokenList->mayConsumeAnyKeyword(Keyword::FOR, Keyword::QUICK, Keyword::FAST, Keyword::MEDIUM, Keyword::EXTENDED, Keyword::CHANGED);
+        $option = $tokenList->getAnyKeyword(Keyword::FOR, Keyword::QUICK, Keyword::FAST, Keyword::MEDIUM, Keyword::EXTENDED, Keyword::CHANGED);
         if ($option !== null) {
             if ($option === Keyword::FOR) {
-                $tokenList->consumeKeyword(Keyword::UPGRADE);
+                $tokenList->expectKeyword(Keyword::UPGRADE);
                 $option .= ' UPGRADE';
             }
             $option = CheckTableOption::get($option);
@@ -80,14 +80,14 @@ class TableMaintenanceCommandsParser
      */
     public function parseChecksumTable(TokenList $tokenList): ChecksumTableCommand
     {
-        $tokenList->consumeKeywords(Keyword::CHECKSUM, Keyword::TABLE);
+        $tokenList->expectKeywords(Keyword::CHECKSUM, Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-        } while ($tokenList->mayConsumeComma());
+            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+        } while ($tokenList->hasComma());
 
-        $quick = (bool) $tokenList->mayConsumeKeyword(Keyword::QUICK);
-        $extended = (bool) $tokenList->mayConsumeKeyword(Keyword::EXTENDED);
+        $quick = $tokenList->hasKeyword(Keyword::QUICK);
+        $extended = $tokenList->hasKeyword(Keyword::EXTENDED);
         $tokenList->expectEnd();
 
         return new ChecksumTableCommand($tables, $quick, $extended);
@@ -99,13 +99,13 @@ class TableMaintenanceCommandsParser
      */
     public function parseOptimizeTable(TokenList $tokenList): OptimizeTableCommand
     {
-        $tokenList->consumeKeyword(Keyword::OPTIMIZE);
-        $local = (bool) $tokenList->mayConsumeAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
-        $tokenList->consumeKeyword(Keyword::TABLE);
+        $tokenList->expectKeyword(Keyword::OPTIMIZE);
+        $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
+        $tokenList->expectKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-        } while ($tokenList->mayConsumeComma());
+            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new OptimizeTableCommand($tables, $local);
@@ -118,17 +118,17 @@ class TableMaintenanceCommandsParser
      */
     public function parseRepairTable(TokenList $tokenList): RepairTableCommand
     {
-        $tokenList->consumeKeyword(Keyword::REPAIR);
-        $local = (bool) $tokenList->mayConsumeAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
-        $tokenList->consumeKeyword(Keyword::TABLE);
+        $tokenList->expectKeyword(Keyword::REPAIR);
+        $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
+        $tokenList->expectKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-        } while ($tokenList->mayConsumeComma());
+            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+        } while ($tokenList->hasComma());
 
-        $quick = (bool) $tokenList->mayConsumeKeyword(Keyword::QUICK);
-        $extended = (bool) $tokenList->mayConsumeKeyword(Keyword::EXTENDED);
-        $useFrm = (bool) $tokenList->mayConsumeKeyword(Keyword::USE_FRM);
+        $quick = $tokenList->hasKeyword(Keyword::QUICK);
+        $extended = $tokenList->hasKeyword(Keyword::EXTENDED);
+        $useFrm = $tokenList->hasKeyword(Keyword::USE_FRM);
         $tokenList->expectEnd();
 
         return new RepairTableCommand($tables, $local, $quick, $extended, $useFrm);

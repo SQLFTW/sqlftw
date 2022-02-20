@@ -24,10 +24,10 @@ class PluginCommandsParser
      */
     public function parseInstallPlugin(TokenList $tokenList): InstallPluginCommand
     {
-        $tokenList->consumeKeywords(Keyword::INSTALL, Keyword::PLUGIN);
-        $pluginName = $tokenList->consumeName();
-        $tokenList->consumeKeyword(Keyword::SONAME);
-        $libName = $tokenList->consumeString();
+        $tokenList->expectKeywords(Keyword::INSTALL, Keyword::PLUGIN);
+        $pluginName = $tokenList->expectName();
+        $tokenList->expectKeyword(Keyword::SONAME);
+        $libName = $tokenList->expectString();
         $tokenList->expectEnd();
 
         return new InstallPluginCommand($pluginName, $libName);
@@ -38,8 +38,8 @@ class PluginCommandsParser
      */
     public function parseUninstallPlugin(TokenList $tokenList): UninstallPluginCommand
     {
-        $tokenList->consumeKeywords(Keyword::UNINSTALL, Keyword::PLUGIN);
-        $pluginName = $tokenList->consumeName();
+        $tokenList->expectKeywords(Keyword::UNINSTALL, Keyword::PLUGIN);
+        $pluginName = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new UninstallPluginCommand($pluginName);

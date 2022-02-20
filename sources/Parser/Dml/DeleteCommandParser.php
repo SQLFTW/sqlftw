@@ -64,7 +64,7 @@ class DeleteCommandParser
      */
     public function parseDelete(TokenList $tokenList, ?WithClause $with = null): DeleteCommand
     {
-        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+        if ($tokenList->hasKeyword(Keyword::WITH)) {
             if ($with !== null) {
                 throw new ParserException('WITH defined twice.');
             }
@@ -75,42 +75,42 @@ class DeleteCommandParser
             return $command;
         }
 
-        $tokenList->consumeKeyword(Keyword::DELETE);
-        $lowPriority = (bool) $tokenList->mayConsumeKeywords(Keyword::LOW_PRIORITY);
-        $quick = (bool) $tokenList->mayConsumeKeyword(Keyword::QUICK);
-        $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
+        $tokenList->expectKeyword(Keyword::DELETE);
+        $lowPriority = $tokenList->hasKeywords(Keyword::LOW_PRIORITY);
+        $quick = $tokenList->hasKeyword(Keyword::QUICK);
+        $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
 
         $references = $partitions = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::FROM)) {
+        if ($tokenList->hasKeyword(Keyword::FROM)) {
             $tables = $this->parseTablesList($tokenList);
-            if ($tokenList->mayConsumeKeyword(Keyword::USING)) {
+            if ($tokenList->hasKeyword(Keyword::USING)) {
                 $references = $this->joinParser->parseTableReferences($tokenList);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            } elseif ($tokenList->hasKeyword(Keyword::PARTITION)) {
+                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $partitions = [];
                 do {
-                    $partitions[] = $tokenList->consumeName();
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    $partitions[] = $tokenList->expectName();
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
         } else {
             $tables = $this->parseTablesList($tokenList);
-            $tokenList->consumeKeyword(Keyword::FROM);
+            $tokenList->expectKeyword(Keyword::FROM);
             $references = $this->joinParser->parseTableReferences($tokenList);
         }
 
         $where = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+        if ($tokenList->hasKeyword(Keyword::WHERE)) {
             $where = $this->expressionParser->parseExpression($tokenList);
         }
 
         $orderBy = $limit = null;
         if ($references === null) {
-            if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
+            if ($tokenList->hasKeywords(Keyword::ORDER, Keyword::BY)) {
                 $orderBy = $this->expressionParser->parseOrderBy($tokenList);
             }
-            if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
-                $limit = $tokenList->consumeInt();
+            if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+                $limit = $tokenList->expectInt();
             }
         }
         $tokenList->expectEnd();
@@ -125,11 +125,11 @@ class DeleteCommandParser
     {
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-            if ($tokenList->mayConsume(TokenType::DOT)) {
-                $tokenList->consumeOperator(Operator::MULTIPLY);
+            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            if ($tokenList->has(TokenType::DOT)) {
+                $tokenList->expectOperator(Operator::MULTIPLY);
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $tables;
     }

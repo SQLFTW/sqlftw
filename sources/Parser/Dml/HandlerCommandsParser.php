@@ -37,12 +37,12 @@ class HandlerCommandsParser
      */
     public function parseHandlerOpen(TokenList $tokenList): HandlerOpenCommand
     {
-        $tokenList->consumeKeyword(Keyword::HANDLER);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-        $tokenList->consumeKeyword(Keyword::OPEN);
+        $tokenList->expectKeyword(Keyword::HANDLER);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $tokenList->expectKeyword(Keyword::OPEN);
 
-        $tokenList->mayConsumeKeyword(Keyword::AS);
-        $alias = $tokenList->mayConsumeName();
+        $tokenList->passKeyword(Keyword::AS);
+        $alias = $tokenList->getName();
         $tokenList->expectEnd();
 
         return new HandlerOpenCommand($table, $alias);
@@ -58,38 +58,38 @@ class HandlerCommandsParser
      */
     public function parseHandlerRead(TokenList $tokenList): HandlerReadCommand
     {
-        $tokenList->consumeKeyword(Keyword::HANDLER);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-        $tokenList->consumeKeyword(Keyword::READ);
+        $tokenList->expectKeyword(Keyword::HANDLER);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $tokenList->expectKeyword(Keyword::READ);
 
         $values = null;
-        $index = $tokenList->mayConsumeName();
+        $index = $tokenList->getName();
         if ($index === Keyword::FIRST || $index === Keyword::NEXT) {
             $index = null;
             $tokenList->resetPosition(-1);
         }
         if ($index !== null) {
-            $what = $tokenList->mayConsumeAnyKeyword(...HandlerReadTarget::getKeywords());
+            $what = $tokenList->getAnyKeyword(...HandlerReadTarget::getKeywords());
             if ($what === null) {
-                $what = $tokenList->consumeAnyOperator(...HandlerReadTarget::getOperators());
+                $what = $tokenList->expectAnyOperator(...HandlerReadTarget::getOperators());
                 $values = [];
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 do {
                     $values[] = $this->expressionParser->parseLiteralValue($tokenList);
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             $what = HandlerReadTarget::get($what);
         } else {
             /** @var HandlerReadTarget $what */
-            $what = $tokenList->consumeKeywordEnum(HandlerReadTarget::class);
+            $what = $tokenList->expectKeywordEnum(HandlerReadTarget::class);
         }
 
         $where = $limit = $offset = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+        if ($tokenList->hasKeyword(Keyword::WHERE)) {
             $where = $this->expressionParser->parseExpression($tokenList);
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
+        if ($tokenList->hasKeyword(Keyword::LIMIT)) {
             [$limit, $offset] = $this->expressionParser->parseLimitAndOffset($tokenList);
         }
         $tokenList->expectEnd();
@@ -102,9 +102,9 @@ class HandlerCommandsParser
      */
     public function parseHandlerClose(TokenList $tokenList): HandlerCloseCommand
     {
-        $tokenList->consumeKeyword(Keyword::HANDLER);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-        $tokenList->consumeKeyword(Keyword::CLOSE);
+        $tokenList->expectKeyword(Keyword::HANDLER);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $tokenList->expectKeyword(Keyword::CLOSE);
         $tokenList->expectEnd();
 
         return new HandlerCloseCommand($table);

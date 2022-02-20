@@ -30,17 +30,17 @@ class ResetCommandParser
      */
     public function parseReset(TokenList $tokenList): Command
     {
-        $tokenList->consumeKeyword(Keyword::RESET);
+        $tokenList->expectKeyword(Keyword::RESET);
         $options = [];
         do {
-            $keyword = $tokenList->consumeAnyKeyword(Keyword::MASTER, Keyword::SLAVE, Keyword::QUERY);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::SLAVE, Keyword::QUERY);
             if ($keyword === Keyword::QUERY) {
-                $tokenList->consumeKeyword(Keyword::CACHE);
+                $tokenList->expectKeyword(Keyword::CACHE);
                 $options[] = ResetOption::get(ResetOption::QUERY_CACHE);
             } else {
                 $options[] = ResetOption::get($keyword);
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new ResetCommand($options);

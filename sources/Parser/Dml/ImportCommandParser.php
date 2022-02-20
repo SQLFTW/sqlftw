@@ -23,12 +23,12 @@ class ImportCommandParser
      */
     public function parseImport(TokenList $tokenList): ImportCommand
     {
-        $tokenList->consumeKeywords(Keyword::IMPORT, Keyword::TABLE, Keyword::FROM);
+        $tokenList->expectKeywords(Keyword::IMPORT, Keyword::TABLE, Keyword::FROM);
 
         $files = [];
         do {
-            $files[] = $tokenList->consumeString();
-        } while ($tokenList->mayConsumeComma());
+            $files[] = $tokenList->expectString();
+        } while ($tokenList->hasComma());
 
         $tokenList->expectEnd();
 

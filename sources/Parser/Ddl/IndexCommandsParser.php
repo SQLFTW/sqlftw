@@ -59,18 +59,18 @@ class IndexCommandsParser
      */
     public function parseCreateIndex(TokenList $tokenList): CreateIndexCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
+        $tokenList->expectKeyword(Keyword::CREATE);
 
         $index = $this->parseIndexDefinition($tokenList);
 
         $alterAlgorithm = $alterLock = null;
-        while ($keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ALGORITHM, Keyword::LOCK)) {
+        while ($keyword = $tokenList->getAnyKeyword(Keyword::ALGORITHM, Keyword::LOCK)) {
             if ($keyword === Keyword::ALGORITHM) {
                 /** @var AlterTableAlgorithm $alterAlgorithm */
-                $alterAlgorithm = $tokenList->consumeKeywordEnum(AlterTableAlgorithm::class);
+                $alterAlgorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
             } elseif ($keyword === Keyword::LOCK) {
                 /** @var AlterTableLock $alterLock */
-                $alterLock = $tokenList->consumeKeywordEnum(AlterTableLock::class);
+                $alterLock = $tokenList->expectKeywordEnum(AlterTableLock::class);
             }
         }
         $tokenList->expectEnd();
@@ -80,7 +80,7 @@ class IndexCommandsParser
 
     public function parseIndexDefinition(TokenList $tokenList, bool $inTable = false): IndexDefinition
     {
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::UNIQUE, Keyword::FULLTEXT, Keyword::SPATIAL);
+        $keyword = $tokenList->getAnyKeyword(Keyword::UNIQUE, Keyword::FULLTEXT, Keyword::SPATIAL);
         if ($keyword === Keyword::UNIQUE) {
             $type = IndexType::get($keyword . ' INDEX');
         } elseif ($keyword !== null) {
@@ -88,51 +88,51 @@ class IndexCommandsParser
         } else {
             $type = IndexType::get(IndexType::INDEX);
         }
-        $tokenList->consumeAnyKeyword(Keyword::INDEX, Keyword::KEY);
+        $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::KEY);
         if ($inTable) {
-            $name = $tokenList->mayConsumeName();
+            $name = $tokenList->getName();
         } else {
-            $name = $tokenList->consumeName();
+            $name = $tokenList->expectName();
         }
 
         $algorithm = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::USING)) {
-            $algorithm = $tokenList->consumeKeywordEnum(IndexAlgorithm::class);
+        if ($tokenList->hasKeyword(Keyword::USING)) {
+            $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
         }
 
         $table = null;
         if (!$inTable) {
-            $tokenList->consumeKeyword(Keyword::ON);
-            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+            $tokenList->expectKeyword(Keyword::ON);
+            $table = new QualifiedName(...$tokenList->expectQualifiedName());
         }
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         $columns = [];
         do {
-            $column = $tokenList->consumeName();
+            $column = $tokenList->expectName();
             $length = null;
-            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
-                $length = $tokenList->consumeInt();
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                $length = $tokenList->expectInt();
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             /** @var Order $order */
-            $order = $tokenList->mayConsumeKeywordEnum(Order::class);
+            $order = $tokenList->getKeywordEnum(Order::class);
             $columns[] = new IndexColumn($column, $length, $order);
-        } while ($tokenList->mayConsumeComma());
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        } while ($tokenList->hasComma());
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         $keyBlockSize = $withParser = $mergeThreshold = $comment = $visible = null;
         $keywords = [Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE, Keyword::INVISIBLE];
-        while ($keyword = $tokenList->mayConsumeAnyKeyword(...$keywords)) {
+        while ($keyword = $tokenList->getAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::USING) {
                 /** @var IndexAlgorithm $algorithm */
-                $algorithm = $tokenList->consumeKeywordEnum(IndexAlgorithm::class);
+                $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
             } elseif ($keyword === Keyword::KEY_BLOCK_SIZE) {
-                $keyBlockSize = $tokenList->consumeInt();
+                $keyBlockSize = $tokenList->expectInt();
             } elseif ($keyword === Keyword::WITH) {
-                $tokenList->consumeKeyword(Keyword::PARSER);
-                $withParser = $tokenList->consumeName();
+                $tokenList->expectKeyword(Keyword::PARSER);
+                $withParser = $tokenList->expectName();
             } elseif ($keyword === Keyword::COMMENT) {
-                $commentString = $tokenList->consumeString();
+                $commentString = $tokenList->expectString();
                 // parse "COMMENT 'MERGE_THRESHOLD=40';"
                 $match = Re::match($commentString, '/^MERGE_THRESHOLD=([0-9]+)$/');
                 if ($match) {
@@ -166,21 +166,21 @@ class IndexCommandsParser
      */
     public function parseDropIndex(TokenList $tokenList): DropIndexCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::INDEX);
-        $name = $tokenList->consumeName();
-        $tokenList->consumeKeyword(Keyword::ON);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::INDEX);
+        $name = $tokenList->expectName();
+        $tokenList->expectKeyword(Keyword::ON);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
         $algorithm = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
+        if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
+            $tokenList->getOperator(Operator::EQUAL);
             /** @var AlterTableAlgorithm $algorithm */
-            $algorithm = $tokenList->consumeKeywordEnum(AlterTableAlgorithm::class);
+            $algorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
         }
         $lock = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::LOCK)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
+        if ($tokenList->hasKeyword(Keyword::LOCK)) {
+            $tokenList->getOperator(Operator::EQUAL);
             /** @var AlterTableLock $lock */
-            $lock = $tokenList->consumeKeywordEnum(AlterTableLock::class);
+            $lock = $tokenList->expectKeywordEnum(AlterTableLock::class);
         }
         $tokenList->expectEnd();
 

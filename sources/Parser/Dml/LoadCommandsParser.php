@@ -60,7 +60,7 @@ class LoadCommandsParser
      */
     public function parseLoadData(TokenList $tokenList): LoadDataCommand
     {
-        $tokenList->consumeKeywords(Keyword::LOAD, Keyword::DATA);
+        $tokenList->expectKeywords(Keyword::LOAD, Keyword::DATA);
         [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset] = $this->parseOptions($tokenList, true);
         $format = $this->fileFormatParser->parseFormat($tokenList);
         [$ignoreRows, $fields, $setters] = $this->parseRowsAndFields($tokenList);
@@ -81,12 +81,12 @@ class LoadCommandsParser
      */
     public function parseLoadXml(TokenList $tokenList): LoadXmlCommand
     {
-        $tokenList->consumeKeywords(Keyword::LOAD, Keyword::XML);
+        $tokenList->expectKeywords(Keyword::LOAD, Keyword::XML);
         [$priority, $local, $file, $duplicateOption, $table, , $charset] = $this->parseOptions($tokenList, false);
 
         $rowsTag = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::ROWS, Keyword::IDENTIFIED, Keyword::BY)) {
-            $rowsTag = $tokenList->consumeString();
+        if ($tokenList->hasKeywords(Keyword::ROWS, Keyword::IDENTIFIED, Keyword::BY)) {
+            $rowsTag = $tokenList->expectString();
         }
 
         [$ignoreRows, $fields, $setters] = $this->parseRowsAndFields($tokenList);
@@ -100,30 +100,30 @@ class LoadCommandsParser
      */
     private function parseOptions(TokenList $tokenList, bool $parsePartitions): array
     {
-        $priority = $tokenList->mayConsumeKeywordEnum(LoadPriority::class);
-        $local = (bool) $tokenList->mayConsumeKeyword(Keyword::LOCAL);
+        $priority = $tokenList->getKeywordEnum(LoadPriority::class);
+        $local = $tokenList->hasKeyword(Keyword::LOCAL);
 
-        $tokenList->consumeKeyword(Keyword::INFILE);
-        $file = $tokenList->consumeString();
+        $tokenList->expectKeyword(Keyword::INFILE);
+        $file = $tokenList->expectString();
 
-        $duplicateOption = $tokenList->mayConsumeKeywordEnum(DuplicateOption::class);
+        $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
 
-        $tokenList->consumeKeywords(Keyword::INTO, Keyword::TABLE);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeywords(Keyword::INTO, Keyword::TABLE);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $partitions = null;
-        if ($parsePartitions && $tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        if ($parsePartitions && $tokenList->hasKeyword(Keyword::PARTITION)) {
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $partitions = [];
             do {
-                $partitions[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $partitions[] = $tokenList->expectName();
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         $charset = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::CHARACTER, Keyword::SET)) {
-            $charset = Charset::get(strtolower($tokenList->consumeString()));
+        if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
+            $charset = Charset::get(strtolower($tokenList->expectString()));
         }
 
         return [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset];
@@ -135,29 +135,29 @@ class LoadCommandsParser
     private function parseRowsAndFields(TokenList $tokenList): array
     {
         $ignoreRows = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::IGNORE)) {
-            $ignoreRows = $tokenList->consumeInt();
-            $tokenList->consumeAnyKeyword(Keyword::LINES, Keyword::ROWS);
+        if ($tokenList->hasKeyword(Keyword::IGNORE)) {
+            $ignoreRows = $tokenList->expectInt();
+            $tokenList->expectAnyKeyword(Keyword::LINES, Keyword::ROWS);
         }
 
         $fields = null;
-        if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
             $fields = [];
             do {
-                $fields[] = $tokenList->mayConsumeName();
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $fields[] = $tokenList->getName();
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         $setters = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::SET)) {
+        if ($tokenList->hasKeyword(Keyword::SET)) {
             $setters = [];
             do {
-                $field = $tokenList->consumeName();
-                $tokenList->consumeOperator(Operator::EQUAL);
+                $field = $tokenList->expectName();
+                $tokenList->expectOperator(Operator::EQUAL);
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 $setters[$field] = $expression;
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
         }
 
         return [$ignoreRows, $fields, $setters];

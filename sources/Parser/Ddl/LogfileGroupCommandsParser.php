@@ -33,21 +33,21 @@ class LogfileGroupCommandsParser
      */
     public function parseAlterLogfileGroup(TokenList $tokenList): AlterLogfileGroupCommand
     {
-        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::LOGFILE, Keyword::GROUP);
-        $name = $tokenList->consumeName();
-        $tokenList->consumeKeywords(Keyword::ADD, Keyword::UNDOFILE);
-        $undoFile = $tokenList->consumeString();
+        $tokenList->expectKeywords(Keyword::ALTER, Keyword::LOGFILE, Keyword::GROUP);
+        $name = $tokenList->expectName();
+        $tokenList->expectKeywords(Keyword::ADD, Keyword::UNDOFILE);
+        $undoFile = $tokenList->expectString();
 
         $initialSize = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $initialSize = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $initialSize = $tokenList->expectInt();
         }
-        $wait = (bool) $tokenList->mayConsumeKeyword(Keyword::WAIT);
+        $wait = $tokenList->hasKeyword(Keyword::WAIT);
 
-        $tokenList->consumeKeyword(Keyword::ENGINE);
-        $tokenList->mayConsumeOperator(Operator::EQUAL);
-        $engine = $tokenList->consumeNameOrString();
+        $tokenList->expectKeyword(Keyword::ENGINE);
+        $tokenList->getOperator(Operator::EQUAL);
+        $engine = $tokenList->expectNameOrString();
         $tokenList->expectEnd();
 
         return new AlterLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $wait);
@@ -66,37 +66,37 @@ class LogfileGroupCommandsParser
      */
     public function parseCreateLogfileGroup(TokenList $tokenList): CreateLogfileGroupCommand
     {
-        $tokenList->consumeKeywords(Keyword::CREATE, Keyword::LOGFILE, Keyword::GROUP);
-        $name = $tokenList->consumeName();
-        $tokenList->consumeKeywords(Keyword::ADD, Keyword::UNDOFILE);
-        $undoFile = $tokenList->consumeString();
+        $tokenList->expectKeywords(Keyword::CREATE, Keyword::LOGFILE, Keyword::GROUP);
+        $name = $tokenList->expectName();
+        $tokenList->expectKeywords(Keyword::ADD, Keyword::UNDOFILE);
+        $undoFile = $tokenList->expectString();
 
         $initialSize = $undoBufferSize = $redoBufferSize = $nodeGroup = $comment = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $initialSize = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $initialSize = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::UNDO_BUFFER_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $undoBufferSize = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::UNDO_BUFFER_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $undoBufferSize = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::REDO_BUFFER_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $redoBufferSize = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::REDO_BUFFER_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $redoBufferSize = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::NODEGROUP)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $nodeGroup = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $nodeGroup = $tokenList->expectInt();
         }
-        $wait = (bool) $tokenList->mayConsumeKeyword(Keyword::WAIT);
-        if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $comment = $tokenList->consumeString();
+        $wait = $tokenList->hasKeyword(Keyword::WAIT);
+        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $comment = $tokenList->expectString();
         }
 
-        $tokenList->consumeKeyword(Keyword::ENGINE);
-        $tokenList->mayConsumeOperator(Operator::EQUAL);
-        $engine = $tokenList->consumeNameOrString();
+        $tokenList->expectKeyword(Keyword::ENGINE);
+        $tokenList->getOperator(Operator::EQUAL);
+        $engine = $tokenList->expectNameOrString();
         $tokenList->expectEnd();
 
         return new CreateLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $undoBufferSize, $redoBufferSize, $nodeGroup, $wait, $comment);
@@ -108,11 +108,11 @@ class LogfileGroupCommandsParser
      */
     public function parseDropLogfileGroup(TokenList $tokenList): DropLogfileGroupCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::LOGFILE, Keyword::GROUP);
-        $name = $tokenList->consumeName();
-        $tokenList->consumeKeyword(Keyword::ENGINE);
-        $tokenList->mayConsumeOperator(Operator::EQUAL);
-        $engine = $tokenList->consumeNameOrString();
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::LOGFILE, Keyword::GROUP);
+        $name = $tokenList->expectName();
+        $tokenList->expectKeyword(Keyword::ENGINE);
+        $tokenList->getOperator(Operator::EQUAL);
+        $engine = $tokenList->expectNameOrString();
         $tokenList->expectEnd();
 
         return new DropLogfileGroupCommand($name, $engine);

@@ -72,30 +72,30 @@ class InsertCommandParser
      */
     public function parseInsert(TokenList $tokenList): InsertCommand
     {
-        $tokenList->consumeKeyword(Keyword::INSERT);
+        $tokenList->expectKeyword(Keyword::INSERT);
         /** @var InsertPriority|null $priority */
-        $priority = $tokenList->mayConsumeKeywordEnum(InsertPriority::class);
-        $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
-        $tokenList->mayConsumeKeyword(Keyword::INTO);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $priority = $tokenList->getKeywordEnum(InsertPriority::class);
+        $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
+        $tokenList->passKeyword(Keyword::INTO);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
 
-        if ($tokenList->mayConsumeKeyword(Keyword::SELECT)) {
+        if ($tokenList->hasKeyword(Keyword::SELECT)) {
             $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
             $tokenList->expectEnd();
 
             return new InsertSelectCommand($table, $select, $columns, $partitions, $priority, $ignore, $update);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::SET)) {
+        } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
             $tokenList->expectEnd();
 
             return new InsertSetCommand($table, $values, $columns, $partitions, $priority, $ignore, $update);
         } else {
-            $tokenList->consumeAnyKeyword(Keyword::VALUE, Keyword::VALUES);
+            $tokenList->expectAnyKeyword(Keyword::VALUE, Keyword::VALUES);
             $rows = $this->parseRows($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
             $tokenList->expectEnd();
@@ -124,28 +124,28 @@ class InsertCommandParser
      */
     public function parseReplace(TokenList $tokenList): ReplaceCommand
     {
-        $tokenList->consumeKeyword(Keyword::REPLACE);
+        $tokenList->expectKeyword(Keyword::REPLACE);
         /** @var InsertPriority|null $priority */
-        $priority = $tokenList->mayConsumeKeywordEnum(InsertPriority::class);
-        $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
-        $tokenList->mayConsumeKeyword(Keyword::INTO);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $priority = $tokenList->getKeywordEnum(InsertPriority::class);
+        $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
+        $tokenList->passKeyword(Keyword::INTO);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
 
-        if ($tokenList->mayConsumeKeyword(Keyword::SELECT)) {
+        if ($tokenList->hasKeyword(Keyword::SELECT)) {
             $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
             $tokenList->expectEnd();
 
             return new ReplaceSelectCommand($table, $select, $columns, $partitions, $priority, $ignore);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::SET)) {
+        } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
             $tokenList->expectEnd();
 
             return new ReplaceSetCommand($table, $values, $columns, $partitions, $priority, $ignore);
         } else {
-            $tokenList->consumeAnyKeyword(Keyword::VALUE, Keyword::VALUES);
+            $tokenList->expectAnyKeyword(Keyword::VALUE, Keyword::VALUES);
             $rows = $this->parseRows($tokenList);
             $tokenList->expectEnd();
 
@@ -159,13 +159,13 @@ class InsertCommandParser
     private function parsePartitionsList(TokenList $tokenList): ?array
     {
         $partitions = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        if ($tokenList->hasKeyword(Keyword::PARTITION)) {
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $partitions = [];
             do {
-                $partitions[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $partitions[] = $tokenList->expectName();
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         return $partitions;
@@ -177,12 +177,12 @@ class InsertCommandParser
     private function parseColumnList(TokenList $tokenList): ?array
     {
         $columns = null;
-        if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
             $columns = [];
             do {
-                $columns[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $columns[] = $tokenList->expectName();
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         return $columns;
@@ -190,7 +190,7 @@ class InsertCommandParser
 
     private function parseOnDuplicateKeyUpdate(TokenList $tokenList): ?OnDuplicateKeyActions
     {
-        if (!$tokenList->mayConsumeKeywords(Keyword::ON, Keyword::DUPLICATE, Keyword::KEY, Keyword::UPDATE)) {
+        if (!$tokenList->hasKeywords(Keyword::ON, Keyword::DUPLICATE, Keyword::KEY, Keyword::UPDATE)) {
             return null;
         }
 
@@ -206,11 +206,11 @@ class InsertCommandParser
     {
         $values = [];
         do {
-            $column = $tokenList->consumeName();
-            $tokenList->consumeOperator(Operator::EQUAL);
+            $column = $tokenList->expectName();
+            $tokenList->expectOperator(Operator::EQUAL);
             $value = $this->expressionParser->parseExpression($tokenList);
             $values[$column] = $value;
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $values;
     }
@@ -222,15 +222,15 @@ class InsertCommandParser
     {
         $rows = [];
         do {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $values = [];
             do {
                 $values[] = $this->expressionParser->parseExpression($tokenList);
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
             $rows[] = $values;
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $rows;
     }

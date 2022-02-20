@@ -57,7 +57,7 @@ class UpdateCommandParser
      */
     public function parseUpdate(TokenList $tokenList, ?WithClause $with = null): UpdateCommand
     {
-        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+        if ($tokenList->hasKeyword(Keyword::WITH)) {
             if ($with !== null) {
                 throw new ParserException('WITH defined twice.');
             }
@@ -68,37 +68,37 @@ class UpdateCommandParser
             return $update;
         }
 
-        $tokenList->consumeKeyword(Keyword::UPDATE);
-        $lowPriority = (bool) $tokenList->mayConsumeKeyword(Keyword::LOW_PRIORITY);
-        $ignore = (bool) $tokenList->mayConsumeKeyword(Keyword::IGNORE);
+        $tokenList->expectKeyword(Keyword::UPDATE);
+        $lowPriority = $tokenList->hasKeyword(Keyword::LOW_PRIORITY);
+        $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
 
         $tableReferences = $this->joinParser->parseTableReferences($tokenList);
 
-        $tokenList->consumeKeyword(Keyword::SET);
+        $tokenList->expectKeyword(Keyword::SET);
         $values = [];
         do {
-            $column = $tokenList->consumeName();
-            $tokenList->consumeOperator(Operator::EQUAL);
-            if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+            $column = $tokenList->expectName();
+            $tokenList->expectOperator(Operator::EQUAL);
+            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                 $values[$column] = new SetColumnExpression($column, null, true);
             } else {
                 $value = $this->expressionParser->parseExpression($tokenList);
                 $values[$column] = new SetColumnExpression($column, $value);
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $where = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+        if ($tokenList->hasKeyword(Keyword::WHERE)) {
             $where = $this->expressionParser->parseExpression($tokenList);
         }
 
         $orderBy = $limit = null;
         if (!$tableReferences instanceof Countable || $tableReferences->count() === 1) {
-            if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
+            if ($tokenList->hasKeywords(Keyword::ORDER, Keyword::BY)) {
                 $orderBy = $this->expressionParser->parseOrderBy($tokenList);
             }
-            if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
-                $limit = $tokenList->consumeInt();
+            if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+                $limit = $tokenList->expectInt();
             }
         }
         $tokenList->expectEnd();

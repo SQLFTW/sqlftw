@@ -93,7 +93,7 @@ class SelectCommandParser
      */
     public function parseSelect(TokenList $tokenList, ?WithClause $with = null): SelectCommand
     {
-        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+        if ($tokenList->hasKeyword(Keyword::WITH)) {
             if ($with !== null) {
                 throw new ParserException('WITH defined twice.');
             }
@@ -104,42 +104,42 @@ class SelectCommandParser
             return $select;
         }
 
-        $tokenList->consumeKeyword(Keyword::SELECT);
+        $tokenList->expectKeyword(Keyword::SELECT);
 
         /** @var SelectDistinctOption $distinct */
-        $distinct = $tokenList->mayConsumeKeywordEnum(SelectDistinctOption::class);
+        $distinct = $tokenList->getKeywordEnum(SelectDistinctOption::class);
         $options = [];
-        $options[SelectOption::HIGH_PRIORITY] = (bool) $tokenList->mayConsumeKeyword(Keyword::HIGH_PRIORITY);
-        $options[SelectOption::STRAIGHT_JOIN] = (bool) $tokenList->mayConsumeKeyword(Keyword::STRAIGHT_JOIN);
-        $options[SelectOption::SMALL_RESULT] = (bool) $tokenList->mayConsumeKeyword(Keyword::SQL_SMALL_RESULT);
-        $options[SelectOption::BIG_RESULT] = (bool) $tokenList->mayConsumeKeyword(Keyword::SQL_BIG_RESULT);
-        $options[SelectOption::BUFFER_RESULT] = (bool) $tokenList->mayConsumeKeyword(Keyword::SQL_BUFFER_RESULT);
-        $options[SelectOption::CACHE] = (bool) $tokenList->mayConsumeKeyword(Keyword::SQL_CACHE);
-        $options[SelectOption::NO_CACHE] = (bool) $tokenList->mayConsumeKeyword(Keyword::SQL_NO_CACHE);
-        $options[SelectOption::CALC_FOUND_ROWS] = (bool) $tokenList->mayConsumeKeyword(Keyword::SQL_CALC_FOUND_ROWS);
+        $options[SelectOption::HIGH_PRIORITY] = $tokenList->hasKeyword(Keyword::HIGH_PRIORITY);
+        $options[SelectOption::STRAIGHT_JOIN] = $tokenList->hasKeyword(Keyword::STRAIGHT_JOIN);
+        $options[SelectOption::SMALL_RESULT] = $tokenList->hasKeyword(Keyword::SQL_SMALL_RESULT);
+        $options[SelectOption::BIG_RESULT] = $tokenList->hasKeyword(Keyword::SQL_BIG_RESULT);
+        $options[SelectOption::BUFFER_RESULT] = $tokenList->hasKeyword(Keyword::SQL_BUFFER_RESULT);
+        $options[SelectOption::CACHE] = $tokenList->hasKeyword(Keyword::SQL_CACHE);
+        $options[SelectOption::NO_CACHE] = $tokenList->hasKeyword(Keyword::SQL_NO_CACHE);
+        $options[SelectOption::CALC_FOUND_ROWS] = $tokenList->hasKeyword(Keyword::SQL_CALC_FOUND_ROWS);
 
         $what = [];
         do {
             $value = $this->expressionParser->parseExpression($tokenList);
             $window = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::OVER)) {
-                if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasKeyword(Keyword::OVER)) {
+                if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                     $window = $this->parseWindow($tokenList);
-                    $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                 } else {
-                    $window = $tokenList->consumeName();
+                    $window = $tokenList->expectName();
                 }
             }
-            if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
-                $alias = $tokenList->consumeName();
+            if ($tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectName();
             } else {
-                $alias = $tokenList->mayConsumeNonKeywordName();
+                $alias = $tokenList->getNonKeywordName();
             }
             $what[] = new SelectExpression($value, $alias, $window);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $from = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::FROM)) {
+        if ($tokenList->hasKeyword(Keyword::FROM)) {
             $from = $this->joinParser->parseTableReferences($tokenList);
             /*
             // todo: should be part of the table references or not?
@@ -153,93 +153,93 @@ class SelectCommandParser
         }
 
         $where = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+        if ($tokenList->hasKeyword(Keyword::WHERE)) {
             $where = $this->expressionParser->parseExpression($tokenList);
         }
 
         $groupBy = null;
         $withRollup = false;
-        if ($tokenList->mayConsumeKeywords(Keyword::GROUP, Keyword::BY)) {
+        if ($tokenList->hasKeywords(Keyword::GROUP, Keyword::BY)) {
             $groupBy = [];
             do {
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 /** @var Order $order */
-                $order = $tokenList->mayConsumeKeywordEnum(Order::class);
+                $order = $tokenList->getKeywordEnum(Order::class);
                 $groupBy[] = new GroupByExpression($expression, $order);
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
 
-            $withRollup = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::ROLLUP);
+            $withRollup = $tokenList->hasKeywords(Keyword::WITH, Keyword::ROLLUP);
         }
 
         $having = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::HAVING)) {
+        if ($tokenList->hasKeyword(Keyword::HAVING)) {
             $having = $this->expressionParser->parseExpression($tokenList);
         }
 
         $windows = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::WINDOW)) {
+        if ($tokenList->hasKeyword(Keyword::WINDOW)) {
             $windows = [];
             do {
-                $name = $tokenList->consumeName();
-                $tokenList->consumeKeyword(Keyword::AS);
+                $name = $tokenList->expectName();
+                $tokenList->expectKeyword(Keyword::AS);
 
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $window = $this->parseWindow($tokenList);
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
                 $windows[$name] = $window;
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
         }
 
         $orderBy = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
+        if ($tokenList->hasKeywords(Keyword::ORDER, Keyword::BY)) {
             $orderBy = $this->expressionParser->parseOrderBy($tokenList);
         }
 
         $limit = $offset = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
+        if ($tokenList->hasKeyword(Keyword::LIMIT)) {
             [$limit, $offset] = $this->expressionParser->parseLimitAndOffset($tokenList);
         }
 
         $into = $charset = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::INTO, Keyword::OUTFILE)) {
-            $outFile = $tokenList->consumeString();
-            if ($tokenList->mayConsumeKeywords(Keyword::CHARACTER, Keyword::SET)) {
-                $charset = Charset::get($tokenList->consumeName());
+        if ($tokenList->hasKeywords(Keyword::INTO, Keyword::OUTFILE)) {
+            $outFile = $tokenList->expectString();
+            if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
+                $charset = Charset::get($tokenList->expectName());
             }
             $format = $this->fileFormatParser->parseFormat($tokenList);
             $into = new SelectInto(null, null, $outFile, $charset, $format);
-        } elseif ($tokenList->mayConsumeKeywords(Keyword::INTO, Keyword::DUMPFILE)) {
-            $dumpFile = $tokenList->consumeString();
+        } elseif ($tokenList->hasKeywords(Keyword::INTO, Keyword::DUMPFILE)) {
+            $dumpFile = $tokenList->expectString();
             $into = new SelectInto(null, $dumpFile);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::INTO)) {
+        } elseif ($tokenList->hasKeyword(Keyword::INTO)) {
             $variables = [];
             do {
                 /** @var string[] $variables */
-                $variables[] = $tokenList->consume(TokenType::AT_VARIABLE)->value;
-            } while ($tokenList->mayConsumeComma());
+                $variables[] = $tokenList->expect(TokenType::AT_VARIABLE)->value;
+            } while ($tokenList->hasComma());
             $into = new SelectInto($variables);
         }
 
         $locking = $lockTables = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::LOCK, Keyword::IN, Keyword::SHARE, Keyword::MODE)) {
+        if ($tokenList->hasKeywords(Keyword::LOCK, Keyword::IN, Keyword::SHARE, Keyword::MODE)) {
             $lockOption = SelectLockOption::get(SelectLockOption::LOCK_IN_SHARE_MODE);
             $locking = new SelectLocking($lockOption);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::FOR)) {
-            if ($tokenList->mayConsumeKeyword(Keyword::UPDATE)) {
+        } elseif ($tokenList->hasKeyword(Keyword::FOR)) {
+            if ($tokenList->hasKeyword(Keyword::UPDATE)) {
                 $lockOption = SelectLockOption::get(SelectLockOption::FOR_UPDATE);
             } else {
-                $tokenList->consumeKeyword(Keyword::SHARE);
+                $tokenList->expectKeyword(Keyword::SHARE);
                 $lockOption = SelectLockOption::get(SelectLockOption::FOR_SHARE);
             }
-            if ($tokenList->mayConsumeKeyword(Keyword::OF)) {
+            if ($tokenList->hasKeyword(Keyword::OF)) {
                 $lockTables = [];
                 do {
-                    $lockTables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-                } while ($tokenList->mayConsumeComma());
+                    $lockTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+                } while ($tokenList->hasComma());
             }
             /** @var SelectLockWaitOption $lockWaitOption */
-            $lockWaitOption = $tokenList->mayConsumeKeywordEnum(SelectLockWaitOption::class);
+            $lockWaitOption = $tokenList->getKeywordEnum(SelectLockWaitOption::class);
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
         }
 
@@ -270,27 +270,27 @@ class SelectCommandParser
      */
     private function parseWindow(TokenList $tokenList): WindowSpecification
     {
-        $reference = $tokenList->mayConsumeName();
+        $reference = $tokenList->getName();
 
         $partitionBy = $orderBy = $frame = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::PARTITION, Keyword::BY)) {
+        if ($tokenList->hasKeywords(Keyword::PARTITION, Keyword::BY)) {
             $partitionBy = [];
             do {
                 $partitionBy[] = $this->expressionParser->parseExpression($tokenList);
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
         }
 
-        if ($tokenList->mayConsumeKeywords(Keyword::ORDER, Keyword::BY)) {
+        if ($tokenList->hasKeywords(Keyword::ORDER, Keyword::BY)) {
             $orderBy = $this->expressionParser->parseOrderBy($tokenList);
         }
 
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ROWS, Keyword::RANGE);
+        $keyword = $tokenList->getAnyKeyword(Keyword::ROWS, Keyword::RANGE);
         if ($keyword !== null) {
             $units = WindowFrameUnits::get($keyword);
             $startType = $endType = $startExpression = $endExpression = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::BETWEEN)) {
+            if ($tokenList->hasKeyword(Keyword::BETWEEN)) {
                 $this->parseFrameBorder($tokenList, $startType, $startExpression);
-                $tokenList->consumeKeyword(Keyword::AND);
+                $tokenList->expectKeyword(Keyword::AND);
                 $this->parseFrameBorder($tokenList, $endType, $endExpression);
             } else {
                 $this->parseFrameBorder($tokenList, $startType, $startExpression);
@@ -313,15 +313,15 @@ class SelectCommandParser
      */
     private function parseFrameBorder(TokenList $tokenList, ?WindowFrameType &$type, ?ExpressionNode &$expression): void
     {
-        if ($tokenList->mayConsumeKeywords(Keyword::CURRENT, Keyword::ROW)) {
+        if ($tokenList->hasKeywords(Keyword::CURRENT, Keyword::ROW)) {
             $type = WindowFrameType::get(WindowFrameType::CURRENT_ROW);
-        } elseif ($tokenList->mayConsumeKeywords(Keyword::UNBOUNDED, Keyword::PRECEDING)) {
+        } elseif ($tokenList->hasKeywords(Keyword::UNBOUNDED, Keyword::PRECEDING)) {
             $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_PRECEDING);
-        } elseif ($tokenList->mayConsumeKeywords(Keyword::UNBOUNDED, Keyword::FOLLOWING)) {
+        } elseif ($tokenList->hasKeywords(Keyword::UNBOUNDED, Keyword::FOLLOWING)) {
             $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_FOLLOWING);
         } else {
             $expression = $this->expressionParser->parseExpression($tokenList);
-            $keyword = $tokenList->consumeAnyKeyword(Keyword::PRECEDING, Keyword::FOLLOWING);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::PRECEDING, Keyword::FOLLOWING);
             $type = WindowFrameType::get($keyword);
         }
     }

@@ -61,8 +61,8 @@ class RoutineCommandsParser
      */
     public function parseAlterFunction(TokenList $tokenList): AlterFunctionCommand
     {
-        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::FUNCTION);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeywords(Keyword::ALTER, Keyword::FUNCTION);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         [$comment, $language, $sideEffects, $sqlSecurity] = $this->parseRoutineCharacteristics($tokenList, false);
         $tokenList->expectEnd();
@@ -81,8 +81,8 @@ class RoutineCommandsParser
      */
     public function parseAlterProcedure(TokenList $tokenList): AlterProcedureCommand
     {
-        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::PROCEDURE);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeywords(Keyword::ALTER, Keyword::PROCEDURE);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         [$comment, $language, $sideEffects, $sqlSecurity] = $this->parseRoutineCharacteristics($tokenList, false);
         $tokenList->expectEnd();
@@ -103,29 +103,29 @@ class RoutineCommandsParser
             $keywords[] = Keyword::DETERMINISTIC;
         }
 
-        while ($keyword = $tokenList->mayConsumeAnyKeyword(...$keywords)) {
+        while ($keyword = $tokenList->getAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::COMMENT) {
-                $comment = $tokenList->consumeString();
+                $comment = $tokenList->expectString();
             } elseif ($keyword === Keyword::LANGUAGE) {
-                $language = $tokenList->consumeKeyword(Keyword::SQL);
+                $language = $tokenList->expectKeyword(Keyword::SQL);
             } elseif ($keyword === Keyword::CONTAINS) {
-                $tokenList->consumeKeyword(Keyword::SQL);
+                $tokenList->expectKeyword(Keyword::SQL);
                 $sideEffects = RoutineSideEffects::get(RoutineSideEffects::CONTAINS_SQL);
             } elseif ($keyword === Keyword::NO) {
-                $tokenList->consumeKeyword(Keyword::SQL);
+                $tokenList->expectKeyword(Keyword::SQL);
                 $sideEffects = RoutineSideEffects::get(RoutineSideEffects::NO_SQL);
             } elseif ($keyword === Keyword::READS) {
-                $tokenList->consumeKeywords(Keyword::SQL, Keyword::DATA);
+                $tokenList->expectKeywords(Keyword::SQL, Keyword::DATA);
                 $sideEffects = RoutineSideEffects::get(RoutineSideEffects::READS_SQL_DATA);
             } elseif ($keyword === Keyword::MODIFIES) {
-                $tokenList->consumeKeywords(Keyword::SQL, Keyword::DATA);
+                $tokenList->expectKeywords(Keyword::SQL, Keyword::DATA);
                 $sideEffects = RoutineSideEffects::get(RoutineSideEffects::MODIFIES_SQL_DATA);
             } elseif ($keyword === Keyword::SQL) {
-                $tokenList->consumeKeyword(Keyword::SECURITY);
+                $tokenList->expectKeyword(Keyword::SECURITY);
                 /** @var SqlSecurity $sqlSecurity */
-                $sqlSecurity = $tokenList->consumeKeywordEnum(SqlSecurity::class);
+                $sqlSecurity = $tokenList->expectKeywordEnum(SqlSecurity::class);
             } elseif ($keyword === Keyword::NOT) {
-                $tokenList->consumeKeyword(Keyword::DETERMINISTIC);
+                $tokenList->expectKeyword(Keyword::DETERMINISTIC);
                 $deterministic = false;
             } elseif ($keyword === Keyword::DETERMINISTIC) {
                 $deterministic = true;
@@ -160,27 +160,27 @@ class RoutineCommandsParser
      */
     public function parseCreateFunction(TokenList $tokenList): CreateFunctionCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
+        $tokenList->expectKeyword(Keyword::CREATE);
         $definer = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
+        if ($tokenList->hasKeyword(Keyword::DEFINER)) {
+            $tokenList->expectOperator(Operator::EQUAL);
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
-        $tokenList->consumeKeyword(Keyword::FUNCTION);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeyword(Keyword::FUNCTION);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $params = [];
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-        if (!$tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS)) {
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
             do {
-                $param = $tokenList->consumeName();
+                $param = $tokenList->expectName();
                 $type = $this->typeParser->parseType($tokenList);
                 $params[$param] = $type;
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
-        $tokenList->consumeKeyword(Keyword::RETURNS);
+        $tokenList->expectKeyword(Keyword::RETURNS);
         $returnType = $this->typeParser->parseType($tokenList);
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
@@ -215,26 +215,26 @@ class RoutineCommandsParser
      */
     public function parseCreateProcedure(TokenList $tokenList): CreateProcedureCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
+        $tokenList->expectKeyword(Keyword::CREATE);
         $definer = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
+        if ($tokenList->hasKeyword(Keyword::DEFINER)) {
+            $tokenList->expectOperator(Operator::EQUAL);
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
-        $tokenList->consumeKeyword(Keyword::PROCEDURE);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeyword(Keyword::PROCEDURE);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $params = [];
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-        if (!$tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS)) {
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
             do {
                 /** @var InOutParamFlag $inOut */
-                $inOut = $tokenList->mayConsumeKeywordEnum(InOutParamFlag::class);
-                $param = $tokenList->consumeName();
+                $inOut = $tokenList->getKeywordEnum(InOutParamFlag::class);
+                $param = $tokenList->expectName();
                 $type = $this->typeParser->parseType($tokenList);
                 $params[] = new ProcedureParam($param, $type, $inOut);
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
@@ -250,9 +250,9 @@ class RoutineCommandsParser
      */
     public function parseDropFunction(TokenList $tokenList): DropFunctionCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::FUNCTION);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::FUNCTION);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
         $tokenList->expectEnd();
 
         return new DropFunctionCommand($name, $ifExists);
@@ -263,9 +263,9 @@ class RoutineCommandsParser
      */
     public function parseDropProcedure(TokenList $tokenList): DropProcedureCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::PROCEDURE);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::PROCEDURE);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
         $tokenList->expectEnd();
 
         return new DropProcedureCommand($name, $ifExists);

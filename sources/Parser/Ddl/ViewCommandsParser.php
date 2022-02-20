@@ -54,7 +54,7 @@ class ViewCommandsParser
      */
     public function parseAlterView(TokenList $tokenList): AlterViewCommand
     {
-        $tokenList->consumeKeyword(Keyword::ALTER);
+        $tokenList->expectKeyword(Keyword::ALTER);
         $params = $this->parseViewDefinition($tokenList);
         $tokenList->expectEnd();
 
@@ -73,8 +73,8 @@ class ViewCommandsParser
      */
     public function parseCreateView(TokenList $tokenList): CreateViewCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
-        $orReplace = (bool) $tokenList->mayConsumeKeywords(Keyword::OR, Keyword::REPLACE);
+        $tokenList->expectKeyword(Keyword::CREATE);
+        $orReplace = $tokenList->hasKeywords(Keyword::OR, Keyword::REPLACE);
 
         $params = $this->parseViewDefinition($tokenList) + [$orReplace];
         $params[] = $orReplace;
@@ -89,45 +89,45 @@ class ViewCommandsParser
     private function parseViewDefinition(TokenList $tokenList): array
     {
         $algorithm = $definer = $sqlSecurity = $checkOption = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
+        if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
+            $tokenList->expectOperator(Operator::EQUAL);
             /** @var ViewAlgorithm $algorithm */
-            $algorithm = $tokenList->consumeKeywordEnum(ViewAlgorithm::class);
+            $algorithm = $tokenList->expectKeywordEnum(ViewAlgorithm::class);
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
+        if ($tokenList->hasKeyword(Keyword::DEFINER)) {
+            $tokenList->expectOperator(Operator::EQUAL);
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::SQL)) {
-            $tokenList->consumeKeyword(Keyword::SECURITY);
+        if ($tokenList->hasKeyword(Keyword::SQL)) {
+            $tokenList->expectKeyword(Keyword::SECURITY);
             /** @var SqlSecurity $sqlSecurity */
-            $sqlSecurity = $tokenList->consumeKeywordEnum(SqlSecurity::class);
+            $sqlSecurity = $tokenList->expectKeywordEnum(SqlSecurity::class);
         }
 
-        $tokenList->consumeKeyword(Keyword::VIEW);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeyword(Keyword::VIEW);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $columns = null;
-        if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
             $columns = [];
             do {
-                $columns[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
+                $columns[] = $tokenList->expectName();
+            } while ($tokenList->hasComma());
 
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
-        $tokenList->consumeKeyword(Keyword::AS);
+        $tokenList->expectKeyword(Keyword::AS);
         $body = $this->selectCommandParser->parseSelect($tokenList);
 
-        if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
-            $option = $tokenList->mayConsumeAnyKeyword(Keyword::CASCADED, Keyword::LOCAL);
+        if ($tokenList->hasKeyword(Keyword::WITH)) {
+            $option = $tokenList->getAnyKeyword(Keyword::CASCADED, Keyword::LOCAL);
             if ($option !== null) {
                 $checkOption = ViewCheckOption::get($option . ' CHECK OPTION');
             } else {
                 $checkOption = ViewCheckOption::get(ViewCheckOption::CHECK_OPTION);
             }
-            $tokenList->consumeKeywords(Keyword::CHECK, Keyword::OPTION);
+            $tokenList->expectKeywords(Keyword::CHECK, Keyword::OPTION);
         }
 
         return [$name, $body, $columns, $definer, $sqlSecurity, $algorithm, $checkOption];
@@ -140,15 +140,15 @@ class ViewCommandsParser
      */
     public function parseDropView(TokenList $tokenList): DropViewCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::VIEW);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::VIEW);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
         $names = [];
         do {
-            $names[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-        } while ($tokenList->mayConsumeComma());
+            $names[] = new QualifiedName(...$tokenList->expectQualifiedName());
+        } while ($tokenList->hasComma());
 
-        $option = $tokenList->mayConsumeAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE);
+        $option = $tokenList->getAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE);
         if ($option !== null) {
             $option = DropViewOption::get($option);
         }

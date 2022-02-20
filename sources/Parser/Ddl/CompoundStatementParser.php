@@ -83,12 +83,12 @@ class CompoundStatementParser
     public function parseCompoundStatement(TokenList $tokenList): CompoundStatement
     {
         $label = null;
-        if (!$tokenList->mayConsumeKeyword(Keyword::BEGIN)) {
-            $label = $tokenList->mayConsumeName();
+        if (!$tokenList->hasKeyword(Keyword::BEGIN)) {
+            $label = $tokenList->getName();
             if ($label !== null) {
-                $tokenList->consume(TokenType::DOUBLE_COLON);
+                $tokenList->expect(TokenType::DOUBLE_COLON);
             }
-            $tokenList->consumeKeyword(Keyword::BEGIN);
+            $tokenList->expectKeyword(Keyword::BEGIN);
         }
 
         return $this->parseBlock($tokenList, $label);
@@ -101,12 +101,12 @@ class CompoundStatementParser
     {
         $statements = [];
         do {
-            if ($tokenList->mayConsumeAnyKeyword(Keyword::END, Keyword::UNTIL, Keyword::WHEN, Keyword::ELSE, Keyword::ELSEIF)) {
+            if ($tokenList->hasAnyKeyword(Keyword::END, Keyword::UNTIL, Keyword::WHEN, Keyword::ELSE, Keyword::ELSEIF)) {
                 $tokenList->resetPosition(-1);
                 break;
             }
             $statements[] = $this->parseStatement($tokenList);
-        } while ($tokenList->mayConsume(TokenType::SEMICOLON));
+        } while ($tokenList->has(TokenType::SEMICOLON));
 
         return $statements;
     }
@@ -126,12 +126,12 @@ class CompoundStatementParser
      */
     private function parseStatement(TokenList $tokenList): Statement
     {
-        $label = $tokenList->mayConsumeName();
+        $label = $tokenList->getName();
         if ($label !== null) {
-            $tokenList->consume(TokenType::DOUBLE_COLON);
-            $keyword = $tokenList->consumeAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE);
+            $tokenList->expect(TokenType::DOUBLE_COLON);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE);
         } else {
-            $keyword = $tokenList->mayConsumeAnyKeyword(
+            $keyword = $tokenList->getAnyKeyword(
                 Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF,
                 Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::GET, Keyword::SIGNAL,
                 Keyword::RESIGNAL, Keyword::RETURN, Keyword::LEAVE, Keyword::ITERATE
@@ -153,11 +153,11 @@ class CompoundStatementParser
             case Keyword::DECLARE:
                 return $this->parseDeclare($tokenList);
             case Keyword::OPEN:
-                return new OpenCursorStatement($tokenList->consumeName());
+                return new OpenCursorStatement($tokenList->expectName());
             case Keyword::FETCH:
                 return $this->parseFetch($tokenList);
             case Keyword::CLOSE:
-                return new CloseCursorStatement($tokenList->consumeName());
+                return new CloseCursorStatement($tokenList->expectName());
             case Keyword::GET:
                 return $this->parseGetDiagnostics($tokenList);
             case Keyword::SIGNAL:
@@ -166,9 +166,9 @@ class CompoundStatementParser
             case Keyword::RETURN:
                 return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
             case Keyword::LEAVE:
-                return new LeaveStatement($tokenList->consumeName());
+                return new LeaveStatement($tokenList->expectName());
             case Keyword::ITERATE:
-                return new IterateStatement($tokenList->consumeName());
+                return new IterateStatement($tokenList->expectName());
             default:
                 return $this->parser->parseTokenList($tokenList);
         }
@@ -177,10 +177,10 @@ class CompoundStatementParser
     private function parseBlock(TokenList $tokenList, ?string $label): CompoundStatement
     {
         $statements = $this->parseStatementList($tokenList);
-        $tokenList->consumeKeyword(Keyword::END);
+        $tokenList->expectKeyword(Keyword::END);
 
         if ($label !== null) {
-            $endLabel = $tokenList->mayConsumeName();
+            $endLabel = $tokenList->getName();
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->expected($label);
             }
@@ -197,10 +197,10 @@ class CompoundStatementParser
     private function parseLoop(TokenList $tokenList, ?string $label): LoopStatement
     {
         $statements = $this->parseStatementList($tokenList);
-        $tokenList->consumeKeywords(Keyword::END, Keyword::LOOP);
+        $tokenList->expectKeywords(Keyword::END, Keyword::LOOP);
 
         if ($label !== null) {
-            $endLabel = $tokenList->mayConsumeName();
+            $endLabel = $tokenList->getName();
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->expected($label);
             }
@@ -218,12 +218,12 @@ class CompoundStatementParser
     private function parseRepeat(TokenList $tokenList, ?string $label): RepeatStatement
     {
         $statements = $this->parseStatementList($tokenList);
-        $tokenList->consumeKeyword(Keyword::UNTIL);
+        $tokenList->expectKeyword(Keyword::UNTIL);
         $condition = $this->expressionParser->parseExpression($tokenList);
-        $tokenList->consumeKeywords(Keyword::END, Keyword::REPEAT);
+        $tokenList->expectKeywords(Keyword::END, Keyword::REPEAT);
 
         if ($label !== null) {
-            $endLabel = $tokenList->mayConsumeName();
+            $endLabel = $tokenList->getName();
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->expected($label);
             }
@@ -240,12 +240,12 @@ class CompoundStatementParser
     private function parseWhile(TokenList $tokenList, ?string $label): WhileStatement
     {
         $condition = $this->expressionParser->parseExpression($tokenList);
-        $tokenList->consumeKeyword(Keyword::DO);
+        $tokenList->expectKeyword(Keyword::DO);
         $statements = $this->parseStatementList($tokenList);
-        $tokenList->consumeKeywords(Keyword::END, Keyword::REPEAT);
+        $tokenList->expectKeywords(Keyword::END, Keyword::REPEAT);
 
         if ($label !== null) {
-            $endLabel = $tokenList->mayConsumeName();
+            $endLabel = $tokenList->getName();
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->expected($label);
             }
@@ -270,21 +270,21 @@ class CompoundStatementParser
     private function parseCase(TokenList $tokenList): CaseStatement
     {
         $condition = null;
-        if (!$tokenList->mayConsumeKeyword(Keyword::WHEN)) {
+        if (!$tokenList->hasKeyword(Keyword::WHEN)) {
             $condition = $this->expressionParser->parseExpression($tokenList);
-            $tokenList->consumeKeyword(Keyword::WHEN);
+            $tokenList->expectKeyword(Keyword::WHEN);
         }
         $values = $statementLists = [];
         do {
             $values[] = $this->expressionParser->parseExpression($tokenList);
-            $tokenList->consumeKeyword(Keyword::THEN);
+            $tokenList->expectKeyword(Keyword::THEN);
             $statementLists[] = $this->parseStatementList($tokenList);
-        } while ($tokenList->mayConsumeKeyword(Keyword::WHEN));
+        } while ($tokenList->hasKeyword(Keyword::WHEN));
 
-        if ($tokenList->mayConsumeKeyword(Keyword::ELSE)) {
+        if ($tokenList->hasKeyword(Keyword::ELSE)) {
             $statementLists[] = $this->parseStatementList($tokenList);
         }
-        $tokenList->consumeKeywords(Keyword::END, Keyword::CASE);
+        $tokenList->expectKeywords(Keyword::END, Keyword::CASE);
 
         return new CaseStatement($condition, $values, $statementLists);
     }
@@ -299,18 +299,18 @@ class CompoundStatementParser
     {
         $conditions = $statementLists = [];
         $conditions[] = $this->expressionParser->parseExpression($tokenList);
-        $tokenList->consumeKeyword(Keyword::THEN);
+        $tokenList->expectKeyword(Keyword::THEN);
         $statementLists[] = $this->parseStatementList($tokenList);
 
-        while ($tokenList->mayConsumeKeyword(Keyword::ELSEIF)) {
+        while ($tokenList->hasKeyword(Keyword::ELSEIF)) {
             $conditions[] = $this->expressionParser->parseExpression($tokenList);
-            $tokenList->consumeKeyword(Keyword::THEN);
+            $tokenList->expectKeyword(Keyword::THEN);
             $statementLists[] = $this->parseStatementList($tokenList);
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::ELSE)) {
+        if ($tokenList->hasKeyword(Keyword::ELSE)) {
             $statementLists[] = $this->parseStatementList($tokenList);
         }
-        $tokenList->consumeKeywords(Keyword::END, Keyword::IF);
+        $tokenList->expectKeywords(Keyword::END, Keyword::IF);
 
         return new IfStatement($conditions, $statementLists);
     }
@@ -350,74 +350,74 @@ class CompoundStatementParser
      */
     private function parseDeclare(TokenList $tokenList)
     {
-        $tokenList->consumeKeyword(Keyword::DECLARE);
+        $tokenList->expectKeyword(Keyword::DECLARE);
 
         /** @var HandlerAction|null $action */
-        $action = $tokenList->mayConsumeKeywordEnum(HandlerAction::class);
+        $action = $tokenList->getKeywordEnum(HandlerAction::class);
         if ($action !== null) {
-            $tokenList->consumeKeywords(Keyword::HANDLER, Keyword::FOR);
+            $tokenList->expectKeywords(Keyword::HANDLER, Keyword::FOR);
 
             $conditions = [];
             do {
                 $value = null;
-                if ($tokenList->mayConsumeKeywords(Keyword::NOT, Keyword::FOUND)) {
+                if ($tokenList->hasKeywords(Keyword::NOT, Keyword::FOUND)) {
                     $type = ConditionType::get(ConditionType::NOT_FOUND);
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::SQLEXCEPTION)) {
+                } elseif ($tokenList->hasKeyword(Keyword::SQLEXCEPTION)) {
                     $type = ConditionType::get(ConditionType::SQL_EXCEPTION);
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::SQLWARNING)) {
+                } elseif ($tokenList->hasKeyword(Keyword::SQLWARNING)) {
                     $type = ConditionType::get(ConditionType::SQL_WARNING);
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::SQLSTATE)) {
+                } elseif ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
                     $type = ConditionType::get(ConditionType::SQL_STATE);
-                    $value = $tokenList->mayConsumeInt();
+                    $value = $tokenList->getInt();
                     if ($value === null) {
-                        $value = $tokenList->consumeNameOrString();
+                        $value = $tokenList->expectNameOrString();
                     }
                 } else {
-                    $value = $tokenList->mayConsumeName();
+                    $value = $tokenList->getName();
                     if ($value !== null) {
                         $type = ConditionType::get(ConditionType::CONDITION);
                     } else {
-                        $value = $tokenList->consumeInt();
+                        $value = $tokenList->expectInt();
                         $type = ConditionType::get(ConditionType::ERROR);
                     }
                 }
                 $conditions[] = new Condition($type, $value);
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
 
             $statement = $this->parseStatement($tokenList);
 
             return new DeclareHandlerStatement($action, $conditions, $statement);
         }
 
-        $name = $tokenList->consumeName();
+        $name = $tokenList->expectName();
 
-        if ($tokenList->mayConsumeKeyword(Keyword::CURSOR)) {
-            $tokenList->consumeKeyword(Keyword::FOR);
+        if ($tokenList->hasKeyword(Keyword::CURSOR)) {
+            $tokenList->expectKeyword(Keyword::FOR);
             $select = $this->selectCommandParser->parseSelect($tokenList);
 
             return new DeclareCursorStatement($name, $select);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::CONDITION)) {
-            $tokenList->consumeKeywords(Keyword::FOR);
-            if ($tokenList->mayConsumeKeyword(Keyword::SQLSTATE)) {
-                $tokenList->mayConsumeKeyword(Keyword::VALUE);
-                $value = $tokenList->mayConsumeInt();
+        } elseif ($tokenList->hasKeyword(Keyword::CONDITION)) {
+            $tokenList->expectKeywords(Keyword::FOR);
+            if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
+                $tokenList->hasKeyword(Keyword::VALUE);
+                $value = $tokenList->getInt();
                 if ($value === null) {
-                    $value = $tokenList->consumeNameOrString();
+                    $value = $tokenList->expectNameOrString();
                 }
             } else {
-                $value = $tokenList->consumeInt();
+                $value = $tokenList->expectInt();
             }
 
             return new DeclareConditionStatement($name, $value);
         }
 
         $names = [$name];
-        while ($tokenList->mayConsumeComma()) {
-            $names[] = $tokenList->consumeName();
+        while ($tokenList->hasComma()) {
+            $names[] = $tokenList->expectName();
         }
         $type = $this->typeParser->parseType($tokenList);
         $default = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+        if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
             $default = $this->expressionParser->parseLiteralValue($tokenList);
         }
 
@@ -429,17 +429,17 @@ class CompoundStatementParser
      */
     private function parseFetch(TokenList $tokenList): FetchStatement
     {
-        if ($tokenList->mayConsumeKeyword(Keyword::NEXT)) {
-            $tokenList->consumeKeyword(Keyword::FROM);
+        if ($tokenList->hasKeyword(Keyword::NEXT)) {
+            $tokenList->expectKeyword(Keyword::FROM);
         } else {
-            $tokenList->mayConsumeKeyword(Keyword::FROM);
+            $tokenList->hasKeyword(Keyword::FROM);
         }
-        $cursor = $tokenList->consumeName();
-        $tokenList->consumeKeyword(Keyword::INTO);
+        $cursor = $tokenList->expectName();
+        $tokenList->expectKeyword(Keyword::INTO);
         $variables = [];
         do {
-            $variables[] = $tokenList->consumeName();
-        } while ($tokenList->mayConsumeComma());
+            $variables[] = $tokenList->expectName();
+        } while ($tokenList->hasComma());
 
         return new FetchStatement($cursor, $variables);
     }
@@ -485,29 +485,29 @@ class CompoundStatementParser
     private function parseGetDiagnostics(TokenList $tokenList): GetDiagnosticsStatement
     {
         /** @var DiagnosticsArea|null $area */
-        $area = $tokenList->mayConsumeKeywordEnum(DiagnosticsArea::class);
-        $tokenList->consumeKeyword(Keyword::DIAGNOSTICS);
+        $area = $tokenList->getKeywordEnum(DiagnosticsArea::class);
+        $tokenList->expectKeyword(Keyword::DIAGNOSTICS);
 
         $statementItems = $conditionItems = $conditionNumber = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::CONDITION)) {
-            $conditionNumber = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::CONDITION)) {
+            $conditionNumber = $tokenList->expectInt();
             $conditionItems = [];
             do {
-                $target = $tokenList->consumeName();
-                $tokenList->consumeOperator(Operator::EQUAL);
+                $target = $tokenList->expectName();
+                $tokenList->expectOperator(Operator::EQUAL);
                 /** @var ConditionInformationItem $item */
-                $item = $tokenList->consumeKeywordEnum(ConditionInformationItem::class);
+                $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class);
                 $conditionItems[] = new DiagnosticsItem($target, $item);
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
         } else {
             $statementItems = [];
             do {
-                $target = $tokenList->consumeName();
-                $tokenList->consumeOperator(Operator::EQUAL);
+                $target = $tokenList->expectName();
+                $tokenList->expectOperator(Operator::EQUAL);
                 /** @var StatementInformationItem $item */
-                $item = $tokenList->consumeKeywordEnum(StatementInformationItem::class);
+                $item = $tokenList->expectKeywordEnum(StatementInformationItem::class);
                 $statementItems[] = new DiagnosticsItem($target, $item);
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
         }
 
         return new GetDiagnosticsStatement($area, $statementItems, $conditionNumber, $conditionItems);
@@ -557,20 +557,20 @@ class CompoundStatementParser
      */
     private function parseSignalResignal(TokenList $tokenList, string $keyword)
     {
-        $condition = $tokenList->mayConsumeInt();
+        $condition = $tokenList->getInt();
         if ($condition === null) {
-            $tokenList->consumeKeyword(Keyword::SQLSTATE);
-            $tokenList->mayConsumeKeyword(Keyword::VALUE);
-            $condition = $tokenList->consumeNameOrString();
+            $tokenList->expectKeyword(Keyword::SQLSTATE);
+            $tokenList->hasKeyword(Keyword::VALUE);
+            $condition = $tokenList->expectNameOrString();
         }
         $items = [];
-        if ($tokenList->mayConsumeKeyword(Keyword::SET)) {
+        if ($tokenList->hasKeyword(Keyword::SET)) {
             do {
-                $item = $tokenList->consumeKeywordEnum(ConditionInformationItem::class)->getValue();
-                $tokenList->consumeOperator(Operator::EQUAL);
+                $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class)->getValue();
+                $tokenList->expectOperator(Operator::EQUAL);
                 $value = $this->expressionParser->parseLiteralValue($tokenList);
                 $items[$item] = $value;
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
         }
 
         if ($keyword === Keyword::SIGNAL) {

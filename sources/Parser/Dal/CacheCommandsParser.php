@@ -39,20 +39,20 @@ class CacheCommandsParser
      */
     public function parseCacheIndex(TokenList $tokenList): CacheIndexCommand
     {
-        $tokenList->consumeKeywords(Keyword::CACHE, Keyword::INDEX);
+        $tokenList->expectKeywords(Keyword::CACHE, Keyword::INDEX);
 
         $tableIndexLists = [];
         do {
-            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+            $table = new QualifiedName(...$tokenList->expectQualifiedName());
             $indexes = $this->parseIndexes($tokenList);
 
             $tableIndexLists[] = new TableIndexList($table, $indexes);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $partitions = $this->parsePartitions($tokenList);
 
-        $tokenList->consumeKeyword(Keyword::IN);
-        $keyCache = $tokenList->consumeName();
+        $tokenList->expectKeyword(Keyword::IN);
+        $keyCache = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new CacheIndexCommand($keyCache, $tableIndexLists, $partitions);
@@ -73,17 +73,17 @@ class CacheCommandsParser
      */
     public function parseLoadIndexIntoCache(TokenList $tokenList): LoadIndexIntoCacheCommand
     {
-        $tokenList->consumeKeywords(Keyword::LOAD, Keyword::INDEX, Keyword::INTO, Keyword::CACHE);
+        $tokenList->expectKeywords(Keyword::LOAD, Keyword::INDEX, Keyword::INTO, Keyword::CACHE);
 
         $tableIndexLists = [];
         do {
-            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+            $table = new QualifiedName(...$tokenList->expectQualifiedName());
             $partitions = $this->parsePartitions($tokenList);
             $indexes = $this->parseIndexes($tokenList);
-            $ignoreLeaves = (bool) $tokenList->mayConsumeKeywords(Keyword::IGNORE, Keyword::LEAVES);
+            $ignoreLeaves = $tokenList->hasKeywords(Keyword::IGNORE, Keyword::LEAVES);
 
             $tableIndexLists[] = new TableIndexList($table, $indexes, $partitions, $ignoreLeaves);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return new LoadIndexIntoCacheCommand($tableIndexLists);
     }
@@ -94,13 +94,13 @@ class CacheCommandsParser
     private function parseIndexes(TokenList $tokenList): ?array
     {
         $indexes = null;
-        if ($tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $indexes = [];
             do {
-                $indexes[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $indexes[] = $tokenList->expectName();
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         return $indexes;
@@ -111,20 +111,20 @@ class CacheCommandsParser
      */
     private function parsePartitions(TokenList $tokenList)
     {
-        if (!$tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
+        if (!$tokenList->hasKeyword(Keyword::PARTITION)) {
             return null;
         }
 
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-        if ($tokenList->mayConsumeKeyword(Keyword::ALL)) {
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        if ($tokenList->hasKeyword(Keyword::ALL)) {
             $partitions = true;
         } else {
             $partitions = [];
             do {
-                $partitions[] = $tokenList->consumeName();
-            } while ($tokenList->mayConsumeComma());
+                $partitions[] = $tokenList->expectName();
+            } while ($tokenList->hasComma());
         }
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         return $partitions;
     }

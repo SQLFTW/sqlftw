@@ -44,31 +44,31 @@ class WithParser
      */
     public function parseWith(TokenList $tokenList): Command
     {
-        $tokenList->consumeKeyword(Keyword::WITH);
-        $recursive = (bool) $tokenList->mayConsumeKeyword(Keyword::RECURSIVE);
+        $tokenList->expectKeyword(Keyword::WITH);
+        $recursive = $tokenList->hasKeyword(Keyword::RECURSIVE);
 
         $expressions = [];
         do {
-            $name = $tokenList->consumeName();
+            $name = $tokenList->expectName();
             $columns = null;
-            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                 $columns = [];
                 do {
-                    $columns[] = $tokenList->consumeName();
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    $columns[] = $tokenList->expectName();
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
-            $tokenList->consumeKeyword(Keyword::AS);
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectKeyword(Keyword::AS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $query = $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList);
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
             $expressions[] = new WithExpression($query, $name, $columns);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $with = new WithClause($expressions, $recursive);
 
-        $next = $tokenList->consumeAnyKeyword(Keyword::SELECT, Keyword::UPDATE, Keyword::DELETE);
+        $next = $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::UPDATE, Keyword::DELETE);
         switch ($next) {
             case Keyword::SELECT:
                 return $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList->resetPosition(-1), $with);

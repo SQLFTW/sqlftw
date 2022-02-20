@@ -52,37 +52,37 @@ class EventCommandsParser
      */
     public function parseAlterEvent(TokenList $tokenList): AlterEventCommand
     {
-        $tokenList->consumeKeyword(Keyword::ALTER);
+        $tokenList->expectKeyword(Keyword::ALTER);
         $definer = $schedule = $preserve = $newName = $state = $comment = $body = null;
 
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
+        if ($tokenList->hasKeyword(Keyword::DEFINER)) {
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
-        $tokenList->consumeKeyword(Keyword::EVENT);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeyword(Keyword::EVENT);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
-        if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::SCHEDULE)) {
+        if ($tokenList->hasKeywords(Keyword::ON, Keyword::SCHEDULE)) {
             $schedule = $this->parseSchedule($tokenList);
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::COMPLETION)) {
-            $preserve = !$tokenList->mayConsumeKeyword(Keyword::NOT);
-            $tokenList->consumeKeyword(Keyword::PRESERVE);
+        if ($tokenList->hasKeywords(Keyword::ON, Keyword::COMPLETION)) {
+            $preserve = !$tokenList->hasKeyword(Keyword::NOT);
+            $tokenList->expectKeyword(Keyword::PRESERVE);
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::RENAME, Keyword::TO)) {
-            $newName = new QualifiedName(...$tokenList->consumeQualifiedName());
+        if ($tokenList->hasKeywords(Keyword::RENAME, Keyword::TO)) {
+            $newName = new QualifiedName(...$tokenList->expectQualifiedName());
         }
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ENABLE, Keyword::DISABLE);
+        $keyword = $tokenList->getAnyKeyword(Keyword::ENABLE, Keyword::DISABLE);
         if ($keyword !== null) {
-            if ($keyword === Keyword::DISABLE && $tokenList->mayConsumeKeywords(Keyword::ON, Keyword::SLAVE)) {
+            if ($keyword === Keyword::DISABLE && $tokenList->hasKeywords(Keyword::ON, Keyword::SLAVE)) {
                 $state = EventState::get(EventState::DISABLE_ON_SLAVE);
             } else {
                 $state = EventState::get($keyword);
             }
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
-            $comment = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+            $comment = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::DO)) {
+        if ($tokenList->hasKeyword(Keyword::DO)) {
             $body = $this->doCommandsParser->parseDo($tokenList->resetPosition($tokenList->getPosition() - 1));
         }
         $tokenList->expectEnd();
@@ -104,34 +104,34 @@ class EventCommandsParser
      */
     public function parseCreateEvent(TokenList $tokenList): CreateEventCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
+        $tokenList->expectKeyword(Keyword::CREATE);
         $definer = $preserve = $state = $comment = null;
 
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
+        if ($tokenList->hasKeyword(Keyword::DEFINER)) {
+            $tokenList->getOperator(Operator::EQUAL);
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
-        $tokenList->consumeKeyword(Keyword::EVENT);
-        $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeyword(Keyword::EVENT);
+        $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
-        $tokenList->consumeKeywords(Keyword::ON, Keyword::SCHEDULE);
+        $tokenList->expectKeywords(Keyword::ON, Keyword::SCHEDULE);
         $schedule = $this->parseSchedule($tokenList);
 
-        if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::COMPLETION)) {
-            $preserve = !$tokenList->mayConsumeKeyword(Keyword::NOT);
-            $tokenList->consumeKeyword(Keyword::PRESERVE);
+        if ($tokenList->hasKeywords(Keyword::ON, Keyword::COMPLETION)) {
+            $preserve = !$tokenList->hasKeyword(Keyword::NOT);
+            $tokenList->expectKeyword(Keyword::PRESERVE);
         }
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ENABLE, Keyword::DISABLE);
+        $keyword = $tokenList->getAnyKeyword(Keyword::ENABLE, Keyword::DISABLE);
         if ($keyword !== null) {
-            if ($keyword === Keyword::DISABLE && $tokenList->mayConsumeKeywords(Keyword::ON, Keyword::SLAVE)) {
+            if ($keyword === Keyword::DISABLE && $tokenList->hasKeywords(Keyword::ON, Keyword::SLAVE)) {
                 $state = EventState::get(EventState::DISABLE_ON_SLAVE);
             } else {
                 $state = EventState::get($keyword);
             }
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
-            $comment = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+            $comment = $tokenList->expectString();
         }
 
         $body = $this->doCommandsParser->parseDo($tokenList);
@@ -153,18 +153,18 @@ class EventCommandsParser
     {
         $at = $every = $startTime = $endTime = null;
 
-        if ($tokenList->mayConsumeKeyword(Keyword::AT)) {
+        if ($tokenList->hasKeyword(Keyword::AT)) {
             $at = $this->expressionParser->parseTimeExpression($tokenList);
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::EVERY)) {
+        } elseif ($tokenList->hasKeyword(Keyword::EVERY)) {
             $every = $this->expressionParser->parseInterval($tokenList);
         } else {
             $tokenList->expectedAnyKeyword(Keyword::ON, Keyword::EVERY);
         }
 
-        if ($tokenList->mayConsumeKeyword(Keyword::STARTS)) {
+        if ($tokenList->hasKeyword(Keyword::STARTS)) {
             $startTime = $this->expressionParser->parseTimeExpression($tokenList);
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::ENDS)) {
+        if ($tokenList->hasKeyword(Keyword::ENDS)) {
             $endTime = $this->expressionParser->parseTimeExpression($tokenList);
         }
 
@@ -176,10 +176,10 @@ class EventCommandsParser
      */
     public function parseDropEvent(TokenList $tokenList): DropEventCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::EVENT);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::EVENT);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
         $tokenList->expectEnd();
 
         return new DropEventCommand($name, $ifExists);

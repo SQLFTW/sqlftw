@@ -33,9 +33,9 @@ class SchemaCommandsParser
      */
     public function parseAlterSchema(TokenList $tokenList): AlterSchemaCommand
     {
-        $tokenList->consumeKeyword(Keyword::ALTER);
-        $tokenList->consumeAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
-        $schema = $tokenList->mayConsumeName();
+        $tokenList->expectKeyword(Keyword::ALTER);
+        $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
+        $schema = $tokenList->getName();
 
         [$charset, $collation] = $this->parseDefaults($tokenList);
         $tokenList->expectEnd();
@@ -53,10 +53,10 @@ class SchemaCommandsParser
      */
     public function parseCreateSchema(TokenList $tokenList): CreateSchemaCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
-        $tokenList->consumeAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
-        $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $schema = $tokenList->consumeName();
+        $tokenList->expectKeyword(Keyword::CREATE);
+        $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
+        $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        $schema = $tokenList->expectName();
 
         [$charset, $collation] = $this->parseDefaults($tokenList);
         $tokenList->expectEnd();
@@ -70,34 +70,34 @@ class SchemaCommandsParser
     private function parseDefaults(TokenList $tokenList): array
     {
         $charset = $collation = null;
-        $tokenList->mayConsumeKeyword(Keyword::DEFAULT);
-        $token = $tokenList->consumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
+        $tokenList->passKeyword(Keyword::DEFAULT);
+        $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
         if ($token === Keyword::CHARACTER) {
-            $tokenList->consumeKeyword(Keyword::SET);
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
+            $tokenList->expectKeyword(Keyword::SET);
+            $tokenList->getOperator(Operator::EQUAL);
             /** @var Charset $charset */
-            $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
+            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
         } else {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
+            $tokenList->getOperator(Operator::EQUAL);
             /** @var Collation $collation */
-            $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
+            $collation = $tokenList->expectNameOrStringEnum(Collation::class);
         }
 
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
-            $token = $tokenList->consumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
+        if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+            $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
         } else {
-            $token = $tokenList->mayConsumeAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
+            $token = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
         }
         if ($token) {
             if ($token === Keyword::CHARACTER) {
-                $tokenList->consumeKeyword(Keyword::SET);
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->expectKeyword(Keyword::SET);
+                $tokenList->getOperator(Operator::EQUAL);
                 /** @var Charset $charset */
-                $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
+                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
             } else {
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
                 /** @var Collation $collation */
-                $collation = $tokenList->consumeNameOrStringEnum(Collation::class);
+                $collation = $tokenList->expectNameOrStringEnum(Collation::class);
             }
         }
 
@@ -109,10 +109,10 @@ class SchemaCommandsParser
      */
     public function parseDropSchema(TokenList $tokenList): DropSchemaCommand
     {
-        $tokenList->consumeKeyword(Keyword::DROP);
-        $tokenList->consumeAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
-        $schema = $tokenList->consumeName();
+        $tokenList->expectKeyword(Keyword::DROP);
+        $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
+        $schema = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new DropSchemaCommand($schema, $ifExists);

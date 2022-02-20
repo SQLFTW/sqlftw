@@ -77,14 +77,13 @@ class ShowCommandsParser
 
     public function parseShow(TokenList $tokenList): ShowCommand
     {
-        $tokenList->consumeKeyword(Keyword::SHOW);
+        $tokenList->expectKeyword(Keyword::SHOW);
 
-        $count = $tokenList->mayConsumeNameOrKeyword(Keyword::COUNT);
-        if ($count !== null) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-            $tokenList->consumeOperator(Operator::MULTIPLY);
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
-            $what = $tokenList->consumeAnyKeyword(Keyword::ERRORS, Keyword::WARNINGS);
+        if ($tokenList->hasNameOrKeyword(Keyword::COUNT)) {
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectOperator(Operator::MULTIPLY);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $what = $tokenList->expectAnyKeyword(Keyword::ERRORS, Keyword::WARNINGS);
             $tokenList->expectEnd();
             if ($what === Keyword::ERRORS) {
                 // SHOW COUNT(*) ERRORS
@@ -95,23 +94,23 @@ class ShowCommandsParser
             }
         }
 
-        $second = $tokenList->consume(TokenType::KEYWORD);
+        $second = $tokenList->expect(TokenType::KEYWORD);
         switch ($second->value) {
             case Keyword::BINLOG:
                 // SHOW BINLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count]
-                $tokenList->consumeKeyword(Keyword::EVENTS);
+                $tokenList->expectKeyword(Keyword::EVENTS);
                 $logName = $limit = $offset = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::IN)) {
-                    $logName = $tokenList->consumeString();
+                if ($tokenList->hasKeyword(Keyword::IN)) {
+                    $logName = $tokenList->expectString();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::FROM)) {
-                    $offset = $tokenList->consumeInt();
+                if ($tokenList->hasKeyword(Keyword::FROM)) {
+                    $offset = $tokenList->expectInt();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
-                    $limit = $tokenList->consumeInt();
-                    if ($tokenList->mayConsumeComma()) {
+                if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+                    $limit = $tokenList->expectInt();
+                    if ($tokenList->hasComma()) {
                         $offset = $limit;
-                        $limit = $tokenList->mayConsumeInt();
+                        $limit = $tokenList->getInt();
                     }
                 }
                 $tokenList->expectEnd();
@@ -119,11 +118,11 @@ class ShowCommandsParser
                 return new ShowBinlogEventsCommand($logName, $limit, $offset);
             case Keyword::CHARACTER:
                 // SHOW CHARACTER SET [LIKE 'pattern' | WHERE expr]
-                $tokenList->consumeKeyword(Keyword::SET);
+                $tokenList->expectKeyword(Keyword::SET);
                 $like = $where = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                    $like = $tokenList->consumeString();
-                } elseif ($tokenList->consumeKeyword(Keyword::WHERE)) {
+                if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                    $like = $tokenList->expectString();
+                } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -132,16 +131,16 @@ class ShowCommandsParser
             case Keyword::COLLATION:
                 // SHOW COLLATION [LIKE 'pattern' | WHERE expr]
                 $like = $where = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                    $like = $tokenList->consumeString();
-                } elseif ($tokenList->consumeKeyword(Keyword::WHERE)) {
+                if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                    $like = $tokenList->expectString();
+                } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
 
                 return new ShowCollationCommand($like, $where);
             case Keyword::CREATE:
-                $third = $tokenList->consumeAnyKeyword(
+                $third = $tokenList->expectAnyKeyword(
                     Keyword::DATABASE,
                     Keyword::SCHEMA,
                     Keyword::EVENT,
@@ -156,49 +155,49 @@ class ShowCommandsParser
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // SHOW CREATE {DATABASE | SCHEMA} db_name
-                        $name = $tokenList->consumeName();
+                        $name = $tokenList->expectName();
                         $tokenList->expectEnd();
 
                         return new ShowCreateSchemaCommand($name);
                     case Keyword::EVENT:
                         // SHOW CREATE EVENT event_name
-                        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+                        $name = new QualifiedName(...$tokenList->expectQualifiedName());
                         $tokenList->expectEnd();
 
                         return new ShowCreateEventCommand($name);
                     case Keyword::FUNCTION:
                         // SHOW CREATE FUNCTION func_name
-                        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+                        $name = new QualifiedName(...$tokenList->expectQualifiedName());
                         $tokenList->expectEnd();
 
                         return new ShowCreateFunctionCommand($name);
                     case Keyword::PROCEDURE:
                         // SHOW CREATE PROCEDURE proc_name
-                        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+                        $name = new QualifiedName(...$tokenList->expectQualifiedName());
                         $tokenList->expectEnd();
 
                         return new ShowCreateProcedureCommand($name);
                     case Keyword::TABLE:
                         // SHOW CREATE TABLE tbl_name
-                        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+                        $name = new QualifiedName(...$tokenList->expectQualifiedName());
                         $tokenList->expectEnd();
 
                         return new ShowCreateTableCommand($name);
                     case Keyword::TRIGGER:
                         // SHOW CREATE TRIGGER trigger_name
-                        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+                        $name = new QualifiedName(...$tokenList->expectQualifiedName());
                         $tokenList->expectEnd();
 
                         return new ShowCreateTriggerCommand($name);
                     case Keyword::USER:
                         // SHOW CREATE USER user
-                        $name = $tokenList->consumeName();
+                        $name = $tokenList->expectName();
                         $tokenList->expectEnd();
 
                         return new ShowCreateUserCommand($name);
                     case Keyword::VIEW:
                         // SHOW CREATE VIEW view_name
-                        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+                        $name = new QualifiedName(...$tokenList->expectQualifiedName());
                         $tokenList->expectEnd();
 
                         return new ShowCreateViewCommand($name);
@@ -208,9 +207,9 @@ class ShowCommandsParser
             case Keyword::SCHEMAS:
                 // SHOW {DATABASES | SCHEMAS} [LIKE 'pattern' | WHERE expr]
                 $like = $where = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                    $like = $tokenList->consumeString();
-                } elseif ($tokenList->consumeKeyword(Keyword::WHERE)) {
+                if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                    $like = $tokenList->expectString();
+                } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -218,9 +217,9 @@ class ShowCommandsParser
                 return new ShowSchemasCommand($like, $where);
             case Keyword::ENGINE:
                 // SHOW ENGINE engine_name {STATUS | MUTEX}
-                $engine = $tokenList->consumeName();
+                $engine = $tokenList->expectName();
                 /** @var ShowEngineOption $what */
-                $what = $tokenList->consumeKeywordEnum(ShowEngineOption::class);
+                $what = $tokenList->expectKeywordEnum(ShowEngineOption::class);
                 $tokenList->expectEnd();
 
                 return new ShowEngineCommand($engine, $what);
@@ -228,7 +227,7 @@ class ShowCommandsParser
             case Keyword::ENGINES:
                 // SHOW [STORAGE] ENGINES
                 if ($second->value === Keyword::STORAGE) {
-                    $tokenList->consumeKeyword(Keyword::ENGINES);
+                    $tokenList->expectKeyword(Keyword::ENGINES);
                 }
                 $tokenList->expectEnd();
 
@@ -236,11 +235,11 @@ class ShowCommandsParser
             case Keyword::ERRORS:
                 // SHOW ERRORS [LIMIT [offset,] row_count]
                 $limit = $offset = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
-                    $limit = $tokenList->consumeInt();
-                    if ($tokenList->mayConsumeComma()) {
+                if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+                    $limit = $tokenList->expectInt();
+                    if ($tokenList->hasComma()) {
                         $offset = $limit;
-                        $limit = $tokenList->consumeInt();
+                        $limit = $tokenList->expectInt();
                     }
                 }
                 $tokenList->expectEnd();
@@ -249,31 +248,31 @@ class ShowCommandsParser
             case Keyword::EVENTS:
                 // SHOW EVENTS [{FROM | IN} schema_name] [LIKE 'pattern' | WHERE expr]
                 $from = $like = $where = null;
-                if ($tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                    $from = $tokenList->consumeName();
+                if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                    $from = $tokenList->expectName();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                    $like = $tokenList->consumeString();
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                    $like = $tokenList->expectString();
+                } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
 
                 return new ShowEventsCommand($from, $like, $where);
             case Keyword::FUNCTION:
-                $what = $tokenList->consumeAnyKeyword(Keyword::CODE, Keyword::STATUS);
+                $what = $tokenList->expectAnyKeyword(Keyword::CODE, Keyword::STATUS);
                 if ($what === Keyword::CODE) {
                     // SHOW FUNCTION CODE func_name
-                    $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+                    $name = new QualifiedName(...$tokenList->expectQualifiedName());
                     $tokenList->expectEnd();
 
                     return new ShowFunctionCodeCommand($name);
                 } else {
                     // SHOW FUNCTION STATUS [LIKE 'pattern' | WHERE expr]
                     $like = $where = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                        $like = $tokenList->consumeString();
-                    } elseif ($tokenList->consumeKeyword(Keyword::WHERE)) {
+                    if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                        $like = $tokenList->expectString();
+                    } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
                     $tokenList->expectEnd();
@@ -286,12 +285,12 @@ class ShowCommandsParser
                 // todo: SHOW GRANTS FOR CURRENT_USER();
                 $forUser = null;
                 $usingRoles = [];
-                if ($tokenList->mayConsumeKeyword(Keyword::FOR)) {
-                    $forUser = new UserName(...$tokenList->consumeUserName());
-                    if ($tokenList->mayConsumeKeyword(Keyword::USING)) {
+                if ($tokenList->hasKeyword(Keyword::FOR)) {
+                    $forUser = new UserName(...$tokenList->expectUserName());
+                    if ($tokenList->hasKeyword(Keyword::USING)) {
                         do {
-                            $usingRoles[] = $tokenList->consumeString();
-                        } while ($tokenList->mayConsumeComma());
+                            $usingRoles[] = $tokenList->expectString();
+                        } while ($tokenList->hasComma());
                     }
                 }
                 $tokenList->expectEnd();
@@ -301,14 +300,14 @@ class ShowCommandsParser
             case Keyword::INDEXES:
             case Keyword::KEYS:
                 // SHOW {INDEX | INDEXES | KEYS} {FROM | IN} tbl_name [{FROM | IN} db_name] [WHERE expr]
-                $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
-                $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-                if ($table->getSchema() === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                    $schema = $tokenList->consumeName();
+                $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
+                $table = new QualifiedName(...$tokenList->expectQualifiedName());
+                if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                    $schema = $tokenList->expectName();
                     $table = new QualifiedName($table->getName(), $schema);
                 }
                 $where = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                if ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -316,14 +315,14 @@ class ShowCommandsParser
                 return new ShowIndexesCommand($table, $where);
             case Keyword::OPEN:
                 // SHOW OPEN TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
-                $tokenList->consumeKeyword(Keyword::TABLES);
+                $tokenList->expectKeyword(Keyword::TABLES);
                 $from = $like = $where = null;
-                if ($tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                    $from = $tokenList->consumeName();
+                if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                    $from = $tokenList->expectName();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                    $like = $tokenList->consumeString();
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                    $like = $tokenList->expectString();
+                } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -340,19 +339,19 @@ class ShowCommandsParser
 
                 return new ShowPrivilegesCommand();
             case Keyword::PROCEDURE:
-                $what = $tokenList->consumeAnyKeyword(Keyword::CODE, Keyword::STATUS);
+                $what = $tokenList->expectAnyKeyword(Keyword::CODE, Keyword::STATUS);
                 if ($what === Keyword::CODE) {
                     // SHOW PROCEDURE CODE proc_name
-                    $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+                    $name = new QualifiedName(...$tokenList->expectQualifiedName());
                     $tokenList->expectEnd();
 
                     return new ShowProcedureCodeCommand($name);
                 } else {
                     // SHOW PROCEDURE STATUS [LIKE 'pattern' | WHERE expr]
                     $like = $where = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                        $like = $tokenList->consumeString();
-                    } elseif ($tokenList->consumeKeyword(Keyword::WHERE)) {
+                    if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                        $like = $tokenList->expectString();
+                    } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
                     $tokenList->expectEnd();
@@ -377,7 +376,7 @@ class ShowCommandsParser
                 ];
                 $continue = static function (string $type) use ($tokenList, $keywords): string {
                     if (isset($keywords[$type])) {
-                        $tokenList->consumeKeyword($keywords[$type]);
+                        $tokenList->expectKeyword($keywords[$type]);
 
                         return $type . ' ' . $keywords[$type];
                     }
@@ -386,23 +385,23 @@ class ShowCommandsParser
                 };
 
                 $types = [];
-                $type = $tokenList->mayConsumeAnyKeyword(...array_keys($keywords));
+                $type = $tokenList->getAnyKeyword(...array_keys($keywords));
                 if ($type) {
                     $types[] = ShowProfileType::get($continue($type));
                 }
-                while ($tokenList->mayConsumeComma()) {
-                    $type = $tokenList->consumeAnyKeyword(...array_keys($keywords));
+                while ($tokenList->hasComma()) {
+                    $type = $tokenList->expectAnyKeyword(...array_keys($keywords));
                     $types[] = ShowProfileType::get($continue($type));
                 }
                 $query = $limit = $offset = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::FOR)) {
-                    $tokenList->consumeKeyword(Keyword::QUERY);
-                    $query = $tokenList->consumeInt();
+                if ($tokenList->hasKeyword(Keyword::FOR)) {
+                    $tokenList->expectKeyword(Keyword::QUERY);
+                    $query = $tokenList->expectInt();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
-                    $limit = $tokenList->consumeInt();
-                    if ($tokenList->mayConsumeKeyword(Keyword::OFFSET)) {
-                        $offset = $tokenList->consumeInt();
+                if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+                    $limit = $tokenList->expectInt();
+                    if ($tokenList->hasKeyword(Keyword::OFFSET)) {
+                        $offset = $tokenList->expectInt();
                     }
                 }
                 $tokenList->expectEnd();
@@ -415,26 +414,26 @@ class ShowCommandsParser
                 return new ShowProfilesCommand();
             case Keyword::RELAYLOG:
                 // SHOW RELAYLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count]
-                $tokenList->consumeKeyword(Keyword::EVENTS);
+                $tokenList->expectKeyword(Keyword::EVENTS);
                 $logName = $from = $limit = $offset = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::IN)) {
-                    $logName = $tokenList->consumeString();
+                if ($tokenList->hasKeyword(Keyword::IN)) {
+                    $logName = $tokenList->expectString();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::FROM)) {
-                    $from = $tokenList->consumeInt();
+                if ($tokenList->hasKeyword(Keyword::FROM)) {
+                    $from = $tokenList->expectInt();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
-                    $limit = $tokenList->consumeInt();
-                    if ($tokenList->mayConsumeComma()) {
+                if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+                    $limit = $tokenList->expectInt();
+                    if ($tokenList->hasComma()) {
                         $offset = $limit;
-                        $limit = $tokenList->consumeInt();
+                        $limit = $tokenList->expectInt();
                     }
                 }
                 $tokenList->expectEnd();
 
                 return new ShowRelaylogEventsCommand($logName, $from, $limit, $offset);
             case Keyword::SLAVE:
-                $what = $tokenList->consumeAnyKeyword(Keyword::HOSTS, Keyword::STATUS);
+                $what = $tokenList->expectAnyKeyword(Keyword::HOSTS, Keyword::STATUS);
                 if ($what === Keyword::HOSTS) {
                     // SHOW SLAVE HOSTS
                     $tokenList->expectEnd();
@@ -443,8 +442,8 @@ class ShowCommandsParser
                 } else {
                     // SHOW SLAVE STATUS [FOR CHANNEL channel]
                     $channel = null;
-                    if ($tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-                        $channel = $tokenList->consumeName();
+                    if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+                        $channel = $tokenList->expectName();
                     }
                     $tokenList->expectEnd();
 
@@ -452,14 +451,14 @@ class ShowCommandsParser
                 }
             case Keyword::TABLE:
                 // SHOW TABLE STATUS [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
-                $tokenList->consumeKeyword(Keyword::STATUS);
+                $tokenList->expectKeyword(Keyword::STATUS);
                 $from = $like = $where = null;
-                if ($tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                    $from = $tokenList->consumeName();
+                if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                    $from = $tokenList->expectName();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                    $like = $tokenList->consumeString();
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                    $like = $tokenList->expectString();
+                } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -468,12 +467,12 @@ class ShowCommandsParser
             case Keyword::TRIGGERS:
                 // SHOW TRIGGERS [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                 $from = $like = $where = null;
-                if ($tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                    $from = $tokenList->consumeName();
+                if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                    $from = $tokenList->expectName();
                 }
-                if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                    $like = $tokenList->consumeString();
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                    $like = $tokenList->expectString();
+                } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -482,11 +481,11 @@ class ShowCommandsParser
             case Keyword::WARNINGS:
                 // SHOW WARNINGS [LIMIT [offset,] row_count]
                 $limit = $offset = null;
-                if ($tokenList->mayConsumeKeyword(Keyword::LIMIT)) {
-                    $limit = $tokenList->consumeInt();
-                    if ($tokenList->mayConsumeComma()) {
+                if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+                    $limit = $tokenList->expectInt();
+                    if ($tokenList->hasComma()) {
                         $offset = $limit;
-                        $limit = $tokenList->consumeInt();
+                        $limit = $tokenList->expectInt();
                     }
                 }
                 $tokenList->expectEnd();
@@ -494,26 +493,26 @@ class ShowCommandsParser
                 return new ShowWarningsCommand($limit, $offset);
             default:
                 $tokenList->resetPosition();
-                $tokenList->consumeKeyword(Keyword::SHOW);
-                if ($tokenList->mayConsumeKeywords(Keyword::MASTER, Keyword::STATUS)) {
+                $tokenList->expectKeyword(Keyword::SHOW);
+                if ($tokenList->hasKeywords(Keyword::MASTER, Keyword::STATUS)) {
                     // SHOW MASTER STATUS
                     $tokenList->expectEnd();
 
                     return new ShowMasterStatusCommand();
-                } elseif ($tokenList->mayConsumeAnyKeyword(Keyword::BINARY, Keyword::MASTER)) {
+                } elseif ($tokenList->hasAnyKeyword(Keyword::BINARY, Keyword::MASTER)) {
                     // SHOW {BINARY | MASTER} LOGS
-                    $tokenList->consumeKeyword(Keyword::LOGS);
+                    $tokenList->expectKeyword(Keyword::LOGS);
                     $tokenList->expectEnd();
 
                     return new ShowBinaryLogsCommand();
                 } elseif ($tokenList->seekKeyword(Keyword::STATUS, 2)) {
                     // SHOW [GLOBAL | SESSION] STATUS [LIKE 'pattern' | WHERE expr]
-                    $scope = $tokenList->mayConsumeAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
-                    $tokenList->consumeKeyword(Keyword::STATUS);
+                    $scope = $tokenList->getAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
+                    $tokenList->expectKeyword(Keyword::STATUS);
                     $like = $where = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                        $like = $tokenList->consumeString();
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                    if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                        $like = $tokenList->expectString();
+                    } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
                     $tokenList->expectEnd();
@@ -521,12 +520,12 @@ class ShowCommandsParser
                     return new ShowStatusCommand($scope ? Scope::get($scope) : null, $like, $where);
                 } elseif ($tokenList->seekKeyword(Keyword::VARIABLES, 2)) {
                     // SHOW [GLOBAL | SESSION] VARIABLES [LIKE 'pattern' | WHERE expr]
-                    $scope = $tokenList->mayConsumeAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
-                    $tokenList->consumeKeyword(Keyword::VARIABLES);
+                    $scope = $tokenList->getAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
+                    $tokenList->expectKeyword(Keyword::VARIABLES);
                     $like = $where = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                        $like = $tokenList->consumeString();
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                    if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                        $like = $tokenList->expectString();
+                    } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
                     $tokenList->expectEnd();
@@ -534,18 +533,18 @@ class ShowCommandsParser
                     return new ShowVariablesCommand($scope ? Scope::get($scope) : null, $like, $where);
                 } elseif ($tokenList->seekKeyword(Keyword::COLUMNS, 2)) {
                     // SHOW [FULL] COLUMNS {FROM | IN} tbl_name [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
-                    $full = (bool) $tokenList->mayConsumeKeyword(Keyword::FULL);
-                    $tokenList->consumeKeyword(Keyword::COLUMNS);
-                    $tokenList->consumeAnyKeyword(Keyword::FROM, Keyword::IN);
-                    $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-                    if ($table->getSchema() === null && $tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                        $schema = $tokenList->consumeName();
+                    $full = $tokenList->hasKeyword(Keyword::FULL);
+                    $tokenList->expectKeyword(Keyword::COLUMNS);
+                    $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
+                    $table = new QualifiedName(...$tokenList->expectQualifiedName());
+                    if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                        $schema = $tokenList->expectName();
                         $table = new QualifiedName($table->getName(), $schema);
                     }
                     $like = $where = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                        $like = $tokenList->consumeString();
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                    if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                        $like = $tokenList->expectString();
+                    } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
                     $tokenList->expectEnd();
@@ -553,23 +552,23 @@ class ShowCommandsParser
                     return new ShowColumnsCommand($table, $full, $like, $where);
                 } elseif ($tokenList->seekKeyword(Keyword::PROCESSLIST, 2)) {
                     // SHOW [FULL] PROCESSLIST
-                    $full = (bool) $tokenList->mayConsumeKeyword(Keyword::FULL);
-                    $tokenList->consumeKeyword(Keyword::PROCESSLIST);
+                    $full = $tokenList->hasKeyword(Keyword::FULL);
+                    $tokenList->expectKeyword(Keyword::PROCESSLIST);
                     $tokenList->expectEnd();
 
                     return new ShowProcessListCommand($full);
                 } elseif ($tokenList->seekKeyword(Keyword::TABLES, 2)) {
                     // SHOW [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
-                    $full = (bool) $tokenList->mayConsumeKeyword(Keyword::FULL);
-                    $tokenList->consumeKeyword(Keyword::TABLES);
+                    $full = $tokenList->hasKeyword(Keyword::FULL);
+                    $tokenList->expectKeyword(Keyword::TABLES);
                     $schema = null;
-                    if ($tokenList->mayConsumeAnyKeyword(Keyword::FROM, Keyword::IN)) {
-                        $schema = $tokenList->consumeName();
+                    if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+                        $schema = $tokenList->expectName();
                     }
                     $like = $where = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-                        $like = $tokenList->consumeString();
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::WHERE)) {
+                    if ($tokenList->hasKeyword(Keyword::LIKE)) {
+                        $like = $tokenList->expectString();
+                    } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
                     $tokenList->expectEnd();

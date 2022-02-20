@@ -87,34 +87,34 @@ class ReplicationCommandsParser
      */
     public function parseChangeMasterTo(TokenList $tokenList): ChangeMasterToCommand
     {
-        $tokenList->consumeKeywords(Keyword::CHANGE, Keyword::MASTER, Keyword::TO);
+        $tokenList->expectKeywords(Keyword::CHANGE, Keyword::MASTER, Keyword::TO);
         $options = [];
         do {
-            $option = $tokenList->consumeKeywordEnum(SlaveOption::class);
-            $tokenList->consumeOperator(Operator::EQUAL);
+            $option = $tokenList->expectKeywordEnum(SlaveOption::class);
+            $tokenList->expectOperator(Operator::EQUAL);
             switch (SlaveOption::getTypes()[$option->getValue()]) {
                 case Type::STRING:
-                    $value = $tokenList->consumeString();
+                    $value = $tokenList->expectString();
                     break;
                 case Type::INT:
-                    $value = $tokenList->consumeInt();
+                    $value = $tokenList->expectInt();
                     break;
                 case Type::BOOL:
-                    $value = $tokenList->consumeBool();
+                    $value = $tokenList->expectBool();
                     break;
                 case TimeInterval::class:
-                    $tokenList->consumeKeyword(Keyword::INTERVAL);
+                    $tokenList->expectKeyword(Keyword::INTERVAL);
                     $value = $this->expressionParser->parseInterval($tokenList);
                     break;
                 case 'array<int>':
-                    $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                    $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                     $value = [];
                     do {
-                        $value[] = $tokenList->consumeInt();
-                        if ($tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS)) {
+                        $value[] = $tokenList->expectInt();
+                        if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
                             break;
                         } else {
-                            $tokenList->consume(TokenType::COMMA);
+                            $tokenList->expect(TokenType::COMMA);
                         }
                     } while (true);
                     break;
@@ -122,11 +122,11 @@ class ReplicationCommandsParser
                     throw new ShouldNotHappenException('Unknown type');
             }
             $options[$option->getValue()] = $value;
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $channel = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->consumeString();
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectString();
         }
 
         return new ChangeMasterToCommand($options, $channel);
@@ -161,48 +161,48 @@ class ReplicationCommandsParser
      */
     public function parseChangeReplicationFilter(TokenList $tokenList): ChangeReplicationFilterCommand
     {
-        $tokenList->consumeKeywords(Keyword::CHANGE, Keyword::REPLICATION, Keyword::FILTER);
+        $tokenList->expectKeywords(Keyword::CHANGE, Keyword::REPLICATION, Keyword::FILTER);
 
         $types = ReplicationFilter::getTypes();
         $filters = [];
         do {
-            $filter = $tokenList->consumeKeywordEnum(ReplicationFilter::class)->getValue();
-            $tokenList->consumeOperator(Operator::EQUAL);
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $filter = $tokenList->expectKeywordEnum(ReplicationFilter::class)->getValue();
+            $tokenList->expectOperator(Operator::EQUAL);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             switch ($types[$filter]) {
                 case 'array<string>':
                     $values = [];
                     do {
                         if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
-                            $values[] = $tokenList->consumeName();
+                            $values[] = $tokenList->expectName();
                         } else {
-                            $values[] = $tokenList->consumeString();
+                            $values[] = $tokenList->expectString();
                         }
-                    } while ($tokenList->mayConsumeComma());
+                    } while ($tokenList->hasComma());
                     break;
                 case 'array<' . QualifiedName::class . '>':
                     $values = [];
                     do {
-                        $values[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-                    } while ($tokenList->mayConsumeComma());
+                        $values[] = new QualifiedName(...$tokenList->expectQualifiedName());
+                    } while ($tokenList->hasComma());
                     break;
                 case 'array<string,string>':
                     $values = [];
                     do {
-                        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-                        $key = $tokenList->consumeName();
-                        $tokenList->consume(TokenType::COMMA);
-                        $value = $tokenList->consumeName();
-                        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                        $key = $tokenList->expectName();
+                        $tokenList->expect(TokenType::COMMA);
+                        $value = $tokenList->expectName();
+                        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                         $values[$key] = $value;
-                    } while ($tokenList->mayConsumeComma());
+                    } while ($tokenList->hasComma());
                     break;
                 default:
                     $values = [];
             }
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $filters[$filter] = $values;
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new ChangeReplicationFilterCommand($filters);
@@ -214,13 +214,13 @@ class ReplicationCommandsParser
      */
     public function parsePurgeBinaryLogs(TokenList $tokenList): PurgeBinaryLogsCommand
     {
-        $tokenList->consumeKeyword(Keyword::PURGE);
-        $tokenList->consumeAnyKeyword(Keyword::BINARY, Keyword::MASTER);
-        $tokenList->consumeKeyword(Keyword::LOGS);
+        $tokenList->expectKeyword(Keyword::PURGE);
+        $tokenList->expectAnyKeyword(Keyword::BINARY, Keyword::MASTER);
+        $tokenList->expectKeyword(Keyword::LOGS);
         $log = $before = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::TO)) {
-            $log = $tokenList->consumeString();
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::BEFORE)) {
+        if ($tokenList->hasKeyword(Keyword::TO)) {
+            $log = $tokenList->expectString();
+        } elseif ($tokenList->hasKeyword(Keyword::BEFORE)) {
             $before = $this->expressionParser->parseDateTime($tokenList);
         } else {
             $tokenList->expectedAnyKeyword(Keyword::TO, Keyword::BEFORE);
@@ -235,10 +235,10 @@ class ReplicationCommandsParser
      */
     public function parseResetMaster(TokenList $tokenList): ResetMasterCommand
     {
-        $tokenList->consumeKeywords(Keyword::RESET, Keyword::MASTER);
+        $tokenList->expectKeywords(Keyword::RESET, Keyword::MASTER);
         $position = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::TO)) {
-            $position = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::TO)) {
+            $position = $tokenList->expectInt();
         }
         $tokenList->expectEnd();
 
@@ -253,11 +253,11 @@ class ReplicationCommandsParser
      */
     public function parseResetSlave(TokenList $tokenList): ResetSlaveCommand
     {
-        $tokenList->consumeKeywords(Keyword::RESET, Keyword::SLAVE);
-        $all = (bool) $tokenList->mayConsumeKeyword(Keyword::ALL);
+        $tokenList->expectKeywords(Keyword::RESET, Keyword::SLAVE);
+        $all = $tokenList->hasKeyword(Keyword::ALL);
         $channel = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->consumeString();
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectString();
         }
         $tokenList->expectEnd();
 
@@ -269,7 +269,7 @@ class ReplicationCommandsParser
      */
     public function parseStartGroupReplication(TokenList $tokenList): StartGroupReplicationCommand
     {
-        $tokenList->consumeKeywords(Keyword::START, Keyword::GROUP_REPLICATION);
+        $tokenList->expectKeywords(Keyword::START, Keyword::GROUP_REPLICATION);
         $tokenList->expectEnd();
 
         return new StartGroupReplicationCommand();
@@ -298,43 +298,43 @@ class ReplicationCommandsParser
      */
     public function parseStartSlave(TokenList $tokenList): StartSlaveCommand
     {
-        $tokenList->consumeKeywords(Keyword::START, Keyword::SLAVE);
+        $tokenList->expectKeywords(Keyword::START, Keyword::SLAVE);
 
         $threadTypes = null;
         /** @var ReplicationThreadType $threadType|null */
-        $threadType = $tokenList->mayConsumeKeywordEnum(ReplicationThreadType::class);
+        $threadType = $tokenList->getKeywordEnum(ReplicationThreadType::class);
         if ($threadType !== null) {
             $threadTypes = [$threadType];
-            while ($tokenList->mayConsumeComma()) {
-                $threadTypes[] = $tokenList->consumeKeywordEnum(ReplicationThreadType::class);
+            while ($tokenList->hasComma()) {
+                $threadTypes[] = $tokenList->expectKeywordEnum(ReplicationThreadType::class);
             }
         }
 
         $until = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::UNTIL)) {
+        if ($tokenList->hasKeyword(Keyword::UNTIL)) {
             $until = [];
-            if ($tokenList->mayConsumeKeyword(Keyword::SQL_AFTER_MTS_GAPS)) {
+            if ($tokenList->hasKeyword(Keyword::SQL_AFTER_MTS_GAPS)) {
                 $until[Keyword::SQL_AFTER_MTS_GAPS] = true;
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::SQL_BEFORE_GTIDS)) {
-                $tokenList->consumeOperator(Operator::EQUAL);
+            } elseif ($tokenList->hasKeyword(Keyword::SQL_BEFORE_GTIDS)) {
+                $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::SQL_BEFORE_GTIDS] = $this->parseGtidSet($tokenList);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::SQL_AFTER_GTIDS)) {
-                $tokenList->consumeOperator(Operator::EQUAL);
+            } elseif ($tokenList->hasKeyword(Keyword::SQL_AFTER_GTIDS)) {
+                $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::SQL_AFTER_GTIDS] = $this->parseGtidSet($tokenList);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::MASTER_LOG_FILE)) {
-                $tokenList->consumeOperator(Operator::EQUAL);
-                $until[Keyword::MASTER_LOG_FILE] = $tokenList->consumeString();
-                $tokenList->consume(TokenType::COMMA);
-                $tokenList->consumeKeyword(Keyword::MASTER_LOG_POS);
-                $tokenList->consumeOperator(Operator::EQUAL);
-                $until[Keyword::MASTER_LOG_POS] = $tokenList->consumeInt();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::RELAY_LOG_FILE)) {
-                $tokenList->consumeOperator(Operator::EQUAL);
-                $until[Keyword::RELAY_LOG_FILE] = $tokenList->consumeString();
-                $tokenList->consume(TokenType::COMMA);
-                $tokenList->consumeKeyword(Keyword::RELAY_LOG_POS);
-                $tokenList->consumeOperator(Operator::EQUAL);
-                $until[Keyword::RELAY_LOG_POS] = $tokenList->consumeInt();
+            } elseif ($tokenList->hasKeyword(Keyword::MASTER_LOG_FILE)) {
+                $tokenList->expectOperator(Operator::EQUAL);
+                $until[Keyword::MASTER_LOG_FILE] = $tokenList->expectString();
+                $tokenList->expect(TokenType::COMMA);
+                $tokenList->expectKeyword(Keyword::MASTER_LOG_POS);
+                $tokenList->expectOperator(Operator::EQUAL);
+                $until[Keyword::MASTER_LOG_POS] = $tokenList->expectInt();
+            } elseif ($tokenList->hasKeyword(Keyword::RELAY_LOG_FILE)) {
+                $tokenList->expectOperator(Operator::EQUAL);
+                $until[Keyword::RELAY_LOG_FILE] = $tokenList->expectString();
+                $tokenList->expect(TokenType::COMMA);
+                $tokenList->expectKeyword(Keyword::RELAY_LOG_POS);
+                $tokenList->expectOperator(Operator::EQUAL);
+                $until[Keyword::RELAY_LOG_POS] = $tokenList->expectInt();
             } else {
                 $tokenList->expectedAnyKeyword(
                     Keyword::SQL_AFTER_MTS_GAPS,
@@ -347,26 +347,26 @@ class ReplicationCommandsParser
         }
 
         $user = $password = $defaultAuth = $pluginDir = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::USER)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
-            $user = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::USER)) {
+            $tokenList->expectOperator(Operator::EQUAL);
+            $user = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::PASSWORD)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
-            $password = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::PASSWORD)) {
+            $tokenList->expectOperator(Operator::EQUAL);
+            $password = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT_AUTH)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
-            $defaultAuth = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::DEFAULT_AUTH)) {
+            $tokenList->expectOperator(Operator::EQUAL);
+            $defaultAuth = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::PLUGIN_DIR)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
-            $pluginDir = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::PLUGIN_DIR)) {
+            $tokenList->expectOperator(Operator::EQUAL);
+            $pluginDir = $tokenList->expectString();
         }
 
         $channel = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->consumeString();
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectString();
         }
         $tokenList->expectEnd();
 
@@ -396,7 +396,7 @@ class ReplicationCommandsParser
      */
     private function parseGtidSet(TokenList $tokenList)
     {
-        $empty = $tokenList->mayConsumeString();
+        $empty = $tokenList->getString();
         if ($empty !== null) {
             if ($empty !== '') {
                 throw new ParserException('Expected UUID or empty string.');
@@ -408,25 +408,25 @@ class ReplicationCommandsParser
         $gtids = [];
         do {
             /** @var string $uuid */
-            $uuid = $tokenList->consume(TokenType::UUID)->value;
+            $uuid = $tokenList->expect(TokenType::UUID)->value;
             $intervals = [];
-            $tokenList->consume(TokenType::DOUBLE_COLON);
+            $tokenList->expect(TokenType::DOUBLE_COLON);
             do {
-                $start = $tokenList->consumeInt();
-                if ($tokenList->mayConsumeOperator(Operator::MINUS)) {
-                    $end = $tokenList->consumeInt();
+                $start = $tokenList->expectInt();
+                if ($tokenList->getOperator(Operator::MINUS)) {
+                    $end = $tokenList->expectInt();
                     // phpcs:ignore
-                } elseif ($end = $tokenList->mayConsumeInt()) {
+                } elseif ($end = $tokenList->getInt()) {
                     // todo: lexer returns "10-20" as tokens of int and negative int :/
                     $end = abs($end);
                 }
                 $intervals[] = [$start, $end];
-                if (!$tokenList->mayConsume(TokenType::DOUBLE_COLON)) {
+                if (!$tokenList->has(TokenType::DOUBLE_COLON)) {
                     break;
                 }
             } while (true);
             $gtids[] = new UuidSet($uuid, $intervals);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $gtids;
     }
@@ -436,7 +436,7 @@ class ReplicationCommandsParser
      */
     public function parseStopGroupReplication(TokenList $tokenList): StopGroupReplicationCommand
     {
-        $tokenList->consumeKeywords(Keyword::STOP, Keyword::GROUP_REPLICATION);
+        $tokenList->expectKeywords(Keyword::STOP, Keyword::GROUP_REPLICATION);
         $tokenList->expectEnd();
 
         return new StopGroupReplicationCommand();
@@ -455,9 +455,9 @@ class ReplicationCommandsParser
      */
     public function parseStopSlave(TokenList $tokenList): StopSlaveCommand
     {
-        $tokenList->consumeKeywords(Keyword::STOP, Keyword::SLAVE);
+        $tokenList->expectKeywords(Keyword::STOP, Keyword::SLAVE);
         $ioThread = $sqlThread = false;
-        $thread = $tokenList->mayConsumeAnyKeyword(Keyword::IO_THREAD, Keyword::SQL_THREAD);
+        $thread = $tokenList->getAnyKeyword(Keyword::IO_THREAD, Keyword::SQL_THREAD);
         if ($thread !== null) {
             if ($thread === Keyword::IO_THREAD) {
                 $ioThread = true;
@@ -465,8 +465,8 @@ class ReplicationCommandsParser
                 $sqlThread = true;
             }
         }
-        if ($tokenList->mayConsumeComma()) {
-            $thread = $tokenList->consumeAnyKeyword(Keyword::IO_THREAD, Keyword::SQL_THREAD);
+        if ($tokenList->hasComma()) {
+            $thread = $tokenList->expectAnyKeyword(Keyword::IO_THREAD, Keyword::SQL_THREAD);
             if ($thread === Keyword::IO_THREAD) {
                 $ioThread = true;
             } else {
@@ -474,8 +474,8 @@ class ReplicationCommandsParser
             }
         }
         $channel = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->consumeString();
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectString();
         }
         $tokenList->expectEnd();
 

@@ -26,9 +26,9 @@ class PreparedCommandsParser
      */
     public function parseDeallocatePrepare(TokenList $tokenList): DeallocatePrepareCommand
     {
-        $tokenList->consumeAnyKeyword(Keyword::DEALLOCATE, Keyword::DROP);
-        $tokenList->consumeKeyword(Keyword::PREPARE);
-        $name = $tokenList->consumeName();
+        $tokenList->expectAnyKeyword(Keyword::DEALLOCATE, Keyword::DROP);
+        $tokenList->expectKeyword(Keyword::PREPARE);
+        $name = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new DeallocatePrepareCommand($name);
@@ -40,16 +40,16 @@ class PreparedCommandsParser
      */
     public function parseExecute(TokenList $tokenList): ExecuteCommand
     {
-        $tokenList->consumeKeyword(Keyword::EXECUTE);
-        $name = $tokenList->consumeName();
+        $tokenList->expectKeyword(Keyword::EXECUTE);
+        $name = $tokenList->expectName();
         $variables = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::USING)) {
+        if ($tokenList->hasKeyword(Keyword::USING)) {
             $variables = [];
             do {
                 /** @var string $variable */
-                $variable = $tokenList->consume(TokenType::AT_VARIABLE)->value;
+                $variable = $tokenList->expect(TokenType::AT_VARIABLE)->value;
                 $variables[] = $variable;
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
         }
         $tokenList->expectEnd();
 
@@ -61,16 +61,16 @@ class PreparedCommandsParser
      */
     public function parsePrepare(TokenList $tokenList): PrepareCommand
     {
-        $tokenList->consumeKeyword(Keyword::PREPARE);
-        $name = $tokenList->consumeName();
-        $tokenList->consumeKeyword(Keyword::FROM);
+        $tokenList->expectKeyword(Keyword::PREPARE);
+        $name = $tokenList->expectName();
+        $tokenList->expectKeyword(Keyword::FROM);
 
-        $variable = $tokenList->mayConsume(TokenType::AT_VARIABLE);
+        $variable = $tokenList->has(TokenType::AT_VARIABLE);
         if ($variable !== null) {
             /** @var string $statement */
             $statement = $variable->value;
         } else {
-            $statement = $tokenList->consumeString();
+            $statement = $tokenList->expectString();
         }
         $tokenList->expectEnd();
 

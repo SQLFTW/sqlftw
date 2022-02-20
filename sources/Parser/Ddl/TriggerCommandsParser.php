@@ -64,34 +64,34 @@ class TriggerCommandsParser
      */
     public function parseCreateTrigger(TokenList $tokenList): CreateTriggerCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
+        $tokenList->expectKeyword(Keyword::CREATE);
         $definer = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::DEFINER)) {
-            $tokenList->consumeOperator(Operator::EQUAL);
+        if ($tokenList->hasKeyword(Keyword::DEFINER)) {
+            $tokenList->expectOperator(Operator::EQUAL);
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
-        $tokenList->consumeKeyword(Keyword::TRIGGER);
-        $name = $tokenList->consumeName();
+        $tokenList->expectKeyword(Keyword::TRIGGER);
+        $name = $tokenList->expectName();
 
-        $event = TriggerEvent::get($tokenList->consumeAnyKeyword(Keyword::BEFORE, Keyword::AFTER)
-            . ' ' . $tokenList->consumeAnyKeyword(Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE));
+        $event = TriggerEvent::get($tokenList->expectAnyKeyword(Keyword::BEFORE, Keyword::AFTER)
+            . ' ' . $tokenList->expectAnyKeyword(Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE));
 
-        $tokenList->consumeKeyword(Keyword::ON);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-        $tokenList->consumeKeywords(Keyword::FOR, Keyword::EACH, Keyword::ROW);
+        $tokenList->expectKeyword(Keyword::ON);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $tokenList->expectKeywords(Keyword::FOR, Keyword::EACH, Keyword::ROW);
 
-        $order = $tokenList->mayConsumeAnyKeyword(Keyword::FOLLOWS, Keyword::PRECEDES);
+        $order = $tokenList->getAnyKeyword(Keyword::FOLLOWS, Keyword::PRECEDES);
         $triggerPosition = null;
         if ($order !== null) {
             $order = TriggerOrder::get($order);
-            $otherTrigger = $tokenList->consumeName();
+            $otherTrigger = $tokenList->expectName();
             $triggerPosition = new TriggerPosition($order, $otherTrigger);
         }
 
-        if ($tokenList->mayConsumeKeyword(Keyword::BEGIN)) {
+        if ($tokenList->hasKeyword(Keyword::BEGIN)) {
             // BEGIN ... END
             $body = $this->compoundStatementParser->parseCompoundStatement($tokenList->resetPosition(-1));
-        } elseif ($tokenList->mayConsumeAnyKeyword(Keyword::SET, Keyword::UPDATE, Keyword::INSERT, Keyword::DELETE, Keyword::REPLACE, Keyword::WITH)) {
+        } elseif ($tokenList->hasAnyKeyword(Keyword::SET, Keyword::UPDATE, Keyword::INSERT, Keyword::DELETE, Keyword::REPLACE, Keyword::WITH)) {
             // SET, UPDATE, INSERT, DELETE, REPLACE...
             $body = $this->parser->parseTokenList($tokenList->resetPosition(-1));
             if ($body instanceof SelectCommand) {
@@ -111,10 +111,10 @@ class TriggerCommandsParser
      */
     public function parseDropTrigger(TokenList $tokenList): DropTriggerCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::TRIGGER);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::TRIGGER);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
         $tokenList->expectEnd();
 
         return new DropTriggerCommand($name, $ifExists);

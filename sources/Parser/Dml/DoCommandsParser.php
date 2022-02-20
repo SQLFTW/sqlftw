@@ -32,12 +32,12 @@ class DoCommandsParser
      */
     public function parseDo(TokenList $tokenList): DoCommand
     {
-        $tokenList->consumeKeyword(Keyword::DO);
+        $tokenList->expectKeyword(Keyword::DO);
 
         $expressions = [];
         do {
             $expressions[] = $this->expressionParser->parseExpression($tokenList);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new DoCommand($expressions);

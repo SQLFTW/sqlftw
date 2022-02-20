@@ -23,13 +23,13 @@ class ResetPersistCommandParser
      */
     public function parseResetPersist(TokenList $tokenList): ResetPersistCommand
     {
-        $tokenList->consumeKeywords(Keyword::RESET, Keyword::PERSIST);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::RESET, Keyword::PERSIST);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         // todo: platform variables
         if ($ifExists) {
-            $variable = $tokenList->consumeName();
+            $variable = $tokenList->expectName();
         } else {
-            $variable = $tokenList->mayConsumeName();
+            $variable = $tokenList->getName();
         }
         $tokenList->expectEnd();
 

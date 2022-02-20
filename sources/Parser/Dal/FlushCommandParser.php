@@ -51,27 +51,27 @@ class FlushCommandParser
      */
     public function parseFlush(TokenList $tokenList): FlushCommand
     {
-        $tokenList->consumeKeyword(Keyword::FLUSH);
-        $local = (bool) $tokenList->mayConsumeAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
+        $tokenList->expectKeyword(Keyword::FLUSH);
+        $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
         $options = [];
         $channel = null;
         $logs = [Keyword::BINARY, Keyword::ENGINE, Keyword::ERROR, Keyword::GENERAL, Keyword::RELAY, Keyword::SLOW];
         $other = [Keyword::DES_KEY_FILE, Keyword::HOSTS, Keyword::OPTIMIZER_COSTS, Keyword::PRIVILEGES, Keyword::QUERY, Keyword::STATUS, Keyword::USER_RESOURCES];
         do {
-            $keyword = $tokenList->consumeAnyKeyword(...array_merge($logs, $other));
+            $keyword = $tokenList->expectAnyKeyword(...array_merge($logs, $other));
             if (Arr::contains($logs, $keyword)) {
-                $tokenList->consumeKeyword(Keyword::LOGS);
-                if ($keyword === Keyword::RELAY && $tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-                    $channel = $tokenList->consumeName();
+                $tokenList->expectKeyword(Keyword::LOGS);
+                if ($keyword === Keyword::RELAY && $tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+                    $channel = $tokenList->expectName();
                 }
                 $options[] = FlushOption::get($keyword . ' ' . Keyword::LOGS);
             } elseif ($keyword === Keyword::QUERY) {
-                $tokenList->consumeKeyword(Keyword::CACHE);
+                $tokenList->expectKeyword(Keyword::CACHE);
                 $options[] = FlushOption::get($keyword . ' ' . Keyword::CACHE);
             } else {
                 $options[] = FlushOption::get($keyword);
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new FlushCommand($options, $channel, $local);
@@ -82,22 +82,22 @@ class FlushCommandParser
      */
     public function parseFlushTables(TokenList $tokenList): FlushTablesCommand
     {
-        $tokenList->consumeKeywords(Keyword::FLUSH, Keyword::TABLES);
+        $tokenList->expectKeywords(Keyword::FLUSH, Keyword::TABLES);
         $tables = [];
-        $table = $tokenList->mayConsumeQualifiedName();
+        $table = $tokenList->getQualifiedName();
         if ($table !== null) {
             $tables[] = new QualifiedName(...$table);
-            while ($tokenList->mayConsumeComma()) {
-                $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
+            while ($tokenList->hasComma()) {
+                $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
             }
         }
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::WITH, Keyword::FOR);
+        $keyword = $tokenList->getAnyKeyword(Keyword::WITH, Keyword::FOR);
         $withReadLock = $forExport = false;
         if ($keyword === Keyword::WITH) {
-            $tokenList->consumeKeywords(Keyword::READ, Keyword::LOCK);
+            $tokenList->expectKeywords(Keyword::READ, Keyword::LOCK);
             $withReadLock = true;
         } else {
-            $tokenList->consumeKeyword(Keyword::EXPORT);
+            $tokenList->expectKeyword(Keyword::EXPORT);
             $forExport = true;
         }
         $tokenList->expectEnd();

@@ -36,16 +36,16 @@ class CallCommandParser
      */
     public function parseCall(TokenList $tokenList): CallCommand
     {
-        $tokenList->consumeKeyword(Keyword::CALL);
+        $tokenList->expectKeyword(Keyword::CALL);
 
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
         $params = null;
-        if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
             $params = [];
             do {
                 $params[] = $this->expressionParser->parseExpression($tokenList);
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
         $tokenList->expectEnd();
 

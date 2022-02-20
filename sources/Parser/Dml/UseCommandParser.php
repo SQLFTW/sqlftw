@@ -23,8 +23,8 @@ class UseCommandParser
      */
     public function parseUse(TokenList $tokenList): UseCommand
     {
-        $tokenList->consumeKeyword(Keyword::USE);
-        $db = $tokenList->consumeName();
+        $tokenList->expectKeyword(Keyword::USE);
+        $db = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new UseCommand($db);

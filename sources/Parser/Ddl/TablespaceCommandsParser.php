@@ -34,38 +34,38 @@ class TablespaceCommandsParser
      */
     public function parseAlterTablespace(TokenList $tokenList): AlterTablespaceCommand
     {
-        $tokenList->consumeKeyword(Keyword::ALTER);
-        $undo = (bool) $tokenList->mayConsumeKeyword(Keyword::UNDO);
-        $tokenList->consumeKeyword(Keyword::TABLESPACE);
+        $tokenList->expectKeyword(Keyword::ALTER);
+        $undo = $tokenList->hasKeyword(Keyword::UNDO);
+        $tokenList->expectKeyword(Keyword::TABLESPACE);
 
-        $name = $tokenList->consumeName();
+        $name = $tokenList->expectName();
 
         $options = [];
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::ADD, Keyword::DROP);
+        $keyword = $tokenList->getAnyKeyword(Keyword::ADD, Keyword::DROP);
         if ($keyword !== null) {
-            $tokenList->consumeKeyword(Keyword::DATAFILE);
-            $options[$keyword . ' ' . Keyword::DATAFILE] = $tokenList->consumeString();
+            $tokenList->expectKeyword(Keyword::DATAFILE);
+            $options[$keyword . ' ' . Keyword::DATAFILE] = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::WAIT) !== null) {
+        if ($tokenList->hasKeyword(Keyword::WAIT) !== null) {
             $options[TablespaceOption::WAIT] = true;
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::RENAME, Keyword::TO)) {
-            $options[TablespaceOption::RENAME_TO] = $tokenList->consumeName();
+        if ($tokenList->hasKeywords(Keyword::RENAME, Keyword::TO)) {
+            $options[TablespaceOption::RENAME_TO] = $tokenList->expectName();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::SET)) {
-            $options[TablespaceOption::SET] = $tokenList->consumeAnyKeyword(Keyword::ACTIVE, Keyword::INACTIVE);
+        if ($tokenList->hasKeyword(Keyword::SET)) {
+            $options[TablespaceOption::SET] = $tokenList->expectAnyKeyword(Keyword::ACTIVE, Keyword::INACTIVE);
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::ENCRYPTION)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::ENCRYPTION] = $tokenList->consumeBool();
+        if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::ENGINE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::ENGINE] = $tokenList->consumeName();
+        if ($tokenList->hasKeyword(Keyword::ENGINE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
         $tokenList->expectEnd();
 
@@ -89,57 +89,57 @@ class TablespaceCommandsParser
      */
     public function parseCreateTablespace(TokenList $tokenList): CreateTablespaceCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
-        $undo = (bool) $tokenList->mayConsumeKeyword(Keyword::UNDO);
-        $tokenList->consumeKeyword(Keyword::TABLESPACE);
+        $tokenList->expectKeyword(Keyword::CREATE);
+        $undo = $tokenList->hasKeyword(Keyword::UNDO);
+        $tokenList->expectKeyword(Keyword::TABLESPACE);
 
-        $name = $tokenList->consumeName();
+        $name = $tokenList->expectName();
 
         $options = [];
-        if ($tokenList->mayConsumeKeywords(Keyword::ADD, Keyword::DATAFILE)) {
-            $options[TablespaceOption::ADD_DATAFILE] = $tokenList->consumeString();
+        if ($tokenList->hasKeywords(Keyword::ADD, Keyword::DATAFILE)) {
+            $options[TablespaceOption::ADD_DATAFILE] = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::FILE_BLOCK_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::FILE_BLOCK_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::ENCRYPTION)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::ENCRYPTION] = $tokenList->consumeBool();
+        if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::USE, Keyword::LOGFILE, Keyword::GROUP)) {
-            $options[TablespaceOption::USE_LOGFILE_GROUP] = $tokenList->consumeName();
+        if ($tokenList->hasKeywords(Keyword::USE, Keyword::LOGFILE, Keyword::GROUP)) {
+            $options[TablespaceOption::USE_LOGFILE_GROUP] = $tokenList->expectName();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::EXTENT_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::EXTENT_SIZE] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::EXTENT_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::EXTENT_SIZE] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::AUTOEXTEND_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::AUTOEXTEND_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::MAX_SIZE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::MAX_SIZE] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::MAX_SIZE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::MAX_SIZE] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::NODEGROUP)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::NODEGROUP] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::NODEGROUP] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::WAIT) !== null) {
+        if ($tokenList->hasKeyword(Keyword::WAIT) !== null) {
             $options[TablespaceOption::WAIT] = true;
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::COMMENT] = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::COMMENT] = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::ENGINE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[TablespaceOption::ENGINE] = $tokenList->consumeName();
+        if ($tokenList->hasKeyword(Keyword::ENGINE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
         $tokenList->expectEnd();
 
@@ -152,15 +152,15 @@ class TablespaceCommandsParser
      */
     public function parseDropTablespace(TokenList $tokenList): DropTablespaceCommand
     {
-        $tokenList->consumeKeyword(Keyword::DROP);
-        $undo = (bool) $tokenList->mayConsumeKeyword(Keyword::UNDO);
-        $tokenList->consumeKeyword(Keyword::TABLESPACE);
+        $tokenList->expectKeyword(Keyword::DROP);
+        $undo = $tokenList->hasKeyword(Keyword::UNDO);
+        $tokenList->expectKeyword(Keyword::TABLESPACE);
 
-        $name = $tokenList->consumeName();
+        $name = $tokenList->expectName();
         $engine = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::ENGINE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $engine = $tokenList->consumeName();
+        if ($tokenList->hasKeyword(Keyword::ENGINE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $engine = $tokenList->expectName();
         }
         $tokenList->expectEnd();
 

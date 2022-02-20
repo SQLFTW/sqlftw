@@ -24,11 +24,11 @@ class ComponentCommandsParser
      */
     public function parseInstallComponent(TokenList $tokenList): InstallComponentCommand
     {
-        $tokenList->consumeKeywords(Keyword::INSTALL, Keyword::COMPONENT);
+        $tokenList->expectKeywords(Keyword::INSTALL, Keyword::COMPONENT);
         $components = [];
         do {
-            $components[] = $tokenList->consumeNameOrString();
-        } while ($tokenList->mayConsumeComma());
+            $components[] = $tokenList->expectNameOrString();
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new InstallComponentCommand($components);
@@ -39,11 +39,11 @@ class ComponentCommandsParser
      */
     public function parseUninstallComponent(TokenList $tokenList): UninstallComponentCommand
     {
-        $tokenList->consumeKeywords(Keyword::UNINSTALL, Keyword::COMPONENT);
+        $tokenList->expectKeywords(Keyword::UNINSTALL, Keyword::COMPONENT);
         $components = [];
         do {
-            $components[] = $tokenList->consumeNameOrString();
-        } while ($tokenList->mayConsumeComma());
+            $components[] = $tokenList->expectNameOrString();
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new UninstallComponentCommand($components);

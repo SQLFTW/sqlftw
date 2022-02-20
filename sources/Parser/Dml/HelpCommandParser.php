@@ -23,8 +23,8 @@ class HelpCommandParser
      */
     public function parseHelp(TokenList $tokenList): HelpCommand
     {
-        $tokenList->consumeKeyword(Keyword::HELP);
-        $term = $tokenList->consumeString();
+        $tokenList->expectKeyword(Keyword::HELP);
+        $term = $tokenList->expectString();
         $tokenList->expectEnd();
 
         return new HelpCommand($term);

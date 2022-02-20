@@ -193,38 +193,38 @@ class TableCommandsParser
      */
     public function parseAlterTable(TokenList $tokenList): AlterTableCommand
     {
-        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::TABLE);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeywords(Keyword::ALTER, Keyword::TABLE);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $actions = [];
         $alterOptions = [];
         $tableOptions = [];
         do {
             $position = $tokenList->getPosition();
-            $keyword = $tokenList->consume(TokenType::KEYWORD)->value;
+            $keyword = $tokenList->expect(TokenType::KEYWORD)->value;
             switch ($keyword) {
                 case Keyword::ADD:
-                    $second = $tokenList->mayConsume(TokenType::KEYWORD);
+                    $second = $tokenList->get(TokenType::KEYWORD);
                     $second = $second !== null ? $second->value : null;
                     switch ($second) {
                         case null:
                         case Keyword::COLUMN:
-                            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+                            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                                 // ADD [COLUMN] (col_name column_definition, ...)
                                 $addColumns = [];
                                 do {
                                     $addColumns[] = $this->parseColumn($tokenList);
-                                } while ($tokenList->mayConsumeComma());
+                                } while ($tokenList->hasComma());
                                 $actions[] = new AddColumnsAction($addColumns);
-                                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                             } else {
                                 // ADD [COLUMN] col_name column_definition [FIRST | AFTER col_name ]
                                 $column = $this->parseColumn($tokenList);
                                 $after = null;
-                                if ($tokenList->mayConsumeKeyword(Keyword::FIRST)) {
+                                if ($tokenList->hasKeyword(Keyword::FIRST)) {
                                     $after = ModifyColumnAction::FIRST;
-                                } elseif ($tokenList->mayConsumeKeyword(Keyword::AFTER)) {
-                                    $after = $tokenList->consumeName();
+                                } elseif ($tokenList->hasKeyword(Keyword::AFTER)) {
+                                    $after = $tokenList->expectName();
                                 }
                                 $actions[] = new AddColumnAction($column, $after);
                             }
@@ -258,9 +258,9 @@ class TableCommandsParser
                             break;
                         case Keyword::PARTITION:
                             // ADD PARTITION (partition_definition)
-                            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                             $partition = $this->parsePartitionDefinition($tokenList);
-                            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                             $actions[] = new AddPartitionAction($partition);
                             break;
                         default:
@@ -280,131 +280,131 @@ class TableCommandsParser
                     break;
                 case Keyword::ALGORITHM:
                     // ALGORITHM [=] {DEFAULT|INPLACE|COPY}
-                    $tokenList->mayConsumeOperator(Operator::EQUAL);
-                    $alterOptions[Keyword::ALGORITHM] = $tokenList->consumeKeywordEnum(AlterTableAlgorithm::class);
+                    $tokenList->getOperator(Operator::EQUAL);
+                    $alterOptions[Keyword::ALGORITHM] = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
                     break;
                 case Keyword::ALTER:
-                    if ($tokenList->mayConsumeKeyword(Keyword::INDEX)) {
+                    if ($tokenList->hasKeyword(Keyword::INDEX)) {
                         // ALTER INDEX index_name {VISIBLE | INVISIBLE}
-                        $index = $tokenList->consumeName();
-                        $visible = $tokenList->consumeAnyKeyword(Keyword::VISIBLE, Keyword::INVISIBLE);
+                        $index = $tokenList->expectName();
+                        $visible = $tokenList->expectAnyKeyword(Keyword::VISIBLE, Keyword::INVISIBLE);
                         $actions[] = new AlterIndexAction($index, $visible === Keyword::VISIBLE);
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::CONSTRAINT)) {
+                    } elseif ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
                         // ALTER CONSTRAINT symbol [NOT] ENFORCED
-                        $constraint = $tokenList->consumeName();
+                        $constraint = $tokenList->expectName();
                         $enforced = true;
-                        if ($tokenList->mayConsumeKeyword(Keyword::NOT)) {
+                        if ($tokenList->hasKeyword(Keyword::NOT)) {
                             $enforced = false;
                         }
-                        $tokenList->consumeKeyword(Keyword::ENFORCED);
+                        $tokenList->expectKeyword(Keyword::ENFORCED);
                         $actions[] = new AlterConstraintAction($constraint, $enforced);
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::CHECK)) {
+                    } elseif ($tokenList->hasKeyword(Keyword::CHECK)) {
                         // ALTER CHECK symbol [NOT] ENFORCED
-                        $check = $tokenList->consumeName();
+                        $check = $tokenList->expectName();
                         $enforced = true;
-                        if ($tokenList->mayConsumeKeyword(Keyword::NOT)) {
+                        if ($tokenList->hasKeyword(Keyword::NOT)) {
                             $enforced = false;
                         }
-                        $tokenList->consumeKeyword(Keyword::ENFORCED);
+                        $tokenList->expectKeyword(Keyword::ENFORCED);
                         $actions[] = new AlterCheckAction($check, $enforced);
                     } else {
                         // ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT}
-                        $tokenList->mayConsumeKeyword(Keyword::COLUMN);
-                        $column = $tokenList->consumeName();
-                        if ($tokenList->mayConsumeKeywords(Keyword::SET, Keyword::DEFAULT)) {
+                        $tokenList->hasKeyword(Keyword::COLUMN);
+                        $column = $tokenList->expectName();
+                        if ($tokenList->hasKeywords(Keyword::SET, Keyword::DEFAULT)) {
                             $value = $this->expressionParser->parseLiteralValue($tokenList);
                             $actions[] = new AlterColumnAction($column, $value);
                         } else {
-                            $tokenList->consumeKeywords(Keyword::DROP, Keyword::DEFAULT);
+                            $tokenList->expectKeywords(Keyword::DROP, Keyword::DEFAULT);
                             $actions[] = new AlterColumnAction($column, null);
                         }
                     }
                     break;
                 case Keyword::ANALYZE:
                     // ANALYZE PARTITION {partition_names | ALL}
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
+                    $tokenList->expectKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
                     $actions[] = new AnalyzePartitionAction($partitions);
                     break;
                 case Keyword::CHANGE:
                     // CHANGE [COLUMN] old_col_name new_col_name column_definition [FIRST|AFTER col_name]
-                    $tokenList->mayConsumeKeyword(Keyword::COLUMN);
-                    $oldName = $tokenList->consumeName();
+                    $tokenList->hasKeyword(Keyword::COLUMN);
+                    $oldName = $tokenList->expectName();
                     $column = $this->parseColumn($tokenList);
                     $after = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::FIRST)) {
+                    if ($tokenList->hasKeyword(Keyword::FIRST)) {
                         $after = ModifyColumnAction::FIRST;
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::AFTER)) {
-                        $after = $tokenList->consumeName();
+                    } elseif ($tokenList->hasKeyword(Keyword::AFTER)) {
+                        $after = $tokenList->expectName();
                     }
                     $actions[] = new ChangeColumnAction($oldName, $column, $after);
                     break;
                 case Keyword::CHECK:
                     // CHECK PARTITION {partition_names | ALL}
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
+                    $tokenList->expectKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
                     $actions[] = new CheckPartitionAction($partitions);
                     break;
                 case Keyword::COALESCE:
                     // COALESCE PARTITION number
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
-                    $actions[] = new CoalescePartitionAction($tokenList->consumeInt());
+                    $tokenList->expectKeyword(Keyword::PARTITION);
+                    $actions[] = new CoalescePartitionAction($tokenList->expectInt());
                     break;
                 case Keyword::CONVERT:
                     // CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]
-                    $tokenList->consumeKeywords(Keyword::TO, Keyword::CHARACTER, Keyword::SET);
+                    $tokenList->expectKeywords(Keyword::TO, Keyword::CHARACTER, Keyword::SET);
                     /** @var Charset $charset */
-                    $charset = $tokenList->consumeNameOrStringEnum(Charset::class);
+                    $charset = $tokenList->expectNameOrStringEnum(Charset::class);
                     $collation = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
-                        $collation = Collation::get($tokenList->consumeNameOrString());
+                    if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+                        $collation = Collation::get($tokenList->expectNameOrString());
                     }
                     $actions[] = new ConvertToCharsetAction($charset, $collation);
                     break;
                 case Keyword::DISCARD:
-                    $second = $tokenList->consumeAnyKeyword(Keyword::TABLESPACE, Keyword::PARTITION);
+                    $second = $tokenList->expectAnyKeyword(Keyword::TABLESPACE, Keyword::PARTITION);
                     if ($second === Keyword::TABLESPACE) {
                         // DISCARD TABLESPACE
                         $actions[] = new DiscardTablespaceAction();
                     } else {
                         // DISCARD PARTITION {partition_names | ALL} TABLESPACE
                         $partitions = $this->parsePartitionNames($tokenList);
-                        $tokenList->consumeKeyword(Keyword::TABLESPACE);
+                        $tokenList->expectKeyword(Keyword::TABLESPACE);
                         $actions[] = new DiscardPartitionTablespaceAction($partitions);
                     }
                     break;
                 case Keyword::DISABLE:
                     // DISABLE KEYS
-                    $tokenList->consumeKeyword(Keyword::KEYS);
+                    $tokenList->expectKeyword(Keyword::KEYS);
                     $actions[] = new DisableKeysAction();
                     break;
                 case Keyword::DROP:
-                    $second = $tokenList->mayConsume(TokenType::KEYWORD);
+                    $second = $tokenList->get(TokenType::KEYWORD);
                     $second = $second !== null ? $second->value : null;
                     switch ($second) {
                         case null:
                         case Keyword::COLUMN:
                             // DROP [COLUMN] col_name
-                            $tokenList->mayConsumeKeyword(Keyword::COLUMN);
-                            $actions[] = new DropColumnAction($tokenList->consumeName());
+                            $tokenList->hasKeyword(Keyword::COLUMN);
+                            $actions[] = new DropColumnAction($tokenList->expectName());
                             break;
                         case Keyword::INDEX:
                         case Keyword::KEY:
                             // DROP {INDEX|KEY} index_name
-                            $actions[] = new DropIndexAction($tokenList->consumeName());
+                            $actions[] = new DropIndexAction($tokenList->expectName());
                             break;
                         case Keyword::FOREIGN:
                             // DROP FOREIGN KEY fk_symbol
-                            $tokenList->consumeKeyword(Keyword::KEY);
-                            $actions[] = new DropForeignKeyAction($tokenList->consumeName());
+                            $tokenList->expectKeyword(Keyword::KEY);
+                            $actions[] = new DropForeignKeyAction($tokenList->expectName());
                             break;
                         case Keyword::CONSTRAINT:
                             // DROP CONSTRAINT symbol
-                            $actions[] = new DropConstraintAction($tokenList->consumeName());
+                            $actions[] = new DropConstraintAction($tokenList->expectName());
                             break;
                         case Keyword::CHECK:
                             // DROP CHECK symbol
-                            $actions[] = new DropCheckAction($tokenList->consumeName());
+                            $actions[] = new DropCheckAction($tokenList->expectName());
                             break;
                         case Keyword::PARTITION:
                             // DROP PARTITION partition_names
@@ -416,7 +416,7 @@ class TableCommandsParser
                             break;
                         case Keyword::PRIMARY:
                             // DROP PRIMARY KEY
-                            $tokenList->consumeKeyword(Keyword::KEY);
+                            $tokenList->expectKeyword(Keyword::KEY);
                             $actions[] = new DropPrimaryKeyAction();
                             break;
                         default:
@@ -425,21 +425,21 @@ class TableCommandsParser
                     break;
                 case Keyword::ENABLE:
                     // ENABLE KEYS
-                    $tokenList->consumeKeyword(Keyword::KEYS);
+                    $tokenList->expectKeyword(Keyword::KEYS);
                     $actions[] = new EnableKeysAction();
                     break;
                 case Keyword::EXCHANGE:
                     // EXCHANGE PARTITION partition_name WITH TABLE tbl_name [{WITH|WITHOUT} VALIDATION]
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
-                    $partition = $tokenList->consumeName();
-                    $tokenList->consumeKeywords(Keyword::WITH, Keyword::TABLE);
-                    $table = new QualifiedName(...$tokenList->consumeQualifiedName());
-                    $validation = $tokenList->mayConsumeAnyKeyword(Keyword::WITH, Keyword::WITHOUT);
+                    $tokenList->expectKeyword(Keyword::PARTITION);
+                    $partition = $tokenList->expectName();
+                    $tokenList->expectKeywords(Keyword::WITH, Keyword::TABLE);
+                    $table = new QualifiedName(...$tokenList->expectQualifiedName());
+                    $validation = $tokenList->getAnyKeyword(Keyword::WITH, Keyword::WITHOUT);
                     if ($validation === Keyword::WITH) {
-                        $tokenList->consumeKeyword(Keyword::VALIDATION);
+                        $tokenList->expectKeyword(Keyword::VALIDATION);
                         $validation = true;
                     } elseif ($validation === Keyword::WITHOUT) {
-                        $tokenList->consumeKeyword(Keyword::VALIDATION);
+                        $tokenList->expectKeyword(Keyword::VALIDATION);
                         $validation = false;
                     } else {
                         $validation = null;
@@ -451,115 +451,115 @@ class TableCommandsParser
                     $alterOptions[AlterTableOption::FORCE] = true;
                     break;
                 case Keyword::IMPORT:
-                    $second = $tokenList->consumeAnyKeyword(Keyword::TABLESPACE, Keyword::PARTITION);
+                    $second = $tokenList->expectAnyKeyword(Keyword::TABLESPACE, Keyword::PARTITION);
                     if ($second === Keyword::TABLESPACE) {
                         // IMPORT TABLESPACE
                         $actions[] = new ImportTablespaceAction();
                     } else {
                         // IMPORT PARTITION {partition_names | ALL} TABLESPACE
                         $partitions = $this->parsePartitionNames($tokenList);
-                        $tokenList->consumeKeyword(Keyword::TABLESPACE);
+                        $tokenList->expectKeyword(Keyword::TABLESPACE);
                         $actions[] = new ImportPartitionTablespaceAction($partitions);
                     }
                     break;
                 case Keyword::LOCK:
                     // LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
-                    $tokenList->mayConsumeOperator(Operator::EQUAL);
-                    $alterOptions[Keyword::LOCK] = $tokenList->consumeKeywordEnum(AlterTableLock::class);
+                    $tokenList->getOperator(Operator::EQUAL);
+                    $alterOptions[Keyword::LOCK] = $tokenList->expectKeywordEnum(AlterTableLock::class);
                     break;
                 case Keyword::MODIFY:
                     // MODIFY [COLUMN] col_name column_definition [FIRST | AFTER col_name]
-                    $tokenList->mayConsumeKeyword(Keyword::COLUMN);
+                    $tokenList->hasKeyword(Keyword::COLUMN);
                     $column = $this->parseColumn($tokenList);
                     $after = null;
-                    if ($tokenList->mayConsumeKeyword(Keyword::FIRST)) {
+                    if ($tokenList->hasKeyword(Keyword::FIRST)) {
                         $after = ModifyColumnAction::FIRST;
-                    } elseif ($tokenList->mayConsumeKeyword(Keyword::AFTER)) {
-                        $after = $tokenList->consumeName();
+                    } elseif ($tokenList->hasKeyword(Keyword::AFTER)) {
+                        $after = $tokenList->expectName();
                     }
                     $actions[] = new ModifyColumnAction($column, $after);
                     break;
                 case Keyword::OPTIMIZE:
                     // OPTIMIZE PARTITION {partition_names | ALL}
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
+                    $tokenList->expectKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
                     $actions[] = new OptimizePartitionAction($partitions);
                     break;
                 case Keyword::ORDER:
                     // ORDER BY col_name [, col_name] ...
-                    $tokenList->consumeKeyword(Keyword::BY);
+                    $tokenList->expectKeyword(Keyword::BY);
                     $columns = [];
                     do {
-                        $columns[] = $tokenList->consumeName();
-                    } while ($tokenList->mayConsumeComma());
+                        $columns[] = $tokenList->expectName();
+                    } while ($tokenList->hasComma());
                     $actions[] = new OrderByAction($columns);
                     break;
                 case Keyword::REBUILD:
                     // REBUILD PARTITION {partition_names | ALL}
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
+                    $tokenList->expectKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
                     $actions[] = new RebuildPartitionAction($partitions);
                     break;
                 case Keyword::REMOVE:
                     // REMOVE PARTITIONING
-                    $tokenList->consumeKeyword(Keyword::PARTITIONING);
+                    $tokenList->expectKeyword(Keyword::PARTITIONING);
                     $actions[] = new RemovePartitioningAction();
                     break;
                 case Keyword::RENAME:
-                    if ($tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
+                    if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
                         // RENAME {INDEX|KEY} old_index_name TO new_index_name
-                        $oldName = $tokenList->consumeName();
-                        $tokenList->consumeKeyword(Keyword::TO);
-                        $newName = $tokenList->consumeName();
+                        $oldName = $tokenList->expectName();
+                        $tokenList->expectKeyword(Keyword::TO);
+                        $newName = $tokenList->expectName();
                         $actions[] = new RenameIndexAction($oldName, $newName);
                     } else {
                         // RENAME [TO|AS] new_tbl_name
-                        $tokenList->mayConsumeAnyKeyword(Keyword::TO, Keyword::AS);
-                        $newName = new QualifiedName(...$tokenList->consumeQualifiedName());
+                        $tokenList->getAnyKeyword(Keyword::TO, Keyword::AS);
+                        $newName = new QualifiedName(...$tokenList->expectQualifiedName());
                         $actions[] = new RenameToAction($newName);
                     }
                     break;
                 case Keyword::REORGANIZE:
                     // REORGANIZE PARTITION partition_names INTO (partition_definitions, ...)
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
+                    $tokenList->expectKeyword(Keyword::PARTITION);
                     $oldPartitions = $this->parsePartitionNames($tokenList);
                     if ($oldPartitions === null) {
                         $tokenList->expected('Expected specific partition names, found "ALL".');
                     }
-                    $tokenList->consumeKeyword(Keyword::INTO);
-                    $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                    $tokenList->expectKeyword(Keyword::INTO);
+                    $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                     $newPartitions = [];
                     do {
                         $newPartitions[] = $this->parsePartitionDefinition($tokenList);
-                    } while ($tokenList->mayConsumeComma());
-                    $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    } while ($tokenList->hasComma());
+                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                     $actions[] = new ReorganizePartitionAction($oldPartitions, $newPartitions);
                     break;
                 case Keyword::REPAIR:
                     // REPAIR PARTITION {partition_names | ALL}
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
+                    $tokenList->expectKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
                     $actions[] = new RepairPartitionAction($partitions);
                     break;
                 case Keyword::TRUNCATE:
                     // TRUNCATE PARTITION {partition_names | ALL}
-                    $tokenList->consumeKeyword(Keyword::PARTITION);
+                    $tokenList->expectKeyword(Keyword::PARTITION);
                     $partitions = $this->parsePartitionNames($tokenList);
                     $actions[] = new TruncatePartitionAction($partitions);
                     break;
                 case Keyword::UPGRADE:
                     // UPGRADE PARTITIONING
-                    $tokenList->consumeKeyword(Keyword::PARTITIONING);
+                    $tokenList->expectKeyword(Keyword::PARTITIONING);
                     $actions[] = new UpgradePartitioningAction();
                     break;
                 case Keyword::WITH:
                     // {WITHOUT|WITH} VALIDATION
-                    $tokenList->consumeKeyword(Keyword::VALIDATION);
+                    $tokenList->expectKeyword(Keyword::VALIDATION);
                     $alterOptions[Keyword::VALIDATION] = true;
                     break;
                 case Keyword::WITHOUT:
                     // {WITHOUT|WITH} VALIDATION
-                    $tokenList->consumeKeyword(Keyword::VALIDATION);
+                    $tokenList->expectKeyword(Keyword::VALIDATION);
                     $alterOptions[Keyword::VALIDATION] = false;
                     break;
                 default:
@@ -571,7 +571,7 @@ class TableCommandsParser
                     }
                     $tableOptions[$option] = $value;
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $tokenList->expectEnd();
 
@@ -599,18 +599,18 @@ class TableCommandsParser
      */
     public function parseCreateTable(TokenList $tokenList): AnyCreateTableCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
-        $temporary = (bool) $tokenList->mayConsumeKeyword(Keyword::TEMPORARY);
-        $tokenList->consumeKeyword(Keyword::TABLE);
-        $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeyword(Keyword::CREATE);
+        $temporary = $tokenList->hasKeyword(Keyword::TEMPORARY);
+        $tokenList->expectKeyword(Keyword::TABLE);
+        $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $position = $tokenList->getPosition();
-        $bodyOpen = $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS);
-        if ($tokenList->mayConsumeKeyword(Keyword::LIKE)) {
-            $oldTable = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $bodyOpen = $tokenList->get(TokenType::LEFT_PARENTHESIS);
+        if ($tokenList->hasKeyword(Keyword::LIKE)) {
+            $oldTable = new QualifiedName(...$tokenList->expectQualifiedName());
             if ($bodyOpen !== null) {
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
 
             return new CreateTableLikeCommand($table, $oldTable, $temporary, $ifNotExists);
@@ -630,18 +630,18 @@ class TableCommandsParser
                     $tokenList->expectedAnyKeyword(...$keywords);
                 }
                 $options[$option] = $value;
-            } while ($tokenList->mayConsumeComma());
+            } while ($tokenList->hasComma());
         }
 
         $partitioning = null;
-        if ($tokenList->mayConsumeAnyKeyword(Keyword::PARTITION)) {
+        if ($tokenList->hasAnyKeyword(Keyword::PARTITION)) {
             $partitioning = $this->parsePartitioning($tokenList->resetPosition(-1));
         }
 
         /** @var DuplicateOption|null $duplicateOption */
-        $duplicateOption = $tokenList->mayConsumeKeywordEnum(DuplicateOption::class);
+        $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
         $select = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::AS) || $items === [] || $duplicateOption !== null || !$tokenList->isFinished()) {
+        if ($tokenList->hasKeyword(Keyword::AS) || $items === [] || $duplicateOption !== null || !$tokenList->isFinished()) {
             $select = $this->selectCommandParser->parseSelect($tokenList);
         }
         $tokenList->expectEnd();
@@ -666,25 +666,25 @@ class TableCommandsParser
     private function parseCreateTableBody(TokenList $tokenList): array
     {
         $items = [];
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
 
         do {
-            if ($tokenList->mayConsumeKeyword(Keyword::CHECK)) {
+            if ($tokenList->hasKeyword(Keyword::CHECK)) {
                 $items[] = $this->parseCheck($tokenList);
-            } elseif ($tokenList->mayConsumeAnyKeyword(Keyword::INDEX, Keyword::KEY, Keyword::FULLTEXT, Keyword::SPATIAL, Keyword::UNIQUE)) {
+            } elseif ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY, Keyword::FULLTEXT, Keyword::SPATIAL, Keyword::UNIQUE)) {
                 $items[] = $this->parseIndex($tokenList->resetPosition(-1));
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::PRIMARY)) {
+            } elseif ($tokenList->hasKeyword(Keyword::PRIMARY)) {
                 $items[] = $this->parseIndex($tokenList, true);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::FOREIGN)) {
+            } elseif ($tokenList->hasKeyword(Keyword::FOREIGN)) {
                 $items[] = $this->parseForeignKey($tokenList->resetPosition(-1));
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::CONSTRAINT)) {
+            } elseif ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
                 $items[] = $this->parseConstraint($tokenList->resetPosition(-1));
             } else {
                 $items[] = $this->parseColumn($tokenList);
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         return $items;
     }
@@ -706,99 +706,99 @@ class TableCommandsParser
      */
     private function parseColumn(TokenList $tokenList): ColumnDefinition
     {
-        $name = $tokenList->consumeName();
+        $name = $tokenList->expectName();
         $type = $this->typeParser->parseType($tokenList);
 
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::GENERATED, Keyword::AS);
+        $keyword = $tokenList->getAnyKeyword(Keyword::GENERATED, Keyword::AS);
         if ($keyword === null) {
             // [NOT NULL | NULL]
             $null = null;
-            if ($tokenList->mayConsumeKeywords(Keyword::NOT, Keyword::NULL)) {
+            if ($tokenList->hasKeywords(Keyword::NOT, Keyword::NULL)) {
                 $null = false;
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::NULL)) {
+            } elseif ($tokenList->hasKeyword(Keyword::NULL)) {
                 $null = true;
             }
 
             // [DEFAULT default_value]
             $default = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                 $default = $this->expressionParser->parseLiteralValue($tokenList);
             }
 
             // [AUTO_INCREMENT]
             $autoIncrement = false;
-            if ($tokenList->mayConsumeKeyword(Keyword::AUTO_INCREMENT)) {
+            if ($tokenList->hasKeyword(Keyword::AUTO_INCREMENT)) {
                 $autoIncrement = true;
             }
 
             // [UNIQUE [KEY] | [PRIMARY] KEY]
             $index = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::UNIQUE)) {
-                $tokenList->mayConsumeKeyword(Keyword::KEY);
+            if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
+                $tokenList->hasKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::UNIQUE);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::PRIMARY)) {
-                $tokenList->mayConsumeKeyword(Keyword::KEY);
+            } elseif ($tokenList->hasKeyword(Keyword::PRIMARY)) {
+                $tokenList->hasKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::PRIMARY);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::KEY)) {
+            } elseif ($tokenList->hasKeyword(Keyword::KEY)) {
                 $index = IndexType::get(IndexType::INDEX);
             }
 
             // [COMMENT 'string']
             $comment = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
-                $comment = $tokenList->consumeString();
+            if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+                $comment = $tokenList->expectString();
             }
 
             // [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
             $columnFormat = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::COLUMN_FORMAT)) {
+            if ($tokenList->hasKeyword(Keyword::COLUMN_FORMAT)) {
                 /** @var ColumnFormat $columnFormat */
-                $columnFormat = $tokenList->consumeKeywordEnum(ColumnFormat::class);
+                $columnFormat = $tokenList->expectKeywordEnum(ColumnFormat::class);
             }
 
             // [reference_definition]
             $reference = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::REFERENCES)) {
+            if ($tokenList->hasKeyword(Keyword::REFERENCES)) {
                 $reference = $this->parseReference($tokenList->resetPosition(-1));
             }
 
             // [check_constraint_definition]
             $check = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::CHECK)) {
+            if ($tokenList->hasKeyword(Keyword::CHECK)) {
                 $check = $this->parseCheck($tokenList);
             }
 
             return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $comment, $index, $columnFormat, $reference, $check);
         } else {
             if ($keyword === Keyword::GENERATED) {
-                $tokenList->consumeKeywords(Keyword::ALWAYS, Keyword::AS);
+                $tokenList->expectKeywords(Keyword::ALWAYS, Keyword::AS);
             }
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $expression = $this->expressionParser->parseExpression($tokenList);
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
             /** @var GeneratedColumnType $generatedType */
-            $generatedType = $tokenList->mayConsumeKeywordEnum(GeneratedColumnType::class);
+            $generatedType = $tokenList->getKeywordEnum(GeneratedColumnType::class);
             $index = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::UNIQUE)) {
-                $tokenList->mayConsumeKeyword(Keyword::KEY);
+            if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
+                $tokenList->hasKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::UNIQUE);
             }
             $comment = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
-                $comment = $tokenList->consumeString();
+            if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+                $comment = $tokenList->expectString();
             }
             $null = null;
-            if ($tokenList->mayConsumeKeywords(Keyword::NOT, Keyword::NULL)) {
+            if ($tokenList->hasKeywords(Keyword::NOT, Keyword::NULL)) {
                 $null = false;
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::NULL)) {
+            } elseif ($tokenList->hasKeyword(Keyword::NULL)) {
                 $null = true;
             }
 
-            if ($tokenList->mayConsumeKeyword(Keyword::PRIMARY)) {
-                $tokenList->mayConsumeKeyword(Keyword::KEY);
+            if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
+                $tokenList->hasKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::PRIMARY);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::KEY)) {
+            } elseif ($tokenList->hasKeyword(Keyword::KEY)) {
                 $index = IndexType::get(IndexType::INDEX);
             }
 
@@ -812,14 +812,14 @@ class TableCommandsParser
      */
     private function parseCheck(TokenList $tokenList): CheckDefinition
     {
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         $expression = $this->expressionParser->parseExpression($tokenList);
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         $enforced = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::ENFORCED)) {
+        if ($tokenList->hasKeyword(Keyword::ENFORCED)) {
             $enforced = true;
-        } elseif ($tokenList->mayConsumeKeywords(Keyword::NOT, Keyword::ENFORCED)) {
+        } elseif ($tokenList->hasKeywords(Keyword::NOT, Keyword::ENFORCED)) {
             $enforced = false;
         }
 
@@ -853,10 +853,10 @@ class TableCommandsParser
      */
     private function parseConstraint(TokenList $tokenList): ConstraintDefinition
     {
-        $tokenList->mayConsumeKeyword(Keyword::CONSTRAINT);
-        $name = $tokenList->mayConsumeName();
+        $tokenList->hasKeyword(Keyword::CONSTRAINT);
+        $name = $tokenList->getName();
 
-        $keyword = $tokenList->consumeAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN, Keyword::CHECK);
+        $keyword = $tokenList->expectAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN, Keyword::CHECK);
         if ($keyword === Keyword::PRIMARY) {
             $type = ConstraintType::get(ConstraintType::PRIMARY_KEY);
             $body = $this->parseIndex($tokenList, true);
@@ -887,8 +887,8 @@ class TableCommandsParser
      */
     private function parseForeignKey(TokenList $tokenList): ForeignKeyDefinition
     {
-        $tokenList->consumeKeywords(Keyword::FOREIGN, Keyword::KEY);
-        $indexName = $tokenList->mayConsumeName();
+        $tokenList->expectKeywords(Keyword::FOREIGN, Keyword::KEY);
+        $indexName = $tokenList->getName();
 
         $columns = $this->parseColumnList($tokenList);
         $reference = $this->parseReference($tokenList);
@@ -908,22 +908,22 @@ class TableCommandsParser
      */
     private function parseReference(TokenList $tokenList): ReferenceDefinition
     {
-        $tokenList->consumeKeyword(Keyword::REFERENCES);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeyword(Keyword::REFERENCES);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $columns = $this->parseColumnList($tokenList);
 
         $matchType = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::MATCH)) {
+        if ($tokenList->hasKeyword(Keyword::MATCH)) {
             /** @var ForeignKeyMatchType $matchType */
-            $matchType = $tokenList->consumeKeywordEnum(ForeignKeyMatchType::class);
+            $matchType = $tokenList->expectKeywordEnum(ForeignKeyMatchType::class);
         }
 
         $onDelete = $onUpdate = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::DELETE)) {
+        if ($tokenList->hasKeywords(Keyword::ON, Keyword::DELETE)) {
             $onDelete = $this->parseForeignKeyAction($tokenList);
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::ON, Keyword::UPDATE)) {
+        if ($tokenList->hasKeywords(Keyword::ON, Keyword::UPDATE)) {
             $onUpdate = $this->parseForeignKeyAction($tokenList);
         }
 
@@ -932,13 +932,13 @@ class TableCommandsParser
 
     private function parseForeignKeyAction(TokenList $tokenList): ForeignKeyAction
     {
-        $keyword = $tokenList->consumeAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE, Keyword::NO, Keyword::SET);
+        $keyword = $tokenList->expectAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE, Keyword::NO, Keyword::SET);
         if ($keyword === Keyword::NO) {
-            $tokenList->consumeKeyword(Keyword::ACTION);
+            $tokenList->expectKeyword(Keyword::ACTION);
 
             return ForeignKeyAction::get(ForeignKeyAction::NO_ACTION);
         } elseif ($keyword === Keyword::SET) {
-            $keyword = $tokenList->consumeAnyKeyword(Keyword::NULL, Keyword::DEFAULT);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::DEFAULT);
 
             return ForeignKeyAction::get(Keyword::SET . ' ' . $keyword);
         } else {
@@ -978,136 +978,136 @@ class TableCommandsParser
      */
     private function parseTableOption(TokenList $tokenList): array
     {
-        $keyword = $tokenList->consume(TokenType::KEYWORD)->value;
+        $keyword = $tokenList->expect(TokenType::KEYWORD)->value;
         switch ($keyword) {
             case Keyword::AUTO_INCREMENT:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::AUTO_INCREMENT, $tokenList->consumeInt()];
+                return [TableOption::AUTO_INCREMENT, $tokenList->expectInt()];
             case Keyword::AVG_ROW_LENGTH:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::AVG_ROW_LENGTH, $tokenList->consumeInt()];
+                return [TableOption::AVG_ROW_LENGTH, $tokenList->expectInt()];
             case Keyword::CHARACTER:
-                $tokenList->consumeKeyword(Keyword::SET);
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->expectKeyword(Keyword::SET);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::CHARACTER_SET, Charset::get($tokenList->consumeString())];
+                return [TableOption::CHARACTER_SET, Charset::get($tokenList->expectString())];
             case Keyword::CHECKSUM:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::CHECKSUM, $tokenList->consumeBool()];
+                return [TableOption::CHECKSUM, $tokenList->expectBool()];
             case Keyword::COLLATE:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::COLLATE, $tokenList->consumeString()];
+                return [TableOption::COLLATE, $tokenList->expectString()];
             case Keyword::COMMENT:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::COMMENT, $tokenList->consumeString()];
+                return [TableOption::COMMENT, $tokenList->expectString()];
             case Keyword::COMPRESSION:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::COMPRESSION, TableCompression::get($tokenList->consumeString())];
+                return [TableOption::COMPRESSION, TableCompression::get($tokenList->expectString())];
             case Keyword::CONNECTION:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::CONNECTION, $tokenList->consumeString()];
+                return [TableOption::CONNECTION, $tokenList->expectString()];
             case Keyword::DATA:
-                $tokenList->consumeKeyword(Keyword::DIRECTORY);
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->expectKeyword(Keyword::DIRECTORY);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::DATA_DIRECTORY, $tokenList->consumeString()];
+                return [TableOption::DATA_DIRECTORY, $tokenList->expectString()];
             case Keyword::DEFAULT:
-                if ($tokenList->mayConsumeKeyword(Keyword::CHARACTER)) {
-                    $tokenList->consumeKeyword(Keyword::SET);
-                    $tokenList->mayConsumeOperator(Operator::EQUAL);
+                if ($tokenList->hasKeyword(Keyword::CHARACTER)) {
+                    $tokenList->expectKeyword(Keyword::SET);
+                    $tokenList->getOperator(Operator::EQUAL);
 
-                    return [TableOption::CHARACTER_SET, Charset::get($tokenList->consumeString())];
+                    return [TableOption::CHARACTER_SET, Charset::get($tokenList->expectString())];
                 } else {
-                    $tokenList->consumeKeyword(Keyword::COLLATE);
-                    $tokenList->mayConsumeOperator(Operator::EQUAL);
+                    $tokenList->expectKeyword(Keyword::COLLATE);
+                    $tokenList->getOperator(Operator::EQUAL);
 
-                    return [TableOption::COLLATE, $tokenList->consumeString()];
+                    return [TableOption::COLLATE, $tokenList->expectString()];
                 }
             case Keyword::DELAY_KEY_WRITE:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::DELAY_KEY_WRITE, $tokenList->consumeBool()];
+                return [TableOption::DELAY_KEY_WRITE, $tokenList->expectBool()];
             case Keyword::ENCRYPTION:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::ENCRYPTION, $tokenList->consumeBool()];
+                return [TableOption::ENCRYPTION, $tokenList->expectBool()];
             case Keyword::ENGINE:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::ENGINE, StorageEngine::get($tokenList->consumeNameOrString())];
+                return [TableOption::ENGINE, StorageEngine::get($tokenList->expectNameOrString())];
             case Keyword::INDEX:
-                $tokenList->consumeKeyword(Keyword::DIRECTORY);
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->expectKeyword(Keyword::DIRECTORY);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::INDEX_DIRECTORY, $tokenList->consumeString()];
+                return [TableOption::INDEX_DIRECTORY, $tokenList->expectString()];
             case Keyword::INSERT_METHOD:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::INSERT_METHOD, $tokenList->consumeKeywordEnum(TableInsertMethod::class)];
+                return [TableOption::INSERT_METHOD, $tokenList->expectKeywordEnum(TableInsertMethod::class)];
             case Keyword::KEY_BLOCK_SIZE:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::KEY_BLOCK_SIZE, $tokenList->consumeInt()];
+                return [TableOption::KEY_BLOCK_SIZE, $tokenList->expectInt()];
             case Keyword::MAX_ROWS:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::MAX_ROWS, $tokenList->consumeInt()];
+                return [TableOption::MAX_ROWS, $tokenList->expectInt()];
             case Keyword::MIN_ROWS:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::MIN_ROWS, $tokenList->consumeInt()];
+                return [TableOption::MIN_ROWS, $tokenList->expectInt()];
             case Keyword::PACK_KEYS:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
-                if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                $tokenList->getOperator(Operator::EQUAL);
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::PACK_KEYS, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::PACK_KEYS, ThreeStateValue::get((string) $tokenList->consumeInt())];
+                    return [TableOption::PACK_KEYS, ThreeStateValue::get((string) $tokenList->expectInt())];
                 }
             case Keyword::PASSWORD:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::PASSWORD, $tokenList->consumeString()];
+                return [TableOption::PASSWORD, $tokenList->expectString()];
             case Keyword::ROW_FORMAT:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::ROW_FORMAT, $tokenList->consumeKeywordEnum(TableRowFormat::class)];
+                return [TableOption::ROW_FORMAT, $tokenList->expectKeywordEnum(TableRowFormat::class)];
             case Keyword::STATS_AUTO_RECALC:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
-                if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                $tokenList->getOperator(Operator::EQUAL);
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get((string) $tokenList->consumeInt())];
+                    return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get((string) $tokenList->expectInt())];
                 }
             case Keyword::STATS_PERSISTENT:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
-                if ($tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
+                $tokenList->getOperator(Operator::EQUAL);
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_PERSISTENT, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::STATS_PERSISTENT, ThreeStateValue::get((string) $tokenList->consumeInt())];
+                    return [TableOption::STATS_PERSISTENT, ThreeStateValue::get((string) $tokenList->expectInt())];
                 }
             case Keyword::STATS_SAMPLE_PAGES:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::STATS_SAMPLE_PAGES, $tokenList->consumeInt()];
+                return [TableOption::STATS_SAMPLE_PAGES, $tokenList->expectInt()];
             case Keyword::TABLESPACE:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
+                $tokenList->getOperator(Operator::EQUAL);
 
-                return [TableOption::TABLESPACE, $tokenList->consumeNameOrString()];
+                return [TableOption::TABLESPACE, $tokenList->expectNameOrString()];
             case Keyword::UNION:
-                $tokenList->mayConsumeOperator(Operator::EQUAL);
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $tables = [];
                 do {
-                    $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
                 return [TableOption::UNION, $tables];
             default:
@@ -1133,27 +1133,27 @@ class TableCommandsParser
      */
     private function parsePartitioning(TokenList $tokenList): PartitioningDefinition
     {
-        $tokenList->consumeKeywords(Keyword::PARTITION, Keyword::BY);
+        $tokenList->expectKeywords(Keyword::PARTITION, Keyword::BY);
         $condition = $this->parsePartitionCondition($tokenList);
 
         $partitionsNumber = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::PARTITIONS)) {
-            $partitionsNumber = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::PARTITIONS)) {
+            $partitionsNumber = $tokenList->expectInt();
         }
         $subpartitionsCondition = $subpartitionsNumber = null;
-        if ($tokenList->mayConsumeKeywords(Keyword::SUBPARTITION, Keyword::BY)) {
+        if ($tokenList->hasKeywords(Keyword::SUBPARTITION, Keyword::BY)) {
             $subpartitionsCondition = $this->parsePartitionCondition($tokenList, true);
-            if ($tokenList->mayConsumeKeyword(Keyword::SUBPARTITIONS)) {
-                $subpartitionsNumber = $tokenList->consumeInt();
+            if ($tokenList->hasKeyword(Keyword::SUBPARTITIONS)) {
+                $subpartitionsNumber = $tokenList->expectInt();
             }
         }
         $partitions = null;
-        if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
             $partitions = [];
             do {
                 $partitions[] = $this->parsePartitionDefinition($tokenList);
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         return new PartitioningDefinition($condition, $partitions, $partitionsNumber, $subpartitionsCondition, $subpartitionsNumber);
@@ -1168,48 +1168,48 @@ class TableCommandsParser
      */
     private function parsePartitionCondition(TokenList $tokenList, bool $subpartition = false): PartitioningCondition
     {
-        $linear = (bool) $tokenList->mayConsumeKeyword(Keyword::LINEAR);
+        $linear = $tokenList->hasKeyword(Keyword::LINEAR);
         if ($linear || $subpartition) {
             $keywords = [Keyword::HASH, Keyword::KEY];
         } else {
             $keywords = [Keyword::HASH, Keyword::KEY, Keyword::RANGE, Keyword::LIST];
         }
-        $keyword = $tokenList->consumeAnyKeyword(...$keywords);
+        $keyword = $tokenList->expectAnyKeyword(...$keywords);
         if ($keyword === Keyword::HASH) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $expression = $this->expressionParser->parseExpression($tokenList);
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_HASH : PartitioningConditionType::HASH);
             $condition = new PartitioningCondition($type, $expression);
         } elseif ($keyword === Keyword::KEY) {
             $algorithm = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::ALGORITHM)) {
-                $tokenList->consumeOperator(Operator::EQUAL);
-                $algorithm = $tokenList->consumeInt();
+            if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
+                $tokenList->expectOperator(Operator::EQUAL);
+                $algorithm = $tokenList->expectInt();
             }
             $columns = $this->parseColumnList($tokenList);
             $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_KEY : PartitioningConditionType::KEY);
             $condition = new PartitioningCondition($type, null, $columns, $algorithm);
         } elseif ($keyword === Keyword::RANGE) {
             $type = PartitioningConditionType::get(PartitioningConditionType::RANGE);
-            if ($tokenList->mayConsumeKeyword(Keyword::COLUMNS)) {
+            if ($tokenList->hasKeyword(Keyword::COLUMNS)) {
                 $columns = $this->parseColumnList($tokenList);
                 $condition = new PartitioningCondition($type, null, $columns);
             } else {
-                $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS);
+                $tokenList->get(TokenType::LEFT_PARENTHESIS);
                 $expression = $this->expressionParser->parseExpression($tokenList);
-                $tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->get(TokenType::RIGHT_PARENTHESIS);
                 $condition = new PartitioningCondition($type, $expression);
             }
         } else {
             $type = PartitioningConditionType::get(PartitioningConditionType::LIST);
-            if ($tokenList->mayConsumeKeyword(Keyword::COLUMNS)) {
+            if ($tokenList->hasKeyword(Keyword::COLUMNS)) {
                 $columns = $this->parseColumnList($tokenList);
                 $condition = new PartitioningCondition($type, null, $columns);
             } else {
-                $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS);
+                $tokenList->get(TokenType::LEFT_PARENTHESIS);
                 $expression = $this->expressionParser->parseExpression($tokenList);
-                $tokenList->mayConsume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->get(TokenType::RIGHT_PARENTHESIS);
                 $condition = new PartitioningCondition($type, $expression);
             }
         }
@@ -1244,52 +1244,52 @@ class TableCommandsParser
      */
     private function parsePartitionDefinition(TokenList $tokenList): PartitionDefinition
     {
-        $tokenList->consumeKeyword(Keyword::PARTITION);
-        $name = $tokenList->consumeName();
+        $tokenList->expectKeyword(Keyword::PARTITION);
+        $name = $tokenList->expectName();
 
         $lessThan = $values = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::VALUES)) {
-            if ($tokenList->mayConsumeKeywords(Keyword::LESS, Keyword::THAN)) {
-                if ($tokenList->mayConsumeKeyword(Keyword::MAXVALUE)) {
+        if ($tokenList->hasKeyword(Keyword::VALUES)) {
+            if ($tokenList->hasKeywords(Keyword::LESS, Keyword::THAN)) {
+                if ($tokenList->hasKeyword(Keyword::MAXVALUE)) {
                     $lessThan = PartitionDefinition::MAX_VALUE;
                 } else {
-                    $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                    $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                     if ($tokenList->seek(TokenType::COMMA, 2)) {
                         $lessThan = [];
                         do {
                             $lessThan[] = $this->expressionParser->parseLiteralValue($tokenList);
-                            if (!$tokenList->mayConsume(TokenType::COMMA)) {
+                            if (!$tokenList->has(TokenType::COMMA)) {
                                 break;
                             }
                         } while (true);
                     } else {
                         $lessThan = $this->expressionParser->parseExpression($tokenList);
                     }
-                    $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                 }
             } else {
-                $tokenList->consumeKeyword(Keyword::IN);
-                $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectKeyword(Keyword::IN);
+                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $values = [];
                 do {
                     $values[] = $this->expressionParser->parseLiteralValue($tokenList);
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
         }
 
         $options = $this->parsePartitionOptions($tokenList);
 
         $subpartitions = null;
-        if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
             $subpartitions = [];
             do {
-                $tokenList->consumeKeyword(Keyword::SUBPARTITION);
-                $subName = $tokenList->consumeName();
+                $tokenList->expectKeyword(Keyword::SUBPARTITION);
+                $subName = $tokenList->expectName();
                 $subOptions = $this->parsePartitionOptions($tokenList);
                 $subpartitions[$subName] = $subOptions;
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
         return new PartitionDefinition($name, $lessThan, $values, $options, $subpartitions);
@@ -1311,37 +1311,37 @@ class TableCommandsParser
     {
         $options = [];
 
-        if ($tokenList->mayConsumeKeyword(Keyword::STORAGE)) {
-            $tokenList->consumeKeyword(Keyword::ENGINE);
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[PartitionOption::ENGINE] = $tokenList->consumeNameOrString();
-        } elseif ($tokenList->mayConsumeKeyword(Keyword::ENGINE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[PartitionOption::ENGINE] = $tokenList->consumeNameOrString();
+        if ($tokenList->hasKeyword(Keyword::STORAGE)) {
+            $tokenList->expectKeyword(Keyword::ENGINE);
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[PartitionOption::ENGINE] = $tokenList->expectNameOrString();
+        } elseif ($tokenList->hasKeyword(Keyword::ENGINE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[PartitionOption::ENGINE] = $tokenList->expectNameOrString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::COMMENT)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[PartitionOption::COMMENT] = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[PartitionOption::COMMENT] = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::DATA, Keyword::DIRECTORY)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[PartitionOption::DATA_DIRECTORY] = $tokenList->consumeString();
+        if ($tokenList->hasKeywords(Keyword::DATA, Keyword::DIRECTORY)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[PartitionOption::DATA_DIRECTORY] = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeywords(Keyword::INDEX, Keyword::DIRECTORY)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[PartitionOption::INDEX_DIRECTORY] = $tokenList->consumeString();
+        if ($tokenList->hasKeywords(Keyword::INDEX, Keyword::DIRECTORY)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[PartitionOption::INDEX_DIRECTORY] = $tokenList->expectString();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::MAX_ROWS)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[PartitionOption::MAX_ROWS] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::MAX_ROWS)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[PartitionOption::MAX_ROWS] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::MIN_ROWS)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[PartitionOption::MIN_ROWS] = $tokenList->consumeInt();
+        if ($tokenList->hasKeyword(Keyword::MIN_ROWS)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[PartitionOption::MIN_ROWS] = $tokenList->expectInt();
         }
-        if ($tokenList->mayConsumeKeyword(Keyword::TABLESPACE)) {
-            $tokenList->mayConsumeOperator(Operator::EQUAL);
-            $options[PartitionOption::TABLESPACE] = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::TABLESPACE)) {
+            $tokenList->getOperator(Operator::EQUAL);
+            $options[PartitionOption::TABLESPACE] = $tokenList->expectString();
         }
 
         return $options ?: null;
@@ -1352,13 +1352,13 @@ class TableCommandsParser
      */
     private function parsePartitionNames(TokenList $tokenList): ?array
     {
-        if ($tokenList->mayConsumeKeyword(Keyword::ALL)) {
+        if ($tokenList->hasKeyword(Keyword::ALL)) {
             return null;
         }
         $names = [];
         do {
-            $names[] = $tokenList->consumeName();
-        } while ($tokenList->mayConsumeComma());
+            $names[] = $tokenList->expectName();
+        } while ($tokenList->hasComma());
 
         return $names;
     }
@@ -1369,11 +1369,11 @@ class TableCommandsParser
     private function parseColumnList(TokenList $tokenList): array
     {
         $columns = [];
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         do {
-            $columns[] = $tokenList->consumeName();
-        } while ($tokenList->mayConsumeComma());
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $columns[] = $tokenList->expectName();
+        } while ($tokenList->hasComma());
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         return $columns;
     }
@@ -1385,20 +1385,20 @@ class TableCommandsParser
      */
     public function parseDropTable(TokenList $tokenList): DropTableCommand
     {
-        $tokenList->consumeKeyword(Keyword::DROP);
-        $temporary = (bool) $tokenList->mayConsumeKeyword(Keyword::TEMPORARY);
-        $tokenList->consumeKeyword(Keyword::TABLE);
-        $ifExists = (bool) $tokenList->mayConsumeKeyword(Keyword::IF);
+        $tokenList->expectKeyword(Keyword::DROP);
+        $temporary = $tokenList->hasKeyword(Keyword::TEMPORARY);
+        $tokenList->expectKeyword(Keyword::TABLE);
+        $ifExists = $tokenList->hasKeyword(Keyword::IF);
         if ($ifExists) {
-            $tokenList->consumeKeyword(Keyword::EXISTS);
+            $tokenList->expectKeyword(Keyword::EXISTS);
         }
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-        } while ($tokenList->mayConsumeComma());
+            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+        } while ($tokenList->hasComma());
 
         // ignored in MySQL 5.7, 8.0
-        $cascadeRestrict = $tokenList->mayConsumeAnyKeyword(Keyword::CASCADE, Keyword::RESTRICT);
+        $cascadeRestrict = $tokenList->getAnyKeyword(Keyword::CASCADE, Keyword::RESTRICT);
         $cascadeRestrict = $cascadeRestrict === Keyword::CASCADE ? true : ($cascadeRestrict === Keyword::RESTRICT ? false : null);
         $tokenList->expectEnd();
 
@@ -1411,15 +1411,15 @@ class TableCommandsParser
      */
     public function parseRenameTable(TokenList $tokenList): RenameTableCommand
     {
-        $tokenList->consumeKeywords(Keyword::RENAME, Keyword::TABLE);
+        $tokenList->expectKeywords(Keyword::RENAME, Keyword::TABLE);
 
         $tables = [];
         $newTables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-            $tokenList->consumeKeyword(Keyword::TO);
-            $newTables[] = new QualifiedName(...$tokenList->consumeQualifiedName());
-        } while ($tokenList->mayConsumeComma());
+            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tokenList->expectKeyword(Keyword::TO);
+            $newTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new RenameTableCommand($tables, $newTables);
@@ -1430,9 +1430,9 @@ class TableCommandsParser
      */
     public function parseTruncateTable(TokenList $tokenList): TruncateTableCommand
     {
-        $tokenList->consumeKeyword(Keyword::TRUNCATE);
-        $tokenList->mayConsumeKeyword(Keyword::TABLE);
-        $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+        $tokenList->expectKeyword(Keyword::TRUNCATE);
+        $tokenList->passKeyword(Keyword::TABLE);
+        $table = new QualifiedName(...$tokenList->expectQualifiedName());
         $tokenList->expectEnd();
 
         return new TruncateTableCommand($table);

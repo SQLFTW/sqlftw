@@ -36,24 +36,26 @@ class TransactionCommandsParser
      */
     public function parseCommit(TokenList $tokenList): CommitCommand
     {
-        $tokenList->consumeKeyword(Keyword::COMMIT);
-        $tokenList->mayConsumeKeyword(Keyword::WORK);
+        $tokenList->expectKeyword(Keyword::COMMIT);
+        $tokenList->passKeyword(Keyword::WORK);
 
-        if ($tokenList->mayConsumeKeyword(Keyword::AND)) {
-            $noChain = $tokenList->mayConsumeKeyword(Keyword::NO);
-            $chain = $tokenList->consumeKeyword(Keyword::CHAIN);
-        } else {
-            $chain = $noChain = null;
+        $chain = null;
+        if ($tokenList->hasKeyword(Keyword::AND)) {
+            $chain = !$tokenList->hasKeyword(Keyword::NO);
+            $tokenList->expectKeyword(Keyword::CHAIN);
         }
 
-        $noRelease = $tokenList->mayConsumeKeyword(Keyword::NO);
-        $release = $noRelease
-            ? $tokenList->consumeKeyword(Keyword::RELEASE)
-            : $tokenList->mayConsumeKeyword(Keyword::RELEASE);
+        $release = null;
+        if ($tokenList->hasKeyword(Keyword::NO)) {
+            $release = false;
+            $tokenList->expectKeyword(Keyword::RELEASE);
+        } elseif ($tokenList->hasKeyword(Keyword::RELEASE)) {
+            $release = true;
+        }
 
         $tokenList->expectEnd();
 
-        return new CommitCommand($chain ? !$noChain : null, $release ? !$noRelease : null);
+        return new CommitCommand($chain, $release);
     }
 
     /**
@@ -67,28 +69,28 @@ class TransactionCommandsParser
      */
     public function parseLockTables(TokenList $tokenList): LockTablesCommand
     {
-        $tokenList->consumeKeywords(Keyword::LOCK, Keyword::TABLES);
+        $tokenList->expectKeywords(Keyword::LOCK, Keyword::TABLES);
         $items = [];
         do {
-            $table = new QualifiedName(...$tokenList->consumeQualifiedName());
+            $table = new QualifiedName(...$tokenList->expectQualifiedName());
             $alias = $lock = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
-                $alias = $tokenList->consumeName();
+            if ($tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectName();
             }
-            if ($tokenList->mayConsumeKeyword(Keyword::READ)) {
-                if ($tokenList->mayConsumeKeyword(Keyword::LOCAL)) {
+            if ($tokenList->hasKeyword(Keyword::READ)) {
+                if ($tokenList->hasKeyword(Keyword::LOCAL)) {
                     $lock = LockTableType::get(LockTableType::READ_LOCAL);
                 } else {
                     $lock = LockTableType::get(LockTableType::READ);
                 }
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::LOW_PRIORITY)) {
-                $tokenList->consumeKeyword(Keyword::WRITE);
+            } elseif ($tokenList->hasKeyword(Keyword::LOW_PRIORITY)) {
+                $tokenList->expectKeyword(Keyword::WRITE);
                 $lock = LockTableType::get(LockTableType::LOW_PRIORITY_WRITE);
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::WRITE)) {
+            } elseif ($tokenList->hasKeyword(Keyword::WRITE)) {
                 $lock = LockTableType::get(LockTableType::WRITE);
             }
             $items[] = new LockTablesItem($table, $lock, $alias);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $tokenList->expectEnd();
 
@@ -100,8 +102,8 @@ class TransactionCommandsParser
      */
     public function parseReleaseSavepoint(TokenList $tokenList): ReleaseSavepointCommand
     {
-        $tokenList->consumeKeywords(Keyword::RELEASE, Keyword::SAVEPOINT);
-        $name = $tokenList->consumeName();
+        $tokenList->expectKeywords(Keyword::RELEASE, Keyword::SAVEPOINT);
+        $name = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new ReleaseSavepointCommand($name);
@@ -112,24 +114,26 @@ class TransactionCommandsParser
      */
     public function parseRollback(TokenList $tokenList): RollbackCommand
     {
-        $tokenList->consumeKeyword(Keyword::ROLLBACK);
-        $tokenList->mayConsumeKeyword(Keyword::WORK);
+        $tokenList->expectKeyword(Keyword::ROLLBACK);
+        $tokenList->passKeyword(Keyword::WORK);
 
-        if ($tokenList->mayConsumeKeyword(Keyword::AND)) {
-            $noChain = $tokenList->mayConsumeKeyword(Keyword::NO);
-            $chain = $tokenList->consumeKeyword(Keyword::CHAIN);
-        } else {
-            $chain = $noChain = null;
+        $chain = null;
+        if ($tokenList->hasKeyword(Keyword::AND)) {
+            $chain = $tokenList->hasKeyword(Keyword::NO);
+            $tokenList->expectKeyword(Keyword::CHAIN);
         }
 
-        $noRelease = $tokenList->mayConsumeKeyword(Keyword::NO);
-        $release = $noRelease
-            ? $tokenList->consumeKeyword(Keyword::RELEASE)
-            : $tokenList->mayConsumeKeyword(Keyword::RELEASE);
+        $release = null;
+        if ($tokenList->hasKeyword(Keyword::NO)) {
+            $release = false;
+            $tokenList->expectKeyword(Keyword::RELEASE);
+        } elseif ($tokenList->hasKeyword(Keyword::RELEASE)) {
+            $release = true;
+        }
 
         $tokenList->expectEnd();
 
-        return new RollbackCommand($chain ? !$noChain : null, $release ? !$noRelease : null);
+        return new RollbackCommand($chain, $release);
     }
 
     /**
@@ -137,12 +141,12 @@ class TransactionCommandsParser
      */
     public function parseRollbackToSavepoint(TokenList $tokenList): RollbackToSavepointCommand
     {
-        $tokenList->consumeKeyword(Keyword::ROLLBACK);
-        $tokenList->mayConsumeKeyword(Keyword::WORK);
-        $tokenList->consumeKeyword(Keyword::TO);
-        $tokenList->mayConsumeKeyword(Keyword::SAVEPOINT);
+        $tokenList->expectKeyword(Keyword::ROLLBACK);
+        $tokenList->passKeyword(Keyword::WORK);
+        $tokenList->expectKeyword(Keyword::TO);
+        $tokenList->passKeyword(Keyword::SAVEPOINT);
 
-        $name = $tokenList->consumeName();
+        $name = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new RollbackToSavepointCommand($name);
@@ -153,8 +157,8 @@ class TransactionCommandsParser
      */
     public function parseSavepoint(TokenList $tokenList): SavepointCommand
     {
-        $tokenList->consumeKeyword(Keyword::SAVEPOINT);
-        $name = $tokenList->consumeName();
+        $tokenList->expectKeyword(Keyword::SAVEPOINT);
+        $name = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new SavepointCommand($name);
@@ -177,38 +181,38 @@ class TransactionCommandsParser
      */
     public function parseSetTransaction(TokenList $tokenList): SetTransactionCommand
     {
-        $tokenList->consumeKeyword(Keyword::SET);
+        $tokenList->expectKeyword(Keyword::SET);
 
         /** @var Scope $scope */
-        $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
+        $scope = $tokenList->getKeywordEnum(Scope::class);
 
-        $tokenList->consumeKeyword(Keyword::TRANSACTION);
+        $tokenList->expectKeyword(Keyword::TRANSACTION);
 
         $isolationLevel = $write = null;
         do {
-            if ($tokenList->mayConsumeKeyword(Keyword::ISOLATION)) {
-                $tokenList->consumeKeyword(Keyword::LEVEL);
-                if ($tokenList->mayConsumeKeyword(Keyword::REPEATABLE)) {
-                    $tokenList->consumeKeyword(Keyword::READ);
+            if ($tokenList->hasKeyword(Keyword::ISOLATION)) {
+                $tokenList->expectKeyword(Keyword::LEVEL);
+                if ($tokenList->hasKeyword(Keyword::REPEATABLE)) {
+                    $tokenList->expectKeyword(Keyword::READ);
                     $isolationLevel = TransactionIsolationLevel::REPEATABLE_READ;
-                } elseif ($tokenList->mayConsumeKeyword(Keyword::SERIALIZABLE)) {
+                } elseif ($tokenList->hasKeyword(Keyword::SERIALIZABLE)) {
                     $isolationLevel = TransactionIsolationLevel::SERIALIZABLE;
                 } else {
-                    $tokenList->consumeKeyword(Keyword::READ);
-                    $level = $tokenList->consumeAnyKeyword(Keyword::COMMITTED, Keyword::UNCOMMITTED);
+                    $tokenList->expectKeyword(Keyword::READ);
+                    $level = $tokenList->expectAnyKeyword(Keyword::COMMITTED, Keyword::UNCOMMITTED);
                     $isolationLevel = $level === Keyword::COMMITTED
                         ? TransactionIsolationLevel::READ_COMMITTED
                         : TransactionIsolationLevel::READ_UNCOMMITTED;
                 }
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::READ)) {
-                if ($tokenList->mayConsumeKeyword(Keyword::WRITE)) {
+            } elseif ($tokenList->hasKeyword(Keyword::READ)) {
+                if ($tokenList->hasKeyword(Keyword::WRITE)) {
                     $write = true;
                 } else {
-                    $tokenList->consumeKeyword(Keyword::ONLY);
+                    $tokenList->expectKeyword(Keyword::ONLY);
                     $write = false;
                 }
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $tokenList->expectEnd();
 
@@ -232,28 +236,28 @@ class TransactionCommandsParser
      */
     public function parseStartTransaction(TokenList $tokenList): StartTransactionCommand
     {
-        if ($tokenList->mayConsumeKeyword(Keyword::BEGIN)) {
-            $tokenList->mayConsumeKeyword(Keyword::WORK);
+        if ($tokenList->hasKeyword(Keyword::BEGIN)) {
+            $tokenList->passKeyword(Keyword::WORK);
 
             return new StartTransactionCommand();
         }
 
-        $tokenList->consumeKeywords(Keyword::START, Keyword::TRANSACTION);
+        $tokenList->expectKeywords(Keyword::START, Keyword::TRANSACTION);
 
         $consistent = $write = null;
         do {
-            if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
-                $tokenList->consumeKeywords(Keyword::CONSISTENT, Keyword::SNAPSHOT);
+            if ($tokenList->hasKeyword(Keyword::WITH)) {
+                $tokenList->expectKeywords(Keyword::CONSISTENT, Keyword::SNAPSHOT);
                 $consistent = true;
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::READ)) {
-                if ($tokenList->mayConsumeKeyword(Keyword::WRITE)) {
+            } elseif ($tokenList->hasKeyword(Keyword::READ)) {
+                if ($tokenList->hasKeyword(Keyword::WRITE)) {
                     $write = true;
                 } else {
-                    $tokenList->consumeKeyword(Keyword::ONLY);
+                    $tokenList->expectKeyword(Keyword::ONLY);
                     $write = false;
                 }
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         $tokenList->expectEnd();
 
@@ -265,7 +269,7 @@ class TransactionCommandsParser
      */
     public function parseUnlockTables(TokenList $tokenList): UnlockTablesCommand
     {
-        $tokenList->consumeKeywords(Keyword::UNLOCK, Keyword::TABLES);
+        $tokenList->expectKeywords(Keyword::UNLOCK, Keyword::TABLES);
 
         $tokenList->expectEnd();
 

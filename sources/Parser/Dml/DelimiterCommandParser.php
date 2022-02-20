@@ -21,9 +21,9 @@ class DelimiterCommandParser
 
     public function parseDelimiter(TokenList $tokenList): DelimiterCommand
     {
-        $tokenList->consumeKeyword(Keyword::DELIMITER);
+        $tokenList->expectKeyword(Keyword::DELIMITER);
         /** @var string $delimiter */
-        $delimiter = $tokenList->consume(TokenType::DELIMITER_DEFINITION)->value;
+        $delimiter = $tokenList->expect(TokenType::DELIMITER_DEFINITION)->value;
         $tokenList->expectEnd();
 
         return new DelimiterCommand($delimiter);

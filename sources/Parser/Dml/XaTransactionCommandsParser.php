@@ -42,21 +42,21 @@ class XaTransactionCommandsParser
      */
     public function parseXa(TokenList $tokenList): Command
     {
-        $tokenList->consumeKeyword(Keyword::XA);
-        $second = $tokenList->consume(TokenType::KEYWORD)->value;
+        $tokenList->expectKeyword(Keyword::XA);
+        $second = $tokenList->expect(TokenType::KEYWORD)->value;
         switch ($second) {
             case Keyword::START:
             case Keyword::BEGIN:
                 $xid = $this->parseXid($tokenList);
                 /** @var XaStartOption $option */
-                $option = $tokenList->mayConsumeKeywordEnum(XaStartOption::class);
+                $option = $tokenList->getKeywordEnum(XaStartOption::class);
                 $tokenList->expectEnd();
 
                 return new XaStartCommand($xid, $option);
             case Keyword::END:
                 $xid = $this->parseXid($tokenList);
-                $suspend = (bool) $tokenList->mayConsumeKeyword(Keyword::SUSPEND);
-                $forMigrate = $suspend ? (bool) $tokenList->mayConsumeKeywords(Keyword::FOR, Keyword::MIGRATE) : false;
+                $suspend = $tokenList->hasKeyword(Keyword::SUSPEND);
+                $forMigrate = $suspend && $tokenList->hasKeywords(Keyword::FOR, Keyword::MIGRATE);
                 $tokenList->expectEnd();
 
                 return new XaEndCommand($xid, $suspend, $forMigrate);
@@ -67,7 +67,7 @@ class XaTransactionCommandsParser
                 return new XaPrepareCommand($xid);
             case Keyword::COMMIT:
                 $xid = $this->parseXid($tokenList);
-                $onePhase = (bool) $tokenList->mayConsumeKeywords(Keyword::ONE, Keyword::PHASE);
+                $onePhase = $tokenList->hasKeywords(Keyword::ONE, Keyword::PHASE);
                 $tokenList->expectEnd();
 
                 return new XaCommitCommand($xid, $onePhase);
@@ -77,7 +77,7 @@ class XaTransactionCommandsParser
 
                 return new XaRollbackCommand($xid);
             case Keyword::RECOVER:
-                $convertXid = (bool) $tokenList->mayConsumeKeywords(Keyword::CONVERT, Keyword::XID);
+                $convertXid = $tokenList->hasKeywords(Keyword::CONVERT, Keyword::XID);
                 $tokenList->expectEnd();
 
                 return new XaRecoverCommand($convertXid);
@@ -99,13 +99,13 @@ class XaTransactionCommandsParser
      */
     private function parseXid(TokenList $tokenList): Xid
     {
-        $transactionId = $tokenList->consumeString();
+        $transactionId = $tokenList->expectString();
         $branch = $format = null;
-        if ($tokenList->mayConsumeComma()) {
-            $branch = $tokenList->consumeString();
-            if ($tokenList->mayConsumeComma()) {
+        if ($tokenList->hasComma()) {
+            $branch = $tokenList->expectString();
+            if ($tokenList->hasComma()) {
                 /** @var int $format */
-                $format = $tokenList->consumeInt();
+                $format = $tokenList->expectInt();
             }
         }
 

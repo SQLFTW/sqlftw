@@ -23,8 +23,8 @@ class BinlogCommandParser
      */
     public function parseBinlog(TokenList $tokenList): BinlogCommand
     {
-        $tokenList->consumeKeyword(Keyword::BINLOG);
-        $value = $tokenList->consumeString();
+        $tokenList->expectKeyword(Keyword::BINLOG);
+        $value = $tokenList->expectString();
         $tokenList->expectEnd();
 
         return new BinlogCommand($value);

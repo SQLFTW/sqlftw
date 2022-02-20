@@ -36,34 +36,34 @@ class ServerCommandsParser
      */
     public function parseAlterServer(TokenList $tokenList): AlterServerCommand
     {
-        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::SERVER);
-        $name = $tokenList->consumeName();
+        $tokenList->expectKeywords(Keyword::ALTER, Keyword::SERVER);
+        $name = $tokenList->expectName();
 
-        $tokenList->consumeKeyword(Keyword::OPTIONS);
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectKeyword(Keyword::OPTIONS);
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         $host = $schema = $user = $password = $socket = $owner = $port = null;
         do {
-            if ($tokenList->mayConsumeKeyword(Keyword::HOST)) {
-                $host = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::DATABASE)) {
-                $schema = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::USER)) {
-                $user = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::PASSWORD)) {
-                $password = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::SOCKET)) {
-                $socket = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::OWNER)) {
-                $owner = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::PORT)) {
-                $port = $tokenList->consumeInt();
+            if ($tokenList->hasKeyword(Keyword::HOST)) {
+                $host = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::DATABASE)) {
+                $schema = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::USER)) {
+                $user = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::PASSWORD)) {
+                $password = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::SOCKET)) {
+                $socket = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::OWNER)) {
+                $owner = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::PORT)) {
+                $port = $tokenList->expectInt();
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
         if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
             $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
 
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         $tokenList->expectEnd();
 
         return new AlterServerCommand($name, $host, $schema, $user, $password, $socket, $owner, $port);
@@ -85,35 +85,35 @@ class ServerCommandsParser
      */
     public function parseCreateServer(TokenList $tokenList): CreateServerCommand
     {
-        $tokenList->consumeKeywords(Keyword::CREATE, Keyword::SERVER);
-        $name = $tokenList->consumeName();
-        $tokenList->consumeKeywords(Keyword::FOREIGN, Keyword::DATA, Keyword::WRAPPER);
-        $wrapper = $tokenList->consumeNameOrString();
+        $tokenList->expectKeywords(Keyword::CREATE, Keyword::SERVER);
+        $name = $tokenList->expectName();
+        $tokenList->expectKeywords(Keyword::FOREIGN, Keyword::DATA, Keyword::WRAPPER);
+        $wrapper = $tokenList->expectNameOrString();
 
-        $tokenList->consumeKeyword(Keyword::OPTIONS);
-        $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectKeyword(Keyword::OPTIONS);
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         $host = $schema = $user = $password = $socket = $owner = $port = null;
         do {
-            if ($tokenList->mayConsumeKeyword(Keyword::HOST)) {
-                $host = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::DATABASE)) {
-                $schema = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::USER)) {
-                $user = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::PASSWORD)) {
-                $password = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::SOCKET)) {
-                $socket = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::OWNER)) {
-                $owner = $tokenList->consumeString();
-            } elseif ($tokenList->mayConsumeKeyword(Keyword::PORT)) {
-                $port = $tokenList->consumeInt();
+            if ($tokenList->hasKeyword(Keyword::HOST)) {
+                $host = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::DATABASE)) {
+                $schema = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::USER)) {
+                $user = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::PASSWORD)) {
+                $password = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::SOCKET)) {
+                $socket = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::OWNER)) {
+                $owner = $tokenList->expectString();
+            } elseif ($tokenList->hasKeyword(Keyword::PORT)) {
+                $port = $tokenList->expectInt();
             }
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
         if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
             $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
-        $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         $tokenList->expectEnd();
 
         return new CreateServerCommand($name, $wrapper, $host, $schema, $user, $password, $socket, $owner, $port);
@@ -124,9 +124,9 @@ class ServerCommandsParser
      */
     public function parseDropServer(TokenList $tokenList): DropServerCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::SERVER);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
-        $name = $tokenList->consumeName();
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::SERVER);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
+        $name = $tokenList->expectName();
         $tokenList->expectEnd();
 
         return new DropServerCommand($name, $ifExists);

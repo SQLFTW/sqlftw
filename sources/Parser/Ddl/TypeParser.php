@@ -62,30 +62,30 @@ class TypeParser
      */
     public function parseType(TokenList $tokenList): DataType
     {
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::DOUBLE, Keyword::NATIONAL, Keyword::CHARACTER, Keyword::CHAR, Keyword::LONG);
+        $keyword = $tokenList->getAnyKeyword(Keyword::DOUBLE, Keyword::NATIONAL, Keyword::CHARACTER, Keyword::CHAR, Keyword::LONG);
         if ($keyword === Keyword::DOUBLE) {
-            if ($tokenList->mayConsumeKeyword(Keyword::PRECISION)) {
+            if ($tokenList->hasKeyword(Keyword::PRECISION)) {
                 $dataType = BaseType::get(BaseType::DOUBLE_PRECISION);
             } else {
                 $dataType = BaseType::get(BaseType::DOUBLE);
             }
         } elseif ($keyword === Keyword::NATIONAL) {
-            $second = $tokenList->consumeAnyKeyword(Keyword::CHAR, Keyword::VARCHAR);
+            $second = $tokenList->expectAnyKeyword(Keyword::CHAR, Keyword::VARCHAR);
             $dataType = BaseType::get($keyword . ' ' . $second);
         } elseif ($keyword === Keyword::CHARACTER) {
-            if ($tokenList->mayConsumeKeyword(Keyword::VARYING)) {
+            if ($tokenList->hasKeyword(Keyword::VARYING)) {
                 $dataType = BaseType::get(BaseType::CHARACTER_VARYING);
             } else {
                 $dataType = BaseType::get(BaseType::CHARACTER);
             }
         } elseif ($keyword === Keyword::CHAR) {
-            if ($tokenList->mayConsumeKeyword(Keyword::BYTE)) {
+            if ($tokenList->hasKeyword(Keyword::BYTE)) {
                 $dataType = BaseType::get(BaseType::CHAR_BYTE);
             } else {
                 $dataType = BaseType::get(BaseType::CHAR);
             }
         } elseif ($keyword === Keyword::LONG) {
-            $second = $tokenList->mayConsumeAnyKeyword(Keyword::VARCHAR, Keyword::VARBINARY);
+            $second = $tokenList->getAnyKeyword(Keyword::VARCHAR, Keyword::VARBINARY);
             if ($second !== null) {
                 $dataType = BaseType::get($keyword . ' ' . $second);
             } else {
@@ -93,7 +93,7 @@ class TypeParser
             }
         } else {
             /** @var BaseType $dataType */
-            $dataType = $tokenList->consumeKeywordEnum(BaseType::class);
+            $dataType = $tokenList->expectKeywordEnum(BaseType::class);
         }
 
         $settings = $tokenList->getSettings();
@@ -106,13 +106,13 @@ class TypeParser
 
         if ($dataType->hasLength()) {
             $length = $decimals = null;
-            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
-                $length = $tokenList->consumeInt();
+            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                $length = $tokenList->expectInt();
                 if ($dataType->hasDecimals()) {
-                    $tokenList->consume(TokenType::COMMA);
-                    $decimals = $tokenList->consumeInt();
+                    $tokenList->expect(TokenType::COMMA);
+                    $decimals = $tokenList->expectInt();
                 }
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             if ($decimals !== null) {
                 /** @var int[] $params */
@@ -121,28 +121,28 @@ class TypeParser
                 $params = $length;
             }
         } elseif ($dataType->hasValues()) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             $params = [];
             do {
-                $params[] = $tokenList->consumeString();
-            } while ($tokenList->mayConsumeComma());
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                $params[] = $tokenList->expectString();
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }/* elseif ($dataType->hasFsp() && $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
             // todo: fsp???
             $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
         }*/
 
         if ($dataType->isNumber()) {
-            $unsigned = (bool) $tokenList->mayConsumeKeyword(Keyword::UNSIGNED);
-            $zerofill = (bool) $tokenList->mayConsumeKeyword(Keyword::ZEROFILL);
+            $unsigned = $tokenList->hasKeyword(Keyword::UNSIGNED);
+            $zerofill = $tokenList->hasKeyword(Keyword::ZEROFILL);
         }
 
         if ($dataType->hasCharset()) {
-            if ($tokenList->mayConsumeKeywords(Keyword::CHARACTER, Keyword::SET)) {
-                $charset = Charset::get($tokenList->consumeNameOrString());
+            if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
+                $charset = Charset::get($tokenList->expectNameOrString());
             }
-            if ($tokenList->mayConsumeKeyword(Keyword::COLLATE)) {
-                $collation = Collation::get($tokenList->consumeNameOrString());
+            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+                $collation = Collation::get($tokenList->expectNameOrString());
             }
         }
 

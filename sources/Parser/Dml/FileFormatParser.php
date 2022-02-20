@@ -33,25 +33,25 @@ class FileFormatParser
     {
         $format = $fieldsTerminatedBy = $fieldsEnclosedBy = $fieldsEscapedBy = null;
         $optionallyEnclosed = false;
-        if ($tokenList->mayConsumeAnyKeyword(Keyword::FIELDS, Keyword::COLUMNS)) {
-            if ($tokenList->mayConsumeKeywords(Keyword::TERMINATED, Keyword::BY)) {
-                $fieldsTerminatedBy = $tokenList->consumeString();
+        if ($tokenList->hasAnyKeyword(Keyword::FIELDS, Keyword::COLUMNS)) {
+            if ($tokenList->hasKeywords(Keyword::TERMINATED, Keyword::BY)) {
+                $fieldsTerminatedBy = $tokenList->expectString();
             }
-            $optionallyEnclosed = (bool) $tokenList->mayConsumeKeyword(Keyword::OPTIONALLY);
-            if ($tokenList->mayConsumeKeywords(Keyword::ENCLOSED, Keyword::BY)) {
-                $fieldsEnclosedBy = $tokenList->consumeString();
+            $optionallyEnclosed = $tokenList->hasKeyword(Keyword::OPTIONALLY);
+            if ($tokenList->hasKeywords(Keyword::ENCLOSED, Keyword::BY)) {
+                $fieldsEnclosedBy = $tokenList->expectString();
             }
-            if ($tokenList->mayConsumeKeywords(Keyword::ESCAPED, Keyword::BY)) {
-                $fieldsEscapedBy = $tokenList->consumeString();
+            if ($tokenList->hasKeywords(Keyword::ESCAPED, Keyword::BY)) {
+                $fieldsEscapedBy = $tokenList->expectString();
             }
         }
         $linesStaringBy = $linesTerminatedBy = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::LINES)) {
-            if ($tokenList->mayConsumeKeywords(Keyword::STARTING, Keyword::BY)) {
-                $linesStaringBy = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::LINES)) {
+            if ($tokenList->hasKeywords(Keyword::STARTING, Keyword::BY)) {
+                $linesStaringBy = $tokenList->expectString();
             }
-            if ($tokenList->mayConsumeKeywords(Keyword::TERMINATED, Keyword::BY)) {
-                $linesTerminatedBy = $tokenList->consumeString();
+            if ($tokenList->hasKeywords(Keyword::TERMINATED, Keyword::BY)) {
+                $linesTerminatedBy = $tokenList->expectString();
             }
         }
         if ($fieldsTerminatedBy ?? $fieldsEnclosedBy ?? $fieldsEscapedBy ?? $linesStaringBy ?? $linesTerminatedBy) {

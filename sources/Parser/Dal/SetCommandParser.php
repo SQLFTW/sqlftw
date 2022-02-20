@@ -47,17 +47,17 @@ class SetCommandParser
      */
     public function parseSet(TokenList $tokenList): SetCommand
     {
-        $tokenList->consumeKeyword(Keyword::SET);
+        $tokenList->expectKeyword(Keyword::SET);
 
         $assignments = [];
         do {
             $position = $tokenList->getPosition();
             /** @var Scope|null $scope */
-            $scope = $tokenList->mayConsumeKeywordEnum(Scope::class);
+            $scope = $tokenList->getKeywordEnum(Scope::class);
             if ($scope !== null) {
-                $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class)->getValue();
+                $variable = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
             } else {
-                $variableToken = $tokenList->mayConsume(TokenType::AT_VARIABLE);
+                $variableToken = $tokenList->get(TokenType::AT_VARIABLE);
                 if ($variableToken !== null) {
                     // @
                     /** @var string $variable */
@@ -80,23 +80,23 @@ class SetCommandParser
                         } else {
                             $scope = Scope::get(Scope::SESSION);
                             $tokenList->resetPosition($position);
-                            $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class, '@')->getValue();
+                            $variable = $tokenList->expectNameOrStringEnum(SystemVariable::class, '@')->getValue();
                         }
                         if ($variable === null) {
-                            $tokenList->consume(TokenType::DOT);
-                            $variable = $tokenList->consumeNameOrStringEnum(SystemVariable::class)->getValue();
+                            $tokenList->expect(TokenType::DOT);
+                            $variable = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
                         }
                     }
                 } else {
                     // !@
-                    $variable = $tokenList->consumeName();
+                    $variable = $tokenList->expectName();
                 }
             }
 
             $expression = $this->expressionParser->parseExpression($tokenList);
 
             $assignments[] = new SetAssignment($variable, $expression, $scope);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
         $tokenList->expectEnd();
 
         return new SetCommand($assignments);

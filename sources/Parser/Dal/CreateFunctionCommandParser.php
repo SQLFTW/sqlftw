@@ -26,15 +26,15 @@ class CreateFunctionCommandParser
      */
     public function parseCreateFunction(TokenList $tokenList): CreateFunctionSonameCommand
     {
-        $tokenList->consumeKeyword(Keyword::CREATE);
-        $aggregate = (bool) $tokenList->mayConsumeKeyword(Keyword::AGGREGATE);
-        $tokenList->consumeKeyword(Keyword::FUNCTION);
-        $name = new QualifiedName(...$tokenList->consumeQualifiedName());
-        $tokenList->consumeKeyword(Keyword::RETURNS);
+        $tokenList->expectKeyword(Keyword::CREATE);
+        $aggregate = $tokenList->hasKeyword(Keyword::AGGREGATE);
+        $tokenList->expectKeyword(Keyword::FUNCTION);
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $tokenList->expectKeyword(Keyword::RETURNS);
         /** @var UdfReturnDataType $type */
-        $type = $tokenList->consumeKeywordEnum(UdfReturnDataType::class);
-        $tokenList->consumeKeyword(Keyword::SONAME);
-        $libName = $tokenList->consumeNameOrString();
+        $type = $tokenList->expectKeywordEnum(UdfReturnDataType::class);
+        $tokenList->expectKeyword(Keyword::SONAME);
+        $libName = $tokenList->expectNameOrString();
         $tokenList->expectEnd();
 
         return new CreateFunctionSonameCommand($name, $libName, $type, $aggregate);

@@ -23,9 +23,9 @@ class InstanceCommandParser
      */
     public function parseAlterInstance(TokenList $tokenList): AlterInstanceCommand
     {
-        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::INSTANCE, Keyword::ROTATE);
-        $tokenList->consumeName('INNODB');
-        $tokenList->consumeKeywords(Keyword::MASTER, Keyword::KEY);
+        $tokenList->expectKeywords(Keyword::ALTER, Keyword::INSTANCE, Keyword::ROTATE);
+        $tokenList->expectName('INNODB');
+        $tokenList->expectKeywords(Keyword::MASTER, Keyword::KEY);
         $tokenList->expectEnd();
 
         return new AlterInstanceCommand();

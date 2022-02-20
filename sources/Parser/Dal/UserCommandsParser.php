@@ -71,19 +71,19 @@ class UserCommandsParser
      */
     public function parseAlterUser(TokenList $tokenList): Command
     {
-        $tokenList->consumeKeywords(Keyword::ALTER, Keyword::USER);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::ALTER, Keyword::USER);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
-        if ($tokenList->mayConsumeKeyword(Keyword::USER)) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
-            $tokenList->consumeKeywords(Keyword::IDENTIFIED, Keyword::BY);
-            $password = $tokenList->consumeString();
+        if ($tokenList->hasKeyword(Keyword::USER)) {
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectKeywords(Keyword::IDENTIFIED, Keyword::BY);
+            $password = $tokenList->expectString();
 
             return new AlterCurrentUserCommand($password, $ifExists);
         } elseif ($tokenList->seekKeyword(Keyword::DEFAULT, 4)) {
-            $user = new UserName(...$tokenList->consumeUserName());
-            $tokenList->consumeKeywords(Keyword::DEFAULT, Keyword::ROLE);
+            $user = new UserName(...$tokenList->expectUserName());
+            $tokenList->expectKeywords(Keyword::DEFAULT, Keyword::ROLE);
             $role = $this->parseRoleSpecification($tokenList);
 
             return new AlterUserDefaultRoleCommand($user, $role, $ifExists);
@@ -109,12 +109,12 @@ class UserCommandsParser
      */
     public function parseCreateUser(TokenList $tokenList): CreateUserCommand
     {
-        $tokenList->consumeKeywords(Keyword::CREATE, Keyword::USER);
-        $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::CREATE, Keyword::USER);
+        $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
 
         $users = $this->parseIdentifiedUsers($tokenList);
 
-        $tokenList->consumeKeywords(Keyword::DEFAULT, Keyword::ROLE);
+        $tokenList->expectKeywords(Keyword::DEFAULT, Keyword::ROLE);
         $defaultRoles = $this->parseRolesList($tokenList);
 
         $tlsOptions = $this->parseTlsOptions($tokenList);
@@ -147,42 +147,42 @@ class UserCommandsParser
     {
         $users = [];
         do {
-            $user = new UserName(...$tokenList->consumeUserName());
-            if ($tokenList->mayConsumeKeywords(Keyword::DISCARD, Keyword::OLD, Keyword::PASSWORD)) {
+            $user = new UserName(...$tokenList->expectUserName());
+            if ($tokenList->hasKeywords(Keyword::DISCARD, Keyword::OLD, Keyword::PASSWORD)) {
                 $action = IdentifiedUserAction::DISCARD_OLD_PASSWORD;
                 $users[] = new IdentifiedUser($user, IdentifiedUserAction::get($action));
                 continue;
             }
 
-            if (!$tokenList->mayConsumeKeyword(Keyword::IDENTIFIED)) {
+            if (!$tokenList->hasKeyword(Keyword::IDENTIFIED)) {
                 $users[] = new IdentifiedUser($user);
                 continue;
             }
 
             $action = $plugin = $password = $replace = null;
             $retainCurrent = false;
-            if ($tokenList->mayConsumeKeyword(Keyword::WITH)) {
+            if ($tokenList->hasKeyword(Keyword::WITH)) {
                 $action = IdentifiedUserAction::SET_PLUGIN;
-                $plugin = $tokenList->consumeName();
-                if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
+                $plugin = $tokenList->expectName();
+                if ($tokenList->hasKeyword(Keyword::AS)) {
                     $action = IdentifiedUserAction::SET_HASH;
-                    $password = $tokenList->consumeString();
+                    $password = $tokenList->expectString();
                 }
             }
-            if ($action !== IdentifiedUserAction::SET_HASH && $tokenList->mayConsumeKeyword(Keyword::BY)) {
+            if ($action !== IdentifiedUserAction::SET_HASH && $tokenList->hasKeyword(Keyword::BY)) {
                 $action = IdentifiedUserAction::SET_PASSWORD;
-                $password = $tokenList->consumeString();
-                if ($tokenList->mayConsumeKeyword(Keyword::REPLACE)) {
-                    $replace = $tokenList->consumeString();
+                $password = $tokenList->expectString();
+                if ($tokenList->hasKeyword(Keyword::REPLACE)) {
+                    $replace = $tokenList->expectString();
                 }
-                if ($tokenList->mayConsumeKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD)) {
+                if ($tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD)) {
                     $retainCurrent = true;
                 }
             }
 
             $action = $action ? IdentifiedUserAction::get($action) : null;
             $users[] = new IdentifiedUser($user, $action, $password, $plugin, $replace, $retainCurrent);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $users;
     }
@@ -203,18 +203,18 @@ class UserCommandsParser
     private function parseTlsOptions(TokenList $tokenList): ?array
     {
         $tlsOptions = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::REQUIRE)) {
-            if ($tokenList->mayConsumeKeyword(Keyword::NONE)) {
+        if ($tokenList->hasKeyword(Keyword::REQUIRE)) {
+            if ($tokenList->hasKeyword(Keyword::NONE)) {
                 $tlsOptions = [];
             } else {
                 $tlsOptions = [];
                 do {
                     /** @var UserTlsOptionType $type */
-                    $type = $tokenList->consumeKeywordEnum(UserTlsOptionType::class);
-                    $value = $tokenList->mayConsumeString();
+                    $type = $tokenList->expectKeywordEnum(UserTlsOptionType::class);
+                    $value = $tokenList->getString();
                     $tlsOptions[] = new UserTlsOption($type, $value);
 
-                    if (!$tokenList->mayConsumeKeyword(Keyword::AND)) {
+                    if (!$tokenList->hasKeyword(Keyword::AND)) {
                         break;
                     }
                 } while (true);
@@ -238,17 +238,17 @@ class UserCommandsParser
      */
     private function parseResourceOptions(TokenList $tokenList): ?array
     {
-        if (!$tokenList->mayConsumeKeyword(Keyword::WITH)) {
+        if (!$tokenList->hasKeyword(Keyword::WITH)) {
             return null;
         }
 
         $resourceOptions = [];
         /** @var UserResourceOptionType $type */
-        $type = $tokenList->consumeKeywordEnum(UserResourceOptionType::class);
+        $type = $tokenList->expectKeywordEnum(UserResourceOptionType::class);
         while ($type !== null) {
-            $value = $tokenList->consumeInt();
+            $value = $tokenList->expectInt();
             $resourceOptions[] = new UserResourceOption($type, $value);
-            $type = $tokenList->mayConsumeKeywordEnum(UserResourceOptionType::class);
+            $type = $tokenList->getKeywordEnum(UserResourceOptionType::class);
         }
 
         return $resourceOptions;
@@ -272,38 +272,38 @@ class UserCommandsParser
     private function parsePasswordLockOptions(TokenList $tokenList): ?array
     {
         $passwordLockOptions = null;
-        while ($keyword = $tokenList->mayConsumeAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT)) {
+        while ($keyword = $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT)) {
             if ($keyword === Keyword::ACCOUNT) {
-                $keyword = $tokenList->consumeAnyKeyword(Keyword::LOCK, Keyword::UNLOCK);
+                $keyword = $tokenList->expectAnyKeyword(Keyword::LOCK, Keyword::UNLOCK);
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT), $keyword);
                 continue;
             }
 
-            $keyword = $tokenList->consumeAnyKeyword(Keyword::EXPIRE, Keyword::HISTORY, Keyword::REUSE, Keyword::REQUIRE);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::EXPIRE, Keyword::HISTORY, Keyword::REUSE, Keyword::REQUIRE);
             if ($keyword === Keyword::EXPIRE) {
-                $value = $tokenList->mayConsumeAnyKeyword(Keyword::DEFAULT, Keyword::NEVER, Keyword::INTERVAL);
+                $value = $tokenList->getAnyKeyword(Keyword::DEFAULT, Keyword::NEVER, Keyword::INTERVAL);
                 if ($value === Keyword::INTERVAL) {
-                    $value = $tokenList->consumeInt();
-                    $tokenList->consumeKeyword(Keyword::DAY);
+                    $value = $tokenList->expectInt();
+                    $tokenList->expectKeyword(Keyword::DAY);
                 }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE), $value);
             } elseif ($keyword === Keyword::HISTORY) {
                 $value = Keyword::DEFAULT;
-                if (!$tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
-                    $value = $tokenList->consumeInt();
+                if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
+                    $value = $tokenList->expectInt();
                 }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_HISTORY), $value);
             } elseif ($keyword === Keyword::REUSE) {
-                $tokenList->consumeKeyword(Keyword::INTERVAL);
+                $tokenList->expectKeyword(Keyword::INTERVAL);
                 $value = Keyword::DEFAULT;
-                if (!$tokenList->mayConsumeKeyword(Keyword::DEFAULT)) {
-                    $value = $tokenList->consumeInt();
-                    $tokenList->consumeKeyword(Keyword::DAY);
+                if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
+                    $value = $tokenList->expectInt();
+                    $tokenList->expectKeyword(Keyword::DAY);
                 }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_REUSE_INTERVAL), $value);
             } else {
-                $tokenList->consumeKeyword(Keyword::CURRENT);
-                $value = $tokenList->mayConsumeAnyKeyword(Keyword::DEFAULT, Keyword::OPTIONAL);
+                $tokenList->expectKeyword(Keyword::CURRENT);
+                $value = $tokenList->getAnyKeyword(Keyword::DEFAULT, Keyword::OPTIONAL);
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_REQUIRE_CURRENT), $value);
             }
         }
@@ -316,8 +316,8 @@ class UserCommandsParser
      */
     public function parseCreateRole(TokenList $tokenList): CreateRoleCommand
     {
-        $tokenList->consumeKeywords(Keyword::CREATE, Keyword::ROLE);
-        $ifNotExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::CREATE, Keyword::ROLE);
+        $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
         $roles = $this->parseRolesList($tokenList);
         $tokenList->expectEnd();
 
@@ -329,8 +329,8 @@ class UserCommandsParser
      */
     public function parseDropRole(TokenList $tokenList): DropRoleCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::ROLE);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::ROLE);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         $roles = $this->parseRolesList($tokenList);
         $tokenList->expectEnd();
 
@@ -342,8 +342,8 @@ class UserCommandsParser
      */
     public function parseDropUser(TokenList $tokenList): DropUserCommand
     {
-        $tokenList->consumeKeywords(Keyword::DROP, Keyword::USER);
-        $ifExists = (bool) $tokenList->mayConsumeKeywords(Keyword::IF, Keyword::EXISTS);
+        $tokenList->expectKeywords(Keyword::DROP, Keyword::USER);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         $users = $this->parseUserList($tokenList);
         $tokenList->expectEnd();
 
@@ -382,38 +382,38 @@ class UserCommandsParser
      */
     public function parseGrant(TokenList $tokenList): Command
     {
-        $tokenList->consumeKeyword(Keyword::GRANT);
+        $tokenList->expectKeyword(Keyword::GRANT);
 
-        if ($tokenList->mayConsumeKeywords(Keyword::PROXY, Keyword::ON)) {
-            $proxy = new UserName(...$tokenList->consumeUserName());
-            $tokenList->consumeKeyword(Keyword::TO);
+        if ($tokenList->hasKeywords(Keyword::PROXY, Keyword::ON)) {
+            $proxy = new UserName(...$tokenList->expectUserName());
+            $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseUserList($tokenList);
-            $withGrantOption = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
+            $withGrantOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
             $tokenList->expectEnd();
 
             return new GrantProxyCommand($proxy, $users, $withGrantOption);
         } elseif (!$tokenList->seekKeyword(Keyword::ON, 1000)) {
             $roles = $this->parseRolesList($tokenList);
-            $tokenList->consumeKeyword(Keyword::TO);
+            $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseUserList($tokenList);
-            $withAdminOption = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::ADMIN, Keyword::OPTION);
+            $withAdminOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::ADMIN, Keyword::OPTION);
             $tokenList->expectEnd();
 
             return new GrantRoleCommand($roles, $users, $withAdminOption);
         } else {
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
-            $tokenList->consumeKeyword(Keyword::TO);
+            $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseIdentifiedUsers($tokenList);
             // 5.x only
             $tlsOptions = $this->parseTlsOptions($tokenList);
-            $withGrantOption = (bool) $tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
+            $withGrantOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
             // 5.x only
             $resourceOptions = $this->parseResourceOptions($tokenList);
             $as = $role = null;
-            if ($tokenList->mayConsumeKeyword(Keyword::AS)) {
-                $as = new UserName(...$tokenList->consumeUserName());
-                if ($tokenList->mayConsumeKeywords(Keyword::WITH, Keyword::ROLE)) {
+            if ($tokenList->hasKeyword(Keyword::AS)) {
+                $as = new UserName(...$tokenList->expectUserName());
+                if ($tokenList->hasKeywords(Keyword::WITH, Keyword::ROLE)) {
                     $role = $this->parseRoleSpecification($tokenList);
                 }
             }
@@ -433,26 +433,26 @@ class UserCommandsParser
         $privileges = [];
         do {
             $types = UserPrivilegeType::getFistAndSecondKeywords();
-            $type = $tokenList->consumeAnyKeyword(...array_keys($types));
+            $type = $tokenList->expectAnyKeyword(...array_keys($types));
             if ($type === Keyword::ALL) {
-                $tokenList->mayConsumeKeyword(Keyword::PRIVILEGES);
+                $tokenList->hasKeyword(Keyword::PRIVILEGES);
                 $next = null;
             } elseif ($type === Keyword::CREATE) {
                 /** @var string[] $next */
                 $next = $types[$type];
-                $next = $tokenList->mayConsumeAnyKeyword(...$next);
+                $next = $tokenList->getAnyKeyword(...$next);
                 if ($next === Keyword::TEMPORARY) {
-                    $tokenList->consumeKeyword(Keyword::TABLES);
+                    $tokenList->expectKeyword(Keyword::TABLES);
                     $next .= ' ' . Keyword::TABLES;
                 }
             } elseif ($type === Keyword::ALTER) {
                 /** @var string[] $next */
                 $next = $types[$type];
-                $next = $tokenList->mayConsumeAnyKeyword(...$next);
+                $next = $tokenList->getAnyKeyword(...$next);
             } else {
                 $next = $types[$type];
                 if ($next !== null) {
-                    $next = $tokenList->consumeAnyKeyword(...$next);
+                    $next = $tokenList->expectAnyKeyword(...$next);
                 }
             }
             if ($next !== null) {
@@ -460,15 +460,15 @@ class UserCommandsParser
             }
 
             $columns = null;
-            if ($tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                 $columns = [];
                 do {
-                    $columns[] = $tokenList->consumeName();
-                } while ($tokenList->mayConsumeComma());
-                $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+                    $columns[] = $tokenList->expectName();
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             $privileges[] = new UserPrivilege(UserPrivilegeType::get($type), $columns);
-        } while ($tokenList->mayConsumeComma());
+        } while ($tokenList->hasComma());
 
         return $privileges;
     }
@@ -493,25 +493,25 @@ class UserCommandsParser
      */
     private function parseResource(TokenList $tokenList): UserPrivilegeResource
     {
-        $tokenList->consumeKeyword(Keyword::ON);
+        $tokenList->expectKeyword(Keyword::ON);
         /** @var UserPrivilegeResourceType|null $resourceType */
-        $resourceType = $tokenList->mayConsumeKeywordEnum(UserPrivilegeResourceType::class);
-        if ($tokenList->mayConsumeOperator(Operator::MULTIPLY)) {
+        $resourceType = $tokenList->getKeywordEnum(UserPrivilegeResourceType::class);
+        if ($tokenList->getOperator(Operator::MULTIPLY)) {
             $object = false;
-            if ($tokenList->mayConsume(TokenType::DOT)) {
-                $tokenList->consumeOperator(Operator::MULTIPLY);
+            if ($tokenList->has(TokenType::DOT)) {
+                $tokenList->expectOperator(Operator::MULTIPLY);
                 $object = true;
             }
 
             return new UserPrivilegeResource(UserPrivilegeResource::ALL, $object ? UserPrivilegeResource::ALL : null, $resourceType);
         } else {
-            $name = $tokenList->consumeName();
-            if ($tokenList->mayConsume(TokenType::DOT)) {
+            $name = $tokenList->expectName();
+            if ($tokenList->has(TokenType::DOT)) {
                 $schema = $name;
-                if ($tokenList->mayConsumeOperator(Operator::MULTIPLY)) {
+                if ($tokenList->getOperator(Operator::MULTIPLY)) {
                     return new UserPrivilegeResource($schema, UserPrivilegeResource::ALL, $resourceType);
                 } else {
-                    $name = $tokenList->consumeName();
+                    $name = $tokenList->expectName();
 
                     return new UserPrivilegeResource($schema, $name, $resourceType);
                 }
@@ -527,15 +527,15 @@ class UserCommandsParser
      */
     public function parseRenameUser(TokenList $tokenList): RenameUserCommand
     {
-        $tokenList->consumeKeywords(Keyword::RENAME, Keyword::USER);
+        $tokenList->expectKeywords(Keyword::RENAME, Keyword::USER);
 
         $users = [];
         $newUsers = [];
         do {
-            $users[] = new UserName(...$tokenList->consumeUserName());
-            $tokenList->consumeKeyword(Keyword::TO);
-            $newUsers[] = new UserName(...$tokenList->consumeUserName());
-        } while ($tokenList->mayConsumeComma());
+            $users[] = new UserName(...$tokenList->expectUserName());
+            $tokenList->expectKeyword(Keyword::TO);
+            $newUsers[] = new UserName(...$tokenList->expectUserName());
+        } while ($tokenList->hasComma());
 
         return new RenameUserCommand($users, $newUsers);
     }
@@ -558,20 +558,20 @@ class UserCommandsParser
      */
     public function parseRevoke(TokenList $tokenList): Command
     {
-        $tokenList->consumeKeyword(Keyword::REVOKE);
+        $tokenList->expectKeyword(Keyword::REVOKE);
 
-        if ($tokenList->mayConsumeKeyword(Keyword::ALL)) {
-            $tokenList->mayConsumeKeyword(Keyword::PRIVILEGES);
-            $tokenList->consume(TokenType::COMMA);
-            $tokenList->consumeKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
+        if ($tokenList->hasKeyword(Keyword::ALL)) {
+            $tokenList->hasKeyword(Keyword::PRIVILEGES);
+            $tokenList->expect(TokenType::COMMA);
+            $tokenList->expectKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
             $users = $this->parseUserList($tokenList);
             $tokenList->expectEnd();
 
             return new RevokeAllCommand($users);
-        } elseif ($tokenList->mayConsumeKeywords(Keyword::PROXY)) {
-            $tokenList->consumeKeyword(Keyword::ON);
-            $proxy = new UserName(...$tokenList->consumeUserName());
-            $tokenList->consumeKeyword(Keyword::FROM);
+        } elseif ($tokenList->hasKeywords(Keyword::PROXY)) {
+            $tokenList->expectKeyword(Keyword::ON);
+            $proxy = new UserName(...$tokenList->expectUserName());
+            $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUserList($tokenList);
             $tokenList->expectEnd();
 
@@ -579,14 +579,14 @@ class UserCommandsParser
         } elseif ($tokenList->seekKeyword(Keyword::ON, 1000)) {
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
-            $tokenList->consumeKeyword(Keyword::FROM);
+            $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUserList($tokenList);
             $tokenList->expectEnd();
 
             return new RevokeCommand($privileges, $resource, $users);
         } else {
             $roles = $this->parseRolesList($tokenList);
-            $tokenList->consumeKeyword(Keyword::FROM);
+            $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUserList($tokenList);
             $tokenList->expectEnd();
 
@@ -601,15 +601,15 @@ class UserCommandsParser
      */
     public function parseSetDefaultRole(TokenList $tokenList): SetDefaultRoleCommand
     {
-        $tokenList->consumeKeywords(Keyword::SET, Keyword::DEFAULT, Keyword::ROLE);
+        $tokenList->expectKeywords(Keyword::SET, Keyword::DEFAULT, Keyword::ROLE);
         /** @var UserDefaultRolesSpecification|null $roles */
-        $roles = $tokenList->mayConsumeKeywordEnum(UserDefaultRolesSpecification::class);
+        $roles = $tokenList->getKeywordEnum(UserDefaultRolesSpecification::class);
         $rolesList = null;
         if ($roles === null) {
             $rolesList = $this->parseRolesList($tokenList);
         }
 
-        $tokenList->consumeKeyword(Keyword::TO);
+        $tokenList->expectKeyword(Keyword::TO);
         $users = $this->parseUserList($tokenList);
         $tokenList->expectEnd();
 
@@ -626,19 +626,19 @@ class UserCommandsParser
      */
     public function parseSetPassword(TokenList $tokenList): SetPasswordCommand
     {
-        $tokenList->consumeKeywords(Keyword::SET, Keyword::PASSWORD);
+        $tokenList->expectKeywords(Keyword::SET, Keyword::PASSWORD);
         $user = null;
-        if ($tokenList->mayConsumeKeyword(Keyword::FOR)) {
-            $user = new UserName(...$tokenList->consumeUserName());
+        if ($tokenList->hasKeyword(Keyword::FOR)) {
+            $user = new UserName(...$tokenList->expectUserName());
         }
-        $tokenList->consumeOperator(Operator::EQUAL);
-        $function = $tokenList->mayConsumeKeyword(Keyword::PASSWORD);
+        $tokenList->expectOperator(Operator::EQUAL);
+        $function = $tokenList->hasKeyword(Keyword::PASSWORD);
         if ($function !== null) {
-            $tokenList->consume(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         }
-        $password = $tokenList->consumeString();
+        $password = $tokenList->expectString();
         if ($function !== null) {
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
         $tokenList->expectEnd();
 
@@ -656,7 +656,7 @@ class UserCommandsParser
      */
     public function parseSetRole(TokenList $tokenList): SetRoleCommand
     {
-        $tokenList->consumeKeywords(Keyword::SET, Keyword::ROLE);
+        $tokenList->expectKeywords(Keyword::SET, Keyword::ROLE);
         $role = $this->parseRoleSpecification($tokenList);
         $tokenList->expectEnd();
 
@@ -665,17 +665,17 @@ class UserCommandsParser
 
     private function parseRoleSpecification(TokenList $tokenList): RolesSpecification
     {
-        $keyword = $tokenList->mayConsumeAnyKeyword(Keyword::DEFAULT, Keyword::NONE, Keyword::ALL);
-        $except = null;
+        $keyword = $tokenList->getAnyKeyword(Keyword::DEFAULT, Keyword::NONE, Keyword::ALL);
+        $except = false;
         if ($keyword === Keyword::ALL) {
-            $except = $tokenList->mayConsumeKeyword(Keyword::EXCEPT);
+            $except = $tokenList->hasKeyword(Keyword::EXCEPT);
         }
-        $type = $keyword
+        $type = $keyword !== null
             ? ($except ? RolesSpecificationType::ALL_EXCEPT : $keyword)
             : RolesSpecificationType::LIST;
 
         $roles = null;
-        if ($except !== null || $keyword === null) {
+        if ($except !== false || $keyword === null) {
             $roles = $this->parseRolesList($tokenList);
         }
 
@@ -689,8 +689,8 @@ class UserCommandsParser
     {
         $users = [];
         do {
-            $users[] = new UserName(...$tokenList->consumeUserName());
-        } while ($tokenList->mayConsumeComma());
+            $users[] = new UserName(...$tokenList->expectUserName());
+        } while ($tokenList->hasComma());
 
         return $users;
     }
@@ -702,8 +702,8 @@ class UserCommandsParser
     {
         $roles = [];
         do {
-            $roles[] = $tokenList->consumeName();
-        } while ($tokenList->mayConsumeComma());
+            $roles[] = $tokenList->expectName();
+        } while ($tokenList->hasComma());
 
         return $roles;
     }
