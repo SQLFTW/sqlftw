@@ -168,7 +168,7 @@ class DataType implements SqlSerializable
     {
         $result = $this->type->serialize($formatter);
 
-        $params = $this->size ?: $this->values;
+        $params = $this->size ?? $this->values;
 
         if (is_array($params)) {
             if ($this->type->hasLength()) {

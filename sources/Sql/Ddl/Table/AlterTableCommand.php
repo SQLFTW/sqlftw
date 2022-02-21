@@ -18,7 +18,9 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\QualifiedName;
+use function assert;
 use function is_array;
+use function is_bool;
 use function rtrim;
 use function trim;
 
@@ -50,7 +52,7 @@ class AlterTableCommand implements DdlTableCommand
     ) {
         Check::types($actions, [AlterActionsList::class, Type::PHP_ARRAY]);
         Check::types($tableOptions, [TableOptionsList::class, Type::PHP_ARRAY, Type::NULL]);
-        if (is_array($alterOptions)) {
+        if ($alterOptions !== []) {
             foreach ($alterOptions as $option => $value) {
                 AlterTableOption::get($option);
             }
@@ -114,6 +116,7 @@ class AlterTableCommand implements DdlTableCommand
                 if ($option === AlterTableOption::FORCE) {
                     $result .= "\n" . $formatter->indent . 'FORCE, ';
                 } elseif ($option === AlterTableOption::VALIDATION) {
+                    assert(is_bool($value));
                     $result .= "\n" . $formatter->indent . ($value ? 'WITH' : 'WITHOUT') . ' VALIDATION, ';
                 } else {
                     $result .= "\n" . $formatter->indent . $option . ' ' . $formatter->formatValue($value) . ',';

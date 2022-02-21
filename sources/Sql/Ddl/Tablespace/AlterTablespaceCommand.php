@@ -12,6 +12,8 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Keyword;
+use function assert;
+use function is_bool;
 
 class AlterTablespaceCommand implements TablespaceCommand
 {
@@ -66,10 +68,12 @@ class AlterTablespaceCommand implements TablespaceCommand
 
         foreach ($this->options as $name => $value) {
             if ($name === TablespaceOption::WAIT) {
+                assert(is_bool($value));
                 $result .= $value ? ' ' . $name : '';
             } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::RENAME_TO) {
                 $result .= ' ' . $name . ' ' . $formatter->formatName($value);
             } elseif ($name === TablespaceOption::ENCRYPTION) {
+                assert(is_bool($value));
                 $result .= ' ' . $name . ' ' . $formatter->formatString($value ? 'Y' : 'N');
             } elseif ($name === TablespaceOption::SET) {
                 $result .= ' ' . $name . ' ' . $value;

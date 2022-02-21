@@ -122,7 +122,7 @@ class ShowCommandsParser
                 $like = $where = null;
                 if ($tokenList->hasKeyword(Keyword::LIKE)) {
                     $like = $tokenList->expectString();
-                } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
+                } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -133,7 +133,7 @@ class ShowCommandsParser
                 $like = $where = null;
                 if ($tokenList->hasKeyword(Keyword::LIKE)) {
                     $like = $tokenList->expectString();
-                } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
+                } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -209,7 +209,7 @@ class ShowCommandsParser
                 $like = $where = null;
                 if ($tokenList->hasKeyword(Keyword::LIKE)) {
                     $like = $tokenList->expectString();
-                } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
+                } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
                 $tokenList->expectEnd();
@@ -272,7 +272,7 @@ class ShowCommandsParser
                     $like = $where = null;
                     if ($tokenList->hasKeyword(Keyword::LIKE)) {
                         $like = $tokenList->expectString();
-                    } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
+                    } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
                     $tokenList->expectEnd();
@@ -295,7 +295,7 @@ class ShowCommandsParser
                 }
                 $tokenList->expectEnd();
 
-                return new ShowGrantsCommand($forUser, $usingRoles ?: null);
+                return new ShowGrantsCommand($forUser, $usingRoles !== [] ? $usingRoles : null);
             case Keyword::INDEX:
             case Keyword::INDEXES:
             case Keyword::KEYS:
@@ -351,7 +351,7 @@ class ShowCommandsParser
                     $like = $where = null;
                     if ($tokenList->hasKeyword(Keyword::LIKE)) {
                         $like = $tokenList->expectString();
-                    } elseif ($tokenList->expectKeyword(Keyword::WHERE)) {
+                    } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
                     $tokenList->expectEnd();
@@ -386,7 +386,7 @@ class ShowCommandsParser
 
                 $types = [];
                 $type = $tokenList->getAnyKeyword(...array_keys($keywords));
-                if ($type) {
+                if ($type !== null) {
                     $types[] = ShowProfileType::get($continue($type));
                 }
                 while ($tokenList->hasComma()) {
@@ -517,7 +517,7 @@ class ShowCommandsParser
                     }
                     $tokenList->expectEnd();
 
-                    return new ShowStatusCommand($scope ? Scope::get($scope) : null, $like, $where);
+                    return new ShowStatusCommand($scope !== null ? Scope::get($scope) : null, $like, $where);
                 } elseif ($tokenList->seekKeyword(Keyword::VARIABLES, 2)) {
                     // SHOW [GLOBAL | SESSION] VARIABLES [LIKE 'pattern' | WHERE expr]
                     $scope = $tokenList->getAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
@@ -530,7 +530,7 @@ class ShowCommandsParser
                     }
                     $tokenList->expectEnd();
 
-                    return new ShowVariablesCommand($scope ? Scope::get($scope) : null, $like, $where);
+                    return new ShowVariablesCommand($scope !== null ? Scope::get($scope) : null, $like, $where);
                 } elseif ($tokenList->seekKeyword(Keyword::COLUMNS, 2)) {
                     // SHOW [FULL] COLUMNS {FROM | IN} tbl_name [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                     $full = $tokenList->hasKeyword(Keyword::FULL);

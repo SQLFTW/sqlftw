@@ -141,11 +141,11 @@ class CreateTableCommand implements AnyCreateTableCommand
             $result .= ' ' . $this->options->serialize($formatter, ', ', ' ');
         }
 
-        if ($this->partitioning) {
+        if ($this->partitioning !== null) {
             $result .= $this->partitioning->serialize($formatter);
         }
 
-        if ($this->duplicateOption) {
+        if ($this->duplicateOption !== null) {
             $result .= "\n" . $this->duplicateOption->serialize($formatter);
         }
 

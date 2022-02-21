@@ -44,7 +44,7 @@ class ShowSchemasCommand implements ShowCommand
         $result = 'SHOW DATABASES';
         if ($this->like !== null) {
             $result .= ' LIKE ' . $formatter->formatString($this->like);
-        } elseif ($this->where) {
+        } elseif ($this->where !== null) {
             $result .= ' WHERE ' . $this->where->serialize($formatter);
         }
 

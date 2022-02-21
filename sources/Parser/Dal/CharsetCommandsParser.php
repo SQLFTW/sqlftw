@@ -50,9 +50,9 @@ class CharsetCommandsParser
     {
         $tokenList->expectKeywords(Keyword::SET, Keyword::NAMES);
         $charset = $collation = null;
-        if ($tokenList->hasKeyword(Keyword::DEFAULT) === null) {
+        if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
             $charset = Charset::get($tokenList->expectNameOrString());
-            if ($tokenList->hasKeyword(Keyword::COLLATE) !== null) {
+            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
                 $collation = Collation::get($tokenList->expectNameOrString());
             }
         }

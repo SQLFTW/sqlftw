@@ -50,15 +50,15 @@ class ShowBinlogEventsCommand implements ShowCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW BINLOG EVENTS';
-        if ($this->logName) {
+        if ($this->logName !== null) {
             $result .= ' IN ' . $formatter->formatString($this->logName);
         }
-        if ($this->offset && !$this->limit) {
+        if ($this->offset !== null && $this->limit === null) {
             $result .= ' FROM ' . $this->offset;
         }
-        if ($this->limit) {
+        if ($this->limit !== null) {
             $result .= ' LIMIT ';
-            if ($this->offset) {
+            if ($this->offset !== null) {
                 $result .= $this->offset . ', ';
             }
             $result .= $this->limit;

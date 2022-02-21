@@ -43,7 +43,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem
     ) {
         Check::oneOf($conditionItems, $statementItems);
 
-        if ($conditionNumber !== null ^ $conditionItems === null) {
+        if ($conditionNumber !== null ^ $conditionItems === null) { // @phpstan-ignore-line XOR needed
             throw new InvalidDefinitionException('When conditionNumber is set, conditionItems must be set.');
         }
 

@@ -280,7 +280,7 @@ class TableCommandsParser
                     break;
                 case Keyword::ALGORITHM:
                     // ALGORITHM [=] {DEFAULT|INPLACE|COPY}
-                    $tokenList->getOperator(Operator::EQUAL);
+                    $tokenList->passEqual();
                     $alterOptions[Keyword::ALGORITHM] = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
                     break;
                 case Keyword::ALTER:
@@ -464,7 +464,7 @@ class TableCommandsParser
                     break;
                 case Keyword::LOCK:
                     // LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
-                    $tokenList->getOperator(Operator::EQUAL);
+                    $tokenList->passEqual();
                     $alterOptions[Keyword::LOCK] = $tokenList->expectKeywordEnum(AlterTableLock::class);
                     break;
                 case Keyword::MODIFY:
@@ -981,127 +981,127 @@ class TableCommandsParser
         $keyword = $tokenList->expect(TokenType::KEYWORD)->value;
         switch ($keyword) {
             case Keyword::AUTO_INCREMENT:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::AUTO_INCREMENT, $tokenList->expectInt()];
             case Keyword::AVG_ROW_LENGTH:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::AVG_ROW_LENGTH, $tokenList->expectInt()];
             case Keyword::CHARACTER:
                 $tokenList->expectKeyword(Keyword::SET);
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::CHARACTER_SET, Charset::get($tokenList->expectString())];
             case Keyword::CHECKSUM:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::CHECKSUM, $tokenList->expectBool()];
             case Keyword::COLLATE:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::COLLATE, $tokenList->expectString()];
             case Keyword::COMMENT:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::COMMENT, $tokenList->expectString()];
             case Keyword::COMPRESSION:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::COMPRESSION, TableCompression::get($tokenList->expectString())];
             case Keyword::CONNECTION:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::CONNECTION, $tokenList->expectString()];
             case Keyword::DATA:
                 $tokenList->expectKeyword(Keyword::DIRECTORY);
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::DATA_DIRECTORY, $tokenList->expectString()];
             case Keyword::DEFAULT:
                 if ($tokenList->hasKeyword(Keyword::CHARACTER)) {
                     $tokenList->expectKeyword(Keyword::SET);
-                    $tokenList->getOperator(Operator::EQUAL);
+                    $tokenList->passEqual();
 
                     return [TableOption::CHARACTER_SET, Charset::get($tokenList->expectString())];
                 } else {
                     $tokenList->expectKeyword(Keyword::COLLATE);
-                    $tokenList->getOperator(Operator::EQUAL);
+                    $tokenList->passEqual();
 
                     return [TableOption::COLLATE, $tokenList->expectString()];
                 }
             case Keyword::DELAY_KEY_WRITE:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::DELAY_KEY_WRITE, $tokenList->expectBool()];
             case Keyword::ENCRYPTION:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::ENCRYPTION, $tokenList->expectBool()];
             case Keyword::ENGINE:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::ENGINE, StorageEngine::get($tokenList->expectNameOrString())];
             case Keyword::INDEX:
                 $tokenList->expectKeyword(Keyword::DIRECTORY);
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::INDEX_DIRECTORY, $tokenList->expectString()];
             case Keyword::INSERT_METHOD:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::INSERT_METHOD, $tokenList->expectKeywordEnum(TableInsertMethod::class)];
             case Keyword::KEY_BLOCK_SIZE:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::KEY_BLOCK_SIZE, $tokenList->expectInt()];
             case Keyword::MAX_ROWS:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::MAX_ROWS, $tokenList->expectInt()];
             case Keyword::MIN_ROWS:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::MIN_ROWS, $tokenList->expectInt()];
             case Keyword::PACK_KEYS:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::PACK_KEYS, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
                     return [TableOption::PACK_KEYS, ThreeStateValue::get((string) $tokenList->expectInt())];
                 }
             case Keyword::PASSWORD:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::PASSWORD, $tokenList->expectString()];
             case Keyword::ROW_FORMAT:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::ROW_FORMAT, $tokenList->expectKeywordEnum(TableRowFormat::class)];
             case Keyword::STATS_AUTO_RECALC:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
                     return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get((string) $tokenList->expectInt())];
                 }
             case Keyword::STATS_PERSISTENT:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_PERSISTENT, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
                     return [TableOption::STATS_PERSISTENT, ThreeStateValue::get((string) $tokenList->expectInt())];
                 }
             case Keyword::STATS_SAMPLE_PAGES:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::STATS_SAMPLE_PAGES, $tokenList->expectInt()];
             case Keyword::TABLESPACE:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
 
                 return [TableOption::TABLESPACE, $tokenList->expectNameOrString()];
             case Keyword::UNION:
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
                 $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $tables = [];
                 do {
@@ -1254,7 +1254,7 @@ class TableCommandsParser
                     $lessThan = PartitionDefinition::MAX_VALUE;
                 } else {
                     $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-                    if ($tokenList->seek(TokenType::COMMA, 2)) {
+                    if ($tokenList->seek(TokenType::COMMA, 2) !== null) {
                         $lessThan = [];
                         do {
                             $lessThan[] = $this->expressionParser->parseLiteralValue($tokenList);
@@ -1313,38 +1313,38 @@ class TableCommandsParser
 
         if ($tokenList->hasKeyword(Keyword::STORAGE)) {
             $tokenList->expectKeyword(Keyword::ENGINE);
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[PartitionOption::ENGINE] = $tokenList->expectNameOrString();
         } elseif ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[PartitionOption::ENGINE] = $tokenList->expectNameOrString();
         }
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[PartitionOption::COMMENT] = $tokenList->expectString();
         }
         if ($tokenList->hasKeywords(Keyword::DATA, Keyword::DIRECTORY)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[PartitionOption::DATA_DIRECTORY] = $tokenList->expectString();
         }
         if ($tokenList->hasKeywords(Keyword::INDEX, Keyword::DIRECTORY)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[PartitionOption::INDEX_DIRECTORY] = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::MAX_ROWS)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[PartitionOption::MAX_ROWS] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::MIN_ROWS)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[PartitionOption::MIN_ROWS] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::TABLESPACE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[PartitionOption::TABLESPACE] = $tokenList->expectString();
         }
 
-        return $options ?: null;
+        return $options !== [] ? $options : null;
     }
 
     /**

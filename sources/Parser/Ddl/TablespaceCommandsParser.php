@@ -15,7 +15,6 @@ use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\CreateTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\DropTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\TablespaceOption;
-use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 
 class TablespaceCommandsParser
@@ -47,10 +46,10 @@ class TablespaceCommandsParser
             $options[$keyword . ' ' . Keyword::DATAFILE] = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectInt();
         }
-        if ($tokenList->hasKeyword(Keyword::WAIT) !== null) {
+        if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $options[TablespaceOption::WAIT] = true;
         }
         if ($tokenList->hasKeywords(Keyword::RENAME, Keyword::TO)) {
@@ -60,11 +59,11 @@ class TablespaceCommandsParser
             $options[TablespaceOption::SET] = $tokenList->expectAnyKeyword(Keyword::ACTIVE, Keyword::INACTIVE);
         }
         if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
         }
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
         $tokenList->expectEnd();
@@ -100,45 +99,45 @@ class TablespaceCommandsParser
             $options[TablespaceOption::ADD_DATAFILE] = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::FILE_BLOCK_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
         }
         if ($tokenList->hasKeywords(Keyword::USE, Keyword::LOGFILE, Keyword::GROUP)) {
             $options[TablespaceOption::USE_LOGFILE_GROUP] = $tokenList->expectName();
         }
         if ($tokenList->hasKeyword(Keyword::EXTENT_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::EXTENT_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::AUTOEXTEND_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::MAX_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::MAX_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::NODEGROUP] = $tokenList->expectInt();
         }
-        if ($tokenList->hasKeyword(Keyword::WAIT) !== null) {
+        if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $options[TablespaceOption::WAIT] = true;
         }
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::COMMENT] = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
         $tokenList->expectEnd();
@@ -159,7 +158,7 @@ class TablespaceCommandsParser
         $name = $tokenList->expectName();
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $engine = $tokenList->expectName();
         }
         $tokenList->expectEnd();

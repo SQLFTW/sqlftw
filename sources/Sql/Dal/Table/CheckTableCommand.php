@@ -53,7 +53,7 @@ class CheckTableCommand implements DalTablesCommand
     {
         $result = 'CHECK TABLE ' . $formatter->formatSerializablesList($this->names);
 
-        if ($this->option) {
+        if ($this->option !== null) {
             $result .= ' ' . $this->option->serialize($formatter);
         }
 

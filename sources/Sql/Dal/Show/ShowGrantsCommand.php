@@ -55,7 +55,7 @@ class ShowGrantsCommand implements ShowCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW GRANTS';
-        if ($this->user) {
+        if ($this->user !== null) {
             $result .= ' FOR ' . $this->user->serialize($formatter);
             if ($this->roles !== null) {
                 $result .= ' USING ' . $formatter->formatStringList($this->roles);

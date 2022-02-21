@@ -16,7 +16,6 @@ use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
-use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 
 class SchemaCommandsParser
@@ -74,11 +73,11 @@ class SchemaCommandsParser
         $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
         if ($token === Keyword::CHARACTER) {
             $tokenList->expectKeyword(Keyword::SET);
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             /** @var Charset $charset */
             $charset = $tokenList->expectNameOrStringEnum(Charset::class);
         } else {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             /** @var Collation $collation */
             $collation = $tokenList->expectNameOrStringEnum(Collation::class);
         }
@@ -88,14 +87,14 @@ class SchemaCommandsParser
         } else {
             $token = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
         }
-        if ($token) {
+        if ($token !== null) {
             if ($token === Keyword::CHARACTER) {
                 $tokenList->expectKeyword(Keyword::SET);
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
                 /** @var Charset $charset */
                 $charset = $tokenList->expectNameOrStringEnum(Charset::class);
             } else {
-                $tokenList->getOperator(Operator::EQUAL);
+                $tokenList->passEqual();
                 /** @var Collation $collation */
                 $collation = $tokenList->expectNameOrStringEnum(Collation::class);
             }

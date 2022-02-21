@@ -79,7 +79,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     public function duplicateWithVisibility(bool $visible): self
     {
         $self = clone $this;
-        $self->options = $this->options
+        $self->options = $this->options !== null
             ? $this->options->duplicateWithVisibility($visible)
             : new IndexOptions(null, null, null, null, $visible);
 

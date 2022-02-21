@@ -14,7 +14,6 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\LogfileGroup\AlterLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\CreateLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\DropLogfileGroupCommand;
-use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 
 /**
@@ -40,13 +39,13 @@ class LogfileGroupCommandsParser
 
         $initialSize = null;
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $initialSize = $tokenList->expectInt();
         }
         $wait = $tokenList->hasKeyword(Keyword::WAIT);
 
         $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->getOperator(Operator::EQUAL);
+        $tokenList->passEqual();
         $engine = $tokenList->expectNameOrString();
         $tokenList->expectEnd();
 
@@ -73,29 +72,29 @@ class LogfileGroupCommandsParser
 
         $initialSize = $undoBufferSize = $redoBufferSize = $nodeGroup = $comment = null;
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $initialSize = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::UNDO_BUFFER_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $undoBufferSize = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::REDO_BUFFER_SIZE)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $redoBufferSize = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $nodeGroup = $tokenList->expectInt();
         }
         $wait = $tokenList->hasKeyword(Keyword::WAIT);
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $comment = $tokenList->expectString();
         }
 
         $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->getOperator(Operator::EQUAL);
+        $tokenList->passEqual();
         $engine = $tokenList->expectNameOrString();
         $tokenList->expectEnd();
 
@@ -111,7 +110,7 @@ class LogfileGroupCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::LOGFILE, Keyword::GROUP);
         $name = $tokenList->expectName();
         $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->getOperator(Operator::EQUAL);
+        $tokenList->passEqual();
         $engine = $tokenList->expectNameOrString();
         $tokenList->expectEnd();
 

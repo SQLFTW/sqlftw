@@ -122,7 +122,7 @@ class JoinParser
             if ($tokenList->hasKeyword(Keyword::NATURAL)) {
                 // NATURAL JOIN
                 $side = null;
-                if ($tokenList->hasKeyword(Keyword::INNER) === null) {
+                if (!$tokenList->hasKeyword(Keyword::INNER)) {
                     /** @var JoinSide|null $side */
                     $side = $tokenList->getKeywordEnum(JoinSide::class);
                     if ($side !== null) {

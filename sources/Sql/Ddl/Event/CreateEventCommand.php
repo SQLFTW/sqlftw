@@ -73,12 +73,10 @@ class CreateEventCommand implements EventCommand
         if ($comment !== null) {
             $result .= ' COMMENT ' . $formatter->formatString($comment);
         }
-        $body = $this->event->getBody();
-        if ($body !== null) {
-            $result .= ' ' . $body->serialize($formatter);
-        }
 
-        return $result;
+        $body = $this->event->getBody();
+
+        return $result . ' ' . $body->serialize($formatter);
     }
 
 }

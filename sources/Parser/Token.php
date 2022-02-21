@@ -53,7 +53,7 @@ final class Token
         // debug info
         $types = [];
         foreach (TokenType::getAllowedValues() as $name => $val) {
-            if ($val & $type) {
+            if (($val & $type) !== 0) {
                 $types[] = $name;
             }
         }

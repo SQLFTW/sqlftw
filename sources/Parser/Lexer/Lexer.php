@@ -12,6 +12,7 @@
 
 namespace SqlFtw\Parser\Lexer;
 
+use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Parser\ParserException;
@@ -26,7 +27,6 @@ use function array_values;
 use function implode;
 use function ltrim;
 use function ord;
-use function preg_match;
 use function rtrim;
 use function str_replace;
 use function strlen;
@@ -217,7 +217,7 @@ class Lexer
                     break;
                 case '*':
                     // /*!12345 ... */
-                    if ($position < $length && $condition && $string[$position] === '/') {
+                    if ($position < $length && $condition !== null && $string[$position] === '/') {
                         $condition = null;
                         $position++;
                         $column++;
@@ -251,7 +251,7 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL | T::PLACEHOLDER, $start, $char, null, $condition);
                     break;
                 case '@':
-                    if ($previous !== null && ($previous->type & (T::STRING | T::NAME))) {
+                    if ($previous !== null && ($previous->type & (T::STRING | T::NAME)) !== 0) {
                         // user @ host
                         yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $char, null, $condition);
                         break;
@@ -513,7 +513,7 @@ class Lexer
                     $uuidCheck = true;
                     $value = substr($string, $position - 1, 36);
                     // UUID
-                    if (strlen($value) === 36 && preg_match(self::UUID_REGEXP, $value)) {
+                    if (strlen($value) === 36 && Re::match($value, self::UUID_REGEXP) !== null) {
                         $position += 35;
                         $column += 35;
                         yield $previous = new Token(T::VALUE | T::UUID, $start, $value, null, $condition);
@@ -566,7 +566,7 @@ class Lexer
                     if (!$uuidCheck) {
                         $value = substr($string, $position - 1, 36);
                         // UUID
-                        if (strlen($value) === 36 && preg_match(self::UUID_REGEXP, $value)) {
+                        if (strlen($value) === 36 && Re::match($value, self::UUID_REGEXP) !== null) {
                             $position += 35;
                             $column += 35;
                             yield $previous = new Token(T::VALUE | T::UUID, $start, $value, null, $condition);

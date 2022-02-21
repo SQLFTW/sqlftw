@@ -46,8 +46,9 @@ class SetNamesCommand implements CharsetCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SET NAMES ' . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT')
-            . ($this->collation ? ' COLLATE ' . $this->collation->serialize($formatter) : '');
+        return 'SET NAMES '
+            . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT')
+            . ($this->collation !== null ? ' COLLATE ' . $this->collation->serialize($formatter) : '');
     }
 
 }

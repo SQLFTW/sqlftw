@@ -1,3 +1,5 @@
+includes:
+    - ../../vendor/phpstan/phpstan-strict-rules/rules.neon
 
 parameters:
     level: 8
@@ -17,19 +19,8 @@ parameters:
         - '~Property SqlFtw\\Sql\\Ddl\\DataType::\$(size|values) \(array<(int|string)>(\|int)?\|null\) does not accept~'
         - '~Parameter #1 \$strings of method SqlFtw\\Formatter\\Formatter::formatStringList\(\) expects array<string>, array<int\|string> given.~'
 
-        # end() on non-empty array
-        #- '~Method .*Reflection::getLastCommand\(\) should return .*Command but returns .*Command\|false~'
-
-        # bullshit
-        - '~Method SqlFtw\\Parser\\Dal\\UserCommandsParser::parseResourceOptions\(\) never returns array<SqlFtw\\Sql\\Dal\\User\\UserResourceOption> so it can be removed from the return type~'
 
     earlyTerminatingMethodCalls:
         SqlFtw\Parser\TokenList:
             - expected
             - expectedAnyKeyword
-
-services:
-	-
-		class: SqlFtw\PhpStan\TokenListDynamicReturnTypeExtension
-		tags:
-			- phpstan.broker.dynamicMethodReturnTypeExtension

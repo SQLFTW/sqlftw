@@ -31,7 +31,7 @@ class FileFormatParser
      */
     public function parseFormat(TokenList $tokenList): ?FileFormat
     {
-        $format = $fieldsTerminatedBy = $fieldsEnclosedBy = $fieldsEscapedBy = null;
+        $fieldsTerminatedBy = $fieldsEnclosedBy = $fieldsEscapedBy = null;
         $optionallyEnclosed = false;
         if ($tokenList->hasAnyKeyword(Keyword::FIELDS, Keyword::COLUMNS)) {
             if ($tokenList->hasKeywords(Keyword::TERMINATED, Keyword::BY)) {
@@ -54,8 +54,9 @@ class FileFormatParser
                 $linesTerminatedBy = $tokenList->expectString();
             }
         }
-        if ($fieldsTerminatedBy ?? $fieldsEnclosedBy ?? $fieldsEscapedBy ?? $linesStaringBy ?? $linesTerminatedBy) {
-            $format = new FileFormat(
+
+        if ($fieldsTerminatedBy !== null || $fieldsEnclosedBy !== null || $fieldsEscapedBy !== null || $linesStaringBy !== null || $linesTerminatedBy !== null) {
+            return new FileFormat(
                 $fieldsTerminatedBy,
                 $fieldsEnclosedBy,
                 $fieldsEscapedBy,
@@ -65,7 +66,7 @@ class FileFormatParser
             );
         }
 
-        return $format;
+        return null;
     }
 
 }

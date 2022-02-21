@@ -43,7 +43,7 @@ class ShowIndexesCommand implements ShowCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW INDEXES FROM ' . $this->table->serialize($formatter);
-        if ($this->where) {
+        if ($this->where !== null) {
             $result .= ' WHERE ' . $this->where->serialize($formatter);
         }
 

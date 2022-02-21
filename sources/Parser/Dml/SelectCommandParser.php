@@ -215,8 +215,9 @@ class SelectCommandParser
         } elseif ($tokenList->hasKeyword(Keyword::INTO)) {
             $variables = [];
             do {
-                /** @var string[] $variables */
-                $variables[] = $tokenList->expect(TokenType::AT_VARIABLE)->value;
+                /** @var string $value */
+                $value = $tokenList->expect(TokenType::AT_VARIABLE)->value;
+                $variables[] = $value;
             } while ($tokenList->hasComma());
             $into = new SelectInto($variables);
         }

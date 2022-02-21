@@ -52,13 +52,13 @@ class ShowStatusCommand implements ShowCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW';
-        if ($this->scope) {
+        if ($this->scope !== null) {
             $result .= ' ' . $this->scope->serialize($formatter);
         }
         $result .= ' STATUS';
         if ($this->like !== null) {
             $result .= ' LIKE ' . $formatter->formatString($this->like);
-        } elseif ($this->where) {
+        } elseif ($this->where !== null) {
             $result .= ' WHERE ' . $this->where->serialize($formatter);
         }
 

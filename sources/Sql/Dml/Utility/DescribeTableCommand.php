@@ -45,7 +45,7 @@ class DescribeTableCommand implements DmlCommand
     {
         $result = 'DESCRIBE ' . $this->table->serialize($formatter);
 
-        if ($this->column) {
+        if ($this->column !== null) {
             if (strtr($this->column, '_%', 'xx') === $this->column) {
                 $result .= ' ' . $formatter->formatName($this->column);
             } else {

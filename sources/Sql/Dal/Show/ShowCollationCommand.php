@@ -44,7 +44,7 @@ class ShowCollationCommand implements ShowCommand
         $result = 'SHOW COLLATION';
         if ($this->like !== null) {
             $result .= ' LIKE ' . $formatter->formatString($this->like);
-        } elseif ($this->where) {
+        } elseif ($this->where !== null) {
             $result .= ' WHERE ' . $this->where->serialize($formatter);
         }
 

@@ -301,7 +301,6 @@ class ReplicationCommandsParser
         $tokenList->expectKeywords(Keyword::START, Keyword::SLAVE);
 
         $threadTypes = null;
-        /** @var ReplicationThreadType $threadType|null */
         $threadType = $tokenList->getKeywordEnum(ReplicationThreadType::class);
         if ($threadType !== null) {
             $threadTypes = [$threadType];
@@ -413,10 +412,10 @@ class ReplicationCommandsParser
             $tokenList->expect(TokenType::DOUBLE_COLON);
             do {
                 $start = $tokenList->expectInt();
-                if ($tokenList->getOperator(Operator::MINUS)) {
+                if ($tokenList->hasOperator(Operator::MINUS)) {
                     $end = $tokenList->expectInt();
                     // phpcs:ignore
-                } elseif ($end = $tokenList->getInt()) {
+                } elseif (($end = $tokenList->getInt()) !== null) {
                     // todo: lexer returns "10-20" as tokens of int and negative int :/
                     $end = abs($end);
                 }

@@ -180,7 +180,10 @@ class UserCommandsParser
                 }
             }
 
-            $action = $action ? IdentifiedUserAction::get($action) : null;
+            if ($action !== null) {
+                $action = IdentifiedUserAction::get($action);
+            }
+
             $users[] = new IdentifiedUser($user, $action, $password, $plugin, $replace, $retainCurrent);
         } while ($tokenList->hasComma());
 
@@ -243,13 +246,12 @@ class UserCommandsParser
         }
 
         $resourceOptions = [];
-        /** @var UserResourceOptionType $type */
         $type = $tokenList->expectKeywordEnum(UserResourceOptionType::class);
-        while ($type !== null) {
+        do {
             $value = $tokenList->expectInt();
             $resourceOptions[] = new UserResourceOption($type, $value);
             $type = $tokenList->getKeywordEnum(UserResourceOptionType::class);
-        }
+        } while ($type !== null);
 
         return $resourceOptions;
     }
@@ -496,7 +498,7 @@ class UserCommandsParser
         $tokenList->expectKeyword(Keyword::ON);
         /** @var UserPrivilegeResourceType|null $resourceType */
         $resourceType = $tokenList->getKeywordEnum(UserPrivilegeResourceType::class);
-        if ($tokenList->getOperator(Operator::MULTIPLY)) {
+        if ($tokenList->hasOperator(Operator::MULTIPLY)) {
             $object = false;
             if ($tokenList->has(TokenType::DOT)) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
@@ -508,7 +510,7 @@ class UserCommandsParser
             $name = $tokenList->expectName();
             if ($tokenList->has(TokenType::DOT)) {
                 $schema = $name;
-                if ($tokenList->getOperator(Operator::MULTIPLY)) {
+                if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     return new UserPrivilegeResource($schema, UserPrivilegeResource::ALL, $resourceType);
                 } else {
                     $name = $tokenList->expectName();
@@ -632,17 +634,17 @@ class UserCommandsParser
             $user = new UserName(...$tokenList->expectUserName());
         }
         $tokenList->expectOperator(Operator::EQUAL);
-        $function = $tokenList->hasKeyword(Keyword::PASSWORD);
-        if ($function !== null) {
+        $passwordFunction = $tokenList->hasKeyword(Keyword::PASSWORD);
+        if ($passwordFunction) {
             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         }
         $password = $tokenList->expectString();
-        if ($function !== null) {
+        if ($passwordFunction) {
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
         $tokenList->expectEnd();
 
-        return new SetPasswordCommand($user, $password, (bool) $function);
+        return new SetPasswordCommand($user, $password, $passwordFunction);
     }
 
     /**

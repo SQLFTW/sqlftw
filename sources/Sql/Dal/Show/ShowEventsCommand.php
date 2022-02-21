@@ -51,12 +51,12 @@ class ShowEventsCommand implements ShowCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW EVENTS';
-        if ($this->schema) {
+        if ($this->schema !== null) {
             $result .= ' FROM ' . $formatter->formatName($this->schema);
         }
         if ($this->like !== null) {
             $result .= ' LIKE ' . $formatter->formatString($this->like);
-        } elseif ($this->where) {
+        } elseif ($this->where !== null) {
             $result .= ' WHERE ' . $this->where->serialize($formatter);
         }
 

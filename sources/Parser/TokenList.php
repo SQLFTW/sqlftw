@@ -12,6 +12,7 @@ namespace SqlFtw\Parser;
 use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\SqlEnum;
 use function array_values;
 use function call_user_func;
@@ -20,7 +21,6 @@ use function implode;
 use function in_array;
 use function is_bool;
 use function is_int;
-use function preg_match;
 use function sprintf;
 use function str_replace;
 use function trim;
@@ -378,14 +378,33 @@ class TokenList
     /**
      * @phpstan-impure
      */
-    public function getOperator(string $operator): ?string
+    public function hasOperator(string $operator): bool
     {
+        $position = $this->position;
+
         $token = $this->get(TokenType::OPERATOR);
         if ($token === null) {
-            return null;
-        }
+            return false;
+        } elseif ($token->value === $operator) {
+            return true;
+        } else {
+            $this->position = $position;
 
-        return $token->value === $operator ? $token->value : null;
+            return false;
+        }
+    }
+
+    /**
+     * @phpstan-impure
+     */
+    public function passEqual(): void
+    {
+        $position = $this->position;
+
+        $token = $this->get(TokenType::OPERATOR);
+        if ($token === null || $token->value !== Operator::EQUAL) {
+            $this->position = $position;
+        }
     }
 
     public function expectAnyOperator(string ...$operators): string
@@ -516,7 +535,9 @@ class TokenList
     }
 
     /**
-     * @param class-string<SqlEnum> $className
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T
      */
     public function expectKeywordEnum(string $className): SqlEnum
     {
@@ -524,7 +545,9 @@ class TokenList
     }
 
     /**
-     * @param class-string<SqlEnum> $className
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T
      */
     public function expectNameOrStringEnum(string $className, ?string $filter = null): SqlEnum
     {
@@ -541,7 +564,9 @@ class TokenList
     }
 
     /**
-     * @param class-string<SqlEnum> $className
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T|null
      */
     public function getKeywordEnum(string $className): ?SqlEnum
     {

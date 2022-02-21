@@ -76,9 +76,9 @@ class ShowProfileCommand implements ShowCommand
             $result .= ' FOR QUERY ' . $this->queryId;
         }
 
-        if ($this->limit) {
+        if ($this->limit !== null) {
             $result .= ' LIMIT ' . $this->limit;
-            if ($this->offset) {
+            if ($this->offset !== null) {
                 $result .= ' OFFSET ' . $this->offset;
             }
         }

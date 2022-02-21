@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Platform\Mode;
@@ -51,7 +52,6 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
-use function preg_match;
 use function sprintf;
 use function strlen;
 use function substr;
@@ -99,11 +99,11 @@ class ExpressionParser
             $operators[] = Operator::PIPES;
         }
 
-        if ($tokenList->getOperator(Operator::NOT)) {
+        if ($tokenList->hasOperator(Operator::NOT)) {
             $expr = $this->parseExpression($tokenList);
 
             return new UnaryOperator(Operator::NOT, $expr);
-        } elseif ($tokenList->getOperator(Operator::EXCLAMATION)) {
+        } elseif ($tokenList->hasOperator(Operator::EXCLAMATION)) {
             $expr = $this->parseExpression($tokenList);
 
             return new UnaryOperator(Operator::EXCLAMATION, $expr);
@@ -431,7 +431,8 @@ class ExpressionParser
                             } while ($tokenList->hasComma());
                             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                         }
-                        $expression = new FunctionCall(new QualifiedName($name2 ?: $name1, $name2 ? $name1 : null), $arguments);
+                        $name = new QualifiedName($name2 ?? $name1, $name2 !== null ? $name1 : null);
+                        $expression = new FunctionCall($name, $arguments);
 
                     } elseif ($name2 !== null) {
                         // identifier
@@ -458,7 +459,7 @@ class ExpressionParser
 
             return new CollateExpression($expression, $collation);
         } elseif ($tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT)
-            && $tokenList->getOperator(Operator::PIPES)
+            && $tokenList->hasOperator(Operator::PIPES)
         ) {
             // simple_expr || simple_expr
             $right = $this->parseSimpleExpression($tokenList);
@@ -576,17 +577,17 @@ class ExpressionParser
     {
         $token = $tokenList->expect(TokenType::VALUE);
 
-        if ($token->type & TokenType::BINARY_LITERAL) {
+        if (($token->type & TokenType::BINARY_LITERAL) !== 0) {
             /** @var string $value */
             $value = $token->value;
 
             return new BinaryLiteral($value);
-        } elseif ($token->type & TokenType::HEXADECIMAL_LITERAL) {
+        } elseif (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
             /** @var string $value */
             $value = $token->value;
 
             return new HexadecimalLiteral($value);
-        } elseif ($token->type & TokenType::KEYWORD) {
+        } elseif (($token->type & TokenType::KEYWORD) !== 0) {
             if ($token->value === Keyword::NULL) {
                 return new NullLiteral();
             } elseif ($token->value === Keyword::TRUE) {
@@ -657,7 +658,7 @@ class ExpressionParser
     {
         $time = $this->parseDateTime($tokenList);
         $intervals = [];
-        while ($tokenList->getOperator(Operator::PLUS)) {
+        while ($tokenList->hasOperator(Operator::PLUS)) {
             $tokenList->expectKeyword(Keyword::INTERVAL);
             $intervals[] = $this->parseInterval($tokenList);
         }
@@ -671,7 +672,7 @@ class ExpressionParser
         if ($string === '') {
             $string = $tokenList->expectString();
         }
-        if (preg_match(self::INT_DATETIME_EXPRESSION, $string)) {
+        if (Re::match($string, self::INT_DATETIME_EXPRESSION) !== null) {
             if (strlen($string) === 12) {
                 $string = '20' . $string;
             }
@@ -685,7 +686,8 @@ class ExpressionParser
                 substr($string, 10, 2),
                 substr($string, 12, 2)
             ));
-        } elseif (preg_match(self::STRING_DATETIME_EXPRESSION, $string, $match)) {
+            // phpcs:ignore SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition
+        } elseif (($match = Re::match($string, self::STRING_DATETIME_EXPRESSION)) !== null) {
             $string = $match[1];
             $decimalPart = $match[2] ?? '';
             if (strlen($string) === 17) {

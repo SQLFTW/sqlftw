@@ -16,6 +16,7 @@ use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Dal\SystemVariable;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Scope;
 use function strpos;
@@ -93,6 +94,7 @@ class SetCommandParser
                 }
             }
 
+            $tokenList->expectOperator(Operator::EQUAL);
             $expression = $this->expressionParser->parseExpression($tokenList);
 
             $assignments[] = new SetAssignment($variable, $expression, $scope);

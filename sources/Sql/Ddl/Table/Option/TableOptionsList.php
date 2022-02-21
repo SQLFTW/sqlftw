@@ -98,7 +98,7 @@ class TableOptionsList
     public function setDefault(string $option, $value): void
     {
         TableOption::get($option);
-        if (empty($this->options[$option])) {
+        if (!isset($this->options[$option])) {
             Check::type($value, TableOption::getTypes()[$option]);
             $this->options[$option] = $value;
         }

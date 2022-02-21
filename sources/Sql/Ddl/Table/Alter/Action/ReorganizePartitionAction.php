@@ -31,7 +31,7 @@ class ReorganizePartitionAction implements PartitioningAction
      */
     public function __construct(array $partitions, array $newPartitions)
     {
-        if ($partitions !== null) {
+        if ($partitions !== []) {
             Check::itemsOfType($partitions, Type::STRING);
         }
         $this->partitions = $partitions;

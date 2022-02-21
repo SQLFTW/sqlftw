@@ -19,7 +19,6 @@ use SqlFtw\Sql\Ddl\Event\DropEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventDefinition;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
-use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 
@@ -108,7 +107,7 @@ class EventCommandsParser
         $definer = $preserve = $state = $comment = null;
 
         if ($tokenList->hasKeyword(Keyword::DEFINER)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::EVENT);

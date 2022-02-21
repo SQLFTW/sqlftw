@@ -59,15 +59,15 @@ class ShowRelaylogEventsCommand implements ShowCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW RELAYLOG EVENTS';
-        if ($this->logName) {
+        if ($this->logName !== null) {
             $result .= ' IN ' . $formatter->formatString($this->logName);
         }
-        if ($this->from) {
+        if ($this->from !== null) {
             $result .= ' FROM ' . $this->from;
         }
-        if ($this->limit) {
+        if ($this->limit !== null) {
             $result .= ' LIMIT ';
-            if ($this->offset) {
+            if ($this->offset !== null) {
                 $result .= $this->offset . ', ';
             }
             $result .= $this->limit;

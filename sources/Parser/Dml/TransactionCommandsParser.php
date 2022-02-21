@@ -119,7 +119,7 @@ class TransactionCommandsParser
 
         $chain = null;
         if ($tokenList->hasKeyword(Keyword::AND)) {
-            $chain = $tokenList->hasKeyword(Keyword::NO);
+            $chain = !$tokenList->hasKeyword(Keyword::NO);
             $tokenList->expectKeyword(Keyword::CHAIN);
         }
 
@@ -216,11 +216,11 @@ class TransactionCommandsParser
 
         $tokenList->expectEnd();
 
-        return new SetTransactionCommand(
-            $scope,
-            $isolationLevel ? TransactionIsolationLevel::get($isolationLevel) : null,
-            $write
-        );
+        if ($isolationLevel !== null) {
+            $isolationLevel = TransactionIsolationLevel::get($isolationLevel);
+        }
+
+        return new SetTransactionCommand($scope, $isolationLevel, $write);
     }
 
     /**

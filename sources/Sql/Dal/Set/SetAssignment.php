@@ -78,7 +78,7 @@ class SetAssignment implements SqlSerializable
     public function serialize(Formatter $formatter): string
     {
         $scope = $this->scope->serialize($formatter);
-        $scope .= $scope ? ' ' : '';
+        $scope .= $scope !== '' ? ' ' : '';
 
         return $scope . $this->variable . ' = ' . $this->formatExpression($formatter, $this->expression);
     }

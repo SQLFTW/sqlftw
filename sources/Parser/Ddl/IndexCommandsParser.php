@@ -22,7 +22,6 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexColumn;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexOptions;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
-use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
@@ -135,7 +134,7 @@ class IndexCommandsParser
                 $commentString = $tokenList->expectString();
                 // parse "COMMENT 'MERGE_THRESHOLD=40';"
                 $match = Re::match($commentString, '/^MERGE_THRESHOLD=([0-9]+)$/');
-                if ($match) {
+                if ($match !== null) {
                     $mergeThreshold = (int) $match[1];
                 } else {
                     $comment = $commentString;
@@ -172,13 +171,13 @@ class IndexCommandsParser
         $table = new QualifiedName(...$tokenList->expectQualifiedName());
         $algorithm = null;
         if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             /** @var AlterTableAlgorithm $algorithm */
             $algorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
         }
         $lock = null;
         if ($tokenList->hasKeyword(Keyword::LOCK)) {
-            $tokenList->getOperator(Operator::EQUAL);
+            $tokenList->passEqual();
             /** @var AlterTableLock $lock */
             $lock = $tokenList->expectKeywordEnum(AlterTableLock::class);
         }

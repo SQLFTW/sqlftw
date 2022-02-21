@@ -45,7 +45,8 @@ class UserTlsOption implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->type->serialize($formatter) . ($this->value ? ' ' . $formatter->formatString($this->value) : '');
+        return $this->type->serialize($formatter)
+            . ($this->value !== null ? ' ' . $formatter->formatString($this->value) : '');
     }
 
 }

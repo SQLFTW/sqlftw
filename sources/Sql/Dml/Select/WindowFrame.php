@@ -86,13 +86,13 @@ class WindowFrame implements SqlSerializable
     {
         $result = $this->units->serialize($formatter) . ' ';
 
-        $result .= $this->startExpression
+        $result .= $this->startExpression !== null
             ? $this->startExpression->serialize($formatter) . ' ' . $this->startType->serialize($formatter)
             : $this->startType->serialize($formatter);
 
         if ($this->endType !== null) {
             $result = 'BETWEEN ' . $result . ' AND ';
-            $result .= $this->endExpression
+            $result .= $this->endExpression !== null
                 ? $this->endType->serialize($formatter) . ' ' . $this->endType->serialize($formatter)
                 : $this->endType->serialize($formatter);
         }

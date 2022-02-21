@@ -15,7 +15,9 @@
         "dogma/dogma": "^0.2.10"
     },
     "require-dev": {
-        "dogma/dogma-dev": "0.1.24"
+        "dogma/dogma-dev": "0.1.25",
+        "phpstan/phpstan": "1.4.6",
+        "phpstan/phpstan-strict-rules": "^1.0"
     },
     "autoload": {
         "classmap": ["sources", "tests", "build"]
@@ -56,14 +58,14 @@
             "@phpcs:tests"
         ],
 
-        "tests:run": "php vendor/nette/tester/src/tester tests -c tests --colors 1",
+        "tests:run": "php vendor/nette/tester/src/tester tests -C --colors 1",
         "tests:all": [
-            "php81 vendor/nette/tester/src/tester tests -c tests --colors 1",
-            "php80 vendor/nette/tester/src/tester tests -c tests --colors 1",
-            "php74 vendor/nette/tester/src/tester tests -c tests --colors 1",
-            "php73 vendor/nette/tester/src/tester tests -c tests --colors 1",
-            "php72 vendor/nette/tester/src/tester tests -c tests --colors 1",
-            "php71 vendor/nette/tester/src/tester tests -c tests --colors 1"
+            "php81 vendor/nette/tester/src/tester tests -C --colors 1",
+            "php80 vendor/nette/tester/src/tester tests -C --colors 1",
+            "php74 vendor/nette/tester/src/tester tests -C --colors 1",
+            "php73 vendor/nette/tester/src/tester tests -C --colors 1",
+            "php72 vendor/nette/tester/src/tester tests -C --colors 1",
+            "php71 vendor/nette/tester/src/tester tests -C --colors 1"
         ],
         "tests:coverage": "php vendor/nette/tester/src/tester tests -c tests --colors 1 -p phpdbg --coverage tests/coverage.html --coverage-src sources",
 

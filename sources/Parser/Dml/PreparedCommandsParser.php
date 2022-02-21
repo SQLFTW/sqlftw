@@ -65,7 +65,7 @@ class PreparedCommandsParser
         $name = $tokenList->expectName();
         $tokenList->expectKeyword(Keyword::FROM);
 
-        $variable = $tokenList->has(TokenType::AT_VARIABLE);
+        $variable = $tokenList->get(TokenType::AT_VARIABLE);
         if ($variable !== null) {
             /** @var string $statement */
             $statement = $variable->value;

@@ -61,9 +61,9 @@ class ShowWarningsCommand implements ShowCommand
         }
 
         $result = 'SHOW WARNINGS';
-        if ($this->limit) {
+        if ($this->limit !== null) {
             $result .= ' LIMIT ';
-            if ($this->offset) {
+            if ($this->offset !== null) {
                 $result .= $this->offset . ', ';
             }
             $result .= $this->limit;

@@ -80,7 +80,7 @@ class Parser
         $buffer = [];
         $lists = [];
         foreach ($tokens as $token) {
-            if ($token->type & TokenType::DELIMITER) {
+            if (($token->type & TokenType::DELIMITER) !== 0) {
                 $lists[] = new TokenList($buffer, $this->settings);
                 $buffer = [];
             } else {

@@ -31,7 +31,8 @@ class ShowSlaveStatusCommand implements ShowCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW SLAVE STATUS' . ($this->channel ? ' FOR CHANNEL ' . $formatter->formatName($this->channel) : '');
+        return 'SHOW SLAVE STATUS'
+            . ($this->channel !== null ? ' FOR CHANNEL ' . $formatter->formatName($this->channel) : '');
     }
 
 }
