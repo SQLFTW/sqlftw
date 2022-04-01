@@ -37,7 +37,7 @@ use function trim;
  * - getFoos() - consume all tokens if exist and return it (serialized)
  * - getAnyFoo - consume one token if exists and return it
  * - passFoo() - consume token if exists, return nothing
- * - passFoos() - consume all tokens if exist, return nothing
+ * - passFoos() - consume all tokens if they exist, return nothing
  * - passAnyFoo() - consume one token if exists, return nothing
  * - expectFoo() - consume token or throw an exception
  * - expectFoos() - consume all tokens or throw an exception
