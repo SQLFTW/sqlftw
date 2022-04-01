@@ -21,7 +21,7 @@ class OrderByExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var Order */
+    /** @var Order|null */
     private $order;
 
     /** @var ColumnName|null */
@@ -33,7 +33,7 @@ class OrderByExpression implements SqlSerializable
     /** @var int|null */
     private $position;
 
-    public function __construct(Order $order, ?ColumnName $column, ?ExpressionNode $expression = null, ?int $position = null)
+    public function __construct(?Order $order, ?ColumnName $column, ?ExpressionNode $expression = null, ?int $position = null)
     {
         Check::oneOf($column, $expression, $position);
 
