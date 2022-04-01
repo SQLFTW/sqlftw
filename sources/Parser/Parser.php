@@ -153,9 +153,7 @@ class Parser
                             Keyword::SERVER, Keyword::TABLE, Keyword::TABLESPACE, Keyword::USER, Keyword::EVENT, Keyword::VIEW,
                             Keyword::DEFINER, Keyword::ALGORITHM, Keyword::SQL
                         );
-                        exit;
                 }
-                break;
             case Keyword::ANALYZE:
                 // ANALYZE
                 return $this->factory->getTableMaintenanceCommandsParser()->parseAnalyzeTable($tokenList->resetPosition($start));
@@ -181,7 +179,6 @@ class Parser
                     return $this->factory->getReplicationCommandsParser()->parseChangeReplicationFilter($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::MASTER, Keyword::REPLICATION);
-                exit;
             case Keyword::CHECK:
                 // CHECK TABLE
                 return $this->factory->getTableMaintenanceCommandsParser()->parseCheckTable($tokenList->resetPosition($start));
@@ -250,7 +247,6 @@ class Parser
                     Keyword::TABLESPACE, Keyword::TABLE, Keyword::USER, Keyword::EVENT, Keyword::FUNCTION,
                     Keyword::INDEX, Keyword::PROCEDURE, Keyword::TABLE, Keyword::TRIGGER, Keyword::VIEW, Keyword::DEFINER
                 );
-                exit;
             case Keyword::DEALLOCATE:
                 // {DEALLOCATE | DROP} PREPARE
                 return $this->factory->getPreparedCommandsParser()->parseDeallocatePrepare($tokenList->resetPosition($start));
@@ -323,7 +319,6 @@ class Parser
                     Keyword::LOGFILE, Keyword::PREPARE, Keyword::PROCEDURE, Keyword::ROLE, Keyword::SERVER,
                     Keyword::TABLESPACE, Keyword::TRIGGER, Keyword::USER, Keyword::VIEW
                 );
-                exit;
             case Keyword::EXECUTE:
                 // EXECUTE
                 return $this->factory->getPreparedCommandsParser()->parseExecute($tokenList->resetPosition($start));
@@ -372,7 +367,6 @@ class Parser
                     return $this->factory->getPluginCommandsParser()->parseInstallPlugin($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::COMPONENT, Keyword::PLUGIN);
-                exit;
             case Keyword::KILL:
                 // KILL
                 return $this->factory->getKillCommandParser()->parseKill($tokenList->resetPosition($start));
@@ -392,7 +386,6 @@ class Parser
                     return $this->factory->getLoadCommandsParser()->parseLoadXml($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::DATA, Keyword::INDEX, Keyword::XML);
-                exit;
             case Keyword::OPTIMIZE:
                 // OPTIMIZE
                 return $this->factory->getTableMaintenanceCommandsParser()->parseOptimizeTable($tokenList->resetPosition($start));
@@ -415,7 +408,6 @@ class Parser
                     return $this->factory->getUserCommandsParser()->parseRenameUser($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::TABLE, Keyword::USER);
-                exit;
             case Keyword::REPAIR:
                 // REPAIR
                 return $this->factory->getTableMaintenanceCommandsParser()->parseRepairTable($tokenList->resetPosition($start));
@@ -501,7 +493,6 @@ class Parser
                         // SET
                         return $this->factory->getSetCommandParser()->parseSet($tokenList->resetPosition($start));
                 }
-                break;
             case Keyword::SHOW:
                 // SHOW
                 return $this->factory->getShowCommandsParser()->parseShow($tokenList->resetPosition($start));
@@ -521,7 +512,6 @@ class Parser
                     return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::TRANSACTION);
-                exit;
             case Keyword::STOP:
                 $second = $tokenList->expect(TokenType::KEYWORD)->value;
                 if ($second === Keyword::GROUP_REPLICATION) {
@@ -532,7 +522,6 @@ class Parser
                     return $this->factory->getReplicationCommandsParser()->parseStopSlave($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE);
-                exit;
             case Keyword::TRUNCATE:
                 // TRUNCATE [TABLE]
                 return $this->factory->getTableCommandsParser()->parseTruncateTable($tokenList->resetPosition($start));
@@ -546,7 +535,6 @@ class Parser
                     return $this->factory->getPluginCommandsParser()->parseUninstallPlugin($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::COMPONENT, Keyword::PLUGIN);
-                exit;
             case Keyword::UNLOCK:
                 // UNLOCK TABLES
                 return $this->factory->getTransactionCommandsParser()->parseUnlockTables($tokenList->resetPosition($start));
@@ -579,7 +567,6 @@ class Parser
                     Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN, Keyword::START, Keyword::STOP,
                     Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
                 );
-                exit;
         }
     }
 
