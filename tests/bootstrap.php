@@ -9,6 +9,7 @@ use function header;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../vendor/nette/tester/src/bootstrap.php';
+require_once __DIR__ . '/ParserHelper.php';
 require_once __DIR__ . '/Assert.php';
 
 Debugger::$maxDepth = 9;

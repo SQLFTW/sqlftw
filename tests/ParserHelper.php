@@ -7,10 +7,12 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Parser;
+namespace SqlFtw\Tests;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Lexer\Lexer;
+use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 

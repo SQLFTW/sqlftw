@@ -5,7 +5,6 @@ namespace SqlFtw\Tests;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserHelper;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
 use function gettype;
@@ -66,8 +65,6 @@ class Assert extends DogmaAssert
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
         $formatter = $formatter ?? new Formatter($parser->getSettings());
 
-        // todo?
-
         $actual = $parser->parseCommand($query)->serialize($formatter);
         /** @var string $actual */
         $actual = preg_replace('/\\s+/', ' ', $actual);
@@ -75,31 +72,5 @@ class Assert extends DogmaAssert
 
         self::same($expected, $actual);
     }
-
-    /*
-    public static function parse(string $query, ?string $result, ?array $platforms): void
-    {
-        $result = $result ?? $query;
-    }
-
-    private function createPlatform(string $platform)
-    {
-        return Platform::get(...explode('-', $platform));
-    }
-
-    private function getParserFactory(?Platform $platform = null): ParserFactory
-    {
-        if ($platform === null) {
-            $platform = Platform::get(Platform::MYSQL);
-        }
-        $settings = new Settings($platform);
-        $settings->setQuoteAllNames(false);
-
-        $lexer = new Lexer($settings, true, true);
-        $parser = new Parser($lexer, $settings);
-
-        return new ParserFactory($settings, $parser);
-    }
-    */
 
 }
