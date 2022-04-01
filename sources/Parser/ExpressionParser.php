@@ -634,7 +634,7 @@ class ExpressionParser
      * limit:
      *     [LIMIT {[offset,] row_count | row_count OFFSET offset}]
      *
-     * @return int[]|null[]|array{0: int, 1: int|null} ($limit, $offset)
+     * @return int[]|null[]|array{int, int|null} ($limit, $offset)
      */
     public function parseLimitAndOffset(TokenList $tokenList): array
     {

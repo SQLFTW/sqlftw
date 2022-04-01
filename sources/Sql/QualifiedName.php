@@ -59,7 +59,7 @@ class QualifiedName implements SqlSerializable
     }
 
     /**
-     * @return string[]|null[]|array{0: string, 1: string|null}
+     * @return string[]|null[]|array{string, string|null}
      */
     public function toArray(): array
     {
