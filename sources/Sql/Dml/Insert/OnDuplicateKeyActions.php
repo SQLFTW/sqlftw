@@ -35,7 +35,7 @@ class OnDuplicateKeyActions implements SqlSerializable
     {
         $result = 'ON DUPLICATE KEY UPDATE ';
 
-        $result .= implode(Arr::mapPairs($this->expressions, static function (string $column, ExpressionNode $expression) use ($formatter): string {
+        $result .= implode(', ', Arr::mapPairs($this->expressions, static function (string $column, ExpressionNode $expression) use ($formatter): string {
             return $formatter->formatName($column) . ' = ' . $expression->serialize($formatter);
         }));
 
