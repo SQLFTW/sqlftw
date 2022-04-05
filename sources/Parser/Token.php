@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
-use function implode;
 
 final class Token
 {
@@ -31,9 +30,6 @@ final class Token
     /** @var string|null */
     public $condition;
 
-    /** @var string */
-    public $typeDesc;
-
     /**
      * @param string|int|float|bool|null $value
      */
@@ -49,15 +45,6 @@ final class Token
         $this->value = $value;
         $this->original = $original;
         $this->condition = $condition;
-
-        // debug info
-        $types = [];
-        foreach (TokenType::getAllowedValues() as $name => $val) {
-            if (($val & $type) !== 0) {
-                $types[] = $name;
-            }
-        }
-        $this->typeDesc = implode(',', $types);
     }
 
 }
