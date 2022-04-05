@@ -90,7 +90,7 @@ class SelectInto implements SqlSerializable
         } elseif ($this->dumpFile !== null) {
             return 'INTO DUMPFILE ' . $formatter->formatString($this->dumpFile);
         } elseif ($this->outFile !== null) {
-            $result = 'INTO OUTFILE' . $formatter->formatString($this->outFile);
+            $result = 'INTO OUTFILE ' . $formatter->formatString($this->outFile);
             if ($this->charset !== null) {
                 $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
             }

@@ -169,8 +169,10 @@ class Lexer
                             break;
                         }
                     }
+
+                    $previous = new Token(T::WHITESPACE, $start, $value, null, $condition);
                     if ($this->withWhitespace) {
-                        yield new Token(T::WHITESPACE, $start, $value, null, $condition);
+                        yield $previous;
                     }
                     break;
                 case '(':
@@ -672,8 +674,9 @@ class Lexer
                         yield new Token(T::KEYWORD, $start, $upper, $value, $condition);
                         $start = $position;
                         $whitespace = $this->parseWhitespace($string, $position, $column, $row);
+                        $previous = new Token(T::WHITESPACE, $start, $whitespace, null, $condition);
                         if ($this->withWhitespace) {
-                            yield new Token(T::WHITESPACE, $start, $whitespace, null, $condition);
+                            yield $previous;
                         }
                         $start = $position;
                         $del = '';

@@ -412,14 +412,22 @@ class ExpressionParser
                     $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
                     $name2 = $name3 = null;
                     if ($tokenList->has(TokenType::DOT)) {
-                        $name2 = $tokenList->expectName();
-                        if ($tokenList->has(TokenType::DOT)) {
-                            $name3 = $tokenList->expectName();
+                        if ($tokenList->hasOperator(Operator::MULTIPLY)) {
+                            $name2 = '*'; // SELECT foo.*
+                        } else {
+                            $name2 = $tokenList->expectName();
+                        }
+                        if ($name2 !== '*' && $tokenList->has(TokenType::DOT)) {
+                            if ($tokenList->hasOperator(Operator::MULTIPLY)) {
+                                $name3 = '*'; // SELECT foo.bar.*
+                            } else {
+                                $name3 = $tokenList->expectName();
+                            }
                         }
                     }
                     if ($name3 !== null) {
                         // identifier
-                        $expression = new Identifier(new ColumnName($name1, $name2, $name3));
+                        $expression = new Identifier(new ColumnName($name3, $name2, $name1));
 
                     } elseif ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                         // function_call

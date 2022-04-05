@@ -238,7 +238,7 @@ class SelectCommand implements DmlCommand
             $result .= "\nWHERE " . $this->where->serialize($formatter);
         }
         if ($this->groupBy !== null) {
-            $result .= "\nGROUP BY " . $formatter->formatSerializablesList($this->groupBy, "\n\t");
+            $result .= "\nGROUP BY " . $formatter->formatSerializablesList($this->groupBy, ",\n\t");
             if ($this->withRollup) {
                 $result .= "\n\tWITH ROLLUP";
             }
@@ -258,7 +258,7 @@ class SelectCommand implements DmlCommand
             }
         }
         if ($this->orderBy !== null) {
-            $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, "\n\t");
+            $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
             $result .= "\nLIMIT " . $this->limit;

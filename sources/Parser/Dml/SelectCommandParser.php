@@ -31,6 +31,8 @@ use SqlFtw\Sql\Dml\Select\WindowFrameUnits;
 use SqlFtw\Sql\Dml\Select\WindowSpecification;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\Identifier;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
@@ -120,7 +122,11 @@ class SelectCommandParser
 
         $what = [];
         do {
-            $value = $this->expressionParser->parseExpression($tokenList);
+            if ($tokenList->hasOperator(Operator::MULTIPLY)) {
+                $expression = new Identifier('*');
+            } else {
+                $expression = $this->expressionParser->parseExpression($tokenList);
+            }
             $window = null;
             if ($tokenList->hasKeyword(Keyword::OVER)) {
                 if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
@@ -135,7 +141,7 @@ class SelectCommandParser
             } else {
                 $alias = $tokenList->getNonKeywordName();
             }
-            $what[] = new SelectExpression($value, $alias, $window);
+            $what[] = new SelectExpression($expression, $alias, $window);
         } while ($tokenList->hasComma());
 
         $from = null;
@@ -215,9 +221,9 @@ class SelectCommandParser
         } elseif ($tokenList->hasKeyword(Keyword::INTO)) {
             $variables = [];
             do {
-                /** @var string $value */
-                $value = $tokenList->expect(TokenType::AT_VARIABLE)->value;
-                $variables[] = $value;
+                /** @var string $expression */
+                $expression = $tokenList->expect(TokenType::AT_VARIABLE)->value;
+                $variables[] = $expression;
             } while ($tokenList->hasComma());
             $into = new SelectInto($variables);
         }
@@ -239,8 +245,12 @@ class SelectCommandParser
                     $lockTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
                 } while ($tokenList->hasComma());
             }
-            /** @var SelectLockWaitOption $lockWaitOption */
-            $lockWaitOption = $tokenList->getKeywordEnum(SelectLockWaitOption::class);
+            $lockWaitOption = null;
+            if ($tokenList->hasKeyword(Keyword::NOWAIT)) {
+                $lockWaitOption = SelectLockWaitOption::get(SelectLockWaitOption::NO_WAIT);
+            } elseif ($tokenList->hasKeywords(Keyword::SKIP, Keyword::LOCKED)) {
+                $lockWaitOption = SelectLockWaitOption::get(SelectLockWaitOption::SKIP_LOCKED);
+            }
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
         }
 
