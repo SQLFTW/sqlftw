@@ -352,12 +352,15 @@ class TableCommandsParser
                     break;
                 case Keyword::CONVERT:
                     // CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]
-                    $tokenList->expectKeywords(Keyword::TO, Keyword::CHARACTER, Keyword::SET);
+                    $tokenList->expectKeyword(Keyword::TO);
+                    if (!$tokenList->hasKeyword(Keyword::CHARSET)) {
+                        $tokenList->expectKeywords(Keyword::CHARACTER, Keyword::SET);
+                    }
                     /** @var Charset $charset */
                     $charset = $tokenList->expectNameOrStringEnum(Charset::class);
                     $collation = null;
                     if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-                        $collation = Collation::get($tokenList->expectNameOrString());
+                        $collation = $tokenList->expectNameOrStringEnum(Collation::class);
                     }
                     $actions[] = new ConvertToCharsetAction($charset, $collation);
                     break;
@@ -989,10 +992,13 @@ class TableCommandsParser
 
                 return [TableOption::AVG_ROW_LENGTH, $tokenList->expectInt()];
             case Keyword::CHARACTER:
-                $tokenList->expectKeyword(Keyword::SET);
+            case Keyword::CHARSET:
+                if ($keyword === Keyword::CHARACTER) {
+                    $tokenList->expectKeyword(Keyword::SET);
+                }
                 $tokenList->passEqual();
 
-                return [TableOption::CHARACTER_SET, Charset::get($tokenList->expectString())];
+                return [TableOption::CHARACTER_SET, $tokenList->expectNameOrStringEnum(Charset::class)];
             case Keyword::CHECKSUM:
                 $tokenList->passEqual();
 
@@ -1019,11 +1025,15 @@ class TableCommandsParser
 
                 return [TableOption::DATA_DIRECTORY, $tokenList->expectString()];
             case Keyword::DEFAULT:
-                if ($tokenList->hasKeyword(Keyword::CHARACTER)) {
+                if ($tokenList->hasKeyword(Keyword::CHARSET)) {
+                    $tokenList->passEqual();
+
+                    return [TableOption::CHARACTER_SET, $tokenList->expectNameOrStringEnum(Charset::class)];
+                } elseif ($tokenList->hasKeyword(Keyword::CHARACTER)) {
                     $tokenList->expectKeyword(Keyword::SET);
                     $tokenList->passEqual();
 
-                    return [TableOption::CHARACTER_SET, Charset::get($tokenList->expectString())];
+                    return [TableOption::CHARACTER_SET, $tokenList->expectNameOrStringEnum(Charset::class)];
                 } else {
                     $tokenList->expectKeyword(Keyword::COLLATE);
                     $tokenList->passEqual();
@@ -1041,7 +1051,7 @@ class TableCommandsParser
             case Keyword::ENGINE:
                 $tokenList->passEqual();
 
-                return [TableOption::ENGINE, StorageEngine::get($tokenList->expectNameOrString())];
+                return [TableOption::ENGINE, $tokenList->expectNameOrStringEnum(StorageEngine::class)];
             case Keyword::INDEX:
                 $tokenList->expectKeyword(Keyword::DIRECTORY);
                 $tokenList->passEqual();

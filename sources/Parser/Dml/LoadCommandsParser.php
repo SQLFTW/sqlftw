@@ -122,8 +122,8 @@ class LoadCommandsParser
         }
 
         $charset = null;
-        if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
-            $charset = Charset::get(strtolower($tokenList->expectString()));
+        if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET) || $tokenList->hasKeyword(Keyword::CHARSET)) {
+            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
         }
 
         return [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset];

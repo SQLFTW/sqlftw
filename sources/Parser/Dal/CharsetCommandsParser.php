@@ -35,7 +35,7 @@ class CharsetCommandsParser
         if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
             $charset = null;
         } else {
-            $charset = Charset::get($tokenList->expectNameOrString());
+            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
         }
         $tokenList->expectEnd();
 
@@ -51,9 +51,9 @@ class CharsetCommandsParser
         $tokenList->expectKeywords(Keyword::SET, Keyword::NAMES);
         $charset = $collation = null;
         if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
-            $charset = Charset::get($tokenList->expectNameOrString());
+            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
             if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-                $collation = Collation::get($tokenList->expectNameOrString());
+                $collation = $tokenList->expectNameOrStringEnum(Collation::class);
             }
         }
         $tokenList->expectEnd();

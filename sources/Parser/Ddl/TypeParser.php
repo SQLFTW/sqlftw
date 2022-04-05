@@ -138,11 +138,13 @@ class TypeParser
         }
 
         if ($dataType->hasCharset()) {
-            if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
-                $charset = Charset::get($tokenList->expectNameOrString());
+            if ($tokenList->hasKeywords(Keyword::CHARSET)) {
+                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+            } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
+                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
             }
             if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-                $collation = Collation::get($tokenList->expectNameOrString());
+                $collation = $tokenList->expectNameOrStringEnum(Collation::class);
             }
         }
 

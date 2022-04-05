@@ -70,9 +70,11 @@ class SchemaCommandsParser
     {
         $charset = $collation = null;
         $tokenList->passKeyword(Keyword::DEFAULT);
-        $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
-        if ($token === Keyword::CHARACTER) {
-            $tokenList->expectKeyword(Keyword::SET);
+        $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
+        if ($token === Keyword::CHARACTER || $token === Keyword::CHARSET) {
+            if ($token === Keyword::CHARACTER) {
+                $tokenList->expectKeyword(Keyword::SET);
+            }
             $tokenList->passEqual();
             /** @var Charset $charset */
             $charset = $tokenList->expectNameOrStringEnum(Charset::class);
@@ -83,13 +85,15 @@ class SchemaCommandsParser
         }
 
         if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-            $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
+            $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
         } else {
-            $token = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::COLLATE);
+            $token = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
         }
         if ($token !== null) {
-            if ($token === Keyword::CHARACTER) {
-                $tokenList->expectKeyword(Keyword::SET);
+            if ($token === Keyword::CHARACTER || $token === Keyword::CHARSET) {
+                if ($token === Keyword::CHARACTER) {
+                    $tokenList->expectKeyword(Keyword::SET);
+                }
                 $tokenList->passEqual();
                 /** @var Charset $charset */
                 $charset = $tokenList->expectNameOrStringEnum(Charset::class);

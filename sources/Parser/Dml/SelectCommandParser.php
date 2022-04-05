@@ -210,8 +210,8 @@ class SelectCommandParser
         $into = $charset = null;
         if ($tokenList->hasKeywords(Keyword::INTO, Keyword::OUTFILE)) {
             $outFile = $tokenList->expectString();
-            if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
-                $charset = Charset::get($tokenList->expectName());
+            if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET) || $tokenList->hasKeyword(Keyword::CHARSET)) {
+                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
             }
             $format = $this->fileFormatParser->parseFormat($tokenList);
             $into = new SelectInto(null, null, $outFile, $charset, $format);
