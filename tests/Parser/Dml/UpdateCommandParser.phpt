@@ -12,6 +12,8 @@ require __DIR__ . '/../../bootstrap.php';
 //     [ORDER BY ...]
 //     [LIMIT row_count]
 Assert::parse("UPDATE foo SET bar = 1, baz = 2");
+Assert::parse("UPDATE foo SET foo.bar = 1, foo.baz = 2");
+Assert::parse("UPDATE foo SET foo.bar.x = 1, foo.baz.y = 2");
 Assert::parse("UPDATE foo SET bar = DEFAULT, baz = DEFAULT");
 Assert::parse("UPDATE LOW_PRIORITY foo SET bar = 1, baz = 2");
 Assert::parse("UPDATE IGNORE foo SET bar = 1, baz = 2");

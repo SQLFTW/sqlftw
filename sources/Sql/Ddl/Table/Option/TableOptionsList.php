@@ -14,6 +14,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
 use function implode;
@@ -41,6 +42,9 @@ class TableOptionsList
                         break;
                     case $value instanceof Charset:
                         $this->options[TableOption::CHARACTER_SET] = $value;
+                        break;
+                    case $value instanceof Collation:
+                        $this->options[TableOption::COLLATE] = $value;
                         break;
                     case $value instanceof TableCompression:
                         $this->options[TableOption::COMPRESSION] = $value;

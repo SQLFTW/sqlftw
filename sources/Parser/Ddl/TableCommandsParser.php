@@ -633,7 +633,9 @@ class TableCommandsParser
                     $tokenList->expectedAnyKeyword(...$keywords);
                 }
                 $options[$option] = $value;
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasComma()
+                || (!$tokenList->isFinished() && !$tokenList->hasAnyKeyword(Keyword::PARTITION, Keyword::IGNORE, Keyword::REPLACE, Keyword::AS, Keyword::SELECT))
+            );
         }
 
         $partitioning = null;
@@ -856,8 +858,11 @@ class TableCommandsParser
      */
     private function parseConstraint(TokenList $tokenList): ConstraintDefinition
     {
-        $tokenList->hasKeyword(Keyword::CONSTRAINT);
-        $name = $tokenList->getName();
+        if ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
+            $name = $tokenList->expectName();
+        } else {
+            $name = $tokenList->getName();
+        }
 
         $keyword = $tokenList->expectAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN, Keyword::CHECK);
         if ($keyword === Keyword::PRIMARY) {
@@ -1006,7 +1011,7 @@ class TableCommandsParser
             case Keyword::COLLATE:
                 $tokenList->passEqual();
 
-                return [TableOption::COLLATE, $tokenList->expectString()];
+                return [TableOption::COLLATE, $tokenList->expectNameOrStringEnum(Collation::class)];
             case Keyword::COMMENT:
                 $tokenList->passEqual();
 
@@ -1038,7 +1043,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::COLLATE);
                     $tokenList->passEqual();
 
-                    return [TableOption::COLLATE, $tokenList->expectString()];
+                    return [TableOption::COLLATE, $tokenList->expectNameOrStringEnum(Collation::class)];
                 }
             case Keyword::DELAY_KEY_WRITE:
                 $tokenList->passEqual();

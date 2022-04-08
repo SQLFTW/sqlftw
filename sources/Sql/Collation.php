@@ -328,7 +328,7 @@ class Collation extends SqlEnum
 
     public function serialize(Formatter $formatter): string
     {
-        return "'" . $this->getValue() . "'";
+        return $this->getValue();
     }
 
 }

@@ -77,13 +77,13 @@ class UpdateCommandParser
         $tokenList->expectKeyword(Keyword::SET);
         $values = [];
         do {
-            $column = $tokenList->expectName();
+            $column = $this->expressionParser->parseColumnName($tokenList);
             $tokenList->expectOperator(Operator::EQUAL);
             if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $values[$column] = new SetColumnExpression($column, null, true);
+                $values[$column->format()] = new SetColumnExpression($column, null, true);
             } else {
                 $value = $this->expressionParser->parseExpression($tokenList);
-                $values[$column] = new SetColumnExpression($column, $value);
+                $values[$column->format()] = new SetColumnExpression($column, $value);
             }
         } while ($tokenList->hasComma());
 

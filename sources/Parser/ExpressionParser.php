@@ -359,6 +359,7 @@ class ExpressionParser
             } else {
                 // (expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                 $expression = new Parentheses(new ListExpression($expressions));
             }
         } elseif ($tokenList->hasKeyword(Keyword::ROW)) {
@@ -541,7 +542,6 @@ class ExpressionParser
     public function parseColumnName(TokenList $tokenList): ColumnName
     {
         $first = $tokenList->expectName();
-        $second = $third = null;
         if ($tokenList->has(TokenType::DOT)) {
             // a reserved keyword may follow after "." unescaped as we know it is a name context
             $secondToken = $tokenList->get(TokenType::KEYWORD);
@@ -560,10 +560,14 @@ class ExpressionParser
                 } else {
                     $third = $tokenList->expectName();
                 }
+
+                return new ColumnName($third, $second, $first);
             }
+
+            return new ColumnName($second, $first, null);
         }
 
-        return new ColumnName($first, $second, $third);
+        return new ColumnName($first, null, null);
     }
 
     private function parseSubquery(TokenList $tokenList): Subquery

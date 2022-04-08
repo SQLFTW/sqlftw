@@ -139,8 +139,9 @@ class JoinParser
             /** @var JoinSide|null $side */
             $side = $tokenList->getKeywordEnum(JoinSide::class);
             if ($side !== null) {
-                // OUTER JOIN
-                $tokenList->hasKeyword(Keyword::OUTER);
+                // {LEFT|RIGHT} [OUTER] JOIN
+                $tokenList->passKeyword(Keyword::OUTER);
+                $tokenList->expectKeyword(Keyword::JOIN);
                 $right = $this->parseTableReferenceInternal($tokenList);
                 [$on, $using] = $this->parseJoinCondition($tokenList);
 
@@ -235,6 +236,7 @@ class JoinParser
 
             return new TableReferenceSubquery($query, $alias, $columns, $selectInParentheses, $keyword === Keyword::LATERAL);
         } else {
+            // tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
             $table = new QualifiedName(...$tokenList->expectQualifiedName());
             $partitions = null;
             if ($tokenList->hasKeyword(Keyword::PARTITION)) {

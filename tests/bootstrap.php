@@ -3,6 +3,7 @@
 namespace Test;
 
 use Dogma\Debug\Dumper;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
 use Tracy\Debugger;
@@ -43,6 +44,8 @@ if (class_exists(Dumper::class)) {
 
         return $res;
     };
+
+    ParserException::$debug = true;
 }
 
 // phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable

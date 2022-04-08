@@ -9,6 +9,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 // more
 Assert::parse("CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17, AVG_ROW_LENGTH 17");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17 AVG_ROW_LENGTH 17", "CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17, AVG_ROW_LENGTH 17");
 
 // AUTO_INCREMENT
 Assert::parse("CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17");
@@ -17,14 +18,20 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17");
 Assert::parse("CREATE TABLE tbl1 (col1 INT) AVG_ROW_LENGTH 17");
 
 // CHARACTER_SET
-Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARACTER SET 'utf8'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARACTER SET 'utf8'", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARSET 'utf8'", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT CHARACTER SET utf8", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT CHARSET utf8", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
 
 // CHECKSUM
 Assert::parse("CREATE TABLE tbl1 (col1 INT) CHECKSUM 0");
 Assert::parse("CREATE TABLE tbl1 (col1 INT) CHECKSUM 1");
 
 // COLLATE
-Assert::parse("CREATE TABLE tbl1 (col1 INT) COLLATE 'ascii_general_ci'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) COLLATE ascii_general_ci");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) COLLATE 'ascii_general_ci'", "CREATE TABLE tbl1 (col1 INT) COLLATE ascii_general_ci");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT COLLATE ascii_general_ci", "CREATE TABLE tbl1 (col1 INT) COLLATE ascii_general_ci");
 
 // COMMENT
 Assert::parse("CREATE TABLE tbl1 (col1 INT) COMMENT 'foo'");

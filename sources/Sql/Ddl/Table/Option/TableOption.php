@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use Dogma\Type;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
@@ -50,7 +51,7 @@ class TableOption extends SqlEnum
         self::AVG_ROW_LENGTH => Type::INT,
         self::CHARACTER_SET => Charset::class,
         self::CHECKSUM => Type::BOOL,
-        self::COLLATE => Type::STRING,
+        self::COLLATE => Collation::class,
         self::COMMENT => Type::STRING,
         self::COMPRESSION => TableCompression::class,
         self::CONNECTION => Type::STRING,

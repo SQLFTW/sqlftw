@@ -2,15 +2,21 @@
 
 namespace SqlFtw\Tests;
 
+use Dogma\Debug\Callstack;
+use Dogma\Debug\Debugger;
+use Dogma\Debug\Dumper;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
+use function class_exists;
 use function gettype;
 use function implode;
 use function preg_replace;
 use function sprintf;
+use function str_replace;
 
 class Assert extends DogmaAssert
 {
@@ -71,6 +77,29 @@ class Assert extends DogmaAssert
         $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);
 
         self::same($expected, $actual);
+    }
+
+    public static function validSql(
+        string $query,
+        ?Parser $parser = null
+    ): void {
+        /** @var string $query */
+        $query = preg_replace('/\\s+/', ' ', $query);
+        $query = str_replace(['( ', ' )'], ['(', ')'], $query);
+
+        $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
+
+        try {
+            $parser->parseCommand($query);
+        } catch (ParserException $e) {
+            if (class_exists(Dumper::class) && $e->backtrace !== null) {
+                Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
+            }
+            self::fail($e->getMessage());
+            return;
+        }
+
+        self::true(true);
     }
 
 }
