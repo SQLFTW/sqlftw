@@ -127,7 +127,7 @@ class JoinParser
                     /** @var JoinSide|null $side */
                     $side = $tokenList->getKeywordEnum(JoinSide::class);
                     if ($side !== null) {
-                        $tokenList->hasKeyword(Keyword::OUTER);
+                        $tokenList->passKeyword(Keyword::OUTER);
                     }
                 }
                 $tokenList->expectKeyword(Keyword::JOIN);
@@ -222,7 +222,7 @@ class JoinParser
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
 
-            $tokenList->hasKeyword(Keyword::AS);
+            $tokenList->passKeyword(Keyword::AS);
             $alias = $tokenList->expectName();
             $columns = null;
             if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {

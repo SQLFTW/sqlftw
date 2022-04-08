@@ -437,7 +437,7 @@ class UserCommandsParser
             $types = UserPrivilegeType::getFistAndSecondKeywords();
             $type = $tokenList->expectAnyKeyword(...array_keys($types));
             if ($type === Keyword::ALL) {
-                $tokenList->hasKeyword(Keyword::PRIVILEGES);
+                $tokenList->passKeyword(Keyword::PRIVILEGES);
                 $next = null;
             } elseif ($type === Keyword::CREATE) {
                 /** @var string[] $next */
@@ -563,7 +563,7 @@ class UserCommandsParser
         $tokenList->expectKeyword(Keyword::REVOKE);
 
         if ($tokenList->hasKeyword(Keyword::ALL)) {
-            $tokenList->hasKeyword(Keyword::PRIVILEGES);
+            $tokenList->passKeyword(Keyword::PRIVILEGES);
             $tokenList->expect(TokenType::COMMA);
             $tokenList->expectKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
             $users = $this->parseUserList($tokenList);

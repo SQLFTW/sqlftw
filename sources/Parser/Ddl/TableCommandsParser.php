@@ -309,7 +309,7 @@ class TableCommandsParser
                         $actions[] = new AlterCheckAction($check, $enforced);
                     } else {
                         // ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT}
-                        $tokenList->hasKeyword(Keyword::COLUMN);
+                        $tokenList->passKeyword(Keyword::COLUMN);
                         $column = $tokenList->expectName();
                         if ($tokenList->hasKeywords(Keyword::SET, Keyword::DEFAULT)) {
                             $value = $this->expressionParser->parseLiteralValue($tokenList);
@@ -328,7 +328,7 @@ class TableCommandsParser
                     break;
                 case Keyword::CHANGE:
                     // CHANGE [COLUMN] old_col_name new_col_name column_definition [FIRST|AFTER col_name]
-                    $tokenList->hasKeyword(Keyword::COLUMN);
+                    $tokenList->passKeyword(Keyword::COLUMN);
                     $oldName = $tokenList->expectName();
                     $column = $this->parseColumn($tokenList);
                     $after = null;
@@ -388,7 +388,7 @@ class TableCommandsParser
                         case null:
                         case Keyword::COLUMN:
                             // DROP [COLUMN] col_name
-                            $tokenList->hasKeyword(Keyword::COLUMN);
+                            $tokenList->passKeyword(Keyword::COLUMN);
                             $actions[] = new DropColumnAction($tokenList->expectName());
                             break;
                         case Keyword::INDEX:
@@ -472,7 +472,7 @@ class TableCommandsParser
                     break;
                 case Keyword::MODIFY:
                     // MODIFY [COLUMN] col_name column_definition [FIRST | AFTER col_name]
-                    $tokenList->hasKeyword(Keyword::COLUMN);
+                    $tokenList->passKeyword(Keyword::COLUMN);
                     $column = $this->parseColumn($tokenList);
                     $after = null;
                     if ($tokenList->hasKeyword(Keyword::FIRST)) {
@@ -637,7 +637,7 @@ class TableCommandsParser
         }
 
         $partitioning = null;
-        if ($tokenList->hasAnyKeyword(Keyword::PARTITION)) {
+        if ($tokenList->hasKeyword(Keyword::PARTITION)) {
             $partitioning = $this->parsePartitioning($tokenList->resetPosition(-1));
         }
 
@@ -737,10 +737,10 @@ class TableCommandsParser
             // [UNIQUE [KEY] | [PRIMARY] KEY]
             $index = null;
             if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
-                $tokenList->hasKeyword(Keyword::KEY);
+                $tokenList->passKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::UNIQUE);
             } elseif ($tokenList->hasKeyword(Keyword::PRIMARY)) {
-                $tokenList->hasKeyword(Keyword::KEY);
+                $tokenList->expectKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::PRIMARY);
             } elseif ($tokenList->hasKeyword(Keyword::KEY)) {
                 $index = IndexType::get(IndexType::INDEX);
@@ -784,7 +784,7 @@ class TableCommandsParser
             $generatedType = $tokenList->getKeywordEnum(GeneratedColumnType::class);
             $index = null;
             if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
-                $tokenList->hasKeyword(Keyword::KEY);
+                $tokenList->passKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::UNIQUE);
             }
             $comment = null;
@@ -799,7 +799,7 @@ class TableCommandsParser
             }
 
             if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
-                $tokenList->hasKeyword(Keyword::KEY);
+                $tokenList->passKeyword(Keyword::KEY);
                 $index = IndexType::get(IndexType::PRIMARY);
             } elseif ($tokenList->hasKeyword(Keyword::KEY)) {
                 $index = IndexType::get(IndexType::INDEX);

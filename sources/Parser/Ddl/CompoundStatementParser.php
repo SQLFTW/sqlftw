@@ -399,7 +399,7 @@ class CompoundStatementParser
         } elseif ($tokenList->hasKeyword(Keyword::CONDITION)) {
             $tokenList->expectKeywords(Keyword::FOR);
             if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
-                $tokenList->hasKeyword(Keyword::VALUE);
+                $tokenList->passKeyword(Keyword::VALUE);
                 $value = $tokenList->getInt();
                 if ($value === null) {
                     $value = $tokenList->expectNameOrString();
@@ -432,7 +432,7 @@ class CompoundStatementParser
         if ($tokenList->hasKeyword(Keyword::NEXT)) {
             $tokenList->expectKeyword(Keyword::FROM);
         } else {
-            $tokenList->hasKeyword(Keyword::FROM);
+            $tokenList->passKeyword(Keyword::FROM);
         }
         $cursor = $tokenList->expectName();
         $tokenList->expectKeyword(Keyword::INTO);
@@ -560,7 +560,7 @@ class CompoundStatementParser
         $condition = $tokenList->getInt();
         if ($condition === null) {
             $tokenList->expectKeyword(Keyword::SQLSTATE);
-            $tokenList->hasKeyword(Keyword::VALUE);
+            $tokenList->passKeyword(Keyword::VALUE);
             $condition = $tokenList->expectNameOrString();
         }
         $items = [];
