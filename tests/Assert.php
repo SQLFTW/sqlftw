@@ -84,14 +84,10 @@ class Assert extends DogmaAssert
         self::same($expected, $actual);
     }
 
-    public static function validSql(
+    public static function validCommand(
         string $query,
         ?Parser $parser = null
     ): void {
-        /** @var string $query */
-        $query = preg_replace('/\\s+/', ' ', $query);
-        $query = str_replace(['( ', ' )'], ['(', ')'], $query);
-
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
 
         try {

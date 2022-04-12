@@ -11,7 +11,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 // https://github.com/SQLFTW/sqlftw/issues/1
-Assert::validSql("
+Assert::validCommand("
 UPDATE `options_lng` AS `olu`
     INNER JOIN (
         SELECT `o`.`id` AS `optionId`, `l`.`indexName` AS `language`, `o`.`value`
@@ -22,7 +22,7 @@ UPDATE `options_lng` AS `olu`
 SET `olu`.`value` = `data`.`value`");
 
 // https://github.com/SQLFTW/sqlftw/issues/2
-Assert::validSql("
+Assert::validCommand("
 INSERT IGNORE INTO `options_lng` (`optionId`, `language`, `value`)
 SELECT `o`.`id` AS `optionId`, `l`.`indexName` AS `language`, `o`.`value`
 FROM `options` AS `o`
@@ -31,10 +31,10 @@ WHERE `o`.`indexName` IN ('warning_in_the_cart', 'information_banner_text')
 ORDER BY `l`.`indexName`");
 
 // https://github.com/SQLFTW/sqlftw/issues/3
-Assert::validSql("-- some comment");
+Assert::validCommand("-- some comment");
 
 // https://github.com/SQLFTW/sqlftw/issues/4
-Assert::validSql(<<<XXX
+Assert::validCommand(<<<XXX
 UPDATE page_elements
 SET settings = regexp_replace(settings, '"limit":[0-9]+', '"limit":10')
 WHERE isSection = 1
@@ -46,21 +46,21 @@ XXX
 );
 
 // https://github.com/SQLFTW/sqlftw/issues/6
-Assert::validSql("
+Assert::validCommand("
 UPDATE `options` SET `value` = 180 
 WHERE (`indexName` = 'truncate_short_description') 
     AND (`value` = 0 OR `value` > 180) 
     AND (@current_template = '07' OR @current_template = '09' OR @current_template = '10' OR @current_template = '11' OR @current_template = '12' OR @current_template = '13' OR @current_template = '14')");
 
 // https://github.com/SQLFTW/sqlftw/issues/7
-Assert::validSql("
+Assert::validCommand("
 DELETE sm
 FROM section_map sm
     LEFT JOIN section_map_parameter_rel smp ON smp.pageId = sm.id
 WHERE sm.pageType = 4 AND smp.pageId IS NULL");
 
 // https://github.com/SQLFTW/sqlftw/issues/8
-Assert::validSql("
+Assert::validCommand("
 CREATE TABLE `order_packages` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `orderId` mediumint(8) unsigned NOT NULL,
