@@ -488,7 +488,7 @@ class ExpressionParser
     {
         $condition = null;
         if (!$tokenList->hasKeyword(Keyword::WHEN)) {
-            $condition = $this->parseLiteral($tokenList);
+            $condition = $this->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::WHEN);
         }
         $values = $results = [];
@@ -499,11 +499,11 @@ class ExpressionParser
                 $values[] = $this->parseExpression($tokenList);
             }
             $tokenList->expectKeyword(Keyword::THEN);
-            $results[] = $this->parseLiteral($tokenList);
+            $results[] = $this->parseExpression($tokenList);
         } while ($tokenList->hasKeyword(Keyword::WHEN));
 
         if ($tokenList->hasKeyword(Keyword::ELSE)) {
-            $results[] = $this->parseLiteral($tokenList);
+            $results[] = $this->parseExpression($tokenList);
         }
         $tokenList->expectKeywords(Keyword::END, Keyword::CASE);
 

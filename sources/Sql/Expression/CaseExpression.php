@@ -19,20 +19,20 @@ class CaseExpression implements Statement, ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var Literal|null */
+    /** @var ExpressionNode|null */
     private $condition;
 
     /** @var Literal[]|ExpressionNode[] */
     private $values;
 
-    /** @var Literal[] */
+    /** @var ExpressionNode[] */
     private $results;
 
     /**
      * @param Literal[]|ExpressionNode[] $values
-     * @param Literal[] $results
+     * @param ExpressionNode[] $results
      */
-    public function __construct(?Literal $condition, array $values, array $results)
+    public function __construct(?ExpressionNode $condition, array $values, array $results)
     {
         Check::array($values, 1);
         if ($condition !== null) {
@@ -67,7 +67,7 @@ class CaseExpression implements Statement, ExpressionNode
     }
 
     /**
-     * @return Literal[]
+     * @return ExpressionNode[]
      */
     public function getResults(): array
     {
