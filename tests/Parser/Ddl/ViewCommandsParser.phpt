@@ -17,7 +17,7 @@ Assert::parse("ALTER ALGORITHM = MERGE VIEW view1 AS SELECT 1");
 Assert::parse("ALTER ALGORITHM = TEMPTABLE VIEW view1 AS SELECT 1");
 
 // [DEFINER = { user | CURRENT_USER }]
-Assert::parse("ALTER DEFINER = 'admin'@'localhost' VIEW view1 AS SELECT 1");
+Assert::parse("ALTER DEFINER = usr1@host1 VIEW view1 AS SELECT 1");
 Assert::parse("ALTER DEFINER = CURRENT_USER VIEW view1 AS SELECT 1");
 
 // [SQL SECURITY { DEFINER | INVOKER }]
@@ -42,7 +42,7 @@ Assert::parse("CREATE ALGORITHM = MERGE VIEW view1 AS SELECT 1");
 Assert::parse("CREATE ALGORITHM = TEMPTABLE VIEW view1 AS SELECT 1");
 
 // [DEFINER = { user | CURRENT_USER }]
-Assert::parse("CREATE DEFINER = 'admin'@'localhost' VIEW view1 AS SELECT 1");
+Assert::parse("CREATE DEFINER = usr1@host1 VIEW view1 AS SELECT 1");
 Assert::parse("CREATE DEFINER = CURRENT_USER VIEW view1 AS SELECT 1");
 
 // [SQL SECURITY { DEFINER | INVOKER }]

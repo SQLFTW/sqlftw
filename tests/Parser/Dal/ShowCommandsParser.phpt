@@ -107,9 +107,11 @@ Assert::parse("SHOW FUNCTION STATUS WHERE col1 = 1");
 
 // SHOW GRANTS [FOR user_or_role [USING role [, role] ...]]
 Assert::parse("SHOW GRANTS");
-Assert::parse("SHOW GRANTS FOR 'usr1'@'host1'");
-Assert::parse("SHOW GRANTS FOR 'usr1'@'host1' USING 'role1'");
-Assert::parse("SHOW GRANTS FOR 'usr1'@'host1' USING 'role1', 'role2'");
+Assert::parse("SHOW GRANTS FOR CURRENT_USER");
+Assert::parse("SHOW GRANTS FOR CURRENT_USER()", "SHOW GRANTS FOR CURRENT_USER");
+Assert::parse("SHOW GRANTS FOR usr1@host1");
+Assert::parse("SHOW GRANTS FOR usr1@host1 USING role1");
+Assert::parse("SHOW GRANTS FOR usr1@host1 USING role1, role2");
 
 
 // SHOW {INDEX | INDEXES | KEYS} {FROM | IN} tbl_name [{FROM | IN} db_name] [WHERE expr]

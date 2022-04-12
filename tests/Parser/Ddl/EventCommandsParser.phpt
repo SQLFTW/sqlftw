@@ -8,7 +8,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 // ALTER [DEFINER = { user | CURRENT_USER }] EVENT event_name
 Assert::parse("ALTER EVENT evt1");
-Assert::parse("ALTER DEFINER 'usr1'@'host1' EVENT evt1");
+Assert::parse("ALTER DEFINER usr1@host1 EVENT evt1");
 Assert::parse("ALTER DEFINER CURRENT_USER EVENT evt1");
 
 // [ON SCHEDULE schedule:]
@@ -49,7 +49,7 @@ Assert::parse("ALTER EVENT evt1 DO stuff()");
 //   [COMMENT 'comment']
 //   DO event_body
 Assert::parse("CREATE EVENT evt1 ON SCHEDULE EVERY 6 HOUR DO stuff()");
-Assert::parse("CREATE DEFINER = 'usr1'@'host1' EVENT evt1 ON SCHEDULE EVERY 6 HOUR DO stuff()");
+Assert::parse("CREATE DEFINER = usr1@host1 EVENT evt1 ON SCHEDULE EVERY 6 HOUR DO stuff()");
 Assert::parse("CREATE DEFINER = CURRENT_USER EVENT evt1 ON SCHEDULE EVERY 6 HOUR DO stuff()");
 Assert::parse(
     "CREATE DEFINER CURRENT_USER EVENT evt1 ON SCHEDULE EVERY 6 HOUR DO stuff()",

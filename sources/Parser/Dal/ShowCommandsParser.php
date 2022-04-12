@@ -281,15 +281,13 @@ class ShowCommandsParser
                 }
             case Keyword::GRANTS:
                 // SHOW GRANTS [FOR user_or_role [USING role [, role] ...]]
-                // todo: SHOW GRANTS FOR CURRENT_USER;
-                // todo: SHOW GRANTS FOR CURRENT_USER();
                 $forUser = null;
                 $usingRoles = [];
                 if ($tokenList->hasKeyword(Keyword::FOR)) {
-                    $forUser = new UserName(...$tokenList->expectUserName());
+                    $forUser = $this->expressionParser->parseUserExpression($tokenList);
                     if ($tokenList->hasKeyword(Keyword::USING)) {
                         do {
-                            $usingRoles[] = $tokenList->expectString();
+                            $usingRoles[] = $tokenList->expectNameOrString();
                         } while ($tokenList->hasComma());
                     }
                 }

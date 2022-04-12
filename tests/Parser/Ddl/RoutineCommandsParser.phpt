@@ -39,7 +39,7 @@ Assert::parse("ALTER PROCEDURE proc1 LANGUAGE SQL COMMENT 'com1'", "ALTER PROCED
 // CREATE [DEFINER = { user | CURRENT_USER }] FUNCTION sp_name ([func_parameter[, ...]]) RETURNS type [characteristic ...] routine_body
 Assert::parse("CREATE FUNCTION func1() RETURNS INT BEGIN RETURN 1 END");
 Assert::parse("CREATE DEFINER = CURRENT_USER FUNCTION func1() RETURNS INT BEGIN RETURN 1 END");
-Assert::parse("CREATE DEFINER = 'usr1'@'host1' FUNCTION func1() RETURNS INT BEGIN RETURN 1 END");
+Assert::parse("CREATE DEFINER = usr1@host1 FUNCTION func1() RETURNS INT BEGIN RETURN 1 END");
 Assert::parse("CREATE FUNCTION func1(arg1 INT) RETURNS INT BEGIN RETURN 1 END");
 Assert::parse("CREATE FUNCTION func1(arg1 INT, arg2 CHAR(3)) RETURNS INT BEGIN RETURN 1 END");
 
@@ -62,7 +62,7 @@ Assert::parse(
 // CREATE [DEFINER = { user | CURRENT_USER }] PROCEDURE sp_name ([proc_parameter[, ...]]) [characteristic ...] routine_body
 Assert::parse("CREATE PROCEDURE proc1() BEGIN SELECT 1 END");
 Assert::parse("CREATE DEFINER = CURRENT_USER PROCEDURE proc1() BEGIN SELECT 1 END");
-Assert::parse("CREATE DEFINER = 'usr1'@'host1' PROCEDURE proc1() BEGIN SELECT 1 END");
+Assert::parse("CREATE DEFINER = usr1@host1 PROCEDURE proc1() BEGIN SELECT 1 END");
 Assert::parse("CREATE PROCEDURE proc1(arg1 INT) BEGIN SELECT 1 END");
 Assert::parse("CREATE PROCEDURE proc1(arg1 INT, arg2 CHAR(3)) BEGIN SELECT 1 END");
 

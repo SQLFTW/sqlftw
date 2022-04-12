@@ -420,6 +420,20 @@ class TokenList
         }
     }
 
+    /**
+     * @phpstan-impure
+     */
+    public function passParens(): void
+    {
+        $position = $this->position;
+
+        $token1 = $this->get(TokenType::LEFT_PARENTHESIS);
+        $token2 = $this->get(TokenType::RIGHT_PARENTHESIS);
+        if ($token1 === null || $token2 === null) {
+            $this->position = $position;
+        }
+    }
+
     public function expectAnyOperator(string ...$operators): string
     {
         $operator = $this->expect(TokenType::OPERATOR);
@@ -671,12 +685,12 @@ class TokenList
      */
     public function expectUserName(): array
     {
-        $name = $this->expectString();
+        $name = $this->expectNameOrString();
         $symbol = $this->expect(TokenType::SYMBOL);
         if ($symbol->value !== '@') {
             $this->expected('@');
         }
-        $host = $this->expectString();
+        $host = $this->expectNameOrString();
 
         return [$name, $host];
     }

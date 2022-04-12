@@ -742,6 +742,8 @@ class ExpressionParser
     public function parseUserExpression(TokenList $tokenList): UserExpression
     {
         if ($tokenList->hasKeyword(Keyword::CURRENT_USER)) {
+            $tokenList->passParens(); // CURRENT_USER()
+
             return new UserExpression(null, Keyword::CURRENT_USER);
         } else {
             return new UserExpression(new UserName(...$tokenList->expectUserName()));
