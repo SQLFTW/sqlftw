@@ -30,6 +30,9 @@ FROM `options` AS `o`
 WHERE `o`.`indexName` IN ('warning_in_the_cart', 'information_banner_text')
 ORDER BY `l`.`indexName`");
 
+// https://github.com/SQLFTW/sqlftw/issues/3
+Assert::validSql("-- some comment");
+
 // https://github.com/SQLFTW/sqlftw/issues/4
 Assert::validSql(<<<XXX
 UPDATE page_elements

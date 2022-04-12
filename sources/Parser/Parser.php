@@ -110,7 +110,14 @@ class Parser
         $tokenList->addAutoSkip(TokenType::get(TokenType::WHITESPACE));
         $tokenList->addAutoSkip(TokenType::get(TokenType::COMMENT));
 
-        $first = $tokenList->expect(TokenType::KEYWORD);
+        $first = $tokenList->get(TokenType::KEYWORD);
+        if ($first === null) {
+            if ($tokenList->onlyContainsComments()) {
+                return new EmptyCommand($tokenList);
+            } else {
+                $tokenList->expected('any keyword');
+            }
+        }
         switch ($first->value) {
             case Keyword::ALTER:
                 $second = $tokenList->expect(TokenType::KEYWORD)->value;

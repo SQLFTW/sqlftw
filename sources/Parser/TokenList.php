@@ -140,6 +140,17 @@ class TokenList
         return trim($result);
     }
 
+    public function onlyContainsComments(): bool
+    {
+        foreach ($this->tokens as $token) {
+            if (($token->type & (TokenType::WHITESPACE | TokenType::COMMENT)) === 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     // matchers --------------------------------------------------------------------------------------------------------
 
     /**
