@@ -33,7 +33,7 @@ class IndexType extends SqlEnum
 
     public function serializeIndexAsKey(Formatter $formatter): string
     {
-        return str_replace('INDEX', 'KEY', $this->getValue());
+        return str_replace(Keyword::INDEX, Keyword::KEY, $this->getValue());
     }
 
 }

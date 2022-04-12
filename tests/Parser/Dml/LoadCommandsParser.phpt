@@ -15,11 +15,19 @@ Assert::parse("LOAD DATA LOCAL INFILE 'foo' INTO TABLE tbl1");
 Assert::parse("LOAD DATA INFILE 'foo' REPLACE INTO TABLE tbl1");
 Assert::parse("LOAD DATA INFILE 'foo' IGNORE INTO TABLE tbl1");
 Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 PARTITION (p1, p2, p3)");
-Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 CHARACTER SET 'ascii'");
+Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 CHARACTER SET ascii");
+Assert::parse(
+    "LOAD DATA INFILE 'foo' INTO TABLE tbl1 CHARACTER SET 'ascii'",
+    "LOAD DATA INFILE 'foo' INTO TABLE tbl1 CHARACTER SET ascii" // '...' -> ...
+);
+Assert::parse(
+    "LOAD DATA INFILE 'foo' INTO TABLE tbl1 CHARSET ascii",
+    "LOAD DATA INFILE 'foo' INTO TABLE tbl1 CHARACTER SET ascii" // CHARSET -> CHARACTER SET
+);
 Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '~' ESCAPED BY '$'");
 Assert::parse(
     "LOAD DATA INFILE 'foo' INTO TABLE tbl1 COLUMNS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '~' ESCAPED BY '$'",
-    "LOAD DATA INFILE 'foo' INTO TABLE tbl1 FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '~' ESCAPED BY '$'"
+    "LOAD DATA INFILE 'foo' INTO TABLE tbl1 FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '~' ESCAPED BY '$'" // COLUMNS -> FIELDS
 );
 Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 LINES STARTING BY ';' TERMINATED BY '~'");
 Assert::parse("LOAD DATA INFILE 'foo' INTO TABLE tbl1 IGNORE 10 LINES");
@@ -38,7 +46,15 @@ Assert::parse("LOAD XML CONCURRENT INFILE 'foo' INTO TABLE tbl1");
 Assert::parse("LOAD XML LOCAL INFILE 'foo' INTO TABLE tbl1");
 Assert::parse("LOAD XML INFILE 'foo' REPLACE INTO TABLE tbl1");
 Assert::parse("LOAD XML INFILE 'foo' IGNORE INTO TABLE tbl1");
-Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 CHARACTER SET 'ascii'");
+Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 CHARACTER SET ascii");
+Assert::parse(
+    "LOAD XML INFILE 'foo' INTO TABLE tbl1 CHARACTER SET 'ascii'",
+    "LOAD XML INFILE 'foo' INTO TABLE tbl1 CHARACTER SET ascii" // '...' -> ...
+);
+Assert::parse(
+    "LOAD XML INFILE 'foo' INTO TABLE tbl1 CHARSET ascii",
+    "LOAD XML INFILE 'foo' INTO TABLE tbl1 CHARACTER SET ascii" // CHARSET -> CHARACTER SET
+);
 Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 ROWS IDENTIFIED BY '<tr>'");
 Assert::parse("LOAD XML INFILE 'foo' INTO TABLE tbl1 IGNORE 10 LINES");
 Assert::parse(

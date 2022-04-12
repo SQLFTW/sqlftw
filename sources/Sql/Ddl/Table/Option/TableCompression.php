@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlEnum;
 
+/**
+ * Case-insensitive, but needs to be a string
+ */
 class TableCompression extends SqlEnum
 {
 
@@ -21,7 +24,7 @@ class TableCompression extends SqlEnum
 
     public function serialize(Formatter $formatter): string
     {
-        return "'" . parent::serialize($formatter) . "'";
+        return "'" . $this->getValue() . "'";
     }
 
 }

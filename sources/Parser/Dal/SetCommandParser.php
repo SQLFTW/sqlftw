@@ -19,6 +19,7 @@ use SqlFtw\Sql\Dal\SystemVariable;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Scope;
+use function ltrim;
 use function strpos;
 use function strtoupper;
 
@@ -52,7 +53,6 @@ class SetCommandParser
 
         $assignments = [];
         do {
-            $position = $tokenList->getPosition();
             /** @var Scope|null $scope */
             $scope = $tokenList->getKeywordEnum(Scope::class);
             if ($scope !== null) {
@@ -80,8 +80,7 @@ class SetCommandParser
                             $variable = null;
                         } else {
                             $scope = Scope::get(Scope::SESSION);
-                            $tokenList->resetPosition($position);
-                            $variable = $tokenList->expectNameOrStringEnum(SystemVariable::class, '@')->getValue();
+                            $variable = (new SystemVariable(ltrim($variable, '@')))->getValue();
                         }
                         if ($variable === null) {
                             $tokenList->expect(TokenType::DOT);

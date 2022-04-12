@@ -9,24 +9,27 @@
 
 namespace SqlFtw\Platform\Naming;
 
-use SqlFtw\Reflection\TableReflection;
+use SqlFtw\Sql\QualifiedName;
 
 interface NamingStrategy
 {
 
     /**
      * @param string[] $columns
+     * @param string[] $existingIndexes
      */
-    public function createIndexName(TableReflection $table, array $columns): string;
+    public function createIndexName(QualifiedName $table, array $columns, array $existingIndexes = []): string;
 
     /**
      * @param string[] $columns
+     * @param string[] $existingKeys
      */
-    public function createForeignKeyName(TableReflection $table, array $columns): string;
+    public function createForeignKeyName(QualifiedName $table, array $columns, array $existingKeys = []): string;
 
     /**
      * @param string[] $columns
+     * @param string[] $existingChecks
      */
-    public function createCheckName(TableReflection $table, array $columns): string;
+    public function createCheckName(QualifiedName $table, array $columns, array $existingChecks = []): string;
 
 }

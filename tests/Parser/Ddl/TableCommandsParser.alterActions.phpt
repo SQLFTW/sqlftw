@@ -86,8 +86,13 @@ Assert::parse("ALTER TABLE tbl1 ORDER BY col1");
 Assert::parse("ALTER TABLE tbl1 ORDER BY col1, col2");
 
 // CONVERT TO CHARACTER SET
-Assert::parse("ALTER TABLE tbl1 CONVERT TO CHARACTER SET 'ascii'");
-Assert::parse("ALTER TABLE tbl1 CONVERT TO CHARACTER SET 'ascii' COLLATE 'ascii_general_ci'");
+Assert::parse("ALTER TABLE tbl1 CONVERT TO CHARACTER SET ascii");
+Assert::parse("ALTER TABLE tbl1 CONVERT TO CHARACTER SET 'ascii'", "ALTER TABLE tbl1 CONVERT TO CHARACTER SET ascii"); // '...' -> ...
+Assert::parse("ALTER TABLE tbl1 CONVERT TO CHARACTER SET ascii COLLATE ascii_general_ci");
+Assert::parse(
+    "ALTER TABLE tbl1 CONVERT TO CHARACTER SET 'ascii' COLLATE 'ascii_general_ci'",
+    "ALTER TABLE tbl1 CONVERT TO CHARACTER SET ascii COLLATE ascii_general_ci" // '...' -> ...
+);
 
 // DISCARD TABLESPACE
 Assert::parse("ALTER TABLE tbl1 DISCARD TABLESPACE");

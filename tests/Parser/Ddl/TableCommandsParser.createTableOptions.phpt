@@ -56,7 +56,8 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT) ENCRYPTION 'Y'");
 Assert::parse("CREATE TABLE tbl1 (col1 INT) ENCRYPTION 'N'");
 
 // ENGINE
-Assert::parse("CREATE TABLE tbl1 (col1 INT) ENGINE 'InnoDB'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) ENGINE InnoDB");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) ENGINE 'InnoDB'", "CREATE TABLE tbl1 (col1 INT) ENGINE InnoDB"); // '...' -> ...
 
 // INDEX_DIRECTORY
 Assert::parse("CREATE TABLE tbl1 (col1 INT) INDEX DIRECTORY 'foo'");

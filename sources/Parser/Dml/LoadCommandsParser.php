@@ -21,7 +21,6 @@ use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
-use function strtolower;
 
 class LoadCommandsParser
 {

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
-use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
 use function strtolower;
@@ -44,11 +43,6 @@ class StorageEngine extends SqlEnum
 
             return false;
         }
-    }
-
-    public function serialize(Formatter $formatter): string
-    {
-        return "'" . parent::serialize($formatter) . "'";
     }
 
 }

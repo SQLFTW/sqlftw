@@ -858,9 +858,8 @@ class TableCommandsParser
      */
     private function parseConstraint(TokenList $tokenList): ConstraintDefinition
     {
+        $name = null;
         if ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
-            $name = $tokenList->expectName();
-        } else {
             $name = $tokenList->getName();
         }
 

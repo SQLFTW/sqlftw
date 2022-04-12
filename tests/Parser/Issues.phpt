@@ -1,5 +1,8 @@
 <?php declare(strict_types = 1);
 
+// phpcs:disable Squiz.PHP.Heredoc.NotAllowed
+// phpcs:disable SlevomatCodingStandard.PHP.RequireNowdoc.RequiredNowdoc
+
 namespace SqlFtw\Parser;
 
 use SqlFtw\Tests\Assert;
@@ -74,4 +77,3 @@ CREATE TABLE `order_packages` (
     CONSTRAINT `order_packages_packs` FOREIGN KEY (`packingId`) REFERENCES `packs` (`id`),
     CONSTRAINT `order_packages_orders` FOREIGN KEY (`orderId`) REFERENCES `orders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;");
-

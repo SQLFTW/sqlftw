@@ -34,12 +34,15 @@ hhhhhhhhhhhh
 
 # en
 acceptor
+backtrace
 bitwise
+callstack
 checksums
 decrypt
 deferrable
 designators
 destructor
+formatters
 instantiable
 introducer
 leakproof
@@ -59,8 +62,10 @@ unescape
 unescaped
 unlogged
 updatable
+uppercased
 validator
 versioning
+wtf
 
 # SQL
 ada

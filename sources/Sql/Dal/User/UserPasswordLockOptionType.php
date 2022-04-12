@@ -39,6 +39,7 @@ class UserPasswordLockOptionType extends SqlEnum
 
     /**
      * @param int|string|null $value
+     * @todo: WTF is this mess?
      */
     public static function validate(string $type, &$value): void
     {

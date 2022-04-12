@@ -12,9 +12,6 @@ parameters:
         - ../../sources/Reflection/*
 
     ignoreErrors:
-        # conflicts with CS and PhpStorm
-        - '~Unreachable statement - code above always terminates.~'
-
         # complicated...
         - '~Property SqlFtw\\Sql\\Ddl\\DataType::\$(size|values) \(array<(int|string)>(\|int)?\|null\) does not accept~'
         - '~Parameter #1 \$strings of method SqlFtw\\Formatter\\Formatter::formatStringList\(\) expects array<string>, array<int\|string> given.~'

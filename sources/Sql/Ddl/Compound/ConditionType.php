@@ -15,8 +15,8 @@ use SqlFtw\Sql\SqlEnum;
 class ConditionType extends SqlEnum
 {
 
-    public const ERROR = 'error';
-    public const CONDITION = 'condition';
+    public const ERROR = 'ERROR'; // special type. does not indicate usage of the actual usage of ERROR keyword
+    public const CONDITION = 'CONDITION'; // special type. does not indicate usage of the actual usage of CONDITION keyword
     public const SQL_STATE = Keyword::SQLSTATE;
     public const SQL_WARNING = Keyword::SQLWARNING;
     public const SQL_EXCEPTION = Keyword::SQLEXCEPTION;

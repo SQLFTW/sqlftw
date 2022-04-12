@@ -14,14 +14,17 @@ Assert::parse("ALTER TABLE tbl1 AUTO_INCREMENT 17");
 Assert::parse("ALTER TABLE tbl1 AVG_ROW_LENGTH 17");
 
 // CHARACTER_SET
-Assert::parse("ALTER TABLE tbl1 CHARACTER SET 'utf8'");
+Assert::parse("ALTER TABLE tbl1 CHARACTER SET utf8");
+Assert::parse("ALTER TABLE tbl1 CHARACTER SET 'utf8'", "ALTER TABLE tbl1 CHARACTER SET utf8"); // '...' -> ...
+Assert::parse("ALTER TABLE tbl1 CHARSET utf8", "ALTER TABLE tbl1 CHARACTER SET utf8"); // CHARSET -> CHARACTER SET
 
 // CHECKSUM
 Assert::parse("ALTER TABLE tbl1 CHECKSUM 0");
 Assert::parse("ALTER TABLE tbl1 CHECKSUM 1");
 
 // COLLATE
-Assert::parse("ALTER TABLE tbl1 COLLATE 'ascii_general_ci'");
+Assert::parse("ALTER TABLE tbl1 COLLATE ascii_general_ci");
+Assert::parse("ALTER TABLE tbl1 COLLATE 'ascii_general_ci'", "ALTER TABLE tbl1 COLLATE ascii_general_ci"); // '...' -> ...
 
 // COMMENT
 Assert::parse("ALTER TABLE tbl1 COMMENT 'foo'");
@@ -46,7 +49,8 @@ Assert::parse("ALTER TABLE tbl1 ENCRYPTION 'Y'");
 Assert::parse("ALTER TABLE tbl1 ENCRYPTION 'N'");
 
 // ENGINE
-Assert::parse("ALTER TABLE tbl1 ENGINE 'InnoDB'");
+Assert::parse("ALTER TABLE tbl1 ENGINE InnoDB");
+Assert::parse("ALTER TABLE tbl1 ENGINE 'InnoDB'", "ALTER TABLE tbl1 ENGINE InnoDB"); // '...' -> ...
 
 // INDEX_DIRECTORY
 Assert::parse("ALTER TABLE tbl1 INDEX DIRECTORY 'foo'");

@@ -10,7 +10,8 @@
 namespace SqlFtw\Platform\Naming;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Reflection\TableReflection;
+use SqlFtw\Sql\QualifiedName;
+use function in_array;
 
 class NamingStrategyMysql implements NamingStrategy
 {
@@ -18,50 +19,52 @@ class NamingStrategyMysql implements NamingStrategy
 
     /**
      * @param string[] $columns
+     * @param string[] $existingIndexes
      */
-    public function createIndexName(TableReflection $table, array $columns): string
+    public function createIndexName(QualifiedName $table, array $columns, array $existingIndexes = []): string
     {
         $name = $columns[0];
-        $indexes = $table->getIndexes();
-        if (!isset($indexes[$name])) {
+        if (!in_array($name, $existingIndexes, true)) {
             return $name;
         }
+
         $n = 1;
-        while (isset($indexes[$name . '_' . $n])) {
+        $name .= '_';
+        while (in_array($name . $n, $existingIndexes, true)) {
             $n++;
         }
 
-        return $name . '_' . $n;
+        return $name . $n;
     }
 
     /**
      * @param string[] $columns
+     * @param string[] $existingKeys
      */
-    public function createForeignKeyName(TableReflection $table, array $columns): string
+    public function createForeignKeyName(QualifiedName $table, array $columns, array $existingKeys = []): string
     {
-        $name = $table->getName()->getName() . '_ibfk';
-        $foreignKeys = $table->getForeignKeys();
+        $name = $table->getName() . '_ibfk_';
         $n = 1;
-        while (isset($foreignKeys[$name . '_' . $n])) {
+        while (in_array($name . $n, $existingKeys, true)) {
             $n++;
         }
 
-        return $name . '_' . $n;
+        return $name . $n;
     }
 
     /**
      * @param string[] $columns
+     * @param string[] $existingChecks
      */
-    public function createCheckName(TableReflection $table, array $columns): string
+    public function createCheckName(QualifiedName $table, array $columns, array $existingChecks = []): string
     {
-        $name = $table->getName()->getName() . '_chk';
-        $checks = $table->getChecks();
+        $name = $table->getName() . '_chk_';
         $n = 1;
-        while (isset($checks[$name . '_' . $n])) {
+        while (in_array($name . $n, $existingChecks, true)) {
             $n++;
         }
 
-        return $name . '_' . $n;
+        return $name . $n;
     }
 
 }

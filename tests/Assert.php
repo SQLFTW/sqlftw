@@ -71,7 +71,12 @@ class Assert extends DogmaAssert
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
         $formatter = $formatter ?? new Formatter($parser->getSettings());
 
-        $actual = $parser->parseCommand($query)->serialize($formatter);
+        //try {
+            $actual = $parser->parseCommand($query)->serialize($formatter);
+        //} catch (ParserException $e) {
+        //    self::fail($e->getMessage());
+        //    return;
+        //}
         /** @var string $actual */
         $actual = preg_replace('/\\s+/', ' ', $actual);
         $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);

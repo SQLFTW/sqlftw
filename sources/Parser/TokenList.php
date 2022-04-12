@@ -22,7 +22,6 @@ use function in_array;
 use function is_bool;
 use function is_int;
 use function sprintf;
-use function str_replace;
 use function trim;
 
 /**
@@ -285,8 +284,11 @@ class TokenList
 
     public function expectNameOrString(): string
     {
+        $token = $this->expectAny(TokenType::NAME, TokenType::STRING);
         /** @var string $value */
-        $value = $this->expectAny(TokenType::NAME, TokenType::STRING)->value;
+        $value = ($token->type & TokenType::STRING) !== 0
+            ? $token->value
+            : $token->original ?? $token->value; // NAME|KEYWORD is automatically uppercased
 
         return $value;
     }
@@ -469,6 +471,7 @@ class TokenList
     {
         try {
             $this->expectKeyword($keyword);
+
             return true;
         } catch (UnexpectedTokenException $e) {
             return false;
@@ -549,13 +552,11 @@ class TokenList
      * @param class-string<T> $className
      * @return T
      */
-    public function expectNameOrStringEnum(string $className, ?string $filter = null): SqlEnum
+    public function expectNameOrStringEnum(string $className): SqlEnum
     {
         $values = call_user_func([$className, 'getAllowedValues']);
         $value = $this->expectNameOrString();
-        if ($filter !== null) {
-            $value = str_replace($filter, '', $value);
-        }
+
         if (in_array($value, $values, true)) {
             return call_user_func([$className, 'get'], $value);
         }
