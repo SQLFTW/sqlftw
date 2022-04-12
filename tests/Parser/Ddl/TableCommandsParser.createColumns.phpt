@@ -61,7 +61,7 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT UNIQUE)", "CREATE TABLE tbl1 (col1 IN
 Assert::parse("CREATE TABLE tbl1 (col1 INT KEY)");
 
 // [COMMENT 'string']
-Assert::parse("CREATE TABLE tbl1 (col1 INT COMMENT 'foo')");
+Assert::parse("CREATE TABLE tbl1 (col1 INT COMMENT 'com1')");
 
 // [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
 Assert::parse("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT FIXED)");

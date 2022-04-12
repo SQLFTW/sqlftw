@@ -21,109 +21,109 @@ Assert::token($tokens[1], TokenType::KEYWORD | TokenType::RESERVED, 'SELECT', 1)
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 7);
 
 // UNQUOTED_NAME
-$tokens = $lexer->tokenizeAll(' foo ');
+$tokens = $lexer->tokenizeAll(' name1 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::NAME | TokenType::UNQUOTED_NAME, 'foo', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 4);
-
-// DOUBLE_QUOTED_STRING
-$tokens = $lexer->tokenizeAll(' "foo" ');
-Assert::count($tokens, 3);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::DOUBLE_QUOTED_STRING, 'foo', 1);
+Assert::token($tokens[1], TokenType::NAME | TokenType::UNQUOTED_NAME, 'name1', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
 
+// DOUBLE_QUOTED_STRING
+$tokens = $lexer->tokenizeAll(' "string1" ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::DOUBLE_QUOTED_STRING, 'string1', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 10);
+
 Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' "foo');
+    $lexer->tokenizeAll(' "string1');
 }, EndOfStringNotFoundException::class);
 
 // with ANSI_QUOTES mode enabled
 $settings->setMode($settings->getMode()->add(Mode::ANSI_QUOTES));
-$tokens = $lexer->tokenizeAll(' "foo" ');
+$tokens = $lexer->tokenizeAll(' "string1" ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::NAME | TokenType::DOUBLE_QUOTED_STRING, 'foo', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
+Assert::token($tokens[1], TokenType::NAME | TokenType::DOUBLE_QUOTED_STRING, 'string1', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 10);
 $settings->setMode($settings->getMode()->remove(Mode::ANSI_QUOTES));
 
 // SINGLE_QUOTED_STRING
-$tokens = $lexer->tokenizeAll(" 'foo' ");
+$tokens = $lexer->tokenizeAll(" 'string1' ");
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'foo', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'string1', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 10);
 
 Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(" 'foo");
+    $lexer->tokenizeAll(" 'string1");
 }, EndOfStringNotFoundException::class);
 
 // doubling quotes
-$tokens = $lexer->tokenizeAll(" 'fo''o' ");
+$tokens = $lexer->tokenizeAll(" 'str''ing1' ");
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, "fo'o", 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, "str'ing1", 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 12);
 
 // escaping quotes
-$tokens = $lexer->tokenizeAll(" 'fo\\'o' ");
+$tokens = $lexer->tokenizeAll(" 'str\\'ing1' ");
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, "fo'o", 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, "str'ing1", 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 12);
 
-$tokens = $lexer->tokenizeAll(" 'foo\\\\' ");
+$tokens = $lexer->tokenizeAll(" 'string1\\\\' ");
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'foo\\', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'string1\\', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 12);
 
-$tokens = $lexer->tokenizeAll(" 'fo\\\\\\'o' ");
+$tokens = $lexer->tokenizeAll(" 'str\\\\\\'ing1' ");
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, "fo\\'o", 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 10);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, "str\\'ing1", 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 14);
 
 // with escaping disabled
 $settings->setMode($settings->getMode()->add(Mode::NO_BACKSLASH_ESCAPES));
-$tokens = $lexer->tokenizeAll(" 'foo\\' ");
+$tokens = $lexer->tokenizeAll(" 'string1\\' ");
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'foo\\', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 7);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'string1\\', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 11);
 $settings->setMode($settings->getMode()->remove(Mode::NO_BACKSLASH_ESCAPES));
 
 // BACKTICK_QUOTED_STRING
-$tokens = $lexer->tokenizeAll(' `foo` ');
+$tokens = $lexer->tokenizeAll(' `name1` ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::NAME | TokenType::BACKTICK_QUOTED_STRING, 'foo', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
+Assert::token($tokens[1], TokenType::NAME | TokenType::BACKTICK_QUOTED_STRING, 'name1', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
 
 Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' `foo');
+    $lexer->tokenizeAll(' `name1');
 }, EndOfStringNotFoundException::class);
 
 // AT_VARIABLE
-$tokens = $lexer->tokenizeAll(' @foo ');
+$tokens = $lexer->tokenizeAll(' @var1 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::NAME | TokenType::AT_VARIABLE, '@foo', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 5);
+Assert::token($tokens[1], TokenType::NAME | TokenType::AT_VARIABLE, '@var1', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
 
 // not AT_VARIABLE
-$tokens = $lexer->tokenizeAll(' foo@bar ');
+$tokens = $lexer->tokenizeAll(' name1@name2 ');
 Assert::count($tokens, 5);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::NAME | TokenType::UNQUOTED_NAME, 'foo', 1);
-Assert::token($tokens[2], TokenType::SYMBOL | TokenType::OPERATOR, '@', 4);
-Assert::token($tokens[3], TokenType::NAME | TokenType::UNQUOTED_NAME, 'bar', 5);
-Assert::token($tokens[4], TokenType::WHITESPACE, ' ', 8);
+Assert::token($tokens[1], TokenType::NAME | TokenType::UNQUOTED_NAME, 'name1', 1);
+Assert::token($tokens[2], TokenType::SYMBOL | TokenType::OPERATOR, '@', 6);
+Assert::token($tokens[3], TokenType::NAME | TokenType::UNQUOTED_NAME, 'name2', 7);
+Assert::token($tokens[4], TokenType::WHITESPACE, ' ', 12);
 
 // ENCODING_DEFINITION
-//$tokens = $lexer->tokenizeAll(" _utf8'foo' ");
+//$tokens = $lexer->tokenizeAll(" _utf8'string1' ");
 //Assert::count($tokens, 5);
 //Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 //Assert::token($tokens[1], TokenType::NAME | TokenType::ENCODING_DEFINITION, '_utf8', 1);
-//Assert::token($tokens[2], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'foo', 1);
+//Assert::token($tokens[2], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'string1', 1);
 //Assert::token($tokens[3], TokenType::WHITESPACE, ' ', 12);

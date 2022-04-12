@@ -64,7 +64,7 @@ Assert::token($tokens[3], TokenType::WHITESPACE, ' ', 12);
 Assert::token($tokens[4], TokenType::SYMBOL | TokenType::SEMICOLON, ';', 13);
 
 Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll('DELIMITER foo');
+    $lexer->tokenizeAll('DELIMITER dlm1');
 }, ExpectedTokenNotFoundException::class);
 
 // NULL

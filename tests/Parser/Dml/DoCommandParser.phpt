@@ -8,7 +8,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // DO expr [, expr] ...
-Assert::parse("DO foo");
-Assert::parse("DO foo(bar)");
-Assert::parse("DO foo(bar, baz)");
-Assert::parse("DO foo(), bar()");
+Assert::parse("DO proc1");
+Assert::parse("DO proc1(var1)");
+Assert::parse("DO proc1(var1, var2)");
+Assert::parse("DO proc1(), proc2()");

@@ -11,18 +11,19 @@ require __DIR__ . '/../../bootstrap.php';
 //     [WHERE where_condition]
 //     [ORDER BY ...]
 //     [LIMIT row_count]
-Assert::parse("UPDATE foo SET bar = 1, baz = 2");
-Assert::parse("UPDATE foo SET foo.bar = 1, foo.baz = 2");
-Assert::parse("UPDATE foo SET foo.bar.x = 1, foo.baz.y = 2");
-Assert::parse("UPDATE foo SET bar = DEFAULT, baz = DEFAULT");
-Assert::parse("UPDATE LOW_PRIORITY foo SET bar = 1, baz = 2");
-Assert::parse("UPDATE IGNORE foo SET bar = 1, baz = 2");
-Assert::parse("UPDATE LOW_PRIORITY IGNORE foo SET bar = 1, baz = 2");
-Assert::parse("UPDATE foo SET bar = 1, baz = 2 WHERE bar = 2");
-Assert::parse("UPDATE foo SET bar = 1, baz = 2 ORDER BY foo, bar");
-Assert::parse("UPDATE foo SET bar = 1, baz = 2 LIMIT 10");
+Assert::parse("UPDATE tbl1 SET col1 = 1, col2 = 2");
+Assert::parse("UPDATE db1.tbl1 SET col1 = 1, col2 = 2");
+Assert::parse("UPDATE tbl1 SET tbl2.col2 = 1, tbl3.col3 = 2");
+Assert::parse("UPDATE tbl1 SET db2.tbl2.col2 = 1, db3.tbl3.col3 = 2");
+Assert::parse("UPDATE tbl1 SET col1 = DEFAULT, col2 = DEFAULT");
+Assert::parse("UPDATE LOW_PRIORITY tbl1 SET col1 = 1, col2 = 2");
+Assert::parse("UPDATE IGNORE tbl1 SET col1 = 1, col2 = 2");
+Assert::parse("UPDATE LOW_PRIORITY IGNORE tbl1 SET col1 = 1, col2 = 2");
+Assert::parse("UPDATE tbl1 SET col1 = 1, col2 = 2 WHERE col3 = 2");
+Assert::parse("UPDATE tbl1 SET col1 = 1, col2 = 2 ORDER BY col3, col4");
+Assert::parse("UPDATE tbl1 SET col1 = 1, col2 = 2 LIMIT 10");
 
 // UPDATE [LOW_PRIORITY] [IGNORE] table_references
 //     SET col_name1={expr1|DEFAULT} [, col_name2={expr2|DEFAULT}] ...
 //     [WHERE where_condition]
-Assert::parse("UPDATE foo JOIN bar ON foo.x = bar.y SET bar = 1, baz = 2");
+Assert::parse("UPDATE tbl1 JOIN tbl2 ON tbl3.col3 = tbl4.col4 SET col5 = 1, col6 = 2");

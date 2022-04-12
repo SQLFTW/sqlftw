@@ -27,7 +27,7 @@ Assert::parse("ALTER TABLE tbl1 COLLATE ascii_general_ci");
 Assert::parse("ALTER TABLE tbl1 COLLATE 'ascii_general_ci'", "ALTER TABLE tbl1 COLLATE ascii_general_ci"); // '...' -> ...
 
 // COMMENT
-Assert::parse("ALTER TABLE tbl1 COMMENT 'foo'");
+Assert::parse("ALTER TABLE tbl1 COMMENT 'ciom1'");
 
 // COMPRESSION
 Assert::parse("ALTER TABLE tbl1 COMPRESSION 'ZLIB'");
@@ -35,10 +35,10 @@ Assert::parse("ALTER TABLE tbl1 COMPRESSION 'LZ4'");
 Assert::parse("ALTER TABLE tbl1 COMPRESSION 'NONE'");
 
 // CONNECTION
-Assert::parse("ALTER TABLE tbl1 CONNECTION 'foo'");
+Assert::parse("ALTER TABLE tbl1 CONNECTION 'con1'");
 
 // DATA_DIRECTORY
-Assert::parse("ALTER TABLE tbl1 DATA DIRECTORY 'foo'");
+Assert::parse("ALTER TABLE tbl1 DATA DIRECTORY 'dir1'");
 
 // DELAY_KEY_WRITE
 Assert::parse("ALTER TABLE tbl1 DELAY_KEY_WRITE 0");
@@ -53,7 +53,7 @@ Assert::parse("ALTER TABLE tbl1 ENGINE InnoDB");
 Assert::parse("ALTER TABLE tbl1 ENGINE 'InnoDB'", "ALTER TABLE tbl1 ENGINE InnoDB"); // '...' -> ...
 
 // INDEX_DIRECTORY
-Assert::parse("ALTER TABLE tbl1 INDEX DIRECTORY 'foo'");
+Assert::parse("ALTER TABLE tbl1 INDEX DIRECTORY 'dir1'");
 
 // INSERT_METHOD
 Assert::parse("ALTER TABLE tbl1 INSERT_METHOD NO");
@@ -75,7 +75,7 @@ Assert::parse("ALTER TABLE tbl1 PACK_KEYS 1");
 Assert::parse("ALTER TABLE tbl1 PACK_KEYS DEFAULT");
 
 // PASSWORD
-Assert::parse("ALTER TABLE tbl1 PASSWORD 'secret'");
+Assert::parse("ALTER TABLE tbl1 PASSWORD 'pwd1'");
 
 // ROW_FORMAT DEFAULT|DYNAMIC|FIXED|COMPRESSED|REDUNDANT|COMPACT
 Assert::parse("ALTER TABLE tbl1 ROW_FORMAT DEFAULT");
@@ -99,7 +99,7 @@ Assert::parse("ALTER TABLE tbl1 STATS_PERSISTENT DEFAULT");
 Assert::parse("ALTER TABLE tbl1 STATS_SAMPLE_PAGES 17");
 
 // TABLESPACE
-Assert::parse("ALTER TABLE tbl1 TABLESPACE 'foo'");
+Assert::parse("ALTER TABLE tbl1 TABLESPACE 'tbs1'");
 
 // UNION
-Assert::parse("ALTER TABLE tbl1 UNION (foo, bar)");
+Assert::parse("ALTER TABLE tbl1 UNION (tbl2, tbl3)");

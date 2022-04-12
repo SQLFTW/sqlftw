@@ -11,19 +11,19 @@ require __DIR__ . '/../../bootstrap.php';
 
 // all
 $query = 'CREATE TABLE test (
-  id BIGINT,
-  foo CHAR(10),
-  bar CHAR(20),
-  PRIMARY KEY (id),
-  UNIQUE INDEX key2 (foo(5), bar(10)),
-  INDEX key3 USING HASH (bar)
+  col1 BIGINT,
+  col2 CHAR(10),
+  col3 CHAR(20),
+  PRIMARY KEY (col1),
+  UNIQUE INDEX key2 (col2(5), col3(10)),
+  INDEX key3 USING HASH (col3)
 )';
 Assert::parse($query);
 
 // [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
 Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT PRIMARY KEY (col1))");
-Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT foo PRIMARY KEY (col1))");
+Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT con1 PRIMARY KEY (col1))");
 
 // type & options
 Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY USING BTREE (col1))");
@@ -32,8 +32,8 @@ Assert::parse(
     "CREATE TABLE tbl1 (col1 INT, PRIMARY KEY USING BTREE (col1))"
 );
 Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) KEY_BLOCK_SIZE 10)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) WITH PARSER foo)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) COMMENT 'string')");
+Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) WITH PARSER par1)");
+Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) COMMENT 'com1')");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) VISIBLE)");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) INVISIBLE)");
 
@@ -45,7 +45,7 @@ Assert::parse(
     "CREATE TABLE tbl1 (col1 INT, UNIQUE INDEX (col1))"
 );
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT UNIQUE INDEX (col1))");
-Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT foo UNIQUE INDEX (col1))");
+Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT con1 UNIQUE INDEX (col1))");
 
 
 // {INDEX|KEY} [index_name] [index_type] (index_col_name, ...) [index_option] ...
@@ -74,7 +74,7 @@ Assert::parse(
 Assert::parse("CREATE TABLE tbl1 (col1 INT, FOREIGN KEY (col1) REFERENCES tbl1 (col1))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, col2 INT, FOREIGN KEY (col1, col2) REFERENCES tbl1 (col1, col2))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT FOREIGN KEY (col1) REFERENCES tbl1 (col1))");
-Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT foo FOREIGN KEY (col1) REFERENCES tbl1 (col1))");
+Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT con1 FOREIGN KEY (col1) REFERENCES tbl1 (col1))");
 
 // options
 Assert::parse("CREATE TABLE tbl1 (col1 INT, FOREIGN KEY (col1) REFERENCES tbl1 (col1) MATCH FULL)");
@@ -101,4 +101,4 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT, CHECK (col1 > 0))");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CHECK (col1 > 0) ENFORCED)");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CHECK (col1 > 0) NOT ENFORCED)");
 Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT CHECK (col1 > 0))");
-Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT foo CHECK (col1 > 0))");
+Assert::parse("CREATE TABLE tbl1 (col1 INT, CONSTRAINT con1 CHECK (col1 > 0))");

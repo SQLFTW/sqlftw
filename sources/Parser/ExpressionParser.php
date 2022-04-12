@@ -414,13 +414,13 @@ class ExpressionParser
                     $name2 = $name3 = null;
                     if ($tokenList->has(TokenType::DOT)) {
                         if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                            $name2 = '*'; // SELECT foo.*
+                            $name2 = '*'; // SELECT tbl.*
                         } else {
                             $name2 = $tokenList->expectName();
                         }
                         if ($name2 !== '*' && $tokenList->has(TokenType::DOT)) {
                             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                                $name3 = '*'; // SELECT foo.bar.*
+                                $name3 = '*'; // SELECT db.tbl.*
                             } else {
                                 $name3 = $tokenList->expectName();
                             }
@@ -432,7 +432,7 @@ class ExpressionParser
 
                     } elseif ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                         // function_call
-                        // todo: support for irregular arguments - eg "GROUP_CONCAT(DISTINCT foo ORDER BY bar)"
+                        // todo: support for irregular arguments - eg "GROUP_CONCAT(DISTINCT col1 ORDER BY col2)"
                         $arguments = [];
                         if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
                             do {

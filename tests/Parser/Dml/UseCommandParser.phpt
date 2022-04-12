@@ -7,5 +7,5 @@ use SqlFtw\Tests\Assert;
 require __DIR__ . '/../../bootstrap.php';
 
 
-// USE foo
+// USE ...
 Assert::parse("USE db1");

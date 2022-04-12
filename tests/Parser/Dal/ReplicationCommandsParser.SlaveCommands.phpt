@@ -15,8 +15,8 @@ Assert::parse("RESET MASTER TO 12345");
 // RESET SLAVE
 Assert::parse("RESET SLAVE");
 Assert::parse("RESET SLAVE ALL");
-Assert::parse("RESET SLAVE FOR CHANNEL 'foo'");
-Assert::parse("RESET SLAVE ALL FOR CHANNEL 'foo'");
+Assert::parse("RESET SLAVE FOR CHANNEL 'chan1'");
+Assert::parse("RESET SLAVE ALL FOR CHANNEL 'chan1'");
 
 
 // START GROUP_REPLICATION
@@ -32,8 +32,8 @@ Assert::parse("START SLAVE UNTIL SQL_BEFORE_GTIDS = 5ade17eb-fb52-49e5-80c9-6b95
 Assert::parse("START SLAVE UNTIL SQL_AFTER_GTIDS = 5ade17eb-fb52-49e5-80c9-6b952de466b7:10");
 Assert::parse("START SLAVE UNTIL SQL_AFTER_GTIDS = 5ade17eb-fb52-49e5-80c9-6b952de466b7:10-20:30-40:50-60");
 Assert::parse("START SLAVE UNTIL SQL_AFTER_GTIDS = 5ade17eb-fb52-49e5-80c9-6b952de466b7:10-20:30-40:50-60, 82c4b49c-b591-4249-8600-d2ba6a528791:70-80");
-Assert::parse("START SLAVE USER='foo' PASSWORD='bar' DEFAULT_AUTH='baz' PLUGIN_DIR='dir'");
-Assert::parse("START SLAVE FOR CHANNEL 'foo'");
+Assert::parse("START SLAVE USER='usr1' PASSWORD='pwd1' DEFAULT_AUTH='auth1' PLUGIN_DIR='dir1'");
+Assert::parse("START SLAVE FOR CHANNEL 'chan1'");
 
 
 // STOP GROUP_REPLICATION
@@ -45,4 +45,4 @@ Assert::parse("STOP SLAVE");
 Assert::parse("STOP SLAVE IO_THREAD");
 Assert::parse("STOP SLAVE SQL_THREAD");
 Assert::parse("STOP SLAVE IO_THREAD, SQL_THREAD");
-Assert::parse("STOP SLAVE FOR CHANNEL 'foo'");
+Assert::parse("STOP SLAVE FOR CHANNEL 'chan1'");

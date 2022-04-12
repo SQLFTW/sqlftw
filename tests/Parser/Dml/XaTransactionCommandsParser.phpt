@@ -8,31 +8,31 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // XA {START|BEGIN} xid [JOIN|RESUME]
-Assert::parse("XA START 'foo'");
-Assert::parse("XA START 'foo', 'bar'");
-Assert::parse("XA START 'foo', 'bar', 1");
-Assert::parse("XA BEGIN 'foo'", "XA START 'foo'");
-Assert::parse("XA START 'foo' JOIN");
-Assert::parse("XA START 'foo' RESUME");
+Assert::parse("XA START 'tr1'");
+Assert::parse("XA START 'tr1', 'tr2'");
+Assert::parse("XA START 'tr1', 'tr2', 1");
+Assert::parse("XA BEGIN 'tr1'", "XA START 'tr1'"); // BEGIN -> START
+Assert::parse("XA START 'tr1' JOIN");
+Assert::parse("XA START 'tr1' RESUME");
 
 
 // XA END xid [SUSPEND [FOR MIGRATE]]
-Assert::parse("XA END 'foo'");
-Assert::parse("XA END 'foo' SUSPEND");
-Assert::parse("XA END 'foo' SUSPEND FOR MIGRATE");
+Assert::parse("XA END 'tr1'");
+Assert::parse("XA END 'tr1' SUSPEND");
+Assert::parse("XA END 'tr1' SUSPEND FOR MIGRATE");
 
 
 // XA PREPARE xid
-Assert::parse("XA PREPARE 'foo'");
+Assert::parse("XA PREPARE 'tr1'");
 
 
 // XA COMMIT xid [ONE PHASE]
-Assert::parse("XA COMMIT 'foo'");
-Assert::parse("XA COMMIT 'foo' ONE PHASE");
+Assert::parse("XA COMMIT 'tr1'");
+Assert::parse("XA COMMIT 'tr1' ONE PHASE");
 
 
 // XA ROLLBACK xid
-Assert::parse("XA ROLLBACK 'foo'");
+Assert::parse("XA ROLLBACK 'tr1'");
 
 
 // XA RECOVER [CONVERT XID]

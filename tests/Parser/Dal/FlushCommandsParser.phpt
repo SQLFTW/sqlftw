@@ -16,7 +16,7 @@ Assert::parse("FLUSH ERROR LOGS");
 Assert::parse("FLUSH GENERAL LOGS");
 Assert::parse("FLUSH RELAY LOGS");
 Assert::parse("FLUSH SLOW LOGS");
-Assert::parse("FLUSH RELAY LOGS FOR CHANNEL foo", "FLUSH RELAY LOGS FOR CHANNEL 'foo'");
+Assert::parse("FLUSH RELAY LOGS FOR CHANNEL chan1", "FLUSH RELAY LOGS FOR CHANNEL 'chan1'");
 Assert::parse("FLUSH OPTIMIZER_COSTS");
 Assert::parse("FLUSH PRIVILEGES");
 Assert::parse("FLUSH QUERY CACHE");

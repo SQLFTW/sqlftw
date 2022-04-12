@@ -18,11 +18,11 @@ Assert::parse("COMMIT NO RELEASE");
 
 // LOCK TABLES tbl_name [[AS] alias] lock_type [, tbl_name [[AS] alias] lock_type] ...
 Assert::parse("LOCK TABLES tbl1");
-Assert::parse("LOCK TABLES tbl1 AS foo1");
+Assert::parse("LOCK TABLES tbl1 AS lock1");
 Assert::parse("LOCK TABLES tbl1, tbl2");
-Assert::parse("LOCK TABLES tbl1 AS foo, tbl2 AS bar");
-Assert::parse("LOCK TABLES tbl1 AS foo READ, tbl2 AS bar READ LOCAL");
-Assert::parse("LOCK TABLES tbl1 AS foo WRITE, tbl2 AS bar LOW_PRIORITY WRITE");
+Assert::parse("LOCK TABLES tbl1 AS lock1, tbl2 AS lock2");
+Assert::parse("LOCK TABLES tbl1 AS lock1 READ, tbl2 AS lock2 READ LOCAL");
+Assert::parse("LOCK TABLES tbl1 AS lock1 WRITE, tbl2 AS lock2 LOW_PRIORITY WRITE");
 
 
 // RELEASE SAVEPOINT identifier

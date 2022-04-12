@@ -8,8 +8,8 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // INSTALL COMPONENT
-Assert::parse("INSTALL COMPONENT foo, bar");
+Assert::parse("INSTALL COMPONENT com1, com2");
 
 
 // UNINSTALL COMPONENT
-Assert::parse("UNINSTALL COMPONENT foo, bar");
+Assert::parse("UNINSTALL COMPONENT com1, com2");

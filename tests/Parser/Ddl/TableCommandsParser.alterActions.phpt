@@ -18,7 +18,7 @@ Assert::parse("ALTER TABLE tbl1 ADD KEY key1 (col1)", "ALTER TABLE tbl1 ADD INDE
 
 // ADD [CONSTRAINT] PRIMARY KEY
 Assert::parse("ALTER TABLE tbl1 ADD PRIMARY KEY (col1)");
-Assert::parse("ALTER TABLE tbl1 ADD CONSTRAINT foo PRIMARY KEY (col1)");
+Assert::parse("ALTER TABLE tbl1 ADD CONSTRAINT con1 PRIMARY KEY (col1)");
 
 // ADD [CONSTRAINT] UNIQUE {INDEX|KEY}
 Assert::parse("ALTER TABLE tbl1 ADD UNIQUE INDEX (col1)");
@@ -42,7 +42,7 @@ Assert::parse("ALTER TABLE tbl1 ALTER COLUMN col1 SET DEFAULT 1");
 Assert::parse("ALTER TABLE tbl1 ALTER col1 DROP DEFAULT", "ALTER TABLE tbl1 ALTER COLUMN col1 DROP DEFAULT");
 
 // CHANGE [COLUMN]
-Assert::parse("ALTER TABLE tbl1 CHANGE COLUMN col1 bar INT");
+Assert::parse("ALTER TABLE tbl1 CHANGE COLUMN col1 col2 INT");
 Assert::parse("ALTER TABLE tbl1 CHANGE col1 col2 INT", "ALTER TABLE tbl1 CHANGE COLUMN col1 col2 INT");
 
 // MODIFY [COLUMN]
@@ -76,7 +76,7 @@ Assert::parse("ALTER TABLE tbl1 DISABLE KEYS");
 Assert::parse("ALTER TABLE tbl1 ENABLE KEYS");
 
 // RENAME TO
-Assert::parse("ALTER TABLE tbl1 RENAME TO bar");
+Assert::parse("ALTER TABLE tbl1 RENAME TO tbl2");
 
 // RENAME {INDEX|KEY}
 Assert::parse("ALTER TABLE tbl1 RENAME INDEX key1 TO key2");

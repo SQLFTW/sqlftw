@@ -8,4 +8,4 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // HELP 'search_string'
-Assert::parse("HELP 'foo'");
+Assert::parse("HELP 'search1'");

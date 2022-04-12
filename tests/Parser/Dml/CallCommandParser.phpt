@@ -8,6 +8,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // CALL sp_name[([parameter[, ...]])]
-Assert::parse("CALL foo");
-Assert::parse("CALL foo(bar)");
-Assert::parse("CALL foo(bar, baz)");
+Assert::parse("CALL proc1");
+Assert::parse("CALL proc1(var1)");
+Assert::parse("CALL proc1(var1, var2)");

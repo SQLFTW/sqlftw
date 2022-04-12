@@ -22,8 +22,8 @@ Assert::parse("CREATE INDEX idx1 USING HASH ON tbl1 (col1)");
 
 // options
 Assert::parse("CREATE INDEX idx1 ON tbl1 (col1) KEY_BLOCK_SIZE 10");
-Assert::parse("CREATE INDEX idx1 ON tbl1 (col1) WITH PARSER foo");
-Assert::parse("CREATE INDEX idx1 ON tbl1 (col1) COMMENT 'foo'");
+Assert::parse("CREATE INDEX idx1 ON tbl1 (col1) WITH PARSER parser1");
+Assert::parse("CREATE INDEX idx1 ON tbl1 (col1) COMMENT 'com1'");
 Assert::parse("CREATE INDEX idx1 ON tbl1 (col1) VISIBLE");
 Assert::parse("CREATE INDEX idx1 ON tbl1 (col1) INVISIBLE");
 

@@ -9,7 +9,10 @@ require __DIR__ . '/../../bootstrap.php';
 
 // more
 Assert::parse("CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17, AVG_ROW_LENGTH 17");
-Assert::parse("CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17 AVG_ROW_LENGTH 17", "CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17, AVG_ROW_LENGTH 17");
+Assert::parse(
+    "CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17 AVG_ROW_LENGTH 17",
+    "CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17, AVG_ROW_LENGTH 17" // [,]
+);
 
 // AUTO_INCREMENT
 Assert::parse("CREATE TABLE tbl1 (col1 INT) AUTO_INCREMENT 17");
@@ -19,10 +22,10 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT) AVG_ROW_LENGTH 17");
 
 // CHARACTER_SET
 Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
-Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARACTER SET 'utf8'", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
-Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARSET 'utf8'", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
-Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT CHARACTER SET utf8", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
-Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT CHARSET utf8", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARACTER SET 'utf8'", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8"); // ['']
+Assert::parse("CREATE TABLE tbl1 (col1 INT) CHARSET 'utf8'", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8"); // CHARSET -> CHARACTER SET
+Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT CHARACTER SET utf8", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8"); // [DEFAULT]
+Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT CHARSET utf8", "CREATE TABLE tbl1 (col1 INT) CHARACTER SET utf8"); // [DEFAULT] CHARSET -> CHARACTER SET
 
 // CHECKSUM
 Assert::parse("CREATE TABLE tbl1 (col1 INT) CHECKSUM 0");
@@ -30,11 +33,11 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT) CHECKSUM 1");
 
 // COLLATE
 Assert::parse("CREATE TABLE tbl1 (col1 INT) COLLATE ascii_general_ci");
-Assert::parse("CREATE TABLE tbl1 (col1 INT) COLLATE 'ascii_general_ci'", "CREATE TABLE tbl1 (col1 INT) COLLATE ascii_general_ci");
-Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT COLLATE ascii_general_ci", "CREATE TABLE tbl1 (col1 INT) COLLATE ascii_general_ci");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) COLLATE 'ascii_general_ci'", "CREATE TABLE tbl1 (col1 INT) COLLATE ascii_general_ci"); // ['']
+Assert::parse("CREATE TABLE tbl1 (col1 INT) DEFAULT COLLATE ascii_general_ci", "CREATE TABLE tbl1 (col1 INT) COLLATE ascii_general_ci"); // [DEFAULT]
 
 // COMMENT
-Assert::parse("CREATE TABLE tbl1 (col1 INT) COMMENT 'foo'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) COMMENT 'com1'");
 
 // COMPRESSION
 Assert::parse("CREATE TABLE tbl1 (col1 INT) COMPRESSION 'ZLIB'");
@@ -42,10 +45,10 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT) COMPRESSION 'LZ4'");
 Assert::parse("CREATE TABLE tbl1 (col1 INT) COMPRESSION 'NONE'");
 
 // CONNECTION
-Assert::parse("CREATE TABLE tbl1 (col1 INT) CONNECTION 'foo'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) CONNECTION 'con1'");
 
 // DATA_DIRECTORY
-Assert::parse("CREATE TABLE tbl1 (col1 INT) DATA DIRECTORY 'foo'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) DATA DIRECTORY 'dir1'");
 
 // DELAY_KEY_WRITE
 Assert::parse("CREATE TABLE tbl1 (col1 INT) DELAY_KEY_WRITE 0");
@@ -60,7 +63,7 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT) ENGINE InnoDB");
 Assert::parse("CREATE TABLE tbl1 (col1 INT) ENGINE 'InnoDB'", "CREATE TABLE tbl1 (col1 INT) ENGINE InnoDB"); // '...' -> ...
 
 // INDEX_DIRECTORY
-Assert::parse("CREATE TABLE tbl1 (col1 INT) INDEX DIRECTORY 'foo'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) INDEX DIRECTORY 'dir1'");
 
 // INSERT_METHOD
 Assert::parse("CREATE TABLE tbl1 (col1 INT) INSERT_METHOD NO");
@@ -82,7 +85,7 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT) PACK_KEYS 1");
 Assert::parse("CREATE TABLE tbl1 (col1 INT) PACK_KEYS DEFAULT");
 
 // PASSWORD
-Assert::parse("CREATE TABLE tbl1 (col1 INT) PASSWORD 'secret'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) PASSWORD 'pwd1'");
 
 // ROW_FORMAT DEFAULT|DYNAMIC|FIXED|COMPRESSED|REDUNDANT|COMPACT
 Assert::parse("CREATE TABLE tbl1 (col1 INT) ROW_FORMAT DEFAULT");
@@ -106,7 +109,7 @@ Assert::parse("CREATE TABLE tbl1 (col1 INT) STATS_PERSISTENT DEFAULT");
 Assert::parse("CREATE TABLE tbl1 (col1 INT) STATS_SAMPLE_PAGES 17");
 
 // TABLESPACE
-Assert::parse("CREATE TABLE tbl1 (col1 INT) TABLESPACE 'foo'");
+Assert::parse("CREATE TABLE tbl1 (col1 INT) TABLESPACE 'tbs1'");
 
 // UNION
 Assert::parse("CREATE TABLE tbl1 (col1 INT) UNION (tbl2, tbl3)");
