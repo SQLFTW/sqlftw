@@ -136,16 +136,11 @@ class Lexer
             $column++;
 
             if ($char === $delimiter[0]) {
-                do {
-                    $delimiterLength = strlen($delimiter);
-                    for ($n = 1; $n < $delimiterLength; $n++) {
-                        if ($position + $n >= $length || $string[$position + $n] !== $delimiter[$n]) {
-                            break 2;
-                        }
-                    }
+                if (substr($string, $position - 1, strlen($delimiter)) === $delimiter) {
+                    $position += strlen($delimiter) - 1;
                     yield new Token(T::SYMBOL | T::DELIMITER, $start, $delimiter, null, $condition);
-                    continue 2;
-                } while (false); // @phpstan-ignore-line
+                    continue;
+                }
             }
 
             switch ($char) {

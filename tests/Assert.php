@@ -103,4 +103,23 @@ class Assert extends DogmaAssert
         self::true(true);
     }
 
+    public static function validCommands(
+        string $sql,
+        ?Parser $parser = null
+    ): void {
+        $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
+
+        try {
+            $parser->parse($sql);
+        } catch (ParserException $e) {
+            if (class_exists(Dumper::class) && $e->backtrace !== null) {
+                Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
+            }
+            self::fail($e->getMessage());
+            return;
+        }
+
+        self::true(true);
+    }
+
 }

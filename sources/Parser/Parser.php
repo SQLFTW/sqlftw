@@ -91,6 +91,10 @@ class Parser
             if (($token->type & TokenType::DELIMITER) !== 0) {
                 $lists[] = new TokenList($buffer, $this->settings);
                 $buffer = [];
+            } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {
+                $buffer[] = $token;
+                $lists[] = new TokenList($buffer, $this->settings);
+                $buffer = [];
             } else {
                 $buffer[] = $token;
             }
