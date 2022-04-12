@@ -8,7 +8,6 @@ use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use Tracy\Debugger;
-use const PHP_SAPI;
 use function array_slice;
 use function class_exists;
 use function ctype_space;
@@ -16,6 +15,7 @@ use function dirname;
 use function get_class;
 use function header;
 use function implode;
+use const PHP_SAPI;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../vendor/nette/tester/src/bootstrap.php';

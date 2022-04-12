@@ -15,8 +15,8 @@
         "dogma/dogma": "^0.2.10"
     },
     "require-dev": {
-        "dogma/dogma-dev": "0.1.26",
-        "phpstan/phpstan": "1.4.6",
+        "dogma/dogma-dev": "0.1.28",
+        "phpstan/phpstan": "1.4.10",
         "phpstan/phpstan-strict-rules": "^1.0"
     },
     "autoload": {
