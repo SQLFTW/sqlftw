@@ -624,17 +624,19 @@ class TableCommandsParser
         }
 
         $options = [];
-        if (!$tokenList->isFinished()) {
-            do {
-                [$option, $value] = $this->parseTableOption($tokenList);
-                if ($option === null) {
-                    $keywords = AlterTableOption::getAllowedValues();
-                    $tokenList->expectedAnyKeyword(...$keywords);
-                }
-                $options[$option] = $value;
-            } while ($tokenList->hasComma()
-                || (!$tokenList->isFinished() && !$tokenList->hasAnyKeyword(Keyword::PARTITION, Keyword::IGNORE, Keyword::REPLACE, Keyword::AS, Keyword::SELECT))
-            );
+        $trailingComma = false;
+        $position = $tokenList->getPosition();
+        do {
+            [$option, $value] = $this->parseTableOption($tokenList);
+            if ($option === null) {
+                break;
+            }
+            $options[$option] = $value;
+            $position = $tokenList->getPosition();
+            $trailingComma = $tokenList->hasComma();
+        } while (true);
+        if ($trailingComma) {
+            $tokenList->resetPosition($position);
         }
 
         $partitioning = null;
@@ -992,11 +994,17 @@ class TableCommandsParser
      *   | TABLESPACE tablespace_name
      *   | UNION [=] (tbl_name[,tbl_name]...)
      *
-     * @return mixed[] (string $name, mixed $value)
+     * @return mixed[] (string|null $name, mixed $value)
      */
     private function parseTableOption(TokenList $tokenList): array
     {
-        $keyword = $tokenList->expect(TokenType::KEYWORD)->value;
+        $position = $tokenList->getPosition();
+        $token = $tokenList->get(TokenType::KEYWORD);
+        if ($token === null) {
+            return [null, null];
+        }
+
+        $keyword = $token->value;
         switch ($keyword) {
             case Keyword::AUTO_INCREMENT:
                 $tokenList->passEqual();
@@ -1007,10 +1015,9 @@ class TableCommandsParser
 
                 return [TableOption::AVG_ROW_LENGTH, $tokenList->expectInt()];
             case Keyword::CHARACTER:
+                $tokenList->expectKeyword(Keyword::SET);
+                // fall-through
             case Keyword::CHARSET:
-                if ($keyword === Keyword::CHARACTER) {
-                    $tokenList->expectKeyword(Keyword::SET);
-                }
                 $tokenList->passEqual();
 
                 return [TableOption::CHARACTER_SET, $tokenList->expectNameOrStringEnum(Charset::class)];
@@ -1136,6 +1143,8 @@ class TableCommandsParser
 
                 return [TableOption::UNION, $tables];
             default:
+                $tokenList->resetPosition($position);
+
                 return [null, null];
         }
     }
