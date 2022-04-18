@@ -156,7 +156,7 @@ class BaseType extends SqlEnum implements Feature
 
     public function isFloatingPointNumber(): bool
     {
-        return in_array($this->getValue(), [self::FLOAT, self::DOUBLE, self::REAL, self::FLOAT4, self::FLOAT8], true);
+        return in_array($this->getValue(), [self::FLOAT, self::DOUBLE, self::REAL, self::FLOAT4, self::FLOAT8, self::DOUBLE_PRECISION], true);
     }
 
     public function isDecimal(): bool
