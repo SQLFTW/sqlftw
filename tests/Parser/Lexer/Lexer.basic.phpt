@@ -55,16 +55,16 @@ Assert::token($tokens[1], TokenType::SYMBOL | TokenType::DELIMITER, ';', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 2);
 
 // DELIMITER_DEFINITION, SEMICOLON
-$tokens = $lexer->tokenizeAll('DELIMITER ;; ;');
+$tokens = $lexer->tokenizeAll("DELIMITER ;;\n;");
 Assert::count($tokens, 5);
 Assert::token($tokens[0], TokenType::KEYWORD, Keyword::DELIMITER, 0);
 Assert::token($tokens[1], TokenType::WHITESPACE, ' ', 9);
 Assert::token($tokens[2], TokenType::SYMBOL | TokenType::DELIMITER_DEFINITION, ';;', 10);
-Assert::token($tokens[3], TokenType::WHITESPACE, ' ', 12);
+Assert::token($tokens[3], TokenType::WHITESPACE, "\n", 12);
 Assert::token($tokens[4], TokenType::SYMBOL | TokenType::SEMICOLON, ';', 13);
 
 Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll('DELIMITER dlm1');
+    $lexer->tokenizeAll('DELIMITER SELECT');
 }, ExpectedTokenNotFoundException::class);
 
 // NULL

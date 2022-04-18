@@ -38,6 +38,7 @@ use function trim;
 
 /**
  * todo:
+ * - quoted delimiters : E
  * - Date and Time Literals?
  * - Mysql string charset declaration (_utf* & N)
  * - \N is synonym for NULL (until 8.0)
@@ -677,17 +678,29 @@ class Lexer
                         $del = '';
                         while ($position < $length) {
                             $next = $string[$position];
-                            if ($next === ';' || isset(self::$operatorSymbolsKey[$next])) {
+                            if ($next === "\n") {
+                                break;
+                            } else {
                                 $del .= $next;
                                 $position++;
                                 $column++;
-                            } else {
-                                break;
                             }
                         }
                         if ($del === '') {
-                            throw new ExpectedTokenNotFoundException(''); // todo
+                            throw new ExpectedTokenNotFoundException('Delimiter not found'); // todo
                         }
+                        if ($this->settings->getPlatform()->getFeatures()->isReserved(strtoupper($del))) {
+                            throw new ExpectedTokenNotFoundException('Delimiter can not be a reserved word found.'); // todo
+                        }
+                        // todo: quoted delimiters :E
+                        /*
+                         * The delimiter string can be specified as an unquoted or quoted argument on the delimiter command line.
+                         * Quoting can be done with either single quote ('), double quote ("), or backtick (`) characters.
+                         * To include a quote within a quoted string, either quote the string with a different quote character
+                         * or escape the quote with a backslash (\) character. Backslash should be avoided outside of quoted
+                         * strings because it is the escape character for MySQL. For an unquoted argument, the delimiter is read
+                         * up to the first space or end of line. For a quoted argument, the delimiter is read up to the matching quote on the line.
+                         */
                         $delimiter = $del;
                         $this->settings->setDelimiter($delimiter);
                         yield $previous = new Token(T::SYMBOL | T::DELIMITER_DEFINITION, $start, $delimiter, $condition);
