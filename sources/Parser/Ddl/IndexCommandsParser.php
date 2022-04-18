@@ -86,10 +86,12 @@ class IndexCommandsParser
         } else {
             $type = IndexType::get(IndexType::INDEX);
         }
-        $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::KEY);
+
         if ($inTable) {
+            $tokenList->getAnyKeyword(Keyword::INDEX, Keyword::KEY);
             $name = $tokenList->getName();
         } else {
+            $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::KEY);
             $name = $tokenList->expectName();
         }
 
