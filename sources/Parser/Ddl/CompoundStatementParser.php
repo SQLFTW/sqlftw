@@ -126,7 +126,7 @@ class CompoundStatementParser
      */
     private function parseStatement(TokenList $tokenList): Statement
     {
-        $label = $tokenList->getName();
+        $label = $tokenList->getNonKeywordName();
         if ($label !== null) {
             $tokenList->expect(TokenType::DOUBLE_COLON);
             $keyword = $tokenList->expectAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE);
