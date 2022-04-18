@@ -16,6 +16,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\Ddl\DataType;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnsAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddConstraintAction;
@@ -713,99 +714,108 @@ class TableCommandsParser
 
         $keyword = $tokenList->getAnyKeyword(Keyword::GENERATED, Keyword::AS);
         if ($keyword === null) {
-            // [NOT NULL | NULL]
-            $null = null;
-            if ($tokenList->hasKeywords(Keyword::NOT, Keyword::NULL)) {
-                $null = false;
-            } elseif ($tokenList->hasKeyword(Keyword::NULL)) {
-                $null = true;
-            }
-
-            // [DEFAULT default_value]
-            $default = null;
-            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $default = $this->expressionParser->parseLiteralValue($tokenList);
-            }
-
-            // [AUTO_INCREMENT]
-            $autoIncrement = false;
-            if ($tokenList->hasKeyword(Keyword::AUTO_INCREMENT)) {
-                $autoIncrement = true;
-            }
-
-            // [UNIQUE [KEY] | [PRIMARY] KEY]
-            $index = null;
-            if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
-                $tokenList->passKeyword(Keyword::KEY);
-                $index = IndexType::get(IndexType::UNIQUE);
-            } elseif ($tokenList->hasKeyword(Keyword::PRIMARY)) {
-                $tokenList->expectKeyword(Keyword::KEY);
-                $index = IndexType::get(IndexType::PRIMARY);
-            } elseif ($tokenList->hasKeyword(Keyword::KEY)) {
-                $index = IndexType::get(IndexType::INDEX);
-            }
-
-            // [COMMENT 'string']
-            $comment = null;
-            if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-                $comment = $tokenList->expectString();
-            }
-
-            // [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
-            $columnFormat = null;
-            if ($tokenList->hasKeyword(Keyword::COLUMN_FORMAT)) {
-                /** @var ColumnFormat $columnFormat */
-                $columnFormat = $tokenList->expectKeywordEnum(ColumnFormat::class);
-            }
-
-            // [reference_definition]
-            $reference = null;
-            if ($tokenList->hasKeyword(Keyword::REFERENCES)) {
-                $reference = $this->parseReference($tokenList->resetPosition(-1));
-            }
-
-            // [check_constraint_definition]
-            $check = null;
-            if ($tokenList->hasKeyword(Keyword::CHECK)) {
-                $check = $this->parseCheck($tokenList);
-            }
-
-            return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $comment, $index, $columnFormat, $reference, $check);
-        } else {
-            if ($keyword === Keyword::GENERATED) {
-                $tokenList->expectKeywords(Keyword::ALWAYS, Keyword::AS);
-            }
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-            $expression = $this->expressionParser->parseExpression($tokenList);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-
-            /** @var GeneratedColumnType $generatedType */
-            $generatedType = $tokenList->getKeywordEnum(GeneratedColumnType::class);
-            $index = null;
-            if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
-                $tokenList->passKeyword(Keyword::KEY);
-                $index = IndexType::get(IndexType::UNIQUE);
-            }
-            $comment = null;
-            if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-                $comment = $tokenList->expectString();
-            }
-            $null = null;
-            if ($tokenList->hasKeywords(Keyword::NOT, Keyword::NULL)) {
-                $null = false;
-            } elseif ($tokenList->hasKeyword(Keyword::NULL)) {
-                $null = true;
-            }
-
-            if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
-                $tokenList->passKeyword(Keyword::KEY);
-                $index = IndexType::get(IndexType::PRIMARY);
-            } elseif ($tokenList->hasKeyword(Keyword::KEY)) {
-                $index = IndexType::get(IndexType::INDEX);
-            }
-
-            return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $comment, $index);
+            return $this->parseOrdinaryColumn($name, $type, $tokenList);
         }
+
+        if ($keyword === Keyword::GENERATED) {
+            $tokenList->expectKeywords(Keyword::ALWAYS, Keyword::AS);
+        }
+
+        return $this->parseGeneratedColumn($name, $type, $tokenList);
+    }
+
+    private function parseOrdinaryColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
+    {
+        $null = $default = $index = $comment = $columnFormat = $reference = $check = null;
+        $autoIncrement = false;
+        while (($keyword = $tokenList->getAnyKeyword(
+            Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::UNIQUE,
+            Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK
+        )) !== null) {
+            switch ($keyword) {
+                case Keyword::NOT:
+                    // [NOT NULL | NULL]
+                    $tokenList->expectKeyword(Keyword::NULL);
+                    $null = false;
+                    break;
+                case Keyword::NULL:
+                    $null = true;
+                    break;
+                case Keyword::DEFAULT:
+                    // [DEFAULT default_value]
+                    $default = $this->expressionParser->parseLiteralValue($tokenList);
+                    break;
+                case Keyword::AUTO_INCREMENT:
+                    // [AUTO_INCREMENT]
+                    $autoIncrement = true;
+                    break;
+                case Keyword::UNIQUE:
+                    // [UNIQUE [KEY] | [PRIMARY] KEY]
+                    $tokenList->passKeyword(Keyword::KEY);
+                    $index = IndexType::get(IndexType::UNIQUE);
+                    break;
+                case Keyword::PRIMARY:
+                    $tokenList->expectKeyword(Keyword::KEY);
+                    $index = IndexType::get(IndexType::PRIMARY);
+                    break;
+                case Keyword::KEY:
+                    $index = IndexType::get(IndexType::INDEX);
+                    break;
+                case Keyword::COMMENT:
+                    // [COMMENT 'string']
+                    $comment = $tokenList->expectString();
+                    break;
+                case Keyword::COLUMN_FORMAT:
+                    // [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
+                    /** @var ColumnFormat $columnFormat */
+                    $columnFormat = $tokenList->expectKeywordEnum(ColumnFormat::class);
+                    break;
+                case Keyword::REFERENCES:
+                    // [reference_definition]
+                    $reference = $this->parseReference($tokenList->resetPosition(-1));
+                    break;
+                case Keyword::CHECK:
+                    // [check_constraint_definition]
+                    $check = $this->parseCheck($tokenList);
+                    break;
+            }
+        }
+
+        return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $comment, $index, $columnFormat, $reference, $check);
+    }
+
+    private function parseGeneratedColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
+    {
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $expression = $this->expressionParser->parseExpression($tokenList);
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+        /** @var GeneratedColumnType $generatedType */
+        $generatedType = $tokenList->getKeywordEnum(GeneratedColumnType::class);
+        $index = null;
+        if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
+            $tokenList->passKeyword(Keyword::KEY);
+            $index = IndexType::get(IndexType::UNIQUE);
+        }
+        $comment = null;
+        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+            $comment = $tokenList->expectString();
+        }
+        $null = null;
+        if ($tokenList->hasKeywords(Keyword::NOT, Keyword::NULL)) {
+            $null = false;
+        } elseif ($tokenList->hasKeyword(Keyword::NULL)) {
+            $null = true;
+        }
+
+        if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
+            $tokenList->passKeyword(Keyword::KEY);
+            $index = IndexType::get(IndexType::PRIMARY);
+        } elseif ($tokenList->hasKeyword(Keyword::KEY)) {
+            $index = IndexType::get(IndexType::INDEX);
+        }
+
+        return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $comment, $index);
     }
 
     /**
