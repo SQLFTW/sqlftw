@@ -98,7 +98,6 @@ class SetCommandParser
 
             $assignments[] = new SetAssignment($variable, $expression, $scope);
         } while ($tokenList->hasComma());
-        $tokenList->expectEnd();
 
         return new SetCommand($assignments);
     }

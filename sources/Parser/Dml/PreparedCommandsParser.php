@@ -29,7 +29,6 @@ class PreparedCommandsParser
         $tokenList->expectAnyKeyword(Keyword::DEALLOCATE, Keyword::DROP);
         $tokenList->expectKeyword(Keyword::PREPARE);
         $name = $tokenList->expectName();
-        $tokenList->expectEnd();
 
         return new DeallocatePrepareCommand($name);
     }
@@ -51,7 +50,6 @@ class PreparedCommandsParser
                 $variables[] = $variable;
             } while ($tokenList->hasComma());
         }
-        $tokenList->expectEnd();
 
         return new ExecuteCommand($name, $variables);
     }
@@ -72,7 +70,6 @@ class PreparedCommandsParser
         } else {
             $statement = $tokenList->expectString();
         }
-        $tokenList->expectEnd();
 
         return new PrepareCommand($name, $statement);
     }

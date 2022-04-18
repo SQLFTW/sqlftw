@@ -76,7 +76,11 @@ class Parser
             throw new ParserException('More than one command found in given SQL code.');
         }
 
-        return $this->parseTokenList($tokenLists[0]);
+        $tokenList = $tokenLists[0];
+        $command = $this->parseTokenList($tokenList);
+        $tokenList->expectEnd();
+
+        return $command;
     }
 
     /**
@@ -106,6 +110,9 @@ class Parser
         return $lists;
     }
 
+    /**
+     * @internal
+     */
     public function parseTokenList(TokenList $tokenList): Command
     {
         $this->lastTokenList = $tokenList;

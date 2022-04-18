@@ -37,7 +37,6 @@ class CharsetCommandsParser
         } else {
             $charset = $tokenList->expectNameOrStringEnum(Charset::class);
         }
-        $tokenList->expectEnd();
 
         return new SetCharacterSetCommand($charset);
     }
@@ -56,7 +55,6 @@ class CharsetCommandsParser
                 $collation = $tokenList->expectNameOrStringEnum(Collation::class);
             }
         }
-        $tokenList->expectEnd();
 
         return new SetNamesCommand($charset, $collation);
     }

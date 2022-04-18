@@ -124,7 +124,6 @@ class ExplainCommandParser
 
                 return new DescribeTableCommand($table, $column);
         }
-        $tokenList->expectEnd();
 
         return new ExplainStatementCommand($statement, $connectionId, $type);
     }

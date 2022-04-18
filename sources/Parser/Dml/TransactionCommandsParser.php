@@ -53,8 +53,6 @@ class TransactionCommandsParser
             $release = true;
         }
 
-        $tokenList->expectEnd();
-
         return new CommitCommand($chain, $release);
     }
 
@@ -92,8 +90,6 @@ class TransactionCommandsParser
             $items[] = new LockTablesItem($table, $lock, $alias);
         } while ($tokenList->hasComma());
 
-        $tokenList->expectEnd();
-
         return new LockTablesCommand($items);
     }
 
@@ -104,7 +100,6 @@ class TransactionCommandsParser
     {
         $tokenList->expectKeywords(Keyword::RELEASE, Keyword::SAVEPOINT);
         $name = $tokenList->expectName();
-        $tokenList->expectEnd();
 
         return new ReleaseSavepointCommand($name);
     }
@@ -131,8 +126,6 @@ class TransactionCommandsParser
             $release = true;
         }
 
-        $tokenList->expectEnd();
-
         return new RollbackCommand($chain, $release);
     }
 
@@ -147,7 +140,6 @@ class TransactionCommandsParser
         $tokenList->passKeyword(Keyword::SAVEPOINT);
 
         $name = $tokenList->expectName();
-        $tokenList->expectEnd();
 
         return new RollbackToSavepointCommand($name);
     }
@@ -159,7 +151,6 @@ class TransactionCommandsParser
     {
         $tokenList->expectKeyword(Keyword::SAVEPOINT);
         $name = $tokenList->expectName();
-        $tokenList->expectEnd();
 
         return new SavepointCommand($name);
     }
@@ -214,8 +205,6 @@ class TransactionCommandsParser
             }
         } while ($tokenList->hasComma());
 
-        $tokenList->expectEnd();
-
         if ($isolationLevel !== null) {
             $isolationLevel = TransactionIsolationLevel::get($isolationLevel);
         }
@@ -259,8 +248,6 @@ class TransactionCommandsParser
             }
         } while ($tokenList->hasComma());
 
-        $tokenList->expectEnd();
-
         return new StartTransactionCommand($consistent, $write);
     }
 
@@ -270,8 +257,6 @@ class TransactionCommandsParser
     public function parseUnlockTables(TokenList $tokenList): UnlockTablesCommand
     {
         $tokenList->expectKeywords(Keyword::UNLOCK, Keyword::TABLES);
-
-        $tokenList->expectEnd();
 
         return new UnlockTablesCommand();
     }

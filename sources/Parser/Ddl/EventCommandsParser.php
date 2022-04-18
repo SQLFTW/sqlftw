@@ -84,7 +84,6 @@ class EventCommandsParser
         if ($tokenList->hasKeyword(Keyword::DO)) {
             $body = $this->doCommandsParser->parseDo($tokenList->resetPosition($tokenList->getPosition() - 1));
         }
-        $tokenList->expectEnd();
 
         return new AlterEventCommand($name, $schedule, $body, $definer, $state, $preserve, $comment, $newName);
     }
@@ -134,7 +133,6 @@ class EventCommandsParser
         }
 
         $body = $this->doCommandsParser->parseDo($tokenList);
-        $tokenList->expectEnd();
 
         $event = new EventDefinition($name, $schedule, $body, $definer, $state, $preserve, $comment);
 
@@ -179,7 +177,6 @@ class EventCommandsParser
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-        $tokenList->expectEnd();
 
         return new DropEventCommand($name, $ifExists);
     }

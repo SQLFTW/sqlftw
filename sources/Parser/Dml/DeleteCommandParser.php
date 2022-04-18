@@ -113,7 +113,6 @@ class DeleteCommandParser
                 $limit = $tokenList->expectInt();
             }
         }
-        $tokenList->expectEnd();
 
         return new DeleteCommand($tables, $where, $with, $orderBy, $limit, $references, $partitions, $lowPriority, $quick, $ignore);
     }

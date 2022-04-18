@@ -50,35 +50,29 @@ class XaTransactionCommandsParser
                 $xid = $this->parseXid($tokenList);
                 /** @var XaStartOption $option */
                 $option = $tokenList->getKeywordEnum(XaStartOption::class);
-                $tokenList->expectEnd();
 
                 return new XaStartCommand($xid, $option);
             case Keyword::END:
                 $xid = $this->parseXid($tokenList);
                 $suspend = $tokenList->hasKeyword(Keyword::SUSPEND);
                 $forMigrate = $suspend && $tokenList->hasKeywords(Keyword::FOR, Keyword::MIGRATE);
-                $tokenList->expectEnd();
 
                 return new XaEndCommand($xid, $suspend, $forMigrate);
             case Keyword::PREPARE:
                 $xid = $this->parseXid($tokenList);
-                $tokenList->expectEnd();
 
                 return new XaPrepareCommand($xid);
             case Keyword::COMMIT:
                 $xid = $this->parseXid($tokenList);
                 $onePhase = $tokenList->hasKeywords(Keyword::ONE, Keyword::PHASE);
-                $tokenList->expectEnd();
 
                 return new XaCommitCommand($xid, $onePhase);
             case Keyword::ROLLBACK:
                 $xid = $this->parseXid($tokenList);
-                $tokenList->expectEnd();
 
                 return new XaRollbackCommand($xid);
             case Keyword::RECOVER:
                 $convertXid = $tokenList->hasKeywords(Keyword::CONVERT, Keyword::XID);
-                $tokenList->expectEnd();
 
                 return new XaRecoverCommand($convertXid);
             default:

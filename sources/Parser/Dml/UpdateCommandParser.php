@@ -101,7 +101,6 @@ class UpdateCommandParser
                 $limit = $tokenList->expectInt();
             }
         }
-        $tokenList->expectEnd();
 
         return new UpdateCommand($tableReferences, $values, $where, $with, $orderBy, $limit, $ignore, $lowPriority);
     }

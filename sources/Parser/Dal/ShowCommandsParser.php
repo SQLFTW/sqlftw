@@ -84,7 +84,6 @@ class ShowCommandsParser
             $tokenList->expectOperator(Operator::MULTIPLY);
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $what = $tokenList->expectAnyKeyword(Keyword::ERRORS, Keyword::WARNINGS);
-            $tokenList->expectEnd();
             if ($what === Keyword::ERRORS) {
                 // SHOW COUNT(*) ERRORS
                 return ShowErrorsCommand::createCount();
@@ -113,7 +112,6 @@ class ShowCommandsParser
                         $limit = $tokenList->getInt();
                     }
                 }
-                $tokenList->expectEnd();
 
                 return new ShowBinlogEventsCommand($logName, $limit, $offset);
             case Keyword::CHARACTER:
@@ -125,7 +123,6 @@ class ShowCommandsParser
                 } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowCharacterSetCommand($like, $where);
             case Keyword::COLLATION:
@@ -136,7 +133,6 @@ class ShowCommandsParser
                 } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowCollationCommand($like, $where);
             case Keyword::CREATE:
@@ -156,49 +152,41 @@ class ShowCommandsParser
                     case Keyword::SCHEMA:
                         // SHOW CREATE {DATABASE | SCHEMA} db_name
                         $name = $tokenList->expectName();
-                        $tokenList->expectEnd();
 
                         return new ShowCreateSchemaCommand($name);
                     case Keyword::EVENT:
                         // SHOW CREATE EVENT event_name
                         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-                        $tokenList->expectEnd();
 
                         return new ShowCreateEventCommand($name);
                     case Keyword::FUNCTION:
                         // SHOW CREATE FUNCTION func_name
                         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-                        $tokenList->expectEnd();
 
                         return new ShowCreateFunctionCommand($name);
                     case Keyword::PROCEDURE:
                         // SHOW CREATE PROCEDURE proc_name
                         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-                        $tokenList->expectEnd();
 
                         return new ShowCreateProcedureCommand($name);
                     case Keyword::TABLE:
                         // SHOW CREATE TABLE tbl_name
                         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-                        $tokenList->expectEnd();
 
                         return new ShowCreateTableCommand($name);
                     case Keyword::TRIGGER:
                         // SHOW CREATE TRIGGER trigger_name
                         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-                        $tokenList->expectEnd();
 
                         return new ShowCreateTriggerCommand($name);
                     case Keyword::USER:
                         // SHOW CREATE USER user
                         $name = $tokenList->expectName();
-                        $tokenList->expectEnd();
 
                         return new ShowCreateUserCommand($name);
                     case Keyword::VIEW:
                         // SHOW CREATE VIEW view_name
                         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-                        $tokenList->expectEnd();
 
                         return new ShowCreateViewCommand($name);
                 }
@@ -212,7 +200,6 @@ class ShowCommandsParser
                 } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowSchemasCommand($like, $where);
             case Keyword::ENGINE:
@@ -220,7 +207,6 @@ class ShowCommandsParser
                 $engine = $tokenList->expectName();
                 /** @var ShowEngineOption $what */
                 $what = $tokenList->expectKeywordEnum(ShowEngineOption::class);
-                $tokenList->expectEnd();
 
                 return new ShowEngineCommand($engine, $what);
             case Keyword::STORAGE:
@@ -229,7 +215,6 @@ class ShowCommandsParser
                 if ($second->value === Keyword::STORAGE) {
                     $tokenList->expectKeyword(Keyword::ENGINES);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowEnginesCommand();
             case Keyword::ERRORS:
@@ -242,7 +227,6 @@ class ShowCommandsParser
                         $limit = $tokenList->expectInt();
                     }
                 }
-                $tokenList->expectEnd();
 
                 return new ShowErrorsCommand($limit, $offset);
             case Keyword::EVENTS:
@@ -256,7 +240,6 @@ class ShowCommandsParser
                 } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowEventsCommand($from, $like, $where);
             case Keyword::FUNCTION:
@@ -264,7 +247,6 @@ class ShowCommandsParser
                 if ($what === Keyword::CODE) {
                     // SHOW FUNCTION CODE func_name
                     $name = new QualifiedName(...$tokenList->expectQualifiedName());
-                    $tokenList->expectEnd();
 
                     return new ShowFunctionCodeCommand($name);
                 } else {
@@ -275,7 +257,6 @@ class ShowCommandsParser
                     } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
-                    $tokenList->expectEnd();
 
                     return new ShowFunctionStatusCommand($like, $where);
                 }
@@ -291,7 +272,6 @@ class ShowCommandsParser
                         } while ($tokenList->hasComma());
                     }
                 }
-                $tokenList->expectEnd();
 
                 return new ShowGrantsCommand($forUser, $usingRoles !== [] ? $usingRoles : null);
             case Keyword::INDEX:
@@ -308,7 +288,6 @@ class ShowCommandsParser
                 if ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowIndexesCommand($table, $where);
             case Keyword::OPEN:
@@ -323,17 +302,14 @@ class ShowCommandsParser
                 } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowOpenTablesCommand($from, $like, $where);
             case Keyword::PLUGINS:
                 // SHOW PLUGINS
-                $tokenList->expectEnd();
 
                 return new ShowPluginsCommand();
             case Keyword::PRIVILEGES:
                 // SHOW PRIVILEGES
-                $tokenList->expectEnd();
 
                 return new ShowPrivilegesCommand();
             case Keyword::PROCEDURE:
@@ -341,7 +317,6 @@ class ShowCommandsParser
                 if ($what === Keyword::CODE) {
                     // SHOW PROCEDURE CODE proc_name
                     $name = new QualifiedName(...$tokenList->expectQualifiedName());
-                    $tokenList->expectEnd();
 
                     return new ShowProcedureCodeCommand($name);
                 } else {
@@ -352,7 +327,6 @@ class ShowCommandsParser
                     } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
-                    $tokenList->expectEnd();
 
                     return new ShowProcedureStatusCommand($like, $where);
                 }
@@ -402,12 +376,10 @@ class ShowCommandsParser
                         $offset = $tokenList->expectInt();
                     }
                 }
-                $tokenList->expectEnd();
 
                 return new ShowProfileCommand($types, $query, $limit, $offset);
             case Keyword::PROFILES:
                 // SHOW PROFILES
-                $tokenList->expectEnd();
 
                 return new ShowProfilesCommand();
             case Keyword::RELAYLOG:
@@ -427,14 +399,12 @@ class ShowCommandsParser
                         $limit = $tokenList->expectInt();
                     }
                 }
-                $tokenList->expectEnd();
 
                 return new ShowRelaylogEventsCommand($logName, $from, $limit, $offset);
             case Keyword::SLAVE:
                 $what = $tokenList->expectAnyKeyword(Keyword::HOSTS, Keyword::STATUS);
                 if ($what === Keyword::HOSTS) {
                     // SHOW SLAVE HOSTS
-                    $tokenList->expectEnd();
 
                     return new ShowSlaveHostsCommand();
                 } else {
@@ -443,7 +413,6 @@ class ShowCommandsParser
                     if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
                         $channel = $tokenList->expectName();
                     }
-                    $tokenList->expectEnd();
 
                     return new ShowSlaveStatusCommand($channel);
                 }
@@ -459,7 +428,6 @@ class ShowCommandsParser
                 } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowTableStatusCommand($from, $like, $where);
             case Keyword::TRIGGERS:
@@ -473,7 +441,6 @@ class ShowCommandsParser
                 } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                     $where = $this->expressionParser->parseExpression($tokenList);
                 }
-                $tokenList->expectEnd();
 
                 return new ShowTriggersCommand($from, $like, $where);
             case Keyword::WARNINGS:
@@ -486,7 +453,6 @@ class ShowCommandsParser
                         $limit = $tokenList->expectInt();
                     }
                 }
-                $tokenList->expectEnd();
 
                 return new ShowWarningsCommand($limit, $offset);
             default:
@@ -494,13 +460,11 @@ class ShowCommandsParser
                 $tokenList->expectKeyword(Keyword::SHOW);
                 if ($tokenList->hasKeywords(Keyword::MASTER, Keyword::STATUS)) {
                     // SHOW MASTER STATUS
-                    $tokenList->expectEnd();
 
                     return new ShowMasterStatusCommand();
                 } elseif ($tokenList->hasAnyKeyword(Keyword::BINARY, Keyword::MASTER)) {
                     // SHOW {BINARY | MASTER} LOGS
                     $tokenList->expectKeyword(Keyword::LOGS);
-                    $tokenList->expectEnd();
 
                     return new ShowBinaryLogsCommand();
                 } elseif ($tokenList->seekKeyword(Keyword::STATUS, 2)) {
@@ -513,7 +477,6 @@ class ShowCommandsParser
                     } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
-                    $tokenList->expectEnd();
 
                     return new ShowStatusCommand($scope !== null ? Scope::get($scope) : null, $like, $where);
                 } elseif ($tokenList->seekKeyword(Keyword::VARIABLES, 2)) {
@@ -526,7 +489,6 @@ class ShowCommandsParser
                     } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
-                    $tokenList->expectEnd();
 
                     return new ShowVariablesCommand($scope !== null ? Scope::get($scope) : null, $like, $where);
                 } elseif ($tokenList->seekKeyword(Keyword::COLUMNS, 2)) {
@@ -545,14 +507,12 @@ class ShowCommandsParser
                     } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
-                    $tokenList->expectEnd();
 
                     return new ShowColumnsCommand($table, $full, $like, $where);
                 } elseif ($tokenList->seekKeyword(Keyword::PROCESSLIST, 2)) {
                     // SHOW [FULL] PROCESSLIST
                     $full = $tokenList->hasKeyword(Keyword::FULL);
                     $tokenList->expectKeyword(Keyword::PROCESSLIST);
-                    $tokenList->expectEnd();
 
                     return new ShowProcessListCommand($full);
                 } elseif ($tokenList->seekKeyword(Keyword::TABLES, 2)) {
@@ -569,7 +529,6 @@ class ShowCommandsParser
                     } elseif ($tokenList->hasKeyword(Keyword::WHERE)) {
                         $where = $this->expressionParser->parseExpression($tokenList);
                     }
-                    $tokenList->expectEnd();
 
                     return new ShowTablesCommand($schema, $full, $like, $where);
                 } else {

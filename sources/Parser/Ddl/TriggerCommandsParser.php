@@ -101,7 +101,6 @@ class TriggerCommandsParser
         } else {
             $tokenList->expectedAnyKeyword(Keyword::SET, Keyword::UPDATE, Keyword::INSERT, Keyword::DELETE, Keyword::REPLACE, Keyword::WITH, Keyword::BEGIN);
         }
-        $tokenList->expectEnd();
 
         return new CreateTriggerCommand($name, $event, $table, $body, $definer, $triggerPosition);
     }
@@ -115,7 +114,6 @@ class TriggerCommandsParser
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-        $tokenList->expectEnd();
 
         return new DropTriggerCommand($name, $ifExists);
     }

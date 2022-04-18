@@ -63,7 +63,6 @@ class LoadCommandsParser
         [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset] = $this->parseOptions($tokenList, true);
         $format = $this->fileFormatParser->parseFormat($tokenList);
         [$ignoreRows, $fields, $setters] = $this->parseRowsAndFields($tokenList);
-        $tokenList->expectEnd();
 
         return new LoadDataCommand($file, $table, $format, $charset, $fields, $setters, $ignoreRows, $priority, $local, $duplicateOption, $partitions);
     }
@@ -89,7 +88,6 @@ class LoadCommandsParser
         }
 
         [$ignoreRows, $fields, $setters] = $this->parseRowsAndFields($tokenList);
-        $tokenList->expectEnd();
 
         return new LoadXmlCommand($file, $table, $rowsTag, $charset, $fields, $setters, $ignoreRows, $priority, $local, $duplicateOption);
     }

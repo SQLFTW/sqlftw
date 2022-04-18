@@ -41,7 +41,6 @@ class ResetCommandParser
                 $options[] = ResetOption::get($keyword);
             }
         } while ($tokenList->hasComma());
-        $tokenList->expectEnd();
 
         return new ResetCommand($options);
     }

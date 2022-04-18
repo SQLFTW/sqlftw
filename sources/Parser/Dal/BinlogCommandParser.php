@@ -25,7 +25,6 @@ class BinlogCommandParser
     {
         $tokenList->expectKeyword(Keyword::BINLOG);
         $value = $tokenList->expectString();
-        $tokenList->expectEnd();
 
         return new BinlogCommand($value);
     }

@@ -47,7 +47,6 @@ class LogfileGroupCommandsParser
         $tokenList->expectKeyword(Keyword::ENGINE);
         $tokenList->passEqual();
         $engine = $tokenList->expectNameOrString();
-        $tokenList->expectEnd();
 
         return new AlterLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $wait);
     }
@@ -96,7 +95,6 @@ class LogfileGroupCommandsParser
         $tokenList->expectKeyword(Keyword::ENGINE);
         $tokenList->passEqual();
         $engine = $tokenList->expectNameOrString();
-        $tokenList->expectEnd();
 
         return new CreateLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $undoBufferSize, $redoBufferSize, $nodeGroup, $wait, $comment);
     }
@@ -112,7 +110,6 @@ class LogfileGroupCommandsParser
         $tokenList->expectKeyword(Keyword::ENGINE);
         $tokenList->passEqual();
         $engine = $tokenList->expectNameOrString();
-        $tokenList->expectEnd();
 
         return new DropLogfileGroupCommand($name, $engine);
     }

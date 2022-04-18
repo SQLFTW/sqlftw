@@ -65,7 +65,6 @@ class RoutineCommandsParser
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         [$comment, $language, $sideEffects, $sqlSecurity] = $this->parseRoutineCharacteristics($tokenList, false);
-        $tokenList->expectEnd();
 
         return new AlterFunctionCommand($name, $sqlSecurity, $sideEffects, $comment, $language);
     }
@@ -85,7 +84,6 @@ class RoutineCommandsParser
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         [$comment, $language, $sideEffects, $sqlSecurity] = $this->parseRoutineCharacteristics($tokenList, false);
-        $tokenList->expectEnd();
 
         return new AlterProcedureCommand($name, $sqlSecurity, $sideEffects, $comment, $language);
     }
@@ -186,7 +184,6 @@ class RoutineCommandsParser
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
         $body = $this->compoundStatementParser->parseCompoundStatement($tokenList);
-        $tokenList->expectEnd();
 
         return new CreateFunctionCommand($name, $body, $params, $returnType, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language);
     }
@@ -240,7 +237,6 @@ class RoutineCommandsParser
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
         $body = $this->compoundStatementParser->parseCompoundStatement($tokenList);
-        $tokenList->expectEnd();
 
         return new CreateProcedureCommand($name, $body, $params, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language);
     }
@@ -253,7 +249,6 @@ class RoutineCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::FUNCTION);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-        $tokenList->expectEnd();
 
         return new DropFunctionCommand($name, $ifExists);
     }
@@ -266,7 +261,6 @@ class RoutineCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::PROCEDURE);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
-        $tokenList->expectEnd();
 
         return new DropProcedureCommand($name, $ifExists);
     }

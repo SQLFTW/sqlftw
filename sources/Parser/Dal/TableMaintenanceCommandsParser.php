@@ -37,7 +37,6 @@ class TableMaintenanceCommandsParser
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
         } while ($tokenList->hasComma());
-        $tokenList->expectEnd();
 
         return new AnalyzeTableCommand($tables, $local);
     }
@@ -70,7 +69,6 @@ class TableMaintenanceCommandsParser
             }
             $option = CheckTableOption::get($option);
         }
-        $tokenList->expectEnd();
 
         return new CheckTableCommand($tables, $option);
     }
@@ -88,7 +86,6 @@ class TableMaintenanceCommandsParser
 
         $quick = $tokenList->hasKeyword(Keyword::QUICK);
         $extended = $tokenList->hasKeyword(Keyword::EXTENDED);
-        $tokenList->expectEnd();
 
         return new ChecksumTableCommand($tables, $quick, $extended);
     }
@@ -106,7 +103,6 @@ class TableMaintenanceCommandsParser
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
         } while ($tokenList->hasComma());
-        $tokenList->expectEnd();
 
         return new OptimizeTableCommand($tables, $local);
     }
@@ -129,7 +125,6 @@ class TableMaintenanceCommandsParser
         $quick = $tokenList->hasKeyword(Keyword::QUICK);
         $extended = $tokenList->hasKeyword(Keyword::EXTENDED);
         $useFrm = $tokenList->hasKeyword(Keyword::USE_FRM);
-        $tokenList->expectEnd();
 
         return new RepairTableCommand($tables, $local, $quick, $extended, $useFrm);
     }

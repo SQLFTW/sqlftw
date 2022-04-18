@@ -66,7 +66,6 @@ class TablespaceCommandsParser
             $tokenList->passEqual();
             $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
-        $tokenList->expectEnd();
 
         return new AlterTablespaceCommand($name, $options, $undo);
     }
@@ -140,7 +139,6 @@ class TablespaceCommandsParser
             $tokenList->passEqual();
             $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
-        $tokenList->expectEnd();
 
         return new CreateTablespaceCommand($name, $options, $undo);
     }
@@ -161,7 +159,6 @@ class TablespaceCommandsParser
             $tokenList->passEqual();
             $engine = $tokenList->expectName();
         }
-        $tokenList->expectEnd();
 
         return new DropTablespaceCommand($name, $engine, $undo);
     }

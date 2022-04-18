@@ -56,7 +56,6 @@ class ViewCommandsParser
     {
         $tokenList->expectKeyword(Keyword::ALTER);
         $params = $this->parseViewDefinition($tokenList);
-        $tokenList->expectEnd();
 
         return new AlterViewCommand(...$params);
     }
@@ -78,7 +77,6 @@ class ViewCommandsParser
 
         $params = $this->parseViewDefinition($tokenList) + [$orReplace];
         $params[] = $orReplace;
-        $tokenList->expectEnd();
 
         return new CreateViewCommand(...$params);
     }
@@ -152,7 +150,6 @@ class ViewCommandsParser
         if ($option !== null) {
             $option = DropViewOption::get($option);
         }
-        $tokenList->expectEnd();
 
         return new DropViewCommand($names, $ifExists, $option);
     }

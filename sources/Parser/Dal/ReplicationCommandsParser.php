@@ -203,7 +203,6 @@ class ReplicationCommandsParser
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $filters[$filter] = $values;
         } while ($tokenList->hasComma());
-        $tokenList->expectEnd();
 
         return new ChangeReplicationFilterCommand($filters);
     }
@@ -225,7 +224,6 @@ class ReplicationCommandsParser
         } else {
             $tokenList->expectedAnyKeyword(Keyword::TO, Keyword::BEFORE);
         }
-        $tokenList->expectEnd();
 
         return new PurgeBinaryLogsCommand($log, $before);
     }
@@ -240,7 +238,6 @@ class ReplicationCommandsParser
         if ($tokenList->hasKeyword(Keyword::TO)) {
             $position = $tokenList->expectInt();
         }
-        $tokenList->expectEnd();
 
         return new ResetMasterCommand($position);
     }
@@ -259,7 +256,6 @@ class ReplicationCommandsParser
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectString();
         }
-        $tokenList->expectEnd();
 
         return new ResetSlaveCommand($all, $channel);
     }
@@ -270,7 +266,6 @@ class ReplicationCommandsParser
     public function parseStartGroupReplication(TokenList $tokenList): StartGroupReplicationCommand
     {
         $tokenList->expectKeywords(Keyword::START, Keyword::GROUP_REPLICATION);
-        $tokenList->expectEnd();
 
         return new StartGroupReplicationCommand();
     }
@@ -367,7 +362,6 @@ class ReplicationCommandsParser
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectString();
         }
-        $tokenList->expectEnd();
 
         return new StartSlaveCommand($user, $password, $defaultAuth, $pluginDir, $until, $threadTypes, $channel);
     }
@@ -436,7 +430,6 @@ class ReplicationCommandsParser
     public function parseStopGroupReplication(TokenList $tokenList): StopGroupReplicationCommand
     {
         $tokenList->expectKeywords(Keyword::STOP, Keyword::GROUP_REPLICATION);
-        $tokenList->expectEnd();
 
         return new StopGroupReplicationCommand();
     }
@@ -476,7 +469,6 @@ class ReplicationCommandsParser
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectString();
         }
-        $tokenList->expectEnd();
 
         return new StopSlaveCommand($ioThread, $sqlThread, $channel);
     }

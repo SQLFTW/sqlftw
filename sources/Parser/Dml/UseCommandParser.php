@@ -25,7 +25,6 @@ class UseCommandParser
     {
         $tokenList->expectKeyword(Keyword::USE);
         $db = $tokenList->expectName();
-        $tokenList->expectEnd();
 
         return new UseCommand($db);
     }

@@ -72,7 +72,6 @@ class IndexCommandsParser
                 $alterLock = $tokenList->expectKeywordEnum(AlterTableLock::class);
             }
         }
-        $tokenList->expectEnd();
 
         return new CreateIndexCommand($index, $alterAlgorithm, $alterLock);
     }
@@ -181,7 +180,6 @@ class IndexCommandsParser
             /** @var AlterTableLock $lock */
             $lock = $tokenList->expectKeywordEnum(AlterTableLock::class);
         }
-        $tokenList->expectEnd();
 
         return new DropIndexCommand($name, $table, $algorithm, $lock);
     }

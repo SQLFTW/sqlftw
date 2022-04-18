@@ -37,7 +37,6 @@ class SchemaCommandsParser
         $schema = $tokenList->getName();
 
         [$charset, $collation] = $this->parseDefaults($tokenList);
-        $tokenList->expectEnd();
 
         return new AlterSchemaCommand($schema, $charset, $collation);
     }
@@ -58,7 +57,6 @@ class SchemaCommandsParser
         $schema = $tokenList->expectName();
 
         [$charset, $collation] = $this->parseDefaults($tokenList);
-        $tokenList->expectEnd();
 
         return new CreateSchemaCommand($schema, $charset, $collation, $ifNotExists);
     }
@@ -116,7 +114,6 @@ class SchemaCommandsParser
         $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         $schema = $tokenList->expectName();
-        $tokenList->expectEnd();
 
         return new DropSchemaCommand($schema, $ifExists);
     }

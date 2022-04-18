@@ -64,7 +64,6 @@ class ServerCommandsParser
         }
 
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-        $tokenList->expectEnd();
 
         return new AlterServerCommand($name, $host, $schema, $user, $password, $socket, $owner, $port);
     }
@@ -114,7 +113,6 @@ class ServerCommandsParser
             $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-        $tokenList->expectEnd();
 
         return new CreateServerCommand($name, $wrapper, $host, $schema, $user, $password, $socket, $owner, $port);
     }
@@ -127,7 +125,6 @@ class ServerCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::SERVER);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         $name = $tokenList->expectName();
-        $tokenList->expectEnd();
 
         return new DropServerCommand($name, $ifExists);
     }

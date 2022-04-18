@@ -576,8 +576,6 @@ class TableCommandsParser
             }
         } while ($tokenList->hasComma());
 
-        $tokenList->expectEnd();
-
         return new AlterTableCommand($name, $actions, $alterOptions, $tableOptions);
     }
 
@@ -649,7 +647,6 @@ class TableCommandsParser
         if ($tokenList->hasKeyword(Keyword::AS) || $items === [] || $duplicateOption !== null || !$tokenList->isFinished()) {
             $select = $this->selectCommandParser->parseSelect($tokenList);
         }
-        $tokenList->expectEnd();
 
         return new CreateTableCommand($table, $items, $options, $partitioning, $temporary, $ifNotExists, $duplicateOption, $select);
     }
@@ -1414,7 +1411,6 @@ class TableCommandsParser
         // ignored in MySQL 5.7, 8.0
         $cascadeRestrict = $tokenList->getAnyKeyword(Keyword::CASCADE, Keyword::RESTRICT);
         $cascadeRestrict = $cascadeRestrict === Keyword::CASCADE ? true : ($cascadeRestrict === Keyword::RESTRICT ? false : null);
-        $tokenList->expectEnd();
 
         return new DropTableCommand($tables, $temporary, $ifExists, $cascadeRestrict);
     }
@@ -1434,7 +1430,6 @@ class TableCommandsParser
             $tokenList->expectKeyword(Keyword::TO);
             $newTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
         } while ($tokenList->hasComma());
-        $tokenList->expectEnd();
 
         return new RenameTableCommand($tables, $newTables);
     }
@@ -1447,7 +1442,6 @@ class TableCommandsParser
         $tokenList->expectKeyword(Keyword::TRUNCATE);
         $tokenList->passKeyword(Keyword::TABLE);
         $table = new QualifiedName(...$tokenList->expectQualifiedName());
-        $tokenList->expectEnd();
 
         return new TruncateTableCommand($table);
     }

@@ -24,7 +24,6 @@ class RestartCommandParser
     public function parseRestart(TokenList $tokenList): RestartCommand
     {
         $tokenList->expectKeyword(Keyword::RESTART);
-        $tokenList->expectEnd();
 
         return new RestartCommand();
     }

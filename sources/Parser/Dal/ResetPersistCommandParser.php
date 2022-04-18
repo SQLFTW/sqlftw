@@ -31,7 +31,6 @@ class ResetPersistCommandParser
         } else {
             $variable = $tokenList->getName();
         }
-        $tokenList->expectEnd();
 
         return new ResetPersistCommand($variable, $ifExists);
     }

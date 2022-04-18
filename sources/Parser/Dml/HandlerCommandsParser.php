@@ -43,7 +43,6 @@ class HandlerCommandsParser
 
         $tokenList->passKeyword(Keyword::AS);
         $alias = $tokenList->getName();
-        $tokenList->expectEnd();
 
         return new HandlerOpenCommand($table, $alias);
     }
@@ -92,7 +91,6 @@ class HandlerCommandsParser
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
             [$limit, $offset] = $this->expressionParser->parseLimitAndOffset($tokenList);
         }
-        $tokenList->expectEnd();
 
         return new HandlerReadCommand($table, $what, $index, $values, $where, $limit, $offset);
     }
@@ -105,7 +103,6 @@ class HandlerCommandsParser
         $tokenList->expectKeyword(Keyword::HANDLER);
         $table = new QualifiedName(...$tokenList->expectQualifiedName());
         $tokenList->expectKeyword(Keyword::CLOSE);
-        $tokenList->expectEnd();
 
         return new HandlerCloseCommand($table);
     }

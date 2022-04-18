@@ -94,8 +94,6 @@ class UserCommandsParser
         $resourceOptions = $this->parseResourceOptions($tokenList);
         $passwordLockOptions = $this->parsePasswordLockOptions($tokenList);
 
-        $tokenList->expectEnd();
-
         return new AlterUserCommand($users, $tlsOptions, $resourceOptions, $passwordLockOptions, $ifExists);
     }
 
@@ -120,8 +118,6 @@ class UserCommandsParser
         $tlsOptions = $this->parseTlsOptions($tokenList);
         $resourceOptions = $this->parseResourceOptions($tokenList);
         $passwordLockOptions = $this->parsePasswordLockOptions($tokenList);
-
-        $tokenList->expectEnd();
 
         return new CreateUserCommand($users, $defaultRoles, $tlsOptions, $resourceOptions, $passwordLockOptions, $ifNotExists);
     }
@@ -321,7 +317,6 @@ class UserCommandsParser
         $tokenList->expectKeywords(Keyword::CREATE, Keyword::ROLE);
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
         $roles = $this->parseRolesList($tokenList);
-        $tokenList->expectEnd();
 
         return new CreateRoleCommand($roles, $ifNotExists);
     }
@@ -334,7 +329,6 @@ class UserCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::ROLE);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         $roles = $this->parseRolesList($tokenList);
-        $tokenList->expectEnd();
 
         return new DropRoleCommand($roles, $ifExists);
     }
@@ -347,7 +341,6 @@ class UserCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::USER);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         $users = $this->parseUserList($tokenList);
-        $tokenList->expectEnd();
 
         return new DropUserCommand($users, $ifExists);
     }
@@ -391,7 +384,6 @@ class UserCommandsParser
             $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseUserList($tokenList);
             $withGrantOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
-            $tokenList->expectEnd();
 
             return new GrantProxyCommand($proxy, $users, $withGrantOption);
         } elseif (!$tokenList->seekKeyword(Keyword::ON, 1000)) {
@@ -399,7 +391,6 @@ class UserCommandsParser
             $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseUserList($tokenList);
             $withAdminOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::ADMIN, Keyword::OPTION);
-            $tokenList->expectEnd();
 
             return new GrantRoleCommand($roles, $users, $withAdminOption);
         } else {
@@ -419,7 +410,6 @@ class UserCommandsParser
                     $role = $this->parseRoleSpecification($tokenList);
                 }
             }
-            $tokenList->expectEnd();
 
             return new GrantCommand($privileges, $resource, $users, $as, $role, $tlsOptions, $resourceOptions, $withGrantOption);
         }
@@ -567,7 +557,6 @@ class UserCommandsParser
             $tokenList->expect(TokenType::COMMA);
             $tokenList->expectKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
             $users = $this->parseUserList($tokenList);
-            $tokenList->expectEnd();
 
             return new RevokeAllCommand($users);
         } elseif ($tokenList->hasKeywords(Keyword::PROXY)) {
@@ -575,7 +564,6 @@ class UserCommandsParser
             $proxy = new UserName(...$tokenList->expectUserName());
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUserList($tokenList);
-            $tokenList->expectEnd();
 
             return new RevokeProxyCommand($proxy, $users);
         } elseif ($tokenList->seekKeyword(Keyword::ON, 1000)) {
@@ -583,14 +571,12 @@ class UserCommandsParser
             $resource = $this->parseResource($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUserList($tokenList);
-            $tokenList->expectEnd();
 
             return new RevokeCommand($privileges, $resource, $users);
         } else {
             $roles = $this->parseRolesList($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUserList($tokenList);
-            $tokenList->expectEnd();
 
             return new RevokeRoleCommand($roles, $users);
         }
@@ -613,7 +599,6 @@ class UserCommandsParser
 
         $tokenList->expectKeyword(Keyword::TO);
         $users = $this->parseUserList($tokenList);
-        $tokenList->expectEnd();
 
         return new SetDefaultRoleCommand($users, $roles, $rolesList);
     }
@@ -642,7 +627,6 @@ class UserCommandsParser
         if ($passwordFunction) {
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
-        $tokenList->expectEnd();
 
         return new SetPasswordCommand($user, $password, $passwordFunction);
     }
@@ -660,7 +644,6 @@ class UserCommandsParser
     {
         $tokenList->expectKeywords(Keyword::SET, Keyword::ROLE);
         $role = $this->parseRoleSpecification($tokenList);
-        $tokenList->expectEnd();
 
         return new SetRoleCommand($role);
     }

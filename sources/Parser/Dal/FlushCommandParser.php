@@ -72,7 +72,6 @@ class FlushCommandParser
                 $options[] = FlushOption::get($keyword);
             }
         } while ($tokenList->hasComma());
-        $tokenList->expectEnd();
 
         return new FlushCommand($options, $channel, $local);
     }
@@ -100,7 +99,6 @@ class FlushCommandParser
             $tokenList->expectKeyword(Keyword::EXPORT);
             $forExport = true;
         }
-        $tokenList->expectEnd();
 
         return new FlushTablesCommand($tables, $withReadLock, $forExport);
     }

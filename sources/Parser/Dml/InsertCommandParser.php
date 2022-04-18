@@ -86,20 +86,17 @@ class InsertCommandParser
         if ($tokenList->hasKeyword(Keyword::SELECT)) {
             $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
-            $tokenList->expectEnd();
 
             return new InsertSelectCommand($table, $select, $columns, $partitions, $priority, $ignore, $update);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
-            $tokenList->expectEnd();
 
             return new InsertSetCommand($table, $values, $columns, $partitions, $priority, $ignore, $update);
         } else {
             $tokenList->expectAnyKeyword(Keyword::VALUE, Keyword::VALUES);
             $rows = $this->parseRows($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
-            $tokenList->expectEnd();
 
             return new InsertValuesCommand($table, $rows, $columns, $partitions, $priority, $ignore, $update);
         }
@@ -137,18 +134,15 @@ class InsertCommandParser
 
         if ($tokenList->hasKeyword(Keyword::SELECT)) {
             $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
-            $tokenList->expectEnd();
 
             return new ReplaceSelectCommand($table, $select, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
-            $tokenList->expectEnd();
 
             return new ReplaceSetCommand($table, $values, $columns, $partitions, $priority, $ignore);
         } else {
             $tokenList->expectAnyKeyword(Keyword::VALUE, Keyword::VALUES);
             $rows = $this->parseRows($tokenList);
-            $tokenList->expectEnd();
 
             return new ReplaceValuesCommand($table, $rows, $columns, $partitions, $priority, $ignore);
         }
