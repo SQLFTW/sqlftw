@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\InvalidValueException;
 use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\PlatformSettings;
@@ -605,14 +606,15 @@ class TokenList
      */
     public function expectNameOrStringEnum(string $className): SqlEnum
     {
-        $values = call_user_func([$className, 'getAllowedValues']);
         $value = $this->expectNameOrString();
 
-        if (in_array($value, $values, true)) {
+        try {
             return call_user_func([$className, 'get'], $value);
-        }
+        } catch (InvalidValueException $e) {
+            $values = call_user_func([$className, 'getAllowedValues']);
 
-        throw new UnexpectedTokenException([TokenType::NAME], $values, $this->tokens[$this->position], $this);
+            throw new UnexpectedTokenException([TokenType::NAME], $values, $this->tokens[$this->position], $this);
+        }
     }
 
     /**
