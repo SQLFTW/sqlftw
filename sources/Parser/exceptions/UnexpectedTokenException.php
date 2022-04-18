@@ -71,7 +71,7 @@ class UnexpectedTokenException extends ParserException
 
     private function formatContext(TokenList $tokenList): string
     {
-        $tokens = $tokenList->getTokens($tokenList->getPosition() - 10, 21);
+        $tokens = array_slice($tokenList->getTokens(), $tokenList->getPosition() - 10, 21);
         $context = '"…' . implode('', array_map(static function (Token $token) {
             return $token->original ?? $token->value;
         }, array_slice($tokens, 0, 10)));
