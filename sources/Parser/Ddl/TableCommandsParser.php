@@ -930,6 +930,10 @@ class TableCommandsParser
         if ($tokenList->hasKeywords(Keyword::ON, Keyword::UPDATE)) {
             $onUpdate = $this->parseForeignKeyAction($tokenList);
         }
+        // order of DELETE/UPDATE may be switched
+        if ($onDelete === null && $tokenList->hasKeywords(Keyword::ON, Keyword::DELETE)) {
+            $onDelete = $this->parseForeignKeyAction($tokenList);
+        }
 
         return new ReferenceDefinition($table, $columns, $onDelete, $onUpdate, $matchType);
     }
