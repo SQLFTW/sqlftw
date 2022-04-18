@@ -335,6 +335,7 @@ class ExpressionParser
             Operator::EXCLAMATION,
             Operator::BINARY
         );
+
         if ($operator !== null) {
             // + simple_expr
             // - simple_expr
@@ -414,13 +415,13 @@ class ExpressionParser
                     $name2 = $name3 = null;
                     if ($tokenList->has(TokenType::DOT)) {
                         if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                            $name2 = '*'; // SELECT tbl.*
+                            $name2 = '*'; // tbl.*
                         } else {
                             $name2 = $tokenList->expectName();
                         }
                         if ($name2 !== '*' && $tokenList->has(TokenType::DOT)) {
                             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                                $name3 = '*'; // SELECT db.tbl.*
+                                $name3 = '*'; // db.tbl.*
                             } else {
                                 $name3 = $tokenList->expectName();
                             }
@@ -432,16 +433,7 @@ class ExpressionParser
 
                     } elseif ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                         // function_call
-                        // todo: support for irregular arguments - eg "GROUP_CONCAT(DISTINCT col1 ORDER BY col2)"
-                        $arguments = [];
-                        if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
-                            do {
-                                $arguments[] = $this->parseExpression($tokenList);
-                            } while ($tokenList->hasComma());
-                            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-                        }
-                        $name = new QualifiedName($name2 ?? $name1, $name2 !== null ? $name1 : null);
-                        $expression = new FunctionCall($name, $arguments);
+                        $expression = $this->parseFunctionCall($tokenList, $name1, $name2);
 
                     } elseif ($name2 !== null) {
                         // identifier
@@ -455,6 +447,9 @@ class ExpressionParser
                         // identifier
                         $expression = new Identifier(new ColumnName($name1, null, null));
                     }
+                } elseif (($name1 = $tokenList->get(TokenType::RESERVED)) !== null && $tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                    // function_call
+                    $expression = $this->parseFunctionCall($tokenList, $name1->value); // @phpstan-ignore-line string
                 } else {
                     // literal
                     $expression = $this->parseLiteral($tokenList);
@@ -477,6 +472,21 @@ class ExpressionParser
         } else {
             return $expression;
         }
+    }
+
+    private function parseFunctionCall(TokenList $tokenList, string $name1, ?string $name2 = null): FunctionCall
+    {
+        // todo: support for irregular arguments - eg "GROUP_CONCAT(DISTINCT col1 ORDER BY col2)"
+        $arguments = [];
+        if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+            do {
+                $arguments[] = $this->parseExpression($tokenList);
+            } while ($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        }
+        $name = new QualifiedName($name2 ?? $name1, $name2 !== null ? $name1 : null);
+
+        return new FunctionCall($name, $arguments);
     }
 
     /**
