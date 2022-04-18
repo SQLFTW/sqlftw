@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
 use SqlFtw\Sql\SqlSerializable;
 use function get_class;
@@ -32,7 +33,7 @@ class SetAssignment implements SqlSerializable
     /** @var Scope */
     private $scope;
 
-    /** @var string */
+    /** @var QualifiedName */
     private $variable;
 
     /** @var bool|int|float|string|ExpressionNode */
@@ -41,7 +42,7 @@ class SetAssignment implements SqlSerializable
     /**
      * @param bool|int|float|string|ExpressionNode|mixed $expression
      */
-    public function __construct(string $variable, $expression, ?Scope $scope = null)
+    public function __construct(QualifiedName $variable, $expression, ?Scope $scope = null)
     {
         if (!$expression instanceof ExpressionNode && !is_scalar($expression)) {
             throw new InvalidDefinitionException(sprintf(
@@ -62,7 +63,7 @@ class SetAssignment implements SqlSerializable
         return $this->scope;
     }
 
-    public function getVariable(): string
+    public function getVariable(): QualifiedName
     {
         return $this->variable;
     }
@@ -80,7 +81,7 @@ class SetAssignment implements SqlSerializable
         $scope = $this->scope->serialize($formatter);
         $scope .= $scope !== '' ? ' ' : '';
 
-        return $scope . $this->variable . ' = ' . $this->formatExpression($formatter, $this->expression);
+        return $scope . $this->variable->serialize($formatter) . ' = ' . $this->formatExpression($formatter, $this->expression);
     }
 
     /**

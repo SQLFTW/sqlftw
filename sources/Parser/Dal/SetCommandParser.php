@@ -18,6 +18,7 @@ use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Dal\SystemVariable;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
 use function ltrim;
 use function strpos;
@@ -56,40 +57,48 @@ class SetCommandParser
             /** @var Scope|null $scope */
             $scope = $tokenList->getKeywordEnum(Scope::class);
             if ($scope !== null) {
-                $variable = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
+                $name = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
+                $variable = new QualifiedName($name);
             } else {
                 $variableToken = $tokenList->get(TokenType::AT_VARIABLE);
                 if ($variableToken !== null) {
                     // @
-                    /** @var string $variable */
-                    $variable = $variableToken->value;
-                    if (strpos($variable, '@@') === 0) {
+                    /** @var string $name */
+                    $name = $variableToken->value;
+                    if (strpos($name, '@@') === 0) {
                         // @@
-                        $upper = strtoupper($variable);
+                        $upper = strtoupper($name);
                         if ($upper === '@@GLOBAL') {
                             $scope = Scope::get(Scope::GLOBAL);
-                            $variable = null;
+                            $name = null;
                         } elseif ($upper === '@@PERSIST') {
                             $scope = Scope::get(Scope::PERSIST);
-                            $variable = null;
+                            $name = null;
                         } elseif ($upper === '@@PERSIST_ONLY') {
                             $scope = Scope::get(Scope::PERSIST_ONLY);
-                            $variable = null;
+                            $name = null;
                         } elseif ($upper === '@@SESSION') {
                             $scope = Scope::get(Scope::SESSION);
-                            $variable = null;
+                            $name = null;
                         } else {
                             $scope = Scope::get(Scope::SESSION);
-                            $variable = (new SystemVariable(ltrim($variable, '@')))->getValue();
+                            $name = (new SystemVariable(ltrim($name, '@')))->getValue();
                         }
-                        if ($variable === null) {
+                        if ($name === null) {
                             $tokenList->expect(TokenType::DOT);
-                            $variable = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
+                            $name = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
                         }
                     }
+                    $variable = new QualifiedName($name);
                 } else {
                     // !@
-                    $variable = $tokenList->expectName();
+                    $name = $tokenList->expectName();
+                    if ($tokenList->has(TokenType::DOT)) {
+                        $name2 = $tokenList->expectName();
+                        $variable = new QualifiedName($name2, $name);
+                    } else {
+                        $variable = new QualifiedName($name);
+                    }
                 }
             }
 
