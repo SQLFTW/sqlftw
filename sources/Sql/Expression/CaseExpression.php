@@ -22,26 +22,19 @@ class CaseExpression implements Statement, ExpressionNode
     /** @var ExpressionNode|null */
     private $condition;
 
-    /** @var Literal[]|ExpressionNode[] */
+    /** @var non-empty-array<ExpressionNode> */
     private $values;
 
-    /** @var ExpressionNode[] */
+    /** @var non-empty-array<ExpressionNode> */
     private $results;
 
     /**
-     * @param Literal[]|ExpressionNode[] $values
-     * @param ExpressionNode[] $results
+     * @param non-empty-array<ExpressionNode> $values
+     * @param non-empty-array<ExpressionNode> $results
      */
     public function __construct(?ExpressionNode $condition, array $values, array $results)
     {
-        Check::array($values, 1);
-        if ($condition !== null) {
-            Check::itemsOfType($values, Literal::class);
-        } else {
-            Check::itemsOfType($values, ExpressionNode::class);
-        }
         Check::array($results, count($values), count($values) + 1);
-        Check::itemsOfType($results, ValueLiteral::class);
 
         $this->condition = $condition;
         $this->values = $values;
@@ -59,7 +52,7 @@ class CaseExpression implements Statement, ExpressionNode
     }
 
     /**
-     * @return Literal[]|ExpressionNode[]
+     * @return non-empty-array<ExpressionNode>
      */
     public function getValues(): array
     {
@@ -67,7 +60,7 @@ class CaseExpression implements Statement, ExpressionNode
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return non-empty-array<ExpressionNode>
      */
     public function getResults(): array
     {

@@ -153,7 +153,7 @@ class ExpressionParser
      */
     private function parseBooleanPrimary(TokenList $tokenList): ExpressionNode
     {
-        $operators = [
+        static $operators = [
             Operator::SAFE_EQUAL,
             Operator::EQUAL,
             Operator::GREATER_OR_EQUAL,
@@ -493,11 +493,7 @@ class ExpressionParser
         }
         $values = $results = [];
         do {
-            if ($condition !== null) {
-                $values[] = $this->parseLiteral($tokenList);
-            } else {
-                $values[] = $this->parseExpression($tokenList);
-            }
+            $values[] = $this->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::THEN);
             $results[] = $this->parseExpression($tokenList);
         } while ($tokenList->hasKeyword(Keyword::WHEN));
@@ -505,7 +501,8 @@ class ExpressionParser
         if ($tokenList->hasKeyword(Keyword::ELSE)) {
             $results[] = $this->parseExpression($tokenList);
         }
-        $tokenList->expectKeywords(Keyword::END, Keyword::CASE);
+
+        $tokenList->expectKeywords(Keyword::END);
 
         return new CaseExpression($condition, $values, $results);
     }
