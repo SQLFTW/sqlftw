@@ -7,6 +7,7 @@ use Dogma\Debug\Debugger;
 use Dogma\Debug\Dumper;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\Token;
@@ -72,7 +73,7 @@ class Assert extends DogmaAssert
         $formatter = $formatter ?? new Formatter($parser->getSettings());
 
         //try {
-            $actual = $parser->parseCommand($query)->serialize($formatter);
+            $actual = $parser->parseSingleCommand($query)->serialize($formatter);
         //} catch (ParserException $e) {
         //    self::fail($e->getMessage());
         //    return;
@@ -91,7 +92,7 @@ class Assert extends DogmaAssert
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
 
         try {
-            $parser->parseCommand($query);
+            $parser->parseSingleCommand($query);
         } catch (ParserException $e) {
             if (class_exists(Dumper::class) && $e->backtrace !== null) {
                 Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
@@ -110,7 +111,9 @@ class Assert extends DogmaAssert
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
 
         try {
-            $parser->parse($sql);
+            foreach ($parser->parse($sql) as $command) {
+                self::true(!$command instanceof InvalidCommand);
+            }
         } catch (ParserException $e) {
             if (class_exists(Dumper::class) && $e->backtrace !== null) {
                 Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));

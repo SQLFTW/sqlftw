@@ -12,11 +12,13 @@
 namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
+use Generator;
 use SqlFtw\Parser\Lexer\Lexer;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use function count;
+use function iterator_to_array;
 
 class Parser
 {
@@ -52,26 +54,26 @@ class Parser
     }
 
     /**
-     * @return Command[]
+     * @return Generator<Command>
      */
-    public function parse(string $sql): array
+    public function parse(string $sql): Generator
     {
-        $tokens = $this->lexer->tokenizeAll($sql);
-        $tokenLists = $this->slice($tokens);
+        $tokenLists = $this->slice($this->lexer->tokenize($sql));
 
-        $commands = [];
         foreach ($tokenLists as $tokenList) {
-            $commands[] = $this->parseTokenList($tokenList);
+            $command = $this->parseTokenList($tokenList);
             $tokenList->expectEnd();
-        }
 
-        return $commands;
+            // todo: sniff for SET NAMES, SET CHARSET, SET sql_mode ...
+
+            yield $command;
+        }
     }
 
-    public function parseCommand(string $sql): Command
+    public function parseSingleCommand(string $sql): Command
     {
-        $tokens = $this->lexer->tokenizeAll($sql);
-        $tokenLists = $this->slice($tokens);
+        /** @var TokenList[] $tokenLists */
+        $tokenLists = iterator_to_array($this->slice($this->lexer->tokenize($sql)));
         if (count($tokenLists) > 1) {
             throw new ParserException('More than one command found in given SQL code.');
         }
@@ -84,30 +86,27 @@ class Parser
     }
 
     /**
-     * @param Token[] $tokens
-     * @return TokenList[]
+     * @param iterable<Token> $tokens
+     * @return Generator<TokenList>
      */
-    private function slice(array $tokens): array
+    private function slice(iterable $tokens): Generator
     {
         $buffer = [];
-        $lists = [];
         foreach ($tokens as $token) {
             if (($token->type & TokenType::DELIMITER) !== 0) {
-                $lists[] = new TokenList($buffer, $this->settings);
+                yield new TokenList($buffer, $this->settings);
                 $buffer = [];
             } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {
                 $buffer[] = $token;
-                $lists[] = new TokenList($buffer, $this->settings);
+                yield new TokenList($buffer, $this->settings);
                 $buffer = [];
             } else {
                 $buffer[] = $token;
             }
         }
         if ($buffer !== []) {
-            $lists[] = new TokenList($buffer, $this->settings);
+            yield new TokenList($buffer, $this->settings);
         }
-
-        return $lists;
     }
 
     /**
