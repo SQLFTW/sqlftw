@@ -17,6 +17,8 @@ use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Literal;
 
 class ColumnDefinition implements TableItem
@@ -40,11 +42,14 @@ class ColumnDefinition implements TableItem
     /** @var bool|null */
     private $nullable;
 
-    /** @var string|int|float|bool|Literal|null */
+    /** @var string|int|float|bool|Literal|Identifier|FunctionCall|null */
     private $defaultValue;
 
     /** @var bool */
     private $autoincrement;
+
+    /** @var Identifier|FunctionCall|null */
+    private $onUpdate;
 
     /** @var GeneratedColumnType|null */
     private $generatedColumnType;
@@ -68,7 +73,8 @@ class ColumnDefinition implements TableItem
     private $check;
 
     /**
-     * @param string|int|float|bool|Literal|null $defaultValue
+     * @param string|int|float|bool|Literal|Identifier|FunctionCall|null $defaultValue
+     * @param Identifier|FunctionCall|null $onUpdate
      */
     public function __construct(
         string $name,
@@ -76,6 +82,7 @@ class ColumnDefinition implements TableItem
         $defaultValue = null,
         ?bool $nullable = null,
         bool $autoincrement = false,
+        ?ExpressionNode $onUpdate = null,
         ?string $comment = null,
         ?IndexType $indexType = null,
         ?ColumnFormat $columnFormat = null,
@@ -88,6 +95,7 @@ class ColumnDefinition implements TableItem
         $this->defaultValue = $defaultValue;
         $this->nullable = $nullable;
         $this->autoincrement = $autoincrement;
+        $this->onUpdate = $onUpdate;
         $this->comment = $comment;
         $this->indexType = $indexType;
         $this->columnFormat = $columnFormat;
@@ -105,7 +113,7 @@ class ColumnDefinition implements TableItem
         ?IndexType $indexType = null
     ): self
     {
-        $instance = new self($name, $type, null, $nullable, false, $comment, $indexType);
+        $instance = new self($name, $type, null, $nullable, false, null, $comment, $indexType);
 
         $instance->generatedColumnType = $generatedColumnType;
         $instance->expression = $expression;
@@ -114,7 +122,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @param string|int|float|bool|Literal|null $defaultValue
+     * @param string|int|float|bool|Literal|Identifier|FunctionCall|null $defaultValue
      */
     public function duplicateWithDefaultValue($defaultValue): self
     {
@@ -153,7 +161,15 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @return string|int|float|bool|Literal|null
+     * @return Identifier|FunctionCall|null
+     */
+    public function getOnUpdate(): ?ExpressionNode
+    {
+        return $this->onUpdate;
+    }
+
+    /**
+     * @return string|int|float|bool|Literal|Identifier|FunctionCall|null
      */
     public function getDefaultValue()
     {
@@ -210,11 +226,16 @@ class ColumnDefinition implements TableItem
             if ($this->nullable !== null) {
                 $result .= $this->nullable ? ' NULL' : ' NOT NULL';
             }
-            if ($this->defaultValue !== null) {
+            if ($this->defaultValue instanceof FunctionCall) {
+                $result .= ' DEFAULT ' . $this->defaultValue->serialize($formatter);
+            } elseif ($this->defaultValue !== null) {
                 $result .= ' DEFAULT ' . $formatter->formatValue($this->defaultValue);
             }
             if ($this->autoincrement) {
                 $result .= ' AUTO_INCREMENT';
+            }
+            if ($this->onUpdate !== null) {
+                $result .= ' ON UPDATE ' . $this->onUpdate->serialize($formatter);
             }
             if ($this->indexType !== null) {
                 $result .= ' ' . $this->indexType->serializeIndexAsKey($formatter);

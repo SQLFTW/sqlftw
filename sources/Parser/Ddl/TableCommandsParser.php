@@ -93,7 +93,10 @@ use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
+use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 
@@ -703,6 +706,7 @@ class TableCommandsParser
      *       [AUTO_INCREMENT] [UNIQUE [KEY] | [PRIMARY] KEY]
      *       [COMMENT 'string']
      *       [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
+     *       [ON UPDATE CURRENT_TIMESTAMP[(...)]] -- not documented in main article: @see https://dev.mysql.com/doc/refman/8.0/en/timestamp-initialization.html
      *       [reference_definition]
      *       [check_constraint_definition]
      *   | data_type [GENERATED ALWAYS] AS (expression)
@@ -728,10 +732,10 @@ class TableCommandsParser
 
     private function parseOrdinaryColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
     {
-        $null = $default = $index = $comment = $columnFormat = $reference = $check = null;
+        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = null;
         $autoIncrement = false;
         while (($keyword = $tokenList->getAnyKeyword(
-            Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::UNIQUE,
+            Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
             Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK
         )) !== null) {
             switch ($keyword) {
@@ -745,12 +749,36 @@ class TableCommandsParser
                     break;
                 case Keyword::DEFAULT:
                     // [DEFAULT default_value]
-                    $default = $this->expressionParser->parseLiteralValue($tokenList);
+                    // [DEFAULT CURRENT_TIMESTAMP[(...)]]
+                    if ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
+                        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                            $param = $tokenList->getInt();
+                            $params = $param !== null ? [new ValueLiteral($param)] : [];
+                            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                            $default = new FunctionCall(new QualifiedName(Keyword::CURRENT_TIMESTAMP), $params);
+                        } else {
+                            $default = new Identifier(Keyword::CURRENT_TIMESTAMP);
+                        }
+                    } else {
+                        $default = $this->expressionParser->parseLiteralValue($tokenList);
+                    }
                     break;
                 case Keyword::AUTO_INCREMENT:
                     // [AUTO_INCREMENT]
                     $autoIncrement = true;
                     break;
+                case Keyword::ON:
+                    // [ON UPDATE CURRENT_TIMESTAMP[(...)]]
+                    $tokenList->expectKeyword(Keyword::UPDATE);
+                    $tokenList->expectKeyword(Keyword::CURRENT_TIMESTAMP);
+                    if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                        $param = $tokenList->getInt();
+                        $params = $param !== null ? [new ValueLiteral($param)] : [];
+                        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                        $onUpdate = new FunctionCall(new QualifiedName(Keyword::CURRENT_TIMESTAMP), $params);
+                    } else {
+                        $onUpdate = new Identifier(Keyword::CURRENT_TIMESTAMP);
+                    }
                 case Keyword::UNIQUE:
                     // [UNIQUE [KEY] | [PRIMARY] KEY]
                     $tokenList->passKeyword(Keyword::KEY);
@@ -783,7 +811,7 @@ class TableCommandsParser
             }
         }
 
-        return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $comment, $index, $columnFormat, $reference, $check);
+        return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $reference, $check);
     }
 
     private function parseGeneratedColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
