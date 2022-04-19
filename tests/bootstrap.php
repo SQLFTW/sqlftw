@@ -55,7 +55,7 @@ if (class_exists(Dumper::class)) {
     // TokenList
     Dumper::$shortObjectFormatters[TokenList::class] = static function (TokenList $tokenList): string {
         $limit = 15;
-        $tokens = $tokenList->getTokens(0, 10000);
+        $tokens = $tokenList->getTokens();
         $count = count($tokens);
         $contents = '';
         foreach (array_slice($tokens, 0, $limit) as $token) {

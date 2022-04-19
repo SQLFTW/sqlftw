@@ -86,9 +86,7 @@ class DataType implements SqlSerializable
     private function setParams(BaseType $type, $params = null): void
     {
         if ($type->isDecimal()) {
-            if ($params === null) {
-                // ok
-            } elseif (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1])) {
+            if ($params !== null && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
                 throw new InvalidDefinitionException(sprintf('Two integer size parameters required for type "%s".', $type->getValue()));
             }
             $this->size = $params;

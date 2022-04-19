@@ -59,7 +59,7 @@ class SetCommand implements DalCommand
     public function getAssignment(string $variable, ?Scope $scope = null): ?SetAssignment
     {
         foreach ($this->assignments as $assignment) {
-            if ($assignment->getVariable() !== $variable) {
+            if ($assignment->getVariable()->format() !== $variable) {
                 continue;
             }
             if ($scope !== null && $assignment->getScope() !== $scope) {

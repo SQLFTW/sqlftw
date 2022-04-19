@@ -734,6 +734,7 @@ class TableCommandsParser
     {
         $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = null;
         $autoIncrement = false;
+        // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
         while (($keyword = $tokenList->getAnyKeyword(
             Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
             Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK

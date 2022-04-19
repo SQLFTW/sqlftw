@@ -175,6 +175,7 @@ class TokenList
 
     /**
      * @phpstan-impure
+     * @param mixed $value
      */
     public function get(int $tokenType, $value = null): ?Token
     {

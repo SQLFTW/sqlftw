@@ -95,10 +95,13 @@ class Parser
         foreach ($tokens as $token) {
             if (($token->type & TokenType::DELIMITER) !== 0) {
                 yield new TokenList($buffer, $this->settings);
+
                 $buffer = [];
             } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {
                 $buffer[] = $token;
+
                 yield new TokenList($buffer, $this->settings);
+
                 $buffer = [];
             } else {
                 $buffer[] = $token;

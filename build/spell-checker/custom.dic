@@ -2,6 +2,7 @@
 args
 armscii
 backtick
+crm
 cwd
 dll
 euc
@@ -17,12 +18,17 @@ keybcs
 mixin
 nul
 num
+parens
 postgresql
+refman
 remstr
+rl
 sdi
+shoptet
 sqlftw
 tagname
 tbl
+termino
 tls
 ucs
 unary

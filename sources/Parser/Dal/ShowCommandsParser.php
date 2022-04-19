@@ -60,7 +60,6 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
-use SqlFtw\Sql\UserName;
 use function array_keys;
 
 class ShowCommandsParser
