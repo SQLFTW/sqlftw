@@ -120,5 +120,11 @@
         "spell:check": "Run spell-checker",
         "lint:php": "Run PHPLint",
         "lint:php-all": "Run PHPLint on all supported PHP versions (7.1 - 8.1)"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": false,
+            "sllh/composer-versions-check": false
+        }
     }
 }
