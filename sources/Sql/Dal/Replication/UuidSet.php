@@ -13,7 +13,7 @@ use Dogma\Arr;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Parser\Lexer\Lexer;
+use SqlFtw\Parser\Lexer;
 use SqlFtw\Sql\SqlSerializable;
 use function implode;
 use function strtolower;

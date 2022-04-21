@@ -7,11 +7,11 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Parser\Lexer;
+namespace SqlFtw\Parser;
 
-use SqlFtw\Parser\ParserException;
-
-class LexerException extends ParserException
+class EndOfCommentNotFoundException extends LexerException
 {
+
+    // todo
 
 }

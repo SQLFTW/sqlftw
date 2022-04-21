@@ -10,7 +10,7 @@
 namespace SqlFtw\Tests;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Parser\Lexer\Lexer;
+use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Platform\Platform;

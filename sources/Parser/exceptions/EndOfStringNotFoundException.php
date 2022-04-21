@@ -7,7 +7,7 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Parser\Lexer;
+namespace SqlFtw\Parser;
 
 class EndOfStringNotFoundException extends LexerException
 {

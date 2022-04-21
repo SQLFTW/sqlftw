@@ -10,13 +10,11 @@
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 // phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
 
-namespace SqlFtw\Parser\Lexer;
+namespace SqlFtw\Parser;
 
 use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use Generator;
-use SqlFtw\Parser\ParserException;
-use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Platform\PlatformSettings;

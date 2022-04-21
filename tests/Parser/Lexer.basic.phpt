@@ -1,14 +1,13 @@
 <?php declare(strict_types = 1);
 
-namespace SqlFtw\Parser\Lexer;
+namespace SqlFtw\Parser;
 
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Tests\Assert;
 
-require '../../bootstrap.php';
+require '../bootstrap.php';
 
 $settings = new PlatformSettings(Platform::get(Platform::MYSQL, '5.7'));
 $lexer = new Lexer($settings, true, true);

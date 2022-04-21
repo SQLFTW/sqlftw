@@ -3,7 +3,7 @@
 namespace AlterExecutor\Parser;
 
 use SqlFtw\Parser\InvalidCommand;
-use SqlFtw\Parser\Lexer\Lexer;
+use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
