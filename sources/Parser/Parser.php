@@ -23,22 +23,22 @@ class Parser
 {
     use StrictBehaviorMixin;
 
+    /** @var PlatformSettings */
+    private $settings;
+
     /** @var Lexer */
     private $lexer;
 
     /** @var ParserFactory */
     private $factory;
 
-    /** @var PlatformSettings */
-    private $settings;
-
     /** @var TokenList - debug info */
     private $lastTokenList;
 
-    public function __construct(Lexer $lexer, PlatformSettings $settings)
+    public function __construct(PlatformSettings $settings, ?Lexer $lexer = null)
     {
-        $this->lexer = $lexer;
         $this->settings = $settings;
+        $this->lexer = $lexer ?? new Lexer($settings);
         $this->factory = new ParserFactory($settings, $this);
     }
 

@@ -30,7 +30,7 @@ class ParserHelper
         $settings->setQuoteAllNames(false);
 
         $lexer = new Lexer($settings, true, true);
-        $parser = new Parser($lexer, $settings);
+        $parser = new Parser($settings, $lexer);
 
         return new ParserFactory($settings, $parser);
     }
