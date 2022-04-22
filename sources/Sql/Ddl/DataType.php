@@ -19,7 +19,6 @@ use function count;
 use function implode;
 use function is_array;
 use function is_int;
-use function sprintf;
 
 class DataType implements SqlSerializable
 {
@@ -87,31 +86,31 @@ class DataType implements SqlSerializable
     {
         if ($type->isDecimal()) {
             if ($params !== null && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
-                throw new InvalidDefinitionException(sprintf('Two integer size parameters required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException("Two integer size parameters required for type {$type->getValue()}.");
             }
             $this->size = $params;
         } elseif ($type->isFloatingPointNumber()) {
             if ($params !== null && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
-                throw new InvalidDefinitionException(sprintf('Two integer size parameters required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException("Two integer size parameters required for type {$type->getValue()}.");
             }
             $this->size = $params;
-        } elseif ($type->isInteger()) {
+        } elseif ($type->isInteger() || $type->getValue() === BaseType::BIT) {
             if ($params !== null && !is_int($params)) {
-                throw new InvalidDefinitionException(sprintf('An integer size parameter or null required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException("An integer size parameter or null required for type {$type->getValue()}.");
             }
             $this->size = $params;
         } elseif ($type->needsLength()) {
             if (!is_int($params)) {
-                throw new InvalidDefinitionException(sprintf('An integer size parameter required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException("An integer size parameter required for type {$type->getValue()}.");
             }
             $this->size = $params;
         } elseif ($type->hasValues()) {
             if (!is_array($params)) {
-                throw new InvalidDefinitionException(sprintf('List of values required for type "%s".', $type->getValue()));
+                throw new InvalidDefinitionException("List of values required for type {$type->getValue()}.");
             }
             $this->values = $params;
         } elseif ($params !== null) {
-            throw new InvalidDefinitionException('Type parameters do not match data type.');
+            throw new InvalidDefinitionException("Type parameters do not match data type {$type->getValue()}.");
         }
     }
 

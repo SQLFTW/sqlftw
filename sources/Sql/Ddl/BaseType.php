@@ -166,7 +166,7 @@ class BaseType extends SqlEnum implements Feature
 
     public function isNumber(): bool
     {
-        return $this->isInteger() || $this->isFloatingPointNumber() || $this->isDecimal();
+        return $this->isInteger() || $this->isFloatingPointNumber() || $this->isDecimal() || $this->getValue() === self::BIT;
     }
 
     public function isText(): bool
