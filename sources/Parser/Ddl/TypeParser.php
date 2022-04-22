@@ -127,10 +127,10 @@ class TypeParser
                 $params[] = $tokenList->expectString();
             } while ($tokenList->hasComma());
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-        }/* elseif ($dataType->hasFsp() && $tokenList->mayConsume(TokenType::LEFT_PARENTHESIS)) {
-            // todo: fsp???
-            $tokenList->consume(TokenType::RIGHT_PARENTHESIS);
-        }*/
+        } elseif ($dataType->hasFsp() && $tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            $params = $tokenList->expectInt();
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        }
 
         if ($dataType->isNumber()) {
             $unsigned = $tokenList->hasKeyword(Keyword::UNSIGNED);

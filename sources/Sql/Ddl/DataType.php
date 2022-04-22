@@ -19,6 +19,7 @@ use function count;
 use function implode;
 use function is_array;
 use function is_int;
+use function is_null;
 
 class DataType implements SqlSerializable
 {
@@ -109,6 +110,10 @@ class DataType implements SqlSerializable
                 throw new InvalidDefinitionException("List of values required for type {$type->getValue()}.");
             }
             $this->values = $params;
+        } elseif ($type->hasFsp()) {
+            if (!is_null($params) && !(is_int($params) && $params >= 0 && $params <= 6)) {
+                throw new InvalidDefinitionException("Parameter of type {$type->getValue()} must be integer from 0 to 6.");
+            }
         } elseif ($params !== null) {
             throw new InvalidDefinitionException("Type parameters do not match data type {$type->getValue()}.");
         }
