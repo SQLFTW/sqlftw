@@ -60,16 +60,16 @@ class DataType implements SqlSerializable
         bool $zerofill = false
     ) {
         if ($unsigned && !$type->isNumber()) {
-            throw new InvalidDefinitionException('Non-numeric columns cannot be unsigned.');
+            throw new InvalidDefinitionException("Non-numeric columns ({$type->getValue()}) cannot be unsigned.");
         }
         if ($zerofill && !$type->isNumber()) {
-            throw new InvalidDefinitionException('Non-numeric columns cannot be zerofill.');
+            throw new InvalidDefinitionException("Non-numeric columns ({$type->getValue()}) cannot be zerofill.");
         }
         if ($charset !== null && !$type->isText()) {
-            throw new InvalidDefinitionException('Non-textual columns cannot have charset.');
+            throw new InvalidDefinitionException("Non-textual columns ({$type->getValue()}) cannot have charset (type: .");
         }
         if ($collation !== null && !$type->isText()) {
-            throw new InvalidDefinitionException('Non-textual columns cannot have collation.');
+            throw new InvalidDefinitionException("Non-textual columns ({$type->getValue()}) cannot have collation.");
         }
 
         $this->type = $type;

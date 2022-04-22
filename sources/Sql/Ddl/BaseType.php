@@ -176,7 +176,7 @@ class BaseType extends SqlEnum implements Feature
             [
                 self::CHAR, self::VARCHAR, self::TINYTEXT, self::TEXT, self::MEDIUMTEXT, self::LONGTEXT,
                 self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR, self::CHARACTER_VARYING, self::NVARCHAR,
-                self::NATIONAL_VARCHAR, self::LONG, self::LONG_VARCHAR,
+                self::NATIONAL_VARCHAR, self::LONG, self::LONG_VARCHAR, self::ENUM, self::SET,
             ],
             true
         );
