@@ -13,9 +13,9 @@ use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
-use SqlFtw\Sql\Ddl\DataType;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
+use SqlFtw\Sql\Expression\DataType;
 use SqlFtw\Sql\QualifiedName;
 use function implode;
 

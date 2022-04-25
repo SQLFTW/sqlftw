@@ -9,7 +9,7 @@
 
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 
-namespace SqlFtw\Sql\Ddl;
+namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Platform\Mode;

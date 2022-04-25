@@ -10,19 +10,22 @@
 namespace SqlFtw\Parser;
 
 use Dogma\Re;
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
+use Nette\Neon\Node\LiteralNode;
 use SqlFtw\Platform\Mode;
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CaseExpression;
 use SqlFtw\Sql\Expression\CollateExpression;
 use SqlFtw\Sql\Expression\CurlyExpression;
+use SqlFtw\Sql\Expression\DataType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
@@ -37,6 +40,7 @@ use SqlFtw\Sql\Expression\MatchMode;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\OnOffLiteral;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\RowExpression;
@@ -52,6 +56,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
+use function explode;
 use function sprintf;
 use function strlen;
 use function substr;
@@ -477,17 +482,170 @@ class ExpressionParser
 
     private function parseFunctionCall(TokenList $tokenList, string $name1, ?string $name2 = null): FunctionCall
     {
-        // todo: support for irregular arguments - eg "GROUP_CONCAT(DISTINCT col1 ORDER BY col2)"
-        $arguments = [];
-        if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
-            do {
-                $arguments[] = $this->parseExpression($tokenList);
-            } while ($tokenList->hasComma());
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-        }
-        $name = new QualifiedName($name2 ?? $name1, $name2 !== null ? $name1 : null);
+        $function = $name2 === null && BuiltInFunction::validateValue($name1)
+            ? BuiltInFunction::get($name1)
+            : new QualifiedName($name2 ?? $name1, $name2 !== null ? $name1 : null);
 
-        return new FunctionCall($name, $arguments);
+        if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+            return new FunctionCall($function, []);
+        }
+rl($name1);
+        if ($function instanceof BuiltInFunction) {
+            $name = $function->getValue();
+            if ($name === Keyword::TRIM) {
+                return $this->parseTrim($tokenList, $function);
+            } elseif ($name === Keyword::JSON_TABLE) {
+                return $this->parseJsonTable($tokenList, $function);
+            }
+            $namedParams = $function->getNamedParams();
+            rd($namedParams);
+        } else {
+            $namedParams = [];
+        }
+
+        $arguments = [];
+        $first = true;
+        do {
+            if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+                break;
+            }
+            foreach ($namedParams as $keywords => $type) {
+                if (!$tokenList->hasKeywords(...explode(' ', $keywords))) {
+                    continue;
+                }
+                switch ($type) {
+                    case null:
+                        $arguments[] = new LiteralNode($keywords);
+                        continue 3;
+                    case ExpressionNode::class:
+                        $arguments[$keywords] = $this->parseExpression($tokenList);
+                        continue 3;
+                    case Charset::class:
+                        $arguments[$keywords] = $tokenList->expectNameOrStringEnum(Charset::class);
+                        continue 3;
+                    case DataType::class:
+                        $arguments[$keywords] = $this->parserFactory->getTypeParser()->parseType($tokenList);
+                        continue 3;
+                    case OrderByExpression::class:
+                        $arguments[$keywords] = new ListExpression($this->parseOrderBy($tokenList));
+                        continue 3;
+                    case Literal::class:
+                        $arguments[$keywords] = $this->parseLiteral($tokenList);
+                        continue 3;
+                    default:
+                        throw new ShouldNotHappenException('Unsupported named parameter type.');
+                }
+            }
+
+            if (!$first) {
+                $tokenList->expect(TokenType::COMMA);
+            }
+            $arguments[] = $this->parseExpression($tokenList);
+            $first = false;
+        } while (true);
+
+        if ($tokenList->hasKeyword(Keyword::OVER)) {
+            $over = $this->parseOver($tokenList);
+            // todo: parse AGG_FUNC(...) [over_clause]
+        }
+
+        return new FunctionCall($function, $arguments);
+    }
+
+    /**
+     * TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
+     */
+    private function parseTrim(TokenList $tokenList, BuiltInFunction $function): FunctionCall
+    {
+        $arguments = [];
+        $keyword = $tokenList->getAnyKeyword(Keyword::LEADING, Keyword::TRAILING, Keyword::BOTH);
+        if ($keyword !== null) {
+            if ($tokenList->hasKeyword(Keyword::FROM)) {
+                // TRIM(FOO FROM str)
+                $second = $this->parseExpression($tokenList);
+                $arguments[$keyword] = $second;
+            } else {
+                // TRIM(FOO remstr FROM str)
+                $arguments[$keyword] = $this->parseExpression($tokenList);
+                $tokenList->expectKeyword(Keyword::FROM);
+                $arguments[] = $this->parseExpression($tokenList);
+            }
+        } else {
+            $first = $this->parseExpression($tokenList);
+            if ($tokenList->hasKeyword(Keyword::FROM)) {
+                // TRIM(remstr FROM str)
+                $arguments[Keyword::FROM] = $first;
+                $arguments[] = $this->parseExpression($tokenList);
+            } else {
+                // TRIM(str)
+                $arguments[] = $first;
+            }
+        }
+
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+        return new FunctionCall($function, $arguments);
+    }
+
+    /**
+     * JSON_TABLE(expr, path COLUMNS column_list)  AS alias
+     *
+     * column_list:
+     *   column[, column][, ...]
+     *
+     * column:
+     *   name FOR ORDINALITY
+     *   |  name type PATH string path [on_empty] [on_error]
+     *   |  name type EXISTS PATH string path
+     *   |  NESTED [PATH] path COLUMNS (column_list)
+     *
+     * on_empty:
+     *   {NULL | DEFAULT json_string | ERROR} ON EMPTY
+     *
+     * on_error:
+     *   {NULL | DEFAULT json_string | ERROR} ON ERROR
+     */
+    private function parseJsonTable(TokenList $tokenList, BuiltInFunction $function): FunctionCall
+    {
+        // todo:
+    }
+
+    /**
+     * over_clause:
+     *   {OVER (window_spec) | OVER window_name}
+     *
+     * window_spec:
+     *   [window_name] [partition_clause] [order_clause] [frame_clause]
+     *
+     * partition_clause:
+     *   PARTITION BY expr [, expr] ...
+     *
+     * order_clause:
+     *   ORDER BY expr [ASC|DESC] [, expr [ASC|DESC]] ...
+     *
+     * frame_clause:
+     *   frame_units frame_extent
+     *
+     * frame_units:
+      *   {ROWS | RANGE}
+     *
+     * frame_extent:
+     *   {frame_start | frame_between}
+     *
+     * frame_between:
+     *   BETWEEN frame_start AND frame_end
+     *
+     * frame_start, frame_end: {
+     *     CURRENT ROW
+     *   | UNBOUNDED PRECEDING
+     *   | UNBOUNDED FOLLOWING
+     *   | expr PRECEDING
+     *   | expr FOLLOWING
+     * }
+     */
+    private function parseOver(TokenList $tokenList): int
+    {
+        // todo:
     }
 
     /**

@@ -14,8 +14,8 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
-use SqlFtw\Sql\Ddl\BaseType;
-use SqlFtw\Sql\Ddl\DataType;
+use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\DataType;
 use SqlFtw\Sql\Keyword;
 
 class TypeParser

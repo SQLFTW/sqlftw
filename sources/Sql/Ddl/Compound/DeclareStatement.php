@@ -13,7 +13,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Ddl\DataType;
+use SqlFtw\Sql\Expression\DataType;
 
 class DeclareStatement implements CompoundStatementItem
 {

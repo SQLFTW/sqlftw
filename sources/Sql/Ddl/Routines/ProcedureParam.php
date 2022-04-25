@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Routines;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Ddl\DataType;
+use SqlFtw\Sql\Expression\DataType;
 use SqlFtw\Sql\SqlSerializable;
 
 class ProcedureParam implements SqlSerializable

@@ -7,21 +7,20 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl;
+namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
 use function count;
 use function implode;
 use function is_array;
 use function is_int;
 use function is_null;
 
-class DataType implements SqlSerializable
+class DataType implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
@@ -80,6 +79,11 @@ class DataType implements SqlSerializable
         $this->collation = $collation;
     }
 
+    public function getType(): NodeType
+    {
+        return NodeType::get(NodeType::DATA_TYPE);
+    }
+
     /**
      * @param int|int[]|string[]|null $params
      */
@@ -119,7 +123,7 @@ class DataType implements SqlSerializable
         }
     }
 
-    public function getType(): BaseType
+    public function getBaseType(): BaseType
     {
         return $this->type;
     }

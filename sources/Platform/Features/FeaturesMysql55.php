@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Platform\Features;
 
-use SqlFtw\Sql\Ddl\BaseType;
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;

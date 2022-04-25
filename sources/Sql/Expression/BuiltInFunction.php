@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Feature;
+use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
 
@@ -502,41 +504,77 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const RANK = 'RANK';
     public const ROW_NUMBER = 'ROW_NUMBER';
 
-    /** @var string[] */
+    /**
+     * In most cases name is parsed as array key of following argument (e.g. ['DISTINCT' => 'col1'])
+     * Special case is postfix FROM in TRIM(), JSON_TABLE() and name represented as Literal value in GET_FORMAT()
+     *
+     * @var array<string, array<string, class-string>>
+     */
     private static $namedParams = [
-        self::AVG, // AVG([DISTINCT] expr)
-        self::CHAR, // CHAR(N, ... [USING charset_name])
-        self::CAST, // CAST(expr AS type)
-        self::CONVERT, // CONVERT(string, type), CONVERT(expr USING charset_name)
-        // type:
-        //   BINARY[(N)]
-        //   CHAR[(N)] [charset_info]
-        //   DATE
-        //   DATETIME
-        //   DECIMAL[(M[,D])]
-        //   JSON
-        //   NCHAR[(N)]
-        //   SIGNED [INTEGER]
-        //   TIME
-        //   UNSIGNED [INTEGER]
-        //
-        // charset_info:
-        //   CHARACTER SET charset_name
-        //   ASCII
-        //   UNICODE
-        self::COUNT, // COUNT(DISTINCT expr,[expr...])
-        self::EXTRACT, // EXTRACT(unit FROM date)
-        self::GET_FORMAT, // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
-        self::JSON_TABLE, // JSON_TABLE(expr, path COLUMNS column_list) AS alias
-        // Columns can be of the types FOR ORDINAL, PATH, EXISTS PATH, and NESTED PATH or NESTED
-        self::MAX, // MAX([DISTINCT] expr)
-        self::MIN, // MIN([DISTINCT] expr)
-        self::POSITION, // POSITION(substr IN str)
-        self::SUBSTR, // SUBSTR(str,pos), SUBSTR(str FROM pos), SUBSTR(str,pos,len), SUBSTR(str FROM pos FOR len)
-        self::SUBSTRING, // SUBSTRING(str,pos), SUBSTRING(str FROM pos), SUBSTRING(str,pos,len), SUBSTRING(str FROM pos FOR len)
-        self::SUM, // SUM([DISTINCT] expr)
-        self::TRIM, // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
-        self::WEIGHT_STRING, // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags])
+        // AVG([DISTINCT] expr)
+        self::AVG => [Keyword::DISTINCT => ExpressionNode::class],
+        // CHAR(N, ... [USING charset_name])
+        self::CHAR => [Keyword::USING => Charset::class],
+        // CAST(expr AS type)
+        self::CAST => [Keyword::AS => DataType::class],
+        /*
+         * CONVERT(string, type), CONVERT(expr USING charset_name)
+         *
+         * type:
+         *   BINARY[(N)]
+         *   CHAR[(N)] [charset_info]
+         *   DATE
+         *   DATETIME
+         *   DECIMAL[(M[,D])]
+         *   JSON
+         *   NCHAR[(N)]
+         *   SIGNED [INTEGER]
+         *   TIME
+         *   UNSIGNED [INTEGER]
+         *
+         * charset_info:
+         *   CHARACTER SET charset_name
+         *   ASCII
+         *   UNICODE
+         */
+        // todo: CHARACTER SET ...
+        self::CONVERT => [Keyword::USING => Charset::class],
+        // COUNT(DISTINCT expr,[expr...])
+        self::COUNT => [Keyword::DISTINCT => ExpressionNode::class],
+        // EXTRACT(unit FROM date)
+        self::EXTRACT => [Keyword::FROM => ExpressionNode::class],
+        // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
+        self::GET_FORMAT => [Keyword::DATE => null, Keyword::TIME => null, Keyword::DATETIME => null],
+        /*
+         * GROUP_CONCAT([DISTINCT] expr [,expr ...]
+         *   [ORDER BY {unsigned_integer | col_name | expr} [ASC | DESC] [,col_name ...]]
+         *   [SEPARATOR str_val])
+         */
+        self::GROUP_CONCAT => [
+            Keyword::DISTINCT => ExpressionNode::class,
+            Keyword::ORDER . ' ' . Keyword::BY => OrderByExpression::class,
+            Keyword::SEPARATOR => Literal::class,
+        ],
+        // JSON_TABLE(expr, path COLUMNS (column_list) [AS] alias)
+        self::JSON_TABLE => [],
+        // MAX([DISTINCT] expr)
+        self::MAX => [Keyword::DISTINCT => ExpressionNode::class],
+        // MIN([DISTINCT] expr)
+        self::MIN => [Keyword::DISTINCT => ExpressionNode::class],
+        // POSITION(substr IN str)
+        self::POSITION => [Keyword::IN => ExpressionNode::class],
+        // SUBSTR(str,pos), SUBSTR(str FROM pos), SUBSTR(str,pos,len), SUBSTR(str FROM pos FOR len)
+        self::SUBSTR => [Keyword::FROM => ExpressionNode::class, Keyword::FOR => ExpressionNode::class],
+        // SUBSTRING(str,pos), SUBSTRING(str FROM pos), SUBSTRING(str,pos,len), SUBSTRING(str FROM pos FOR len)
+        self::SUBSTRING => [Keyword::FROM => ExpressionNode::class, Keyword::FOR => ExpressionNode::class],
+        // SUM([DISTINCT] expr)
+        self::SUM => [Keyword::DISTINCT => ExpressionNode::class],
+        // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
+        // has special handling because of the suffix FROM
+        self::TRIM => [],
+        // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags])
+        // "The flags clause currently is unused."
+        self::WEIGHT_STRING => [Keyword::AS => DataType::class],
     ];
 
     /** @var string[] */
@@ -609,9 +647,9 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::UTC_TIMESTAMP,
     ];
 
-    public function hasNamedParams(): bool
+    public function getNamedParams(): array
     {
-        return in_array($this->getValue(), self::$namedParams, true);
+        return self::$namedParams[$this->getValue()] ?? [];
     }
 
     public function isAggregate(): bool

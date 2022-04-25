@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Dml\Select;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\OrderByExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\SqlSerializable;
 use function array_map;
 use function implode;

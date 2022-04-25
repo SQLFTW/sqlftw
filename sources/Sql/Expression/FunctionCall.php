@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 
 class FunctionCall implements ExpressionNode
@@ -19,21 +20,21 @@ class FunctionCall implements ExpressionNode
     use StrictBehaviorMixin;
 
     /** @var QualifiedName */
-    private $name;
+    private $function;
 
     /** @var ExpressionNode[] */
     private $arguments;
 
     /**
-     * @param QualifiedName|BuiltInFunction $name
+     * @param QualifiedName|BuiltInFunction $function
      * @param ExpressionNode[] $arguments
      */
-    public function __construct($name, array $arguments = [])
+    public function __construct($function, array $arguments = [])
     {
-        Check::types($name, [QualifiedName::class, BuiltInFunction::class]);
+        Check::types($function, [QualifiedName::class, BuiltInFunction::class]);
         Check::itemsOfType($arguments, ExpressionNode::class);
 
-        $this->name = $name;
+        $this->function = $function;
         $this->arguments = $arguments;
     }
 
@@ -45,9 +46,9 @@ class FunctionCall implements ExpressionNode
     /**
      * @return QualifiedName|BuiltInFunction
      */
-    public function getName()
+    public function getFunction()
     {
-        return $this->name;
+        return $this->function;
     }
 
     /**
@@ -60,7 +61,29 @@ class FunctionCall implements ExpressionNode
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->name->serialize($formatter) . '(' . $formatter->formatSerializablesList($this->arguments) . ')';
+        if ($this->function instanceof BuiltInFunction && $this->function->hasNamedParams()) {
+            $arguments = '';
+            $first = true;
+            foreach ($this->arguments as $name => $argument) {
+                if (is_int($name)) {
+                    $arguments .= ($first ? '' : ', ') . ' ' . $argument->serialize($formatter);
+                } elseif ($this->function->getValue() === Keyword::TRIM) {
+                    // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
+                    if ($name === Keyword::FROM) {
+                        $arguments .= $argument->serialize($formatter) . ' ' . Keyword::FROM;
+                    } else {
+                        $arguments .= $name . ' ' . $argument->serialize($formatter) . ' ' . Keyword::FROM;
+                    }
+                } else {
+                    $arguments .= ($first ? '' : ', ') . $name . ' ' . $argument->serialize($formatter);
+                }
+                $first = false;
+            }
+        } else {
+            $arguments = $formatter->formatSerializablesList($this->arguments);
+        }
+
+        return $this->function->serialize($formatter) . '(' . $arguments . ')';
     }
 
 }
