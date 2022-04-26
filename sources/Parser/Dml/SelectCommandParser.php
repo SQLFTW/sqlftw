@@ -73,6 +73,7 @@ class SelectCommandParser
      *     [SQL_SMALL_RESULT] [SQL_BIG_RESULT] [SQL_BUFFER_RESULT]
      *     [SQL_CACHE | SQL_NO_CACHE] [SQL_CALC_FOUND_ROWS]
      *     select_expr [, select_expr ...]
+     *     [into_option]
      *     [FROM table_references
      *       [PARTITION partition_list]
      *     [WHERE where_condition]
@@ -84,14 +85,11 @@ class SelectCommandParser
      *     [ORDER BY {col_name | expr | position}
      *       [ASC | DESC], ...]
      *     [LIMIT {[offset,] row_count | row_count OFFSET offset}]
-     *     [INTO OUTFILE 'file_name'
-     *         [CHARACTER SET charset_name]
-     *         export_options
-     *       | INTO DUMPFILE 'file_name'
-     *       | INTO var_name [, var_name]]
+     *     [into_option]
      *     [FOR UPDATE | LOCK IN SHARE MODE]]
      *     [FOR {UPDATE | SHARE} [OF tbl_name [, tbl_name] ...] [NOWAIT | SKIP LOCKED]
      *       | LOCK IN SHARE MODE]]
+     *     [into_option]
      */
     public function parseSelect(TokenList $tokenList, ?WithClause $with = null): SelectCommand
     {
@@ -143,6 +141,11 @@ class SelectCommandParser
             }
             $what[] = new SelectExpression($expression, $alias, $window);
         } while ($tokenList->hasComma());
+
+        $into = null;
+        if ($tokenList->hasKeyword(Keyword::INTO)) {
+            $into = $this->parseInto($tokenList);
+        }
 
         $from = null;
         if ($tokenList->hasKeyword(Keyword::FROM)) {
@@ -207,25 +210,8 @@ class SelectCommandParser
             [$limit, $offset] = $this->expressionParser->parseLimitAndOffset($tokenList);
         }
 
-        $into = $charset = null;
-        if ($tokenList->hasKeywords(Keyword::INTO, Keyword::OUTFILE)) {
-            $outFile = $tokenList->expectString();
-            if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET) || $tokenList->hasKeyword(Keyword::CHARSET)) {
-                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
-            }
-            $format = $this->fileFormatParser->parseFormat($tokenList);
-            $into = new SelectInto(null, null, $outFile, $charset, $format);
-        } elseif ($tokenList->hasKeywords(Keyword::INTO, Keyword::DUMPFILE)) {
-            $dumpFile = $tokenList->expectString();
-            $into = new SelectInto(null, $dumpFile);
-        } elseif ($tokenList->hasKeyword(Keyword::INTO)) {
-            $variables = [];
-            do {
-                /** @var string $expression */
-                $expression = $tokenList->expect(TokenType::AT_VARIABLE)->value;
-                $variables[] = $expression;
-            } while ($tokenList->hasComma());
-            $into = new SelectInto($variables);
+        if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
+            $into = $this->parseInto($tokenList);
         }
 
         $locking = $lockTables = null;
@@ -254,7 +240,47 @@ class SelectCommandParser
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
         }
 
+        if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
+            $into = $this->parseInto($tokenList);
+        }
+
         return new SelectCommand($what, $from, $where, $groupBy, $having, $with, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);
+    }
+
+    /**
+     * into_option: {
+     *     INTO OUTFILE 'file_name'
+     *       [CHARACTER SET charset_name]
+     *       export_options
+     *   | INTO DUMPFILE 'file_name'
+     *   | INTO var_name [, var_name] ...
+     * }
+     */
+    private function parseInto(TokenList $tokenList)
+    {
+        if ($tokenList->hasKeyword(Keyword::OUTFILE)) {
+            $outFile = $tokenList->expectString();
+            $charset = null;
+            if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET) || $tokenList->hasKeyword(Keyword::CHARSET)) {
+                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+            }
+            $format = $this->fileFormatParser->parseFormat($tokenList);
+
+            return new SelectInto(null, null, $outFile, $charset, $format);
+        } elseif ($tokenList->hasKeyword(Keyword::DUMPFILE)) {
+            $dumpFile = $tokenList->expectString();
+
+            return new SelectInto(null, $dumpFile);
+        } else {
+            $variables = [];
+            do {
+                /** @var string $expression */
+                $expression = $tokenList->expect(TokenType::AT_VARIABLE)->value;
+                $variables[] = $expression;
+            } while ($tokenList->hasComma());
+
+            return new SelectInto($variables);
+        }
     }
 
     /**
