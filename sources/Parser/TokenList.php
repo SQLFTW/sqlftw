@@ -22,7 +22,6 @@ use function implode;
 use function in_array;
 use function is_bool;
 use function is_int;
-use function sprintf;
 use function trim;
 
 /**
@@ -390,7 +389,7 @@ class TokenList
             return false;
         }
 
-        throw new ParserException(sprintf('Boolean-like value expected. "%s" found.', $value));
+        throw new ParserException("Boolean-like value expected. \"$value\" found.");
     }
 
     public function expectOperator(string $operator): string

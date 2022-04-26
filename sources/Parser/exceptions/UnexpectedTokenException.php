@@ -35,9 +35,9 @@ class UnexpectedTokenException extends ParserException
                 $expectedValue = implode(' or ', array_map(static function ($value): string {
                     return ExceptionValueFormatter::format($value);
                 }, $expectedValue));
-                $expectedValue = sprintf(' with value %s', $expectedValue);
+                $expectedValue = " with value " . $expectedValue;
             } else {
-                $expectedValue = sprintf(' with value %s', ExceptionValueFormatter::format($expectedValue));
+                $expectedValue = " with value " . ExceptionValueFormatter::format($expectedValue);
             }
         }
 

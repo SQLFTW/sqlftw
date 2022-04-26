@@ -19,7 +19,6 @@ use function array_keys;
 use function count;
 use function is_int;
 use function is_string;
-use function sprintf;
 
 class IndexDefinition implements TableItem, ConstraintBody
 {
@@ -117,7 +116,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     private function addColumn(string $columnName, IndexColumn $column): void
     {
         if (isset($this->columns[$columnName])) {
-            throw new InvalidDefinitionException(sprintf('Column `%s` is already added to the index.', $columnName));
+            throw new InvalidDefinitionException("Column `$columnName` is already added to the index.");
         }
         $this->columns[$columnName] = $column;
     }

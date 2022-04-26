@@ -11,7 +11,6 @@ namespace SqlFtw\Parser;
 
 use Throwable;
 use function ord;
-use function sprintf;
 
 class InvalidCharacterException extends LexerException
 {
@@ -27,7 +26,9 @@ class InvalidCharacterException extends LexerException
 
     public function __construct(string $char, int $position, string $context, ?Throwable $previous = null)
     {
-        parent::__construct(sprintf('Invalid character of ASCII code %d at position %d in "%s".', ord($char), $position, $context), $previous);
+        $ord = ord($char);
+
+        parent::__construct("Invalid character of ASCII code $ord at position $position in \"$context\".", $previous);
 
         $this->char = $char;
         $this->position = $position;

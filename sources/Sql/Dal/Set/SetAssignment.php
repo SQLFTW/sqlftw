@@ -22,7 +22,6 @@ use function is_float;
 use function is_int;
 use function is_object;
 use function is_scalar;
-use function sprintf;
 use function str_replace;
 use function ucfirst;
 
@@ -45,10 +44,8 @@ class SetAssignment implements SqlSerializable
     public function __construct(QualifiedName $variable, $expression, ?Scope $scope = null)
     {
         if (!$expression instanceof ExpressionNode && !is_scalar($expression)) {
-            throw new InvalidDefinitionException(sprintf(
-                'ExpressionNode assigned to variable must be a scalar value or an ExpressionNode. %s given.',
-                is_object($expression) ? get_class($expression) : ucfirst(gettype($expression))
-            ));
+            $given = is_object($expression) ? get_class($expression) : ucfirst(gettype($expression));
+            throw new InvalidDefinitionException("ExpressionNode assigned to variable must be a scalar value or an ExpressionNode. $given given.");
         }
         if ($scope === null) {
             $scope = Scope::get(Scope::DEFAULT);

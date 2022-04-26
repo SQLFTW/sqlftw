@@ -15,7 +15,6 @@ use SqlFtw\Sql\SqlEnum;
 use function in_array;
 use function is_int;
 use function is_string;
-use function sprintf;
 use function strtoupper;
 
 class UserPasswordLockOptionType extends SqlEnum
@@ -53,7 +52,7 @@ class UserPasswordLockOptionType extends SqlEnum
             return;
         }
 
-        throw new InvalidDefinitionException(sprintf('Invalid value %s for user password or lock option %s.', $value, $type));
+        throw new InvalidDefinitionException("Invalid value $value for user password or lock option $type.");
     }
 
 }

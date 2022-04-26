@@ -883,7 +883,7 @@ rl($name1);
                 $decimalPart
             ));
         } else {
-            throw new ParserException(sprintf('Invalid datetime value "%s"', $string));
+            throw new ParserException("Invalid datetime value \"$string\"");
         }
     }
 

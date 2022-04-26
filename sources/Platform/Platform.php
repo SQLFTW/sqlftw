@@ -14,7 +14,6 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Features\PlatformFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
 use function in_array;
-use function sprintf;
 use function str_replace;
 use function ucfirst;
 
@@ -58,10 +57,10 @@ class Platform
     public static function get(string $name, ?string $version = null): self
     {
         if (!isset(self::$versions[$name])) {
-            throw new InvalidArgumentException(sprintf('Unknown platform %s.', $name));
+            throw new InvalidArgumentException("Unknown platform $name.");
         }
         if ($version !== null && !in_array($version, self::$versions[$name], true)) {
-            throw new InvalidArgumentException(sprintf('Unknown version %s for platform %s.', $version, $name));
+            throw new InvalidArgumentException("Unknown version $version of platform $name.");
         }
         if ($version === null) {
             $version = new Version(self::$defaultVersions[$name]);

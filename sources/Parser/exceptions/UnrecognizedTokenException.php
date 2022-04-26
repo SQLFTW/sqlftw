@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser;
 
 use Throwable;
-use function sprintf;
 
 class UnrecognizedTokenException extends LexerException
 {
@@ -26,7 +25,7 @@ class UnrecognizedTokenException extends LexerException
 
     public function __construct(string $tokens, int $position, string $context, ?Throwable $previous = null)
     {
-        parent::__construct(sprintf('Unrecognized token "%s" at position %d in "%s".', $tokens, $position, $context), $previous);
+        parent::__construct("Unrecognized token \"$tokens\" at position $position in \"$context\".", $previous);
 
         $this->token = $tokens;
         $this->position = $position;

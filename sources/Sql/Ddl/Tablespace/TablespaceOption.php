@@ -16,7 +16,6 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
-use function sprintf;
 
 class TablespaceOption extends SqlEnum
 {
@@ -99,9 +98,7 @@ class TablespaceOption extends SqlEnum
     {
         foreach ($values as $key => $value) {
             if (!in_array($key, self::$usage[$for], true)) {
-                throw new InvalidDefinitionException(
-                    sprintf('Option %s cannot be used in %s TABLESPACE command.', $key, $for)
-                );
+                throw new InvalidDefinitionException("Option $key cannot be used in $for TABLESPACE command.");
             }
             $allowedValues = self::$values[$key];
             if ($allowedValues === Type::INT) {
@@ -112,9 +109,7 @@ class TablespaceOption extends SqlEnum
                 Check::bool($value);
             } else {
                 if (!in_array($value, $allowedValues, true)) {
-                    throw new InvalidDefinitionException(
-                        sprintf('Invalid values "%s" for option %s.', $value, $key)
-                    );
+                    throw new InvalidDefinitionException("Invalid values \"$value\" for option $key.");
                 }
             }
             $values[$key] = $value;

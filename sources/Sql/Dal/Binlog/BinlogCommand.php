@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Dal\Binlog;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
-use function sprintf;
 
 class BinlogCommand implements DalCommand
 {
@@ -28,7 +27,7 @@ class BinlogCommand implements DalCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return sprintf('BINLOG %s', $formatter->formatString($this->value));
+        return "BINLOG " . $formatter->formatString($this->value);
     }
 
 }
