@@ -295,9 +295,9 @@ class TokenList
     {
         $token = $this->expectAny(TokenType::NAME, TokenType::STRING);
         /** @var string $value */
-        $value = ($token->type & TokenType::STRING) !== 0
-            ? $token->value
-            : $token->original ?? $token->value; // NAME|KEYWORD is automatically uppercased
+        $value = ($token->type & TokenType::KEYWORD) !== 0
+            ? $token->original ?? $token->value // NAME|KEYWORD is automatically upper-cased
+            : $token->value;
 
         return $value;
     }
