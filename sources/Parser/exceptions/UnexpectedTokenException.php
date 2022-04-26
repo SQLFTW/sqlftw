@@ -11,6 +11,7 @@ namespace SqlFtw\Parser;
 
 use Dogma\Arr;
 use Dogma\ExceptionValueFormatter;
+use Dogma\Str;
 use Throwable;
 use function array_map;
 use function array_slice;
@@ -32,9 +33,9 @@ class UnexpectedTokenException extends ParserException
         }));
         if ($expectedValue !== null) {
             if (is_array($expectedValue)) {
-                $expectedValue = implode(' or ', array_map(static function ($value): string {
-                    return ExceptionValueFormatter::format($value);
-                }, $expectedValue));
+                $expectedValue = Str::join(array_map(static function ($value): string {
+                    return '"' . $value . '"';
+                }, $expectedValue), ', ', ' or ', 120, '...');
                 $expectedValue = " with value " . $expectedValue;
             } else {
                 $expectedValue = " with value " . ExceptionValueFormatter::format($expectedValue);
