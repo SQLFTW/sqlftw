@@ -162,9 +162,33 @@ class DataType implements ExpressionNode
         return $this->unsigned;
     }
 
+    public function addCharset(Charset $charset): self
+    {
+        if ($this->charset !== null) {
+            throw new InvalidDefinitionException('Type already has a charset.');
+        }
+
+        $that = clone $this;
+        $that->charset = $charset;
+
+        return $that;
+    }
+
     public function getCharset(): ?Charset
     {
         return $this->charset;
+    }
+
+    public function addCollation(Collation $collation): self
+    {
+        if ($this->collation !== null) {
+            throw new InvalidDefinitionException('Type already has a collation.');
+        }
+
+        $that = clone $this;
+        $that->collation = $collation;
+
+        return $that;
     }
 
     public function getCollation(): ?Collation

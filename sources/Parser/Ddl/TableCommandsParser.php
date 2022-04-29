@@ -732,13 +732,17 @@ class TableCommandsParser
 
     private function parseOrdinaryColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
     {
-        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = null;
+        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $charset = $collation = null;
         $autoIncrement = false;
         // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
-        while (($keyword = $tokenList->getAnyKeyword(
-            Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
-            Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK
-        )) !== null) {
+        $keywords = [Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
+            Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK];
+        if ($type->getBaseType()->hasCharset()) {
+            $keywords[] = Keyword::CHARACTER;
+            $keywords[] = Keyword::CHARSET;
+            $keywords[] = Keyword::COLLATE;
+        }
+        while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
             switch ($keyword) {
                 case Keyword::NOT:
                     // [NOT NULL | NULL]
@@ -809,7 +813,21 @@ class TableCommandsParser
                     // [check_constraint_definition]
                     $check = $this->parseCheck($tokenList);
                     break;
+                case Keyword::CHARACTER:
+                    $tokenList->expectKeyword(Keyword::SET);
+                case Keyword::CHARSET:
+                    $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+                    break;
+                case Keyword::COLLATE:
+                    $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+                    break;
             }
+        }
+        if ($charset !== null) {
+            $type = $type->addCharset($charset);
+        }
+        if ($collation !== null) {
+            $type = $type->addCollation($collation);
         }
 
         return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $reference, $check);
