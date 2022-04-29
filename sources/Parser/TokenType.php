@@ -50,12 +50,12 @@ use Dogma\Enum\IntSet;
  *    ~ NULL (+ KEYWORD)
  *    ~ DEFAULT (+ KEYWORD)
  *    * OBJECT - OLD, NEW, VALUES
+ *    - PLACEHOLDER - "?"
  * - SYMBOL
  *    - LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, LEFT_CURLY_BRACKET, RIGHT_CURLY_BRACKET
  *    - DOT, COMMA, SEMICOLON
  *    - DELIMITER - default ";"
  *    - DELIMITER_DEFINITION
- *    - PLACEHOLDER - "?"
  *    - OPERATOR - everything else
  */
 class TokenType extends IntSet

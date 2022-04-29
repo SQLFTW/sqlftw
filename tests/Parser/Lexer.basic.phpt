@@ -25,11 +25,11 @@ $tokens = $lexer->tokenizeAll("\t\n\r");
 Assert::count($tokens, 1);
 Assert::token($tokens[0], TokenType::WHITESPACE, "\t\n\r", 0);
 
-// VARIABLE_MARKER
+// PLACEHOLDER
 $tokens = $lexer->tokenizeAll(' ? ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::SYMBOL | TokenType::PLACEHOLDER, '?', 1);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::PLACEHOLDER, '?', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 2);
 
 // DOT

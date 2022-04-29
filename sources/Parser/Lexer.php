@@ -269,7 +269,7 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $value, null, $condition);
                     break;
                 case '?':
-                    yield $previous = new Token(T::SYMBOL | T::PLACEHOLDER, $start, $char, null, $condition);
+                    yield $previous = new Token(T::VALUE | T::PLACEHOLDER, $start, $char, null, $condition);
                     break;
                 case '@':
                     if ($previous !== null && ($previous->type & (T::STRING | T::NAME)) !== 0) {
@@ -445,7 +445,8 @@ class Lexer
                         yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
                         break;
                     }
-                    if (isset(self::$numbersKey[$next])) {
+                    $unaryCanFollow = ($previous->type & T::SYMBOL) !== 0 && ($previous->type & T::RIGHT_PARENTHESIS) === 0;
+                    if ($unaryCanFollow && isset(self::$numbersKey[$next])) {
                         [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '-');
                         if ($value !== null) {
                             yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
@@ -467,7 +468,8 @@ class Lexer
                     break;
                 case '+':
                     $next = $position < $length ? $string[$position] : '';
-                    if (isset(self::$numbersKey[$next])) {
+                    $unaryCanFollow = ($previous->type & T::SYMBOL) !== 0 && ($previous->type & T::RIGHT_PARENTHESIS) === 0;
+                    if ($unaryCanFollow && isset(self::$numbersKey[$next])) {
                         [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '+');
                         if ($value !== null) {
                             yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
