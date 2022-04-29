@@ -736,12 +736,8 @@ class TableCommandsParser
         $autoIncrement = false;
         // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
         $keywords = [Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
-            Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK];
-        if ($type->getBaseType()->hasCharset()) {
-            $keywords[] = Keyword::CHARACTER;
-            $keywords[] = Keyword::CHARSET;
-            $keywords[] = Keyword::COLLATE;
-        }
+            Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK,
+            Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE];
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
             switch ($keyword) {
                 case Keyword::NOT:

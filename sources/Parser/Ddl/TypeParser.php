@@ -137,15 +137,13 @@ class TypeParser
             $zerofill = $tokenList->hasKeyword(Keyword::ZEROFILL);
         }
 
-        if ($dataType->hasCharset()) {
-            if ($tokenList->hasKeywords(Keyword::CHARSET)) {
-                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
-            } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
-                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
-            }
-            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-                $collation = $tokenList->expectNameOrStringEnum(Collation::class);
-            }
+        if ($tokenList->hasKeywords(Keyword::CHARSET)) {
+            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+        } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
+            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+        }
+        if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+            $collation = $tokenList->expectNameOrStringEnum(Collation::class);
         }
 
         return new DataType($dataType, $params, $unsigned, $charset, $collation, $zerofill);
