@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dal\Set;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
@@ -38,10 +39,13 @@ class SetAssignment implements SqlSerializable
     /** @var bool|int|float|string|ExpressionNode */
     private $expression;
 
+    /** @var string */
+    private $operator;
+
     /**
      * @param bool|int|float|string|ExpressionNode|mixed $expression
      */
-    public function __construct(QualifiedName $variable, $expression, ?Scope $scope = null)
+    public function __construct(QualifiedName $variable, $expression, ?Scope $scope = null, string $operator = Operator::EQUAL)
     {
         if (!$expression instanceof ExpressionNode && !is_scalar($expression)) {
             $given = is_object($expression) ? get_class($expression) : ucfirst(gettype($expression));
@@ -53,6 +57,7 @@ class SetAssignment implements SqlSerializable
         $this->scope = $scope;
         $this->variable = $variable;
         $this->expression = $expression;
+        $this->operator = $operator;
     }
 
     public function getScope(): Scope
@@ -78,7 +83,7 @@ class SetAssignment implements SqlSerializable
         $scope = $this->scope->serialize($formatter);
         $scope .= $scope !== '' ? ' ' : '';
 
-        return $scope . $this->variable->serialize($formatter) . ' = ' . $this->formatExpression($formatter, $this->expression);
+        return $scope . $this->variable->serialize($formatter) . ' ' . $this->operator . ' ' . $this->formatExpression($formatter, $this->expression);
     }
 
     /**

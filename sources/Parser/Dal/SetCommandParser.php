@@ -102,10 +102,10 @@ class SetCommandParser
                 }
             }
 
-            $tokenList->expectOperator(Operator::EQUAL);
+            $operator = $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
             $expression = $this->expressionParser->parseExpression($tokenList);
 
-            $assignments[] = new SetAssignment($variable, $expression, $scope);
+            $assignments[] = new SetAssignment($variable, $expression, $scope, $operator);
         } while ($tokenList->hasComma());
 
         return new SetCommand($assignments);
