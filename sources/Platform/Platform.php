@@ -15,6 +15,7 @@ use SqlFtw\Platform\Features\PlatformFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
 use function in_array;
 use function str_replace;
+use function strtoupper;
 use function ucfirst;
 
 class Platform
@@ -27,16 +28,16 @@ class Platform
 
     /** @var string[][] */
     private static $versions = [
-        self::SQL => ['92', '99', '2003', '2008', '2011'],
+        self::SQL => ['92', '99', '2003', '2008', '2011', '2016', '2019'],
         self::MYSQL => ['5.1', '5.5', '5.6', '5.7', '8.0'],
-        self::MARIA => ['5.1', '5.2', '5.3', '5.5', '10.0', '10.1', '10.2', '10.3'],
+        self::MARIA => ['5.1', '5.2', '5.3', '5.5', '10.0', '10.1', '10.2', '10.3', '10.4', '10.5', '10.6', '10.7', '10.8'],
     ];
 
     /** @var string[] */
     private static $defaultVersions = [
         self::SQL => '2011',
         self::MYSQL => '8.0',
-        self::MARIA => '10.3',
+        self::MARIA => '10.8',
     ];
 
     /** @var self[] */
@@ -88,6 +89,15 @@ class Platform
         return $this->version->getId() !== $version->getId();
     }
 
+    public function isAtLeast(string $name, Version $version): bool
+    {
+        if ($this->name !== $name) {
+            return false;
+        }
+
+        return $this->version->getId() >= $version->getId();
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -116,12 +126,29 @@ class Platform
         $this->version = $version;
     }
 
-    public function hasOptionalComments(): bool
+    public function interpretOptionalComment(string $versionId): bool
     {
-        return $this->name === self::MYSQL || $this->name === self::MARIA;
+        $maria = $versionId[0] === 'M';
+        $versionId = (int) ltrim($versionId, 'M');
+
+        if ($this->name !== self::MYSQL && $this->name !== self::MARIA) {
+            // no support for optional comments
+            return false;
+        } elseif ($maria && $this->name !== self::MARIA) {
+            // Maria only
+            return false;
+        } elseif (!$maria && $this->name === self::MARIA && $versionId >= 50700 && $this->version->getId() >= 100007) {
+            // Starting from MariaDB 10.0.7, MariaDB ignores MySQL-style executable comments that have a version number in the range 50700..99999.
+            return false;
+        } elseif ($versionId >= $this->version->getId()) {
+            // version mismatch
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    public function hasUserDelimiter(): bool
+    public function userDelimiter(): bool
     {
         return $this->name === self::MYSQL || $this->name === self::MARIA;
     }

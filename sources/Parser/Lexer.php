@@ -17,6 +17,7 @@ use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Mode;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use function array_flip;
 use function array_keys;
@@ -25,6 +26,7 @@ use function array_values;
 use function implode;
 use function ltrim;
 use function ord;
+use function preg_match;
 use function rtrim;
 use function str_replace;
 use function strlen;
@@ -56,20 +58,23 @@ class Lexer
 
     public const UUID_REGEXP = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i';
 
-    /** @var int[] */
+    /** @var array<string, int> */
     private static $numbersKey;
 
-    /** @var int[] */
+    /** @var array<string, int> */
     private static $hexadecKey;
 
-    /** @var int[] */
+    /** @var array<string, int> */
     private static $nameCharsKey;
 
-    /** @var int[] */
+    /** @var array<string, int> */
     private static $operatorSymbolsKey;
 
     /** @var PlatformSettings */
     private $settings;
+
+    /** @var Platform */
+    private $platform;
 
     /** @var bool */
     private $withComments;
@@ -77,19 +82,36 @@ class Lexer
     /** @var bool */
     private $withWhitespace;
 
+    /** @var array<string, int> */
+    private $reservedKey;
+
+    /** @var array<string, int> */
+    private $keywordsKey;
+
+    /** @var array<string, int> */
+    private $operatorKeywordsKey;
+
     public function __construct(
         PlatformSettings $settings,
         bool $withComments = true,
         bool $withWhitespace = false
     ) {
-        self::$numbersKey = array_flip(self::NUMBERS);
-        self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
-        self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
-        self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
+        if (self::$numbersKey === null) {
+            self::$numbersKey = array_flip(self::NUMBERS);
+            self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
+            self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
+            self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
+        }
 
         $this->settings = $settings;
+        $this->platform = $settings->getPlatform();
         $this->withComments = $withComments;
         $this->withWhitespace = $withWhitespace;
+
+        $features = $this->platform->getFeatures();
+        $this->reservedKey = array_flip($features->getReservedWords());
+        $this->keywordsKey = array_flip($features->getNonReservedWords());
+        $this->operatorKeywordsKey = array_flip($features->getOperatorKeywords());
     }
 
     /**
@@ -116,11 +138,6 @@ class Lexer
         $position = 0;
         $row = 1;
         $column = 1;
-
-        $features = $this->settings->getPlatform()->getFeatures();
-        $reservedKey = array_flip($features->getReservedWords());
-        $keywordsKey = array_flip($features->getNonReservedWords());
-        $operatorKeywordsKey = array_flip($features->getOperatorKeywords());
 
         $delimiter = $this->settings->getDelimiter();
         /** @var Token|null $previous */
@@ -317,9 +334,18 @@ class Lexer
                         if ($condition !== null) {
                             throw new ParserException('Comment inside conditional comment');
                         }
-                        //$column = $string->column;
-                        //$row = $string->row;
+                        if (preg_match('~[Mm]?!(?:[0-9]{5,6})?~', $string, $m, 0, $position)) {
+                            $versionId = strtoupper(str_replace('!', '', $m[0]));
+                            if ($this->platform->interpretOptionalComment($versionId)) {
+                                $condition = $versionId;
+                                $position += strlen($versionId) + 1;
+                                $column += strlen($versionId) + 1;
+                                // continue parsing as conditional code
+                                break;
+                            }
+                        }
 
+                        // parse as a regular comment
                         $value = $char . $next;
                         $ok = false;
                         while ($position < $length) {
@@ -345,23 +371,15 @@ class Lexer
                             throw new EndOfCommentNotFoundException(''); // todo
                         }
 
-                        if ($value[2] === '!') {
-                            // /*!12345 comment */
-                            $versionId = (int) trim(substr($value, 2, 6));
-                            if ($this->settings->getPlatform()->hasOptionalComments()
-                                && ($versionId === 0 || $versionId <= $this->settings->getPlatform()->getVersion()->getId())
-                            ) {
-                                // todo: conditional comments
-                                $condition = 'todo';
-                            } else {
+                        if ($this->withComments) {
+                            if ($value[2] === '!' || ($value[3] === '!' && ($value[2] === 'm' || $value[2] === 'M'))) {
+                                // /*!12345 comment (when not interpreted as code) */
                                 yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, $start, $value);
-                            }
-                        } elseif ($value[2] === '+') {
-                            // /*+ comment */
-                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::HINT_COMMENT, $start, $value);
-                        } else {
-                            // /* comment */
-                            if ($this->withComments) {
+                            } elseif ($value[2] === '+') {
+                                // /*+ comment */
+                                yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::HINT_COMMENT, $start, $value);
+                            } else {
+                                // /* comment */
                                 yield new Token(T::COMMENT | T::BLOCK_COMMENT, $start, $value);
                             }
                         }
@@ -656,15 +674,15 @@ class Lexer
                         yield $previous = new Token(T::KEYWORD | T::VALUE, $start, 'TRUE', $value, $condition);
                     } elseif ($upper === 'FALSE') {
                         yield $previous = new Token(T::KEYWORD | T::VALUE, $start, 'FALSE', $value, $condition);
-                    } elseif (isset($reservedKey[$upper])) {
-                        if (isset($operatorKeywordsKey[$upper])) {
+                    } elseif (isset($this->reservedKey[$upper])) {
+                        if (isset($this->operatorKeywordsKey[$upper])) {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::OPERATOR, $start, $upper, $value, $condition);
                         } else {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED, $start, $upper, $value, $condition);
                         }
-                    } elseif (isset($keywordsKey[$upper])) {
+                    } elseif (isset($this->keywordsKey[$upper])) {
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $upper, $value, $condition);
-                    } elseif ($upper === 'DELIMITER' && $this->settings->getPlatform()->hasUserDelimiter()) {
+                    } elseif ($upper === 'DELIMITER' && $this->platform->userDelimiter()) {
                         yield new Token(T::KEYWORD, $start, $upper, $value, $condition);
                         $start = $position;
                         $whitespace = $this->parseWhitespace($string, $position, $column, $row);

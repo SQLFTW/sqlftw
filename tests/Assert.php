@@ -31,9 +31,9 @@ class Assert extends DogmaAssert
             parent::fail(sprintf(
                 'Type of token "%s" is %s (%d) and should be %s (%d).',
                 $token->value,
-                implode('|', TokenType::get($token->type)->getConstantNames()),
+                implode('|', TokenType::getByValue($token->type)->getConstantNames()),
                 $token->type,
-                implode('|', TokenType::get($type)->getConstantNames()),
+                implode('|', TokenType::getByValue($type)->getConstantNames()),
                 $type
             ));
         }
