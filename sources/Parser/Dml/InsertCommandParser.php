@@ -83,7 +83,14 @@ class InsertCommandParser
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
 
-        if ($tokenList->hasKeyword(Keyword::SELECT)) {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            $tokenList->expectKeyword(Keyword::SELECT);
+            $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
+            $update = $this->parseOnDuplicateKeyUpdate($tokenList);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+            return new InsertSelectCommand($table, $select, $columns, $partitions, $priority, $ignore, $update);
+        } elseif ($tokenList->hasKeyword(Keyword::SELECT)) {
             $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
@@ -132,7 +139,13 @@ class InsertCommandParser
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
 
-        if ($tokenList->hasKeyword(Keyword::SELECT)) {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            $tokenList->expectKeyword(Keyword::SELECT);
+            $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+            return new ReplaceSelectCommand($table, $select, $columns, $partitions, $priority, $ignore);
+        } elseif ($tokenList->hasKeyword(Keyword::SELECT)) {
             $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
 
             return new ReplaceSelectCommand($table, $select, $columns, $partitions, $priority, $ignore);
@@ -171,8 +184,14 @@ class InsertCommandParser
      */
     private function parseColumnList(TokenList $tokenList): ?array
     {
+        $position = $tokenList->getPosition();
         $columns = null;
         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasKeyword(Keyword::SELECT)) {
+                // this is not a column list
+                $tokenList->resetPosition($position);
+                return $columns;
+            }
             $columns = [];
             do {
                 $columns[] = $tokenList->expectName();
