@@ -89,6 +89,9 @@ class Lexer
     private $keywordsKey;
 
     /** @var array<string, int> */
+    private $operatorsKey;
+
+    /** @var array<string, int> */
     private $operatorKeywordsKey;
 
     public function __construct(
@@ -111,6 +114,7 @@ class Lexer
         $features = $this->platform->getFeatures();
         $this->reservedKey = array_flip($features->getReservedWords());
         $this->keywordsKey = array_flip($features->getNonReservedWords());
+        $this->operatorsKey = array_flip($features->getOperators());
         $this->operatorKeywordsKey = array_flip($features->getOperatorKeywords());
     }
 
@@ -250,6 +254,10 @@ class Lexer
                     $value = $char;
                     while ($position < $length) {
                         $next = $string[$position];
+                        if (!isset($this->operatorsKey[$value . $next])) {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $value, null, $condition);
+                            break 2;
+                        }
                         if (isset(self::$operatorSymbolsKey[$next])) {
                             $value .= $next;
                             $position++;
