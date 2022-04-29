@@ -57,6 +57,7 @@ use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 use function explode;
+use function in_array;
 use function sprintf;
 use function strlen;
 use function substr;
@@ -405,8 +406,7 @@ class ExpressionParser
                 /** @var string $variableName */
                 $variableName = $variable->value;
                 // variable
-                if ($variableName[1] === '@') {
-                    // @@global.xyz
+                if (in_array(strtoupper($variableName), ['@@SESSION', '@@GOBAL', '@@PERSIST', '@@PERSIST_ONLY'])) {
                     $tokenList->expect(TokenType::DOT);
                     // todo: better type here
                     $variableName .= '.' . $tokenList->expectName();
