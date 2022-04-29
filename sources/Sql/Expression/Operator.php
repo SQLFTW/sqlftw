@@ -91,7 +91,7 @@ class Operator extends SqlEnum implements Feature
     {
         return in_array(
             $this->getValue(),
-            [self::PLUS, self::MINUS, self::EXCLAMATION, self::BIT_INVERT, self::EXISTS, self::BINARY],
+            [self::PLUS, self::MINUS, self::NOT, self::EXCLAMATION, self::BIT_INVERT, self::EXISTS, self::BINARY],
             true
         );
     }
