@@ -672,6 +672,7 @@ class FeaturesMysql55 extends PlatformFeatures
         BaseType::MEDIUMINT,
         BaseType::INT,
         BaseType::BIGINT,
+        BaseType::SERIAL,
 
         // floats
         BaseType::REAL,

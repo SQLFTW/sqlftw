@@ -41,6 +41,7 @@ class BaseType extends SqlEnum implements Feature
     public const INT3 = Keyword::INT3; // MEDIUMINT
     public const INT4 = Keyword::INT4; // INT
     public const INT8 = Keyword::INT8; // BIGINT
+    public const SERIAL = Keyword::SERIAL; // alias for: BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE
 
     // floats
     public const REAL = Keyword::REAL;
