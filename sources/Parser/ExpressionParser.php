@@ -489,7 +489,7 @@ class ExpressionParser
         if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
             return new FunctionCall($function, []);
         }
-rl($name1);
+
         if ($function instanceof BuiltInFunction) {
             $name = $function->getValue();
             if ($name === Keyword::TRIM) {
@@ -498,7 +498,6 @@ rl($name1);
                 return $this->parseJsonTable($tokenList, $function);
             }
             $namedParams = $function->getNamedParams();
-            rd($namedParams);
         } else {
             $namedParams = [];
         }
