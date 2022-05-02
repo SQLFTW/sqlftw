@@ -36,15 +36,15 @@ class InsertCommandParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var SelectCommandParser */
-    private $selectCommandParser;
+    /** @var QueryParser */
+    private $queryParser;
 
     public function __construct(
         ExpressionParser $expressionParser,
-        SelectCommandParser $selectCommandParser
+        QueryParser $queryParser
     ) {
         $this->expressionParser = $expressionParser;
-        $this->selectCommandParser = $selectCommandParser;
+        $this->queryParser = $queryParser;
     }
 
     /**
@@ -84,17 +84,17 @@ class InsertCommandParser
         $columns = $this->parseColumnList($tokenList);
 
         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-            $tokenList->expectKeyword(Keyword::SELECT);
-            $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
+            $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::VALUES);
+            $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
-            return new InsertSelectCommand($table, $select, $columns, $partitions, $priority, $ignore, $update);
-        } elseif ($tokenList->hasKeyword(Keyword::SELECT)) {
-            $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
+            return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
+        } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE)) { // no Keyword::VALUES!
+            $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertSelectCommand($table, $select, $columns, $partitions, $priority, $ignore, $update);
+            return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
@@ -140,15 +140,15 @@ class InsertCommandParser
         $columns = $this->parseColumnList($tokenList);
 
         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-            $tokenList->expectKeyword(Keyword::SELECT);
-            $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
+            $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::VALUES);
+            $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
-            return new ReplaceSelectCommand($table, $select, $columns, $partitions, $priority, $ignore);
-        } elseif ($tokenList->hasKeyword(Keyword::SELECT)) {
-            $select = $this->selectCommandParser->parseSelect($tokenList->resetPosition(-1));
+            return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
+        } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE)) { // no Keyword::VALUES!
+            $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
 
-            return new ReplaceSelectCommand($table, $select, $columns, $partitions, $priority, $ignore);
+            return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
 
@@ -187,7 +187,7 @@ class InsertCommandParser
         $position = $tokenList->getPosition();
         $columns = null;
         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-            if ($tokenList->hasKeyword(Keyword::SELECT)) {
+            if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // this is not a column list
                 $tokenList->resetPosition($position);
                 return $columns;

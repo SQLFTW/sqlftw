@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\QualifiedName;
 
 class AlterViewCommand implements ViewCommand, SchemaObjectCommand

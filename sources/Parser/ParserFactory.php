@@ -52,7 +52,7 @@ use SqlFtw\Parser\Dml\ImportCommandParser;
 use SqlFtw\Parser\Dml\InsertCommandParser;
 use SqlFtw\Parser\Dml\LoadCommandsParser;
 use SqlFtw\Parser\Dml\PreparedCommandsParser;
-use SqlFtw\Parser\Dml\SelectCommandParser;
+use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\Dml\TransactionCommandsParser;
 use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
@@ -94,13 +94,18 @@ class ParserFactory
             $this->parser,
             $this->getExpressionParser(),
             $this->getTypeParser(),
-            $this->getSelectCommandParser()
+            $this->getQueryParser()
         );
     }
 
     public function getExpressionParser(): ExpressionParser
     {
         return new ExpressionParser($this);
+    }
+
+    public function getTypeParser(): TypeParser
+    {
+        return new TypeParser();
     }
 
     public function getFileFormatParser(): FileFormatParser
@@ -111,11 +116,6 @@ class ParserFactory
     public function getJoinParser(): JoinParser
     {
         return new JoinParser($this, $this->getExpressionParser());
-    }
-
-    public function getTypeParser(): TypeParser
-    {
-        return new TypeParser();
     }
 
     public function getWithParser(): WithParser
@@ -183,7 +183,7 @@ class ParserFactory
     public function getExplainCommandParser(): ExplainCommandParser
     {
         return new ExplainCommandParser(
-            $this->getSelectCommandParser(),
+            $this->getQueryParser(),
             $this->getInsertCommandParser(),
             $this->getUpdateCommandParser(),
             $this->getDeleteCommandParser()
@@ -217,7 +217,7 @@ class ParserFactory
 
     public function getInsertCommandParser(): InsertCommandParser
     {
-        return new InsertCommandParser($this->getExpressionParser(), $this->getSelectCommandParser());
+        return new InsertCommandParser($this->getExpressionParser(), $this->getQueryParser());
     }
 
     public function getInstanceCommandParser(): InstanceCommandParser
@@ -250,6 +250,16 @@ class ParserFactory
         return new PreparedCommandsParser();
     }
 
+    public function getQueryParser(): QueryParser
+    {
+        return new QueryParser(
+            $this->getExpressionParser(),
+            $this->getFileFormatParser(),
+            $this->getJoinParser(),
+            $this->getWithParser()
+        );
+    }
+
     public function getReplicationCommandsParser(): ReplicationCommandsParser
     {
         return new ReplicationCommandsParser($this->getExpressionParser());
@@ -273,11 +283,6 @@ class ParserFactory
     public function getRoutineCommandsParser(): RoutineCommandsParser
     {
         return new RoutineCommandsParser($this->getTypeParser(), $this->getExpressionParser(), $this->getCompoundStatementParser());
-    }
-
-    public function getSelectCommandParser(): SelectCommandParser
-    {
-        return new SelectCommandParser($this->getWithParser(), $this->getExpressionParser(), $this->getJoinParser(), $this->getFileFormatParser());
     }
 
     public function getServerCommandsParser(): ServerCommandsParser
@@ -306,7 +311,7 @@ class ParserFactory
             $this->getTypeParser(),
             $this->getExpressionParser(),
             $this->getIndexCommandsParser(),
-            $this->getSelectCommandParser()
+            $this->getQueryParser()
         );
     }
 
@@ -347,7 +352,7 @@ class ParserFactory
 
     public function getViewCommandsParser(): ViewCommandsParser
     {
-        return new ViewCommandsParser($this->getExpressionParser(), $this->getSelectCommandParser());
+        return new ViewCommandsParser($this->getExpressionParser(), $this->getQueryParser());
     }
 
     public function getXaTransactionCommandsParser(): XaTransactionCommandsParser

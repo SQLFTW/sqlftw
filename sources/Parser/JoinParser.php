@@ -197,9 +197,10 @@ class JoinParser
      */
     private function parseTableFactor(TokenList $tokenList): TableReferenceNode
     {
+        // todo: QueryParser should be able to detect this better and resolve with ParenthesizedQueryExpression
         $selectInParentheses = false;
         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-            $selectInParentheses = $tokenList->hasKeyword(Keyword::SELECT);
+            $selectInParentheses = $tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
             if (!$selectInParentheses) {
                 $references = $this->parseTableReferences($tokenList);
                 $tokenList->get(TokenType::RIGHT_PARENTHESIS);
@@ -208,16 +209,16 @@ class JoinParser
             }
         }
 
-        $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::LATERAL);
+        $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH, Keyword::LATERAL);
         if ($selectInParentheses || $keyword !== null) {
             if ($keyword === Keyword::LATERAL) {
                 if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                     $selectInParentheses = true;
                 }
-                $tokenList->expectKeyword(Keyword::SELECT);
+                $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
             }
 
-            $query = $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList->resetPosition(-1));
+            $query = $this->parserFactory->getQueryParser()->parseQuery($tokenList->resetPosition(-1));
 
             if ($selectInParentheses) {
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);

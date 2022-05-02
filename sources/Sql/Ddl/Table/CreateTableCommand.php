@@ -16,7 +16,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Dml\DuplicateOption;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use function is_array;
@@ -46,8 +46,8 @@ class CreateTableCommand implements AnyCreateTableCommand
     /** @var DuplicateOption|null */
     private $duplicateOption;
 
-    /** @var SelectCommand|null */
-    private $select;
+    /** @var Query|null */
+    private $query;
 
     /**
      * @param TableItem[] $items
@@ -61,10 +61,10 @@ class CreateTableCommand implements AnyCreateTableCommand
         bool $temporary = false,
         bool $ifNotExists = false,
         ?DuplicateOption $duplicateOption = null,
-        ?SelectCommand $select = null
+        ?Query $query = null
     ) {
         Check::types($options, [TableOptionsList::class, Type::PHP_ARRAY, Type::NULL]);
-        if ($duplicateOption !== null && $select === null) {
+        if ($duplicateOption !== null && $query === null) {
             throw new InvalidDefinitionException('IGNORE/REPLACE can be uses only with CREATE TABLE AS ... command.');
         }
 
@@ -75,7 +75,7 @@ class CreateTableCommand implements AnyCreateTableCommand
         $this->temporary = $temporary;
         $this->ifNotExists = $ifNotExists;
         $this->duplicateOption = $duplicateOption;
-        $this->select = $select;
+        $this->query = $query;
     }
 
     public function getName(): QualifiedName
@@ -116,9 +116,9 @@ class CreateTableCommand implements AnyCreateTableCommand
         return $this->duplicateOption;
     }
 
-    public function getSelect(): ?SelectCommand
+    public function getQuery(): ?Query
     {
-        return $this->select;
+        return $this->query;
     }
 
     public function serialize(Formatter $formatter): string
@@ -149,8 +149,8 @@ class CreateTableCommand implements AnyCreateTableCommand
             $result .= "\n" . $this->duplicateOption->serialize($formatter);
         }
 
-        if ($this->select !== null) {
-            $result .= "\nAS " . $this->select->serialize($formatter);
+        if ($this->query !== null) {
+            $result .= "\nAS " . $this->query->serialize($formatter);
         }
 
         return $result;

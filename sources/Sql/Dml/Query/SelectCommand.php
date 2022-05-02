@@ -7,19 +7,18 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Dml\Select;
+namespace SqlFtw\Sql\Dml\Query;
 
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\InvalidDefinitionException;
 
-class SelectCommand implements DmlCommand
+class SelectCommand implements SimpleQuery
 {
     use StrictBehaviorMixin;
 
@@ -179,9 +178,25 @@ class SelectCommand implements DmlCommand
         return $this->orderBy;
     }
 
+    public function removeOrderBy(): SimpleQuery
+    {
+        $that = clone $this;
+        $that->orderBy = null;
+
+        return $that;
+    }
+
     public function getLimit(): ?int
     {
         return $this->limit;
+    }
+
+    public function removeLimit(): SimpleQuery
+    {
+        $that = clone $this;
+        $that->limit = null;
+
+        return $that;
     }
 
     public function getOffset(): ?int
@@ -205,6 +220,14 @@ class SelectCommand implements DmlCommand
     public function getInto(): ?SelectInto
     {
         return $this->into;
+    }
+
+    public function removeInto(): SimpleQuery
+    {
+        $that = clone $this;
+        $that->into = null;
+
+        return $that;
     }
 
     public function getLocking(): ?SelectLocking

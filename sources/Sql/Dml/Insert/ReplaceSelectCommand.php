@@ -11,15 +11,15 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\QualifiedName;
 
 class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var SelectCommand */
-    private $select;
+    /** @var Query */
+    private $query;
 
     /**
      * @param string[]|null $columns
@@ -27,7 +27,7 @@ class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceComm
      */
     public function __construct(
         QualifiedName $table,
-        SelectCommand $select,
+        Query $query,
         ?array $columns,
         ?array $partitions,
         ?InsertPriority $priority = null,
@@ -35,17 +35,17 @@ class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceComm
     ) {
         parent::__construct($table, $columns, $partitions, $priority, $ignore);
 
-        $this->select = $select;
+        $this->query = $query;
     }
 
-    public function getSelect(): SelectCommand
+    public function getQuery(): Query
     {
-        return $this->select;
+        return $this->query;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'REPLACE' . $this->serializeBody($formatter) . ' ' . $this->select->serialize($formatter);
+        return 'REPLACE' . $this->serializeBody($formatter) . ' ' . $this->query->serialize($formatter);
     }
 
 }

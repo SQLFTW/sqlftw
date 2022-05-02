@@ -16,53 +16,170 @@ use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Dml\Select\GroupByExpression;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
-use SqlFtw\Sql\Dml\Select\SelectDistinctOption;
-use SqlFtw\Sql\Dml\Select\SelectExpression;
-use SqlFtw\Sql\Dml\Select\SelectInto;
-use SqlFtw\Sql\Dml\Select\SelectLocking;
-use SqlFtw\Sql\Dml\Select\SelectLockOption;
-use SqlFtw\Sql\Dml\Select\SelectLockWaitOption;
-use SqlFtw\Sql\Dml\Select\SelectOption;
-use SqlFtw\Sql\Dml\Select\WindowFrame;
-use SqlFtw\Sql\Dml\Select\WindowFrameType;
-use SqlFtw\Sql\Dml\Select\WindowFrameUnits;
-use SqlFtw\Sql\Dml\Select\WindowSpecification;
+use SqlFtw\Sql\Dml\Query\GroupByExpression;
+use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
+use SqlFtw\Sql\Dml\Query\Query;
+use SqlFtw\Sql\Dml\Query\Row;
+use SqlFtw\Sql\Dml\Query\SelectCommand;
+use SqlFtw\Sql\Dml\Query\SelectDistinctOption;
+use SqlFtw\Sql\Dml\Query\SelectExpression;
+use SqlFtw\Sql\Dml\Query\SelectInto;
+use SqlFtw\Sql\Dml\Query\SelectLocking;
+use SqlFtw\Sql\Dml\Query\SelectLockOption;
+use SqlFtw\Sql\Dml\Query\SelectLockWaitOption;
+use SqlFtw\Sql\Dml\Query\SelectOption;
+use SqlFtw\Sql\Dml\Query\SimpleQuery;
+use SqlFtw\Sql\Dml\Query\TableCommand;
+use SqlFtw\Sql\Dml\Query\UnionExpression;
+use SqlFtw\Sql\Dml\Query\UnionType;
+use SqlFtw\Sql\Dml\Query\ValuesCommand;
+use SqlFtw\Sql\Dml\Query\WindowFrame;
+use SqlFtw\Sql\Dml\Query\WindowFrameType;
+use SqlFtw\Sql\Dml\Query\WindowFrameUnits;
+use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
+use function array_pop;
 
-class SelectCommandParser
+class QueryParser
 {
     use StrictBehaviorMixin;
-
-    /** @var WithParser */
-    private $withParser;
 
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var JoinParser */
-    private $joinParser;
-
     /** @var FileFormatParser */
     private $fileFormatParser;
 
+    /** @var JoinParser */
+    private $joinParser;
+
+    /** @var WithParser */
+    private $withParser;
+
     public function __construct(
-        WithParser $withParser,
         ExpressionParser $expressionParser,
+        FileFormatParser $fileFormatParser,
         JoinParser $joinParser,
-        FileFormatParser $fileFormatParser
+        WithParser $withParser
     ) {
-        $this->withParser = $withParser;
         $this->expressionParser = $expressionParser;
-        $this->joinParser = $joinParser;
         $this->fileFormatParser = $fileFormatParser;
+        $this->joinParser = $joinParser;
+        $this->withParser = $withParser;
+    }
+
+    /**
+     * query:
+     *     parenthesized_query_expression
+     *   | query_expression
+     *
+     * parenthesized_query_expression:
+     *   ( query_expression [order_by_clause] [limit_clause] )
+     *     [order_by_clause]
+     *     [limit_clause]
+     *     [into_clause]
+     *
+     * query_expression:
+     *   query_block [UNION [ALL | DISTINCT] query_block [UNION [ALL | DISTINCT] query_block ...]]
+     *     [order_by_clause]
+     *     [limit_clause]
+     *     [into_clause]
+     *
+     * query_bock:
+     *     parenthesized_query_expression
+     *   | [WITH ...] SELECT ...
+     *   | TABLE ...
+     *   | VALUES ...
+     */
+    public function parseQuery(TokenList $tokenList): Query
+    {
+        $queries = [$this->parseQueryBlock($tokenList)];
+        $types = [];
+        while ($tokenList->hasKeyword(Keyword::UNION)) {
+            if ($tokenList->hasKeyword(Keyword::ALL)) {
+                $types[] = UnionType::get(UnionType::ALL);
+            } else {
+                $tokenList->passKeyword(Keyword::DISTINCT);
+                $types[] = UnionType::get(UnionType::DISTINCT);
+            }
+            $queries[] = $this->parseQueryBlock($tokenList);
+        }
+
+        if (count($queries) === 1) {
+            return $queries[0];
+        }
+
+        [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
+
+        // order, limit and into of last unparenthesized query belong to the whole union result
+        $lastQuery = array_pop($queries);
+        if ($lastQuery instanceof SimpleQuery) {
+            $queryOrderBy = $lastQuery->getOrderBy();
+            if ($queryOrderBy !== null) {
+                if ($orderBy !== null) {
+                    throw new ParserException("Duplicate ORDER BY clause in last query and in UNION.");
+                } else {
+                    $orderBy = $queryOrderBy;
+                    $lastQuery = $lastQuery->removeLimit();
+                }
+            }
+
+            $queryLimit = $lastQuery->getLimit();
+            if ($queryLimit !== null) {
+                if ($limit !== null) {
+                    throw new ParserException("Duplicate LIMIT clause in last query and in UNION.");
+                } else {
+                    $limit = $queryLimit;
+                    $lastQuery = $lastQuery->removeLimit();
+                }
+            }
+
+            $queryInto = $lastQuery->getInto();
+            if ($queryInto !== null) {
+                if ($into !== null) {
+                    throw new ParserException("Duplicate INTO clause in last query and in UNION.");
+                } else {
+                    $into = $queryInto;
+                    $lastQuery = $lastQuery->removeInto();
+                }
+            }
+        }
+        $queries[] = $lastQuery;
+
+        return new UnionExpression($queries, $types, $orderBy, $limit, $into);
+    }
+
+    public function parseQueryBlock(TokenList $tokenList): Query
+    {
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            return $this->parseParenthesizedQueryExpression($tokenList->resetPosition(-1));
+        } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH)) {
+            return $this->parseSelect($tokenList->resetPosition(-1));
+        } elseif ($tokenList->hasKeyword(Keyword::TABLE)) {
+            return $this->parseTable($tokenList->resetPosition(-1));
+        } elseif ($tokenList->hasKeyword(Keyword::VALUES)) {
+            return $this->parseValues($tokenList->resetPosition(-1));
+        } else {
+            $tokenList->expectedAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
+        }
+    }
+
+    private function parseParenthesizedQueryExpression(TokenList $tokenList): ParenthesizedQueryExpression
+    {
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $query = $this->parseQuery($tokenList);
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+        [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
+
+        return new ParenthesizedQueryExpression($query, $orderBy, $limit, $into);
     }
 
     /**
@@ -248,6 +365,74 @@ class SelectCommandParser
     }
 
     /**
+     * TABLE table_name [ORDER BY column_name] [LIMIT number [OFFSET number]]
+     *   [into_option]
+     */
+    public function parseTable(TokenList $tokenList): TableCommand
+    {
+        $tokenList->expectKeyword(Keyword::TABLE);
+        $name = $tokenList->expectQualifiedName();
+
+        [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);
+
+        return new TableCommand($name, $orderBy, $limit, $offset, $into);
+    }
+
+    /**
+     * VALUES row_constructor_list [ORDER BY column_designator] [LIMIT number]
+     *
+     * row_constructor_list:
+     *   ROW(value_list)[, ROW(value_list)][, ...]
+     *
+     * value_list:
+     *   value[, value][, ...]
+     *
+     * column_designator:
+     *   column_index
+     */
+    public function parseValues(TokenList $tokenList): ValuesCommand
+    {
+        $tokenList->expectKeyword(Keyword::TABLE);
+        $rows = [];
+        do {
+            $tokenList->expectKeyword(Keyword::ROW);
+            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $values = [];
+            do {
+                $values[] = $this->expressionParser->parseExpression($tokenList);
+            } while($tokenList->hasComma());
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $rows[] = new Row($values);
+        } while($tokenList->hasComma());
+
+        [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
+
+        return new ValuesCommand($rows, $orderBy, $limit, $into);
+    }
+
+    /**
+     * @return array{OrderByExpression|null, int|null, int|null, SelectInto|null}
+     */
+    private function parseOrderLimitOffsetInto(TokenList $tokenList, $parseOffset = true): array
+    {
+        $orderBy = $limit = $offset = $into = null;
+        if ($tokenList->hasKeywords(Keyword::ORDER, Keyword::BY)) {
+            $orderBy = $tokenList->expectName();
+        }
+        if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+            $limit = $tokenList->expectInt();
+            if ($parseOffset && $tokenList->hasKeyword(Keyword::OFFSET)) {
+                $offset = $tokenList->expectInt();
+            }
+        }
+        if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
+            $into = $this->parseInto($tokenList);
+        }
+
+        return [$orderBy, $limit, $offset, $into];
+    }
+
+    /**
      * into_option: {
      *     INTO OUTFILE 'file_name'
      *       [CHARACTER SET charset_name]
@@ -256,7 +441,7 @@ class SelectCommandParser
      *   | INTO var_name [, var_name] ...
      * }
      */
-    private function parseInto(TokenList $tokenList)
+    private function parseInto(TokenList $tokenList): SelectInto
     {
         if ($tokenList->hasKeyword(Keyword::OUTFILE)) {
             $outFile = $tokenList->expectString();

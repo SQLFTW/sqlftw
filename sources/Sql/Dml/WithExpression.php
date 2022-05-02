@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\SqlSerializable;
 
 class WithExpression implements SqlSerializable

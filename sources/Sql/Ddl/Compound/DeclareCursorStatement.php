@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 
 class DeclareCursorStatement implements CompoundStatementItem
 {
@@ -20,13 +20,13 @@ class DeclareCursorStatement implements CompoundStatementItem
     /** @var string */
     private $name;
 
-    /** @var SelectCommand */
-    private $select;
+    /** @var Query */
+    private $query;
 
-    public function __construct(string $name, SelectCommand $select)
+    public function __construct(string $name, Query $query)
     {
         $this->name = $name;
-        $this->select = $select;
+        $this->query = $query;
     }
 
     public function getName(): string
@@ -34,14 +34,14 @@ class DeclareCursorStatement implements CompoundStatementItem
         return $this->name;
     }
 
-    public function getSelect(): SelectCommand
+    public function getQuery(): Query
     {
-        return $this->select;
+        return $this->query;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DECLARE ' . $formatter->formatName($this->name) . ' CURSOR FOR ' . $this->select->serialize($formatter);
+        return 'DECLARE ' . $formatter->formatName($this->name) . ' CURSOR FOR ' . $this->query->serialize($formatter);
     }
 
 }

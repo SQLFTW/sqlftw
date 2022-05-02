@@ -230,7 +230,7 @@ class ExpressionParser
             return new TernaryOperator($left, $not ? [Operator::NOT, Operator::BETWEEN] : [Operator::BETWEEN], $middle, Operator::AND, $right);
         } elseif ($tokenList->hasKeyword(Keyword::IN)) {
             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-            if ($tokenList->hasKeyword(Keyword::SELECT)) {
+            if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 $subquery = new Parentheses($this->parseSubquery($tokenList->resetPosition(-1)));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
@@ -358,7 +358,7 @@ class ExpressionParser
             $expression = new ExistsExpression($subquery);
 
         } elseif ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-            if ($tokenList->hasAnyKeyword(Keyword::SELECT)) {
+            if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // (subquery)
                 $subquery = $this->parseSubquery($tokenList->resetPosition(-1));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
@@ -737,7 +737,7 @@ class ExpressionParser
 
     private function parseSubquery(TokenList $tokenList): Subquery
     {
-        return new Subquery($this->parserFactory->getSelectCommandParser()->parseSelect($tokenList));
+        return new Subquery($this->parserFactory->getQueryParser()->parseQuery($tokenList));
     }
 
     private function parseLiteral(TokenList $tokenList): Literal

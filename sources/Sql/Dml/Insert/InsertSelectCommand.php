@@ -11,15 +11,15 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\QualifiedName;
 
 class InsertSelectCommand extends InsertOrReplaceCommand implements InsertCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var SelectCommand */
-    private $select;
+    /** @var Query */
+    private $query;
 
     /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
@@ -30,7 +30,7 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
      */
     public function __construct(
         QualifiedName $table,
-        SelectCommand $select,
+        Query $query,
         ?array $columns,
         ?array $partitions,
         ?InsertPriority $priority = null,
@@ -39,13 +39,13 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
     ) {
         parent::__construct($table, $columns, $partitions, $priority, $ignore);
 
-        $this->select = $select;
+        $this->query = $query;
         $this->onDuplicateKeyActions = $onDuplicateKeyActions;
     }
 
-    public function getSelect(): SelectCommand
+    public function getQuery(): Query
     {
-        return $this->select;
+        return $this->query;
     }
 
     public function getOnDuplicateKeyAction(): ?OnDuplicateKeyActions
@@ -55,7 +55,7 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'INSERT' . $this->serializeBody($formatter) . ' ' . $this->select->serialize($formatter);
+        $result = 'INSERT' . $this->serializeBody($formatter) . ' ' . $this->query->serialize($formatter);
 
         if ($this->onDuplicateKeyActions !== null) {
             $result .= ' ' . $this->onDuplicateKeyActions->serialize($formatter);

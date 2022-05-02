@@ -11,16 +11,16 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 
 class Subquery implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var SelectCommand */
+    /** @var Query */
     private $subquery;
 
-    public function __construct(SelectCommand $subquery)
+    public function __construct(Query $subquery)
     {
         $this->subquery = $subquery;
     }
@@ -30,7 +30,7 @@ class Subquery implements ExpressionNode
         return NodeType::get(NodeType::SUBQUERY);
     }
 
-    public function getSubquery(): SelectCommand
+    public function getSubquery(): Query
     {
         return $this->subquery;
     }

@@ -10,17 +10,19 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Parser\Dml\SelectCommandParser;
+use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\SqlSecurity;
+use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Ddl\View\CreateViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewCommand;
 use SqlFtw\Sql\Ddl\View\DropViewOption;
 use SqlFtw\Sql\Ddl\View\ViewAlgorithm;
 use SqlFtw\Sql\Ddl\View\ViewCheckOption;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -32,15 +34,15 @@ class ViewCommandsParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var SelectCommandParser */
-    private $selectCommandParser;
+    /** @var QueryParser */
+    private $queryParser;
 
     public function __construct(
         ExpressionParser $expressionParser,
-        SelectCommandParser $selectCommandParser
+        QueryParser $queryParser
     ) {
         $this->expressionParser = $expressionParser;
-        $this->selectCommandParser = $selectCommandParser;
+        $this->queryParser = $queryParser;
     }
 
     /**
@@ -82,7 +84,7 @@ class ViewCommandsParser
     }
 
     /**
-     * @return mixed[]
+     * @return array{QualifiedName, Query, string[]|null, UserExpression|null, SqlSecurity|null, ViewAlgorithm|null, ViewCheckOption|null}
      */
     private function parseViewDefinition(TokenList $tokenList): array
     {
@@ -116,7 +118,7 @@ class ViewCommandsParser
         }
 
         $tokenList->expectKeyword(Keyword::AS);
-        $body = $this->selectCommandParser->parseSelect($tokenList);
+        $body = $this->queryParser->parseQuery($tokenList);
 
         if ($tokenList->hasKeyword(Keyword::WITH)) {
             $option = $tokenList->getAnyKeyword(Keyword::CASCADED, Keyword::LOCAL);

@@ -12,7 +12,7 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Parser\Dml\SelectCommandParser;
+use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\TokenList;
@@ -60,19 +60,19 @@ class CompoundStatementParser
     /** @var TypeParser */
     private $typeParser;
 
-    /** @var SelectCommandParser */
-    private $selectCommandParser;
+    /** @var QueryParser */
+    private $queryParser;
 
     public function __construct(
         Parser $parser,
         ExpressionParser $expressionParser,
         TypeParser $typeParser,
-        SelectCommandParser $selectCommandParser
+        QueryParser $queryParser
     ) {
         $this->parser = $parser;
         $this->expressionParser = $expressionParser;
         $this->typeParser = $typeParser;
-        $this->selectCommandParser = $selectCommandParser;
+        $this->queryParser = $queryParser;
     }
 
     /**
@@ -393,9 +393,9 @@ class CompoundStatementParser
 
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
-            $select = $this->selectCommandParser->parseSelect($tokenList);
+            $query = $this->queryParser->parseQuery($tokenList);
 
-            return new DeclareCursorStatement($name, $select);
+            return new DeclareCursorStatement($name, $query);
         } elseif ($tokenList->hasKeyword(Keyword::CONDITION)) {
             $tokenList->expectKeywords(Keyword::FOR);
             if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {

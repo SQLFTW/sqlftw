@@ -23,8 +23,8 @@ class ExplainCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var SelectCommandParser */
-    private $selectCommandParser;
+    /** @var QueryParser */
+    private $queryParser;
 
     /** @var InsertCommandParser */
     private $insertCommandParser;
@@ -36,13 +36,13 @@ class ExplainCommandParser
     private $deleteCommandParser;
 
     public function __construct(
-        SelectCommandParser $selectCommandParser,
+        QueryParser $queryParser,
         InsertCommandParser $insertCommandParser,
         UpdateCommandParser $updateCommandParser,
         DeleteCommandParser $deleteCommandParser
     )
     {
-        $this->selectCommandParser = $selectCommandParser;
+        $this->queryParser = $queryParser;
         $this->insertCommandParser = $insertCommandParser;
         $this->updateCommandParser = $updateCommandParser;
         $this->deleteCommandParser = $deleteCommandParser;
@@ -91,7 +91,7 @@ class ExplainCommandParser
         }
 
         $position = $tokenList->getPosition();
-        $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR);
+        $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR);
         $statement = $connectionId = null;
         switch ($keyword) {
             case Keyword::FOR:
@@ -99,7 +99,11 @@ class ExplainCommandParser
                 $connectionId = $tokenList->expectInt();
                 break;
             case Keyword::SELECT:
-                $statement = $this->selectCommandParser->parseSelect($tokenList->resetPosition($position));
+            case Keyword::WITH:
+                $statement = $this->queryParser->parseSelect($tokenList->resetPosition($position));
+                break;
+            case Keyword::TABLE:
+                $statement = $this->queryParser->parseTable($tokenList->resetPosition($position));
                 break;
             case Keyword::INSERT:
                 $statement = $this->insertCommandParser->parseInsert($tokenList->resetPosition($position));

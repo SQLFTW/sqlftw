@@ -122,7 +122,7 @@ class Parser
         $tokenList->addAutoSkip(TokenType::get(TokenType::WHITESPACE));
         $tokenList->addAutoSkip(TokenType::get(TokenType::COMMENT));
 
-        $first = $tokenList->get(TokenType::KEYWORD);
+        $first = $tokenList->get();
         if ($first === null) {
             if ($tokenList->onlyContainsComments()) {
                 return new EmptyCommand($tokenList);
@@ -131,6 +131,9 @@ class Parser
             }
         }
         switch ($first->value) {
+            case '(':
+                // ({SELECT|TABLE|VALUES} ...) ...
+                return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
             case Keyword::ALTER:
                 $second = $tokenList->expect(TokenType::KEYWORD)->value;
                 switch ($second) {
@@ -487,7 +490,7 @@ class Parser
                 return $this->factory->getTransactionCommandsParser()->parseSavepoint($tokenList->resetPosition($start));
             case Keyword::SELECT:
                 // SELECT
-                return $this->factory->getSelectCommandParser()->parseSelect($tokenList->resetPosition($start));
+                return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
             case Keyword::SET:
                 $second = $tokenList->get(TokenType::KEYWORD);
                 $second = $second !== null ? $second->value : '';
@@ -551,6 +554,9 @@ class Parser
                     return $this->factory->getReplicationCommandsParser()->parseStopSlave($tokenList->resetPosition($start));
                 }
                 $tokenList->expectedAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE);
+            case Keyword::TABLE:
+                // TABLE
+                return $this->factory->getQueryParser()->parseTable($tokenList->resetPosition($start));
             case Keyword::TRUNCATE:
                 // TRUNCATE [TABLE]
                 return $this->factory->getTableCommandsParser()->parseTruncateTable($tokenList->resetPosition($start));
@@ -573,8 +579,11 @@ class Parser
             case Keyword::USE:
                 // USE
                 return $this->factory->getUseCommandParser()->parseUse($tokenList->resetPosition($start));
+            case Keyword::VALUES:
+                // VALUES
+                return $this->factory->getQueryParser()->parseValues($tokenList->resetPosition($start));
             case Keyword::WITH:
-                // WITH
+                // WITH ... SELECT|UPDATE|DELETE
                 return $this->factory->getWithParser()->parseWith($tokenList->resetPosition($start));
             case Keyword::XA:
                 // XA {START|BEGIN}

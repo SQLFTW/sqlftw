@@ -7,15 +7,16 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Dml\Select;
+namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
-class SelectLockWaitOption extends SqlEnum
+class SelectLockOption extends SqlEnum
 {
 
-    public const NO_WAIT = Keyword::NOWAIT;
-    public const SKIP_LOCKED = Keyword::SKIP . ' ' . Keyword::LOCKED;
+    public const FOR_UPDATE = Keyword::FOR . ' ' . Keyword::UPDATE;
+    public const FOR_SHARE = Keyword::FOR . ' ' . Keyword::SHARE;
+    public const LOCK_IN_SHARE_MODE = Keyword::LOCK . ' ' . Keyword::IN . ' ' . Keyword::SHARE . ' ' . Keyword::MODE;
 
 }

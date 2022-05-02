@@ -53,8 +53,14 @@ class Formatter
         return $this->settings;
     }
 
+    public function indent(string $code): string
+    {
+        return str_replace("\n", "\n\t", $code);
+    }
+
     public function formatName(string $name): string
     {
+        // todo: sqlmode ansi uses "
         return $this->settings->quoteAllNames()
             ? '`' . $name . '`'
             : ($this->settings->getPlatform()->getFeatures()->isReserved($name)

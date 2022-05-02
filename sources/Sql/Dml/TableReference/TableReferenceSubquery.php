@@ -14,13 +14,13 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 
 class TableReferenceSubquery implements TableReferenceNode, Countable
 {
     use StrictBehaviorMixin;
 
-    /** @var SelectCommand */
+    /** @var Query */
     private $query;
 
     /** @var string|null */
@@ -39,7 +39,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
      * @param string[]|null $columnList
      */
     public function __construct(
-        SelectCommand $query,
+        Query $query,
         ?string $alias,
         ?array $columnList,
         bool $parentheses = false,
@@ -65,7 +65,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
         return $this->query instanceof Countable ? $this->query->count() : 1;
     }
 
-    public function getQuery(): SelectCommand
+    public function getQuery(): Query
     {
         return $this->query;
     }

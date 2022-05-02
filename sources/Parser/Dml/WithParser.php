@@ -16,7 +16,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
-use SqlFtw\Sql\Dml\Select\SelectCommand;
+use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Dml\WithExpression;
@@ -60,7 +60,7 @@ class WithParser
             }
             $tokenList->expectKeyword(Keyword::AS);
             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-            $query = $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList);
+            $query = $this->parserFactory->getQueryParser()->parseSelect($tokenList);
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
             $expressions[] = new WithExpression($query, $name, $columns);
@@ -71,7 +71,7 @@ class WithParser
         $next = $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::UPDATE, Keyword::DELETE);
         switch ($next) {
             case Keyword::SELECT:
-                return $this->parserFactory->getSelectCommandParser()->parseSelect($tokenList->resetPosition(-1), $with);
+                return $this->parserFactory->getQueryParser()->parseSelect($tokenList->resetPosition(-1), $with);
             case Keyword::UPDATE:
                 return $this->parserFactory->getUpdateCommandParser()->parseUpdate($tokenList->resetPosition(-1), $with);
             case Keyword::DELETE:

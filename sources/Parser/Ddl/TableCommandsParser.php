@@ -10,7 +10,7 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Parser\Dml\SelectCommandParser;
+use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -113,20 +113,20 @@ class TableCommandsParser
     /** @var IndexCommandsParser */
     private $indexCommandsParser;
 
-    /** @var SelectCommandParser */
-    private $selectCommandParser;
+    /** @var QueryParser */
+    private $queryParser;
 
     public function __construct(
         TypeParser $typeParser,
         ExpressionParser $expressionParser,
         IndexCommandsParser $indexCommandsParser,
-        SelectCommandParser $selectCommandParser
+        QueryParser $queryParser
     )
     {
         $this->typeParser = $typeParser;
         $this->expressionParser = $expressionParser;
         $this->indexCommandsParser = $indexCommandsParser;
-        $this->selectCommandParser = $selectCommandParser;
+        $this->queryParser = $queryParser;
     }
 
     /**
@@ -651,7 +651,7 @@ class TableCommandsParser
         $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
         $select = null;
         if ($tokenList->hasKeyword(Keyword::AS) || $items === [] || $duplicateOption !== null || !$tokenList->isFinished()) {
-            $select = $this->selectCommandParser->parseSelect($tokenList);
+            $select = $this->queryParser->parseQuery($tokenList);
         }
 
         return new CreateTableCommand($table, $items, $options, $partitioning, $temporary, $ifNotExists, $duplicateOption, $select);
