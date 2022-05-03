@@ -209,8 +209,8 @@ class TableCommandsParser
             switch ($keyword) {
                 case Keyword::ADD:
                     $second = $tokenList->get(TokenType::KEYWORD);
-                    $second = $second !== null ? $second->value : null;
-                    switch ($second) {
+                    $secondValue = $second !== null ? $second->value : null;
+                    switch ($secondValue) {
                         case null:
                         case Keyword::COLUMN:
                             if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
@@ -268,18 +268,31 @@ class TableCommandsParser
                             $actions[] = new AddPartitionAction($partition);
                             break;
                         default:
-                            $tokenList->expectedAnyKeyword(
-                                Keyword::COLUMN,
-                                Keyword::CONSTRAINT,
-                                Keyword::FOREIGN,
-                                Keyword::FULLTEXT,
-                                Keyword::INDEX,
-                                Keyword::KEY,
-                                Keyword::PARTITION,
-                                Keyword::PRIMARY,
-                                Keyword::SPATIAL,
-                                Keyword::UNIQUE
-                            );
+                            // keyword used as a column name
+                            if (($second->type & TokenType::RESERVED) === 0) {
+                                // ADD [COLUMN] col_name column_definition [FIRST | AFTER col_name ]
+                                $column = $this->parseColumn($tokenList->resetPosition(-1));
+                                $after = null;
+                                if ($tokenList->hasKeyword(Keyword::FIRST)) {
+                                    $after = ModifyColumnAction::FIRST;
+                                } elseif ($tokenList->hasKeyword(Keyword::AFTER)) {
+                                    $after = $tokenList->expectName();
+                                }
+                                $actions[] = new AddColumnAction($column, $after);
+                            } else {
+                                $tokenList->expectedAnyKeyword(
+                                    Keyword::COLUMN,
+                                    Keyword::CONSTRAINT,
+                                    Keyword::FOREIGN,
+                                    Keyword::FULLTEXT,
+                                    Keyword::INDEX,
+                                    Keyword::KEY,
+                                    Keyword::PARTITION,
+                                    Keyword::PRIMARY,
+                                    Keyword::SPATIAL,
+                                    Keyword::UNIQUE
+                                );
+                            }
                     }
                     break;
                 case Keyword::ALGORITHM:
