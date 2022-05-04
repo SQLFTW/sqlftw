@@ -24,14 +24,14 @@ class TimeInterval implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var int|string */
+    /** @var int|string|ExpressionNode */
     private $value;
 
     /** @var TimeIntervalUnit */
     private $unit;
 
     /**
-     * @param int|string $value
+     * @param int|string|ExpressionNode $value
      */
     public function __construct($value, TimeIntervalUnit $unit)
     {
@@ -151,7 +151,7 @@ class TimeInterval implements SqlSerializable
     }
 
     /**
-     * @return int|string
+     * @return int|string|ExpressionNode
      */
     public function getValue()
     {
@@ -165,8 +165,15 @@ class TimeInterval implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return (is_string($this->value) ? $formatter->formatString($this->value) : $this->value)
-            . ' ' . $this->unit->serialize($formatter);
+        if ($this->value instanceof ExpressionNode) {
+            $result = $this->value->serialize($formatter);
+        } elseif (is_string($this->value)) {
+            $result = $formatter->formatString($this->value);
+        } else {
+            $result = $this->value;
+        }
+
+        return $result . ' ' . $this->unit->serialize($formatter);
     }
 
 }

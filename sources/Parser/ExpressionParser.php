@@ -917,10 +917,8 @@ class ExpressionParser
      */
     public function parseInterval(TokenList $tokenList): TimeInterval
     {
-        $value = $tokenList->getString();
-        if ($value === null) {
-            $value = $tokenList->expectInt();
-        }
+        $value = $this->parseExpression($tokenList);
+
         /** @var TimeIntervalUnit $unit */
         $unit = $tokenList->expectKeywordEnum(TimeIntervalUnit::class);
 
