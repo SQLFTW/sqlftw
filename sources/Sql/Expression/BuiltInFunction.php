@@ -505,10 +505,12 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const ROW_NUMBER = 'ROW_NUMBER';
 
     /**
-     * In most cases name is parsed as array key of following argument (e.g. ['DISTINCT' => 'col1'])
-     * Special case is postfix FROM in TRIM(), JSON_TABLE() and name represented as Literal value in GET_FORMAT()
+     * In most cases name is parsed as array key of the following argument - e.g. AVG(DISTINCT col1) -> ['DISTINCT' => 'col1']
+     * Special cases:
+     * - when no value follows the keyword (indicated by null), the keyword is parsed as a Literal - e.g. GET_FORMAT(DATE ISO) -> [new Literal('DATE'), 'ISO']
+     * - parameters of some functions need special parsing (indicated by false) - e.g. TRIM() and JSON_TABLE()
      *
-     * @var array<string, array<string, class-string>>
+     * @var array<string, array<string, class-string|null|false>>
      */
     private static $namedParams = [
         // AVG([DISTINCT] expr)
@@ -556,7 +558,7 @@ class BuiltInFunction extends SqlEnum implements Feature
             Keyword::SEPARATOR => Literal::class,
         ],
         // JSON_TABLE(expr, path COLUMNS (column_list) [AS] alias)
-        self::JSON_TABLE => [],
+        self::JSON_TABLE => [Keyword::COLUMNS => false, Keyword::AS => false],
         // MAX([DISTINCT] expr)
         self::MAX => [Keyword::DISTINCT => ExpressionNode::class],
         // MIN([DISTINCT] expr)
@@ -571,7 +573,7 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::SUM => [Keyword::DISTINCT => ExpressionNode::class],
         // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
         // has special handling because of the suffix FROM
-        self::TRIM => [],
+        self::TRIM => [Keyword::BOTH => false, Keyword::LEADING => false, Keyword::TRAILING => false, Keyword::FROM => false],
         // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags])
         // "The flags clause currently is unused."
         self::WEIGHT_STRING => [Keyword::AS => DataType::class],
@@ -650,6 +652,11 @@ class BuiltInFunction extends SqlEnum implements Feature
     public function getNamedParams(): array
     {
         return self::$namedParams[$this->getValue()] ?? [];
+    }
+
+    public function hasNamedParams(): bool
+    {
+        return isset(self::$namedParams[$this->getValue()]);
     }
 
     public function isAggregate(): bool
