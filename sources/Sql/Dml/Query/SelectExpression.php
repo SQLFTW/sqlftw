@@ -26,19 +26,27 @@ class SelectExpression implements SqlSerializable
     /** @var string|null */
     private $alias;
 
+    /** @var string|null */
+    private $assignVariable;
+
     /** @var WindowSpecification|string|null */
     private $window;
 
     /**
      * @param WindowSpecification|string|mixed|null $window
      */
-    public function __construct(ExpressionNode $expression, ?string $alias = null, $window = null)
-    {
+    public function __construct(
+        ExpressionNode $expression,
+        ?string $alias = null,
+        ?string $assignVariable = null,
+        $window = null
+    ) {
         if ($window !== null && !is_string($window) && !$window instanceof WindowSpecification) {
             throw new InvalidTypeException(WindowSpecification::class . '|string', $window);
         }
         $this->expression = $expression;
         $this->alias = $alias;
+        $this->assignVariable = $assignVariable;
         $this->window = $window;
     }
 
@@ -52,6 +60,11 @@ class SelectExpression implements SqlSerializable
         return $this->alias;
     }
 
+    public function getAssignVariable(): ?string
+    {
+        return $this->assignVariable;
+    }
+
     /**
      * @return WindowSpecification|string|null
      */
@@ -62,7 +75,13 @@ class SelectExpression implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $this->expression->serialize($formatter);
+        $result = '';
+
+        if ($this->assignVariable !== null) {
+            $result .= $this->assignVariable . ' := ';
+        }
+
+        $result .= $this->expression->serialize($formatter);
 
         if (is_string($this->window)) {
             $result .= ' OVER ' . $formatter->formatName($this->window);
