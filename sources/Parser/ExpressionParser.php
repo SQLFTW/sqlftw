@@ -58,6 +58,7 @@ use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
 use function explode;
 use function in_array;
+use function is_int;
 use function sprintf;
 use function strlen;
 use function substr;
@@ -465,7 +466,7 @@ class ExpressionParser
 
         if ($tokenList->hasKeyword(Keyword::COLLATE)) {
             // simple_expr COLLATE collation_name
-            $collation = Collation::get($tokenList->expectString());
+            $collation = $tokenList->expectNameOrStringEnum(Collation::class);
 
             return new CollateExpression($expression, $collation);
         } elseif ($tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT)
@@ -796,12 +797,34 @@ class ExpressionParser
     {
         $orderBy = [];
         do {
+            $column = $position = $collation = null;
             $expression = $this->parseExpression($tokenList);
-            // todo: extract column name or position from expression
+
+            // transform to more detailed shape
+            if ($expression instanceof CollateExpression) {
+                $collation = $expression->getCollation();
+                $expression = $expression->getExpression();
+            }
+            // extract column name or position
+            if ($expression instanceof Literal) {
+                $value = $expression->getValue();
+                if (is_int($value) || $value === (string) (int) $value) {
+                    $position = (int) $value;
+                    $expression = null;
+                }
+            } elseif ($expression instanceof Identifier) {
+                $column = $expression->getName();
+                $expression = null;
+            }
 
             /** @var Order $order */
             $order = $tokenList->getKeywordEnum(Order::class);
-            $orderBy[] = new OrderByExpression($order, null, $expression);
+
+            if ($collation === null && $tokenList->hasKeyword(Keyword::COLLATE)) {
+                $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+            }
+
+            $orderBy[] = new OrderByExpression($order, $column, $expression, $position, $collation);
         } while ($tokenList->hasComma());
 
         return $orderBy;

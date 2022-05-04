@@ -12,8 +12,10 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Order;
+use SqlFtw\Sql\QualifiedName;
 
 class OrderByExpression implements ExpressionNode
 {
@@ -22,7 +24,7 @@ class OrderByExpression implements ExpressionNode
     /** @var Order|null */
     private $order;
 
-    /** @var ColumnName|null */
+    /** @var string|QualifiedName|ColumnName|null */
     private $column;
 
     /** @var ExpressionNode|null */
@@ -31,7 +33,16 @@ class OrderByExpression implements ExpressionNode
     /** @var int|null */
     private $position;
 
-    public function __construct(?Order $order, ?ColumnName $column, ?ExpressionNode $expression = null, ?int $position = null)
+    /** @var Collation|null */
+    private $collation;
+
+    public function __construct(
+        ?Order $order,
+        ?ColumnName $column,
+        ?ExpressionNode $expression = null,
+        ?int $position = null,
+        ?Collation $collation = null
+    )
     {
         Check::oneOf($column, $expression, $position);
 
@@ -39,11 +50,40 @@ class OrderByExpression implements ExpressionNode
         $this->column = $column;
         $this->expression = $expression;
         $this->position = $position;
+        $this->collation = $collation;
     }
 
     public function getType(): NodeType
     {
         return NodeType::get(NodeType::ORDER_BY_EXPRESSION);
+    }
+
+    public function getOrder(): ?Order
+    {
+        return $this->order;
+    }
+
+    /**
+     * @return string|ColumnName|QualifiedName|null
+     */
+    public function getColumn()
+    {
+        return $this->column;
+    }
+
+    public function getExpression(): ?ExpressionNode
+    {
+        return $this->expression;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function getCollation(): ?Collation
+    {
+        return $this->collation;
     }
 
     public function serialize(Formatter $formatter): string
@@ -57,6 +97,9 @@ class OrderByExpression implements ExpressionNode
         }
         if ($this->order !== null) {
             $result .= ' ' . $this->order->serialize($formatter);
+        }
+        if ($this->collation !== null) {
+            $result .= ' COLLATE ' . $this->collation->serialize($formatter);
         }
 
         return $result;

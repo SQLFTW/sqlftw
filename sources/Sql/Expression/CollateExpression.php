@@ -17,11 +17,11 @@ class CollateExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var Collation */
-    private $collation;
-
     /** @var ExpressionNode */
     private $expression;
+
+    /** @var Collation */
+    private $collation;
 
     public function __construct(ExpressionNode $expression, Collation $collation)
     {
@@ -34,14 +34,14 @@ class CollateExpression implements ExpressionNode
         return NodeType::get(NodeType::CURLY_EXPRESSION);
     }
 
-    public function getCollation(): Collation
-    {
-        return $this->collation;
-    }
-
     public function getExpression(): ExpressionNode
     {
         return $this->expression;
+    }
+
+    public function getCollation(): Collation
+    {
+        return $this->collation;
     }
 
     public function serialize(Formatter $formatter): string
