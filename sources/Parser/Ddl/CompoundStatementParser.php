@@ -242,7 +242,7 @@ class CompoundStatementParser
         $condition = $this->expressionParser->parseExpression($tokenList);
         $tokenList->expectKeyword(Keyword::DO);
         $statements = $this->parseStatementList($tokenList);
-        $tokenList->expectKeywords(Keyword::END, Keyword::REPEAT);
+        $tokenList->expectKeywords(Keyword::END, Keyword::WHILE);
 
         if ($label !== null) {
             $endLabel = $tokenList->getName();
