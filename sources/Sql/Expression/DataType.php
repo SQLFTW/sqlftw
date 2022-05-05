@@ -94,6 +94,11 @@ class DataType implements ExpressionNode
                 throw new InvalidDefinitionException("Two integer size parameters required for type {$type->getValue()}.");
             }
             $this->size = $params;
+        } elseif ($type->equalsValue(BaseType::FLOAT)) {
+            if ($params !== null && !is_int($params) && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
+                throw new InvalidDefinitionException("One or two integer size parameters required for type {$type->getValue()}.");
+            }
+            $this->size = $params;
         } elseif ($type->isFloatingPointNumber()) {
             if ($params !== null && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
                 throw new InvalidDefinitionException("Two integer size parameters required for type {$type->getValue()}.");

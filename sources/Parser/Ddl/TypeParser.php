@@ -34,6 +34,7 @@ class TypeParser
      *   | REAL[(length,decimals)] [UNSIGNED] [ZEROFILL]
      *   | DOUBLE[(length,decimals)] [UNSIGNED] [ZEROFILL]
      *   | FLOAT[(length,decimals)] [UNSIGNED] [ZEROFILL]
+     *   | FLOAT[(precision)] [UNSIGNED] [ZEROFILL]
      *   | DECIMAL[(length[,decimals])] [UNSIGNED] [ZEROFILL]
      *   | NUMERIC[(length[,decimals])] [UNSIGNED] [ZEROFILL]
      *   | DATE
@@ -108,7 +109,11 @@ class TypeParser
             $length = $decimals = null;
             if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                 $length = $tokenList->expectInt();
-                if ($dataType->hasDecimals()) {
+                if ($dataType->equalsValue(BaseType::FLOAT)) {
+                    if ($tokenList->has(TokenType::COMMA)) {
+                        $decimals = $tokenList->expectInt();
+                    }
+                } elseif ($dataType->hasDecimals()) {
                     $tokenList->expect(TokenType::COMMA);
                     $decimals = $tokenList->expectInt();
                 }
