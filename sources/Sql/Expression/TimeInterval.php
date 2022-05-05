@@ -86,7 +86,7 @@ class TimeInterval implements SqlSerializable
             } elseif ($interval->getSeconds() !== 0) {
                 $intervals[] = new self(
                     sprintf('%d %d:%d:%d', $interval->getDays(), $interval->getHours(), $interval->getMinutes(), $interval->getSeconds()),
-                    TimeIntervalUnit::get(TimeIntervalUnit::DAY_HOUR)
+                    TimeIntervalUnit::get(TimeIntervalUnit::DAY_SECOND)
                 );
             } elseif ($interval->getMinutes() !== 0) {
                 $intervals[] = new self(
