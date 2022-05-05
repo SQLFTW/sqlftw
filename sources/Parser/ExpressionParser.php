@@ -13,7 +13,6 @@ use Dogma\Re;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
-use Nette\Neon\Node\LiteralNode;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -26,7 +25,6 @@ use SqlFtw\Sql\Expression\CaseExpression;
 use SqlFtw\Sql\Expression\CollateExpression;
 use SqlFtw\Sql\Expression\CurlyExpression;
 use SqlFtw\Sql\Expression\DataType;
-use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
@@ -37,8 +35,7 @@ use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
-use SqlFtw\Sql\Expression\NullLiteral;
-use SqlFtw\Sql\Expression\OnOffLiteral;
+use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Parentheses;
@@ -50,7 +47,6 @@ use SqlFtw\Sql\Expression\TimeExpression;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Expression\TimeIntervalUnit;
 use SqlFtw\Sql\Expression\UnaryOperator;
-use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
@@ -126,7 +122,7 @@ class ExpressionParser
             $not = $tokenList->hasKeyword(Keyword::NOT);
             $keyword = $tokenList->expectAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
             $right = $keyword === Keyword::UNKNOWN
-                ? new UnknownLiteral()
+                ? new KeywordLiteral(Keyword::UNKNOWN)
                 : new ValueLiteral($keyword === Keyword::TRUE);
 
             return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IS] : [Operator::IS], $right);
@@ -189,7 +185,7 @@ class ExpressionParser
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
             $tokenList->expectKeyword(Keyword::NULL);
-            $right = new NullLiteral();
+            $right = new KeywordLiteral(Keyword::NULL);
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         } else {
@@ -518,28 +514,28 @@ class ExpressionParser
             if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
                 break;
             }
-            foreach ($namedParams as $keywords => $type) {
-                if (!$tokenList->hasKeywords(...explode(' ', $keywords))) {
+            foreach ($namedParams as $keyword => $type) {
+                if (!$tokenList->hasKeywords(...explode(' ', $keyword))) {
                     continue;
                 }
                 switch ($type) {
                     case null:
-                        $arguments[] = new LiteralNode($keywords);
+                        $arguments[] = new KeywordLiteral($keyword);
                         continue 3;
                     case ExpressionNode::class:
-                        $arguments[$keywords] = $this->parseExpression($tokenList);
+                        $arguments[$keyword] = $this->parseExpression($tokenList);
                         continue 3;
                     case Charset::class:
-                        $arguments[$keywords] = $tokenList->expectNameOrStringEnum(Charset::class);
+                        $arguments[$keyword] = $tokenList->expectNameOrStringEnum(Charset::class);
                         continue 3;
                     case DataType::class:
-                        $arguments[$keywords] = $this->parserFactory->getTypeParser()->parseType($tokenList);
+                        $arguments[$keyword] = $this->parserFactory->getTypeParser()->parseType($tokenList);
                         continue 3;
                     case OrderByExpression::class:
-                        $arguments[$keywords] = new ListExpression($this->parseOrderBy($tokenList));
+                        $arguments[$keyword] = new ListExpression($this->parseOrderBy($tokenList));
                         continue 3;
                     case Literal::class:
-                        $arguments[$keywords] = $this->parseLiteral($tokenList);
+                        $arguments[$keyword] = $this->parseLiteral($tokenList);
                         continue 3;
                     default:
                         throw new ShouldNotHappenException('Unsupported named parameter type.');
@@ -776,15 +772,15 @@ class ExpressionParser
             return new HexadecimalLiteral($value);
         } elseif (($token->type & TokenType::KEYWORD) !== 0) {
             if ($token->value === Keyword::NULL) {
-                return new NullLiteral();
+                return new KeywordLiteral(Keyword::NULL);
             } elseif ($token->value === Keyword::TRUE) {
                 return true;
             } elseif ($token->value === Keyword::FALSE) {
                 return false;
             } elseif ($token->value === Keyword::DEFAULT) {
-                return new DefaultLiteral();
+                return new KeywordLiteral(Keyword::DEFAULT);
             } elseif ($token->value === Keyword::ON || $token->value === Keyword::OFF) {
-                return new OnOffLiteral($token->value);
+                return new KeywordLiteral($token->value);
             } else {
                 $tokenList->expectedAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF);
             }

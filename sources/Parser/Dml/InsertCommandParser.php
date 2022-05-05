@@ -23,8 +23,8 @@ use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
-use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -223,7 +223,7 @@ class InsertCommandParser
             $column = $tokenList->expectName();
             $tokenList->expectOperator(Operator::EQUAL);
             if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $values[$column] = new DefaultLiteral();
+                $values[$column] = new KeywordLiteral(Keyword::DEFAULT);
             } else {
                 $values[$column] = $this->expressionParser->parseExpression($tokenList);
             }
@@ -243,7 +243,7 @@ class InsertCommandParser
             $values = [];
             do {
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    $values[] = new DefaultLiteral();
+                    $values[] = new KeywordLiteral(Keyword::DEFAULT);
                 } else {
                     $values[] = $this->expressionParser->parseExpression($tokenList);
                 }
