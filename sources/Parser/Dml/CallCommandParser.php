@@ -42,10 +42,12 @@ class CallCommandParser
         $params = null;
         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
             $params = [];
-            do {
-                $params[] = $this->expressionParser->parseExpression($tokenList);
-            } while ($tokenList->hasComma());
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+                do {
+                    $params[] = $this->expressionParser->parseExpression($tokenList);
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            }
         }
 
         return new CallCommand($name, $params);
