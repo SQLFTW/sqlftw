@@ -460,9 +460,9 @@ class QueryParser
         } else {
             $variables = [];
             do {
-                /** @var string $expression */
-                $expression = $tokenList->expect(TokenType::AT_VARIABLE)->value;
-                $variables[] = $expression;
+                /** @var string $variable */
+                $variable = $tokenList->expectAny(TokenType::AT_VARIABLE, TokenType::UNQUOTED_NAME)->value;
+                $variables[] = $variable;
             } while ($tokenList->hasComma());
 
             return new SelectInto($variables);
