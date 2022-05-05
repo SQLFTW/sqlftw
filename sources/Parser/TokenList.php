@@ -685,10 +685,12 @@ class TokenList
         $first = $this->expectName();
         if ($this->has(TokenType::DOT)) {
             // a reserved keyword may follow after "." unescaped as we know it is a name context
-            $secondToken = $this->get(TokenType::KEYWORD);
-            if ($secondToken !== null) {
+            $keyword = $this->get(TokenType::KEYWORD);
+            if ($keyword !== null) {
                 /** @var string $second */
-                $second = $secondToken->value;
+                $second = $keyword->value;
+            } elseif ($this->hasOperator(Operator::MULTIPLY)) {
+                $second = Operator::MULTIPLY;
             } else {
                 $second = $this->expectName();
             }
