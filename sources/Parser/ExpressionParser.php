@@ -498,7 +498,13 @@ class ExpressionParser
 
         if ($function instanceof BuiltInFunction) {
             $name = $function->getValue();
-            if ($name === Keyword::TRIM) {
+            if ($name === Keyword::COUNT) {
+                if ($tokenList->hasOperator(Operator::MULTIPLY)) {
+                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+                    return new FunctionCall($function, [new Identifier('*')]);
+                }
+            } elseif ($name === Keyword::TRIM) {
                 return $this->parseTrim($tokenList, $function);
             } elseif ($name === Keyword::JSON_TABLE) {
                 return $this->parseJsonTable($tokenList, $function);
