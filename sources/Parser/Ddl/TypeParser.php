@@ -109,13 +109,15 @@ class TypeParser
             $length = $decimals = null;
             if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                 $length = $tokenList->expectInt();
-                if ($dataType->equalsValue(BaseType::FLOAT)) {
-                    if ($tokenList->has(TokenType::COMMA)) {
+                if ($dataType->hasDecimals()) {
+                    if ($dataType->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
+                        if ($tokenList->has(TokenType::COMMA)) {
+                            $decimals = $tokenList->expectInt();
+                        }
+                    } else {
+                        $tokenList->expect(TokenType::COMMA);
                         $decimals = $tokenList->expectInt();
                     }
-                } elseif ($dataType->hasDecimals()) {
-                    $tokenList->expect(TokenType::COMMA);
-                    $decimals = $tokenList->expectInt();
                 }
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }

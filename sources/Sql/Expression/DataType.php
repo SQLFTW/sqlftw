@@ -89,12 +89,7 @@ class DataType implements ExpressionNode
      */
     private function setParams(BaseType $type, $params = null): void
     {
-        if ($type->isDecimal()) {
-            if ($params !== null && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
-                throw new InvalidDefinitionException("Two integer size parameters required for type {$type->getValue()}.");
-            }
-            $this->size = $params;
-        } elseif ($type->equalsValue(BaseType::FLOAT)) {
+        if ($type->isDecimal() || $type->equalsValue(BaseType::FLOAT)) {
             if ($params !== null && !is_int($params) && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
                 throw new InvalidDefinitionException("One or two integer size parameters required for type {$type->getValue()}.");
             }
