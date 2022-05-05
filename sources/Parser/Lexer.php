@@ -686,12 +686,12 @@ class Lexer
                     }
 
                     $upper = strtoupper($value);
-                    if ($upper === 'NULL') {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, 'NULL', $value, $condition);
-                    } elseif ($upper === 'TRUE') {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, 'TRUE', $value, $condition);
-                    } elseif ($upper === 'FALSE') {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, 'FALSE', $value, $condition);
+                    if ($upper === Keyword::NULL) {
+                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::NULL, $value, $condition);
+                    } elseif ($upper === Keyword::TRUE) {
+                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::TRUE, $value, $condition);
+                    } elseif ($upper === Keyword::FALSE) {
+                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::FALSE, $value, $condition);
                     } elseif (isset($this->reservedKey[$upper])) {
                         if (isset($this->operatorKeywordsKey[$upper])) {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::OPERATOR, $start, $upper, $value, $condition);
@@ -700,7 +700,7 @@ class Lexer
                         }
                     } elseif (isset($this->keywordsKey[$upper])) {
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $upper, $value, $condition);
-                    } elseif ($upper === 'DELIMITER' && $this->platform->userDelimiter()) {
+                    } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
                         yield new Token(T::KEYWORD, $start, $upper, $value, $condition);
                         $start = $position;
                         $whitespace = $this->parseWhitespace($string, $position, $column, $row);
