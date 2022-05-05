@@ -748,6 +748,11 @@ class TokenList
     public function expectEnd(): void
     {
         $this->doAutoSkip();
+        // pass trailing ; when delimiter is something else
+        while ($this->has(TokenType::SEMICOLON)) {
+            $this->doAutoSkip();
+        }
+
         if ($this->position < count($this->tokens)) {
             throw new UnexpectedTokenException([TokenType::END], null, $this->tokens[$this->position], $this);
         }
