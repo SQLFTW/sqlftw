@@ -595,6 +595,20 @@ class TableCommandsParser
                         $tokenList->expectedAnyKeyword(...$keywords);
                     }
                     $tableOptions[$option] = $value;
+                    $position = $tokenList->getPosition();
+                    $trailingComma = $tokenList->hasComma();
+                    do {
+                        [$option, $value] = $this->parseTableOption($tokenList->resetPosition($position));
+                        if ($option === null) {
+                            break;
+                        }
+                        $tableOptions[$option] = $value;
+                        $position = $tokenList->getPosition();
+                        $trailingComma = $tokenList->hasComma();
+                    } while (true);
+                    if ($trailingComma) {
+                        $tokenList->resetPosition($position);
+                    }
             }
         } while ($tokenList->hasComma());
 
