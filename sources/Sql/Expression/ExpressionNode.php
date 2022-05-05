@@ -33,6 +33,7 @@ use SqlFtw\Sql\SqlSerializable;
  *     - ValueLiteral - e.g. 1, 1.23, 'string', true, false, null...
  *   - MatchExpression - MATCH x AGAINST y
  *   - OperatorExpression:
+ *     - AssignOperator - variable := expr
  *     - BinaryOperator - e.g. x + y
  *     - TernaryOperator - e.g. x BETWEEN y AND z
  *     - UnaryOperator - e.g. NOT x

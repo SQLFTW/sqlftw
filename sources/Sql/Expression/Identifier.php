@@ -14,6 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\QualifiedName;
 use function is_string;
+use function preg_match;
 
 /**
  * e.g. `name`, @name, *
@@ -39,6 +40,11 @@ class Identifier implements ExpressionNode
     public function getName()
     {
         return $this->name;
+    }
+
+    public function isUserVariable(): bool
+    {
+        return is_string($this->name) && preg_match('~^@[^@]~', $this->name);
     }
 
     public function serialize(Formatter $formatter): string

@@ -18,6 +18,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Ddl\UserExpression;
+use SqlFtw\Sql\Expression\AssignOperator;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
 use SqlFtw\Sql\Expression\BuiltInFunction;
@@ -78,9 +79,26 @@ class ExpressionParser
     /** @var ParserFactory */
     private $parserFactory;
 
+    /** @var bool */
+    private $assignAllowed = false;
+
     public function __construct(ParserFactory $parserFactory)
     {
         $this->parserFactory = $parserFactory;
+    }
+
+    /**
+     * assign_expr:
+     *    [user_variable :=] expr
+     */
+    public function parseAssignExpression(TokenList $tokenList): ExpressionNode
+    {
+        $this->assignAllowed = true;
+        try {
+            return $this->parseExpression($tokenList);
+        } finally {
+            $this->assignAllowed = false;
+        }
     }
 
     /**
@@ -126,6 +144,10 @@ class ExpressionParser
                 : new ValueLiteral($keyword === Keyword::TRUE);
 
             return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IS] : [Operator::IS], $right);
+        } elseif ($this->assignAllowed && $left instanceof Identifier && $left->isUserVariable() && $tokenList->hasOperator(Operator::ASSIGN)) {
+            $right = $this->parseExpression($tokenList);
+
+            return new AssignOperator($left, $right);
         } else {
             return $left;
         }

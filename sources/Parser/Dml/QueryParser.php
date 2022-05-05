@@ -238,25 +238,10 @@ class QueryParser
 
         $what = [];
         do {
-            $assignVariable = null;
             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                 $expression = new Identifier('*');
             } else {
-                $position = $tokenList->getPosition();
-                $expression = $this->expressionParser->parseExpression($tokenList);
-                // SELECT @var := col1, ...
-                if ($tokenList->hasOperator(Operator::ASSIGN)) {
-                    if ($expression instanceof Identifier) {
-                        $name = $expression->getName();
-                        if (!preg_match('~@[^@]+~', $name)) {
-                            $tokenList->resetPosition($position)->expected("Before ':=' operator, a user variable starting with single '@' character was expected. '$name' found instead.");
-                        }
-                        $assignVariable = $expression->getName();
-                        $expression = $this->expressionParser->parseExpression($tokenList);
-                    } else {
-                        $tokenList->resetPosition($position)->expected("Before ':=' operator, a user variable starting with single '@' character was expected. Expression found instead.");
-                    }
-                }
+                $expression = $this->expressionParser->parseAssignExpression($tokenList);
             }
             $window = null;
             if ($tokenList->hasKeyword(Keyword::OVER)) {
@@ -272,7 +257,7 @@ class QueryParser
             } else {
                 $alias = $tokenList->getNonKeywordName();
             }
-            $what[] = new SelectExpression($expression, $alias, $assignVariable, $window);
+            $what[] = new SelectExpression($expression, $alias, $window);
         } while ($tokenList->hasComma());
 
         $into = null;

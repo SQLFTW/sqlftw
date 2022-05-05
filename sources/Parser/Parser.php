@@ -47,6 +47,9 @@ class Parser
         return $this->settings;
     }
 
+    /**
+     * @internal debug info
+     */
     public function getLastTokenList(): TokenList
     {
         return $this->lastTokenList;
