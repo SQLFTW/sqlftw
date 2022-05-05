@@ -300,8 +300,17 @@ class ExpressionParser
         if (($operator === Operator::PLUS || $operator === Operator::MINUS) && $tokenList->hasKeyword(Keyword::INTERVAL)) {
             $right = new IntervalLiteral($this->parseInterval($tokenList));
 
-            return new BinaryOperator($left, [$operator], $right);
+            // right recursion of interval_expr
+            $left = new BinaryOperator($left, [$operator], $right);
+            while ($operator = $tokenList->getAnyOperator(Operator::PLUS, Operator::MINUS)) {
+                $tokenList->expectKeyword(Keyword::INTERVAL);
+                $right = new IntervalLiteral($this->parseInterval($tokenList));
+                $left = new BinaryOperator($left, [$operator], $right);
+            }
+
+            return $left;
         }
+        // full recursion of bit_expr
         $right = $this->parseBitExpression($tokenList);
 
         return new BinaryOperator($left, [$operator], $right);
