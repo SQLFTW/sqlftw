@@ -83,29 +83,21 @@ class InsertCommandParser
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
 
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-            $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::VALUES);
-            $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
-            $update = $this->parseOnDuplicateKeyUpdate($tokenList);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-
-            return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
-        } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE)) { // no Keyword::VALUES!
-            $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
+        if ($tokenList->hasAnyKeyword(Keyword::VALUE, Keyword::VALUES)) {
+            $rows = $this->parseRows($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
+            return new InsertValuesCommand($table, $rows, $columns, $partitions, $priority, $ignore, $update);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $values = $this->parseAssignments($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
             return new InsertSetCommand($table, $values, $columns, $partitions, $priority, $ignore, $update);
         } else {
-            $tokenList->expectAnyKeyword(Keyword::VALUE, Keyword::VALUES);
-            $rows = $this->parseRows($tokenList);
+            $query = $this->queryParser->parseQuery($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertValuesCommand($table, $rows, $columns, $partitions, $priority, $ignore, $update);
+            return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
         }
     }
 
