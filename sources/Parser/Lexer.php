@@ -146,7 +146,7 @@ class Lexer
         $column = 1;
 
         $delimiter = $this->settings->getDelimiter();
-        /** @var Token|null $previous */
+        /** @var Token|null $previous - last significant token parsed (comments and whitespace are skipped here) */
         $previous = null;
         $condition = null;
 
@@ -290,7 +290,7 @@ class Lexer
                             break;
                         }
                     }
-                    yield new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+                    yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
                     break;
                 case '#':
                     // # comment
@@ -704,9 +704,9 @@ class Lexer
                         yield new Token(T::KEYWORD, $start, $upper, $value, $condition);
                         $start = $position;
                         $whitespace = $this->parseWhitespace($string, $position, $column, $row);
-                        $previous = new Token(T::WHITESPACE, $start, $whitespace, null, $condition);
+                        $whitespace = new Token(T::WHITESPACE, $start, $whitespace, null, $condition);
                         if ($this->withWhitespace) {
-                            yield $previous;
+                            yield $whitespace;
                         }
                         $start = $position;
                         $del = '';
