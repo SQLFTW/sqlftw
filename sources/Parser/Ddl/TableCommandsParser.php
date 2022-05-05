@@ -400,14 +400,8 @@ class TableCommandsParser
                     break;
                 case Keyword::DROP:
                     $second = $tokenList->get(TokenType::KEYWORD);
-                    $second = $second !== null ? $second->value : null;
-                    switch ($second) {
-                        case null:
-                        case Keyword::COLUMN:
-                            // DROP [COLUMN] col_name
-                            $tokenList->passKeyword(Keyword::COLUMN);
-                            $actions[] = new DropColumnAction($tokenList->expectName());
-                            break;
+                    $secondValue = $second !== null ? $second->value : null;
+                    switch ($secondValue) {
                         case Keyword::INDEX:
                         case Keyword::KEY:
                             // DROP {INDEX|KEY} index_name
@@ -439,8 +433,19 @@ class TableCommandsParser
                             $tokenList->expectKeyword(Keyword::KEY);
                             $actions[] = new DropPrimaryKeyAction();
                             break;
+                        case null:
+                        case Keyword::COLUMN:
+                            // DROP [COLUMN] col_name
+                            $tokenList->passKeyword(Keyword::COLUMN);
+                            $actions[] = new DropColumnAction($tokenList->expectName());
+                            break;
                         default:
-                            $tokenList->expectedAnyKeyword(Keyword::COLUMN, Keyword::INDEX, Keyword::KEY, Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY);
+                            if (($second->type & TokenType::UNQUOTED_NAME) !== 0) {
+                                // DROP [COLUMN] col_name
+                                $actions[] = new DropColumnAction($second->original);
+                            } else {
+                                $tokenList->expectedAnyKeyword(Keyword::COLUMN, Keyword::INDEX, Keyword::KEY, Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY);
+                            }
                     }
                     break;
                 case Keyword::ENABLE:
