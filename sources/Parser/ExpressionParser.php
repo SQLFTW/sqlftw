@@ -236,18 +236,17 @@ class ExpressionParser
 
         $not = $tokenList->hasKeyword(Keyword::NOT);
 
-        $operator = $tokenList->getAnyKeyword(Keyword::REGEXP, Keyword::RLIKE);
-        if ($operator !== null) {
-            $right = $this->parseBitExpression($tokenList);
+        $position = $tokenList->getPosition();
+        if ($tokenList->hasKeyword(Keyword::IN)) {
+            // lonely IN can be a named parameter "POSITION(substr IN str)"
+            if (!$not && !$tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                $tokenList->resetPosition($position);
 
-            return new BinaryOperator($left, $not ? [Operator::NOT, $operator] : [$operator], $right);
-        } elseif ($tokenList->hasKeyword(Keyword::BETWEEN)) {
-            $middle = $this->parseBitExpression($tokenList);
-            $tokenList->expectKeyword(Keyword::AND);
-            $right = $this->parseBitExpression($tokenList);
+                return $left;
+            }
 
-            return new TernaryOperator($left, $not ? [Operator::NOT, Operator::BETWEEN] : [Operator::BETWEEN], $middle, Operator::AND, $right);
-        } elseif ($tokenList->hasKeyword(Keyword::IN)) {
+            $tokenList->resetPosition($position);
+            $tokenList->expectKeyword(Keyword::IN);
             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 $subquery = new Parentheses($this->parseSubquery($tokenList->resetPosition(-1)));
@@ -260,7 +259,17 @@ class ExpressionParser
 
                 return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IN] : [Operator::IN], $expressions);
             }
-        } elseif ($tokenList->hasKeyword(Keyword::LIKE)) {
+        }
+
+        if ($tokenList->hasKeyword(Keyword::BETWEEN)) {
+            $middle = $this->parseBitExpression($tokenList);
+            $tokenList->expectKeyword(Keyword::AND);
+            $right = $this->parseBitExpression($tokenList);
+
+            return new TernaryOperator($left, $not ? [Operator::NOT, Operator::BETWEEN] : [Operator::BETWEEN], $middle, Operator::AND, $right);
+        }
+
+        if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $second = $this->parseSimpleExpression($tokenList);
             if ($tokenList->hasKeyword(Keyword::ESCAPE)) {
                 $third = $this->parseSimpleExpression($tokenList);
@@ -269,9 +278,16 @@ class ExpressionParser
             } else {
                 return new BinaryOperator($left, $not ? [Operator::NOT, Operator::LIKE] : [Operator::LIKE], $second);
             }
-        } else {
-            return $left;
         }
+
+        $operator = $tokenList->getAnyKeyword(Keyword::REGEXP, Keyword::RLIKE);
+        if ($operator !== null) {
+            $right = $this->parseBitExpression($tokenList);
+
+            return new BinaryOperator($left, $not ? [Operator::NOT, $operator] : [$operator], $right);
+        }
+
+        return $left;
     }
 
     /**
