@@ -13,6 +13,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\Re;
+use Dogma\Str;
 use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Parser\TokenType as T;
@@ -677,6 +678,13 @@ class Lexer
                             break;
                         }
                     }
+                    $yieldDelimiter = false;
+                    if (Str::endsWith($value, $delimiter)) {
+                        // fucking name-like delimiter after name without whitespace
+                        $value = substr($value, 0, -strlen($delimiter));
+                        $yieldDelimiter = true;
+                    }
+
                     $upper = strtoupper($value);
                     if ($upper === 'NULL') {
                         yield $previous = new Token(T::KEYWORD | T::VALUE, $start, 'NULL', $value, $condition);
@@ -732,6 +740,10 @@ class Lexer
                         yield $previous = new Token(T::SYMBOL | T::DELIMITER_DEFINITION, $start, $delimiter, $condition);
                     } else {
                         yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $value, $value, $condition);
+                    }
+
+                    if ($yieldDelimiter) {
+                        yield new Token(T::SYMBOL | T::DELIMITER, $start, $delimiter, null, $condition);
                     }
                     break;
                 case '_':
