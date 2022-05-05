@@ -15,7 +15,6 @@ use SqlFtw\Platform\Features\PlatformFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
 use function in_array;
 use function str_replace;
-use function strtoupper;
 use function ucfirst;
 
 class Platform
