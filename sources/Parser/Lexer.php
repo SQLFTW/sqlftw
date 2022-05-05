@@ -96,6 +96,9 @@ class Lexer
     /** @var array<string, int> */
     private $operatorKeywordsKey;
 
+    /** @var array<string, int> */
+    private $functionsKey;
+
     public function __construct(
         PlatformSettings $settings,
         bool $withComments = true,
@@ -118,6 +121,7 @@ class Lexer
         $this->keywordsKey = array_flip($features->getNonReservedWords());
         $this->operatorsKey = array_flip($features->getOperators());
         $this->operatorKeywordsKey = array_flip($features->getOperatorKeywords());
+        $this->functionsKey = array_flip($features->getBuiltInFunctions());
     }
 
     /**
@@ -695,6 +699,8 @@ class Lexer
                     } elseif (isset($this->reservedKey[$upper])) {
                         if (isset($this->operatorKeywordsKey[$upper])) {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::OPERATOR, $start, $upper, $value, $condition);
+                        } elseif (isset($this->functionsKey[$upper])) {
+                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, $start, $upper, $value, $condition);
                         } else {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED, $start, $upper, $value, $condition);
                         }

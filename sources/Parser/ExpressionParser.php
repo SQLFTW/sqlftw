@@ -497,9 +497,6 @@ class ExpressionParser
                         $expression = new Identifier(new ColumnName($name1, null, null));
                     }
                     // phpcs:disable SlevomatCodingStandard.ControlStructures.AssignmentInCondition
-                } elseif (($name1 = $tokenList->get(TokenType::RESERVED)) !== null && $tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-                    // function_call
-                    $expression = $this->parseFunctionCall($tokenList, $name1->value); // @phpstan-ignore-line string
                 } else {
                     // literal
                     $expression = $this->parseLiteral($tokenList);
