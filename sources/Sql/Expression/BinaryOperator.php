@@ -50,7 +50,7 @@ use function is_array;
  * left -> right
  * left ->> right
  */
-class BinaryOperator implements ExpressionNode
+class BinaryOperator implements OperatorExpression
 {
     use StrictBehaviorMixin;
 
@@ -82,11 +82,6 @@ class BinaryOperator implements ExpressionNode
         $this->left = $left;
         $this->operator = $operator;
         $this->right = $right;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::BINARY_OPERATOR);
     }
 
     public function getLeft(): ExpressionNode

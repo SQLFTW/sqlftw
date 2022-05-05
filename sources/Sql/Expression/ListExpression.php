@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * ..., ..., ...
+ */
 class ListExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -25,11 +28,6 @@ class ListExpression implements ExpressionNode
     public function __construct(array $items)
     {
         $this->items = $items;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::LIST);
     }
 
     /**

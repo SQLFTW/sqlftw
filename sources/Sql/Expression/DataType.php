@@ -20,6 +20,9 @@ use function is_array;
 use function is_int;
 use function is_null;
 
+/**
+ * e.g. CAST(expr AS type)
+ */
 class DataType implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -77,11 +80,6 @@ class DataType implements ExpressionNode
         $this->zerofill = $zerofill;
         $this->charset = $charset;
         $this->collation = $collation;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::DATA_TYPE);
     }
 
     /**

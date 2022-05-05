@@ -13,6 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Collation;
 
+/**
+ * expression COLLATE collation
+ */
 class CollateExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -27,11 +30,6 @@ class CollateExpression implements ExpressionNode
     {
         $this->expression = $expression;
         $this->collation = $collation;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::CURLY_EXPRESSION);
     }
 
     public function getExpression(): ExpressionNode

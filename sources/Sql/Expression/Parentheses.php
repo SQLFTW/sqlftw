@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * (...)
+ */
 class Parentheses implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -22,11 +25,6 @@ class Parentheses implements ExpressionNode
     public function __construct(ExpressionNode $contents)
     {
         $this->contents = $contents;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::PARENTHESES);
     }
 
     public function getContents(): ExpressionNode

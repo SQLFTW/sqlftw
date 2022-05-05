@@ -9,19 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
-use SqlFtw\Formatter\Formatter;
-
-/**
- * ?
- */
-class Placeholder implements ExpressionNode
+interface OperatorExpression extends ExpressionNode
 {
-    use StrictBehaviorMixin;
-
-    public function serialize(Formatter $formatter): string
-    {
-        return '?';
-    }
 
 }

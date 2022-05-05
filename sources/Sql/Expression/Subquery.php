@@ -13,6 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 
+/**
+ * (SELECT ...)
+ */
 class Subquery implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -23,11 +26,6 @@ class Subquery implements ExpressionNode
     public function __construct(Query $subquery)
     {
         $this->subquery = $subquery;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::SUBQUERY);
     }
 
     public function getSubquery(): Query

@@ -15,6 +15,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 use function count;
 
+/**
+ * CASE x THEN y ELSE z END
+ */
 class CaseExpression implements Statement, ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -39,11 +42,6 @@ class CaseExpression implements Statement, ExpressionNode
         $this->condition = $condition;
         $this->values = $values;
         $this->results = $results;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::CASE_EXPRESSION);
     }
 
     public function getCondition(): ?ExpressionNode

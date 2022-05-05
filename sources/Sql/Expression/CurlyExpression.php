@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * {identifier expr}
+ */
 class CurlyExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -26,11 +29,6 @@ class CurlyExpression implements ExpressionNode
     {
         $this->name = $name;
         $this->expression = $expression;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::CURLY_EXPRESSION);
     }
 
     public function getName(): string

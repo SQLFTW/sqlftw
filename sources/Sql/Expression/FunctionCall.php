@@ -15,6 +15,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 
+/**
+ * e.g. AVG([DISTINCT] x) OVER ...
+ */
 class FunctionCall implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -36,11 +39,6 @@ class FunctionCall implements ExpressionNode
 
         $this->function = $function;
         $this->arguments = $arguments;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::FUNCTION_CALL);
     }
 
     /**

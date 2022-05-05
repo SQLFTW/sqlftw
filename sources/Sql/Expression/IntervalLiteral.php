@@ -15,6 +15,9 @@ use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * e.g. INTERVAL 6 DAYS
+ */
 class IntervalLiteral implements Literal
 {
     use StrictBehaviorMixin;
@@ -30,11 +33,6 @@ class IntervalLiteral implements Literal
         Check::types($value, [TimeInterval::class, DateTimeSpan::class, DateInterval::class]);
 
         $this->value = $value;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::PARENTHESES);
     }
 
     /**

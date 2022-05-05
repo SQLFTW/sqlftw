@@ -17,6 +17,9 @@ use function str_repeat;
 use function strlen;
 use function substr;
 
+/**
+ * e.g. 0b01101110
+ */
 class BinaryLiteral implements Literal
 {
     use StrictBehaviorMixin;
@@ -27,11 +30,6 @@ class BinaryLiteral implements Literal
     public function __construct(string $value)
     {
         $this->value = $value;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::LITERAL);
     }
 
     public function getValue(): string

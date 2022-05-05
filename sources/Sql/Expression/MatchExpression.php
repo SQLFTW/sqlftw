@@ -14,6 +14,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\ColumnName;
 
+/**
+ * MATCH x AGAINST y
+ */
 class MatchExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -41,11 +44,6 @@ class MatchExpression implements ExpressionNode
         $this->query = $query;
         $this->mode = $mode;
         $this->queryExpansion = $queryExpansion;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::MATCH_EXPRESSION);
     }
 
     /**

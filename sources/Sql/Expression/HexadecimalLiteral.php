@@ -18,6 +18,9 @@ use function str_repeat;
 use function strlen;
 use function substr;
 
+/**
+ * e.g. 0x001F
+ */
 class HexadecimalLiteral implements Literal
 {
     use StrictBehaviorMixin;
@@ -28,11 +31,6 @@ class HexadecimalLiteral implements Literal
     public function __construct(string $value)
     {
         $this->value = $value;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::LITERAL);
     }
 
     public function getValue(): string

@@ -9,6 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
+/**
+ * 1, 'x', TRUE, NULL
+ */
 interface Literal extends ExpressionNode
 {
 

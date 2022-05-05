@@ -19,7 +19,7 @@ use SqlFtw\Formatter\Formatter;
  * -right
  * +right
  */
-class UnaryOperator implements ExpressionNode
+class UnaryOperator implements OperatorExpression
 {
     use StrictBehaviorMixin;
 
@@ -35,11 +35,6 @@ class UnaryOperator implements ExpressionNode
 
         $this->operator = $operator;
         $this->right = $right;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::UNARY_OPERATOR);
     }
 
     public function getOperator(): string

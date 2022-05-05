@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * e.g. DEFAULT, UNKNOWN, ON, OFF...
+ */
 class KeywordLiteral implements Literal
 {
     use StrictBehaviorMixin;
@@ -22,11 +25,6 @@ class KeywordLiteral implements Literal
     public function __construct(string $value)
     {
         $this->value = $value;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::LITERAL);
     }
 
     public function getValue(): string

@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * ROW (...[, ...])
+ */
 class RowExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -25,11 +28,6 @@ class RowExpression implements ExpressionNode
     public function __construct(array $contents)
     {
         $this->contents = $contents;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::PARENTHESES);
     }
 
     /**

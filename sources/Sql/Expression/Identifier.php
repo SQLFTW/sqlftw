@@ -15,6 +15,9 @@ use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\QualifiedName;
 use function is_string;
 
+/**
+ * e.g. `name`, @name, *
+ */
 class Identifier implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -28,11 +31,6 @@ class Identifier implements ExpressionNode
     public function __construct($name)
     {
         $this->name = $name;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::IDENTIFIER);
     }
 
     /**

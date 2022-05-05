@@ -18,7 +18,7 @@ use function is_array;
  * left BETWEEN middle AND right
  * left LIKE middle ESCAPE right
  */
-class TernaryOperator implements ExpressionNode
+class TernaryOperator implements OperatorExpression
 {
     use StrictBehaviorMixin;
 
@@ -62,11 +62,6 @@ class TernaryOperator implements ExpressionNode
         $this->middle = $middle;
         $this->rightOperator = $rightOperator;
         $this->right = $right;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::TERNARY_OPERATOR);
     }
 
     public function getLeft(): ExpressionNode

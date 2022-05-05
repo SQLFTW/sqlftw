@@ -185,7 +185,7 @@ class ExpressionParser
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
             $tokenList->expectKeyword(Keyword::NULL);
-            $right = new KeywordLiteral(Keyword::NULL);
+            $right = new ValueLiteral(null);
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         } else {
@@ -778,11 +778,11 @@ class ExpressionParser
             return new HexadecimalLiteral($value);
         } elseif (($token->type & TokenType::KEYWORD) !== 0) {
             if ($token->value === Keyword::NULL) {
-                return new KeywordLiteral(Keyword::NULL);
+                return new ValueLiteral(null);
             } elseif ($token->value === Keyword::TRUE) {
-                return true;
+                return new ValueLiteral(true);
             } elseif ($token->value === Keyword::FALSE) {
-                return false;
+                return new ValueLiteral(false);
             } elseif ($token->value === Keyword::DEFAULT) {
                 return new KeywordLiteral(Keyword::DEFAULT);
             } elseif ($token->value === Keyword::ON || $token->value === Keyword::OFF) {

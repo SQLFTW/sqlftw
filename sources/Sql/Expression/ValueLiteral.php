@@ -20,24 +20,19 @@ class ValueLiteral implements Literal
 {
     use StrictBehaviorMixin;
 
-    /** @var bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval */
+    /** @var bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval|null */
     private $value;
 
     /**
-     * @param bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval $value
+     * @param bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval|null $value
      */
     public function __construct($value)
     {
         $this->value = $value;
     }
 
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::LITERAL);
-    }
-
     /**
-     * @return bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval
+     * @return bool|int|float|string|DateTimeInterface|Date|Time|DateTimeSpan|TimeInterval|null
      */
     public function getValue()
     {

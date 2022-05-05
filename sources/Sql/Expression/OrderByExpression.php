@@ -17,6 +17,9 @@ use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
 
+/**
+ * {col_name | expr | position} [ASC | DESC]
+ */
 class OrderByExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -51,11 +54,6 @@ class OrderByExpression implements ExpressionNode
         $this->expression = $expression;
         $this->position = $position;
         $this->collation = $collation;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::ORDER_BY_EXPRESSION);
     }
 
     public function getOrder(): ?Order

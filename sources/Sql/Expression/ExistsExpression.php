@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * EXISTS (SELECT ...)
+ */
 class ExistsExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
@@ -22,11 +25,6 @@ class ExistsExpression implements ExpressionNode
     public function __construct(Subquery $subquery)
     {
         $this->subquery = $subquery;
-    }
-
-    public function getType(): NodeType
-    {
-        return NodeType::get(NodeType::PARENTHESES);
     }
 
     public function getSubquery(): Subquery
