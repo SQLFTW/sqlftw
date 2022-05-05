@@ -19,6 +19,7 @@ use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Sql\Keyword;
 use function array_flip;
 use function array_keys;
 use function array_merge;
@@ -185,9 +186,8 @@ class Lexer
                         }
                     }
 
-                    $previous = new Token(T::WHITESPACE, $start, $value, null, $condition);
                     if ($this->withWhitespace) {
-                        yield $previous;
+                        yield new Token(T::WHITESPACE, $start, $value, null, $condition);
                     }
                     break;
                 case '(':
@@ -445,7 +445,7 @@ class Lexer
                         yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
                         break;
                     }
-                    $unaryCanFollow = ($previous->type & T::SYMBOL) !== 0 && ($previous->type & T::RIGHT_PARENTHESIS) === 0;
+                    $unaryCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($unaryCanFollow && isset(self::$numbersKey[$next])) {
                         [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '-');
                         if ($value !== null) {
@@ -468,7 +468,7 @@ class Lexer
                     break;
                 case '+':
                     $next = $position < $length ? $string[$position] : '';
-                    $unaryCanFollow = ($previous->type & T::SYMBOL) !== 0 && ($previous->type & T::RIGHT_PARENTHESIS) === 0;
+                    $unaryCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($unaryCanFollow && isset(self::$numbersKey[$next])) {
                         [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '+');
                         if ($value !== null) {
