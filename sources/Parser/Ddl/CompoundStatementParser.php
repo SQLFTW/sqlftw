@@ -350,8 +350,6 @@ class CompoundStatementParser
      */
     private function parseDeclare(TokenList $tokenList)
     {
-        $tokenList->expectKeyword(Keyword::DECLARE);
-
         /** @var HandlerAction|null $action */
         $action = $tokenList->getKeywordEnum(HandlerAction::class);
         if ($action !== null) {
