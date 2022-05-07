@@ -44,7 +44,7 @@ class Identifier implements ExpressionNode
 
     public function isUserVariable(): bool
     {
-        return is_string($this->name) && preg_match('~^@[^@]~', $this->name);
+        return is_string($this->name) && preg_match('~^@[^@]~', $this->name) === 1;
     }
 
     public function serialize(Formatter $formatter): string

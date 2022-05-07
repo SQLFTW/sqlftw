@@ -16,6 +16,7 @@ use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
+use function is_string;
 
 /**
  * {col_name | expr | position} [ASC | DESC]
@@ -39,9 +40,12 @@ class OrderByExpression implements ExpressionNode
     /** @var Collation|null */
     private $collation;
 
+    /**
+     * @param string|QualifiedName|ColumnName|null $column
+     */
     public function __construct(
         ?Order $order,
-        ?ColumnName $column,
+        $column,
         ?ExpressionNode $expression = null,
         ?int $position = null,
         ?Collation $collation = null
@@ -86,7 +90,9 @@ class OrderByExpression implements ExpressionNode
 
     public function serialize(Formatter $formatter): string
     {
-        if ($this->column !== null) {
+        if (is_string($this->column)) {
+            $result = $formatter->formatName($this->column);
+        } elseif ($this->column !== null) {
             $result = $this->column->serialize($formatter);
         } elseif ($this->expression !== null) {
             $result = $this->expression->serialize($formatter);

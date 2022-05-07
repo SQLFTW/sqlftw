@@ -11,16 +11,15 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
-use SqlFtw\Sql\QualifiedName;
 use function array_values;
 
 class ValuesCommand implements SimpleQuery
 {
 
-    /** @var QualifiedName */
+    /** @var non-empty-array<Row> */
     private $rows;
 
-    /** @var string|null */
+    /** @var OrderByExpression[]|null */
     private $orderBy;
 
     /** @var int|null */
@@ -46,6 +45,9 @@ class ValuesCommand implements SimpleQuery
         $this->into = $into;
     }
 
+    /**
+     * @return non-empty-array<Row>
+     */
     public function getRows(): array
     {
         return $this->rows;

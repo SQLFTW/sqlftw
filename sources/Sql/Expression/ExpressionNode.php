@@ -18,6 +18,7 @@ use SqlFtw\Sql\SqlSerializable;
  *
  * ExpressionNode hierarchy:
  *   - CaseExpression - CASE x THEN y ELSE z END
+ *   - Charset - e.g. in CONVERT(expr USING charset_name)
  *   - CollateExpression - expression COLLATE collation
  *   - CurlyExpression - {identifier expr}
  *   - DataType - e.g. CAST(expr AS type)
@@ -42,6 +43,9 @@ use SqlFtw\Sql\SqlSerializable;
  *   - Placeholder - ?
  *   - RowExpression - ROW (...[, ...])
  *   - Subquery - (SELECT ...)
+ *
+ * todo: make Collation, ColumnName, QualifiedName, UserName part of the Expression hierarchy
+ * todo: introduce UserVariable (@foo), SystemVariable (@GLOBAL.foo) ???
  */
 interface ExpressionNode extends SqlSerializable
 {

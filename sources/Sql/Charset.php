@@ -9,9 +9,10 @@
 
 namespace SqlFtw\Sql;
 
+use SqlFtw\Sql\Expression\ExpressionNode;
 use function array_search;
 
-class Charset extends SqlEnum
+class Charset extends SqlEnum implements ExpressionNode
 {
 
     public const ARMSCII_8 = 'armscii8';

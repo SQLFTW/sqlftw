@@ -46,7 +46,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
 use function array_pop;
-use function preg_match;
+use function count;
 
 class QueryParser
 {
@@ -113,13 +113,14 @@ class QueryParser
             $queries[] = $this->parseQueryBlock($tokenList);
         }
 
-        if (count($queries) === 1) {
+        if (count($queries) === 1 || count($types) === 0) {
             return $queries[0];
         }
 
         [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
 
         // order, limit and into of last unparenthesized query belong to the whole union result
+        /** @var Query $lastQuery PHPStan assumes it might be null :E */
         $lastQuery = array_pop($queries);
         if ($lastQuery instanceof SimpleQuery) {
             $queryOrderBy = $lastQuery->getOrderBy();
@@ -372,7 +373,7 @@ class QueryParser
     public function parseTable(TokenList $tokenList): TableCommand
     {
         $tokenList->expectKeyword(Keyword::TABLE);
-        $name = $tokenList->expectQualifiedName();
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);
 
@@ -401,10 +402,10 @@ class QueryParser
             $values = [];
             do {
                 $values[] = $this->expressionParser->parseExpression($tokenList);
-            } while($tokenList->hasComma());
+            } while ($tokenList->hasComma());
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $rows[] = new Row($values);
-        } while($tokenList->hasComma());
+        } while ($tokenList->hasComma());
 
         [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
 
@@ -412,13 +413,13 @@ class QueryParser
     }
 
     /**
-     * @return array{OrderByExpression|null, int|null, int|null, SelectInto|null}
+     * @return array{OrderByExpression[]|null, int|null, int|null, SelectInto|null}
      */
-    private function parseOrderLimitOffsetInto(TokenList $tokenList, $parseOffset = true): array
+    private function parseOrderLimitOffsetInto(TokenList $tokenList, bool $parseOffset = true): array
     {
         $orderBy = $limit = $offset = $into = null;
         if ($tokenList->hasKeywords(Keyword::ORDER, Keyword::BY)) {
-            $orderBy = $tokenList->expectName();
+            $orderBy = $this->expressionParser->parseOrderBy($tokenList);
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
             $limit = $tokenList->expectInt();
@@ -426,7 +427,7 @@ class QueryParser
                 $offset = $tokenList->expectInt();
             }
         }
-        if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
+        if ($tokenList->hasKeyword(Keyword::INTO)) {
             $into = $this->parseInto($tokenList);
         }
 

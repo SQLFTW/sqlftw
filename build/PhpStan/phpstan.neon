@@ -13,7 +13,7 @@ parameters:
 
     ignoreErrors:
         # complicated...
-        - '~Property SqlFtw\\Sql\\Ddl\\DataType::\$(size|values) \(array<(int|string)>(\|int)?\|null\) does not accept~'
+        #- '~Property SqlFtw\\Sql\\Ddl\\DataType::\$(size|values) \(array<(int|string)>(\|int)?\|null\) does not accept~'
         - '~Parameter #1 \$strings of method SqlFtw\\Formatter\\Formatter::formatStringList\(\) expects array<string>, array<int\|string> given.~'
 
 

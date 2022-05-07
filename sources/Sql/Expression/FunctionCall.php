@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use function is_int;
 
 /**
  * e.g. AVG([DISTINCT] x) OVER ...
@@ -22,7 +23,7 @@ class FunctionCall implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName */
+    /** @var QualifiedName|BuiltInFunction */
     private $function;
 
     /** @var ExpressionNode[] */

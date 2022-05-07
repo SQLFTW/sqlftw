@@ -176,7 +176,7 @@ class TokenList
      * @phpstan-impure
      * @param mixed $value
      */
-    public function get(int $tokenType = null, $value = null): ?Token
+    public function get(?int $tokenType = null, $value = null): ?Token
     {
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;

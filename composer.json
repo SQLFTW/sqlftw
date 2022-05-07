@@ -30,6 +30,7 @@
         "cf": "@check:fast",
         "t": "@tests:run",
         "tc": "@tests:coverage",
+        "ps": "@phpstan:run",
         "cs": [
             "@phpcs:src",
             "@phpcs:tests"
@@ -69,7 +70,7 @@
         ],
         "tests:coverage": "php vendor/nette/tester/src/tester tests -c tests --colors 1 -p phpdbg --coverage tests/coverage.html --coverage-src sources",
 
-        "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon",
+        "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
         "phpstan:all": [
             "php81 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
             "php80 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",

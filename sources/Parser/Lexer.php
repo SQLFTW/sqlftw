@@ -60,7 +60,7 @@ class Lexer
 
     public const UUID_REGEXP = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i';
 
-    /** @var array<string, int> */
+    /** @var array<string, int> (this is in fact array<int, int>, but PHPStan is unable to cope with the auto-casting of numeric string keys) */
     private static $numbersKey;
 
     /** @var array<string, int> */
@@ -105,7 +105,7 @@ class Lexer
         bool $withWhitespace = false
     ) {
         if (self::$numbersKey === null) {
-            self::$numbersKey = array_flip(self::NUMBERS);
+            self::$numbersKey = array_flip(self::NUMBERS); // @phpstan-ignore-line
             self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
             self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
             self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
@@ -150,8 +150,8 @@ class Lexer
         $column = 1;
 
         $delimiter = $this->settings->getDelimiter();
-        /** @var Token|null $previous - last significant token parsed (comments and whitespace are skipped here) */
-        $previous = null;
+        // last significant token parsed (comments and whitespace are skipped here)
+        $previous = new Token(TokenType::END, 0);
         $condition = null;
 
         while ($position < $length) {
@@ -347,7 +347,7 @@ class Lexer
                         if ($condition !== null) {
                             throw new ParserException('Comment inside conditional comment');
                         }
-                        if (preg_match('~^[Mm]?!(?:[0-9]{5,6})?~', $string, $m, 0, $position)) {
+                        if (preg_match('~^[Mm]?!(?:[0-9]{5,6})?~', $string, $m, 0, $position) === 1) {
                             $versionId = strtoupper(str_replace('!', '', $m[0]));
                             if ($this->platform->interpretOptionalComment($versionId)) {
                                 $condition = $versionId;

@@ -649,6 +649,9 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::UTC_TIMESTAMP,
     ];
 
+    /**
+     * @return array<string, class-string|false|null>
+     */
     public function getNamedParams(): array
     {
         return self::$namedParams[$this->getValue()] ?? [];

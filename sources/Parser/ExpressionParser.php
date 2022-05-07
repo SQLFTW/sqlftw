@@ -32,11 +32,11 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalLiteral;
+use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
-use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Parentheses;
@@ -58,6 +58,7 @@ use function in_array;
 use function is_int;
 use function sprintf;
 use function strlen;
+use function strtoupper;
 use function substr;
 
 class ExpressionParser
@@ -450,7 +451,7 @@ class ExpressionParser
                 /** @var string $variableName */
                 $variableName = $variable->value;
                 // variable
-                if (in_array(strtoupper($variableName), ['@@SESSION', '@@GOBAL', '@@PERSIST', '@@PERSIST_ONLY'])) {
+                if (in_array(strtoupper($variableName), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
                     $tokenList->expect(TokenType::DOT);
                     // todo: better type here
                     $variableName .= '.' . $tokenList->expectName();
@@ -654,6 +655,7 @@ class ExpressionParser
     private function parseJsonTable(TokenList $tokenList, BuiltInFunction $function): FunctionCall
     {
         // todo:
+        return new FunctionCall(new QualifiedName('foo'), []);
     }
 
     /**
@@ -673,7 +675,7 @@ class ExpressionParser
      *   frame_units frame_extent
      *
      * frame_units:
-      *   {ROWS | RANGE}
+     *   {ROWS | RANGE}
      *
      * frame_extent:
      *   {frame_start | frame_between}
@@ -692,6 +694,7 @@ class ExpressionParser
     private function parseOver(TokenList $tokenList): int
     {
         // todo:
+        return 0;
     }
 
     /**

@@ -14,6 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function array_values;
+use function count;
 
 class UnionExpression implements Query
 {

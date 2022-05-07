@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Dml\Query\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\QualifiedName;
 
 class CreateViewCommand implements ViewCommand, SchemaObjectCommand
@@ -24,8 +24,8 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
     /** @var QualifiedName */
     private $name;
 
-    /** @var SelectCommand */
-    private $body;
+    /** @var Query */
+    private $query;
 
     /** @var string[]|null */
     private $columns;
@@ -50,7 +50,7 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
      */
     public function __construct(
         QualifiedName $name,
-        SelectCommand $body,
+        Query $query,
         ?array $columns = null,
         ?UserExpression $definer = null,
         ?SqlSecurity $security = null,
@@ -59,7 +59,7 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
         bool $orReplace = false
     ) {
         $this->name = $name;
-        $this->body = $body;
+        $this->query = $query;
         $this->columns = $columns;
         $this->definer = $definer;
         $this->security = $security;
@@ -73,9 +73,9 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
         return $this->name;
     }
 
-    public function getBody(): SelectCommand
+    public function getQuery(): Query
     {
-        return $this->body;
+        return $this->query;
     }
 
     /**
@@ -131,7 +131,7 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
         if ($this->columns !== null) {
             $result .= ' (' . $formatter->formatNamesList($this->columns) . ')';
         }
-        $result .= " AS\n" . $this->body->serialize($formatter);
+        $result .= " AS\n" . $this->query->serialize($formatter);
 
         if ($this->checkOption !== null) {
             $result .= ' WITH ' . $this->checkOption->serialize($formatter);

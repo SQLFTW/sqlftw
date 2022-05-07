@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Features\PlatformFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
 use function in_array;
+use function ltrim;
 use function str_replace;
 use function ucfirst;
 

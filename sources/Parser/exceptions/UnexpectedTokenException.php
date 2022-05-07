@@ -17,6 +17,8 @@ use function array_map;
 use function array_slice;
 use function implode;
 use function is_array;
+use function max;
+use function min;
 use function sprintf;
 
 class UnexpectedTokenException extends ParserException

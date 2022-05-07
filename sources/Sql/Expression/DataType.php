@@ -19,6 +19,7 @@ use function implode;
 use function is_array;
 use function is_int;
 use function is_null;
+use function is_string;
 
 /**
  * e.g. CAST(expr AS type)
@@ -87,15 +88,18 @@ class DataType implements ExpressionNode
      */
     private function setParams(BaseType $type, $params = null): void
     {
+        // phpcs:disable SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
         if ($type->isDecimal() || $type->equalsValue(BaseType::FLOAT)) {
-            if ($params !== null && !is_int($params) && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
+            if ($params !== null && !is_int($params) && (count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
                 throw new InvalidDefinitionException("One or two integer size parameters required for type {$type->getValue()}.");
             }
+            /** @var int[] $params */
             $this->size = $params;
         } elseif ($type->isFloatingPointNumber()) {
             if ($params !== null && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
                 throw new InvalidDefinitionException("Two integer size parameters required for type {$type->getValue()}.");
             }
+            /** @var int[] $params */
             $this->size = $params;
         } elseif ($type->isInteger() || $type->getValue() === BaseType::BIT) {
             if ($params !== null && !is_int($params)) {
@@ -109,13 +113,20 @@ class DataType implements ExpressionNode
             $this->size = $params;
         } elseif ($type->hasValues()) {
             if (!is_array($params)) {
-                throw new InvalidDefinitionException("List of values required for type {$type->getValue()}.");
+                throw new InvalidDefinitionException("List of string values required for type {$type->getValue()}.");
             }
+            foreach ($params as $param) {
+                if (!is_string($param)) {
+                    throw new InvalidDefinitionException("List of string values required for type {$type->getValue()}.");
+                }
+            }
+            /** @var string[] $params */
             $this->values = $params;
         } elseif ($type->hasFsp()) {
             if (!is_null($params) && !(is_int($params) && $params >= 0 && $params <= 6)) {
                 throw new InvalidDefinitionException("Parameter of type {$type->getValue()} must be integer from 0 to 6.");
             }
+            $this->size = $params;
         } elseif ($params !== null) {
             throw new InvalidDefinitionException("Type parameters do not match data type {$type->getValue()}.");
         }

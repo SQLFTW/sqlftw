@@ -269,7 +269,7 @@ class TableCommandsParser
                             break;
                         default:
                             // keyword used as a column name
-                            if (($second->type & TokenType::RESERVED) === 0) {
+                            if ($second !== null && ($second->type & TokenType::RESERVED) === 0) {
                                 // ADD [COLUMN] col_name column_definition [FIRST | AFTER col_name ]
                                 $column = $this->parseColumn($tokenList->resetPosition(-1));
                                 $after = null;
@@ -440,9 +440,11 @@ class TableCommandsParser
                             $actions[] = new DropColumnAction($tokenList->expectName());
                             break;
                         default:
-                            if (($second->type & TokenType::UNQUOTED_NAME) !== 0) {
+                            if ($second !== null && ($second->type & TokenType::UNQUOTED_NAME) !== 0) {
                                 // DROP [COLUMN] col_name
-                                $actions[] = new DropColumnAction($second->original);
+                                /** @var string $columnName */
+                                $columnName = $second->original;
+                                $actions[] = new DropColumnAction($columnName);
                             } else {
                                 $tokenList->expectedAnyKeyword(Keyword::COLUMN, Keyword::INDEX, Keyword::KEY, Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY);
                             }
@@ -766,7 +768,7 @@ class TableCommandsParser
     {
         $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $charset = $collation = null;
         $autoIncrement = false;
-        // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
+        // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
             Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK,
             Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE];
