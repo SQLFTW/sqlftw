@@ -1,5 +1,6 @@
 
 args
+ansi
 armscii
 backtick
 crm
@@ -24,8 +25,8 @@ refman
 remstr
 rl
 sdi
-shoptet
 sqlftw
+sqlmode
 tagname
 tbl
 termino
@@ -46,6 +47,7 @@ callstack
 checksums
 decrypt
 deferrable
+designator
 designators
 destructor
 formatters
@@ -67,6 +69,7 @@ unencrypted
 unescape
 unescaped
 unlogged
+unparenthesized
 updatable
 uppercased
 validator
