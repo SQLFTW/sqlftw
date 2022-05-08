@@ -450,8 +450,10 @@ class Lexer
                         yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
                         break;
                     }
-                    $unaryCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
-                    if ($unaryCanFollow && isset(self::$numbersKey[$next])) {
+                    $numberCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL
+                        || ($previous->type & T::END) !== 0
+                        || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
+                    if ($numberCanFollow && isset(self::$numbersKey[$next])) {
                         [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '-');
                         if ($value !== null) {
                             yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
@@ -473,8 +475,10 @@ class Lexer
                     break;
                 case '+':
                     $next = $position < $length ? $string[$position] : '';
-                    $unaryCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
-                    if ($unaryCanFollow && isset(self::$numbersKey[$next])) {
+                    $numberCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL
+                        || ($previous->type & T::END) !== 0
+                        || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
+                    if ($numberCanFollow && isset(self::$numbersKey[$next])) {
                         [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '+');
                         if ($value !== null) {
                             yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
