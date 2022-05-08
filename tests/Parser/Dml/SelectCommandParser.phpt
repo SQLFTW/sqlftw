@@ -96,14 +96,16 @@ Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 INTO @var1, @var2");
 //       | LOCK IN SHARE MODE]]
 Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 LOCK IN SHARE MODE");
 Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE NOWAIT");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE SKIP LOCKED");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE OF tbl3, tbl4");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE OF tbl3, tbl4 NOWAIT");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE OF tbl3, tbl4 SKIP LOCKED");
 Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE NOWAIT");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE SKIP LOCKED");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE OF tbl3, tbl4");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE OF tbl3, tbl4 NOWAIT");
-Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE OF tbl3, tbl4 SKIP LOCKED");
+
+// 8.0 features
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE NOWAIT", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE SKIP LOCKED", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE OF tbl3, tbl4", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE OF tbl3, tbl4 NOWAIT", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR UPDATE OF tbl3, tbl4 SKIP LOCKED", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE NOWAIT", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE SKIP LOCKED", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE OF tbl3, tbl4", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE OF tbl3, tbl4 NOWAIT", null, $parser);
+Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 FOR SHARE OF tbl3, tbl4 SKIP LOCKED", null, $parser);
