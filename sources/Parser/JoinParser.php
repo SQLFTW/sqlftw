@@ -238,7 +238,11 @@ class JoinParser
             return new TableReferenceSubquery($query, $alias, $columns, $selectInParentheses, $keyword === Keyword::LATERAL);
         } else {
             // tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
-            $table = new QualifiedName(...$tokenList->expectQualifiedName());
+            if ($tokenList->hasKeyword(Keyword::DUAL)) {
+                $table = new QualifiedName(Keyword::DUAL);
+            } else {
+                $table = new QualifiedName(...$tokenList->expectQualifiedName());
+            }
             $partitions = null;
             if ($tokenList->hasKeyword(Keyword::PARTITION)) {
                 $tokenList->expect(TokenType::LEFT_PARENTHESIS);
