@@ -409,7 +409,7 @@ class Lexer
                         yield $previous = new Token(T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING, $start, $value, $orig, $condition);
                     }
                     break;
-                case '\'':
+                case "'":
                     [$value, $orig] = $this->parseString($string, $position, $column, $row, $char);
                     yield $previous = new Token(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $start, $value, $orig, $condition);
                     break;

@@ -37,6 +37,7 @@ use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
+use SqlFtw\Sql\Expression\MultilineString;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Parentheses;
@@ -828,6 +829,12 @@ class ExpressionParser
             $value = $token->value;
 
             return new HexadecimalLiteral($value);
+        } elseif (($token->type & TokenType::STRING) !== 0) {
+            $values[] = $token->value;
+            while (($next = $tokenList->getString()) !== null) {
+                $values[] = $next;
+            }
+            return count($values) === 1 ? $values[0] : new MultilineString($values);
         } else {
             /** @var string|int|float $value */
             $value = $token->value;

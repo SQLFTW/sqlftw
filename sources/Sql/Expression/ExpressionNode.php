@@ -31,6 +31,7 @@ use SqlFtw\Sql\SqlSerializable;
  *     - HexadecimalLiteral - e.g. 0x001F
  *     - IntervalLiteral - e.g. INTERVAL 6 DAYS
  *     - KeywordLiteral - e.g. DEFAULT, UNKNOWN, ON, OFF...
+ *     - MultilineString - e.g. "start " \n 'middle ' \n "end"
  *     - ValueLiteral - e.g. 1, 1.23, 'string', true, false, null...
  *   - MatchExpression - MATCH x AGAINST y
  *   - OperatorExpression:
