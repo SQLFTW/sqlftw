@@ -15,17 +15,18 @@ use SqlFtw\Sql\SqlEnum;
 class FlushOption extends SqlEnum
 {
 
-    public const DES_KEY_FILE = Keyword::DES_KEY_FILE;
-    public const HOSTS = Keyword::HOSTS;
     public const BINARY_LOGS = Keyword::BINARY . ' ' . Keyword::LOGS;
+    public const DES_KEY_FILE = Keyword::DES_KEY_FILE;
     public const ENGINE_LOGS = Keyword::ENGINE . ' ' . Keyword::LOGS;
     public const ERROR_LOGS = Keyword::ERROR . ' ' . Keyword::LOGS;
     public const GENERAL_LOGS = Keyword::GENERAL . ' ' . Keyword::LOGS;
-    public const RELAY_LOGS = Keyword::RELAY . ' ' . Keyword::LOGS;
-    public const SLOW_LOGS = Keyword::SLOW . ' ' . Keyword::LOGS;
+    public const HOSTS = Keyword::HOSTS;
+    public const LOGS = Keyword::LOGS;
     public const OPTIMIZER_COSTS = Keyword::OPTIMIZER_COSTS;
     public const PRIVILEGES = Keyword::PRIVILEGES;
     public const QUERY_CACHE = Keyword::QUERY . ' ' . Keyword::CACHE;
+    public const RELAY_LOGS = Keyword::RELAY . ' ' . Keyword::LOGS;
+    public const SLOW_LOGS = Keyword::SLOW . ' ' . Keyword::LOGS;
     public const STATUS = Keyword::STATUS;
     public const USER_RESOURCES = Keyword::USER_RESOURCES;
 

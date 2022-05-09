@@ -27,27 +27,20 @@ class FlushCommandParser
      * FLUSH [NO_WRITE_TO_BINLOG | LOCAL]
      *     flush_option [, flush_option] ...
      *
-     * flush_option:
-     *     DES_KEY_FILE
+     * flush_option: {
+     *     BINARY LOGS
+     *   | ENGINE LOGS
+     *   | ERROR LOGS
+     *   | GENERAL LOGS
      *   | HOSTS
-     *   | [log_type] LOGS
-     *   | RELAY LOGS [channel_option]
-     *   | OPTIMIZER_COSTS
+     *   | LOGS
      *   | PRIVILEGES
-     *   | QUERY CACHE
+     *   | OPTIMIZER_COSTS
+     *   | RELAY LOGS [FOR CHANNEL channel]
+     *   | SLOW LOGS
      *   | STATUS
      *   | USER_RESOURCES
-     *
-     * log_type:
-     *     BINARY
-     *   | ENGINE
-     *   | ERROR
-     *   | GENERAL
-     *   | RELAY
-     *   | SLOW
-     *
-     * channel_option:
-     *     FOR CHANNEL channel
+     * }
      */
     public function parseFlush(TokenList $tokenList): FlushCommand
     {
@@ -56,7 +49,7 @@ class FlushCommandParser
         $options = [];
         $channel = null;
         $logs = [Keyword::BINARY, Keyword::ENGINE, Keyword::ERROR, Keyword::GENERAL, Keyword::RELAY, Keyword::SLOW];
-        $other = [Keyword::DES_KEY_FILE, Keyword::HOSTS, Keyword::OPTIMIZER_COSTS, Keyword::PRIVILEGES, Keyword::QUERY, Keyword::STATUS, Keyword::USER_RESOURCES];
+        $other = [Keyword::LOGS, Keyword::DES_KEY_FILE, Keyword::HOSTS, Keyword::OPTIMIZER_COSTS, Keyword::PRIVILEGES, Keyword::QUERY, Keyword::STATUS, Keyword::USER_RESOURCES];
         do {
             $keyword = $tokenList->expectAnyKeyword(...array_merge($logs, $other));
             if (Arr::contains($logs, $keyword)) {
