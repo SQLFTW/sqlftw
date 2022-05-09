@@ -67,28 +67,16 @@ class SchemaCommandsParser
     private function parseDefaults(TokenList $tokenList): array
     {
         $charset = $collation = null;
-        $tokenList->passKeyword(Keyword::DEFAULT);
-        $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
-        if ($token === Keyword::CHARACTER || $token === Keyword::CHARSET) {
-            if ($token === Keyword::CHARACTER) {
-                $tokenList->expectKeyword(Keyword::SET);
+        $n = 0;
+        while ($n < 2) {
+            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
+            } else {
+                $token = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
             }
-            $tokenList->passEqual();
-            /** @var Charset $charset */
-            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
-        } else {
-            $tokenList->passEqual();
-            /** @var Collation $collation */
-            $collation = $tokenList->expectNameOrStringEnum(Collation::class);
-        }
-
-        if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-            $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
-        } else {
-            $token = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
-        }
-        if ($token !== null) {
-            if ($token === Keyword::CHARACTER || $token === Keyword::CHARSET) {
+            if ($token === null) {
+                break;
+            } elseif ($token === Keyword::CHARACTER || $token === Keyword::CHARSET) {
                 if ($token === Keyword::CHARACTER) {
                     $tokenList->expectKeyword(Keyword::SET);
                 }
@@ -100,6 +88,7 @@ class SchemaCommandsParser
                 /** @var Collation $collation */
                 $collation = $tokenList->expectNameOrStringEnum(Collation::class);
             }
+            $n++;
         }
 
         return [$charset, $collation];
