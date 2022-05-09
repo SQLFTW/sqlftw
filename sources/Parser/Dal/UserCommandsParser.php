@@ -100,7 +100,7 @@ class UserCommandsParser
     /**
      * CREATE USER [IF NOT EXISTS]
      *     user [auth_option] [, user [auth_option]] ...
-     *     DEFAULT ROLE role [, role ] ...
+     *     [DEFAULT ROLE role [, role ] ...]
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH resource_option [resource_option] ...]
      *     [password_option | lock_option] ...
@@ -112,8 +112,10 @@ class UserCommandsParser
 
         $users = $this->parseIdentifiedUsers($tokenList);
 
-        $tokenList->expectKeywords(Keyword::DEFAULT, Keyword::ROLE);
-        $defaultRoles = $this->parseRolesList($tokenList);
+        $defaultRoles = null;
+        if ($tokenList->hasKeywords(Keyword::DEFAULT, Keyword::ROLE)) {
+            $defaultRoles = $this->parseRolesList($tokenList);
+        }
 
         $tlsOptions = $this->parseTlsOptions($tokenList);
         $resourceOptions = $this->parseResourceOptions($tokenList);
