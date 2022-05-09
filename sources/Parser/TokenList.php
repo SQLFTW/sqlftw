@@ -616,7 +616,7 @@ class TokenList
         } catch (InvalidValueException $e) {
             $values = call_user_func([$className, 'getAllowedValues']);
 
-            throw UnexpectedTokenException::tokens([TokenType::NAME], $values, $this->tokens[$this->position], $this);
+            throw UnexpectedTokenException::tokens([TokenType::NAME], $values, $this->tokens[$this->position - 1], $this);
         }
     }
 
