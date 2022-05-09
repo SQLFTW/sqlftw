@@ -20,6 +20,7 @@ use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Keyword;
 use function array_flip;
 use function array_keys;
@@ -757,7 +758,22 @@ class Lexer
                     }
                     break;
                 case '_':
-                    // todo: charset declaration
+                    $value = '';
+                    while ($position < $length) {
+                        $next = $string[$position];
+                        if (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
+                            $value .= $next;
+                            $position++;
+                            $column++;
+                        } else {
+                            break;
+                        }
+                    }
+                    if ($value !== '' && !Charset::validateValue($value)) {
+                        throw new LexerException("Invalid string charset declaration: $value");
+                    }
+                    // todo: ignored - do something about it
+                    break;
                 default:
                     if (ord($char) < 32) {
                         throw new InvalidCharacterException($char, $start, ''); // todo
