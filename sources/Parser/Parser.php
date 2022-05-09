@@ -332,6 +332,7 @@ class Parser
                         // DROP SERVER
                         return $this->factory->getServerCommandsParser()->parseDropServer($tokenList->resetPosition($start));
                     case Keyword::TABLE:
+                    case Keyword::TABLES:
                     case Keyword::TEMPORARY:
                         // DROP [TEMPORARY] TABLE
                         return $this->factory->getTableCommandsParser()->parseDropTable($tokenList->resetPosition($start));

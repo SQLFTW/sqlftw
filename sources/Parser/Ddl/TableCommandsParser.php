@@ -1498,7 +1498,7 @@ class TableCommandsParser
     {
         $tokenList->expectKeyword(Keyword::DROP);
         $temporary = $tokenList->hasKeyword(Keyword::TEMPORARY);
-        $tokenList->expectKeyword(Keyword::TABLE);
+        $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $ifExists = $tokenList->hasKeyword(Keyword::IF);
         if ($ifExists) {
             $tokenList->expectKeyword(Keyword::EXISTS);
