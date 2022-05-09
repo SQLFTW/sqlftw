@@ -47,6 +47,21 @@ class Version
         }
     }
 
+    public function getMajor(): int
+    {
+        return $this->major;
+    }
+
+    public function getMinor(): ?int
+    {
+        return $this->minor;
+    }
+
+    public function getPatch(): ?int
+    {
+        return $this->patch;
+    }
+
     public function getMajorMinor(): string
     {
         return $this->major . (isset($this->minor) ? '.' . $this->minor : '');

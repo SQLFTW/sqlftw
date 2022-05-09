@@ -120,8 +120,9 @@ class Assert extends DogmaAssert
                 if ($e instanceof UnexpectedTokenException) {
                     Debugger::dump($e->getTokenList());
                 }
+                Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
             }
-            self::fail($e->getMessage());
+            //self::fail($e->getMessage());
             return;
         }
 

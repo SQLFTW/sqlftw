@@ -7,6 +7,7 @@ use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Platform;
 use Tracy\Debugger;
 use function array_slice;
 use function class_exists;
@@ -65,8 +66,16 @@ if (class_exists(Dumper::class)) {
         $info = Dumper::$showInfo !== true ? ' ' . Dumper::info('// #' . Dumper::objectHash($tokenList)) : '';
 
         return Dumper::name(get_class($tokenList)) . Dumper::bracket('(')
-            . Dumper::value($contents . $dots) . ' | ' . Dumper::value2((string) $count . ' tokens, position ' . $tokenList->getPosition())
+            . Dumper::value($contents . $dots) . ' | ' . Dumper::value2($count . ' tokens, position ' . $tokenList->getPosition())
             . Dumper::bracket(')') . $info;
+    };
+
+    Dumper::$objectFormatters[Platform::class] = static function (Platform $platform): string {
+        $version = $platform->getVersion();
+
+        return Dumper::name(get_class($platform)) . Dumper::bracket('(')
+            . Dumper::value($platform->getName()) . ' ' . Dumper::value2($version->getMajorMinor() . ($version->getPatch() ? '.' . $version->getPatch() : ''))
+            . Dumper::bracket(')');
     };
 
     ParserException::$debug = true;
