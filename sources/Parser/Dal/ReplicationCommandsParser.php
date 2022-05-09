@@ -13,9 +13,9 @@ use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Parser\UnexpectedTokenException;
 use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
 use SqlFtw\Sql\Dal\Replication\ChangeReplicationFilterCommand;
 use SqlFtw\Sql\Dal\Replication\PurgeBinaryLogsCommand;
@@ -392,7 +392,7 @@ class ReplicationCommandsParser
         $empty = $tokenList->getString();
         if ($empty !== null) {
             if ($empty !== '') {
-                throw new ParserException('Expected UUID or empty string.');
+                throw new UnexpectedTokenException('Expected UUID or empty string.', $tokenList);
             }
 
             return '';

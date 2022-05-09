@@ -24,11 +24,26 @@ use function sprintf;
 class UnexpectedTokenException extends ParserException
 {
 
+    /** @var TokenList */
+    private $tokenList;
+
+    public function __construct(string $message, TokenList $tokenList, ?Throwable $previous = null)
+    {
+        parent::__construct($message, $previous);
+
+        $this->tokenList = $tokenList;
+    }
+
+    public function getTokenList(): TokenList
+    {
+        return $this->tokenList;
+    }
+
     /**
      * @param int[] $expectedTokens
      * @param mixed $expectedValue
      */
-    public function __construct(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null)
+    public static function tokens(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null): self
     {
         $expectedToken = implode(', ', Arr::map($expectedTokens, static function (int $type) {
             return implode('|', TokenType::get($type)->getConstantNames());
@@ -44,24 +59,22 @@ class UnexpectedTokenException extends ParserException
             }
         }
 
-        $context = $this->formatContext($tokenList);
+        $context = self::formatContext($tokenList);
 
         if ($token === null) {
-            parent::__construct(sprintf(
+            return new self(sprintf(
                 "Expected token %s%s, but end of query found instead at position %d in:\n%s",
                 $expectedToken,
                 $expectedValue,
                 $tokenList->getPosition(),
                 $context
-            ), $previous);
-
-            return;
+            ), $tokenList, $previous);
         }
 
         $actualToken = implode('|', TokenType::getByValue($token->type)->getConstantNames());
         $actualValue = ExceptionValueFormatter::format($token->value);
 
-        parent::__construct(sprintf(
+        return new self(sprintf(
             "Expected token %s%s, but token %s with value %s found instead at position %d in:\n%s",
             $expectedToken,
             $expectedValue,
@@ -69,10 +82,10 @@ class UnexpectedTokenException extends ParserException
             $actualValue,
             $tokenList->getPosition(),
             $context
-        ), $previous);
+        ), $tokenList, $previous);
     }
 
-    private function formatContext(TokenList $tokenList): string
+    private static function formatContext(TokenList $tokenList): string
     {
         $start = max($tokenList->getPosition() - 11, 0);
         $prefix = 10 - min(max(10 - $tokenList->getPosition(), 0), 10);

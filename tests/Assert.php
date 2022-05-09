@@ -12,6 +12,7 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Parser\UnexpectedTokenException;
 use function class_exists;
 use function gettype;
 use function implode;
@@ -115,8 +116,10 @@ class Assert extends DogmaAssert
                 self::true(!$command instanceof InvalidCommand);
             }
         } catch (ParserException $e) {
-            if (class_exists(Dumper::class) && $e->backtrace !== null) {
-                Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
+            if (class_exists(Debugger::class) && $e->backtrace !== null) {
+                if ($e instanceof UnexpectedTokenException) {
+                    Debugger::dump($e->getTokenList());
+                }
             }
             self::fail($e->getMessage());
             return;

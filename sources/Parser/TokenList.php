@@ -151,7 +151,7 @@ class TokenList
      */
     public function expected(string $description): void
     {
-        throw new ParserException($description);
+        throw new UnexpectedTokenException($description, $this);
     }
 
     /**
@@ -162,10 +162,10 @@ class TokenList
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & $tokenType) === 0) {
-            throw new UnexpectedTokenException([$tokenType], $value, $token, $this);
+            throw UnexpectedTokenException::tokens([$tokenType], $value, $token, $this);
         }
         if ($value !== null && $token->value !== $value) {
-            throw new UnexpectedTokenException([$tokenType], $value, $token, $this);
+            throw UnexpectedTokenException::tokens([$tokenType], $value, $token, $this);
         }
         $this->position++;
 
@@ -217,7 +217,7 @@ class TokenList
             }
         }
 
-        throw new UnexpectedTokenException($tokenTypes, null, $token, $this);
+        throw UnexpectedTokenException::tokens($tokenTypes, null, $token, $this);
     }
 
     /**
@@ -255,7 +255,7 @@ class TokenList
     {
         $token = $this->expect(TokenType::NAME, $name);
         if (($token->type & TokenType::KEYWORD) !== 0) {
-            throw new UnexpectedTokenException([TokenType::NAME], null, $token, $this);
+            throw UnexpectedTokenException::tokens([TokenType::NAME], null, $token, $this);
         }
 
         return $token->original; // @phpstan-ignore-line non-null
@@ -341,7 +341,7 @@ class TokenList
             if (is_int($number->value)) {
                 return $number->value;
             } else {
-                throw new UnexpectedTokenException([TokenType::NUMBER], 'integer', $number, $this);
+                throw UnexpectedTokenException::tokens([TokenType::NUMBER], 'integer', $number, $this);
             }
         }
 
@@ -392,7 +392,7 @@ class TokenList
             return false;
         }
 
-        throw new ParserException("Boolean-like value expected. \"$value\" found.");
+        throw new UnexpectedTokenException("Boolean-like value expected. \"$value\" found.", $this);
     }
 
     public function expectOperator(string $operator): string
@@ -453,7 +453,7 @@ class TokenList
     {
         $operator = $this->expect(TokenType::OPERATOR);
         if (!in_array($operator->value, $operators, true)) {
-            throw new UnexpectedTokenException([TokenType::OPERATOR], $operators, $operator, $this);
+            throw UnexpectedTokenException::tokens([TokenType::OPERATOR], $operators, $operator, $this);
         }
 
         return $operator->value;
@@ -482,7 +482,7 @@ class TokenList
         $this->position--;
         $token = $this->get(TokenType::KEYWORD);
 
-        throw new UnexpectedTokenException([TokenType::KEYWORD], $keywords, $token, $this);
+        throw UnexpectedTokenException::tokens([TokenType::KEYWORD], $keywords, $token, $this);
     }
 
     public function expectKeyword(string $keyword): string
@@ -490,10 +490,10 @@ class TokenList
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & TokenType::KEYWORD) === 0) {
-            throw new UnexpectedTokenException([TokenType::KEYWORD], $keyword, $token, $this);
+            throw UnexpectedTokenException::tokens([TokenType::KEYWORD], $keyword, $token, $this);
         }
         if ($token->value !== $keyword) {
-            throw new UnexpectedTokenException([TokenType::KEYWORD], $keyword, $token, $this);
+            throw UnexpectedTokenException::tokens([TokenType::KEYWORD], $keyword, $token, $this);
         }
         $this->position++;
 
@@ -616,7 +616,7 @@ class TokenList
         } catch (InvalidValueException $e) {
             $values = call_user_func([$className, 'getAllowedValues']);
 
-            throw new UnexpectedTokenException([TokenType::NAME], $values, $this->tokens[$this->position], $this);
+            throw UnexpectedTokenException::tokens([TokenType::NAME], $values, $this->tokens[$this->position], $this);
         }
     }
 
@@ -754,7 +754,7 @@ class TokenList
         }
 
         if ($this->position < count($this->tokens)) {
-            throw new UnexpectedTokenException([TokenType::END], null, $this->tokens[$this->position], $this);
+            throw UnexpectedTokenException::tokens([TokenType::END], null, $this->tokens[$this->position], $this);
         }
     }
 

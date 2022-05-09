@@ -12,8 +12,8 @@ namespace SqlFtw\Parser\Ddl;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\UnexpectedTokenException;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\TriggerEvent;
@@ -96,7 +96,7 @@ class TriggerCommandsParser
             $body = $this->parser->parseTokenList($tokenList->resetPosition(-1));
             if ($body instanceof SelectCommand) {
                 // WITH ... SELECT ...
-                throw new ParserException('Cannot use SELECT as trigger action.');
+                throw new UnexpectedTokenException('Cannot use SELECT as trigger action.', $tokenList);
             }
         } else {
             $tokenList->expectedAnyKeyword(Keyword::SET, Keyword::UPDATE, Keyword::INSERT, Keyword::DELETE, Keyword::REPLACE, Keyword::WITH, Keyword::BEGIN);
