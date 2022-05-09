@@ -64,7 +64,9 @@ class Parser
 
         foreach ($tokenLists as $tokenList) {
             $command = $this->parseTokenList($tokenList);
-            $tokenList->expectEnd();
+            if (!$command instanceof TesterCommand) {
+                $tokenList->expectEnd();
+            }
 
             // todo: sniff for SET NAMES, SET CHARSET, SET sql_mode ...
 
@@ -597,6 +599,24 @@ class Parser
                 // XA ROLLBACK
                 // XA RECOVER
                 return $this->factory->getXaTransactionCommandsParser()->parseXa($tokenList->resetPosition($start));
+            // mysql test suite scripts
+            case Keyword::CONNECTION:
+            case Keyword::DEC:
+            case Keyword::IF:
+            case Keyword::SOURCE:
+            case Keyword::WHILE:
+            case 'connect':
+            case 'die':
+            case 'disable_query_log':
+            case 'disconnect':
+            case 'enable_query_log':
+            case 'eval':
+            case 'let':
+            case 'send':
+            case '}':
+                if ($this->settings->mysqlTestMode) {
+                    return new TesterCommand($tokenList);
+                }
             default:
                 $tokenList->expectedAnyKeyword(
                     Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE,

@@ -41,6 +41,12 @@ class PlatformSettings
     /** @var bool */
     private $optionalEquals;
 
+    /**
+     * @var bool - true when parsing mysql .test files containing special non-SQL syntax
+     * @internal
+     */
+    public $mysqlTestMode = false;
+
     public function __construct(
         Platform $platform,
         string $delimiter = ';',
