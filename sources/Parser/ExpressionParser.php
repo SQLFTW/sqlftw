@@ -802,19 +802,9 @@ class ExpressionParser
      */
     public function parseLiteralValue(TokenList $tokenList)
     {
-        $token = $tokenList->expect(TokenType::VALUE);
+        $token = $tokenList->expectAny(TokenType::VALUE, TokenType::KEYWORD);
 
-        if (($token->type & TokenType::BINARY_LITERAL) !== 0) {
-            /** @var string $value */
-            $value = $token->value;
-
-            return new BinaryLiteral($value);
-        } elseif (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
-            /** @var string $value */
-            $value = $token->value;
-
-            return new HexadecimalLiteral($value);
-        } elseif (($token->type & TokenType::KEYWORD) !== 0) {
+        if (($token->type & TokenType::KEYWORD) !== 0) {
             if ($token->value === Keyword::NULL) {
                 return new ValueLiteral(null);
             } elseif ($token->value === Keyword::TRUE) {
@@ -828,6 +818,16 @@ class ExpressionParser
             } else {
                 $tokenList->expectedAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF);
             }
+        } elseif (($token->type & TokenType::BINARY_LITERAL) !== 0) {
+            /** @var string $value */
+            $value = $token->value;
+
+            return new BinaryLiteral($value);
+        } elseif (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
+            /** @var string $value */
+            $value = $token->value;
+
+            return new HexadecimalLiteral($value);
         } else {
             /** @var string|int|float $value */
             $value = $token->value;
