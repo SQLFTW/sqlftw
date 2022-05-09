@@ -736,11 +736,14 @@ class TokenList
     public function expectUserName(): array
     {
         $name = $this->expectNameOrString();
-        $symbol = $this->expect(TokenType::SYMBOL);
-        if ($symbol->value !== '@') {
-            $this->expected('@');
+        $host = null;
+        $symbol = $this->get(TokenType::SYMBOL);
+        if ($symbol !== null) {
+            if ($symbol->value !== '@') {
+                $this->expected('@');
+            }
+            $host = $this->expectNameOrString();
         }
-        $host = $this->expectNameOrString();
 
         return [$name, $host];
     }
