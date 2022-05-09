@@ -734,6 +734,9 @@ class Lexer
                         if ($del === '') {
                             throw new ExpectedTokenNotFoundException('Delimiter not found'); // todo
                         }
+                        if (Str::endsWith($del, $delimiter)) {
+                            $del = substr($del, 0, -strlen($delimiter));
+                        }
                         if ($this->settings->getPlatform()->getFeatures()->isReserved(strtoupper($del))) {
                             throw new ExpectedTokenNotFoundException('Delimiter can not be a reserved word found.'); // todo
                         }
