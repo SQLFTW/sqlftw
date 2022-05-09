@@ -50,9 +50,7 @@ class UnexpectedTokenException extends ParserException
         }));
         if ($expectedValue !== null) {
             if (is_array($expectedValue)) {
-                $expectedValue = Str::join(array_map(static function ($value): string {
-                    return '"' . $value . '"';
-                }, $expectedValue), ', ', ' or ', 120, '...');
+                $expectedValue = Str::join($expectedValue, ', ', ' or ', 120, '...');
                 $expectedValue = " with value " . $expectedValue;
             } else {
                 $expectedValue = " with value " . ExceptionValueFormatter::format($expectedValue);
