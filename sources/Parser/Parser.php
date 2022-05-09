@@ -274,7 +274,7 @@ class Parser
                     return $this->factory->getRoutineCommandsParser()->parseCreateProcedure($tokenList->resetPosition($start));
                 } elseif ($tokenList->seekKeyword(Keyword::TRIGGER, 8)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] TRIGGER
-                    return $this->factory->getTriggerCommandsParser($this)->parseCreateTrigger($tokenList->resetPosition($start));
+                    return $this->factory->getTriggerCommandsParser()->parseCreateTrigger($tokenList->resetPosition($start));
                 } elseif ($tokenList->seekKeyword(Keyword::VIEW, 15)) {
                     // CREATE [OR REPLACE] [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
                     return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
@@ -344,7 +344,7 @@ class Parser
                         return $this->factory->getTablespaceCommandsParser()->parseDropTablespace($tokenList->resetPosition($start));
                     case Keyword::TRIGGER:
                         // DROP TRIGGER
-                        return $this->factory->getTriggerCommandsParser($this)->parseDropTrigger($tokenList->resetPosition($start));
+                        return $this->factory->getTriggerCommandsParser()->parseDropTrigger($tokenList->resetPosition($start));
                     case Keyword::USER:
                         // DROP USER
                         return $this->factory->getUserCommandsParser()->parseDropUser($tokenList->resetPosition($start));

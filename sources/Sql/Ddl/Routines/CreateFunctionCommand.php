@@ -12,12 +12,11 @@ namespace SqlFtw\Sql\Ddl\Routines;
 use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
-use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\DataType;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Statement;
 use function implode;
 
 class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineCommand
@@ -27,7 +26,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     /** @var QualifiedName */
     private $name;
 
-    /** @var CompoundStatement|ReturnStatement */
+    /** @var Statement */
     private $body;
 
     /** @var DataType[] ($name => $type) */
@@ -55,12 +54,11 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     private $language;
 
     /**
-     * @param CompoundStatement|ReturnStatement $body
      * @param DataType[] $params
      */
     public function __construct(
         QualifiedName $name,
-        $body,
+        Statement $body,
         array $params,
         DataType $returnType,
         ?UserExpression $definer = null,
@@ -87,10 +85,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         return $this->name;
     }
 
-    /**
-     * @return CompoundStatement|ReturnStatement
-     */
-    public function getBody()
+    public function getBody(): Statement
     {
         return $this->body;
     }

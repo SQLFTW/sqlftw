@@ -330,9 +330,9 @@ class ParserFactory
         return new TransactionCommandsParser();
     }
 
-    public function getTriggerCommandsParser(Parser $parser): TriggerCommandsParser
+    public function getTriggerCommandsParser(): TriggerCommandsParser
     {
-        return new TriggerCommandsParser($parser, $this->getExpressionParser(), $this->getCompoundStatementParser());
+        return new TriggerCommandsParser($this->getExpressionParser(), $this->getCompoundStatementParser());
     }
 
     public function getUpdateCommandParser(): UpdateCommandParser

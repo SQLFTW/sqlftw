@@ -76,22 +76,33 @@ class CompoundStatementParser
     }
 
     /**
-     * [begin_label:] BEGIN
+     * routine_body:
+     *     RETURN ...
+     *   | statement
+     *   | compound_statement
+     *
+     * compound_statement:
+     *   [begin_label:] BEGIN
      *     [statement_list]
-     * END [end_label]
+     *   END [end_label]
      */
-    public function parseCompoundStatement(TokenList $tokenList): CompoundStatement
+    public function parseRoutineBody(TokenList $tokenList, bool $allowReturn): Statement
     {
-        $label = null;
-        if (!$tokenList->hasKeyword(Keyword::BEGIN)) {
-            $label = $tokenList->getName();
-            if ($label !== null) {
-                $tokenList->expect(TokenType::DOUBLE_COLON);
-            }
-            $tokenList->expectKeyword(Keyword::BEGIN);
+        if ($allowReturn && $tokenList->hasKeyword(Keyword::RETURN)) {
+            return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
         }
 
-        return $this->parseBlock($tokenList, $label);
+        $label = $tokenList->getNonKeywordName();
+        if ($label !== null) {
+            $tokenList->expect(TokenType::DOUBLE_COLON);
+            $tokenList->expectKeyword(Keyword::BEGIN);
+
+            return $this->parseBlock($tokenList, $label);
+        } elseif ($tokenList->hasKeyword(Keyword::BEGIN)) {
+            return $this->parseBlock($tokenList, $label);
+        } else {
+            return $this->parser->parseTokenList($tokenList);
+        }
     }
 
     /**

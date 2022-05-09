@@ -11,15 +11,12 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\UnexpectedTokenException;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\TriggerEvent;
 use SqlFtw\Sql\Ddl\Trigger\TriggerOrder;
 use SqlFtw\Sql\Ddl\Trigger\TriggerPosition;
-use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -28,9 +25,6 @@ class TriggerCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var Parser */
-    private $parser;
-
     /** @var ExpressionParser */
     private $expressionParser;
 
@@ -38,11 +32,9 @@ class TriggerCommandsParser
     private $compoundStatementParser;
 
     public function __construct(
-        Parser $parser,
         ExpressionParser $expressionParser,
         CompoundStatementParser $compoundStatementParser
     ) {
-        $this->parser = $parser;
         $this->expressionParser = $expressionParser;
         $this->compoundStatementParser = $compoundStatementParser;
     }
@@ -88,19 +80,7 @@ class TriggerCommandsParser
             $triggerPosition = new TriggerPosition($order, $otherTrigger);
         }
 
-        if ($tokenList->hasKeyword(Keyword::BEGIN)) {
-            // BEGIN ... END
-            $body = $this->compoundStatementParser->parseCompoundStatement($tokenList->resetPosition(-1));
-        } elseif ($tokenList->hasAnyKeyword(Keyword::SET, Keyword::UPDATE, Keyword::INSERT, Keyword::DELETE, Keyword::REPLACE, Keyword::WITH)) {
-            // SET, UPDATE, INSERT, DELETE, REPLACE...
-            $body = $this->parser->parseTokenList($tokenList->resetPosition(-1));
-            if ($body instanceof SelectCommand) {
-                // WITH ... SELECT ...
-                throw new UnexpectedTokenException('Cannot use SELECT as trigger action.', $tokenList);
-            }
-        } else {
-            $tokenList->expectedAnyKeyword(Keyword::SET, Keyword::UPDATE, Keyword::INSERT, Keyword::DELETE, Keyword::REPLACE, Keyword::WITH, Keyword::BEGIN);
-        }
+        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
 
         return new CreateTriggerCommand($name, $event, $table, $body, $definer, $triggerPosition);
     }

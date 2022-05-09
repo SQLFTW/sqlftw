@@ -11,10 +11,10 @@ namespace SqlFtw\Sql\Ddl\Routines;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Statement;
 
 class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCommand
 {
@@ -23,7 +23,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
     /** @var QualifiedName */
     private $name;
 
-    /** @var CompoundStatement */
+    /** @var Statement */
     private $body;
 
     /** @var ProcedureParam[] */
@@ -52,7 +52,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
      */
     public function __construct(
         QualifiedName $name,
-        CompoundStatement $body,
+        Statement $body,
         array $params,
         ?UserExpression $definer = null,
         ?bool $deterministic = null,
@@ -77,7 +77,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
         return $this->name;
     }
 
-    public function getBody(): CompoundStatement
+    public function getBody(): Statement
     {
         return $this->body;
     }
