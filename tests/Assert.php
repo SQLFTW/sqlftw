@@ -122,7 +122,7 @@ class Assert extends DogmaAssert
                 }
                 Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
             }
-            //self::fail($e->getMessage());
+            self::fail('Invalid command');
             return;
         }
 

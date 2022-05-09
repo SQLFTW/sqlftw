@@ -78,6 +78,8 @@ if (class_exists(Dumper::class)) {
             . Dumper::bracket(')');
     };
 
+    Dumper::$hiddenFields[] = 'sql';
+
     ParserException::$debug = true;
 }
 
