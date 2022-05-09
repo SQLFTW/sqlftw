@@ -555,13 +555,18 @@ class UserCommandsParser
         $tokenList->expectKeyword(Keyword::REVOKE);
 
         if ($tokenList->hasKeyword(Keyword::ALL)) {
-            $tokenList->passKeyword(Keyword::PRIVILEGES);
-            $tokenList->expect(TokenType::COMMA);
-            $tokenList->expectKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
-            $users = $this->parseUserList($tokenList);
+            if (!$tokenList->seekKeyword(Keyword::ON, 15)) {
+                $tokenList->passKeyword(Keyword::PRIVILEGES);
+                $tokenList->expect(TokenType::COMMA);
+                $tokenList->expectKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
+                $users = $this->parseUserList($tokenList);
 
-            return new RevokeAllCommand($users);
-        } elseif ($tokenList->hasKeywords(Keyword::PROXY)) {
+                return new RevokeAllCommand($users);
+            } else {
+                $tokenList->resetPosition(-1);
+            }
+        }
+        if ($tokenList->hasKeywords(Keyword::PROXY)) {
             $tokenList->expectKeyword(Keyword::ON);
             $proxy = new UserName(...$tokenList->expectUserName());
             $tokenList->expectKeyword(Keyword::FROM);
