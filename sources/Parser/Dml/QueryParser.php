@@ -254,9 +254,12 @@ class QueryParser
                 }
             }
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName();
+                $alias = $tokenList->expectNameOrString();
             } else {
                 $alias = $tokenList->getNonKeywordName();
+                if ($alias === null) {
+                    $alias = $tokenList->getString();
+                }
             }
             $what[] = new SelectExpression($expression, $alias, $window);
         } while ($tokenList->hasComma());
