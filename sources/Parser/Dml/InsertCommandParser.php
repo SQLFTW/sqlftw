@@ -232,15 +232,18 @@ class InsertCommandParser
         $rows = [];
         do {
             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+
             $values = [];
-            do {
-                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    $values[] = new KeywordLiteral(Keyword::DEFAULT);
-                } else {
-                    $values[] = $this->expressionParser->parseExpression($tokenList);
-                }
-            } while ($tokenList->hasComma());
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+                do {
+                    if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                        $values[] = new KeywordLiteral(Keyword::DEFAULT);
+                    } else {
+                        $values[] = $this->expressionParser->parseExpression($tokenList);
+                    }
+                } while ($tokenList->hasComma());
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            }
 
             $rows[] = $values;
         } while ($tokenList->hasComma());
