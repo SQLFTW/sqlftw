@@ -13,6 +13,7 @@ use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
+use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\DataType;
@@ -26,7 +27,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     /** @var QualifiedName */
     private $name;
 
-    /** @var CompoundStatement */
+    /** @var CompoundStatement|ReturnStatement */
     private $body;
 
     /** @var DataType[] ($name => $type) */
@@ -54,11 +55,12 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     private $language;
 
     /**
+     * @param CompoundStatement|ReturnStatement $body
      * @param DataType[] $params
      */
     public function __construct(
         QualifiedName $name,
-        CompoundStatement $body,
+        $body,
         array $params,
         DataType $returnType,
         ?UserExpression $definer = null,
@@ -85,7 +87,10 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         return $this->name;
     }
 
-    public function getBody(): CompoundStatement
+    /**
+     * @return CompoundStatement|ReturnStatement
+     */
+    public function getBody()
     {
         return $this->body;
     }

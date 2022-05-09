@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
@@ -183,7 +184,11 @@ class RoutineCommandsParser
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
-        $body = $this->compoundStatementParser->parseCompoundStatement($tokenList);
+        if ($tokenList->hasKeyword(Keyword::RETURN)) {
+            $body = new ReturnStatement($this->expressionParser->parseExpression($tokenList));
+        } else {
+            $body = $this->compoundStatementParser->parseCompoundStatement($tokenList);
+        }
 
         return new CreateFunctionCommand($name, $body, $params, $returnType, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language);
     }
