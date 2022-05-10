@@ -75,10 +75,10 @@ class FlushCommandParser
     public function parseFlushTables(TokenList $tokenList): FlushTablesCommand
     {
         $tokenList->expectKeywords(Keyword::FLUSH, Keyword::TABLES);
-        $tables = [];
+        $tables = null;
         $table = $tokenList->getQualifiedName();
         if ($table !== null) {
-            $tables[] = new QualifiedName(...$table);
+            $tables = [new QualifiedName(...$table)];
             while ($tokenList->hasComma()) {
                 $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
             }
