@@ -124,10 +124,6 @@ class ReplicationCommandsParser
                 case UserName::class:
                     $value = $tokenList->expectUserName();
                     break;
-                case TimeInterval::class:
-                    $tokenList->expectKeyword(Keyword::INTERVAL);
-                    $value = $this->expressionParser->parseInterval($tokenList);
-                    break;
                 case 'array<int>':
                     $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                     $value = [];
@@ -236,10 +232,6 @@ class ReplicationCommandsParser
                     break;
                 case UserName::class:
                     $value = $tokenList->expectUserName();
-                    break;
-                case TimeInterval::class:
-                    $tokenList->expectKeyword(Keyword::INTERVAL);
-                    $value = $this->expressionParser->parseInterval($tokenList);
                     break;
                 case 'array<int>':
                     $tokenList->expect(TokenType::LEFT_PARENTHESIS);
