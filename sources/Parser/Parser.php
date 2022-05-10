@@ -659,7 +659,7 @@ class Parser
                     return new TesterCommand($tokenList);
                 }
             default:
-                $tokenList->expectedAnyKeyword(
+                $tokenList->resetPosition($start)->expectedAnyKeyword(
                     Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE,
                     Keyword::CALL, Keyword::CHANGE, Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE,
                     Keyword::DEALLOCATE, Keyword::DELETE, Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE,
