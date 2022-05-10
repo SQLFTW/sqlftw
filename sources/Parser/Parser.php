@@ -624,17 +624,36 @@ class Parser
             // mysql test suite scripts
             case Keyword::CONNECTION:
             case Keyword::DEC:
+            case Keyword::ERROR:
+            case Keyword::EXIT:
             case Keyword::IF:
             case Keyword::SOURCE:
             case Keyword::WHILE:
             case 'connect':
+            case 'copy_file':
             case 'die':
+            case 'diff_files':
             case 'disable_query_log':
+            case 'disable_warnings':
             case 'disconnect':
+            case 'echo':
             case 'enable_query_log':
+            case 'enable_warnings':
             case 'eval':
+            case 'EVAL':
+            case 'exec':
+            case 'file_exists':
+            case 'inc':
             case 'let':
+            case 'query_vertical':
+            case 'reap':
+            case 'remove_file':
+            case 'save_master_pos':
             case 'send':
+            case 'sleep':
+            case 'sync_slave_with_master':
+            case 'sync_with_master':
+            case 'wait_for_slave_to_stop':
             case '}':
                 if ($this->settings->mysqlTestMode) {
                     return new TesterCommand($tokenList);
