@@ -5,6 +5,7 @@ namespace SqlFtw\Tests;
 use Dogma\Debug\Callstack;
 use Dogma\Debug\Debugger;
 use Dogma\Debug\Dumper;
+use Dogma\Str;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
@@ -113,16 +114,29 @@ class Assert extends DogmaAssert
 
         try {
             foreach ($parser->parse($sql) as $command) {
-                self::true(!$command instanceof InvalidCommand);
+                if ($command instanceof InvalidCommand) {
+                    $source = $command->getTokenList()->serialize();
+                    // filtering "false" negatives
+                    // todo: also should filter false positives
+                    if (Str::contains($source, "--error ER_")) {
+                        self::true(true);
+                    } else {
+                        Debugger::dump($command->getTokenList());
+                        Debugger::callstack(100, 1, 5, 100, $command->getException()->getTrace());
+                        self::fail('Invalid command');
+                    }
+                } else {
+                    self::true(true);
+                }
             }
         } catch (ParserException $e) {
             if (class_exists(Debugger::class) && $e->backtrace !== null) {
                 if ($e instanceof UnexpectedTokenException) {
                     Debugger::dump($e->getTokenList());
                 }
-                Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
+                Debugger::callstack(100, 1, 5, 100, $e->getTrace());
             }
-            self::fail('Invalid command');
+            self::fail('Cannot tokenize commands');
             return;
         }
 

@@ -63,7 +63,12 @@ class Parser
         $tokenLists = $this->slice($this->lexer->tokenize($sql));
 
         foreach ($tokenLists as $tokenList) {
-            $command = $this->parseTokenList($tokenList);
+            try {
+                $command = $this->parseTokenList($tokenList);
+            } catch (UnexpectedTokenException $e) {
+                yield new InvalidCommand($tokenList, $e);
+                continue;
+            }
             if (!$command instanceof TesterCommand) {
                 $tokenList->expectEnd();
             }
