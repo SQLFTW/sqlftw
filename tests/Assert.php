@@ -9,6 +9,7 @@ use Dogma\Str;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
+use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\Token;
@@ -122,14 +123,15 @@ class Assert extends DogmaAssert
                         self::true(true);
                     } else {
                         Debugger::dump($command->getTokenList());
-                        Debugger::callstack(100, 1, 5, 100, $command->getException()->getTrace());
-                        self::fail('Invalid command');
+                        //Debugger::callstack(100, 1, 5, 100, $command->getException()->getTrace());
+                        //self::fail('Invalid command');
+                        throw $command->getException();
                     }
                 } else {
                     self::true(true);
                 }
             }
-        } catch (ParserException $e) {
+        } catch (LexerException $e) {
             if (class_exists(Debugger::class) && $e->backtrace !== null) {
                 if ($e instanceof UnexpectedTokenException) {
                     Debugger::dump($e->getTokenList());
