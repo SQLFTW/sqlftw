@@ -60,7 +60,8 @@ class Lexer
 
     private const OPERATOR_SYMBOLS = ['!', '%', '&', '*', '+', '-', '/', ':', '<', '=', '>', '\\', '^', '|', '~'];
 
-    public const UUID_REGEXP = '/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i';
+    public const UUID_REGEXP = '~^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$~i';
+    public const IP_V4_REGEXP = '~^((?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]))~';
 
     /** @var array<string, int> (this is in fact array<int, int>, but PHPStan is unable to cope with the auto-casting of numeric string keys) */
     private static $numbersKey;
@@ -532,6 +533,7 @@ class Lexer
                 case '0':
                     $next = $position < $length ? $string[$position] : '';
                     if ($next === 'b') {
+                        // 0b00100011
                         $position++;
                         $column++;
                         $bits = '';
@@ -548,6 +550,7 @@ class Lexer
                             }
                         }
                     } elseif ($next === 'x') {
+                        // 0x001f
                         $position++;
                         $column++;
                         $bits = '';
@@ -581,6 +584,14 @@ class Lexer
                         $position += 35;
                         $column += 35;
                         yield $previous = new Token(T::VALUE | T::UUID, $start, $value, null, $condition);
+                        break;
+                    }
+                    // IPv4
+                    $ip = Re::submatch($value, self::IP_V4_REGEXP);
+                    if ($ip !== null) {
+                        $position += strlen($ip) - 1;
+                        $column += strlen($ip) - 1;
+                        yield $previous = new Token(T::VALUE | T::STRING, $start, $ip, null, $condition);
                         break;
                     }
                     [$value, $orig] = $this->parseNumber($string, $position, $column, $row, $char);
