@@ -316,38 +316,42 @@ class ReplicationCommandsParser
             $filter = $tokenList->expectKeywordEnum(ReplicationFilter::class)->getValue();
             $tokenList->expectOperator(Operator::EQUAL);
             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-            switch ($types[$filter]) {
-                case 'array<string>':
-                    $values = [];
-                    do {
-                        if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
-                            $values[] = $tokenList->expectName();
-                        } else {
-                            $values[] = $tokenList->expectString();
-                        }
-                    } while ($tokenList->hasComma());
-                    break;
-                case 'array<' . QualifiedName::class . '>':
-                    $values = [];
-                    do {
-                        $values[] = new QualifiedName(...$tokenList->expectQualifiedName());
-                    } while ($tokenList->hasComma());
-                    break;
-                case 'array<string,string>':
-                    $values = [];
-                    do {
-                        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-                        $key = $tokenList->expectName();
-                        $tokenList->expect(TokenType::COMMA);
-                        $value = $tokenList->expectName();
-                        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-                        $values[$key] = $value;
-                    } while ($tokenList->hasComma());
-                    break;
-                default:
-                    $values = [];
+            if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+                $values = [];
+            } else {
+                switch ($types[$filter]) {
+                    case 'array<string>':
+                        $values = [];
+                        do {
+                            if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
+                                $values[] = $tokenList->expectName();
+                            } else {
+                                $values[] = $tokenList->expectString();
+                            }
+                        } while ($tokenList->hasComma());
+                        break;
+                    case 'array<' . QualifiedName::class . '>':
+                        $values = [];
+                        do {
+                            $values[] = new QualifiedName(...$tokenList->expectQualifiedName());
+                        } while ($tokenList->hasComma());
+                        break;
+                    case 'array<string,string>':
+                        $values = [];
+                        do {
+                            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                            $key = $tokenList->expectName();
+                            $tokenList->expect(TokenType::COMMA);
+                            $value = $tokenList->expectName();
+                            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                            $values[$key] = $value;
+                        } while ($tokenList->hasComma());
+                        break;
+                    default:
+                        $values = [];
+                }
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $filters[$filter] = $values;
         } while ($tokenList->hasComma());
 
