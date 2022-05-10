@@ -19,7 +19,7 @@ class CreateTriggerCommand implements TriggerCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var QualifiedName */
     private $name;
 
     /** @var TriggerEvent */
@@ -38,7 +38,7 @@ class CreateTriggerCommand implements TriggerCommand
     private $position;
 
     public function __construct(
-        string $name,
+        QualifiedName $name,
         TriggerEvent $event,
         QualifiedName $table,
         Statement $body,
@@ -55,7 +55,7 @@ class CreateTriggerCommand implements TriggerCommand
 
     public function getName(): QualifiedName
     {
-        return new QualifiedName($this->name, $this->table->getSchema());
+        return new QualifiedName($this->name->getName(), $this->table->getSchema());
     }
 
     public function getEvent(): TriggerEvent
@@ -89,7 +89,7 @@ class CreateTriggerCommand implements TriggerCommand
         if ($this->definer !== null) {
             $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
-        $result .= ' TRIGGER ' . $formatter->formatName($this->name) . ' ' . $this->event->serialize($formatter);
+        $result .= ' TRIGGER ' . $this->name->serialize($formatter) . ' ' . $this->event->serialize($formatter);
         $result .= ' ON ' . $this->table->serialize($formatter) . ' FOR EACH ROW';
         if ($this->position !== null) {
             $result .= ' ' . $this->position->serialize($formatter);

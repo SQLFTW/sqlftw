@@ -63,7 +63,7 @@ class TriggerCommandsParser
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::TRIGGER);
-        $name = $tokenList->expectName();
+        $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $event = TriggerEvent::get($tokenList->expectAnyKeyword(Keyword::BEFORE, Keyword::AFTER)
             . ' ' . $tokenList->expectAnyKeyword(Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE));
