@@ -371,8 +371,10 @@ class Parser
                 // EXPLAIN
                 return $this->factory->getExplainCommandParser()->parseExplain($tokenList->resetPosition($start));
             case Keyword::FLUSH:
-                $second = $tokenList->expect(TokenType::KEYWORD)->value;
-                if ($second === Keyword::TABLES) {
+                if ($tokenList->hasKeyword(Keyword::TABLES)
+                    || $tokenList->hasKeywords(Keyword::LOCAL, Keyword::TABLES)
+                    || $tokenList->hasKeywords(Keyword::NO_WRITE_TO_BINLOG, Keyword::TABLES)
+                ) {
                     // FLUSH TABLES
                     return $this->factory->getFlushCommandParser()->parseFlushTables($tokenList->resetPosition($start));
                 }

@@ -28,11 +28,18 @@ class FlushTablesCommand implements DalCommand
     /** @var bool */
     private $forExport;
 
+    /** @var bool */
+    private $local;
+
     /**
      * @param QualifiedName[]|null $tables
      */
-    public function __construct(?array $tables = null, bool $withReadLock = false, bool $forExport = false)
-    {
+    public function __construct(
+        ?array $tables = null,
+        bool $withReadLock = false,
+        bool $forExport = false,
+        bool $local = false
+    ) {
         if ($tables !== null) {
             Check::array($tables, 1);
             Check::itemsOfType($tables, QualifiedName::class);
@@ -41,6 +48,7 @@ class FlushTablesCommand implements DalCommand
         $this->tables = $tables;
         $this->withReadLock = $withReadLock;
         $this->forExport = $forExport;
+        $this->local = $local;
     }
 
     /**
@@ -61,9 +69,19 @@ class FlushTablesCommand implements DalCommand
         return $this->forExport;
     }
 
+    public function isLocal(): bool
+    {
+        return $this->local;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        $result = 'FLUSH TABLES';
+        $result = 'FLUSH ';
+        if ($this->isLocal()) {
+            $result .= 'LOCAL ';
+        }
+        $result .= 'TABLES';
+
         if ($this->tables !== null) {
             $result .= ' ' . $formatter->formatSerializablesList($this->tables);
         }

@@ -70,11 +70,15 @@ class FlushCommandParser
     }
 
     /**
-     * FLUSH TABLES [tbl_name [, tbl_name] ...] [WITH READ LOCK | FOR EXPORT]
+     * FLUSH [NO_WRITE_TO_BINLOG | LOCAL]
+     *   TABLES [tbl_name [, tbl_name] ...] [WITH READ LOCK | FOR EXPORT]
      */
     public function parseFlushTables(TokenList $tokenList): FlushTablesCommand
     {
-        $tokenList->expectKeywords(Keyword::FLUSH, Keyword::TABLES);
+        $tokenList->expectKeyword(Keyword::FLUSH);
+        $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
+        $tokenList->expectKeyword(Keyword::TABLES);
+
         $tables = null;
         $table = $tokenList->getQualifiedName();
         if ($table !== null) {
@@ -93,7 +97,7 @@ class FlushCommandParser
             $forExport = true;
         }
 
-        return new FlushTablesCommand($tables, $withReadLock, $forExport);
+        return new FlushTablesCommand($tables, $withReadLock, $forExport, $local);
     }
 
 }
