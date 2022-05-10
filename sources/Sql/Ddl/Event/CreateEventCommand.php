@@ -76,7 +76,7 @@ class CreateEventCommand implements EventCommand
 
         $body = $this->event->getBody();
 
-        return $result . ' ' . $body->serialize($formatter);
+        return $result . ' DO ' . $body->serialize($formatter);
     }
 
 }

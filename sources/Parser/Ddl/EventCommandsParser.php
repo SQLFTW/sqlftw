@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Parser\Dml\DoCommandsParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
@@ -26,15 +25,15 @@ class EventCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var DoCommandsParser */
-    private $doCommandsParser;
+    /** @var CompoundStatementParser */
+    private $compoundStatementParser;
 
     /** @var ExpressionParser */
     private $expressionParser;
 
-    public function __construct(DoCommandsParser $doCommandsParser, ExpressionParser $expressionParser)
+    public function __construct(CompoundStatementParser $compoundStatementParser, ExpressionParser $expressionParser)
     {
-        $this->doCommandsParser = $doCommandsParser;
+        $this->compoundStatementParser = $compoundStatementParser;
         $this->expressionParser = $expressionParser;
     }
 
@@ -82,7 +81,7 @@ class EventCommandsParser
             $comment = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::DO)) {
-            $body = $this->doCommandsParser->parseDo($tokenList->resetPosition($tokenList->getPosition() - 1));
+            $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
         }
 
         return new AlterEventCommand($name, $schedule, $body, $definer, $state, $preserve, $comment, $newName);
@@ -132,7 +131,8 @@ class EventCommandsParser
             $comment = $tokenList->expectString();
         }
 
-        $body = $this->doCommandsParser->parseDo($tokenList);
+        $tokenList->expectKeyword(Keyword::DO);
+        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
 
         $event = new EventDefinition($name, $schedule, $body, $definer, $state, $preserve, $comment);
 

@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Ddl\Event;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Dml\DoCommand\DoCommand;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Statement;
 
 class EventDefinition
 {
@@ -24,7 +24,7 @@ class EventDefinition
     /** @var EventSchedule */
     private $schedule;
 
-    /** @var DoCommand */
+    /** @var Statement */
     private $body;
 
     /** @var UserExpression|null */
@@ -42,7 +42,7 @@ class EventDefinition
     public function __construct(
         QualifiedName $name,
         EventSchedule $schedule,
-        DoCommand $body,
+        Statement $body,
         ?UserExpression $definer = null,
         ?EventState $state = null,
         ?bool $preserve = null,
@@ -82,7 +82,7 @@ class EventDefinition
         return $this->schedule;
     }
 
-    public function getBody(): DoCommand
+    public function getBody(): Statement
     {
         return $this->body;
     }

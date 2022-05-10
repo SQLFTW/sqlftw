@@ -12,8 +12,8 @@ namespace SqlFtw\Sql\Ddl\Event;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Dml\DoCommand\DoCommand;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Statement;
 
 class AlterEventCommand implements EventCommand
 {
@@ -25,7 +25,7 @@ class AlterEventCommand implements EventCommand
     /** @var EventSchedule|null */
     private $schedule;
 
-    /** @var DoCommand|null */
+    /** @var Statement|null */
     private $body;
 
     /** @var UserExpression|null */
@@ -46,7 +46,7 @@ class AlterEventCommand implements EventCommand
     public function __construct(
         QualifiedName $name,
         ?EventSchedule $schedule,
-        ?DoCommand $body = null,
+        ?Statement $body = null,
         ?UserExpression $definer = null,
         ?EventState $state = null,
         ?bool $preserve = null,
@@ -73,7 +73,7 @@ class AlterEventCommand implements EventCommand
         return $this->schedule;
     }
 
-    public function getBody(): ?DoCommand
+    public function getBody(): ?Statement
     {
         return $this->body;
     }
@@ -127,7 +127,7 @@ class AlterEventCommand implements EventCommand
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         }
         if ($this->body !== null) {
-            $result .= ' ' . $this->body->serialize($formatter);
+            $result .= ' DO ' . $this->body->serialize($formatter);
         }
 
         return $result;

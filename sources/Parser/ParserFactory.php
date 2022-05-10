@@ -177,7 +177,7 @@ class ParserFactory
 
     public function getEventCommandsParser(): EventCommandsParser
     {
-        return new EventCommandsParser($this->getDoCommandParser(), $this->getExpressionParser());
+        return new EventCommandsParser($this->getCompoundStatementParser(), $this->getExpressionParser());
     }
 
     public function getExplainCommandParser(): ExplainCommandParser
