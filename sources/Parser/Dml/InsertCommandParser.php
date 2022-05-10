@@ -179,6 +179,9 @@ class InsertCommandParser
         $position = $tokenList->getPosition();
         $columns = null;
         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+                return [];
+            }
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // this is not a column list
                 $tokenList->resetPosition($position);
