@@ -2,6 +2,7 @@
 
 namespace Test;
 
+use Dogma\Debug\Ansi;
 use Dogma\Debug\Dumper;
 use Dogma\Debug\FormattersDogma;
 use SqlFtw\Parser\ParserException;
@@ -34,9 +35,12 @@ Dumper::$objectFormatters[Token::class] = static function (Token $token, int $de
     $info = Dumper::$showInfo;
     Dumper::$showInfo = false;
 
+    $value = Dumper::dumpValue($token->value, $depth + 1);
+    if (($token->type & (TokenType::COMMENT | TokenType::WHITESPACE)) !== 0) {
+        $value = Ansi::dgray(Ansi::removeColors($value));
+    }
     $orig = $token->original !== null && $token->original !== $token->value ? ' / ' . Dumper::value($token->original) : '';
-    $res = Dumper::name(get_class($token)) . Dumper::bracket('(')
-        . Dumper::dumpValue($token->value, $depth + 1) . $orig . ' / '
+    $res = Dumper::name(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
         . Dumper::value2($type) . ' ' . Dumper::info('at position') . ' ' . $token->position
         . Dumper::bracket(')');
 
