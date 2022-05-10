@@ -61,6 +61,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const DATE_FORMAT = 'date_format';
     public const DATETIME_FORMAT = 'datetime_format';
     public const DEBUG = 'DEBUG';
+    public const DEBUG_SYNC = 'DEBUG_SYNC';
     public const DEFAULT_AUTHENTICATION_PLUGIN = 'default_authentication_plugin';
     public const DEFAULT_PASSWORD_LIFETIME = 'default_password_lifetime';
     public const DEFAULT_STORAGE_ENGINE = 'default_storage_engine';
@@ -331,6 +332,14 @@ class SystemVariable extends SqlEnum implements Feature
     public const NET_WRITE_TIMEOUT = 'net_write_timeout';
     public const NEW = 'new';
     public const NGRAM_TOKEN_SIZE = 'ngram_token_size';
+    public const NULL_AUDIT_ABORT_MESSAGE = 'null_audit_abort_message';
+    public const NULL_AUDIT_ABORT_VALUE = 'null_audit_abort_value';
+    public const NULL_AUDIT_EVENT_ORDER_CHECK = 'null_audit_event_order_check';
+    public const NULL_AUDIT_EVENT_ORDER_CHECK_CONSUME_IGNORE_COUNT = 'null_audit_event_order_check_consume_ignore_count';
+    public const NULL_AUDIT_EVENT_ORDER_CHECK_EXACT = 'null_audit_event_order_check_exact';
+    public const NULL_AUDIT_EVENT_ORDER_STARTED = 'null_audit_event_order_started';
+    public const NULL_AUDIT_EVENT_RECORD = 'null_audit_event_record';
+    public const NULL_AUDIT_EVENT_RECORD_DEF = 'null_audit_event_record_def';
     public const OFFLINE_MODE = 'offline_mode';
     public const OLD = 'old';
     public const OLD_ALTER_TABLE = 'old_alter_table';

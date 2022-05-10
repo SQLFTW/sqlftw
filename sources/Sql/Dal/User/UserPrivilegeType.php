@@ -81,6 +81,7 @@ class UserPrivilegeType extends SqlEnum
     public const RESOURCE_GROUP_USER = 'RESOURCE_GROUP_USER';
     public const ROLE_ADMIN = 'ROLE_ADMIN';
     public const SENSITIVE_VARIABLES_OBSERVER = 'SENSITIVE_VARIABLES_OBSERVER';
+    public const SERVICE_CONNECTION_ADMIN = 'SERVICE_CONNECTION_ADMIN';
     public const SESSION_VARIABLES_ADMIN = 'SESSION_VARIABLES_ADMIN';
     public const SET_USER_ID = 'SET_USER_ID';
     public const SHOW_ROUTINE = 'SHOW_ROUTINE';
