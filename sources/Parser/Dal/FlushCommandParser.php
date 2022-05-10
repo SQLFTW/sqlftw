@@ -88,7 +88,7 @@ class FlushCommandParser
         if ($keyword === Keyword::WITH) {
             $tokenList->expectKeywords(Keyword::READ, Keyword::LOCK);
             $withReadLock = true;
-        } else {
+        } elseif ($keyword === Keyword::FOR) {
             $tokenList->expectKeyword(Keyword::EXPORT);
             $forExport = true;
         }
