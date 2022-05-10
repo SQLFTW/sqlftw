@@ -1306,7 +1306,7 @@ class TableCommandsParser
                 $tokenList->expectOperator(Operator::EQUAL);
                 $algorithm = $tokenList->expectInt();
             }
-            $columns = $this->parseColumnList($tokenList);
+            $columns = $this->parseColumnList($tokenList, true);
             $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_KEY : PartitioningConditionType::KEY);
             $condition = new PartitioningCondition($type, null, $columns, $algorithm);
         } elseif ($keyword === Keyword::RANGE) {
@@ -1485,10 +1485,14 @@ class TableCommandsParser
     /**
      * @return string[]
      */
-    private function parseColumnList(TokenList $tokenList): array
+    private function parseColumnList(TokenList $tokenList, bool $allowEmpty = false): array
     {
         $columns = [];
         $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        if ($allowEmpty && $tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+            return $columns;
+        }
+
         do {
             $columns[] = $tokenList->expectName();
         } while ($tokenList->hasComma());
