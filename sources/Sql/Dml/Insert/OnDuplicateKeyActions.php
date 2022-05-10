@@ -9,35 +9,39 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\SqlSerializable;
-use function implode;
 
 class OnDuplicateKeyActions implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode[] */
-    private $expressions;
+    /** @var Assignment[] */
+    private $assignments;
 
     /**
-     * @param ExpressionNode[] $expressions (string $column => ExpressionNode $value)
+     * @param Assignment[] $assignments
      */
-    public function __construct(array $expressions)
+    public function __construct(array $assignments)
     {
-        $this->expressions = $expressions;
+        $this->assignments = $assignments;
+    }
+
+    /**
+     * @return Assignment[]
+     */
+    public function getAssignements(): array
+    {
+        return $this->assignments;
     }
 
     public function serialize(Formatter $formatter): string
     {
         $result = 'ON DUPLICATE KEY UPDATE ';
 
-        $result .= implode(', ', Arr::mapPairs($this->expressions, static function (string $column, ExpressionNode $expression) use ($formatter): string {
-            return $formatter->formatName($column) . ' = ' . $expression->serialize($formatter);
-        }));
+        $result .= $formatter->formatSerializablesList($this->assignments);
 
         return $result;
     }

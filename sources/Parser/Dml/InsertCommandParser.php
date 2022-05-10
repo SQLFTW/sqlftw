@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\Insert\InsertCommand;
 use SqlFtw\Sql\Dml\Insert\InsertPriority;
 use SqlFtw\Sql\Dml\Insert\InsertSelectCommand;
@@ -89,10 +90,10 @@ class InsertCommandParser
 
             return new InsertValuesCommand($table, $rows, $columns, $partitions, $priority, $ignore, $update);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
-            $values = $this->parseAssignments($tokenList);
+            $assignments = $this->parseAssignments($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertSetCommand($table, $values, $columns, $partitions, $priority, $ignore, $update);
+            return new InsertSetCommand($table, $assignments, $columns, $partitions, $priority, $ignore, $update);
         } else {
             $query = $this->queryParser->parseQuery($tokenList);
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
@@ -142,9 +143,9 @@ class InsertCommandParser
 
             return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
-            $values = $this->parseAssignments($tokenList);
+            $assignments = $this->parseAssignments($tokenList);
 
-            return new ReplaceSetCommand($table, $values, $columns, $partitions, $priority, $ignore);
+            return new ReplaceSetCommand($table, $assignments, $columns, $partitions, $priority, $ignore);
         } else {
             $tokenList->expectAnyKeyword(Keyword::VALUE, Keyword::VALUES);
             $rows = $this->parseRows($tokenList);
@@ -203,28 +204,28 @@ class InsertCommandParser
             return null;
         }
 
-        $values = $this->parseAssignments($tokenList);
+        $assignments = $this->parseAssignments($tokenList);
 
-        return new OnDuplicateKeyActions($values);
+        return new OnDuplicateKeyActions($assignments);
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return Assignment[]
      */
     private function parseAssignments(TokenList $tokenList): array
     {
-        $values = [];
+        $assignments = [];
         do {
-            $column = $tokenList->expectName();
+            $column = new QualifiedName(...$tokenList->expectQualifiedName());
             $tokenList->expectOperator(Operator::EQUAL);
             if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $values[$column] = new KeywordLiteral(Keyword::DEFAULT);
+                $assignments[] = new Assignment($column, new KeywordLiteral(Keyword::DEFAULT));
             } else {
-                $values[$column] = $this->expressionParser->parseExpression($tokenList);
+                $assignments[] = new Assignment($column, $this->expressionParser->parseExpression($tokenList));
             }
         } while ($tokenList->hasComma());
 
-        return $values;
+        return $assignments;
     }
 
     /**

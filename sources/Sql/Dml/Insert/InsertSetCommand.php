@@ -9,52 +9,49 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use Dogma\Arr;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
-use function implode;
 
 class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode[] */
-    private $values;
+    /** @var Assignment[] */
+    private $assignments;
 
     /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
 
     /**
-     * @param ExpressionNode[] $values (string $column => ExpressionNode $value)
+     * @param Assignment[] $assignments
      * @param string[]|null $columns
      * @param string[]|null $partitions
      */
     public function __construct(
         QualifiedName $table,
-        array $values,
+        array $assignments,
         ?array $columns,
         ?array $partitions,
         ?InsertPriority $priority = null,
         bool $ignore = false,
         ?OnDuplicateKeyActions $onDuplicateKeyActions = null
     ) {
-        Check::itemsOfType($values, ExpressionNode::class);
-
         parent::__construct($table, $columns, $partitions, $priority, $ignore);
 
-        $this->values = $values;
+        $this->assignments = $assignments;
         $this->onDuplicateKeyActions = $onDuplicateKeyActions;
     }
 
     /**
      * @return ExpressionNode[]
      */
-    public function getValues(): array
+    public function getAssignments(): array
     {
-        return $this->values;
+        return $this->assignments;
     }
 
     public function getOnDuplicateKeyAction(): ?OnDuplicateKeyActions
@@ -66,9 +63,7 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     {
         $result = 'INSERT' . $this->serializeBody($formatter);
 
-        $result .= ' SET ' . implode(', ', Arr::mapPairs($this->values, static function (string $column, ExpressionNode $value) use ($formatter): string {
-            return $formatter->formatName($column) . ' = ' . $value->serialize($formatter);
-        }));
+        $result .= ' SET ' . $formatter->formatSerializablesList($this->assignments);
 
         if ($this->onDuplicateKeyActions !== null) {
             $result .= ' ' . $this->onDuplicateKeyActions->serialize($formatter);
