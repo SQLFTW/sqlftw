@@ -38,6 +38,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const BINLOG_ROWS_QUERY_LOG_EVENTS = 'binlog_rows_query_log_events';
     public const BINLOG_STMT_CACHE_SIZE = 'binlog_stmt_cache_size';
     public const BINLOG_TRANSACTION_COMPRESSION = 'binlog_transaction_compression';
+    public const BINLOG_TRANSACTION_DEPENDENCY_TRACKING = 'binlog_transaction_dependency_tracking';
     public const BLOCK_ENCRYPTION_MODE = 'block_encryption_mode';
     public const BULK_INSERT_BUFFER_SIZE = 'bulk_insert_buffer_size';
     public const CHARACTER_SET_CLIENT = 'character_set_client';
@@ -419,11 +420,18 @@ class SystemVariable extends SqlEnum implements Feature
     public const RELAY_LOG_PURGE = 'relay_log_purge';
     public const RELAY_LOG_RECOVERY = 'relay_log_recovery';
     public const RELAY_LOG_SPACE_LIMIT = 'relay_log_space_limit';
+    public const REPLICA_EXEC_MODE = 'replica_exec_mode';
+    public const REPLICA_PARALLEL_TYPE = 'replica_parallel_type';
+    public const REPLICA_PARALLEL_WORKERS = 'replica_parallel_workers';
+    public const REPLICA_PRESERVE_COMMIT_ORDER = 'replica_preserve_commit_order';
+    public const REPLICA_TRANSACTION_RETRIES = 'replica_transaction_retries';
+    public const REPLICA_TYPE_CONVERSIONS = 'replica_type_conversions';
     public const REPORT_HOST = 'report_host';
     public const REPORT_PASSWORD = 'report_password';
     public const REPORT_PORT = 'report_port';
     public const REPORT_USER = 'report_user';
     public const REQUIRE_SECURE_TRANSPORT = 'require_secure_transport';
+    public const RPL_SEMI_SYNC_SOURCE_WAIT_POINT = 'rpl_semi_sync_source_wait_point';
     public const RPL_STOP_SLAVE_TIMEOUT = 'rpl_stop_slave_timeout';
     public const SECURE_AUTH = 'secure_auth';
     public const SECURE_FILE_PRIV = 'secure_file_priv';
@@ -474,6 +482,8 @@ class SystemVariable extends SqlEnum implements Feature
     public const SQL_MODE = 'sql_mode';
     public const SQL_NOTES = 'sql_notes';
     public const SQL_QUOTE_SHOW_CREATE = 'sql_quote_show_create';
+    public const SQL_REPLICA_SKIP_COUNTER = 'sql_replica_skip_counter';
+    public const SQL_REQUIRE_PRIMARY_KEY = 'sql_require_primary_key';
     public const SQL_SAFE_UPDATES = 'sql_safe_updates';
     public const SQL_SELECT_LIMIT = 'sql_select_limit';
     public const SQL_SLAVE_SKIP_COUNTER = 'sql_slave_skip_counter';
