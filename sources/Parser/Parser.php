@@ -212,8 +212,15 @@ class Parser
                     // CHANGE MASTER TO
                     return $this->factory->getReplicationCommandsParser()->parseChangeMasterTo($tokenList->resetPosition($start));
                 } elseif ($second === Keyword::REPLICATION) {
-                    // CHANGE REPLICATION FILTER
-                    return $this->factory->getReplicationCommandsParser()->parseChangeReplicationFilter($tokenList->resetPosition($start));
+                    $third = $tokenList->expect(TokenType::KEYWORD)->value;
+                    if ($third === Keyword::SOURCE) {
+                        // CHANGE REPLICATION SOURCE
+                        return $this->factory->getReplicationCommandsParser()->parseChangeReplicationSourceTo($tokenList->resetPosition($start));
+                    } elseif ($third === Keyword::FILTER) {
+                        // CHANGE REPLICATION FILTER
+                        return $this->factory->getReplicationCommandsParser()->parseChangeReplicationFilter($tokenList->resetPosition($start));
+                    }
+                    $tokenList->expectedAnyKeyword(Keyword::SOURCE, Keyword::FILTER);
                 }
                 $tokenList->expectedAnyKeyword(Keyword::MASTER, Keyword::REPLICATION);
             case Keyword::CHECK:

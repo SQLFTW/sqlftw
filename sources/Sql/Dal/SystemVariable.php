@@ -37,6 +37,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const BINLOG_ROW_IMAGE = 'binlog_row_image';
     public const BINLOG_ROWS_QUERY_LOG_EVENTS = 'binlog_rows_query_log_events';
     public const BINLOG_STMT_CACHE_SIZE = 'binlog_stmt_cache_size';
+    public const BINLOG_TRANSACTION_COMPRESSION = 'binlog_transaction_compression';
     public const BLOCK_ENCRYPTION_MODE = 'block_encryption_mode';
     public const BULK_INSERT_BUFFER_SIZE = 'bulk_insert_buffer_size';
     public const CHARACTER_SET_CLIENT = 'character_set_client';
@@ -58,6 +59,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const DATADIR = 'datadir';
     public const DATE_FORMAT = 'date_format';
     public const DATETIME_FORMAT = 'datetime_format';
+    public const DEBUG = 'DEBUG';
     public const DEFAULT_AUTHENTICATION_PLUGIN = 'default_authentication_plugin';
     public const DEFAULT_PASSWORD_LIFETIME = 'default_password_lifetime';
     public const DEFAULT_STORAGE_ENGINE = 'default_storage_engine';
@@ -391,6 +393,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const PROFILING_HISTORY_SIZE = 'profiling_history_size';
     public const PROTOCOL_VERSION = 'protocol_version';
     public const PROXY_USER = 'proxy_user';
+    public const PSEUDO_REPLICA_MODE = 'pseudo_replica_mode';
     public const PSEUDO_SLAVE_MODE = 'pseudo_slave_mode';
     public const PSEUDO_THREAD_ID = 'pseudo_thread_id';
     public const QUERY_ALLOC_BLOCK_SIZE = 'query_alloc_block_size';

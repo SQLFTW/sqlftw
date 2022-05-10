@@ -18,8 +18,11 @@ use SqlFtw\Parser\TokenType;
 use SqlFtw\Parser\UnexpectedTokenException;
 use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
 use SqlFtw\Sql\Dal\Replication\ChangeReplicationFilterCommand;
+use SqlFtw\Sql\Dal\Replication\ChangeReplicationSourceToCommand;
 use SqlFtw\Sql\Dal\Replication\PurgeBinaryLogsCommand;
+use SqlFtw\Sql\Dal\Replication\ReplicaOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationFilter;
+use SqlFtw\Sql\Dal\Replication\ReplicationGtidAssignOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationThreadType;
 use SqlFtw\Sql\Dal\Replication\ResetMasterCommand;
 use SqlFtw\Sql\Dal\Replication\ResetSlaveCommand;
@@ -33,7 +36,10 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\SqlEnum;
+use SqlFtw\Sql\UserName;
 use function abs;
+use function is_a;
 
 class ReplicationCommandsParser
 {
@@ -56,15 +62,22 @@ class ReplicationCommandsParser
      *   | MASTER_USER = 'user_name'
      *   | MASTER_PASSWORD = 'password'
      *   | MASTER_PORT = port_num
-     *   | MASTER_CONNECT_RETRY = interval
-     *   | MASTER_RETRY_COUNT = count
-     *   | MASTER_DELAY = interval
-     *   | MASTER_HEARTBEAT_PERIOD = interval
-     *   | MASTER_LOG_FILE = 'master_log_name'
-     *   | MASTER_LOG_POS = master_log_pos
+     *   | PRIVILEGE_CHECKS_USER = {'account' | NULL}
+     *   | REQUIRE_ROW_FORMAT = {0|1}
+     *   | REQUIRE_TABLE_PRIMARY_KEY_CHECK = {STREAM | ON | OFF}
+     *   | ASSIGN_GTIDS_TO_ANONYMOUS_TRANSACTIONS = {OFF | LOCAL | uuid}
+     *   | MASTER_LOG_FILE = 'source_log_name'
+     *   | MASTER_LOG_POS = source_log_pos
      *   | MASTER_AUTO_POSITION = {0|1}
      *   | RELAY_LOG_FILE = 'relay_log_name'
      *   | RELAY_LOG_POS = relay_log_pos
+     *   | MASTER_HEARTBEAT_PERIOD = interval
+     *   | MASTER_CONNECT_RETRY = interval
+     *   | MASTER_RETRY_COUNT = count
+     *   | SOURCE_CONNECTION_AUTO_FAILOVER = {0|1}
+     *   | MASTER_DELAY = interval
+     *   | MASTER_COMPRESSION_ALGORITHMS = 'algorithm[,algorithm][,algorithm]'
+     *   | MASTER_ZSTD_COMPRESSION_LEVEL = level
      *   | MASTER_SSL = {0|1}
      *   | MASTER_SSL_CA = 'ca_file_name'
      *   | MASTER_SSL_CAPATH = 'ca_directory_name'
@@ -75,9 +88,12 @@ class ReplicationCommandsParser
      *   | MASTER_SSL_CIPHER = 'cipher_list'
      *   | MASTER_SSL_VERIFY_SERVER_CERT = {0|1}
      *   | MASTER_TLS_VERSION = 'protocol_list'
+     *   | MASTER_TLS_CIPHERSUITES = 'ciphersuite_list'
      *   | MASTER_PUBLIC_KEY_PATH = 'key_file_name'
      *   | GET_MASTER_PUBLIC_KEY = {0|1}
-     *   | IGNORE_SERVER_IDS = (server_id_list)
+     *   | NETWORK_NAMESPACE = 'namespace'
+     *   | IGNORE_SERVER_IDS = (server_id_list),
+     *   | GTID_ONLY = {0|1}
      *
      * channel_option:
      *     FOR CHANNEL channel
@@ -88,11 +104,13 @@ class ReplicationCommandsParser
     public function parseChangeMasterTo(TokenList $tokenList): ChangeMasterToCommand
     {
         $tokenList->expectKeywords(Keyword::CHANGE, Keyword::MASTER, Keyword::TO);
+        $types = SlaveOption::getTypes();
         $options = [];
         do {
             $option = $tokenList->expectKeywordEnum(SlaveOption::class);
             $tokenList->expectOperator(Operator::EQUAL);
-            switch (SlaveOption::getTypes()[$option->getValue()]) {
+            $type = $types[$option->getValue()];
+            switch ($type) {
                 case Type::STRING:
                     $value = $tokenList->expectString();
                     break;
@@ -101,6 +119,9 @@ class ReplicationCommandsParser
                     break;
                 case Type::BOOL:
                     $value = $tokenList->expectBool();
+                    break;
+                case UserName::class:
+                    $value = $tokenList->expectUserName();
                     break;
                 case TimeInterval::class:
                     $tokenList->expectKeyword(Keyword::INTERVAL);
@@ -118,7 +139,19 @@ class ReplicationCommandsParser
                         }
                     } while (true);
                     break;
+                case ReplicationGtidAssignOption::class:
+                    $uuid = null;
+                    $keyword = $tokenList->getAnyKeyword(Keyword::OFF, Keyword::LOCAL);
+                    if ($keyword === null) {
+                        $uuid = $tokenList->expect(TokenType::UUID)->value;
+                    }
+                    $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
+                    break;
                 default:
+                    if (is_a($type, SqlEnum::class, true)) {
+                        $value = $tokenList->expectKeywordEnum($type);
+                        break;
+                    }
                     throw new ShouldNotHappenException('Unknown type');
             }
             $options[$option->getValue()] = $value;
@@ -130,6 +163,119 @@ class ReplicationCommandsParser
         }
 
         return new ChangeMasterToCommand($options, $channel);
+    }
+
+    /**
+     * CHANGE MASTER TO option [, option] ... [ channel_option ]
+     *
+     * option: {
+     *     SOURCE_BIND = 'interface_name'
+     *   | SOURCE_HOST = 'host_name'
+     *   | SOURCE_USER = 'user_name'
+     *   | SOURCE_PASSWORD = 'password'
+     *   | SOURCE_PORT = port_num
+     *   | PRIVILEGE_CHECKS_USER = {NULL | 'account'}
+     *   | REQUIRE_ROW_FORMAT = {0|1}
+     *   | REQUIRE_TABLE_PRIMARY_KEY_CHECK = {STREAM | ON | OFF}
+     *   | ASSIGN_GTIDS_TO_ANONYMOUS_TRANSACTIONS = {OFF | LOCAL | uuid}
+     *   | SOURCE_LOG_FILE = 'source_log_name'
+     *   | SOURCE_LOG_POS = source_log_pos
+     *   | SOURCE_AUTO_POSITION = {0|1}
+     *   | RELAY_LOG_FILE = 'relay_log_name'
+     *   | RELAY_LOG_POS = relay_log_pos
+     *   | SOURCE_HEARTBEAT_PERIOD = interval
+     *   | SOURCE_CONNECT_RETRY = interval
+     *   | SOURCE_RETRY_COUNT = count
+     *   | SOURCE_CONNECTION_AUTO_FAILOVER = {0|1}
+     *   | SOURCE_DELAY = interval
+     *   | SOURCE_COMPRESSION_ALGORITHMS = 'algorithm[,algorithm][,algorithm]'
+     *   | SOURCE_ZSTD_COMPRESSION_LEVEL = level
+     *   | SOURCE_SSL = {0|1}
+     *   | SOURCE_SSL_CA = 'ca_file_name'
+     *   | SOURCE_SSL_CAPATH = 'ca_directory_name'
+     *   | SOURCE_SSL_CERT = 'cert_file_name'
+     *   | SOURCE_SSL_CRL = 'crl_file_name'
+     *   | SOURCE_SSL_CRLPATH = 'crl_directory_name'
+     *   | SOURCE_SSL_KEY = 'key_file_name'
+     *   | SOURCE_SSL_CIPHER = 'cipher_list'
+     *   | SOURCE_SSL_VERIFY_SERVER_CERT = {0|1}
+     *   | SOURCE_TLS_VERSION = 'protocol_list'
+     *   | SOURCE_TLS_CIPHERSUITES = 'ciphersuite_list'
+     *   | SOURCE_PUBLIC_KEY_PATH = 'key_file_name'
+     *   | GET_SOURCE_PUBLIC_KEY = {0|1}
+     *   | NETWORK_NAMESPACE = 'namespace'
+     *   | IGNORE_SERVER_IDS = (server_id_list),
+     *   | GTID_ONLY = {0|1}
+     * }
+     *
+     * channel_option:
+     *     FOR CHANNEL channel
+     *
+     * server_id_list:
+     *     [server_id [, server_id] ... ]
+     */
+    public function parseChangeReplicationSourceTo(TokenList $tokenList): ChangeReplicationSourceToCommand
+    {
+        $tokenList->expectKeywords(Keyword::CHANGE, Keyword::REPLICATION, Keyword::SOURCE, Keyword::TO);
+        $types = ReplicaOption::getTypes();
+        $options = [];
+        do {
+            $option = $tokenList->expectKeywordEnum(ReplicaOption::class);
+            $tokenList->expectOperator(Operator::EQUAL);
+            $type = $types[$option->getValue()];
+            switch ($type) {
+                case Type::STRING:
+                    $value = $tokenList->expectString();
+                    break;
+                case Type::INT:
+                    $value = $tokenList->expectInt();
+                    break;
+                case Type::BOOL:
+                    $value = $tokenList->expectBool();
+                    break;
+                case UserName::class:
+                    $value = $tokenList->expectUserName();
+                    break;
+                case TimeInterval::class:
+                    $tokenList->expectKeyword(Keyword::INTERVAL);
+                    $value = $this->expressionParser->parseInterval($tokenList);
+                    break;
+                case 'array<int>':
+                    $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                    $value = [];
+                    do {
+                        $value[] = $tokenList->expectInt();
+                        if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+                            break;
+                        } else {
+                            $tokenList->expect(TokenType::COMMA);
+                        }
+                    } while (true);
+                    break;
+                case ReplicationGtidAssignOption::class:
+                    $uuid = null;
+                    $keyword = $tokenList->getAnyKeyword(Keyword::OFF, Keyword::LOCAL);
+                    if ($keyword === null) {
+                        $uuid = $tokenList->expect(TokenType::UUID)->value;
+                    }
+                    $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
+                    break;
+                default:
+                    if (is_a($type, SqlEnum::class, true)) {
+                        $value = $tokenList->expectKeywordEnum($type);
+                        break;
+                    }
+                    throw new ShouldNotHappenException('Unknown type');
+            }
+            $options[$option->getValue()] = $value;
+        } while ($tokenList->hasComma());
+
+        $channel = null;
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectString();
+        }
+
+        return new ChangeReplicationSourceToCommand($options, $channel);
     }
 
     /**
