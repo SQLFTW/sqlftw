@@ -161,7 +161,7 @@ class UserCommandsParser
             $retainCurrent = false;
             if ($tokenList->hasKeyword(Keyword::WITH)) {
                 $action = IdentifiedUserAction::SET_PLUGIN;
-                $plugin = $tokenList->expectName();
+                $plugin = $tokenList->expectNameOrString();
                 if ($tokenList->hasKeyword(Keyword::AS)) {
                     $action = IdentifiedUserAction::SET_HASH;
                     $password = $tokenList->expectString();
