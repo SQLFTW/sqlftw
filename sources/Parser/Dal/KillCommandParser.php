@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Kill\KillCommand;
 use SqlFtw\Sql\Keyword;
@@ -18,6 +19,14 @@ class KillCommandParser
 {
     use StrictBehaviorMixin;
 
+    /** @var ExpressionParser */
+    private $expressionParser;
+
+    public function __construct(ExpressionParser $expressionParser)
+    {
+        $this->expressionParser = $expressionParser;
+    }
+
     /**
      * KILL [CONNECTION | QUERY] processlist_id
      */
@@ -25,7 +34,7 @@ class KillCommandParser
     {
         $tokenList->expectKeyword(Keyword::KILL);
         $tokenList->getAnyKeyword(Keyword::CONNECTION, Keyword::QUERY);
-        $id = $tokenList->expectInt();
+        $id = $this->expressionParser->parseExpression($tokenList);
 
         return new KillCommand($id);
     }

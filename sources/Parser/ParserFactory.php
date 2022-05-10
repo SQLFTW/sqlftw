@@ -227,7 +227,7 @@ class ParserFactory
 
     public function getKillCommandParser(): KillCommandParser
     {
-        return new KillCommandParser();
+        return new KillCommandParser($this->getExpressionParser());
     }
 
     public function getLoadCommandsParser(): LoadCommandsParser
