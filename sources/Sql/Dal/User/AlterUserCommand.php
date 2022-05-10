@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class AlterUserCommand implements UserCommand
 {
@@ -28,6 +29,12 @@ class AlterUserCommand implements UserCommand
     /** @var UserPasswordLockOption[]|null */
     private $passwordLockOptions;
 
+    /** @var string|null */
+    private $comment;
+
+    /** @var string|null */
+    private $attribute;
+
     /** @var bool */
     private $ifExists;
 
@@ -37,12 +44,26 @@ class AlterUserCommand implements UserCommand
      * @param UserResourceOption[]|null $resourceOptions
      * @param UserPasswordLockOption[]|null $passwordLockOptions
      */
-    public function __construct(array $users, ?array $tlsOptions, ?array $resourceOptions = null, ?array $passwordLockOptions = null, bool $ifExists = false)
+    public function __construct(
+        array $users,
+        ?array $tlsOptions,
+        ?array $resourceOptions = null,
+        ?array $passwordLockOptions = null,
+        ?string $comment = null,
+        ?string $attribute = null,
+        bool $ifExists = false
+    )
     {
+        if ($comment !== null && $attribute !== null) {
+            throw new InvalidDefinitionException('Comment and attribute cannot be both set.');
+        }
+
         $this->users = $users;
         $this->tlsOptions = $tlsOptions;
         $this->resourceOptions = $resourceOptions;
         $this->passwordLockOptions = $passwordLockOptions;
+        $this->comment = $comment;
+        $this->attribute = $attribute;
         $this->ifExists = $ifExists;
     }
 
@@ -78,6 +99,16 @@ class AlterUserCommand implements UserCommand
         return $this->passwordLockOptions;
     }
 
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function getAttribute(): ?string
+    {
+        return $this->attribute;
+    }
+
     public function ifExists(): bool
     {
         return $this->ifExists;
@@ -104,6 +135,11 @@ class AlterUserCommand implements UserCommand
         }
         if ($this->passwordLockOptions !== null) {
             $result .= ' ' . $formatter->formatSerializablesList($this->passwordLockOptions, ' ');
+        }
+        if ($this->comment !== null) {
+            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
+        } elseif ($this->attribute !== null) {
+            $result .= ' ATTRIBUTE ' . $formatter->formatString($this->attribute);
         }
 
         return $result;

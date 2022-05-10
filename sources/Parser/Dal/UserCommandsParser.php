@@ -61,6 +61,7 @@ class UserCommandsParser
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH resource_option [resource_option] ...]
      *     [password_option | lock_option] ...
+     *     [COMMENT 'comment_string' | ATTRIBUTE 'json_object']
      *
      * ALTER USER [IF EXISTS]
      *     USER() IDENTIFIED BY 'auth_string'
@@ -94,7 +95,14 @@ class UserCommandsParser
         $resourceOptions = $this->parseResourceOptions($tokenList);
         $passwordLockOptions = $this->parsePasswordLockOptions($tokenList);
 
-        return new AlterUserCommand($users, $tlsOptions, $resourceOptions, $passwordLockOptions, $ifExists);
+        $comment = $attribute = null;
+        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+            $comment = $tokenList->expectString();
+        } elseif ($tokenList->hasKeyword(Keyword::ATTRIBUTE)) {
+            $attribute = $tokenList->expectString();
+        }
+
+        return new AlterUserCommand($users, $tlsOptions, $resourceOptions, $passwordLockOptions, $comment, $attribute, $ifExists);
     }
 
     /**
@@ -104,6 +112,7 @@ class UserCommandsParser
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH resource_option [resource_option] ...]
      *     [password_option | lock_option] ...
+     *     [COMMENT 'comment_string' | ATTRIBUTE 'json_object']
      */
     public function parseCreateUser(TokenList $tokenList): CreateUserCommand
     {
@@ -121,7 +130,14 @@ class UserCommandsParser
         $resourceOptions = $this->parseResourceOptions($tokenList);
         $passwordLockOptions = $this->parsePasswordLockOptions($tokenList);
 
-        return new CreateUserCommand($users, $defaultRoles, $tlsOptions, $resourceOptions, $passwordLockOptions, $ifNotExists);
+        $comment = $attribute = null;
+        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
+            $comment = $tokenList->expectString();
+        } elseif ($tokenList->hasKeyword(Keyword::ATTRIBUTE)) {
+            $attribute = $tokenList->expectString();
+        }
+
+        return new CreateUserCommand($users, $defaultRoles, $tlsOptions, $resourceOptions, $passwordLockOptions, $comment, $attribute, $ifNotExists);
     }
 
     /**
