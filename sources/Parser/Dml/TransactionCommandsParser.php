@@ -67,7 +67,8 @@ class TransactionCommandsParser
      */
     public function parseLockTables(TokenList $tokenList): LockTablesCommand
     {
-        $tokenList->expectKeywords(Keyword::LOCK, Keyword::TABLES);
+        $tokenList->expectKeyword(Keyword::LOCK);
+        $tokenList->expectAnyKeyword(Keyword::TABLES, Keyword::TABLE);
         $items = [];
         do {
             $table = new QualifiedName(...$tokenList->expectQualifiedName());
@@ -256,7 +257,8 @@ class TransactionCommandsParser
      */
     public function parseUnlockTables(TokenList $tokenList): UnlockTablesCommand
     {
-        $tokenList->expectKeywords(Keyword::UNLOCK, Keyword::TABLES);
+        $tokenList->expectKeyword(Keyword::UNLOCK);
+        $tokenList->expectAnyKeyword(Keyword::TABLES, Keyword::TABLE);
 
         return new UnlockTablesCommand();
     }
