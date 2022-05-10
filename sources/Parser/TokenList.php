@@ -197,10 +197,11 @@ class TokenList
 
     /**
      * @phpstan-impure
+     * @param mixed $value
      */
-    public function has(int $tokenType): bool
+    public function has(int $tokenType, $value = null): bool
     {
-        return (bool) $this->get($tokenType);
+        return (bool) $this->get($tokenType, $value);
     }
 
     public function expectAny(int ...$tokenTypes): Token

@@ -684,8 +684,16 @@ class TableCommandsParser
         /** @var DuplicateOption|null $duplicateOption */
         $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
         $select = null;
-        if ($tokenList->hasKeyword(Keyword::AS) || $items === [] || $duplicateOption !== null || !$tokenList->isFinished()) {
+
+        if ($tokenList->hasKeyword(Keyword::AS) || $items === [] || $duplicateOption !== null) {
             $select = $this->queryParser->parseQuery($tokenList);
+        } elseif (!$tokenList->isFinished()) {
+            $position = $tokenList->getPosition();
+            if (!$tokenList->has(TokenType::SEMICOLON)) {
+                $select = $this->queryParser->parseQuery($tokenList);
+            } else {
+                $tokenList->resetPosition($position);
+            }
         }
 
         return new CreateTableCommand($table, $items, $options, $partitioning, $temporary, $ifNotExists, $duplicateOption, $select);
