@@ -16,6 +16,7 @@ class ResetOption extends SqlEnum
 {
 
     public const MASTER = Keyword::MASTER;
+    public const REPLICA = Keyword::REPLICA;
     public const SLAVE = Keyword::SLAVE;
     public const QUERY_CACHE = Keyword::QUERY . ' ' . Keyword::CACHE;
 

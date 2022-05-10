@@ -464,25 +464,33 @@ class Parser
                     // RESET PERSIST
                     return $this->factory->getResetPersistCommandParser()->parseResetPersist($tokenList->resetPosition($start));
                 }
-                $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::SLAVE, Keyword::QUERY);
+                $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::REPLICA, Keyword::SLAVE, Keyword::QUERY);
                 if ($keyword === Keyword::MASTER) {
                     if ($tokenList->hasComma()) {
-                        // RESET MASTER, SLAVE, QUERY CACHE
+                        // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
                         return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                     }
 
                     // RESET MASTER
                     return $this->factory->getReplicationCommandsParser()->parseResetMaster($tokenList->resetPosition($start));
+                } elseif ($keyword === Keyword::REPLICA) {
+                    if ($tokenList->hasComma()) {
+                        // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
+                        return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
+                    }
+
+                    // RESET REPLICA
+                    return $this->factory->getReplicationCommandsParser()->parseResetReplica($tokenList->resetPosition($start));
                 } elseif ($keyword === Keyword::SLAVE) {
                     if ($tokenList->hasComma()) {
-                        // RESET MASTER, SLAVE, QUERY CACHE
+                        // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
                         return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                     }
 
                     // RESET SLAVE
                     return $this->factory->getReplicationCommandsParser()->parseResetSlave($tokenList->resetPosition($start));
                 } else {
-                    // RESET MASTER, SLAVE, QUERY CACHE
+                    // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
                     return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                 }
             case Keyword::RESTART:

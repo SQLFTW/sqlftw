@@ -25,7 +25,8 @@ class ResetCommandParser
      *
      * reset_option:
      *     MASTER
-     *   | QUERY CACHE
+     *   | REPLICA
+     *   | QUERY CACHE (<= 5.7)
      *   | SLAVE
      */
     public function parseReset(TokenList $tokenList): Command
@@ -33,7 +34,7 @@ class ResetCommandParser
         $tokenList->expectKeyword(Keyword::RESET);
         $options = [];
         do {
-            $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::SLAVE, Keyword::QUERY);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::REPLICA, Keyword::SLAVE, Keyword::QUERY);
             if ($keyword === Keyword::QUERY) {
                 $tokenList->expectKeyword(Keyword::CACHE);
                 $options[] = ResetOption::get(ResetOption::QUERY_CACHE);

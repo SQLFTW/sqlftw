@@ -25,6 +25,7 @@ use SqlFtw\Sql\Dal\Replication\ReplicationFilter;
 use SqlFtw\Sql\Dal\Replication\ReplicationGtidAssignOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationThreadType;
 use SqlFtw\Sql\Dal\Replication\ResetMasterCommand;
+use SqlFtw\Sql\Dal\Replication\ResetReplicaCommand;
 use SqlFtw\Sql\Dal\Replication\ResetSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\SlaveOption;
 use SqlFtw\Sql\Dal\Replication\StartGroupReplicationCommand;
@@ -404,6 +405,24 @@ class ReplicationCommandsParser
         }
 
         return new ResetSlaveCommand($all, $channel);
+    }
+
+    /**
+     * RESET REPLICA [ALL] [channel_option]
+     *
+     * channel_option:
+     *     FOR CHANNEL channel
+     */
+    public function parseResetReplica(TokenList $tokenList): ResetReplicaCommand
+    {
+        $tokenList->expectKeywords(Keyword::RESET, Keyword::REPLICA);
+        $all = $tokenList->hasKeyword(Keyword::ALL);
+        $channel = null;
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectString();
+        }
+
+        return new ResetReplicaCommand($all, $channel);
     }
 
     /**
