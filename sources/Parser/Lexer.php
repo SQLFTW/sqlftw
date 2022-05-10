@@ -41,7 +41,8 @@ use function trim;
 
 /**
  * todo:
- * - quoted delimiters : E
+ * - quoted delimiters
+ * - quoted user variables
  * - Date and Time Literals?
  * - Mysql string charset declaration (_utf* & N)
  * - \N is synonym for NULL (until 8.0)
@@ -69,6 +70,9 @@ class Lexer
 
     /** @var array<string, int> */
     private static $nameCharsKey;
+
+    /** @var array<string, int> */
+    private static $userVariableNameCharsKey;
 
     /** @var array<string, int> */
     private static $operatorSymbolsKey;
@@ -109,6 +113,7 @@ class Lexer
             self::$numbersKey = array_flip(self::NUMBERS); // @phpstan-ignore-line
             self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
             self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
+            self::$userVariableNameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_', '.']));
             self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
         }
 
@@ -283,19 +288,44 @@ class Lexer
                         yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $char, null, $condition);
                         break;
                     }
-                    // @variable
+
                     $value = $char;
-                    while ($position < $length) {
-                        $next = $string[$position];
-                        if ($next === '@' || isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
-                            $value .= $next;
-                            $position++;
-                            $column++;
-                        } else {
-                            break;
+                    $second = $string[$position];
+                    if ($second === '@') {
+                        // @@variable
+                        $value .= $second;
+                        $position++;
+                        $column++;
+                        while ($position < $length) {
+                            $next = $string[$position];
+                            if ($next === '@' || isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
+                                $value .= $next;
+                                $position++;
+                                $column++;
+                            } else {
+                                break;
+                            }
                         }
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+                    } elseif (isset(self::$userVariableNameCharsKey[$second]) || ord($second) > 127) {
+                        // @variable
+                        $value .= $second;
+                        $position++;
+                        $column++;
+                        while ($position < $length) {
+                            $next = $string[$position];
+                            if (isset(self::$userVariableNameCharsKey[$next]) || ord($next) > 127) {
+                                $value .= $next;
+                                $position++;
+                                $column++;
+                            } else {
+                                break;
+                            }
+                        }
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+                    } else {
+                        throw new InvalidCharacterException($second, $position, ''); // todo
                     }
-                    yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
                     break;
                 case '#':
                     // # comment
