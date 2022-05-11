@@ -14,7 +14,7 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Parser\UnexpectedTokenException;
+use SqlFtw\Parser\InvalidTokenException;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Query\GroupByExpression;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
@@ -126,7 +126,7 @@ class QueryParser
             $queryOrderBy = $lastQuery->getOrderBy();
             if ($queryOrderBy !== null) {
                 if ($orderBy !== null) {
-                    throw new UnexpectedTokenException("Duplicate ORDER BY clause in last query and in UNION.", $tokenList);
+                    throw new InvalidTokenException("Duplicate ORDER BY clause in last query and in UNION.", $tokenList);
                 } else {
                     $orderBy = $queryOrderBy;
                     $lastQuery = $lastQuery->removeLimit();
@@ -136,7 +136,7 @@ class QueryParser
             $queryLimit = $lastQuery->getLimit();
             if ($queryLimit !== null) {
                 if ($limit !== null) {
-                    throw new UnexpectedTokenException("Duplicate LIMIT clause in last query and in UNION.", $tokenList);
+                    throw new InvalidTokenException("Duplicate LIMIT clause in last query and in UNION.", $tokenList);
                 } else {
                     $limit = $queryLimit;
                     $lastQuery = $lastQuery->removeLimit();
@@ -146,7 +146,7 @@ class QueryParser
             $queryInto = $lastQuery->getInto();
             if ($queryInto !== null) {
                 if ($into !== null) {
-                    throw new UnexpectedTokenException("Duplicate INTO clause in last query and in UNION.", $tokenList);
+                    throw new InvalidTokenException("Duplicate INTO clause in last query and in UNION.", $tokenList);
                 } else {
                     $into = $queryInto;
                     $lastQuery = $lastQuery->removeInto();
@@ -214,7 +214,7 @@ class QueryParser
     {
         if ($tokenList->hasKeyword(Keyword::WITH)) {
             if ($with !== null) {
-                throw new UnexpectedTokenException('WITH defined twice.', $tokenList);
+                throw new InvalidTokenException('WITH defined twice.', $tokenList);
             }
 
             /** @var SelectCommand $select */

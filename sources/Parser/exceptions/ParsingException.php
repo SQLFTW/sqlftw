@@ -21,7 +21,7 @@ use function debug_backtrace;
  *     - InvalidCharacterException
  *   - ParserException
  *     - InvalidVersionException
- *     - UnexpectedTokenException
+ *     - InvalidTokenException
  */
 class ParsingException extends Exception
 {

@@ -14,7 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\UnexpectedTokenException;
+use SqlFtw\Parser\InvalidTokenException;
 use SqlFtw\Sql\Dml\Update\SetColumnExpression;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
@@ -59,7 +59,7 @@ class UpdateCommandParser
     {
         if ($tokenList->hasKeyword(Keyword::WITH)) {
             if ($with !== null) {
-                throw new UnexpectedTokenException('WITH defined twice.', $tokenList);
+                throw new InvalidTokenException('WITH defined twice.', $tokenList);
             }
 
             /** @var UpdateCommand $update */

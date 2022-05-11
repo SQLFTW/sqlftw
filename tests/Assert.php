@@ -14,7 +14,7 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParsingException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Parser\UnexpectedTokenException;
+use SqlFtw\Parser\InvalidTokenException;
 use function class_exists;
 use function gettype;
 use function implode;
@@ -133,7 +133,7 @@ class Assert extends DogmaAssert
             }
         } catch (LexerException $e) {
             if (class_exists(Debugger::class) && $e->backtrace !== null) {
-                if ($e instanceof UnexpectedTokenException) {
+                if ($e instanceof InvalidTokenException) {
                     Debugger::dump($e->getTokenList());
                 }
                 Debugger::callstack(100, 1, 5, 100, $e->getTrace());

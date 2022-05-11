@@ -65,7 +65,7 @@ class Parser
         foreach ($tokenLists as $tokenList) {
             try {
                 $command = $this->parseTokenList($tokenList);
-            } catch (UnexpectedTokenException $e) {
+            } catch (InvalidTokenException $e) {
                 yield new InvalidCommand($tokenList, $e);
                 continue;
             }

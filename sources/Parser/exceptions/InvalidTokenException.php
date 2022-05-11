@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser;
 
-class UnexpectedTokenException extends ParserException
+class InvalidTokenException extends ParserException
 {
 
 }
