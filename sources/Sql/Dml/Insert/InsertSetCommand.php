@@ -9,11 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
 
 class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
@@ -47,7 +45,7 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return Assignment[]
      */
     public function getAssignments(): array
     {

@@ -32,7 +32,7 @@ class OnDuplicateKeyActions implements SqlSerializable
     /**
      * @return Assignment[]
      */
-    public function getAssignements(): array
+    public function getAssignments(): array
     {
         return $this->assignments;
     }

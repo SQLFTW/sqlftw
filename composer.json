@@ -31,6 +31,7 @@
         "t": "@tests:run",
         "tc": "@tests:coverage",
         "ps": "@phpstan:run",
+        "sc": "@spell:check",
         "cs": [
             "@phpcs:src",
             "@phpcs:tests"

@@ -9,13 +9,11 @@ use Dogma\Str;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
-use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParsingException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Parser\InvalidTokenException;
 use function class_exists;
 use function gettype;
 use function implode;
@@ -23,6 +21,9 @@ use function preg_replace;
 use function sprintf;
 use function str_replace;
 
+/**
+ * @phpstan-import-type PhpBacktraceItem from Callstack
+ */
 class Assert extends DogmaAssert
 {
 
@@ -132,12 +133,14 @@ class Assert extends DogmaAssert
                     self::true(true);
                 }
             }
-        } catch (LexerException $e) {
+        } catch (ParsingException $e) {
             if (class_exists(Debugger::class) && $e->backtrace !== null) {
                 if ($e instanceof ParserException) {
                     Debugger::dump($e->getTokenList());
                 }
-                Debugger::callstack(100, 1, 5, 100, $e->getTrace());
+                /** @var PhpBacktraceItem[] $trace */
+                $trace = $e->getTrace();
+                Debugger::callstack(100, 1, 5, 100, $trace);
             }
             self::fail('Cannot tokenize commands');
             return;

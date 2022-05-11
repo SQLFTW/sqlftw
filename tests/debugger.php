@@ -71,6 +71,6 @@ Dumper::$objectFormatters[Platform::class] = static function (Platform $platform
     $version = $platform->getVersion();
 
     return Dumper::name(get_class($platform)) . Dumper::bracket('(')
-        . Dumper::value($platform->getName()) . ' ' . Dumper::value2($version->getMajorMinor() . ($version->getPatch() ? '.' . $version->getPatch() : ''))
+        . Dumper::value($platform->getName()) . ' ' . Dumper::value2($version->format())
         . Dumper::bracket(')');
 };

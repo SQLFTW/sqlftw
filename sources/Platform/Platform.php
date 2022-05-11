@@ -118,14 +118,13 @@ class Platform
 
         $thisId = $this->version->getId();
 
-        if ($versionMin === null || $thisId < $versionMin) {
+        if ($versionMin !== null && $thisId < $versionMin) {
             return false;
-        }
-        if ($versionMax === null || $thisId > $versionMax) {
+        } elseif ($versionMax !== null && $thisId > $versionMax) {
             return false;
+        } else {
+            return true;
         }
-
-        return true;
     }
 
     public function interpretOptionalComment(string $versionId): bool

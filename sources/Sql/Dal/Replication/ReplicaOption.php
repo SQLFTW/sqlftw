@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Type;
-use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;

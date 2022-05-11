@@ -69,7 +69,7 @@ class Version
 
     public function format(): string
     {
-        return $this->getMajorMinor() . ($this->patch ? '.' . $this->patch : '');
+        return $this->getMajorMinor() . ($this->patch !== null ? '.' . $this->patch : '');
     }
 
 }

@@ -42,7 +42,7 @@ class MultilineString implements Literal
         return $this->parts;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return implode('', $this->parts);
     }

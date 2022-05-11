@@ -65,8 +65,9 @@ class Parser
         foreach ($tokenLists as $tokenList) {
             try {
                 $command = $this->parseTokenList($tokenList);
-            } catch (InvalidTokenException $e) {
+            } catch (ParserException $e) {
                 yield new InvalidCommand($tokenList, $e);
+
                 continue;
             }
             if (!$command instanceof TesterCommand) {
@@ -103,7 +104,9 @@ class Parser
         $buffer = [];
         foreach ($tokens as $token) {
             if (($token->type & TokenType::DELIMITER) !== 0) {
-                yield new TokenList($buffer, $this->settings);
+                if ($buffer !== []) {
+                    yield new TokenList($buffer, $this->settings);
+                }
 
                 $buffer = [];
             } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {

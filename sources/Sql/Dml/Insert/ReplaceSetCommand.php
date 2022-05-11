@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Dml\Insert;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\QualifiedName;
 
 class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
@@ -41,7 +40,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return Assignment[]
      */
     public function getAssignments(): array
     {

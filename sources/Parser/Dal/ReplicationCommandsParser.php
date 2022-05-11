@@ -110,6 +110,7 @@ class ReplicationCommandsParser
             $option = $tokenList->expectKeywordEnum(SlaveOption::class);
             $tokenList->expectOperator(Operator::EQUAL);
             $type = $types[$option->getValue()];
+            $value = null;
             switch ($type) {
                 case Type::STRING:
                     $value = $tokenList->expectString();
@@ -139,6 +140,7 @@ class ReplicationCommandsParser
                     $uuid = null;
                     $keyword = $tokenList->getAnyKeyword(Keyword::OFF, Keyword::LOCAL);
                     if ($keyword === null) {
+                        /** @var string $uuid */
                         $uuid = $tokenList->expect(TokenType::UUID)->value;
                     }
                     $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
@@ -147,8 +149,9 @@ class ReplicationCommandsParser
                     if (is_a($type, SqlEnum::class, true)) {
                         $value = $tokenList->expectKeywordEnum($type);
                         break;
+                    } else {
+                        throw new ShouldNotHappenException('Unknown type');
                     }
-                    throw new ShouldNotHappenException('Unknown type');
             }
             $options[$option->getValue()] = $value;
         } while ($tokenList->hasComma());
@@ -219,6 +222,7 @@ class ReplicationCommandsParser
             $option = $tokenList->expectKeywordEnum(ReplicaOption::class);
             $tokenList->expectOperator(Operator::EQUAL);
             $type = $types[$option->getValue()];
+            $value = null;
             switch ($type) {
                 case Type::STRING:
                     $value = $tokenList->expectString();
@@ -248,6 +252,7 @@ class ReplicationCommandsParser
                     $uuid = null;
                     $keyword = $tokenList->getAnyKeyword(Keyword::OFF, Keyword::LOCAL);
                     if ($keyword === null) {
+                        /** @var string $uuid */
                         $uuid = $tokenList->expect(TokenType::UUID)->value;
                     }
                     $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
@@ -256,8 +261,9 @@ class ReplicationCommandsParser
                     if (is_a($type, SqlEnum::class, true)) {
                         $value = $tokenList->expectKeywordEnum($type);
                         break;
+                    } else {
+                        throw new ShouldNotHappenException('Unknown type');
                     }
-                    throw new ShouldNotHappenException('Unknown type');
             }
             $options[$option->getValue()] = $value;
         } while ($tokenList->hasComma());

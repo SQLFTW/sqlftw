@@ -5,6 +5,7 @@ armscii
 backtick
 crm
 cwd
+dgray
 dll
 euc
 fk
@@ -50,6 +51,7 @@ deferrable
 designator
 designators
 destructor
+failover
 formatters
 instantiable
 introducer
@@ -63,6 +65,7 @@ preparable
 reindex
 serializables
 startup
+submatch
 timestamps
 transactional
 unencrypted
@@ -93,10 +96,13 @@ avgx
 avgy
 bernoulli
 bitvar
+bqual
 builtin
 calc
 capath
 chk
+ciphersuite
+ciphersuites
 clob
 cmp
 compat
@@ -104,6 +110,7 @@ cond
 covar
 crl
 crlpath
+cte
 cume
 deref
 des
@@ -115,8 +122,10 @@ filesystem
 frac
 frm
 gcol
+geomcollection
 graphml
 gtids
+gtrid
 ilike
 inet
 innobase
@@ -129,6 +138,7 @@ minvalue
 mmap
 mts
 multiset
+mysqlx
 nclob
 ngram
 notnull
@@ -138,6 +148,7 @@ ntoa
 nullif
 objectagg
 oids
+passwordless
 pli
 pll
 plsql
@@ -176,6 +187,7 @@ unixtime
 unlisten
 unnest
 variadic
+vcpu
 wlock
 xmlattributes
 xmlconcat
@@ -186,8 +198,4 @@ xmlparse
 xmlpi
 xmlroot
 xmlserialize
-geomcollection
-cte
-gtrid
-bqual
-vcpu
+zstd

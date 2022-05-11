@@ -54,6 +54,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\UserName;
+use function count;
 use function explode;
 use function in_array;
 use function is_int;
@@ -830,7 +831,9 @@ class ExpressionParser
 
             return new HexadecimalLiteral($value);
         } elseif (($token->type & TokenType::STRING) !== 0) {
-            $values[] = $token->value;
+            /** @var string $value */
+            $value = $token->value;
+            $values = [$value];
             while (($next = $tokenList->getString()) !== null) {
                 $values[] = $next;
             }
