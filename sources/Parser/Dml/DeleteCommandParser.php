@@ -12,9 +12,9 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Parser\InvalidTokenException;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Keyword;
@@ -65,7 +65,7 @@ class DeleteCommandParser
     {
         if ($tokenList->hasKeyword(Keyword::WITH)) {
             if ($with !== null) {
-                throw new InvalidTokenException('WITH defined twice.', $tokenList);
+                throw new ParserException('WITH defined twice.', $tokenList);
             }
 
             /** @var DeleteCommand $command */

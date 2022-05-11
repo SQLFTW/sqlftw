@@ -13,9 +13,9 @@ use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Parser\InvalidTokenException;
 use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
 use SqlFtw\Sql\Dal\Replication\ChangeReplicationFilterCommand;
 use SqlFtw\Sql\Dal\Replication\ChangeReplicationSourceToCommand;
@@ -34,7 +34,6 @@ use SqlFtw\Sql\Dal\Replication\StopGroupReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\StopSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\UuidSet;
 use SqlFtw\Sql\Expression\Operator;
-use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
@@ -553,7 +552,7 @@ class ReplicationCommandsParser
         $empty = $tokenList->getString();
         if ($empty !== null) {
             if ($empty !== '') {
-                throw new InvalidTokenException('Expected UUID or empty string.', $tokenList);
+                throw new InvalidValueException('UUID', $tokenList);
             }
 
             return '';

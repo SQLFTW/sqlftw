@@ -129,8 +129,7 @@ class Parser
         $this->lastTokenList = $tokenList;
 
         $start = $tokenList->getPosition();
-        $tokenList->addAutoSkip(TokenType::get(TokenType::WHITESPACE));
-        $tokenList->addAutoSkip(TokenType::get(TokenType::COMMENT));
+        $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT);
 
         $first = $tokenList->get();
         if ($first === null) {

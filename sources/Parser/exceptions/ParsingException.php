@@ -13,16 +13,6 @@ use Dogma\Exception;
 use Throwable;
 use function debug_backtrace;
 
-/**
- * ParsingException:
- *   - LexerException
- *     - EndOfCommentNotFoundException
- *     - EndOfStringNotFoundException
- *     - InvalidCharacterException
- *   - ParserException
- *     - InvalidVersionException
- *     - InvalidTokenException
- */
 class ParsingException extends Exception
 {
 

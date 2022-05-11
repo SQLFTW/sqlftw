@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\InvalidValueException;
+use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
@@ -48,7 +48,7 @@ class TokenList
 {
     use StrictBehaviorMixin;
 
-    /** @var Token[] */
+    /** @var non-empty-array<Token> */
     private $tokens;
 
     /** @var PlatformSettings */
@@ -67,7 +67,7 @@ class TokenList
     private $position = 0;
 
     /**
-     * @param Token[] $tokens
+     * @param non-empty-array<Token> $tokens
      */
     public function __construct(array $tokens, PlatformSettings $settings, bool $whitespace = true)
     {
@@ -101,6 +101,8 @@ class TokenList
     {
         if ($position < 0) {
             $this->position += $position;
+        } elseif ($position > count($this->tokens)) {
+            $this->position = count($this->tokens) - 1;
         } else {
             $this->position = $position;
         }
@@ -108,9 +110,9 @@ class TokenList
         return $this;
     }
 
-    public function addAutoSkip(TokenType $tokenType): void
+    public function setAutoSkip(int $tokenType): void
     {
-        $this->autoSkip |= $tokenType->getValue();
+        $this->autoSkip = $tokenType;
     }
 
     private function doAutoSkip(): void
@@ -128,6 +130,17 @@ class TokenList
     public function getTokens(): array
     {
         return $this->tokens;
+    }
+
+    public function getLast(): Token
+    {
+        $position = $this->position;
+        do {
+            $position--;
+            $token = $this->tokens[$position] ?? null;
+        } while ($token !== null && ($this->autoSkip & $token->type) !== 0);
+
+        return $token ?? $this->tokens[0];
     }
 
     public function serialize(): string
@@ -403,7 +416,7 @@ class TokenList
             return false;
         }
 
-        throw new InvalidTokenException("Boolean-like value expected. \"$value\" found.", $this);
+        throw new InvalidValueException("boolean", $this);
     }
 
     public function expectOperator(string $operator): string
@@ -624,7 +637,7 @@ class TokenList
 
         try {
             return call_user_func([$className, 'get'], $value);
-        } catch (InvalidValueException $e) {
+        } catch (InvalidEnumValueException $e) {
             $values = call_user_func([$className, 'getAllowedValues']);
 
             throw InvalidTokenException::tokens([TokenType::NAME], $values, $this->tokens[$this->position - 1], $this);

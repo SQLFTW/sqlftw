@@ -961,7 +961,7 @@ class ExpressionParser
                 $decimalPart
             ));
         } else {
-            throw new ParsingException("Invalid datetime value \"$string\"");
+            throw new InvalidValueException("datetime", $tokenList);
         }
     }
 
