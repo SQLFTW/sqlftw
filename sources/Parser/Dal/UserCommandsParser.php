@@ -442,7 +442,7 @@ class UserCommandsParser
     {
         $privileges = [];
         do {
-            $type = $tokenList->getName();
+            $type = $tokenList->getNonKeywordName();
             if ($type !== null) {
                 // dynamic (names)
                 if (!UserPrivilegeType::isValid($type)) {
