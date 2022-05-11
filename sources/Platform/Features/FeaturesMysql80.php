@@ -433,6 +433,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::INACTIVE,
         Keyword::INDEXES,
         Keyword::INITIAL_SIZE,
+        Keyword::INNODB,
         Keyword::INPLACE, // undocumented
         Keyword::INSERT_METHOD,
         Keyword::INSTALL,
@@ -446,6 +447,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::ISSUER,
         Keyword::JSON,
         Keyword::KEY_BLOCK_SIZE,
+        Keyword::KEYRING,
         Keyword::LANGUAGE,
         Keyword::LAST,
         Keyword::LEAVES,
@@ -721,6 +723,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::TIMESTAMP,
         Keyword::TIMESTAMPADD,
         Keyword::TIMESTAMPDIFF,
+        Keyword::TLS,
         Keyword::TRADITIONAL, // undocumented
         Keyword::TRANSACTION,
         Keyword::TRIGGERS,

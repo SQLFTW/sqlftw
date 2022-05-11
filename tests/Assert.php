@@ -9,6 +9,7 @@ use Dogma\Str;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
+use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParsingException;
@@ -77,12 +78,17 @@ class Assert extends DogmaAssert
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
         $formatter = $formatter ?? new Formatter($parser->getSettings());
 
-        //try {
+        try {
             $actual = $parser->parseSingleCommand($query)->serialize($formatter);
-        //} catch (ParserException $e) {
-        //    self::fail($e->getMessage());
-        //    return;
-        //}
+        } catch (ParserException $e) {
+            if (class_exists(Debugger::class)) {
+                if ($e instanceof ParserException) {
+                    Debugger::dump($e->getTokenList());
+                }
+            }
+            self::fail($e->getMessage());
+            return;
+        }
         /** @var string $actual */
         $actual = preg_replace('/\\s+/', ' ', $actual);
         $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);
@@ -133,14 +139,16 @@ class Assert extends DogmaAssert
                     self::true(true);
                 }
             }
-        } catch (ParsingException $e) {
-            if (class_exists(Debugger::class) && $e->backtrace !== null) {
+        } catch (LexerException $e) {
+            if (class_exists(Debugger::class)) {
                 if ($e instanceof ParserException) {
                     Debugger::dump($e->getTokenList());
                 }
-                /** @var PhpBacktraceItem[] $trace */
-                $trace = $e->getTrace();
-                Debugger::callstack(100, 1, 5, 100, $trace);
+                if ($e->backtrace !== null) {
+                    /** @var PhpBacktraceItem[] $trace */
+                    $trace = $e->getTrace();
+                    Debugger::callstack(100, 1, 5, 100, $trace);
+                }
             }
             self::fail('Cannot tokenize commands');
             return;

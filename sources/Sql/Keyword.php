@@ -465,6 +465,7 @@ class Keyword extends SqlEnum implements Feature
     public const KEY_BLOCK_SIZE = 'KEY_BLOCK_SIZE';
     public const KEY_MEMBER = 'KEY_MEMBER';
     public const KEY_TYPE = 'KEY_TYPE';
+    public const KEYRING = 'KEYRING';
     public const KEYS = 'KEYS';
     public const KILL = 'KILL';
     public const LABEL = 'LABEL';
@@ -1029,6 +1030,7 @@ class Keyword extends SqlEnum implements Feature
     public const TINYBLOB = 'TINYBLOB';
     public const TINYINT = 'TINYINT';
     public const TINYTEXT = 'TINYTEXT';
+    public const TLS = 'TLS';
     public const TO = 'TO';
     public const TOP_LEVEL_COUNT = 'TOP_LEVEL_COUNT';
     public const TRAILING = 'TRAILING';
@@ -1160,5 +1162,6 @@ class Keyword extends SqlEnum implements Feature
     public const PROCESS = 'PROCESS'; // privileges
     public const SHARED = 'SHARED'; // lock
     public const TRADITIONAL = 'TRADITIONAL'; // sql mode
+    public const REDO_LOG = 'REDO_LOG';
 
 }

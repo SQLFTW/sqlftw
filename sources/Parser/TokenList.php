@@ -19,6 +19,7 @@ use SqlFtw\Sql\SqlEnum;
 use function array_values;
 use function call_user_func;
 use function count;
+use function explode;
 use function implode;
 use function in_array;
 use function is_bool;
@@ -82,7 +83,7 @@ class TokenList
         return $this->settings;
     }
 
-    public function using(string $platform, ?int $versionMin = null, ?int $versionMax = null): bool
+    public function using(string $platform = null, ?int $versionMin = null, ?int $versionMax = null): bool
     {
         return $this->platform->matches($platform, $versionMin, $versionMax);
     }
@@ -624,6 +625,30 @@ class TokenList
     public function expectKeywordEnum(string $className): SqlEnum
     {
         return call_user_func([$className, 'get'], $this->expectAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues']))));
+    }
+
+    /**
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T
+     */
+    public function expectMultiKeywordsEnum(string $className): SqlEnum
+    {
+        $start = $this->position;
+        $values = call_user_func([$className, 'getAllowedValues']);
+        foreach ($values as $value) {
+            $this->position = $start;
+            $keywords = explode(' ', $value);
+            foreach ($keywords as $keyword) {
+                if (!$this->hasKeyword($keyword)) {
+                    continue 2;
+                }
+            }
+
+            return call_user_func([$className, 'get'], $value);
+        }
+
+        throw InvalidTokenException::tokens([TokenType::KEYWORD], $values, $this->tokens[$this->position - 1], $this);
     }
 
     /**

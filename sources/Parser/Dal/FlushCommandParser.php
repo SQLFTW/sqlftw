@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Dal\Flush\FlushOption;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
-use function array_merge;
 
 class FlushCommandParser
 {
@@ -48,21 +46,10 @@ class FlushCommandParser
         $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
         $options = [];
         $channel = null;
-        $logs = [Keyword::BINARY, Keyword::ENGINE, Keyword::ERROR, Keyword::GENERAL, Keyword::RELAY, Keyword::SLOW];
-        $other = [Keyword::LOGS, Keyword::DES_KEY_FILE, Keyword::HOSTS, Keyword::OPTIMIZER_COSTS, Keyword::PRIVILEGES, Keyword::QUERY, Keyword::STATUS, Keyword::USER_RESOURCES];
         do {
-            $keyword = $tokenList->expectAnyKeyword(...array_merge($logs, $other));
-            if (Arr::contains($logs, $keyword)) {
-                $tokenList->expectKeyword(Keyword::LOGS);
-                if ($keyword === Keyword::RELAY && $tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-                    $channel = $tokenList->expectName();
-                }
-                $options[] = FlushOption::get($keyword . ' ' . Keyword::LOGS);
-            } elseif ($keyword === Keyword::QUERY) {
-                $tokenList->expectKeyword(Keyword::CACHE);
-                $options[] = FlushOption::get($keyword . ' ' . Keyword::CACHE);
-            } else {
-                $options[] = FlushOption::get($keyword);
+            $option = $tokenList->expectMultiKeywordsEnum(FlushOption::class);
+            if ($option->equalsValue(FlushOption::RELAY_LOGS) && $tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+                $channel = $tokenList->expectName();
             }
         } while ($tokenList->hasComma());
 

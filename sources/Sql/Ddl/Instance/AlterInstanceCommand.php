@@ -17,9 +17,52 @@ class AlterInstanceCommand implements DdlCommand
 {
     use StrictBehaviorMixin;
 
+    /** @var AlterInstanceAction */
+    private $action;
+
+    /** @var string|null */
+    private $forChannel;
+
+    /** @var bool */
+    private $noRollbackOnError;
+
+    public function __construct(
+        AlterInstanceAction $action,
+        ?string $forChannel = null,
+        bool $noRollbackOnError = false
+    )
+    {
+        $this->action = $action;
+        $this->forChannel = $forChannel;
+        $this->noRollbackOnError = $noRollbackOnError;
+    }
+
+    public function getAction(): AlterInstanceAction
+    {
+        return $this->action;
+    }
+
+    public function getForChannel(): ?string
+    {
+        return $this->forChannel;
+    }
+
+    public function noRollbackOnError(): bool
+    {
+        return $this->noRollbackOnError;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'ALTER INSTANCE ROTATE INNODB MASTER KEY';
+        $result = 'ALTER INSTANCE ' . $this->action->serialize($formatter);
+        if ($this->forChannel !== null) {
+            $result .= ' FOR CHANNEL ' . $this->forChannel;
+        }
+        if ($this->noRollbackOnError) {
+            $result .= ' NO ROLLBACK ON ERROR';
+        }
+
+        return $result;
     }
 
 }

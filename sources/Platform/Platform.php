@@ -110,9 +110,9 @@ class Platform
         return $this->name . ' ' . $this->version->format();
     }
 
-    public function matches(string $name, ?int $versionMin = null, ?int $versionMax = null): bool
+    public function matches(?string $name, ?int $versionMin = null, ?int $versionMax = null): bool
     {
-        if ($this->name !== $name) {
+        if ($name !== null && $this->name !== $name) {
             return false;
         }
 
