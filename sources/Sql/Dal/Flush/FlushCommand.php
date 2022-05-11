@@ -9,18 +9,17 @@
 
 namespace SqlFtw\Sql\Dal\Flush;
 
-use Dogma\Arr;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
+use function array_map;
 use function implode;
 
 class FlushCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var FlushOption[] */
+    /** @var non-empty-array<FlushOption> */
     private $options;
 
     /** @var string|null */
@@ -30,20 +29,17 @@ class FlushCommand implements DalCommand
     private $local;
 
     /**
-     * @param FlushOption[] $options
+     * @param non-empty-array<FlushOption> $options
      */
     public function __construct(array $options, ?string $channel = null, bool $local = false)
     {
-        Check::array($options, 1);
-        Check::itemsOfType($options, FlushOption::class);
-
         $this->options = $options;
         $this->channel = $channel;
         $this->local = $local;
     }
 
     /**
-     * @return FlushOption[]
+     * @return non-empty-array<FlushOption>
      */
     public function getOptions(): array
     {
@@ -66,13 +62,13 @@ class FlushCommand implements DalCommand
         if ($this->isLocal()) {
             $result .= 'LOCAL ';
         }
-        $result .= implode(', ', Arr::map($this->options, function (FlushOption $option) use ($formatter) {
+        $result .= implode(', ', array_map(function (FlushOption $option) use ($formatter) {
             if ($this->channel !== null && $option->equalsAny(FlushOption::RELAY_LOGS)) {
                 return $option->serialize($formatter) . ' FOR CHANNEL ' . $formatter->formatString($this->channel);
             } else {
                 return $option->serialize($formatter);
             }
-        }));
+        }, $this->options));
 
         return $result;
     }

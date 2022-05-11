@@ -47,7 +47,7 @@ class FlushCommandParser
         $options = [];
         $channel = null;
         do {
-            $option = $tokenList->expectMultiKeywordsEnum(FlushOption::class);
+            $options[] = $option = $tokenList->expectMultiKeywordsEnum(FlushOption::class);
             if ($option->equalsValue(FlushOption::RELAY_LOGS) && $tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
                 $channel = $tokenList->expectName();
             }
