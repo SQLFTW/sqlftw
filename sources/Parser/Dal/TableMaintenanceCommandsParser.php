@@ -61,14 +61,7 @@ class TableMaintenanceCommandsParser
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
         } while ($tokenList->hasComma());
 
-        $option = $tokenList->getAnyKeyword(Keyword::FOR, Keyword::QUICK, Keyword::FAST, Keyword::MEDIUM, Keyword::EXTENDED, Keyword::CHANGED);
-        if ($option !== null) {
-            if ($option === Keyword::FOR) {
-                $tokenList->expectKeyword(Keyword::UPGRADE);
-                $option .= ' UPGRADE';
-            }
-            $option = CheckTableOption::get($option);
-        }
+        $option = $tokenList->getMultiKeywordsEnum(CheckTableOption::class);
 
         return new CheckTableCommand($tables, $option);
     }
