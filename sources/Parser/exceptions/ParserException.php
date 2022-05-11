@@ -9,36 +9,99 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\Exception;
+use Dogma\Arr;
+use Dogma\ExceptionValueFormatter;
+use Dogma\Str;
 use Throwable;
-use function debug_backtrace;
+use function array_map;
+use function array_slice;
+use function implode;
+use function is_array;
+use function max;
+use function min;
+use function sprintf;
 
-/**
- * ParserException:
- *   - LexerException
- *     - EndOfCommentNotFoundException
- *     - EndOfStringNotFoundException
- *     - InvalidCharacterException
- *   - UnexpectedTokenException
- */
-class ParserException extends Exception
+class ParserException extends ParsingException
 {
 
-    /** @var bool */
-    public static $debug = false;
+    /** @var TokenList */
+    private $tokenList;
 
-    /** @var mixed[][]|null */
-    public $backtrace;
-
-    public function __construct(string $message, ?Throwable $previous = null, int $code = 0)
+    public function __construct(string $message, TokenList $tokenList, ?Throwable $previous = null)
     {
-        // todo: details
+        parent::__construct($message, $previous);
 
-        parent::__construct($message, $previous, $code);
+        $this->tokenList = $tokenList;
+    }
 
-        if (self::$debug) {
-            $this->backtrace = debug_backtrace();
+    public function getTokenList(): TokenList
+    {
+        return $this->tokenList;
+    }
+
+    /**
+     * @param int[] $expectedTokens
+     * @param mixed $expectedValue
+     */
+    public static function tokens(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null): self
+    {
+        $expectedToken = implode(', ', Arr::map($expectedTokens, static function (int $type) {
+            return implode('|', TokenType::get($type)->getConstantNames());
+        }));
+        if ($expectedValue !== null) {
+            if (is_array($expectedValue)) {
+                $expectedValue = Str::join($expectedValue, ', ', ' or ', 120, '...');
+                $expectedValue = " with value " . $expectedValue;
+            } else {
+                $expectedValue = " with value " . ExceptionValueFormatter::format($expectedValue);
+            }
         }
+
+        $context = self::formatContext($tokenList);
+
+        if ($token === null) {
+            return new self(sprintf(
+                "Expected token %s%s, but end of query found instead at position %d in:\n%s",
+                $expectedToken,
+                $expectedValue,
+                $tokenList->getPosition(),
+                $context
+            ), $tokenList, $previous);
+        }
+
+        $actualToken = implode('|', TokenType::getByValue($token->type)->getConstantNames());
+        $actualValue = ExceptionValueFormatter::format($token->value);
+
+        return new self(sprintf(
+            "Expected token %s%s, but token %s with value %s found instead at position %d in:\n%s",
+            $expectedToken,
+            $expectedValue,
+            $actualToken,
+            $actualValue,
+            $tokenList->getPosition(),
+            $context
+        ), $tokenList, $previous);
+    }
+
+    private static function formatContext(TokenList $tokenList): string
+    {
+        $start = max($tokenList->getPosition() - 11, 0);
+        $prefix = 10 - min(max(10 - $tokenList->getPosition(), 0), 10);
+        $tokens = array_slice($tokenList->getTokens(), $start, 21);
+        $context = '"…' . implode('', array_map(static function (Token $token) {
+            return $token->original ?? $token->value;
+        }, array_slice($tokens, 0, $prefix)));
+
+        if (isset($tokens[$prefix])) {
+            $context .= '»' . ($tokens[$prefix]->original ?? $tokens[$prefix]->value) . '«';
+            $context .= implode('', array_map(static function (Token $token) {
+                return $token->original ?? $token->value;
+            }, array_slice($tokens, $prefix + 1))) . '…"';
+        } else {
+            $context .= '»«"';
+        }
+
+        return $context;
     }
 
 }

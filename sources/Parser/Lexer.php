@@ -377,7 +377,7 @@ class Lexer
                         $position++;
                         $column++;
                         if ($condition !== null) {
-                            throw new ParserException('Comment inside conditional comment');
+                            throw new ParsingException('Comment inside conditional comment');
                         }
                         if (preg_match('~^[Mm]?!(?:[0-9]{5,6})?~', $string, $m, 0, $position) === 1) {
                             $versionId = strtoupper(str_replace('!', '', $m[0]));

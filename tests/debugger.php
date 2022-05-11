@@ -5,14 +5,14 @@ namespace Test;
 use Dogma\Debug\Ansi;
 use Dogma\Debug\Dumper;
 use Dogma\Debug\FormattersDogma;
-use SqlFtw\Parser\ParserException;
+use SqlFtw\Parser\ParsingException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
 use Tracy\Debugger;
 
-ParserException::$debug = true;
+ParsingException::$debug = true;
 
 Debugger::$maxDepth = 9;
 Debugger::$strictMode = true;

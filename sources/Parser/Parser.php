@@ -84,7 +84,7 @@ class Parser
         /** @var TokenList[] $tokenLists */
         $tokenLists = iterator_to_array($this->slice($this->lexer->tokenize($sql)));
         if (count($tokenLists) > 1) {
-            throw new ParserException('More than one command found in given SQL code.');
+            throw new ParsingException('More than one command found in given SQL code.');
         }
 
         $tokenList = $tokenLists[0];

@@ -52,7 +52,7 @@ class Platform
     final private function __construct(string $name, Version $version)
     {
         $this->name = $name;
-        $this->setVersion($version);
+        $this->version = $version;
     }
 
     public static function get(string $name, ?string $version = null): self
@@ -75,27 +75,6 @@ class Platform
         }
 
         return self::$instances[$key];
-    }
-
-    public function is(string $name, ?Version $version = null): bool
-    {
-        if ($this->name !== $name) {
-            return false;
-        }
-        if ($version === null) {
-            return true;
-        }
-
-        return $this->version->getId() !== $version->getId();
-    }
-
-    public function isAtLeast(string $name, Version $version): bool
-    {
-        if ($this->name !== $name) {
-            return false;
-        }
-
-        return $this->version->getId() >= $version->getId();
     }
 
     public function getName(): string
@@ -124,6 +103,29 @@ class Platform
     public function setVersion(Version $version): void
     {
         $this->version = $version;
+    }
+
+    public function format(): string
+    {
+        return $this->name . ' ' . $this->version->format();
+    }
+
+    public function matches(string $name, ?int $versionMin = null, ?int $versionMax = null): bool
+    {
+        if ($this->name !== $name) {
+            return false;
+        }
+
+        $thisId = $this->version->getId();
+
+        if ($versionMin === null || $thisId < $versionMin) {
+            return false;
+        }
+        if ($versionMax === null || $thisId > $versionMax) {
+            return false;
+        }
+
+        return true;
     }
 
     public function interpretOptionalComment(string $versionId): bool

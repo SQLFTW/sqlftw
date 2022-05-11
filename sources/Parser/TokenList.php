@@ -12,6 +12,7 @@ namespace SqlFtw\Parser;
 use Dogma\InvalidValueException;
 use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\SqlEnum;
@@ -53,6 +54,9 @@ class TokenList
     /** @var PlatformSettings */
     private $settings;
 
+    /** @var Platform */
+    private $platform;
+
     /** @var bool */
     private $whitespace;
 
@@ -69,12 +73,18 @@ class TokenList
     {
         $this->tokens = $tokens;
         $this->settings = $settings;
+        $this->platform = $settings->getPlatform();
         $this->whitespace = $whitespace;
     }
 
     public function getSettings(): PlatformSettings
     {
         return $this->settings;
+    }
+
+    public function using(string $platform, ?int $versionMin = null, ?int $versionMax = null): bool
+    {
+        return $this->platform->matches($platform, $versionMin, $versionMax);
     }
 
     public function isFinished(): bool

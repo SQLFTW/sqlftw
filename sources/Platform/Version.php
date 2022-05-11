@@ -67,4 +67,9 @@ class Version
         return $this->major . (isset($this->minor) ? '.' . $this->minor : '');
     }
 
+    public function format(): string
+    {
+        return $this->getMajorMinor() . ($this->patch ? '.' . $this->patch : '');
+    }
+
 }

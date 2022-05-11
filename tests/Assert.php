@@ -11,7 +11,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserException;
+use SqlFtw\Parser\ParsingException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Parser\UnexpectedTokenException;
@@ -96,7 +96,7 @@ class Assert extends DogmaAssert
 
         try {
             $parser->parseSingleCommand($query);
-        } catch (ParserException $e) {
+        } catch (ParsingException $e) {
             if (class_exists(Dumper::class) && $e->backtrace !== null) {
                 Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
             }
