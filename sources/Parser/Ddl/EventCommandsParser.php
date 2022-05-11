@@ -51,7 +51,7 @@ class EventCommandsParser
     public function parseAlterEvent(TokenList $tokenList): AlterEventCommand
     {
         $tokenList->expectKeyword(Keyword::ALTER);
-        $definer = $schedule = $preserve = $newName = $state = $comment = $body = null;
+        $definer = $schedule = $preserve = $newName = $comment = $body = null;
 
         if ($tokenList->hasKeyword(Keyword::DEFINER)) {
             $definer = $this->expressionParser->parseUserExpression($tokenList);
@@ -69,14 +69,9 @@ class EventCommandsParser
         if ($tokenList->hasKeywords(Keyword::RENAME, Keyword::TO)) {
             $newName = new QualifiedName(...$tokenList->expectQualifiedName());
         }
-        $keyword = $tokenList->getAnyKeyword(Keyword::ENABLE, Keyword::DISABLE);
-        if ($keyword !== null) {
-            if ($keyword === Keyword::DISABLE && $tokenList->hasKeywords(Keyword::ON, Keyword::SLAVE)) {
-                $state = EventState::get(EventState::DISABLE_ON_SLAVE);
-            } else {
-                $state = EventState::get($keyword);
-            }
-        }
+
+        $state = $tokenList->getMultiKeywordsEnum(EventState::class);
+
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
             $comment = $tokenList->expectString();
         }
@@ -102,7 +97,7 @@ class EventCommandsParser
     public function parseCreateEvent(TokenList $tokenList): CreateEventCommand
     {
         $tokenList->expectKeyword(Keyword::CREATE);
-        $definer = $preserve = $state = $comment = null;
+        $definer = $preserve = $comment = null;
 
         if ($tokenList->hasKeyword(Keyword::DEFINER)) {
             $tokenList->passEqual();
@@ -119,14 +114,9 @@ class EventCommandsParser
             $preserve = !$tokenList->hasKeyword(Keyword::NOT);
             $tokenList->expectKeyword(Keyword::PRESERVE);
         }
-        $keyword = $tokenList->getAnyKeyword(Keyword::ENABLE, Keyword::DISABLE);
-        if ($keyword !== null) {
-            if ($keyword === Keyword::DISABLE && $tokenList->hasKeywords(Keyword::ON, Keyword::SLAVE)) {
-                $state = EventState::get(EventState::DISABLE_ON_SLAVE);
-            } else {
-                $state = EventState::get($keyword);
-            }
-        }
+
+        $state = $tokenList->getMultiKeywordsEnum(EventState::class);
+
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
             $comment = $tokenList->expectString();
         }

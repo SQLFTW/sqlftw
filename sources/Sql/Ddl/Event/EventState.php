@@ -18,7 +18,7 @@ class EventState extends SqlEnum
     use StrictBehaviorMixin;
 
     public const ENABLE = Keyword::ENABLE;
-    public const DISABLE = Keyword::DISABLE;
     public const DISABLE_ON_SLAVE = Keyword::DISABLE . ' ' . Keyword::ON . ' ' . Keyword::SLAVE;
+    public const DISABLE = Keyword::DISABLE;
 
 }
