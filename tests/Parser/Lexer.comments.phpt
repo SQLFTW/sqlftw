@@ -20,7 +20,7 @@ Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 14);
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' /* comment ');
-}, EndOfCommentNotFoundException::class);
+}, LexerException::class, '~^End of comment not found~');
 
 // HINT_COMMENT
 $tokens = $lexer->tokenizeAll(' /*+ comment */ ');

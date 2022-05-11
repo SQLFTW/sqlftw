@@ -80,24 +80,24 @@ Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 7);
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' 1.23e');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid number exponent~');
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' 1.23e+');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid number exponent~');
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' 1.23e-');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid number exponent~');
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' 1.23ef');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid number exponent~');
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' 1.23e+f');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid number exponent~');
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' 1.23e-f');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid number exponent~');

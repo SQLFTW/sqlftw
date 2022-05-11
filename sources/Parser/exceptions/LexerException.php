@@ -9,7 +9,33 @@
 
 namespace SqlFtw\Parser;
 
+use Throwable;
+
 class LexerException extends ParsingException
 {
+
+    /** @var int */
+    private $position;
+
+    /** @var string */
+    private $input;
+
+    public function __construct(string $message, int $position, string $input, ?Throwable $previous = null)
+    {
+        parent::__construct($message, $previous);
+
+        $this->position = $position;
+        $this->input = $input;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function getInput(): string
+    {
+        return $this->input;
+    }
 
 }

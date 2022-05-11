@@ -325,7 +325,7 @@ class Lexer
                         }
                         yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
                     } else {
-                        throw new InvalidCharacterException($second, $position, ''); // todo
+                        throw new LexerException('Invalid @ variable name', $position, $string);
                     }
                     break;
                 case '#':
@@ -377,7 +377,7 @@ class Lexer
                         $position++;
                         $column++;
                         if ($condition !== null) {
-                            throw new LexerException('Comment inside conditional comment');
+                            throw new LexerException('Comment inside conditional comment', $position, $string);
                         }
                         if (preg_match('~^[Mm]?!(?:[0-9]{5,6})?~', $string, $m, 0, $position) === 1) {
                             $versionId = strtoupper(str_replace('!', '', $m[0]));
@@ -413,7 +413,7 @@ class Lexer
                             }
                         }
                         if (!$ok) {
-                            throw new EndOfCommentNotFoundException(''); // todo
+                            throw new LexerException('End of comment not found', $position, $string);
                         }
 
                         if ($this->withComments) {
@@ -622,7 +622,7 @@ class Lexer
                                 yield $previous = new Token(T::VALUE | T::BINARY_LITERAL, $start, $bits, $orig, $condition);
                                 break;
                             } else {
-                                throw new ExpectedTokenNotFoundException(''); // todo
+                                throw new LexerException('Invalid binary literal', $position, $string);
                             }
                         }
                         break;
@@ -666,12 +666,12 @@ class Lexer
                                 $column++;
                                 $orig = $char . '\'' . $bits . '\'';
                                 if ((strlen($bits) % 2) === 1) {
-                                    throw new ExpectedTokenNotFoundException(''); // todo
+                                    throw new LexerException('Invalid hexadecimal literal', $position, $string);
                                 }
                                 yield $previous = new Token(T::VALUE | T::HEXADECIMAL_LITERAL, $start, strtolower($bits), $orig, $condition);
                                 break;
                             } else {
-                                throw new ExpectedTokenNotFoundException(''); // todo
+                                throw new LexerException('Invalid hexadecimal literal', $position, $string);
                             }
                         }
                         break;
@@ -773,13 +773,17 @@ class Lexer
                             }
                         }
                         if ($del === '') {
-                            throw new ExpectedTokenNotFoundException('Delimiter not found'); // todo
+                            throw new LexerException('Delimiter not found', $position, $string);
                         }
                         if (Str::endsWith($del, $delimiter)) {
-                            $del = substr($del, 0, -strlen($delimiter));
+                            $trimmed = substr($del, 0, -strlen($delimiter));
+                            if ($trimmed !== $delimiter) {
+                                // do not trim delimiter when would not change the current one (;; vs ;)
+                                $del = $trimmed;
+                            }
                         }
                         if ($this->settings->getPlatform()->getFeatures()->isReserved(strtoupper($del))) {
-                            throw new ExpectedTokenNotFoundException('Delimiter can not be a reserved word found.'); // todo
+                            throw new LexerException('Delimiter can not be a reserved word', $position, $string);
                         }
                         // todo: quoted delimiters :E
                         /*
@@ -814,13 +818,13 @@ class Lexer
                         }
                     }
                     if ($value !== '' && !Charset::validateValue($value)) {
-                        throw new LexerException("Invalid string charset declaration: $value");
+                        throw new LexerException("Invalid string charset declaration: $value", $position, $string);
                     }
                     // todo: ignored - do something about it
                     break;
                 default:
                     if (ord($char) < 32) {
-                        throw new InvalidCharacterException($char, $start, ''); // todo
+                        throw new LexerException('Invalid ASCII control character', $position, $string);
                     }
                     $value = $char;
                     while ($position < $length) {
@@ -908,7 +912,7 @@ class Lexer
             }
         }
         if (!$finished) {
-            throw new EndOfStringNotFoundException(''); // todo
+            throw new LexerException('End of string not found', $position, $string);
         }
         $orig = implode('', $orig);
         $value = $this->unescapeString($orig, $quote);
@@ -1037,13 +1041,13 @@ class Lexer
                             $expComplete = true;
                         } else {
                             if (trim($exp, 'e+-') === '' && strpos($base, '.') !== false) {
-                                throw new ExpectedTokenNotFoundException(''); // todo
+                                throw new LexerException('Invalid number exponent', $position, $string);
                             }
                             break;
                         }
                     }
                     if (!$expComplete) {
-                        throw new ExpectedTokenNotFoundException(''); // todo
+                        throw new LexerException('Invalid number exponent', $position, $string);
                     }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                     $num = false;

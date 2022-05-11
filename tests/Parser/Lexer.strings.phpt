@@ -35,7 +35,7 @@ Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 10);
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' "string1');
-}, EndOfStringNotFoundException::class);
+}, LexerException::class, '~^End of string not found~');
 
 // with ANSI_QUOTES mode enabled
 $settings->setMode($settings->getMode()->add(Mode::ANSI_QUOTES));
@@ -55,7 +55,7 @@ Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 10);
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(" 'string1");
-}, EndOfStringNotFoundException::class);
+}, LexerException::class, '~^End of string not found~');
 
 // doubling quotes
 $tokens = $lexer->tokenizeAll(" 'str''ing1' ");
@@ -101,7 +101,7 @@ Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' `name1');
-}, EndOfStringNotFoundException::class);
+}, LexerException::class, '~^End of string not found~');
 
 // AT_VARIABLE
 $tokens = $lexer->tokenizeAll(' @var1 ');

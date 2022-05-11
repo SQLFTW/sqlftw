@@ -32,11 +32,11 @@ Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' b\'0102\' ');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid binary literal~');
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' b\'0101 ');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid binary literal~');
 
 // HEXADECIMAL_LITERAL
 $tokens = $lexer->tokenizeAll(' 0x12AB ');
@@ -59,8 +59,8 @@ Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' x\'12A\' ');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid hexadecimal literal~');
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' x\'12AB ');
-}, ExpectedTokenNotFoundException::class);
+}, LexerException::class, '~^Invalid hexadecimal literal~');
