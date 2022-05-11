@@ -34,13 +34,7 @@ class ResetCommandParser
         $tokenList->expectKeyword(Keyword::RESET);
         $options = [];
         do {
-            $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::REPLICA, Keyword::SLAVE, Keyword::QUERY);
-            if ($keyword === Keyword::QUERY) {
-                $tokenList->expectKeyword(Keyword::CACHE);
-                $options[] = ResetOption::get(ResetOption::QUERY_CACHE);
-            } else {
-                $options[] = ResetOption::get($keyword);
-            }
+            $options[] = $tokenList->expectMultiKeywordsEnum(ResetOption::class);
         } while ($tokenList->hasComma());
 
         return new ResetCommand($options);
