@@ -334,35 +334,13 @@ class ShowCommandsParser
                 //
                 // type:
                 //     ALL | BLOCK IO | CONTEXT SWITCHES | CPU | IPC | MEMORY | PAGE FAULTS | SOURCE | SWAPS
-                $keywords = [
-                    Keyword::ALL => null,
-                    Keyword::BLOCK => Keyword::IO,
-                    Keyword::CONTEXT => Keyword::SWITCHES,
-                    Keyword::CPU => null,
-                    Keyword::IPC => null,
-                    Keyword::MEMORY => null,
-                    Keyword::PAGE => Keyword::FAULTS,
-                    Keyword::SOURCE => null,
-                    Keyword::SWAPS => null,
-                ];
-                $continue = static function (string $type) use ($tokenList, $keywords): string {
-                    if (isset($keywords[$type])) {
-                        $tokenList->expectKeyword($keywords[$type]);
-
-                        return $type . ' ' . $keywords[$type];
-                    }
-
-                    return $type;
-                };
-
                 $types = [];
-                $type = $tokenList->getAnyKeyword(...array_keys($keywords));
+                $type = $tokenList->getMultiKeywordsEnum(ShowProfileType::class);
                 if ($type !== null) {
-                    $types[] = ShowProfileType::get($continue($type));
-                }
-                while ($tokenList->hasComma()) {
-                    $type = $tokenList->expectAnyKeyword(...array_keys($keywords));
-                    $types[] = ShowProfileType::get($continue($type));
+                    $types[] = $type;
+                    while ($tokenList->hasComma()) {
+                        $types[] = $tokenList->expectMultiKeywordsEnum(ShowProfileType::class);
+                    }
                 }
                 $query = $limit = $offset = null;
                 if ($tokenList->hasKeyword(Keyword::FOR)) {

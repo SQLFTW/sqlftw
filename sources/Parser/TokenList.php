@@ -632,6 +632,30 @@ class TokenList
      * @param class-string<T> $className
      * @return T
      */
+    public function getMultiKeywordsEnum(string $className): ?SqlEnum
+    {
+        $start = $this->position;
+        $values = call_user_func([$className, 'getAllowedValues']);
+        foreach ($values as $value) {
+            $this->position = $start;
+            $keywords = explode(' ', $value);
+            foreach ($keywords as $keyword) {
+                if (!$this->hasKeyword($keyword)) {
+                    continue 2;
+                }
+            }
+
+            return call_user_func([$className, 'get'], $value);
+        }
+
+        return null;
+    }
+
+    /**
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T
+     */
     public function expectMultiKeywordsEnum(string $className): SqlEnum
     {
         $start = $this->position;
