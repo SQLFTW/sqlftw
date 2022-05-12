@@ -87,7 +87,7 @@ Assert::parse(
     "SELECT col1, col2 FROM tbl1, tbl2 INTO OUTFILE 'file.txt' CHARACTER SET 'utf8'",
     "SELECT col1, col2 FROM tbl1, tbl2 INTO OUTFILE 'file.txt' CHARACTER SET utf8"
 );
-// todo: FileFormatParser.phpt for export_options
+// todo: test for export_options
 Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 INTO DUMPFILE 'file.txt'");
 Assert::parse("SELECT col1, col2 FROM tbl1, tbl2 INTO @var1, @var2");
 

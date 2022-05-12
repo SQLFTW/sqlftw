@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Dml\TableReference\EscapedTableReference;
 use SqlFtw\Sql\Dml\TableReference\IndexHint;
 use SqlFtw\Sql\Dml\TableReference\IndexHintAction;
@@ -33,19 +34,19 @@ class JoinParser
 {
     use StrictBehaviorMixin;
 
-    /** @var ParserFactory */
-    private $parserFactory;
-
     /** @var ExpressionParser */
     private $expressionParser;
 
-    public function __construct(
-        ParserFactory $parserFactory,
-        ExpressionParser $expressionParser
-    )
+    /** @var callable(): QueryParser */
+    private $queryParserProxy;
+
+    /**
+     * @param callable(): QueryParser $queryParserProxy
+     */
+    public function __construct(ExpressionParser $expressionParser, callable $queryParserProxy)
     {
-        $this->parserFactory = $parserFactory;
         $this->expressionParser = $expressionParser;
+        $this->queryParserProxy = $queryParserProxy;
     }
 
     /**
@@ -218,7 +219,7 @@ class JoinParser
                 $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
             }
 
-            $query = $this->parserFactory->getQueryParser()->parseQuery($tokenList->resetPosition(-1));
+            $query = ($this->queryParserProxy)()->parseQuery($tokenList->resetPosition(-1));
 
             if ($selectInParentheses) {
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);

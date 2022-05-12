@@ -13,11 +13,14 @@ use Dogma\Re;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
+use SqlFtw\Parser\Ddl\TypeParser;
+use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Ddl\UserExpression;
+use SqlFtw\Sql\Dml\FileFormat;
 use SqlFtw\Sql\Expression\AssignOperator;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
@@ -53,7 +56,6 @@ use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\UserName;
 use function count;
 use function explode;
 use function in_array;
@@ -79,15 +81,22 @@ class ExpressionParser
         . self::PUNCTUATION . '(?:[0-5][0-9]))'
         . '(\\.[0-9]+)?$/';
 
-    /** @var ParserFactory */
-    private $parserFactory;
+    /** @var TypeParser */
+    private $typeParser;
+
+    /** @var callable(): QueryParser */
+    private $queryParserProxy;
 
     /** @var bool */
     private $assignAllowed = false;
 
-    public function __construct(ParserFactory $parserFactory)
+    /**
+     * @param callable(): QueryParser $queryParserProxy
+     */
+    public function __construct(TypeParser $typeParser, callable $queryParserProxy)
     {
-        $this->parserFactory = $parserFactory;
+        $this->typeParser = $typeParser;
+        $this->queryParserProxy = $queryParserProxy;
     }
 
     /**
@@ -577,7 +586,7 @@ class ExpressionParser
                         $arguments[$keyword] = $tokenList->expectNameOrStringEnum(Charset::class);
                         continue 3;
                     case DataType::class:
-                        $arguments[$keyword] = $this->parserFactory->getTypeParser()->parseType($tokenList);
+                        $arguments[$keyword] = $this->typeParser->parseType($tokenList);
                         continue 3;
                     case OrderByExpression::class:
                         $arguments[$keyword] = new ListExpression($this->parseOrderBy($tokenList));
@@ -793,7 +802,7 @@ class ExpressionParser
 
     private function parseSubquery(TokenList $tokenList): Subquery
     {
-        return new Subquery($this->parserFactory->getQueryParser()->parseQuery($tokenList));
+        return new Subquery(($this->queryParserProxy)()->parseQuery($tokenList));
     }
 
     private function parseLiteral(TokenList $tokenList): Literal
@@ -1008,6 +1017,57 @@ class ExpressionParser
         } else {
             return new UserExpression($tokenList->expectUserName());
         }
+    }
+
+    /**
+     * [{FIELDS | COLUMNS}
+     *   [TERMINATED BY 'string']
+     *   [[OPTIONALLY] ENCLOSED BY 'char']
+     *   [ESCAPED BY 'char']
+     * ]
+     * [LINES
+     *   [STARTING BY 'string']
+     *   [TERMINATED BY 'string']
+     * ]
+     */
+    public function parseFileFormat(TokenList $tokenList): ?FileFormat
+    {
+        $fieldsTerminatedBy = $fieldsEnclosedBy = $fieldsEscapedBy = null;
+        $optionallyEnclosed = false;
+        if ($tokenList->hasAnyKeyword(Keyword::FIELDS, Keyword::COLUMNS)) {
+            if ($tokenList->hasKeywords(Keyword::TERMINATED, Keyword::BY)) {
+                $fieldsTerminatedBy = $tokenList->expectString();
+            }
+            $optionallyEnclosed = $tokenList->hasKeyword(Keyword::OPTIONALLY);
+            if ($tokenList->hasKeywords(Keyword::ENCLOSED, Keyword::BY)) {
+                $fieldsEnclosedBy = $tokenList->expectString();
+            }
+            if ($tokenList->hasKeywords(Keyword::ESCAPED, Keyword::BY)) {
+                $fieldsEscapedBy = $tokenList->expectString();
+            }
+        }
+        $linesStaringBy = $linesTerminatedBy = null;
+        if ($tokenList->hasKeyword(Keyword::LINES)) {
+            if ($tokenList->hasKeywords(Keyword::STARTING, Keyword::BY)) {
+                $linesStaringBy = $tokenList->expectString();
+            }
+            if ($tokenList->hasKeywords(Keyword::TERMINATED, Keyword::BY)) {
+                $linesTerminatedBy = $tokenList->expectString();
+            }
+        }
+
+        if ($fieldsTerminatedBy !== null || $fieldsEnclosedBy !== null || $fieldsEscapedBy !== null || $linesStaringBy !== null || $linesTerminatedBy !== null) {
+            return new FileFormat(
+                $fieldsTerminatedBy,
+                $fieldsEnclosedBy,
+                $fieldsEscapedBy,
+                $optionallyEnclosed,
+                $linesStaringBy,
+                $linesTerminatedBy
+            );
+        }
+
+        return null;
     }
 
 }

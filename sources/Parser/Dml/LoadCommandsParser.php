@@ -29,13 +29,9 @@ class LoadCommandsParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var FileFormatParser */
-    private $fileFormatParser;
-
-    public function __construct(ExpressionParser $expressionParser, FileFormatParser $fileFormatParser)
+    public function __construct(ExpressionParser $expressionParser)
     {
         $this->expressionParser = $expressionParser;
-        $this->fileFormatParser = $fileFormatParser;
     }
 
     /**
@@ -61,7 +57,7 @@ class LoadCommandsParser
     {
         $tokenList->expectKeywords(Keyword::LOAD, Keyword::DATA);
         [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset] = $this->parseOptions($tokenList, true);
-        $format = $this->fileFormatParser->parseFormat($tokenList);
+        $format = $this->expressionParser->parseFileFormat($tokenList);
         [$ignoreRows, $fields, $setters] = $this->parseRowsAndFields($tokenList);
 
         return new LoadDataCommand($file, $table, $format, $charset, $fields, $setters, $ignoreRows, $priority, $local, $duplicateOption, $partitions);

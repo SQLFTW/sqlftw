@@ -55,9 +55,6 @@ class QueryParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var FileFormatParser */
-    private $fileFormatParser;
-
     /** @var JoinParser */
     private $joinParser;
 
@@ -66,12 +63,10 @@ class QueryParser
 
     public function __construct(
         ExpressionParser $expressionParser,
-        FileFormatParser $fileFormatParser,
         JoinParser $joinParser,
         WithParser $withParser
     ) {
         $this->expressionParser = $expressionParser;
-        $this->fileFormatParser = $fileFormatParser;
         $this->joinParser = $joinParser;
         $this->withParser = $withParser;
     }
@@ -449,7 +444,7 @@ class QueryParser
             if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET) || $tokenList->hasKeyword(Keyword::CHARSET)) {
                 $charset = $tokenList->expectNameOrStringEnum(Charset::class);
             }
-            $format = $this->fileFormatParser->parseFormat($tokenList);
+            $format = $this->expressionParser->parseFileFormat($tokenList);
 
             return new SelectInto(null, null, $outFile, $charset, $format);
         } elseif ($tokenList->hasKeyword(Keyword::DUMPFILE)) {
