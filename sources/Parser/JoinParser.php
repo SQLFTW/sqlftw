@@ -289,13 +289,7 @@ class JoinParser
             $tokenList->getAnyKeyword(Keyword::INDEX, Keyword::KEY);
             $target = null;
             if ($tokenList->hasKeyword(Keyword::FOR)) {
-                $keyword = $tokenList->expectAnyKeyword(Keyword::JOIN, Keyword::ORDER, Keyword::GROUP);
-                if ($keyword === Keyword::JOIN) {
-                    $target = IndexHintTarget::get(IndexHintTarget::JOIN);
-                } else {
-                    $tokenList->expectKeyword(Keyword::BY);
-                    $target = IndexHintTarget::get($keyword . ' ' . Keyword::BY);
-                }
+                $target = $tokenList->expectMultiKeywordsEnum(IndexHintTarget::class);
             }
 
             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
