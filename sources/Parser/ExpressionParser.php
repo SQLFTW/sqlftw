@@ -915,18 +915,29 @@ class ExpressionParser
      */
     public function parseTimeExpression(TokenList $tokenList): TimeExpression
     {
-        $time = $this->parseDateTime($tokenList);
+        $initial = $this->parseDateTime($tokenList);
         $intervals = [];
         while ($tokenList->hasOperator(Operator::PLUS)) {
             $tokenList->expectKeyword(Keyword::INTERVAL);
             $intervals[] = $this->parseInterval($tokenList);
         }
 
-        return new TimeExpression($time, $intervals);
+        return new TimeExpression($initial, $intervals);
     }
 
-    public function parseDateTime(TokenList $tokenList): DateTime
+    /**
+     * @return DateTime|BuiltInFunction
+     */
+    public function parseDateTime(TokenList $tokenList)
     {
+        if ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
+            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            }
+
+            return new BuiltInFunction(BuiltInFunction::CURRENT_TIMESTAMP);
+        }
+
         $string = (string) $tokenList->getInt();
         if ($string === '') {
             $string = $tokenList->expectString();

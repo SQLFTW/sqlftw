@@ -229,6 +229,11 @@ class TokenList
         return (bool) $this->get($tokenType, $value);
     }
 
+    public function pass(int $tokenType, $value = null): void
+    {
+        $this->has($tokenType, $value);
+    }
+
     public function expectAny(int ...$tokenTypes): Token
     {
         $this->doAutoSkip();

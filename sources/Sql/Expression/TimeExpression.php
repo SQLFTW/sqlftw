@@ -25,20 +25,19 @@ class TimeExpression implements SqlSerializable
     use StrictBehaviorMixin;
 
     /** @var Date|Time|DateTime|BuiltInFunction */
-    private $value;
+    private $initial;
 
     /** @var TimeInterval[] */
     private $intervals;
 
     /**
-     * @param Date|Time|DateTimeInterface|BuiltInFunction $value
+     * @param Date|Time|DateTimeInterface|BuiltInFunction $initial
      * @param DateInterval[]|DateTimeSpan[]|TimeInterval[] $intervals
      */
-    public function __construct($value, array $intervals = [])
+    public function __construct($initial, array $intervals = [])
     {
-        Check::types($value, [Date::class, Time::class, DateTime::class]);
-        if ($value instanceof DateTimeInterface && !$value instanceof DateTime) {
-            $value = DateTime::createFromDateTimeInterface($value);
+        if ($initial instanceof DateTimeInterface && !$initial instanceof DateTime) {
+            $initial = DateTime::createFromDateTimeInterface($initial);
         }
 
         $int = [];
@@ -59,16 +58,16 @@ class TimeExpression implements SqlSerializable
             );
         }*/
 
-        $this->value = $value;
+        $this->initial = $initial;
         $this->intervals = $int;
     }
 
     /**
      * @return Date|Time|DateTime|BuiltInFunction
      */
-    public function getValue()
+    public function getInitial()
     {
-        return $this->value;
+        return $this->initial;
     }
 
     /**
@@ -81,9 +80,9 @@ class TimeExpression implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $this->value instanceof BuiltInFunction
-            ? $this->value->serialize($formatter)
-            : $formatter->formatValue($this->value);
+        $result = $this->initial instanceof BuiltInFunction
+            ? $this->initial->serialize($formatter)
+            : $formatter->formatValue($this->initial);
 
         foreach ($this->intervals as $interval) {
             $result .= ' + INTERVAL ' . $interval->serialize($formatter);
