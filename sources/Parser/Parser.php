@@ -65,13 +65,13 @@ class Parser
         foreach ($tokenLists as $tokenList) {
             try {
                 $command = $this->parseTokenList($tokenList);
+                if (!$command instanceof TesterCommand) {
+                    $tokenList->expectEnd();
+                }
             } catch (ParserException $e) {
                 yield new InvalidCommand($tokenList, $e);
 
                 continue;
-            }
-            if (!$command instanceof TesterCommand) {
-                $tokenList->expectEnd();
             }
 
             // todo: sniff for SET NAMES, SET CHARSET, SET sql_mode ...
