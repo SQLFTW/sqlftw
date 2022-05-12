@@ -15,6 +15,16 @@ use SqlFtw\Sql\SqlEnum;
 class SystemVariable extends SqlEnum implements Feature
 {
 
+    public const ACTIVATE_ALL_ROLES_ON_LOGIN = 'activate_all_roles_on_login';
+    public const ADMIN_SSL_CA = 'admin_ssl_ca';
+    public const ADMIN_SSL_CAPATH = 'admin_ssl_capath';
+    public const ADMIN_SSL_CERT = 'admin_ssl_cert';
+    public const ADMIN_SSL_CIPHER = 'admin_ssl_cipher';
+    public const ADMIN_TLS_CIPHERSUITES = 'admin_tls_ciphersuites';
+    public const ADMIN_SSL_CRL = 'admin_ssl_crl';
+    public const ADMIN_SSL_CRLPATH = 'admin_ssl_crlpath';
+    public const ADMIN_SSL_KEY = 'admin_ssl_key';
+    public const ADMIN_TLS_VERSION = 'admin_tls_version';
     public const AUTO_INCREMENT_INCREMENT = 'auto_increment_increment';
     public const AUTO_INCREMENT_OFFSET = 'auto_increment_offset';
     public const AUTOCOMMIT = 'autocommit';
@@ -255,6 +265,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const KEY_CACHE_AGE_THRESHOLD = 'key_cache_age_threshold';
     public const KEY_CACHE_BLOCK_SIZE = 'key_cache_block_size';
     public const KEY_CACHE_DIVISION_LIMIT = 'key_cache_division_limit';
+    public const KEYRING_FILE_DATA = 'keyring_file_data';
     public const LARGE_FILES_SUPPORT = 'large_files_support';
     public const LARGE_PAGE_SIZE = 'large_page_size';
     public const LARGE_PAGES = 'large_pages';
@@ -287,6 +298,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const LOW_PRIORITY_UPDATES = 'low_priority_updates';
     public const LOWER_CASE_FILE_SYSTEM = 'lower_case_file_system';
     public const LOWER_CASE_TABLE_NAMES = 'lower_case_table_names';
+    public const MANDATORY_ROLES = 'mandatory_roles';
     public const MASTER_INFO_REPOSITORY = 'master_info_repository';
     public const MASTER_VERIFY_CHECKSUM = 'master_verify_checksum';
     public const MAX_ALLOWED_PACKET = 'max_allowed_packet';
@@ -353,6 +365,8 @@ class SystemVariable extends SqlEnum implements Feature
     public const OPTIMIZER_TRACE_LIMIT = 'optimizer_trace_limit';
     public const OPTIMIZER_TRACE_MAX_MEM_SIZE = 'optimizer_trace_max_mem_size';
     public const OPTIMIZER_TRACE_OFFSET = 'optimizer_trace_offset';
+    public const PARTIAL_REVOKES = 'partial_revokes';
+    public const PASSWORD_REQUIRE_CURRENT = 'password_require_current';
     public const PERFORMANCE_SCHEMA = 'performance_schema';
     public const PERFORMANCE_SCHEMA_ACCOUNTS_SIZE = 'performance_schema_accounts_size';
     public const PERFORMANCE_SCHEMA_DIGESTS_SIZE = 'performance_schema_digests_size';

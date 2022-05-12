@@ -571,6 +571,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::QUARTER,
         Keyword::QUERY,
         Keyword::QUICK,
+        Keyword::RANDOM,
         Keyword::READ_ONLY,
         Keyword::REBUILD,
         Keyword::RECOVER,

@@ -624,13 +624,19 @@ class Parser
                 // XA RECOVER
                 return $this->factory->getXaTransactionCommandsParser()->parseXa($tokenList->resetPosition($start));
             // mysql test suite scripts
+            case Keyword::CLOSE:
             case Keyword::CONNECTION:
             case Keyword::DEC:
             case Keyword::ERROR:
             case Keyword::EXIT:
             case Keyword::IF:
+            case Keyword::OPEN:
+            case Keyword::READ:
             case Keyword::SOURCE:
             case Keyword::WHILE:
+            case 'append_file':
+            case 'break':
+            case 'change_user':
             case 'connect':
             case 'copy_file':
             case 'die':
@@ -647,6 +653,8 @@ class Parser
             case 'file_exists':
             case 'inc':
             case 'let':
+            case 'my':
+            case 'perl':
             case 'query_vertical':
             case 'reap':
             case 'remove_file':
@@ -656,6 +664,8 @@ class Parser
             case 'sync_slave_with_master':
             case 'sync_with_master':
             case 'wait_for_slave_to_stop':
+            case 'write_file':
+            case '[':
             case '}':
                 if ($this->settings->mysqlTestMode) {
                     return new TesterCommand($tokenList);
