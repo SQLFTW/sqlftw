@@ -83,7 +83,7 @@ class UserCommandsParser
 
             return new AlterCurrentUserCommand($password, $ifExists);
         } elseif ($tokenList->seekKeyword(Keyword::DEFAULT, 4)) {
-            $user = new UserName(...$tokenList->expectUserName());
+            $user = $tokenList->expectUserName();
             $tokenList->expectKeywords(Keyword::DEFAULT, Keyword::ROLE);
             $role = $this->parseRoleSpecification($tokenList);
 
@@ -161,7 +161,7 @@ class UserCommandsParser
     {
         $users = [];
         do {
-            $user = new UserName(...$tokenList->expectUserName());
+            $user = $tokenList->expectUserName();
             if ($tokenList->hasKeywords(Keyword::DISCARD, Keyword::OLD, Keyword::PASSWORD)) {
                 $action = IdentifiedUserAction::DISCARD_OLD_PASSWORD;
                 $users[] = new IdentifiedUser($user, IdentifiedUserAction::get($action));
@@ -398,7 +398,7 @@ class UserCommandsParser
         $tokenList->expectKeyword(Keyword::GRANT);
 
         if ($tokenList->hasKeywords(Keyword::PROXY, Keyword::ON)) {
-            $proxy = new UserName(...$tokenList->expectUserName());
+            $proxy = $tokenList->expectUserName();
             $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseUserList($tokenList);
             $withGrantOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
@@ -423,7 +423,7 @@ class UserCommandsParser
             $resourceOptions = $this->parseResourceOptions($tokenList);
             $as = $role = null;
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $as = new UserName(...$tokenList->expectUserName());
+                $as = $tokenList->expectUserName();
                 if ($tokenList->hasKeywords(Keyword::WITH, Keyword::ROLE)) {
                     $role = $this->parseRoleSpecification($tokenList);
                 }
@@ -551,9 +551,9 @@ class UserCommandsParser
         $users = [];
         $newUsers = [];
         do {
-            $users[] = new UserName(...$tokenList->expectUserName());
+            $users[] = $tokenList->expectUserName();
             $tokenList->expectKeyword(Keyword::TO);
-            $newUsers[] = new UserName(...$tokenList->expectUserName());
+            $newUsers[] = $tokenList->expectUserName();
         } while ($tokenList->hasComma());
 
         return new RenameUserCommand($users, $newUsers);
@@ -593,7 +593,7 @@ class UserCommandsParser
         }
         if ($tokenList->hasKeywords(Keyword::PROXY)) {
             $tokenList->expectKeyword(Keyword::ON);
-            $proxy = new UserName(...$tokenList->expectUserName());
+            $proxy = $tokenList->expectUserName();
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUserList($tokenList);
 
@@ -648,7 +648,7 @@ class UserCommandsParser
         $tokenList->expectKeywords(Keyword::SET, Keyword::PASSWORD);
         $user = null;
         if ($tokenList->hasKeyword(Keyword::FOR)) {
-            $user = new UserName(...$tokenList->expectUserName());
+            $user = $tokenList->expectUserName();
         }
         $tokenList->expectOperator(Operator::EQUAL);
         $passwordFunction = $tokenList->hasKeyword(Keyword::PASSWORD);
@@ -706,7 +706,7 @@ class UserCommandsParser
     {
         $users = [];
         do {
-            $users[] = new UserName(...$tokenList->expectUserName());
+            $users[] = $tokenList->expectUserName();
         } while ($tokenList->hasComma());
 
         return $users;

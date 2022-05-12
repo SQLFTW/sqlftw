@@ -991,7 +991,7 @@ class ExpressionParser
 
             return new UserExpression(null, Keyword::CURRENT_USER);
         } else {
-            return new UserExpression(new UserName(...$tokenList->expectUserName()));
+            return new UserExpression($tokenList->expectUserName());
         }
     }
 

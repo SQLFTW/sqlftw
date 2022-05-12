@@ -16,6 +16,7 @@ use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\SqlEnum;
+use SqlFtw\Sql\UserName;
 use function array_values;
 use function call_user_func;
 use function count;
@@ -803,10 +804,7 @@ class TokenList
         return [$first, null];
     }
 
-    /**
-     * @return array{string, string|null} ($name, $host)
-     */
-    public function expectUserName(): array
+    public function expectUserName(): UserName
     {
         $name = $this->expectNameOrString();
         $host = null;
@@ -814,7 +812,7 @@ class TokenList
             $host = $this->expectNameOrString();
         }
 
-        return [$name, $host];
+        return new UserName($name, $host);
     }
 
     public function expectEnd(): void
