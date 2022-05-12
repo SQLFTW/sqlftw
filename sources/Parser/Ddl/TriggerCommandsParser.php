@@ -65,8 +65,7 @@ class TriggerCommandsParser
         $tokenList->expectKeyword(Keyword::TRIGGER);
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
-        $event = TriggerEvent::get($tokenList->expectAnyKeyword(Keyword::BEFORE, Keyword::AFTER)
-            . ' ' . $tokenList->expectAnyKeyword(Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE));
+        $event = $tokenList->expectMultiKeywordsEnum(TriggerEvent::class);
 
         $tokenList->expectKeyword(Keyword::ON);
         $table = new QualifiedName(...$tokenList->expectQualifiedName());
