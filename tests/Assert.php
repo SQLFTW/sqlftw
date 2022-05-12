@@ -149,8 +149,7 @@ class Assert extends DogmaAssert
                     Debugger::callstack(100, 1, 5, 100, $trace);
                 }
             }
-            self::fail('Cannot tokenize commands');
-            return;
+            throw $e;
         }
 
         self::true(true);

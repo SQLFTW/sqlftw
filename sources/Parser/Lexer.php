@@ -818,7 +818,9 @@ class Lexer
                         }
                     }
                     if ($value !== '' && !Charset::validateValue($value)) {
-                        throw new LexerException("Invalid string charset declaration: $value", $position, $string);
+                        if (!$this->settings->mysqlTestMode) {
+                            throw new LexerException("Invalid string charset declaration: $value", $position, $string);
+                        }
                     }
                     // todo: ignored - do something about it
                     break;
