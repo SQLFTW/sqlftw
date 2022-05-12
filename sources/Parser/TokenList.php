@@ -810,11 +810,7 @@ class TokenList
     {
         $name = $this->expectNameOrString();
         $host = null;
-        $symbol = $this->get(TokenType::SYMBOL);
-        if ($symbol !== null) {
-            if ($symbol->value !== '@') {
-                $this->expected('@');
-            }
+        if ($this->has(TokenType::SYMBOL, '@')) {
             $host = $this->expectNameOrString();
         }
 
