@@ -13,12 +13,10 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
 use SqlFtw\Sql\Ddl\Table\TableItem;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
-use function array_keys;
 use function count;
-use function is_int;
-use function is_string;
 
 class IndexDefinition implements TableItem, ConstraintBody
 {
@@ -32,8 +30,8 @@ class IndexDefinition implements TableItem, ConstraintBody
     /** @var IndexType */
     private $type;
 
-    /** @var IndexColumn[] */
-    private $columns;
+    /** @var array<IndexColumn|ExpressionNode> */
+    private $parts;
 
     /** @var IndexAlgorithm|null */
     private $algorithm;
@@ -45,44 +43,26 @@ class IndexDefinition implements TableItem, ConstraintBody
     private $table;
 
     /**
-     * @param IndexColumn[]|int[]|string[]|null[] $columns
+     * @param array<IndexColumn|ExpressionNode> $parts
      */
     public function __construct(
         ?string $name,
         IndexType $type,
-        array $columns,
+        array $parts,
         ?IndexAlgorithm $algorithm = null,
         ?IndexOptions $options = null,
         ?QualifiedName $table = null
     ) {
-        if (count($columns) < 1) {
+        if (count($parts) < 1) {
             throw new InvalidDefinitionException('Index must contain at least one column. None given.');
         }
 
         $this->name = $name;
         $this->type = $type;
-        $this->setColumns($columns);
+        $this->parts = $parts;
         $this->algorithm = $algorithm;
         $this->options = $options;
         $this->table = $table;
-    }
-
-    public function duplicateWithNewName(string $newName): self
-    {
-        $self = clone $this;
-        $self->name = $newName;
-
-        return $self;
-    }
-
-    public function duplicateWithVisibility(bool $visible): self
-    {
-        $self = clone $this;
-        $self->options = $this->options !== null
-            ? $this->options->duplicateWithVisibility($visible)
-            : new IndexOptions(null, null, null, null, $visible);
-
-        return $self;
     }
 
     public function duplicateAsPrimary(): self
@@ -92,33 +72,6 @@ class IndexDefinition implements TableItem, ConstraintBody
         $self->name = self::PRIMARY_KEY_NAME;
 
         return $self;
-    }
-
-    /**
-     * @param IndexColumn[]|int[]|string[]|null[] $columns
-     */
-    private function setColumns(array $columns): void
-    {
-        $this->columns = [];
-        foreach ($columns as $name => $column) {
-            if ($column instanceof IndexColumn) {
-                $this->addColumn($column->getName(), $column);
-            } elseif (is_int($name) && is_string($column)) {
-                $this->addColumn($column, new IndexColumn($column));
-            } elseif (is_int($column)) {
-                $this->addColumn($name, new IndexColumn($name, $column));
-            } else {
-                throw new InvalidDefinitionException("Invalid index column definition: $column($name)");
-            }
-        }
-    }
-
-    private function addColumn(string $columnName, IndexColumn $column): void
-    {
-        if (isset($this->columns[$columnName])) {
-            throw new InvalidDefinitionException("Column `$columnName` is already added to the index.");
-        }
-        $this->columns[$columnName] = $column;
     }
 
     public function getName(): ?string
@@ -148,7 +101,7 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public function isMultiColumn(): bool
     {
-        return count($this->columns) > 1;
+        return count($this->parts) > 1;
     }
 
     public function getAlgorithm(): ?IndexAlgorithm
@@ -167,19 +120,11 @@ class IndexDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @return string[]
-     */
-    public function getColumnNames(): array
-    {
-        return array_keys($this->columns);
-    }
-
-    /**
      * @return IndexColumn[]
      */
-    public function getColumns(): array
+    public function getParts(): array
     {
-        return $this->columns;
+        return $this->parts;
     }
 
     public function serialize(Formatter $formatter): string
@@ -203,7 +148,7 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public function serializeTail(Formatter $formatter): string
     {
-        $result = '(' . $formatter->formatSerializablesList($this->columns) . ')';
+        $result = '(' . $formatter->formatSerializablesList($this->parts) . ')';
         if ($this->options !== null) {
             $options = $this->options->serialize($formatter);
             if ($options !== '') {

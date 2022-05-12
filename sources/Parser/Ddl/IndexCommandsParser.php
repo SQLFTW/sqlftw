@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
@@ -22,6 +23,7 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexColumn;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexOptions;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
@@ -30,15 +32,26 @@ class IndexCommandsParser
 {
     use StrictBehaviorMixin;
 
+    /** @var ExpressionParser */
+    private $expressionParser;
+
+    public function __construct(ExpressionParser $expressionParser)
+    {
+        $this->expressionParser = $expressionParser;
+    }
+
     /**
+     * https://dev.mysql.com/doc/refman/8.0/en/create-index.html
      * CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
      *     [index_type]
-     *     ON tbl_name (index_col_name, ...)
+     *     ON tbl_name (key_part, ...)
      *     [index_option]
      *     [algorithm_option | lock_option] ...
      *
-     * index_col_name:
-     *     col_name [(length)] [ASC | DESC]
+     * key_part: {
+     *     col_name [(length)]
+     *   | (expr) -- 8.0.13
+     * } [ASC | DESC]
      *
      * index_option:
      *     KEY_BLOCK_SIZE [=] value
@@ -107,20 +120,8 @@ class IndexCommandsParser
             $tokenList->expectKeyword(Keyword::ON);
             $table = new QualifiedName(...$tokenList->expectQualifiedName());
         }
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-        $columns = [];
-        do {
-            $column = $tokenList->expectName();
-            $length = null;
-            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-                $length = $tokenList->expectInt();
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-            }
-            /** @var Order $order */
-            $order = $tokenList->getKeywordEnum(Order::class);
-            $columns[] = new IndexColumn($column, $length, $order);
-        } while ($tokenList->hasComma());
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+        $parts = $this->parseIndexParts($tokenList);
 
         $keyBlockSize = $withParser = $mergeThreshold = $comment = $visible = $engineAttribute = $secondaryEngineAttribute = null;
         $keywords = [
@@ -172,7 +173,37 @@ class IndexCommandsParser
             $options = new IndexOptions($keyBlockSize, $withParser, $mergeThreshold, $comment, $visible, $engineAttribute, $secondaryEngineAttribute);
         }
 
-        return new IndexDefinition($name, $type, $columns, $algorithm, $options, $table);
+        return new IndexDefinition($name, $type, $parts, $algorithm, $options, $table);
+    }
+
+    /**
+     * @param TokenList $tokenList
+     * @return array<IndexColumn|ExpressionNode>
+     */
+    private function parseIndexParts(TokenList $tokenList): array
+    {
+        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $parts = [];
+        do {
+            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                $tokenList->check('functional indexes', 80013);
+                $parts[] = $this->expressionParser->parseExpression($tokenList);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            } else {
+                $part = $tokenList->expectName();
+                $length = null;
+                if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                    $length = $tokenList->expectInt();
+                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                }
+                /** @var Order $order */
+                $order = $tokenList->getKeywordEnum(Order::class);
+                $parts[] = new IndexColumn($part, $length, $order);
+            }
+        } while ($tokenList->hasComma());
+        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+        return $parts;
     }
 
     /**
