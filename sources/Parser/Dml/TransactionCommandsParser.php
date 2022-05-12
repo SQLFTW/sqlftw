@@ -72,22 +72,12 @@ class TransactionCommandsParser
         $items = [];
         do {
             $table = new QualifiedName(...$tokenList->expectQualifiedName());
-            $alias = $lock = null;
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectName();
+            } else {
+                $alias = $tokenList->getName();
             }
-            if ($tokenList->hasKeyword(Keyword::READ)) {
-                if ($tokenList->hasKeyword(Keyword::LOCAL)) {
-                    $lock = LockTableType::get(LockTableType::READ_LOCAL);
-                } else {
-                    $lock = LockTableType::get(LockTableType::READ);
-                }
-            } elseif ($tokenList->hasKeyword(Keyword::LOW_PRIORITY)) {
-                $tokenList->expectKeyword(Keyword::WRITE);
-                $lock = LockTableType::get(LockTableType::LOW_PRIORITY_WRITE);
-            } elseif ($tokenList->hasKeyword(Keyword::WRITE)) {
-                $lock = LockTableType::get(LockTableType::WRITE);
-            }
+            $lock = $tokenList->expectMultiKeywordsEnum(LockTableType::class);
             $items[] = new LockTablesItem($table, $lock, $alias);
         } while ($tokenList->hasComma());
 

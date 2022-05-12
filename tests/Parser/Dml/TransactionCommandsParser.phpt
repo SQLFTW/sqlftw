@@ -17,10 +17,10 @@ Assert::parse("COMMIT NO RELEASE");
 
 
 // LOCK TABLES tbl_name [[AS] alias] lock_type [, tbl_name [[AS] alias] lock_type] ...
-Assert::parse("LOCK TABLES tbl1");
-Assert::parse("LOCK TABLES tbl1 AS lock1");
-Assert::parse("LOCK TABLES tbl1, tbl2");
-Assert::parse("LOCK TABLES tbl1 AS lock1, tbl2 AS lock2");
+Assert::parse("LOCK TABLE tbl1 READ", "LOCK TABLES tbl1 READ");
+Assert::parse("LOCK TABLES tbl1 READ");
+Assert::parse("LOCK TABLES tbl1 AS lock1 READ");
+Assert::parse("LOCK TABLES tbl1 READ, tbl2 READ");
 Assert::parse("LOCK TABLES tbl1 AS lock1 READ, tbl2 AS lock2 READ LOCAL");
 Assert::parse("LOCK TABLES tbl1 AS lock1 WRITE, tbl2 AS lock2 LOW_PRIORITY WRITE");
 
