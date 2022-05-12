@@ -749,7 +749,7 @@ class ExpressionParser
         $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         $query = $tokenList->expectString();
         /** @var MatchMode|null $mode */
-        $mode = $tokenList->getKeywordEnum(MatchMode::class);
+        $mode = $tokenList->getMultiKeywordsEnum(MatchMode::class);
         $expansion = $tokenList->hasKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
