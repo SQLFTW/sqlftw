@@ -182,20 +182,8 @@ class TransactionCommandsParser
 
         $isolationLevel = $write = null;
         do {
-            if ($tokenList->hasKeyword(Keyword::ISOLATION)) {
-                $tokenList->expectKeyword(Keyword::LEVEL);
-                if ($tokenList->hasKeyword(Keyword::REPEATABLE)) {
-                    $tokenList->expectKeyword(Keyword::READ);
-                    $isolationLevel = TransactionIsolationLevel::REPEATABLE_READ;
-                } elseif ($tokenList->hasKeyword(Keyword::SERIALIZABLE)) {
-                    $isolationLevel = TransactionIsolationLevel::SERIALIZABLE;
-                } else {
-                    $tokenList->expectKeyword(Keyword::READ);
-                    $level = $tokenList->expectAnyKeyword(Keyword::COMMITTED, Keyword::UNCOMMITTED);
-                    $isolationLevel = $level === Keyword::COMMITTED
-                        ? TransactionIsolationLevel::READ_COMMITTED
-                        : TransactionIsolationLevel::READ_UNCOMMITTED;
-                }
+            if ($tokenList->hasKeywords(Keyword::ISOLATION, Keyword::LEVEL)) {
+                $isolationLevel = $tokenList->expectMultiKeywordsEnum(TransactionIsolationLevel::class);
             } elseif ($tokenList->hasKeyword(Keyword::READ)) {
                 if ($tokenList->hasKeyword(Keyword::WRITE)) {
                     $write = true;
@@ -205,10 +193,6 @@ class TransactionCommandsParser
                 }
             }
         } while ($tokenList->hasComma());
-
-        if ($isolationLevel !== null) {
-            $isolationLevel = TransactionIsolationLevel::get($isolationLevel);
-        }
 
         return new SetTransactionCommand($scope, $isolationLevel, $write);
     }
