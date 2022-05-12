@@ -37,13 +37,17 @@ class CreateTriggerCommand implements TriggerCommand
     /** @var TriggerPosition|null */
     private $position;
 
+    /** @var bool */
+    private $ifNotExists;
+
     public function __construct(
         QualifiedName $name,
         TriggerEvent $event,
         QualifiedName $table,
         Statement $body,
         ?UserExpression $definer = null,
-        ?TriggerPosition $position = null
+        ?TriggerPosition $position = null,
+        bool $ifNotExists = false
     ) {
         $this->name = $name;
         $this->event = $event;
@@ -51,6 +55,7 @@ class CreateTriggerCommand implements TriggerCommand
         $this->body = $body;
         $this->definer = $definer;
         $this->position = $position;
+        $this->ifNotExists = $ifNotExists;
     }
 
     public function getName(): QualifiedName
@@ -83,13 +88,22 @@ class CreateTriggerCommand implements TriggerCommand
         return $this->position;
     }
 
+    public function ifNotExists(): bool
+    {
+        return $this->ifNotExists;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
             $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
-        $result .= ' TRIGGER ' . $this->name->serialize($formatter) . ' ' . $this->event->serialize($formatter);
+        $result .= ' TRIGGER ';
+        if ($this->ifNotExists) {
+            $result .= 'IF NOT EXISTS ';
+        }
+        $result .= $this->name->serialize($formatter) . ' ' . $this->event->serialize($formatter);
         $result .= ' ON ' . $this->table->serialize($formatter) . ' FOR EACH ROW';
         if ($this->position !== null) {
             $result .= ' ' . $this->position->serialize($formatter);

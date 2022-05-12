@@ -53,6 +53,9 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     /** @var string|null */
     private $language;
 
+    /** @var bool */
+    private $ifNotExists;
+
     /**
      * @param DataType[] $params
      */
@@ -66,7 +69,8 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         ?SqlSecurity $security = null,
         ?RoutineSideEffects $sideEffects = null,
         ?string $comment = null,
-        ?string $language = null
+        ?string $language = null,
+        bool $ifNotExists = false
     ) {
         $this->name = $name;
         $this->body = $body;
@@ -78,6 +82,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         $this->sideEffects = $sideEffects;
         $this->comment = $comment;
         $this->language = $language;
+        $this->ifNotExists = $ifNotExists;
     }
 
     public function getName(): QualifiedName
@@ -133,13 +138,22 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         return $this->language;
     }
 
+    public function ifNotExists(): bool
+    {
+        return $this->ifNotExists;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
             $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
-        $result .= ' FUNCTION ' . $this->name->serialize($formatter);
+        $result .= ' FUNCTION ';
+        if ($this->ifNotExists) {
+            $result .= 'IF NOT EXISTS ';
+        }
+        $result .= $this->name->serialize($formatter);
 
         $result .= '(' . implode(', ', Arr::mapPairs($this->params, static function (string $name, DataType $type) use ($formatter) {
             return $formatter->formatName($name) . ' ' . $type->serialize($formatter);

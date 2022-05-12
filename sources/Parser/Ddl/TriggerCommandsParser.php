@@ -63,6 +63,9 @@ class TriggerCommandsParser
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::TRIGGER);
+
+        $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $event = $tokenList->expectMultiKeywordsEnum(TriggerEvent::class);
@@ -81,7 +84,7 @@ class TriggerCommandsParser
 
         $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
 
-        return new CreateTriggerCommand($name, $event, $table, $body, $definer, $triggerPosition);
+        return new CreateTriggerCommand($name, $event, $table, $body, $definer, $triggerPosition, $ifNotExists);
     }
 
     /**

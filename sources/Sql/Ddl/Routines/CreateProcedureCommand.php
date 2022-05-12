@@ -47,6 +47,9 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
     /** @var string|null */
     private $language;
 
+    /** @var bool */
+    private $ifNotExists;
+
     /**
      * @param ProcedureParam[] $params
      */
@@ -59,7 +62,8 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
         ?SqlSecurity $security = null,
         ?RoutineSideEffects $sideEffects = null,
         ?string $comment = null,
-        ?string $language = null
+        ?string $language = null,
+        bool $ifNotExists = false
     ) {
         $this->name = $name;
         $this->body = $body;
@@ -70,6 +74,7 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
         $this->sideEffects = $sideEffects;
         $this->comment = $comment;
         $this->language = $language;
+        $this->ifNotExists = $ifNotExists;
     }
 
     public function getName(): QualifiedName
@@ -120,13 +125,22 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
         return $this->language;
     }
 
+    public function ifNotExists(): bool
+    {
+        return $this->ifNotExists;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
             $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
-        $result .= ' PROCEDURE ' . $this->name->serialize($formatter);
+        $result .= ' PROCEDURE ';
+        if ($this->ifNotExists) {
+            $result .= 'IF NOT EXISTS ';
+        }
+        $result .= $this->name->serialize($formatter);
 
         $result .= '(' . $formatter->formatSerializablesList($this->params) . ')';
 

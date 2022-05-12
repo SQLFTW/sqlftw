@@ -136,7 +136,7 @@ class RoutineCommandsParser
     /**
      * CREATE
      *   [DEFINER = { user | CURRENT_USER }]
-     *   FUNCTION sp_name ([func_parameter[, ...]])
+     *   FUNCTION [IF NOT EXISTS] sp_name ([func_parameter[, ...]])
      *   RETURNS type
      *   [characteristic ...] routine_body
      *
@@ -165,6 +165,9 @@ class RoutineCommandsParser
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::FUNCTION);
+
+        $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $params = [];
@@ -185,13 +188,13 @@ class RoutineCommandsParser
 
         $body = $this->compoundStatementParser->parseRoutineBody($tokenList, true);
 
-        return new CreateFunctionCommand($name, $body, $params, $returnType, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language);
+        return new CreateFunctionCommand($name, $body, $params, $returnType, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language, $ifNotExists);
     }
 
     /**
      * CREATE
      *     [DEFINER = { user | CURRENT_USER }]
-     *     PROCEDURE sp_name ([proc_parameter[, ...]])
+     *     PROCEDURE [IF NOT EXISTS] sp_name ([proc_parameter[, ...]])
      *     [characteristic ...] routine_body
      *
      * proc_parameter:
@@ -219,6 +222,9 @@ class RoutineCommandsParser
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::PROCEDURE);
+
+        $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $params = [];
@@ -238,7 +244,7 @@ class RoutineCommandsParser
 
         $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
 
-        return new CreateProcedureCommand($name, $body, $params, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language);
+        return new CreateProcedureCommand($name, $body, $params, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language, $ifNotExists);
     }
 
     /**
