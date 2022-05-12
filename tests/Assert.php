@@ -59,9 +59,8 @@ class Assert extends DogmaAssert
 
     public static function parse(
         string $query,
-        ?string $expected = null,
-        ?Parser $parser = null,
-        ?Formatter $formatter = null
+        string $expected = null,
+        ?int $version = null
     ): void {
         /** @var string $query */
         $query = preg_replace('/\\s+/', ' ', $query);
@@ -75,7 +74,7 @@ class Assert extends DogmaAssert
             $expected = $query;
         }
 
-        $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
+        $parser = $parser ?? ParserHelper::getParserFactory(null, $version)->getParser();
         $formatter = $formatter ?? new Formatter($parser->getSettings());
 
         try {

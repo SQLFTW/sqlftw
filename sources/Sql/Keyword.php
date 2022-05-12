@@ -746,6 +746,7 @@ class Keyword extends SqlEnum implements Feature
     public const QUICK = 'QUICK';
     public const QUOTE = 'QUOTE';
     public const RAISE = 'RAISE';
+    public const RANDOM = 'RANDOM';
     public const RANGE = 'RANGE';
     public const RANK = 'RANK';
     public const READ = 'READ';

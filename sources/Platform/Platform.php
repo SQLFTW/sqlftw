@@ -55,18 +55,17 @@ class Platform
         $this->version = $version;
     }
 
-    public static function get(string $name, ?string $version = null): self
+    /**
+     * @param int|string|null $version
+     */
+    public static function get(string $name, $version = null): self
     {
         if (!isset(self::$versions[$name])) {
             throw new InvalidArgumentException("Unknown platform $name.");
         }
-        if ($version !== null && !in_array($version, self::$versions[$name], true)) {
-            throw new InvalidArgumentException("Unknown version $version of platform $name.");
-        }
-        if ($version === null) {
-            $version = new Version(self::$defaultVersions[$name]);
-        } else {
-            $version = new Version($version);
+        $version = new Version($version ?? self::$defaultVersions[$name]);
+        if (!in_array($version->getMajorMinor(), self::$versions[$name], true)) {
+            throw new InvalidArgumentException("Unknown version {$version->format()} of platform $name.");
         }
 
         $key = $name . $version->getId();

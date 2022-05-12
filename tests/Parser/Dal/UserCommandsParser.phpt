@@ -41,7 +41,7 @@ Assert::parse("SET DEFAULT ROLE role1 TO usr1@host1, usr2@host2");
 // SET PASSWORD [FOR user] = {PASSWORD('auth_string') | 'auth_string'}
 Assert::parse("SET PASSWORD = 'pwd1'");
 Assert::parse("SET PASSWORD FOR usr1@host1 = 'pwd1'");
-Assert::parse("SET PASSWORD = PASSWORD('pwd1')");
+Assert::parse("SET PASSWORD = PASSWORD('pwd1')", null, 50700);
 
 
 // SET ROLE {DEFAULT | NONE | ALL | ALL EXCEPT role [, role ] ... | role [, role ] ... }

@@ -636,6 +636,17 @@ class UserCommandsParser
     }
 
     /**
+     * 8.0 https://dev.mysql.com/doc/refman/8.0/en/set-password.html
+     * SET PASSWORD [FOR user] auth_option
+     *   [REPLACE 'current_auth_string']
+     *   [RETAIN CURRENT PASSWORD]
+     *
+     * auth_option: {
+     *     = 'auth_string'
+     *   | TO RANDOM
+     * }
+     *
+     * 5.7 https://dev.mysql.com/doc/refman/5.7/en/set-password.html
      * SET PASSWORD [FOR user] = password_option
      *
      * password_option: {
@@ -650,17 +661,34 @@ class UserCommandsParser
         if ($tokenList->hasKeyword(Keyword::FOR)) {
             $user = $tokenList->expectUserName();
         }
-        $tokenList->expectOperator(Operator::EQUAL);
-        $passwordFunction = $tokenList->hasKeyword(Keyword::PASSWORD);
-        if ($passwordFunction) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-        }
-        $password = $tokenList->expectString();
-        if ($passwordFunction) {
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+        $passwordFunction = $password = $replace = null;
+        if ($tokenList->using(null, 80000)) {
+            if ($tokenList->hasOperator(Operator::EQUAL)) {
+                $password = $tokenList->expectString();
+            } else {
+                $tokenList->expectKeywords(Keyword::TO, Keyword::RANDOM);
+            }
+            if ($tokenList->hasKeyword(Keyword::REPLACE)) {
+                $replace = $tokenList->expectString();
+            }
+            $retain = $tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD);
+        } else {
+            $tokenList->expectOperator(Operator::EQUAL);
+            $passwordFunction = $tokenList->using(null, 50700)
+                ? $tokenList->getAnyKeyword(Keyword::PASSWORD)
+                : $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::OLD_PASSWORD);
+            if ($passwordFunction) {
+                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            }
+            $password = $tokenList->expectString();
+            if ($passwordFunction) {
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            }
+            $retain = false;
         }
 
-        return new SetPasswordCommand($user, $password, $passwordFunction);
+        return new SetPasswordCommand($user, $passwordFunction, $password, $replace, $retain);
     }
 
     /**

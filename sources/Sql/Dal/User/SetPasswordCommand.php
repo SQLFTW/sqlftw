@@ -20,17 +20,31 @@ class SetPasswordCommand implements UserCommand
     /** @var UserName|null */
     private $user;
 
-    /** @var string */
+    /** @var string|null */
+    private $passwordFunction;
+
+    /** @var string|null */
     private $password;
 
-    /** @var bool */
-    private $usePasswordFunction;
+    /** @var string|null */
+    private $replace;
 
-    public function __construct(?UserName $user, string $password, bool $usePasswordFunction = false)
+    /** @var bool */
+    private $retainCurrent;
+
+    public function __construct(
+        ?UserName $user,
+        ?string $passwordFunction,
+        ?string $password,
+        ?string $replace,
+        bool $retainCurrent
+    )
     {
         $this->user = $user;
+        $this->passwordFunction = $passwordFunction;
         $this->password = $password;
-        $this->usePasswordFunction = $usePasswordFunction;
+        $this->replace = $replace;
+        $this->retainCurrent = $retainCurrent;
     }
 
     public function getUser(): ?UserName
@@ -38,14 +52,24 @@ class SetPasswordCommand implements UserCommand
         return $this->user;
     }
 
-    public function getPassword(): string
+    public function passwordFunction(): ?string
+    {
+        return $this->passwordFunction;
+    }
+
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function usePasswordFunction(): bool
+    public function getReplace(): ?string
     {
-        return $this->usePasswordFunction;
+        return $this->replace;
+    }
+
+    public function retainCurrent(): bool
+    {
+        return $this->retainCurrent;
     }
 
     public function serialize(Formatter $formatter): string
@@ -54,9 +78,19 @@ class SetPasswordCommand implements UserCommand
         if ($this->user !== null) {
             $result .= ' FOR ' . $this->user->serialize($formatter);
         }
-        $result .= $this->usePasswordFunction
-            ? ' = PASSWORD(' . $formatter->formatString($this->password) . ')'
-            : ' = ' . $formatter->formatString($this->password);
+        if ($this->password === null) {
+            $result .= ' TO RANDOM';
+        } elseif ($this->passwordFunction !== null) {
+            $result .= ' = ' . $this->passwordFunction . '(' . $formatter->formatString($this->password) . ')';
+        } else {
+            $result .= ' = ' . $formatter->formatString($this->password);
+        }
+        if ($this->replace !== null) {
+            $result .= ' REPLACE ' . $formatter->formatString($this->replace);
+        }
+        if ($this->retainCurrent) {
+            $result .= ' RETAIN CURRENT PASSWORD';
+        }
 
         return $result;
     }

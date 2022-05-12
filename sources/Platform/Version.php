@@ -11,8 +11,8 @@ namespace SqlFtw\Platform;
 
 use Dogma\StrictBehaviorMixin;
 use function explode;
-use function str_repeat;
-use function strlen;
+use function floor;
+use function is_int;
 
 class Version
 {
@@ -27,12 +27,21 @@ class Version
     /** @var int|null */
     private $patch;
 
-    public function __construct(string $version)
+    /**
+     * @param string|int $version
+     */
+    public function __construct($version)
     {
-        $parts = explode('.', $version);
-        $this->major = (int) $parts[0];
-        $this->minor = isset($parts[1]) ? (int) $parts[1] : null;
-        $this->patch = isset($parts[2]) ? (int) $parts[2] : null;
+        if (is_int($version)) {
+            $this->major = (int) floor($version / 10000);
+            $this->minor = (int) floor(($version % 10000) / 100);
+            $this->patch = ((int) $version % 100) ?: null;
+        } else {
+            $parts = explode('.', $version);
+            $this->major = (int) $parts[0];
+            $this->minor = isset($parts[1]) ? (int) $parts[1] : null;
+            $this->patch = isset($parts[2]) ? (int) $parts[2] : null;
+        }
     }
 
     public function getId(): int
@@ -40,10 +49,7 @@ class Version
         if ($this->major > 90) {
             return $this->major;
         } else {
-            return (int) ($this->major
-                . str_repeat('0', 2 - strlen((string) $this->minor)) . $this->minor
-                . (isset($this->patch) ? str_repeat('0', 2 - strlen((string) $this->patch)) : '99') . $this->patch
-            );
+            return $this->major * 10000 + $this->minor * 100 + $this->patch;
         }
     }
 
@@ -64,12 +70,12 @@ class Version
 
     public function getMajorMinor(): string
     {
-        return $this->major . (isset($this->minor) ? '.' . $this->minor : '');
+        return $this->major . ($this->minor !== null ? '.' . $this->minor : '');
     }
 
     public function format(): string
     {
-        return $this->getMajorMinor() . ($this->patch !== null ? '.' . $this->patch : '');
+        return $this->major . ($this->minor !== null ? '.' . $this->minor . ($this->patch !== null ? '.' . $this->patch : '') : '');
     }
 
 }
