@@ -719,7 +719,7 @@ class UserCommandsParser
     {
         $roles = [];
         do {
-            $roles[] = $tokenList->expectName();
+            $roles[] = $tokenList->expectNameOrString();
         } while ($tokenList->hasComma());
 
         return $roles;
