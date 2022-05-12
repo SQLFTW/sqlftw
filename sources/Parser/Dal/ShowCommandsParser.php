@@ -60,7 +60,6 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
-use function array_keys;
 
 class ShowCommandsParser
 {
@@ -267,7 +266,7 @@ class ShowCommandsParser
                     $forUser = $this->expressionParser->parseUserExpression($tokenList);
                     if ($tokenList->hasKeyword(Keyword::USING)) {
                         do {
-                            $usingRoles[] = $tokenList->expectNameOrString();
+                            $usingRoles[] = $tokenList->expectUserName();
                         } while ($tokenList->hasComma());
                     }
                 }

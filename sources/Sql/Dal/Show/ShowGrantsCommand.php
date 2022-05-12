@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
+use SqlFtw\Sql\UserName;
 
 class ShowGrantsCommand implements ShowCommand
 {
@@ -22,19 +23,14 @@ class ShowGrantsCommand implements ShowCommand
     /** @var UserExpression|null */
     private $user;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<UserName>|null */
     private $roles;
 
     /**
-     * @param string[] $roles
+     * @param non-empty-array<UserName> $roles
      */
     public function __construct(?UserExpression $user = null, ?array $roles = null)
     {
-        if ($roles !== null) {
-            Check::array($roles, 1);
-            Check::itemsOfType($roles, Type::STRING);
-        }
-
         $this->user = $user;
         $this->roles = $roles;
     }
@@ -45,7 +41,7 @@ class ShowGrantsCommand implements ShowCommand
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<UserName>|null
      */
     public function getRoles(): ?array
     {
@@ -58,7 +54,7 @@ class ShowGrantsCommand implements ShowCommand
         if ($this->user !== null) {
             $result .= ' FOR ' . $this->user->serialize($formatter);
             if ($this->roles !== null) {
-                $result .= ' USING ' . $formatter->formatNamesList($this->roles);
+                $result .= ' USING ' . $formatter->formatSerializablesList($this->roles);
             }
         }
 
