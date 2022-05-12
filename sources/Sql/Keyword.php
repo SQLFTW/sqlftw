@@ -284,6 +284,7 @@ class Keyword extends SqlEnum implements Feature
     public const ENDS = 'ENDS';
     public const ENFORCED = 'ENFORCED';
     public const ENGINE = 'ENGINE';
+    public const ENGINE_ATTRIBUTE = 'ENGINE_ATTRIBUTE';
     public const ENGINES = 'ENGINES';
     public const ENUM = 'ENUM';
     public const EQUALS = 'EQUALS';
@@ -855,6 +856,7 @@ class Keyword extends SqlEnum implements Feature
     public const SECOND_MICROSECOND = 'SECOND_MICROSECOND';
     public const SECONDARY = 'SECONDARY';
     public const SECONDARY_ENGINE = 'SECONDARY_ENGINE';
+    public const SECONDARY_ENGINE_ATTRIBUTE = 'SECONDARY_ENGINE_ATTRIBUTE';
     public const SECONDARY_LOAD = 'SECONDARY_LOAD';
     public const SECONDARY_UNLOAD = 'SECONDARY_UNLOAD';
     public const SECTION = 'SECTION';

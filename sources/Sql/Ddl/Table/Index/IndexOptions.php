@@ -33,12 +33,20 @@ class IndexOptions implements SqlSerializable
     /** @var bool|null */
     private $visible;
 
+    /** @var string|null */
+    private $engineAttribute;
+
+    /** @var string|null */
+    private $secondaryEngineAttribute;
+
     public function __construct(
         ?int $keyBlockSize,
         ?string $withParser,
         ?int $mergeThreshold,
         ?string $comment,
-        ?bool $visible
+        ?bool $visible,
+        ?string $engineAttribute,
+        ?string $secondaryEngineAttribute
     )
     {
         $this->keyBlockSize = $keyBlockSize;
@@ -46,11 +54,8 @@ class IndexOptions implements SqlSerializable
         $this->mergeThreshold = $mergeThreshold;
         $this->comment = $comment;
         $this->visible = $visible;
-    }
-
-    public function duplicateWithVisibility(?bool $visible): self
-    {
-        return new self($this->keyBlockSize, $this->withParser, $this->mergeThreshold, $this->comment, $visible);
+        $this->engineAttribute = $engineAttribute;
+        $this->secondaryEngineAttribute = $secondaryEngineAttribute;
     }
 
     public function getKeyBlockSize(): ?int
@@ -63,11 +68,6 @@ class IndexOptions implements SqlSerializable
         return $this->withParser;
     }
 
-    public function getVisible(): ?bool
-    {
-        return $this->visible;
-    }
-
     public function getComment(): ?string
     {
         return $this->comment;
@@ -78,19 +78,43 @@ class IndexOptions implements SqlSerializable
         return $this->mergeThreshold;
     }
 
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
+    }
+
+    public function getEngineAttribute(): ?string
+    {
+        return $this->engineAttribute;
+    }
+
+    public function getSecondaryEngineAttribute(): ?string
+    {
+        return $this->secondaryEngineAttribute;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';
         if ($this->keyBlockSize !== null) {
             $result .= ' KEY_BLOCK_SIZE ' . $this->keyBlockSize;
-        } elseif ($this->withParser !== null) {
+        }
+        if ($this->withParser !== null) {
             $result .= ' WITH PARSER ' . $formatter->formatName($this->withParser);
-        } elseif ($this->comment !== null) {
+        }
+        if ($this->comment !== null) {
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         } elseif ($this->mergeThreshold !== null) {
             $result .= " COMMENT 'MERGE_THRESHOLD={$this->mergeThreshold}'";
-        } elseif ($this->visible !== null) {
+        }
+        if ($this->visible !== null) {
             $result .= ' ' . ($this->visible ? 'VISIBLE' : 'INVISIBLE');
+        }
+        if ($this->engineAttribute !== null) {
+            $result .= ' ENGINE_ATTRIBUTE ' . $formatter->formatString($this->engineAttribute);
+        }
+        if ($this->secondaryEngineAttribute !== null) {
+            $result .= ' SECONDARY_ENGINE_ATTRIBUTE ' . $formatter->formatString($this->secondaryEngineAttribute);
         }
 
         return ltrim($result);

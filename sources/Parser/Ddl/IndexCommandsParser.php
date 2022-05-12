@@ -46,6 +46,8 @@ class IndexCommandsParser
      *   | WITH PARSER parser_name
      *   | COMMENT 'string'
      *   | {VISIBLE | INVISIBLE}
+     *   | ENGINE_ATTRIBUTE [=] 'string' -- 8.0.21
+     *   | SECONDARY_ENGINE_ATTRIBUTE [=] 'string' -- 8.0.21
      *
      * index_type:
      *     USING {BTREE | HASH}
@@ -120,8 +122,11 @@ class IndexCommandsParser
         } while ($tokenList->hasComma());
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
-        $keyBlockSize = $withParser = $mergeThreshold = $comment = $visible = null;
-        $keywords = [Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE, Keyword::INVISIBLE];
+        $keyBlockSize = $withParser = $mergeThreshold = $comment = $visible = $engineAttribute = $secondaryEngineAttribute = null;
+        $keywords = [
+            Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE,
+            Keyword::INVISIBLE, Keyword::ENGINE_ATTRIBUTE, Keyword::SECONDARY_ENGINE_ATTRIBUTE,
+        ];
         while ($keyword = $tokenList->getAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::USING) {
                 /** @var IndexAlgorithm $algorithm */
@@ -144,12 +149,28 @@ class IndexCommandsParser
                 $visible = true;
             } elseif ($keyword === Keyword::INVISIBLE) {
                 $visible = false;
+            } elseif ($keyword === Keyword::ENGINE_ATTRIBUTE) {
+                $tokenList->check(Keyword::ENGINE_ATTRIBUTE, 80021);
+                $tokenList->passEqual();
+                $engineAttribute = $tokenList->expectString();
+            } elseif ($keyword === Keyword::SECONDARY_ENGINE_ATTRIBUTE) {
+                $tokenList->check(Keyword::SECONDARY_ENGINE_ATTRIBUTE, 80021);
+                $tokenList->passEqual();
+                $secondaryEngineAttribute = $tokenList->expectString();
             }
         }
 
-        $options = $keyBlockSize !== null || $withParser !== null || $mergeThreshold !== null || $comment !== null || $visible !== null
-            ? new IndexOptions($keyBlockSize, $withParser, $mergeThreshold, $comment, $visible)
-            : null;
+        $options = null;
+        if ($keyBlockSize !== null
+            || $withParser !== null
+            || $mergeThreshold !== null
+            || $comment !== null
+            || $visible !== null
+            || $engineAttribute !== null
+            || $secondaryEngineAttribute !== null
+        ) {
+            $options = new IndexOptions($keyBlockSize, $withParser, $mergeThreshold, $comment, $visible, $engineAttribute, $secondaryEngineAttribute);
+        }
 
         return new IndexDefinition($name, $type, $columns, $algorithm, $options, $table);
     }
