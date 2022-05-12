@@ -353,12 +353,7 @@ class QueryParser
                     $lockTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
                 } while ($tokenList->hasComma());
             }
-            $lockWaitOption = null;
-            if ($tokenList->hasKeyword(Keyword::NOWAIT)) {
-                $lockWaitOption = SelectLockWaitOption::get(SelectLockWaitOption::NO_WAIT);
-            } elseif ($tokenList->hasKeywords(Keyword::SKIP, Keyword::LOCKED)) {
-                $lockWaitOption = SelectLockWaitOption::get(SelectLockWaitOption::SKIP_LOCKED);
-            }
+            $lockWaitOption = $tokenList->getMultiKeywordsEnum(SelectLockWaitOption::class);
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
         }
 
