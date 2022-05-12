@@ -1022,33 +1022,17 @@ class TableCommandsParser
 
         $onDelete = $onUpdate = null;
         if ($tokenList->hasKeywords(Keyword::ON, Keyword::DELETE)) {
-            $onDelete = $this->parseForeignKeyAction($tokenList);
+            $onDelete = $tokenList->expectMultiKeywordsEnum(ForeignKeyAction::class);
         }
         if ($tokenList->hasKeywords(Keyword::ON, Keyword::UPDATE)) {
-            $onUpdate = $this->parseForeignKeyAction($tokenList);
+            $onUpdate = $tokenList->expectMultiKeywordsEnum(ForeignKeyAction::class);
         }
         // order of DELETE/UPDATE may be switched
         if ($onDelete === null && $tokenList->hasKeywords(Keyword::ON, Keyword::DELETE)) {
-            $onDelete = $this->parseForeignKeyAction($tokenList);
+            $onDelete = $tokenList->expectMultiKeywordsEnum(ForeignKeyAction::class);
         }
 
         return new ReferenceDefinition($table, $columns, $onDelete, $onUpdate, $matchType);
-    }
-
-    private function parseForeignKeyAction(TokenList $tokenList): ForeignKeyAction
-    {
-        $keyword = $tokenList->expectAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE, Keyword::NO, Keyword::SET);
-        if ($keyword === Keyword::NO) {
-            $tokenList->expectKeyword(Keyword::ACTION);
-
-            return ForeignKeyAction::get(ForeignKeyAction::NO_ACTION);
-        } elseif ($keyword === Keyword::SET) {
-            $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::DEFAULT);
-
-            return ForeignKeyAction::get(Keyword::SET . ' ' . $keyword);
-        } else {
-            return ForeignKeyAction::get($keyword);
-        }
     }
 
     /**
