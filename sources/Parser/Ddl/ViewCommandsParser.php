@@ -121,13 +121,7 @@ class ViewCommandsParser
         $body = $this->queryParser->parseQuery($tokenList);
 
         if ($tokenList->hasKeyword(Keyword::WITH)) {
-            $option = $tokenList->getAnyKeyword(Keyword::CASCADED, Keyword::LOCAL);
-            if ($option !== null) {
-                $checkOption = ViewCheckOption::get($option . ' CHECK OPTION');
-            } else {
-                $checkOption = ViewCheckOption::get(ViewCheckOption::CHECK_OPTION);
-            }
-            $tokenList->expectKeywords(Keyword::CHECK, Keyword::OPTION);
+            $checkOption = $tokenList->getMultiKeywordsEnum(ViewCheckOption::class);
         }
 
         return [$name, $body, $columns, $definer, $sqlSecurity, $algorithm, $checkOption];
