@@ -809,7 +809,7 @@ class TokenList
         $name = $this->expectNameOrString();
         $host = null;
         if ($this->has(TokenType::SYMBOL, '@')) {
-            $host = $this->expectNameOrString();
+            $host = (string) ($this->getInt() ?? $this->expectNameOrString());
         }
 
         return new UserName($name, $host);
