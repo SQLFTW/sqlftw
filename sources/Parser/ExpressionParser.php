@@ -417,12 +417,16 @@ class ExpressionParser
                 $expression = new Parentheses(new ListExpression($expressions));
             }
         } elseif ($tokenList->hasKeyword(Keyword::ROW)) {
-            // ROW (expr, expr [, expr] ...)
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-            $expressions = $this->parseExpressionList($tokenList);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-            $expression = new RowExpression($expressions);
-
+            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                // ROW (expr, expr [, expr] ...)
+                $expressions = $this->parseExpressionList($tokenList);
+                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $expression = new RowExpression($expressions);
+            } else {
+                // e.g. SET @@session.binlog_format = ROW;
+                // todo: in fact a value
+                $expression = new Identifier(Keyword::ROW);
+            }
         } elseif ($tokenList->hasKeyword(Keyword::INTERVAL)) {
             // interval_expr
             $interval = $this->parseInterval($tokenList);
@@ -489,7 +493,7 @@ class ExpressionParser
 
                     } elseif ($name2 !== null) {
                         // identifier
-                        $expression = new Identifier(new ColumnName($name2, $name1, null));
+                        $expression = new Identifier(new QualifiedName($name2, $name1));
 
                     } elseif (BuiltInFunction::isValid($name1) && $platformFeatures->isReserved($name1)) {
                         // function without parentheses
@@ -497,7 +501,7 @@ class ExpressionParser
 
                     } else {
                         // identifier
-                        $expression = new Identifier(new ColumnName($name1, null, null));
+                        $expression = new Identifier($name1);
                     }
                     // phpcs:disable SlevomatCodingStandard.ControlStructures.AssignmentInCondition
                 } else {
