@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Set\SetAssignment;
@@ -80,9 +81,11 @@ class SetCommandParser
                         } elseif ($upper === '@@SESSION') {
                             $scope = Scope::get(Scope::SESSION);
                             $name = null;
-                        } else {
+                        } elseif (SystemVariable::isValid(ltrim($name, '@'))) {
                             $scope = Scope::get(Scope::SESSION);
                             $name = (new SystemVariable(ltrim($name, '@')))->getValue();
+                        } else {
+                            throw new InvalidValueException('System variable name', $tokenList);
                         }
                         if ($name === null) {
                             $tokenList->expect(TokenType::DOT);
