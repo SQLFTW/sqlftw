@@ -168,7 +168,7 @@ class TokenList
     public function onlyContainsComments(): bool
     {
         foreach ($this->tokens as $token) {
-            if (($token->type & (TokenType::WHITESPACE | TokenType::COMMENT)) === 0) {
+            if (($token->type & (TokenType::WHITESPACE | TokenType::COMMENT | TokenType::PERL)) === 0) {
                 return false;
             }
         }

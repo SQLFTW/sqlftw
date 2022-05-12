@@ -181,4 +181,7 @@ class TokenType extends IntSet
     /** Not a real token. Indicates expectation of end of token list */
     public const END = 0x8000000000;
 
+    /** Block of Perl code from MySQL tests */
+    public const PERL = 0x10000000000;
+
 }

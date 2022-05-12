@@ -797,6 +797,21 @@ class Lexer
                         $delimiter = $del;
                         $this->settings->setDelimiter($delimiter);
                         yield $previous = new Token(T::SYMBOL | T::DELIMITER_DEFINITION, $start, $delimiter, $condition);
+                    } elseif ($value === 'EOF' && $this->settings->mysqlTestMode && $string[$position - 4] === "\n" && $string[$position] === "\n") {
+                        yield new Token(T::PERL, $start, 'EOF');
+                    } elseif ($value === 'perl' && $this->settings->mysqlTestMode && $string[$position - 5] === "\n" && $string[$position] === ';') {
+                        // Perl code blocks from MySQL tests
+                        $end = strpos($string, "\nEOF\n", $position);
+                        if ($end === false) {
+                            throw new LexerException('End of Perl block not found.', $position, $string);
+                            //$block = substr($string, $position - 4);
+                        } else {
+                            $block = substr($string, $position - 4, $end - $position + 8);
+                        }
+                        $position += strlen($block) - 4;
+                        $row += Str::count($block, "\n");
+
+                        yield new Token(T::PERL, $start, $block);
                     } else {
                         yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $value, $value, $condition);
                     }
