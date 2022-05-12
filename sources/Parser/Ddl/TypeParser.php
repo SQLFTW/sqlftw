@@ -63,39 +63,7 @@ class TypeParser
      */
     public function parseType(TokenList $tokenList): DataType
     {
-        $keyword = $tokenList->getAnyKeyword(Keyword::DOUBLE, Keyword::NATIONAL, Keyword::CHARACTER, Keyword::CHAR, Keyword::LONG);
-        if ($keyword === Keyword::DOUBLE) {
-            if ($tokenList->hasKeyword(Keyword::PRECISION)) {
-                $dataType = BaseType::get(BaseType::DOUBLE_PRECISION);
-            } else {
-                $dataType = BaseType::get(BaseType::DOUBLE);
-            }
-        } elseif ($keyword === Keyword::NATIONAL) {
-            $second = $tokenList->expectAnyKeyword(Keyword::CHAR, Keyword::VARCHAR);
-            $dataType = BaseType::get($keyword . ' ' . $second);
-        } elseif ($keyword === Keyword::CHARACTER) {
-            if ($tokenList->hasKeyword(Keyword::VARYING)) {
-                $dataType = BaseType::get(BaseType::CHARACTER_VARYING);
-            } else {
-                $dataType = BaseType::get(BaseType::CHARACTER);
-            }
-        } elseif ($keyword === Keyword::CHAR) {
-            if ($tokenList->hasKeyword(Keyword::BYTE)) {
-                $dataType = BaseType::get(BaseType::CHAR_BYTE);
-            } else {
-                $dataType = BaseType::get(BaseType::CHAR);
-            }
-        } elseif ($keyword === Keyword::LONG) {
-            $second = $tokenList->getAnyKeyword(Keyword::VARCHAR, Keyword::VARBINARY);
-            if ($second !== null) {
-                $dataType = BaseType::get($keyword . ' ' . $second);
-            } else {
-                $dataType = BaseType::get(BaseType::LONG);
-            }
-        } else {
-            /** @var BaseType $dataType */
-            $dataType = $tokenList->expectKeywordEnum(BaseType::class);
-        }
+        $dataType = $tokenList->expectMultiKeywordsEnum(BaseType::class);
 
         $settings = $tokenList->getSettings();
         if ($settings->canonicalizeTypes()) {
