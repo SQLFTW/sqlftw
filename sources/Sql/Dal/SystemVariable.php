@@ -37,7 +37,10 @@ class SystemVariable extends SqlEnum implements Feature
     public const BINLOG_CACHE_SIZE = 'binlog_cache_size';
     public const BINLOG_CHECKSUM = 'binlog_checksum';
     public const BINLOG_DIRECT_NON_TRANSACTIONAL_UPDATES = 'binlog_direct_non_transactional_updates';
+    public const BINLOG_ENCRYPTION = 'binlog_encryption';
     public const BINLOG_ERROR_ACTION = 'binlog_error_action';
+    public const BINLOG_EXPIRE_LOGS_AUTO_PURGE = 'binlog_expire_logs_auto_purge';
+    public const BINLOG_EXPIRE_LOGS_SECONDS = 'binlog_expire_logs_seconds';
     public const BINLOG_FORMAT = 'binlog_format';
     public const BINLOG_GROUP_COMMIT_SYNC_DELAY = 'binlog_group_commit_sync_delay';
     public const BINLOG_GROUP_COMMIT_SYNC_NO_DELAY_COUNT = 'binlog_group_commit_sync_no_delay_count';
@@ -497,6 +500,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const SLOW_QUERY_LOG_FILE = 'slow_query_log_file';
     public const SOCKET = 'socket';
     public const SORT_BUFFER_SIZE = 'sort_buffer_size';
+    public const SOURCE_VERIFY_CHECKSUM = 'source_verify_checksum';
     public const SQL_AUTO_IS_NULL = 'sql_auto_is_null';
     public const SQL_BIG_SELECTS = 'sql_big_selects';
     public const SQL_BUFFER_RESULT = 'sql_buffer_result';
