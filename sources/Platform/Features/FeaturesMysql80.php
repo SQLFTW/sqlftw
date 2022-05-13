@@ -577,6 +577,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::REBUILD,
         Keyword::RECOVER,
         Keyword::REDO_BUFFER_SIZE,
+        Keyword::REDO_LOG, // undocumented
         Keyword::REDOFILE,
         Keyword::REDUNDANT,
         Keyword::REFERENCE,

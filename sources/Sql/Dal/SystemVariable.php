@@ -48,9 +48,11 @@ class SystemVariable extends SqlEnum implements Feature
     public const BINLOG_MAX_FLUSH_QUEUE_TIME = 'binlog_max_flush_queue_time';
     public const BINLOG_ORDER_COMMITS = 'binlog_order_commits';
     public const BINLOG_ROW_IMAGE = 'binlog_row_image';
+    public const BINLOG_ROW_METADATA = 'binlog_row_metadata';
     public const BINLOG_ROWS_QUERY_LOG_EVENTS = 'binlog_rows_query_log_events';
     public const BINLOG_STMT_CACHE_SIZE = 'binlog_stmt_cache_size';
     public const BINLOG_TRANSACTION_COMPRESSION = 'binlog_transaction_compression';
+    public const BINLOG_TRANSACTION_COMPRESSION_LEVEL_ZSTD = 'binlog_transaction_compression_level_zstd';
     public const BINLOG_TRANSACTION_DEPENDENCY_TRACKING = 'binlog_transaction_dependency_tracking';
     public const BLOCK_ENCRYPTION_MODE = 'block_encryption_mode';
     public const BULK_INSERT_BUFFER_SIZE = 'bulk_insert_buffer_size';
@@ -63,12 +65,21 @@ class SystemVariable extends SqlEnum implements Feature
     public const CHARACTER_SET_SYSTEM = 'character_set_system';
     public const CHARACTER_SETS_DIR = 'character_sets_dir';
     public const CHECK_PROXY_USERS = 'check_proxy_users';
+    public const CLONE_BLOCK_DDL = 'clone_block_ddl';
+    public const CLONE_BUFFER_SIZE = 'clone_buffer_size';
+    public const CLONE_DDL_TIMEOUT = 'clone_ddl_timeout';
+    public const CLONE_DONOR_TIMEOUT_AFTER_NETWORK_FAILURE = 'clone_donor_timeout_after_network_failure';
+    public const CLONE_MAX_CONCURRENCY = 'clone_max_concurrency';
+    public const CLONE_VALID_DONOR_LIST = 'clone_valid_donor_list';
     public const COLLATION_CONNECTION = 'collation_connection';
     public const COLLATION_DATABASE = 'collation_database';
     public const COLLATION_SERVER = 'collation_server';
     public const COMPLETION_TYPE = 'completion_type';
     public const CONCURRENT_INSERT = 'concurrent_insert';
     public const CONNECT_TIMEOUT = 'connect_timeout';
+    public const CONNECTION_CONTROL_FAILED_CONNECTIONS_THRESHOLD = 'connection_control_failed_connections_threshold';
+    public const CONNECTION_CONTROL_MAX_CONNECTION_DELAY = 'connection_control_max_connection_delay';
+    public const CONNECTION_CONTROL_MIN_CONNECTION_DELAY = 'connection_control_min_connection_delay';
     public const CORE_FILE = 'core_file';
     public const DATADIR = 'datadir';
     public const DATE_FORMAT = 'date_format';
@@ -142,6 +153,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const INNODB_API_TRX_LEVEL = 'innodb_api_trx_level';
     public const INNODB_AUTOEXTEND_INCREMENT = 'innodb_autoextend_increment';
     public const INNODB_AUTOINC_LOCK_MODE = 'innodb_autoinc_lock_mode';
+    public const INNODB_BUF_FLUSH_LIST_NOW = 'innodb_buf_flush_list_now';
     public const INNODB_BUFFER_POOL_CHUNK_SIZE = 'innodb_buffer_pool_chunk_size';
     public const INNODB_BUFFER_POOL_DUMP_AT_SHUTDOWN = 'innodb_buffer_pool_dump_at_shutdown';
     public const INNODB_BUFFER_POOL_DUMP_NOW = 'innodb_buffer_pool_dump_now';
@@ -230,6 +242,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const INNODB_READ_AHEAD_THRESHOLD = 'innodb_read_ahead_threshold';
     public const INNODB_READ_IO_THREADS = 'innodb_read_io_threads';
     public const INNODB_READ_ONLY = 'innodb_read_only';
+    public const INNODB_REDO_LOG_ENCRYPT = 'innodb_redo_log_encrypt';
     public const INNODB_REPLICATION_DELAY = 'innodb_replication_delay';
     public const INNODB_ROLLBACK_ON_TIMEOUT = 'innodb_rollback_on_timeout';
     public const INNODB_ROLLBACK_SEGMENTS = 'innodb_rollback_segments';
@@ -253,6 +266,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const INNODB_THREAD_CONCURRENCY = 'innodb_thread_concurrency';
     public const INNODB_THREAD_SLEEP_DELAY = 'innodb_thread_sleep_delay';
     public const INNODB_UNDO_DIRECTORY = 'innodb_undo_directory';
+    public const INNODB_UNDO_LOG_ENCRYPT = 'innodb_undo_log_encrypt';
     public const INNODB_UNDO_LOG_TRUNCATE = 'innodb_undo_log_truncate';
     public const INNODB_UNDO_LOGS = 'innodb_undo_logs';
     public const INNODB_UNDO_TABLESPACES = 'innodb_undo_tablespaces';
@@ -292,6 +306,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const LOG_SLAVE_UPDATES = 'log_slave_updates';
     public const LOG_SLOW_ADMIN_STATEMENTS = 'log_slow_admin_statements';
     public const LOG_SLOW_SLAVE_STATEMENTS = 'log_slow_slave_statements';
+    public const LOG_STATEMENTS_UNSAFE_FOR_BINLOG = 'log_statements_unsafe_for_binlog';
     public const LOG_SYSLOG = 'log_syslog';
     public const LOG_SYSLOG_TAG = 'log_syslog_tag';
     public const LOG_THROTTLE_QUERIES_NOT_USING_INDEXES = 'log_throttle_queries_not_using_indexes';
@@ -544,6 +559,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const TMPDIR = 'tmpdir';
     public const TRANSACTION_ALLOC_BLOCK_SIZE = 'transaction_alloc_block_size';
     public const TRANSACTION_ALLOW_BATCHING = 'transaction_allow_batching';
+    public const TRANSACTION_ISOLATION = 'transaction_isolation';
     public const TRANSACTION_PREALLOC_SIZE = 'transaction_prealloc_size';
     public const TRANSACTION_WRITE_SET_EXTRACTION = 'transaction_write_set_extraction';
     public const TX_ISOLATION = 'tx_isolation';
