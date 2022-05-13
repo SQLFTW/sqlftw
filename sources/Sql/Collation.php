@@ -275,7 +275,6 @@ class Collation extends SqlEnum
     public const UTF8_VIETNAMESE_CI = 'utf8mb4_vietnamese_ci';
 
     // MySQL 8.0
-    //public const UTF8_JAPANESE_0900_AI_CI = 'utf8mb4_ja_0900_ai_ci';
     public const UTF8_GENERAL_0900_AI_CI = 'utf8mb4_0900_ai_ci'; // good for: de, en, fr, ga, id, it, lb, ms, nl, pt, sw, zu
     public const UTF8_CROATIAN_0900_AI_CI = 'utf8mb4_hr_0900_ai_ci';
     public const UTF8_CZECH_0900_AI_CI = 'utf8mb4_cs_0900_ai_ci';
@@ -285,11 +284,13 @@ class Collation extends SqlEnum
     public const UTF8_GERMAN_PHONE_BOOK_0900_AI_CI = 'utf8mb4_de_pb_0900_ai_ci';
     public const UTF8_HUNGARIAN_0900_AI_CI = 'utf8mb4_hu_0900_ai_ci';
     public const UTF8_ICELANDIC_0900_AI_CI = 'utf8mb4_is_0900_ai_ci';
+    public const UTF8_JAPANESE_0900_AI_CI = 'utf8mb4_ja_0900_ai_ci';
     public const UTF8_LATVIAN_0900_AI_CI = 'utf8mb4_lv_0900_ai_ci';
     public const UTF8_LITHUANIAN_0900_AI_CI = 'utf8mb4_lt_0900_ai_ci';
     public const UTF8_POLISH_0900_AI_CI = 'utf8mb4_pl_0900_ai_ci';
     public const UTF8_CLASSICAL_LATIN_0900_AI_CI = 'utf8mb4_la_0900_ai_ci';
     public const UTF8_ROMANIAN_0900_AI_CI = 'utf8mb4_ro_0900_ai_ci';
+    public const UTF8_RUSSIAN_0900_AI_CI = 'utf8mb4_ru_0900_ai_ci';
     public const UTF8_SLOVAK_0900_AI_CI = 'utf8mb4_sk_0900_ai_ci';
     public const UTF8_SLOVENIAN_0900_AI_CI = 'utf8mb4_sl_0900_ai_ci';
     public const UTF8_SPANISH_0900_AI_CI = 'utf8mb4_es_0900_ai_ci';
@@ -299,6 +300,7 @@ class Collation extends SqlEnum
     public const UTF8_VIETNAMESE_0900_AI_CI = 'utf8mb4_vi_0900_ai_ci';
 
     public const UTF8_GENERAL_0900_AS_CS = 'utf8mb4_0900_as_cs'; // good for: de, en, fr, ga, id, it, lb, ms, nl, pt, sw, zu
+    public const UTF8_CHINESE_0900_AS_CS = 'utf8mb4_zh_0900_as_cs';
     public const UTF8_CROATIAN_0900_AS_CS = 'utf8mb4_hr_0900_as_cs';
     public const UTF8_CZECH_0900_AS_CS = 'utf8mb4_cs_0900_as_cs';
     public const UTF8_DANISH_0900_AS_CS = 'utf8mb4_da_0900_as_cs'; // also good for: no, nb, nn
@@ -314,6 +316,7 @@ class Collation extends SqlEnum
     public const UTF8_POLISH_0900_AS_CS = 'utf8mb4_pl_0900_as_cs';
     public const UTF8_CLASSICAL_LATIN_0900_AS_CS = 'utf8mb4_la_0900_as_cs';
     public const UTF8_ROMANIAN_0900_AS_CS = 'utf8mb4_ro_0900_as_cs';
+    public const UTF8_RUSSIAN_0900_AS_CS = 'utf8mb4_ru_0900_as_cs';
     public const UTF8_SLOVAK_0900_AS_CS = 'utf8mb4_sk_0900_as_cs';
     public const UTF8_SLOVENIAN_0900_AS_CS = 'utf8mb4_sl_0900_as_cs';
     public const UTF8_SPANISH_0900_AS_CS = 'utf8mb4_es_0900_as_cs';
