@@ -334,10 +334,6 @@ class Lexer
                     while ($position < $length) {
                         $next = $string[$position];
                         if ($next === "\n") {
-                            $value .= $next;
-                            $position++;
-                            $column = 1;
-                            $row++;
                             break;
                         } else {
                             $value .= $next;
@@ -359,10 +355,6 @@ class Lexer
                         while ($position < $length) {
                             $next = $string[$position];
                             if ($next === "\n") {
-                                $value .= $next;
-                                $position++;
-                                $column = 1;
-                                $row++;
                                 break;
                             } else {
                                 $value .= $next;
@@ -468,10 +460,6 @@ class Lexer
                         while ($position < $length) {
                             $next = $string[$position];
                             if ($next === "\n") {
-                                $value .= $next;
-                                $position++;
-                                $column = 1;
-                                $row++;
                                 break;
                             } else {
                                 $value .= $next;
