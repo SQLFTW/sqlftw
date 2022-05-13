@@ -26,6 +26,7 @@ class StorageEngine extends SqlEnum
     public const MERGE = 'Merge';
     public const FEDERATED = 'Federated';
     public const EXAMPLE = 'Example';
+    public const HEAP = 'HEAP'; // old alias for Memory
 
     public static function validateValue(string &$value): bool
     {
