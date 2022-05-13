@@ -23,6 +23,7 @@ use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
 use function ltrim;
 use function strpos;
+use function strtolower;
 use function strtoupper;
 
 class SetCommandParser
@@ -69,6 +70,7 @@ class SetCommandParser
                     if (strpos($name, '@@') === 0) {
                         // @@
                         $upper = strtoupper($name);
+                        $lower = strtolower($name);
                         if ($upper === '@@GLOBAL') {
                             $scope = Scope::get(Scope::GLOBAL);
                             $name = null;
@@ -81,9 +83,9 @@ class SetCommandParser
                         } elseif ($upper === '@@SESSION') {
                             $scope = Scope::get(Scope::SESSION);
                             $name = null;
-                        } elseif (SystemVariable::isValid(ltrim($name, '@'))) {
+                        } elseif (SystemVariable::isValid(ltrim($lower, '@'))) {
                             $scope = Scope::get(Scope::SESSION);
-                            $name = (new SystemVariable(ltrim($name, '@')))->getValue();
+                            $name = (new SystemVariable(ltrim($lower, '@')))->getValue();
                         } else {
                             throw new InvalidValueException('System variable name', $tokenList);
                         }
