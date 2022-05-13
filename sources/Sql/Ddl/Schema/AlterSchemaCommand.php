@@ -11,8 +11,6 @@ namespace SqlFtw\Sql\Ddl\Schema;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Collation;
 
 class AlterSchemaCommand implements SchemaCommand
 {
@@ -21,17 +19,13 @@ class AlterSchemaCommand implements SchemaCommand
     /** @var string|null */
     private $name;
 
-    /** @var Charset|null */
-    private $charset;
+    /** @var SchemaOptions */
+    private $options;
 
-    /** @var Collation|null */
-    private $collation;
-
-    public function __construct(?string $name, ?Charset $charset, ?Collation $collation = null)
+    public function __construct(?string $name, SchemaOptions $options)
     {
         $this->name = $name;
-        $this->charset = $charset;
-        $this->collation = $collation;
+        $this->options = $options;
     }
 
     public function getName(): ?string
@@ -39,30 +33,19 @@ class AlterSchemaCommand implements SchemaCommand
         return $this->name;
     }
 
-    public function getCharset(): ?Charset
+    public function getOptions(): SchemaOptions
     {
-        return $this->charset;
-    }
-
-    public function getCollation(): ?Collation
-    {
-        return $this->collation;
+        return $this->options;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER DATABASE';
+        $result = 'ALTER SCHEMA';
         if ($this->name !== null) {
             $result .= ' ' . $formatter->formatName($this->name);
         }
-        if ($this->charset !== null) {
-            $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
-        }
-        if ($this->collation !== null) {
-            $result .= ' COLLATE ' . $this->collation->serialize($formatter);
-        }
 
-        return $result;
+        return $result . ' ' . $this->options->serialize($formatter);
     }
 
 }

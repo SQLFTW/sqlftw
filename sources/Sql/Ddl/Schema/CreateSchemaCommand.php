@@ -11,8 +11,6 @@ namespace SqlFtw\Sql\Ddl\Schema;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Collation;
 
 class CreateSchemaCommand implements SchemaCommand
 {
@@ -21,24 +19,15 @@ class CreateSchemaCommand implements SchemaCommand
     /** @var string */
     private $name;
 
-    /** @var Charset|null */
-    private $charset;
-
-    /** @var Collation|null */
-    private $collation;
+    /** @var SchemaOptions|null */
+    private $options;
 
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(
-        string $name,
-        ?Charset $charset,
-        ?Collation $collation = null,
-        bool $ifNotExists = false
-    ) {
+    public function __construct(string $name, ?SchemaOptions $options, bool $ifNotExists = false) {
         $this->name = $name;
-        $this->charset = $charset;
-        $this->collation = $collation;
+        $this->options = $options;
         $this->ifNotExists = $ifNotExists;
     }
 
@@ -47,14 +36,9 @@ class CreateSchemaCommand implements SchemaCommand
         return $this->name;
     }
 
-    public function getCharset(): ?Charset
+    public function getOptions(): ?SchemaOptions
     {
-        return $this->charset;
-    }
-
-    public function getCollation(): ?Collation
-    {
-        return $this->collation;
+        return $this->options;
     }
 
     public function ifNotExists(): bool
@@ -64,18 +48,15 @@ class CreateSchemaCommand implements SchemaCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CREATE DATABASE ';
+        $result = 'CREATE SCHEMA ';
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
 
         $result .= $formatter->formatName($this->name);
 
-        if ($this->charset !== null) {
-            $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
-        }
-        if ($this->collation !== null) {
-            $result .= ' COLLATE ' . $this->collation->serialize($formatter);
+        if ($this->options !== null) {
+            $result .= ' ' . $this->options->serialize($formatter);
         }
 
         return $result;

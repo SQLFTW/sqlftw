@@ -16,6 +16,8 @@ use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\SchemaOptions;
+use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
 use SqlFtw\Sql\Keyword;
 
 class SchemaCommandsParser
@@ -24,11 +26,14 @@ class SchemaCommandsParser
 
     /**
      * ALTER {DATABASE | SCHEMA} [db_name]
-     *     alter_specification ...
+     *     alter_option ...
      *
-     * alter_specification:
+     * alter_option:
      *     [DEFAULT] CHARACTER SET [=] charset_name
      *   | [DEFAULT] COLLATE [=] collation_name
+     *   | [DEFAULT] ENCRYPTION [=] {'Y' | 'N'}
+     *   | READ ONLY [=] {DEFAULT | 0 | 1}
+     * }
      */
     public function parseAlterSchema(TokenList $tokenList): AlterSchemaCommand
     {
@@ -36,18 +41,24 @@ class SchemaCommandsParser
         $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
         $schema = $tokenList->getName();
 
-        [$charset, $collation] = $this->parseDefaults($tokenList);
+        $options = $this->parseOptions($tokenList);
+        if ($options === null) {
+            $tokenList->expectedAnyKeyword(Keyword::DEFAULT, Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::ENCRYPTION, Keyword::READ);
+        }
 
-        return new AlterSchemaCommand($schema, $charset, $collation);
+        return new AlterSchemaCommand($schema, $options);
     }
 
     /**
      * CREATE {DATABASE | SCHEMA} [IF NOT EXISTS] db_name
-     *     [create_specification] ...
+     *     [create_option] ...
      *
-     * create_specification:
+     * create_option: {
      *     [DEFAULT] CHARACTER SET [=] charset_name
      *   | [DEFAULT] COLLATE [=] collation_name
+     *   | [DEFAULT] ENCRYPTION [=] {'Y' | 'N'}
+     *   | READ ONLY [=] {DEFAULT | 0 | 1}
+     * }
      */
     public function parseCreateSchema(TokenList $tokenList): CreateSchemaCommand
     {
@@ -56,42 +67,54 @@ class SchemaCommandsParser
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
         $schema = $tokenList->expectName();
 
-        [$charset, $collation] = $this->parseDefaults($tokenList);
+        $options = $this->parseOptions($tokenList);
 
-        return new CreateSchemaCommand($schema, $charset, $collation, $ifNotExists);
+        return new CreateSchemaCommand($schema, $options, $ifNotExists);
     }
 
-    /**
-     * @return array{Charset|null, Collation|null}
-     */
-    private function parseDefaults(TokenList $tokenList): array
+    private function parseOptions(TokenList $tokenList): ?SchemaOptions
     {
-        $charset = $collation = null;
+        $charset = $collation = $encryption = $readOnly = null;
         $n = 0;
         while ($n < 2) {
             if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $token = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
+                $keyword = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::ENCRYPTION);
             } else {
-                $token = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE);
+                $keyword = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::ENCRYPTION, Keyword::READ);
             }
-            if ($token === null) {
+            if ($keyword === null) {
                 break;
-            } elseif ($token === Keyword::CHARACTER || $token === Keyword::CHARSET) {
-                if ($token === Keyword::CHARACTER) {
+            } elseif ($keyword === Keyword::CHARACTER || $keyword === Keyword::CHARSET) {
+                if ($keyword === Keyword::CHARACTER) {
                     $tokenList->expectKeyword(Keyword::SET);
                 }
                 $tokenList->passEqual();
-                /** @var Charset $charset */
                 $charset = $tokenList->expectNameOrStringEnum(Charset::class);
-            } else {
+            } elseif ($keyword === Keyword::COLLATE) {
                 $tokenList->passEqual();
-                /** @var Collation $collation */
                 $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+            } elseif ($keyword === Keyword::ENCRYPTION) {
+                $tokenList->check('schema encryption', 80016);
+                $tokenList->passEqual();
+                $encryption = $tokenList->expectBool();
+            } else {
+                $tokenList->check('schema read only', 80022);
+                $tokenList->expectKeyword(Keyword::ONLY);
+                $tokenList->passEqual();
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                    $readOnly = ThreeStateValue::get(ThreeStateValue::DEFAULT);
+                } else {
+                    $readOnly = ThreeStateValue::get((string) (int) $tokenList->expectBool());
+                }
             }
             $n++;
         }
 
-        return [$charset, $collation];
+        if ($charset !== null || $collation !== null || $encryption !== null || $readOnly !== null) {
+            return new SchemaOptions($charset, $collation, $encryption, $readOnly);
+        } else {
+            return null;
+        }
     }
 
     /**
