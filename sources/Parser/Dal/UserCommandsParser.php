@@ -181,14 +181,14 @@ class UserCommandsParser
                 $plugin = $tokenList->expectNameOrString();
                 if ($tokenList->hasKeyword(Keyword::AS)) {
                     $action = IdentifiedUserAction::SET_HASH;
-                    $password = $tokenList->expectString();
+                    $password = $tokenList->expectStringLike();
                 }
             }
             if ($action !== IdentifiedUserAction::SET_HASH && $tokenList->hasKeyword(Keyword::BY)) {
                 $action = IdentifiedUserAction::SET_PASSWORD;
-                $password = $tokenList->expectString();
+                $password = $tokenList->expectStringLike();
                 if ($tokenList->hasKeyword(Keyword::REPLACE)) {
-                    $replace = $tokenList->expectString();
+                    $replace = $tokenList->expectStringLike();
                 }
                 if ($tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD)) {
                     $retainCurrent = true;

@@ -336,6 +336,17 @@ class TokenList
         return $value;
     }
 
+    public function expectStringLike(): ValueLiteral
+    {
+        $token = $this->expect(TokenType::STRING | TokenType::HEXADECIMAL_LITERAL);
+        $value = $token->value;
+        if (($token->type & TokenType::HEXADECIMAL_LITERAL) !== null) {
+            $value = new HexadecimalLiteral($value);
+        }
+
+        return new ValueLiteral($value);
+    }
+
     public function expectNameOrString(): string
     {
         $token = $this->expectAny(TokenType::NAME, TokenType::STRING);

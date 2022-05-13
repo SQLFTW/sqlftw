@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\UserName;
 
@@ -27,10 +28,10 @@ class IdentifiedUser implements SqlSerializable
     /** @var string|null */
     private $plugin;
 
-    /** @var string|null */
+    /** @var ValueLiteral|null */
     private $password;
 
-    /** @var string|null */
+    /** @var ValueLiteral|null */
     private $replace;
 
     /** @var bool */
@@ -39,9 +40,9 @@ class IdentifiedUser implements SqlSerializable
     public function __construct(
         UserName $user,
         ?IdentifiedUserAction $action = null,
-        ?string $password = null,
+        ?ValueLiteral $password = null,
         ?string $plugin = null,
-        ?string $replace = null,
+        ?ValueLiteral $replace = null,
         bool $retainCurrent = false
     ) {
         $this->user = $user;
@@ -67,12 +68,12 @@ class IdentifiedUser implements SqlSerializable
         return $this->plugin;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): ?ValueLiteral
     {
         return $this->password;
     }
 
-    public function getReplace(): ?string
+    public function getReplace(): ?ValueLiteral
     {
         return $this->replace;
     }
@@ -101,14 +102,14 @@ class IdentifiedUser implements SqlSerializable
             if ($this->plugin !== null) {
                 $result .= ' WITH ' . $formatter->formatName($this->plugin);
             }
-            $result .= ' AS ' . $formatter->formatString($this->password); // @phpstan-ignore-line non-null
+            $result .= ' AS ' . $this->password->serialize($formatter); // @phpstan-ignore-line non-null
         } else {
             if ($this->plugin !== null) {
                 $result .= ' WITH ' . $formatter->formatName($this->plugin);
             }
-            $result .= ' BY ' . $formatter->formatString($this->password); // @phpstan-ignore-line non-null
+            $result .= ' BY ' . $this->password->serialize($formatter); // @phpstan-ignore-line non-null
             if ($this->replace !== null) {
-                $result .= ' REPLACE ' . $formatter->formatString($this->replace);
+                $result .= ' REPLACE ' . $this->replace->serialize($formatter);
             }
             if ($this->retainCurrent) {
                 $result .= ' RETAIN CURRENT PASSWORD';
