@@ -745,6 +745,7 @@ class TableCommandsParser
      *
      * column_definition:
      *     data_type [NOT NULL | NULL] [DEFAULT default_value]
+     *       [VISIBLE | INVISIBLE]
      *       [AUTO_INCREMENT] [UNIQUE [KEY] | [PRIMARY] KEY]
      *       [COMMENT 'string']
      *       [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
@@ -753,6 +754,7 @@ class TableCommandsParser
      *       [check_constraint_definition]
      *   | data_type [GENERATED ALWAYS] AS (expression)
      *       [VIRTUAL | STORED] [UNIQUE [KEY]] [COMMENT comment]
+     *       [VISIBLE | INVISIBLE]
      *       [NOT NULL | NULL] [[PRIMARY] KEY]
      */
     private function parseColumn(TokenList $tokenList): ColumnDefinition
@@ -774,12 +776,12 @@ class TableCommandsParser
 
     private function parseOrdinaryColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
     {
-        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $charset = $collation = null;
+        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $charset = $collation = $visible = null;
         $autoIncrement = false;
         // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
             Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK,
-            Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE];
+            Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::VISIBLE, Keyword::INVISIBLE];
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
             switch ($keyword) {
                 case Keyword::NOT:
@@ -805,6 +807,16 @@ class TableCommandsParser
                     } else {
                         $default = $this->expressionParser->parseLiteralValue($tokenList);
                     }
+                    break;
+                case Keyword::VISIBLE:
+                    // [VISIBLE | INVISIBLE]
+                    $tokenList->check('column visibility', 80023);
+                    $visible = true;
+                    break;
+                case Keyword::INVISIBLE:
+                    // [VISIBLE | INVISIBLE]
+                    $tokenList->check('column visibility', 80023);
+                    $visible = false;
                     break;
                 case Keyword::AUTO_INCREMENT:
                     // [AUTO_INCREMENT]
@@ -868,7 +880,7 @@ class TableCommandsParser
             $type = $type->addCollation($collation);
         }
 
-        return new ColumnDefinition($name, $type, $default, $null, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $reference, $check);
+        return new ColumnDefinition($name, $type, $default, $null, $visible, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $reference, $check);
     }
 
     private function parseGeneratedColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
@@ -879,16 +891,21 @@ class TableCommandsParser
 
         /** @var GeneratedColumnType $generatedType */
         $generatedType = $tokenList->getKeywordEnum(GeneratedColumnType::class);
-        $index = null;
+        $index = $comment = $visible = $null = null;
         if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
             $tokenList->passKeyword(Keyword::KEY);
             $index = IndexType::get(IndexType::UNIQUE);
         }
-        $comment = null;
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
             $comment = $tokenList->expectString();
         }
-        $null = null;
+        if ($tokenList->hasKeyword(Keyword::VISIBLE)) {
+            $tokenList->check('column visibility', 80023);
+            $visible = true;
+        } elseif ($tokenList->hasKeyword(Keyword::INVISIBLE)) {
+            $tokenList->check('column visibility', 80023);
+            $visible = false;
+        }
         if ($tokenList->hasKeywords(Keyword::NOT, Keyword::NULL)) {
             $null = false;
         } elseif ($tokenList->hasKeyword(Keyword::NULL)) {
@@ -902,7 +919,7 @@ class TableCommandsParser
             $index = IndexType::get(IndexType::INDEX);
         }
 
-        return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $comment, $index);
+        return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $visible, $comment, $index);
     }
 
     /**

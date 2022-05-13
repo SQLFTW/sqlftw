@@ -42,6 +42,9 @@ class ColumnDefinition implements TableItem
     /** @var bool|null */
     private $nullable;
 
+    /** @var bool|null */
+    private $visible;
+
     /** @var string|int|float|bool|Literal|Identifier|FunctionCall|null */
     private $defaultValue;
 
@@ -81,6 +84,7 @@ class ColumnDefinition implements TableItem
         DataType $type,
         $defaultValue = null,
         ?bool $nullable = null,
+        ?bool $visible = null,
         bool $autoincrement = false,
         ?ExpressionNode $onUpdate = null,
         ?string $comment = null,
@@ -94,6 +98,7 @@ class ColumnDefinition implements TableItem
         $this->type = $type;
         $this->defaultValue = $defaultValue;
         $this->nullable = $nullable;
+        $this->visible = $visible;
         $this->autoincrement = $autoincrement;
         $this->onUpdate = $onUpdate;
         $this->comment = $comment;
@@ -109,11 +114,12 @@ class ColumnDefinition implements TableItem
         ExpressionNode $expression,
         ?GeneratedColumnType $generatedColumnType,
         ?bool $nullable = null,
+        ?bool $visible = null,
         ?string $comment = null,
         ?IndexType $indexType = null
     ): self
     {
-        $instance = new self($name, $type, null, $nullable, false, null, $comment, $indexType);
+        $instance = new self($name, $type, null, $nullable, $visible, false, null, $comment, $indexType);
 
         $instance->generatedColumnType = $generatedColumnType;
         $instance->expression = $expression;
@@ -153,6 +159,11 @@ class ColumnDefinition implements TableItem
     public function getNullable(): ?bool
     {
         return $this->nullable;
+    }
+
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
     }
 
     public function hasAutoincrement(): bool
@@ -231,6 +242,9 @@ class ColumnDefinition implements TableItem
             } elseif ($this->defaultValue !== null) {
                 $result .= ' DEFAULT ' . $formatter->formatValue($this->defaultValue);
             }
+            if ($this->visible !== null) {
+                $result .= $this->visible ? ' VISIBLE' : ' INVISIBLE';
+            }
             if ($this->autoincrement) {
                 $result .= ' AUTO_INCREMENT';
             }
@@ -265,6 +279,9 @@ class ColumnDefinition implements TableItem
             }
             if ($this->nullable !== null) {
                 $result .= $this->nullable ? ' NULL' : ' NOT NULL';
+            }
+            if ($this->visible !== null) {
+                $result .= $this->visible ? ' VISIBLE' : ' INVISIBLE';
             }
             if ($this->indexType === IndexType::get(IndexType::PRIMARY)) {
                 $result .= ' PRIMARY KEY';
