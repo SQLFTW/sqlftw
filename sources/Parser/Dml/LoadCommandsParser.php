@@ -13,7 +13,6 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadPriority;
@@ -116,7 +115,7 @@ class LoadCommandsParser
 
         $charset = null;
         if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET) || $tokenList->hasKeyword(Keyword::CHARSET)) {
-            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+            $charset = $tokenList->expectCharsetName();
         }
 
         return [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset];

@@ -374,7 +374,7 @@ class TableCommandsParser
                         $tokenList->expectKeywords(Keyword::CHARACTER, Keyword::SET);
                     }
                     /** @var Charset $charset */
-                    $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+                    $charset = $tokenList->expectCharsetName();
                     $collation = null;
                     if ($tokenList->hasKeyword(Keyword::COLLATE)) {
                         $collation = $tokenList->expectNameOrStringEnum(Collation::class);
@@ -869,7 +869,7 @@ class TableCommandsParser
                 case Keyword::CHARACTER:
                     $tokenList->expectKeyword(Keyword::SET);
                 case Keyword::CHARSET:
-                    $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+                    $charset = $tokenList->expectCharsetName();
                     break;
                 case Keyword::COLLATE:
                     $collation = $tokenList->expectNameOrStringEnum(Collation::class);
@@ -1109,7 +1109,7 @@ class TableCommandsParser
             case Keyword::CHARSET:
                 $tokenList->passEqual();
 
-                return [TableOption::CHARACTER_SET, $tokenList->expectNameOrStringEnum(Charset::class)];
+                return [TableOption::CHARACTER_SET, $tokenList->expectCharsetName()];
             case Keyword::CHECKSUM:
                 $tokenList->passEqual();
 
@@ -1139,12 +1139,12 @@ class TableCommandsParser
                 if ($tokenList->hasKeyword(Keyword::CHARSET)) {
                     $tokenList->passEqual();
 
-                    return [TableOption::CHARACTER_SET, $tokenList->expectNameOrStringEnum(Charset::class)];
+                    return [TableOption::CHARACTER_SET, $tokenList->expectCharsetName()];
                 } elseif ($tokenList->hasKeyword(Keyword::CHARACTER)) {
                     $tokenList->expectKeyword(Keyword::SET);
                     $tokenList->passEqual();
 
-                    return [TableOption::CHARACTER_SET, $tokenList->expectNameOrStringEnum(Charset::class)];
+                    return [TableOption::CHARACTER_SET, $tokenList->expectCharsetName()];
                 } else {
                     $tokenList->expectKeyword(Keyword::COLLATE);
                     $tokenList->passEqual();

@@ -15,7 +15,6 @@ use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Query\GroupByExpression;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
 use SqlFtw\Sql\Dml\Query\Query;
@@ -442,7 +441,7 @@ class QueryParser
             $outFile = $tokenList->expectString();
             $charset = null;
             if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET) || $tokenList->hasKeyword(Keyword::CHARSET)) {
-                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+                $charset = $tokenList->expectCharsetName();
             }
             $format = $this->expressionParser->parseFileFormat($tokenList);
 

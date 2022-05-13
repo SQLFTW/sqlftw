@@ -583,7 +583,7 @@ class ExpressionParser
                         $arguments[$keyword] = $this->parseExpression($tokenList);
                         continue 3;
                     case Charset::class:
-                        $arguments[$keyword] = $tokenList->expectNameOrStringEnum(Charset::class);
+                        $arguments[$keyword] = $tokenList->expectCharsetName();
                         continue 3;
                     case DataType::class:
                         $arguments[$keyword] = $this->typeParser->parseType($tokenList);

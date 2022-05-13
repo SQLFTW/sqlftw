@@ -113,12 +113,12 @@ class TypeParser
         }
 
         if ($tokenList->hasKeywords(Keyword::CHARSET)) {
-            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+            $charset = $tokenList->expectCharsetName();
         } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
             if ($tokenList->hasKeyword(Keyword::BINARY)) {
                 $charset = Charset::get(Charset::BINARY);
             } else {
-                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+                $charset = $tokenList->expectCharsetName();
             }
         } elseif ($tokenList->hasKeyword(Keyword::BINARY)) {
             $charset = Charset::get(Charset::BINARY);

@@ -13,10 +13,12 @@ use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\ValueLiteral;
+use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 use function array_values;
@@ -841,6 +843,15 @@ class TokenList
         }
 
         return new UserName($name, $host);
+    }
+
+    public function expectCharsetName(): Charset
+    {
+        if ($this->hasKeyword(Keyword::BINARY)) {
+            return Charset::get(Charset::BINARY);
+        } else {
+            return $this->expectNameOrStringEnum(Charset::class);
+        }
     }
 
     public function expectEnd(): void
