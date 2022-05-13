@@ -467,7 +467,21 @@ class Lexer
                                 $column++;
                             }
                         }
-                        yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
+                        if ($value === '--perl' && $this->settings->mysqlTestMode) {
+                            // Perl code blocks from MySQL tests
+                            $end = strpos($string, "\nEOF\n", $position);
+                            if ($end === false) {
+                                throw new LexerException('End of Perl block not found.', $position, $string);
+                            } else {
+                                $block = substr($string, $position - 6, $end - $position + 10);
+                            }
+                            $position += strlen($block) - 6;
+                            $row += Str::count($block, "\n");
+
+                            yield new Token(T::PERL, $start, $block, null, $condition);
+                        } else {
+                            yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
+                        }
                         break;
                     }
                     $numberCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL
@@ -792,7 +806,6 @@ class Lexer
                         $end = strpos($string, "\nEOF\n", $position);
                         if ($end === false) {
                             throw new LexerException('End of Perl block not found.', $position, $string);
-                            //$block = substr($string, $position - 4);
                         } else {
                             $block = substr($string, $position - 4, $end - $position + 8);
                         }

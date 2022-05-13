@@ -205,6 +205,15 @@ class Parser
                 // BEGIN
                 return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->resetPosition($start));
             case Keyword::BINLOG:
+                if ($this->settings->mysqlTestMode) {
+                    if ($tokenList->has(TokenType::NUMBER)) {
+                        // e.g. binlog.2147483646
+                        return new TesterCommand($tokenList);
+                    } elseif ($tokenList->hasOperator('-')) {
+                        // e.g. binlog»-«b34582.000001
+                        return new TesterCommand($tokenList);
+                    }
+                }
                 // BINLOG
                 return $this->factory->getBinlogCommandParser()->parseBinlog($tokenList->resetPosition($start));
             case Keyword::CACHE:
@@ -649,17 +658,21 @@ class Parser
             case 'echo':
             case 'enable_query_log':
             case 'enable_warnings':
+            case 'END_OF_PROCEDURE':
             case 'eval':
             case 'EVAL':
             case 'exec':
             case 'file_exists':
             case 'inc':
             case 'let':
+            case 'mkdir':
             case 'my':
             case 'perl':
             case 'query_vertical':
             case 'reap':
             case 'remove_file':
+            case 'replace_regex':
+            case 'rmdir':
             case 'save_master_pos':
             case 'send':
             case 'sleep':
@@ -667,6 +680,7 @@ class Parser
             case 'sync_with_master':
             case 'wait_for_slave_to_stop':
             case 'write_file':
+            case '$file':
             case '[':
             case '}':
                 if ($this->settings->mysqlTestMode) {
