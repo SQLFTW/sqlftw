@@ -50,6 +50,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
 use function array_keys;
+use function strtoupper;
 
 class UserCommandsParser
 {
@@ -445,7 +446,7 @@ class UserCommandsParser
             $type = $tokenList->getNonKeywordName();
             if ($type !== null) {
                 // dynamic (names)
-                if (!UserPrivilegeType::isValid($type)) {
+                if (!UserPrivilegeType::isValid(strtoupper($type))) {
                     $tokenList->expectKeywordEnum(UserPrivilegeType::class);
                 }
             } else {
@@ -486,7 +487,7 @@ class UserCommandsParser
                 } while ($tokenList->hasComma());
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
-            $privileges[] = new UserPrivilege(UserPrivilegeType::get($type), $columns);
+            $privileges[] = new UserPrivilege(UserPrivilegeType::get(strtoupper($type)), $columns);
         } while ($tokenList->hasComma());
 
         return $privileges;
