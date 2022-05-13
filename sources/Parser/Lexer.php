@@ -487,6 +487,16 @@ class Lexer
                             $row += Str::count($block, "\n");
 
                             yield new Token(T::PERL, $start, $block, null, $condition);
+                        } elseif ($this->settings->mysqlTestMode && Str::startsWith($value, '--delimiter')) {
+                            // change delimiter outside SQL
+                            [, $del] = explode(' ', $value);
+                            $delimiter = $del;
+                            yield new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
+                            yield new Token(T::KEYWORD, $start, Keyword::DELIMITER, $value, $condition);
+                            if ($this->withWhitespace) {
+                                yield new Token(T::WHITESPACE, $start, ' ', null, $condition);
+                            }
+                            yield $previous = new Token(T::DELIMITER_DEFINITION, $start, $del, null, $condition);
                         } else {
                             yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
                         }
