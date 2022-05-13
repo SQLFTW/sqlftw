@@ -439,9 +439,9 @@ class TokenList
         if (is_bool($value)) {
             return $value;
         }
-        if ($value === 1 || $value === 'Y' || $value === 'T') {
+        if ($value === 1 || $value === 'Y' || $value === 'T' || $value === 'y' || $value === 't') {
             return true;
-        } elseif ($value === 0 || $value === 'N' || $value === 'F') {
+        } elseif ($value === 0 || $value === 'N' || $value === 'F' || $value === 'n' || $value === 'f') {
             return false;
         }
 
