@@ -45,12 +45,12 @@ class BaseType extends SqlEnum implements Feature
     public const SERIAL = Keyword::SERIAL; // alias for: BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE
 
     // floats
+    public const DOUBLE_PRECISION = Keyword::DOUBLE . ' ' . Keyword::PRECISION; // alias for DOUBLE
     public const REAL = Keyword::REAL;
     public const FLOAT = Keyword::FLOAT;
     public const DOUBLE = Keyword::DOUBLE;
     public const FLOAT4 = Keyword::FLOAT4; // FLOAT
     public const FLOAT8 = Keyword::FLOAT8; // DOUBLE
-    public const DOUBLE_PRECISION = Keyword::DOUBLE . ' ' . Keyword::PRECISION; // DOUBLE
 
     // decimal
     public const DECIMAL = Keyword::DECIMAL;
@@ -65,6 +65,16 @@ class BaseType extends SqlEnum implements Feature
     public const TIME = Keyword::TIME;
     public const TIMESTAMP = Keyword::TIMESTAMP;
 
+    // binary
+    public const BINARY = Keyword::BINARY;
+    public const VARBINARY = Keyword::VARBINARY;
+    public const TINYBLOB = Keyword::TINYBLOB;
+    public const BLOB = Keyword::BLOB;
+    public const MEDIUMBLOB = Keyword::MEDIUMBLOB;
+    public const LONGBLOB = Keyword::LONGBLOB;
+    public const CHAR_BYTE = Keyword::CHAR . ' ' . Keyword::BYTE; // BINARY
+    public const LONG_VARBINARY = Keyword::LONG . ' ' . Keyword::VARBINARY; // MEDIUMBLOB
+
     // texts
     public const CHAR = Keyword::CHAR;
     public const VARCHAR = Keyword::VARCHAR;
@@ -78,18 +88,8 @@ class BaseType extends SqlEnum implements Feature
     public const CHARACTER_VARYING = Keyword::CHARACTER . ' ' . Keyword::VARYING; // VARCHAR
     public const NVARCHAR = Keyword::NVARCHAR; // VARCHAR
     public const NATIONAL_VARCHAR = Keyword::NATIONAL . ' ' . Keyword::VARCHAR; // VARCHAR
-    public const LONG = Keyword::LONG; // MEDIUMTEXT
     public const LONG_VARCHAR = Keyword::LONG . ' ' . Keyword::VARCHAR; // MEDIUMTEXT
-
-    // binary
-    public const BINARY = Keyword::BINARY;
-    public const VARBINARY = Keyword::VARBINARY;
-    public const TINYBLOB = Keyword::TINYBLOB;
-    public const BLOB = Keyword::BLOB;
-    public const MEDIUMBLOB = Keyword::MEDIUMBLOB;
-    public const LONGBLOB = Keyword::LONGBLOB;
-    public const CHAR_BYTE = Keyword::CHAR . ' ' . Keyword::BYTE; // BINARY
-    public const LONG_VARBINARY = Keyword::LONG . ' ' . Keyword::VARBINARY; // MEDIUMBLOB
+    public const LONG = Keyword::LONG; // MEDIUMTEXT
 
     // sets
     public const ENUM = Keyword::ENUM;
