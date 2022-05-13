@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Transaction\CommitCommand;
+use SqlFtw\Sql\Dml\Transaction\LockInstanceCommand;
 use SqlFtw\Sql\Dml\Transaction\LockTablesCommand;
 use SqlFtw\Sql\Dml\Transaction\LockTablesItem;
 use SqlFtw\Sql\Dml\Transaction\LockTableType;
@@ -22,6 +23,7 @@ use SqlFtw\Sql\Dml\Transaction\SavepointCommand;
 use SqlFtw\Sql\Dml\Transaction\SetTransactionCommand;
 use SqlFtw\Sql\Dml\Transaction\StartTransactionCommand;
 use SqlFtw\Sql\Dml\Transaction\TransactionIsolationLevel;
+use SqlFtw\Sql\Dml\Transaction\UnlockInstanceCommand;
 use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -235,6 +237,20 @@ class TransactionCommandsParser
         $tokenList->expectAnyKeyword(Keyword::TABLES, Keyword::TABLE);
 
         return new UnlockTablesCommand();
+    }
+
+    public function parseLockInstance(TokenList $tokenList): LockInstanceCommand
+    {
+        $tokenList->expectKeywords(Keyword::LOCK, Keyword::INSTANCE, Keyword::FOR, Keyword::BACKUP);
+
+        return new LockInstanceCommand();
+    }
+
+    public function parseUnlockInstance(TokenList $tokenList): UnlockInstanceCommand
+    {
+        $tokenList->expectKeywords(Keyword::UNLOCK, Keyword::INSTANCE);
+
+        return new UnlockInstanceCommand();
     }
 
 }
