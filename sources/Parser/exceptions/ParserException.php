@@ -46,7 +46,7 @@ class ParserException extends ParsingException
     public static function tokens(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null): self
     {
         $expectedToken = implode(', ', Arr::map($expectedTokens, static function (int $type) {
-            return implode('|', TokenType::get($type)->getConstantNames());
+            return implode('|', TokenType::getByValue($type)->getConstantNames());
         }));
         if ($expectedValue !== null) {
             if (is_array($expectedValue)) {

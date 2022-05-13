@@ -11,20 +11,21 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ExpressionNode;
 
 class ResetMasterCommand implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var int|null */
+    /** @var ExpressionNode|null */
     private $binlogPosition;
 
-    public function __construct(?int $binlogPosition)
+    public function __construct(?ExpressionNode $binlogPosition)
     {
         $this->binlogPosition = $binlogPosition;
     }
 
-    public function getBinlogPosition(): ?int
+    public function getBinlogPosition(): ?ExpressionNode
     {
         return $this->binlogPosition;
     }
@@ -33,7 +34,7 @@ class ResetMasterCommand implements ReplicationCommand
     {
         $result = 'RESET MASTER';
         if ($this->binlogPosition !== null) {
-            $result .= ' TO ' . $this->binlogPosition;
+            $result .= ' TO ' . $this->binlogPosition->serialize($formatter);
         }
 
         return $result;

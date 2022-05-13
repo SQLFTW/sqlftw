@@ -384,7 +384,7 @@ class ReplicationCommandsParser
         $tokenList->expectKeywords(Keyword::RESET, Keyword::MASTER);
         $position = null;
         if ($tokenList->hasKeyword(Keyword::TO)) {
-            $position = $tokenList->expectInt();
+            $position = $tokenList->expectIntLike();
         }
 
         return new ResetMasterCommand($position);

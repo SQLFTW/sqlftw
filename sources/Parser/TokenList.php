@@ -10,21 +10,25 @@
 namespace SqlFtw\Parser;
 
 use Dogma\InvalidValueException as InvalidEnumValueException;
-use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Sql\Expression\BinaryLiteral;
+use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 use function array_values;
 use function call_user_func;
 use function count;
+use function ctype_digit;
 use function explode;
 use function implode;
 use function in_array;
 use function is_bool;
-use function is_int;
+use function is_float;
+use function is_string;
 use function trim;
 
 /**
@@ -374,47 +378,47 @@ class TokenList
 
     public function expectInt(): int
     {
-        $number = $this->get(TokenType::NUMBER);
-        if ($number !== null) {
-            if (is_int($number->value)) {
-                return $number->value;
-            } else {
-                throw InvalidTokenException::tokens([TokenType::NUMBER], 'integer', $number, $this);
-            }
+        $number = $this->expectNumber();
+        if (is_float($number)) {
+            throw new InvalidValueException('integer', $this);
+        } else {
+            return $number;
         }
-
-        $number = $this->getString();
-        if ($number !== null && Re::match($number, '/^[0-9]+$/') !== null) {
-            return (int) $number;
-        }
-        // always fails
-        $this->expect(TokenType::NUMBER);
-        exit;
     }
 
     public function getInt(): ?int
     {
         $position = $this->position;
 
-        $number = $this->get(TokenType::NUMBER);
-        if ($number !== null) {
-            if (is_int($number->value)) {
-                return $number->value;
-            } else {
-                $this->position = $position;
-
-                return null;
-            }
+        $number = $this->getNumber();
+        if ($number === null) {
+            return null;
         }
-
-        $number = $this->getString();
-        if ($number !== null && Re::match($number, '/^[0-9]+$/') !== null) {
-            return (int) $number;
-        } else {
+        if (is_float($number)) {
             $this->position = $position;
 
             return null;
         }
+
+        return $number;
+    }
+
+    public function expectIntLike(): ValueLiteral
+    {
+        $number = $this->expect(TokenType::NUMBER | TokenType::STRING | TokenType::HEXADECIMAL_LITERAL | TokenType::BINARY_LITERAL);
+        $value = $number->value;
+        if (is_float($value)) {
+            throw new InvalidValueException('integer', $this);
+        } elseif (($number->type & TokenType::STRING) !== 0 && is_string($value) && !ctype_digit($value)) {
+            throw new InvalidValueException('integer', $this);
+        }
+        if (($number->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
+            $value = new HexadecimalLiteral($number->value);
+        } elseif (($number->type & TokenType::BINARY_LITERAL) !== 0) {
+            $value = new BinaryLiteral($number->value);
+        }
+
+        return new ValueLiteral($value);
     }
 
     public function expectBool(): bool
