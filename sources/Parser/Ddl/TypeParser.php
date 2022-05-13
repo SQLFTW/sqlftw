@@ -115,7 +115,11 @@ class TypeParser
         if ($tokenList->hasKeywords(Keyword::CHARSET)) {
             $charset = $tokenList->expectNameOrStringEnum(Charset::class);
         } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
-            $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+            if ($tokenList->hasKeyword(Keyword::BINARY)) {
+                $charset = Charset::get(Charset::BINARY);
+            } else {
+                $charset = $tokenList->expectNameOrStringEnum(Charset::class);
+            }
         }
         if ($tokenList->hasKeyword(Keyword::COLLATE)) {
             $collation = $tokenList->expectNameOrStringEnum(Collation::class);
