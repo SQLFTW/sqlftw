@@ -427,7 +427,7 @@ class CompoundStatementParser
         $type = $this->typeParser->parseType($tokenList);
         $default = null;
         if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-            $default = $this->expressionParser->parseLiteralValue($tokenList);
+            $default = $this->expressionParser->parseExpression($tokenList);
         }
 
         return new DeclareStatement($names, $type, $default);
