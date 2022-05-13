@@ -45,10 +45,10 @@ class SetCommandParser
      *     user_var_name = expr
      *   | param_name = expr
      *   | local_var_name = expr
-     *   | {GLOBAL | @@GLOBAL.} system_var_name
-     *   | {PERSIST | @@PERSIST.} system_var_name
-     *   | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name
-     *   | [SESSION | @@SESSION. | @@] system_var_name
+     *   | {GLOBAL | @@GLOBAL.} system_var_name = expr
+     *   | {PERSIST | @@PERSIST.} system_var_name = expr
+     *   | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name = expr
+     *   | [LOCAL | SESSION | @@SESSION. | @@] system_var_name = expr
      */
     public function parseSet(TokenList $tokenList): SetCommand
     {
@@ -56,8 +56,11 @@ class SetCommandParser
 
         $assignments = [];
         do {
-            /** @var Scope|null $scope */
-            $scope = $tokenList->getKeywordEnum(Scope::class);
+            if ($tokenList->hasKeyword(Keyword::LOCAL)) {
+                $scope = Scope::get(Scope::SESSION);
+            } else {
+                $scope = $tokenList->getKeywordEnum(Scope::class);
+            }
             if ($scope !== null) {
                 $name = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
                 $variable = new QualifiedName($name);
