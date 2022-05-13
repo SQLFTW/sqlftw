@@ -795,7 +795,10 @@ class TableCommandsParser
                 case Keyword::DEFAULT:
                     // [DEFAULT default_value]
                     // [DEFAULT CURRENT_TIMESTAMP[(...)]]
-                    if ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
+                    if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                        $default = $this->expressionParser->parseExpression($tokenList);
+                        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                    } elseif ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
                         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                             $param = $tokenList->getInt();
                             $params = $param !== null ? [new ValueLiteral($param)] : [];
