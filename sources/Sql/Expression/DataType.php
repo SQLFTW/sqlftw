@@ -111,6 +111,11 @@ class DataType implements ExpressionNode
                 throw new InvalidDefinitionException("An integer size parameter required for type {$type->getValue()}.");
             }
             $this->size = $params;
+        } elseif ($type->hasLength()) {
+            if ($params !== null && !is_int($params)) {
+                throw new InvalidDefinitionException("An integer size parameter required for type {$type->getValue()}.");
+            }
+            $this->size = $params;
         } elseif ($type->hasValues()) {
             if (!is_array($params)) {
                 throw new InvalidDefinitionException("List of string values required for type {$type->getValue()}.");

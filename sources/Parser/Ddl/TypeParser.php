@@ -47,11 +47,11 @@ class TypeParser
      *   | BINARY[(length)]
      *   | VARBINARY(length)
      *   | TINYBLOB
-     *   | BLOB
+     *   | BLOB[(length)]
      *   | MEDIUMBLOB
      *   | LONGBLOB
      *   | TINYTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
-     *   | TEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | TEXT[(length)] [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
      *   | MEDIUMTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
      *   | LONGTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
      *   | ENUM(value1,value2,value3, ...) [CHARACTER SET charset_name] [COLLATE collation_name]

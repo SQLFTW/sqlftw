@@ -223,7 +223,7 @@ class BaseType extends SqlEnum implements Feature
 
     public function hasLength(): bool
     {
-        return $this->isNumber() || $this->needsLength();
+        return $this->isNumber() || $this->needsLength() || $this->getValue() === self::BLOB || $this->getValue() === self::TEXT;
     }
 
     public function needsLength(): bool
