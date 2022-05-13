@@ -323,5 +323,6 @@ class Collation extends SqlEnum
     public const UTF8_VIETNAMESE_0900_AS_CS = 'utf8mb4_vi_0900_as_cs';
 
     public const UTF8_GENERAL_0900_AS_CI = 'utf8mb4_0900_as_ci';
+    public const UTF8_GENERAL_0900_BIN = 'utf8mb4_0900_bin';
 
 }
