@@ -487,7 +487,7 @@ class Lexer
                             $row += Str::count($block, "\n");
 
                             yield new Token(T::PERL, $start, $block, null, $condition);
-                        } elseif ($this->settings->mysqlTestMode && Str::startsWith($value, '--delimiter')) {
+                        } elseif ($this->settings->mysqlTestMode && Str::startsWith(strtolower($value), '--delimiter')) {
                             // change delimiter outside SQL
                             [, $del] = explode(' ', $value);
                             $delimiter = $del;
