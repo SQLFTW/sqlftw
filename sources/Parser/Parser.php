@@ -17,6 +17,7 @@ use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use function count;
+use function in_array;
 use function iterator_to_array;
 
 class Parser
@@ -141,7 +142,10 @@ class Parser
             } else {
                 $tokenList->expected('any keyword');
             }
+        } elseif (($first->type & TokenType::INVALID) !== 0) {
+            return new InvalidCommand($tokenList, $first->value);
         }
+
         switch ($first->value) {
             case '(':
                 // ({SELECT|TABLE|VALUES} ...) ...
@@ -634,70 +638,32 @@ class Parser
                 // XA ROLLBACK
                 // XA RECOVER
                 return $this->factory->getXaTransactionCommandsParser()->parseXa($tokenList->resetPosition($start));
-            // mysql test suite scripts
-            case Keyword::CLOSE:
-            case Keyword::CONNECTION:
-            case Keyword::DEC:
-            case Keyword::ERROR:
-            case Keyword::EXIT:
-            case Keyword::IF:
-            case Keyword::OPEN:
-            case Keyword::READ:
-            case Keyword::SOURCE:
-            case Keyword::WHILE:
-            case 'append_file':
-            case 'break':
-            case 'change_user':
-            case 'connect':
-            case 'copy_file':
-            case 'die':
-            case 'diff_files':
-            case 'disable_query_log':
-            case 'disable_warnings':
-            case 'disconnect':
-            case 'echo':
-            case 'enable_query_log':
-            case 'enable_warnings':
-            case 'END_OF_PROCEDURE':
-            case 'eval':
-            case 'EVAL':
-            case 'exec':
-            case 'file_exists':
-            case 'inc':
-            case 'let':
-            case 'mkdir':
-            case 'my':
-            case 'perl':
-            case 'query_vertical':
-            case 'reap':
-            case 'remove_file':
-            case 'replace_regex':
-            case 'rmdir':
-            case 'save_master_pos':
-            case 'send':
-            case 'sleep':
-            case 'sync_slave_with_master':
-            case 'sync_with_master':
-            case 'wait_for_slave_to_stop':
-            case 'write_file':
-            case '$file':
-            case '[':
-            case '}':
-                if ($this->settings->mysqlTestMode) {
-                    return new TesterCommand($tokenList);
-                }
             default:
-                $tokenList->resetPosition($start)->expectedAnyKeyword(
-                    Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE,
-                    Keyword::CALL, Keyword::CHANGE, Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE,
-                    Keyword::DEALLOCATE, Keyword::DELETE, Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE,
-                    Keyword::DO, Keyword::DROP, Keyword::EXECUTE, Keyword::EXPLAIN, Keyword::FLUSH, Keyword::GRANT,
-                    Keyword::HANDLER, Keyword::HELP, Keyword::INSERT, Keyword::INSTALL, Keyword::KILL, Keyword::LOCK,
-                    Keyword::LOAD, Keyword::OPTIMIZE, Keyword::PREPARE, Keyword::PURGE, Keyword::RELEASE, Keyword::RENAME,
-                    Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::RESTART, Keyword::REVOKE, Keyword::ROLLBACK,
-                    Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN, Keyword::START, Keyword::STOP,
-                    Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
-                );
+                // avoiding Perl artifacts in MySQL test suite scripts
+                static $perlArtifacts = [Keyword::CLOSE, Keyword::CONNECTION, Keyword::DEC, Keyword::ERROR, Keyword::EXIT, Keyword::IF,
+                    Keyword::OPEN, Keyword::READ, Keyword::SOURCE, Keyword::WHILE, 'append_file', 'break', 'change_user',
+                    'connect', 'copy_file', 'die', 'diff_files', 'disable_query_log', 'disable_warnings', 'disconnect',
+                    'echo', 'enable_query_log', 'enable_warnings', 'END_OF_PROCEDURE', 'eval', 'EVAL', 'exec', 'file_exists',
+                    'inc', 'let', 'mkdir', 'my', 'perl', 'query_vertical', 'reap', 'remove_file', 'replace_regex',
+                    'reset_connection', 'rmdir', 'save_master_pos', 'send', 'sleep', 'sync_slave_with_master', 'sync_with_master',
+                    'wait_for_slave_to_stop', 'write_file', '$file', '[', '}'
+                ];
+
+                if ($this->settings->mysqlTestMode && in_array($first->value, $perlArtifacts)) {
+                    return new TesterCommand($tokenList);
+                } else {
+                    $tokenList->resetPosition($start)->expectedAnyKeyword(
+                        Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE,
+                        Keyword::CALL, Keyword::CHANGE, Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE,
+                        Keyword::DEALLOCATE, Keyword::DELETE, Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE,
+                        Keyword::DO, Keyword::DROP, Keyword::EXECUTE, Keyword::EXPLAIN, Keyword::FLUSH, Keyword::GRANT,
+                        Keyword::HANDLER, Keyword::HELP, Keyword::INSERT, Keyword::INSTALL, Keyword::KILL, Keyword::LOCK,
+                        Keyword::LOAD, Keyword::OPTIMIZE, Keyword::PREPARE, Keyword::PURGE, Keyword::RELEASE, Keyword::RENAME,
+                        Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::RESTART, Keyword::REVOKE, Keyword::ROLLBACK,
+                        Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN, Keyword::START, Keyword::STOP,
+                        Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
+                    );
+                }
         }
     }
 

@@ -32,7 +32,7 @@ use Dogma\Enum\IntSet;
  *    - BACKTICK_QUOTED_STRING - "`table1`" (MySQL, PostgreSQL, Sqlite)
  *    - SQUARE_BRACKETED_STRING - "[table1]" (MSSQL, SqLite)
  *    - AT_VARIABLE - "@var", "@@global"
- *    * CHARSET_INTRODUCER - "_utf8'string'", "n'string'", "N'string'"
+ *    - CHARSET_INTRODUCER - "_utf8'string'", "n'string'", "N'string'"
  * - VALUE
  *    - STRING
  *        - SINGLE_QUOTED_STRING "'string'" (standard)
@@ -107,7 +107,7 @@ class TokenType extends IntSet
     public const AT_VARIABLE = 0x4000;
 
     /** Encoding definition starting with "_" and preceding a quoted string */
-    public const ENCODING_DEFINITION = 0x8000;
+    public const CHARSET_INTRODUCER = 0x8000;
 
     /** Quoted string value (not name) */
     public const STRING = 0x10000;
@@ -181,7 +181,10 @@ class TokenType extends IntSet
     /** Not a real token. Indicates expectation of end of token list */
     public const END = 0x8000000000;
 
+    /** Produced on invalid input to allow further parsing, instead of producing exception */
+    public const INVALID = 0x10000000000;
+
     /** Block of Perl code from MySQL tests */
-    public const PERL = 0x10000000000;
+    public const PERL = 0x20000000000;
 
 }

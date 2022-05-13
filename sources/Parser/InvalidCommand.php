@@ -20,10 +20,10 @@ class InvalidCommand implements Command
     /** @var TokenList */
     private $tokenList;
 
-    /** @var ParserException */
+    /** @var ParsingException */
     private $exception;
 
-    public function __construct(TokenList $tokenList, ParserException $exception)
+    public function __construct(TokenList $tokenList, ParsingException $exception)
     {
         $this->tokenList = $tokenList;
         $this->exception = $exception;
@@ -34,7 +34,7 @@ class InvalidCommand implements Command
         return $this->tokenList;
     }
 
-    public function getException(): ParserException
+    public function getException(): ParsingException
     {
         return $this->exception;
     }

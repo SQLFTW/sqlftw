@@ -62,9 +62,8 @@ Assert::token($tokens[2], TokenType::SYMBOL | TokenType::DELIMITER_DEFINITION, '
 Assert::token($tokens[3], TokenType::WHITESPACE, "\n", 12);
 Assert::token($tokens[4], TokenType::SYMBOL | TokenType::SEMICOLON, ';', 13);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll('DELIMITER SELECT');
-}, LexerException::class, '~^Delimiter can not be a reserved word~');
+$tokens = $lexer->tokenizeAll('DELIMITER SELECT');
+Assert::invalidToken($tokens[2], TokenType::INVALID, '~^Delimiter can not be a reserved word~', 10);
 
 // NULL
 $tokens = $lexer->tokenizeAll(' NULL ');

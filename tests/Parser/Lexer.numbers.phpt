@@ -78,26 +78,20 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::VALUE | TokenType::NUMBER, 1230000, 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 7);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' 1.23e');
-}, LexerException::class, '~^Invalid number exponent~');
+$tokens = $lexer->tokenizeAll(' 1.23e');
+Assert::invalidToken($tokens[1], TokenType::VALUE | TokenType::NUMBER | TokenType::INVALID, '~^Invalid number exponent~', 1);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' 1.23e+');
-}, LexerException::class, '~^Invalid number exponent~');
+$tokens = $lexer->tokenizeAll(' 1.23e+');
+Assert::invalidToken($tokens[1], TokenType::VALUE | TokenType::NUMBER | TokenType::INVALID, '~^Invalid number exponent~', 1);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' 1.23e-');
-}, LexerException::class, '~^Invalid number exponent~');
+$tokens = $lexer->tokenizeAll(' 1.23e-');
+Assert::invalidToken($tokens[1], TokenType::VALUE | TokenType::NUMBER | TokenType::INVALID, '~^Invalid number exponent~', 1);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' 1.23ef');
-}, LexerException::class, '~^Invalid number exponent~');
+$tokens = $lexer->tokenizeAll(' 1.23ef');
+Assert::invalidToken($tokens[1], TokenType::VALUE | TokenType::NUMBER | TokenType::INVALID, '~^Invalid number exponent~', 1);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' 1.23e+f');
-}, LexerException::class, '~^Invalid number exponent~');
+$tokens = $lexer->tokenizeAll(' 1.23e+f');
+Assert::invalidToken($tokens[1], TokenType::VALUE | TokenType::NUMBER | TokenType::INVALID, '~^Invalid number exponent~', 1);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' 1.23e-f');
-}, LexerException::class, '~^Invalid number exponent~');
+$tokens = $lexer->tokenizeAll(' 1.23e-f');
+Assert::invalidToken($tokens[1], TokenType::VALUE | TokenType::NUMBER | TokenType::INVALID, '~^Invalid number exponent~', 1);
