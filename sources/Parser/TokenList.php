@@ -671,6 +671,7 @@ class TokenList
      */
     public function expectMultiKeywordsEnum(string $className): SqlEnum
     {
+        $this->doAutoSkip();
         $start = $this->position;
         $values = call_user_func([$className, 'getAllowedValues']);
         foreach ($values as $value) {
@@ -685,7 +686,7 @@ class TokenList
             return call_user_func([$className, 'get'], $value);
         }
 
-        throw InvalidTokenException::tokens([TokenType::KEYWORD], $values, $this->tokens[$this->position - 1], $this);
+        throw InvalidTokenException::tokens([TokenType::KEYWORD], $values, $this->tokens[$this->position], $this);
     }
 
     /**

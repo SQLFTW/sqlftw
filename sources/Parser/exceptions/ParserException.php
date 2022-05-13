@@ -85,7 +85,7 @@ class ParserException extends ParsingException
 
     private static function formatContext(TokenList $tokenList): string
     {
-        $start = max($tokenList->getPosition() - 11, 0);
+        $start = max($tokenList->getPosition() - 10, 0);
         $prefix = 10 - min(max(10 - $tokenList->getPosition(), 0), 10);
         $tokens = array_slice($tokenList->getTokens(), $start, 21);
         $context = '"…' . implode('', array_map(static function (Token $token) {
