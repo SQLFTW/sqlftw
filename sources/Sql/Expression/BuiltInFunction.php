@@ -517,8 +517,8 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::AVG => [Keyword::DISTINCT => ExpressionNode::class],
         // CHAR(N, ... [USING charset_name])
         self::CHAR => [Keyword::USING => Charset::class],
-        // CAST(expr AS type)
-        self::CAST => [Keyword::AS => DataType::class],
+        // CAST(expr AS type [ARRAY])
+        self::CAST => [Keyword::AS => DataType::class, Keyword::ARRAY => null],
         /*
          * CONVERT(string, type), CONVERT(expr USING charset_name)
          *

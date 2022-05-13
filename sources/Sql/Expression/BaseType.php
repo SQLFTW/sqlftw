@@ -41,6 +41,7 @@ class BaseType extends SqlEnum implements Feature
     public const INT3 = Keyword::INT3; // MEDIUMINT
     public const INT4 = Keyword::INT4; // INT
     public const INT8 = Keyword::INT8; // BIGINT
+    public const UNSIGNED = Keyword::UNSIGNED; // alias for: BIGINT UNSIGNED
     public const SERIAL = Keyword::SERIAL; // alias for: BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE
 
     // floats
@@ -148,7 +149,7 @@ class BaseType extends SqlEnum implements Feature
         return in_array(
             $this->getValue(),
             [
-                self::TINYINT, self::SMALLINT, self::MEDIUMINT, self::INT, self::BIGINT, self::YEAR,
+                self::TINYINT, self::SMALLINT, self::MEDIUMINT, self::INT, self::BIGINT, self::YEAR, self::UNSIGNED, self::SERIAL,
                 self::MIDDLEINT, self::INTEGER, self::INT1, self::INT2, self::INT3, self::INT4, self::INT8, self::BOOL, self::BOOLEAN,
             ],
             true
