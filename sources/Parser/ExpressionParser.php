@@ -17,7 +17,6 @@ use SqlFtw\Parser\Ddl\TypeParser;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\FileFormat;
@@ -522,7 +521,7 @@ class ExpressionParser
 
         if ($tokenList->hasKeyword(Keyword::COLLATE)) {
             // simple_expr COLLATE collation_name
-            $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+            $collation = $tokenList->expectCollationName();
 
             return new CollateExpression($expression, $collation);
         } elseif ($tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT)
@@ -893,7 +892,7 @@ class ExpressionParser
             $order = $tokenList->getKeywordEnum(Order::class);
 
             if ($collation === null && $tokenList->hasKeyword(Keyword::COLLATE)) {
-                $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+                $collation = $tokenList->expectCollationName();
             }
 
             $orderBy[] = new OrderByExpression($order, $column, $expression, $position, $collation);

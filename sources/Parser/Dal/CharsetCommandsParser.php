@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Keyword;
@@ -51,7 +50,7 @@ class CharsetCommandsParser
         if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
             $charset = $tokenList->expectCharsetName();
             if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-                $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+                $collation = $tokenList->expectCollationName();
             }
         }
 

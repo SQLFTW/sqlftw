@@ -15,7 +15,6 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnsAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddConstraintAction;
@@ -377,7 +376,7 @@ class TableCommandsParser
                     $charset = $tokenList->expectCharsetName();
                     $collation = null;
                     if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-                        $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+                        $collation = $tokenList->expectCollationName();
                     }
                     $actions[] = new ConvertToCharsetAction($charset, $collation);
                     break;
@@ -872,7 +871,7 @@ class TableCommandsParser
                     $charset = $tokenList->expectCharsetName();
                     break;
                 case Keyword::COLLATE:
-                    $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+                    $collation = $tokenList->expectCollationName();
                     break;
             }
         }
@@ -1117,7 +1116,7 @@ class TableCommandsParser
             case Keyword::COLLATE:
                 $tokenList->passEqual();
 
-                return [TableOption::COLLATE, $tokenList->expectNameOrStringEnum(Collation::class)];
+                return [TableOption::COLLATE, $tokenList->expectCollationName()];
             case Keyword::COMMENT:
                 $tokenList->passEqual();
 
@@ -1149,7 +1148,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::COLLATE);
                     $tokenList->passEqual();
 
-                    return [TableOption::COLLATE, $tokenList->expectNameOrStringEnum(Collation::class)];
+                    return [TableOption::COLLATE, $tokenList->expectCollationName()];
                 }
             case Keyword::DELAY_KEY_WRITE:
                 $tokenList->passEqual();

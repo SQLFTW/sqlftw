@@ -13,7 +13,6 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\DataType;
 use SqlFtw\Sql\Keyword;
@@ -124,7 +123,7 @@ class TypeParser
             $charset = Charset::get(Charset::BINARY);
         }
         if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-            $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+            $collation = $tokenList->expectCollationName();
         }
 
         return new DataType($dataType, $params, $unsigned, $charset, $collation, $zerofill);

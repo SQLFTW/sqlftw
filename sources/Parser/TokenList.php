@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Operator;
@@ -851,6 +852,15 @@ class TokenList
             return Charset::get(Charset::BINARY);
         } else {
             return $this->expectNameOrStringEnum(Charset::class);
+        }
+    }
+
+    public function expectCollationName(): Collation
+    {
+        if ($this->hasKeyword(Keyword::BINARY)) {
+            return Collation::get(Collation::BINARY);
+        } else {
+            return $this->expectNameOrStringEnum(Collation::class);
         }
     }
 

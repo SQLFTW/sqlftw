@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
@@ -91,7 +90,7 @@ class SchemaCommandsParser
                 $charset = $tokenList->expectCharsetName();
             } elseif ($keyword === Keyword::COLLATE) {
                 $tokenList->passEqual();
-                $collation = $tokenList->expectNameOrStringEnum(Collation::class);
+                $collation = $tokenList->expectCollationName();
             } elseif ($keyword === Keyword::ENCRYPTION) {
                 $tokenList->check('schema encryption', 80016);
                 $tokenList->passEqual();
