@@ -37,7 +37,7 @@ class ServerCommandsParser
     public function parseAlterServer(TokenList $tokenList): AlterServerCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::SERVER);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectNameOrString();
 
         $tokenList->expectKeyword(Keyword::OPTIONS);
         $tokenList->expect(TokenType::LEFT_PARENTHESIS);
@@ -85,7 +85,7 @@ class ServerCommandsParser
     public function parseCreateServer(TokenList $tokenList): CreateServerCommand
     {
         $tokenList->expectKeywords(Keyword::CREATE, Keyword::SERVER);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectNameOrString();
         $tokenList->expectKeywords(Keyword::FOREIGN, Keyword::DATA, Keyword::WRAPPER);
         $wrapper = $tokenList->expectNameOrString();
 
@@ -124,7 +124,7 @@ class ServerCommandsParser
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::SERVER);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectNameOrString();
 
         return new DropServerCommand($name, $ifExists);
     }
