@@ -64,7 +64,7 @@ class FlushCommandParser
     {
         $tokenList->expectKeyword(Keyword::FLUSH);
         $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
-        $tokenList->expectKeyword(Keyword::TABLES);
+        $tokenList->expectAnyKeyword(Keyword::TABLES, Keyword::TABLE);
 
         $tables = null;
         $table = $tokenList->getQualifiedName();
