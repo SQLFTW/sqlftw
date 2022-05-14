@@ -330,14 +330,15 @@ class ExpressionParser
             Operator::MINUS,
             Operator::MULTIPLY,
             Operator::DIVIDE,
-            Operator::DIV,
-            Operator::MOD,
             Operator::MODULO,
             Operator::BIT_XOR,
         ];
 
         $left = $this->parseSimpleExpression($tokenList);
         $operator = $tokenList->getAnyOperator(...$operators);
+        if ($operator === null) {
+            $operator = $tokenList->getAnyKeyword(Keyword::DIV, Keyword::MOD);
+        }
         if ($operator === null) {
             return $left;
         }
