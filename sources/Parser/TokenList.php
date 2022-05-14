@@ -283,7 +283,9 @@ class TokenList
 
     public function expectName(?string $name = null): string
     {
-        return $this->expect(TokenType::NAME, $name)->original; // @phpstan-ignore-line non-null
+        $token = $this->expect(TokenType::NAME, $name);
+
+        return $token->original ?? $token->value;
     }
 
     public function getName(?string $name = null): ?string
@@ -303,7 +305,7 @@ class TokenList
             throw InvalidTokenException::tokens([TokenType::NAME], null, $token, $this);
         }
 
-        return $token->original; // @phpstan-ignore-line non-null
+        return $token->original ?? $token->value;
     }
 
     public function getNonKeywordName(?string $name = null): ?string
