@@ -24,18 +24,18 @@ class TypeParser
     /**
      * data_type:
      *     BIT[(length)]
-     *   | TINYINT[(length)] [UNSIGNED] [ZEROFILL]
-     *   | SMALLINT[(length)] [UNSIGNED] [ZEROFILL]
-     *   | MEDIUMINT[(length)] [UNSIGNED] [ZEROFILL]
-     *   | INT[(length)] [UNSIGNED] [ZEROFILL]
-     *   | INTEGER[(length)] [UNSIGNED] [ZEROFILL]
-     *   | BIGINT[(length)] [UNSIGNED] [ZEROFILL]
-     *   | REAL[(length,decimals)] [UNSIGNED] [ZEROFILL]
-     *   | DOUBLE[(length,decimals)] [UNSIGNED] [ZEROFILL]
-     *   | FLOAT[(length,decimals)] [UNSIGNED] [ZEROFILL]
-     *   | FLOAT[(precision)] [UNSIGNED] [ZEROFILL]
-     *   | DECIMAL[(length[,decimals])] [UNSIGNED] [ZEROFILL]
-     *   | NUMERIC[(length[,decimals])] [UNSIGNED] [ZEROFILL]
+     *   | TINYINT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | SMALLINT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | MEDIUMINT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | INT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | INTEGER[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | BIGINT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | REAL[(length,decimals)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | DOUBLE[(length,decimals)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | FLOAT[(length,decimals)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | FLOAT[(precision)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | DECIMAL[(length[,decimals])] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | NUMERIC[(length[,decimals])] [UNSIGNED | SIGNED] [ZEROFILL]
      *   | DATE
      *   | TIME[(fsp)]
      *   | TIMESTAMP[(fsp)]
@@ -108,6 +108,9 @@ class TypeParser
 
         if ($dataType->isNumber()) {
             $unsigned = $tokenList->hasKeyword(Keyword::UNSIGNED);
+            if ($unsigned === false) {
+                $tokenList->passKeyword(Keyword::SIGNED);
+            }
             $zerofill = $tokenList->hasKeyword(Keyword::ZEROFILL);
         }
 
