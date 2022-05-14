@@ -154,7 +154,7 @@ class ExpressionParser
                 ? new KeywordLiteral(Keyword::UNKNOWN)
                 : new ValueLiteral($keyword === Keyword::TRUE);
 
-            return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IS] : [Operator::IS], $right);
+            return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         } elseif ($this->assignAllowed && $left instanceof Identifier && $left->isUserVariable() && $tokenList->hasOperator(Operator::ASSIGN)) {
             $right = $this->parseExpression($tokenList);
 
@@ -182,7 +182,7 @@ class ExpressionParser
      *     boolean_primary IS [NOT] NULL
      *   | boolean_primary <=> predicate
      *   | boolean_primary comparison_operator predicate
-     *   | boolean_primary comparison_operator {ALL | ANY} (subquery)
+     *   | boolean_primary comparison_operator {ALL | ANY | SOME} (subquery)
      *   | predicate
      *
      * comparison_operator: = | >= | > | <= | < | <> | !=
@@ -203,7 +203,7 @@ class ExpressionParser
         $left = $this->parsePredicate($tokenList);
         $operator = $tokenList->getAnyOperator(...$operators);
         if ($operator !== null) {
-            $quantifier = $tokenList->getAnyKeyword(Keyword::ALL, Keyword::ANY);
+            $quantifier = $tokenList->getAnyKeyword(Keyword::ALL, Keyword::ANY, Keyword::SOME);
             if ($quantifier !== null) {
                 $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $subquery = new Parentheses($this->parseSubquery($tokenList));

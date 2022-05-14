@@ -21,14 +21,14 @@ use function is_array;
  * left XOR right
  * left && right
  * left || right
- * left = right
  * left <=> right
- * left != right
- * left <> right
- * left < right
- * left <= right
- * left > right
- * left >= right
+ * left = [ALL | ANY | SOME] right
+ * left != [ALL | ANY | SOME] right
+ * left <> [ALL | ANY | SOME] right
+ * left < [ALL | ANY | SOME] right
+ * left <= [ALL | ANY | SOME] right
+ * left > [ALL | ANY | SOME] right
+ * left >= [ALL | ANY | SOME] right
  * left + right
  * left - right
  * left * right
@@ -41,12 +41,12 @@ use function is_array;
  * left ^ right
  * left << right
  * left >> right
- * left IS right
- * left LIKE right
- * left REGEXP right
- * left RLIKE right
- * left SOUNDS right
- * left IN right
+ * left IS [NOT] right
+ * left [NOT] LIKE right
+ * left [NOT] REGEXP right
+ * left [NOT] RLIKE right
+ * left SOUNDS LIKE right
+ * left [NOT] IN right
  * left -> right
  * left ->> right
  */
@@ -105,7 +105,7 @@ class BinaryOperator implements OperatorExpression
     public function serialize(Formatter $formatter): string
     {
         return $this->left->serialize($formatter) . ' '
-            . (is_array($this->operator) ? implode('', $this->operator) : $this->operator) . ' '
+            . (is_array($this->operator) ? implode(' ', $this->operator) : $this->operator) . ' '
             . $this->right->serialize($formatter);
     }
 
