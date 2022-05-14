@@ -9,18 +9,20 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
+use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use function implode;
 
 class OrderByAction implements TableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var array<string, 'ASC'|'DESC'|null> */
     private $columns;
 
     /**
-     * @param string[] $columns
+     * @param array<string, 'ASC'|'DESC'|null> $columns
      */
     public function __construct(array $columns)
     {
@@ -28,7 +30,7 @@ class OrderByAction implements TableAction
     }
 
     /**
-     * @return string[]
+     * @return array<string, 'ASC'|'DESC'|null>
      */
     public function getColumns(): array
     {
@@ -37,7 +39,9 @@ class OrderByAction implements TableAction
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ORDER BY ' . $formatter->formatNamesList($this->columns);
+        return 'ORDER BY ' . implode(', ', Arr::mapPairs($this->columns, static function (string $column, ?string $order) use ($formatter): string {
+            return $formatter->formatName($column) . ($order !== null ? ' ' . $order : '');
+        }));
     }
 
 }

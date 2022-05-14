@@ -168,7 +168,7 @@ class TableCommandsParser
      *   | ENABLE KEYS
      *   | RENAME [TO|AS] new_tbl_name
      *   | RENAME {INDEX|KEY} old_index_name TO new_index_name
-     *   | ORDER BY col_name [, col_name] ...
+     *   | ORDER BY col_name [ASC | DESC] [, col_name [ASC | DESC]] ...
      *   | CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]
      *   | [DEFAULT] CHARACTER SET [=] charset_name [COLLATE [=] collation_name]
      *   | DISCARD TABLESPACE
@@ -516,7 +516,8 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::BY);
                     $columns = [];
                     do {
-                        $columns[] = $tokenList->expectName();
+                        $column = $tokenList->expectName();
+                        $columns[$column] = $tokenList->getAnyKeyword(Keyword::ASC, Keyword::DESC);
                     } while ($tokenList->hasComma());
                     $actions[] = new OrderByAction($columns);
                     break;
