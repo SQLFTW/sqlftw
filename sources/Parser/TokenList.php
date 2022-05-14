@@ -345,7 +345,7 @@ class TokenList
     {
         $token = $this->expect(TokenType::STRING | TokenType::HEXADECIMAL_LITERAL);
         $value = $token->value;
-        if (($token->type & TokenType::HEXADECIMAL_LITERAL) !== null) {
+        if (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
             $value = new HexadecimalLiteral($value);
         }
 
