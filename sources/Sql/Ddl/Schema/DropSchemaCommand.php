@@ -40,7 +40,7 @@ class DropSchemaCommand implements SchemaCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DROP DATABASE ';
+        $result = 'DROP SCHEMA ';
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
