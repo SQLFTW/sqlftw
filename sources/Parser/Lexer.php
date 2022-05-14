@@ -763,6 +763,7 @@ class Lexer
                 case 'y':
                 case 'Z':
                 case 'z':
+                case '_':
                 case '$':
                     $value = $char;
                     while ($position < $length) {
@@ -799,6 +800,8 @@ class Lexer
                         }
                     } elseif (isset($this->keywordsKey[$upper])) {
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $upper, $value, $condition);
+                    } elseif ($value[0] === '_' && ($charset = substr($value, 1)) && Charset::validateValue($charset)) {
+                        yield $previous = new Token(T::NAME | T::CHARSET_INTRODUCER, $start, $charset, $value, $condition);
                     } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
                         yield new Token(T::KEYWORD, $start, $upper, $value, $condition);
                         $start = $position;
@@ -871,28 +874,6 @@ class Lexer
                     if ($yieldDelimiter) {
                         yield new Token(T::SYMBOL | T::DELIMITER, $start, $delimiter, null, $condition);
                     }
-                    break;
-                case '_':
-                    $value = '';
-                    while ($position < $length) {
-                        $next = $string[$position];
-                        if (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
-                            $value .= $next;
-                            $position++;
-                            $column++;
-                        } else {
-                            break;
-                        }
-                    }
-                    if ($value !== '' && !Charset::validateValue($value)) {
-                        if (!$this->settings->mysqlTestMode) {
-                            $exception = new LexerException("Invalid string charset declaration: $value", $position, $string);
-
-                            yield $previous = new Token(T::NAME | T::CHARSET_INTRODUCER | T::INVALID, $start, $exception, $value, $condition);
-                            break;
-                        }
-                    }
-                    // todo: ignored - do something about it
                     break;
                 default:
                     if (ord($char) < 32) {
