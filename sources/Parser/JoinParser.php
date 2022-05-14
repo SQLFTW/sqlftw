@@ -256,7 +256,7 @@ class JoinParser
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectName();
             } else {
-                $alias = $tokenList->getName();
+                $alias = $tokenList->getNonKeywordName();
             }
             $indexHints = null;
             if ($tokenList->hasAnyKeyword(Keyword::USE, Keyword::IGNORE, Keyword::FORCE)) {
