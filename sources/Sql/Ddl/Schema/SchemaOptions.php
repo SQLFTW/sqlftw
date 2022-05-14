@@ -36,7 +36,7 @@ class SchemaOptions implements SchemaCommand
         ?Charset $charset,
         ?Collation $collation = null,
         ?bool $encryption = null,
-        ?ThreeStateValue $readOnly
+        ?ThreeStateValue $readOnly = null
     )
     {
         $this->charset = $charset;
