@@ -105,6 +105,7 @@ class BaseType extends SqlEnum implements Feature
     public const LINESTRING = Keyword::LINESTRING;
     public const POLYGON = Keyword::POLYGON;
     public const GEOMETRYCOLLECTION = Keyword::GEOMETRYCOLLECTION;
+    public const GEOMCOLLECTION = Keyword::GEOMCOLLECTION;
     public const MULTIPOINT = Keyword::MULTIPOINT;
     public const MULTILINESTRING = Keyword::MULTILINESTRING;
     public const MULTIPOLYGON = Keyword::MULTIPOLYGON;
@@ -209,7 +210,7 @@ class BaseType extends SqlEnum implements Feature
             $this->getValue(),
             [
                 self::GEOMETRY, self::POINT, self::LINESTRING, self::POLYGON,
-                self::GEOMETRYCOLLECTION, self::MULTIPOINT, self::MULTILINESTRING, self::MULTIPOLYGON,
+                self::GEOMETRYCOLLECTION, self::GEOMCOLLECTION, self::MULTIPOINT, self::MULTILINESTRING, self::MULTIPOLYGON,
             ],
             true
         );
