@@ -23,6 +23,7 @@ class StorageEngine extends SqlEnum
     public const ARCHIVE = 'Archive';
     public const BLACKHOLE = 'Blackhole';
     public const NDB = 'NDB';
+    public const NDBCLUSTER = 'ndbcluster';
     public const MERGE = 'Merge';
     public const FEDERATED = 'Federated';
     public const EXAMPLE = 'Example';
