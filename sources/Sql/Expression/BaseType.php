@@ -226,7 +226,9 @@ class BaseType extends SqlEnum implements Feature
 
     public function hasLength(): bool
     {
-        return $this->isNumber() || $this->needsLength() || $this->getValue() === self::BLOB || $this->getValue() === self::TEXT;
+        return $this->isNumber() || $this->needsLength() || in_array($this->getValue(), [
+            self::BINARY, self::BLOB, self::CHAR, self::TEXT
+        ]);
     }
 
     public function needsLength(): bool
@@ -234,8 +236,8 @@ class BaseType extends SqlEnum implements Feature
         return in_array(
             $this->getValue(),
             [
-                self::CHAR, self::VARCHAR, self::BINARY, self::VARBINARY,
-                self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR, self::CHARACTER_VARYING, self::NVARCHAR, self::NATIONAL_VARCHAR, self::CHAR_BYTE,
+                self::VARCHAR, self::VARBINARY, self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR,
+                self::CHARACTER_VARYING, self::NVARCHAR, self::NATIONAL_VARCHAR, self::CHAR_BYTE,
             ],
             true
         );
