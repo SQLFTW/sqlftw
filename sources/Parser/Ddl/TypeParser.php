@@ -117,13 +117,11 @@ class TypeParser
         if ($tokenList->hasKeywords(Keyword::CHARSET)) {
             $charset = $tokenList->expectCharsetName();
         } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
-            if ($tokenList->hasKeyword(Keyword::BINARY)) {
-                $charset = Charset::get(Charset::BINARY);
-            } else {
-                $charset = $tokenList->expectCharsetName();
-            }
+            $charset = $tokenList->expectCharsetName();
         } elseif ($tokenList->hasKeyword(Keyword::BINARY)) {
             $charset = Charset::get(Charset::BINARY);
+        } elseif ($tokenList->hasKeyword(Keyword::ASCII)) {
+            $charset = Charset::get(Charset::ASCII);
         }
         if ($tokenList->hasKeyword(Keyword::COLLATE)) {
             $collation = $tokenList->expectCollationName();
