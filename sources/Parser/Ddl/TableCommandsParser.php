@@ -330,7 +330,12 @@ class TableCommandsParser
                         $tokenList->passKeyword(Keyword::COLUMN);
                         $column = $tokenList->expectName();
                         if ($tokenList->hasKeywords(Keyword::SET, Keyword::DEFAULT)) {
-                            $value = $this->expressionParser->parseLiteralValue($tokenList);
+                            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                                $value = $this->expressionParser->parseExpression($tokenList);
+                                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                            } else {
+                                $value = $this->expressionParser->parseLiteral($tokenList);
+                            }
                             $actions[] = new AlterColumnAction($column, $value);
                         } else {
                             $tokenList->expectKeywords(Keyword::DROP, Keyword::DEFAULT);

@@ -805,7 +805,7 @@ class ExpressionParser
         return new Subquery(($this->queryParserProxy)()->parseQuery($tokenList));
     }
 
-    private function parseLiteral(TokenList $tokenList): Literal
+    public function parseLiteral(TokenList $tokenList): Literal
     {
         $literal = $this->parseLiteralValue($tokenList);
 

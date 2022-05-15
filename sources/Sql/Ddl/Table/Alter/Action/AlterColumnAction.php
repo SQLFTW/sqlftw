@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Literal;
 
 class AlterColumnAction implements ColumnAction
@@ -20,13 +21,10 @@ class AlterColumnAction implements ColumnAction
     /** @var string */
     private $name;
 
-    /** @var string|int|float|bool|Literal|null */
+    /** @var ?ExpressionNode */
     private $default;
 
-    /**
-     * @param string|int|float|bool|Literal|null $default
-     */
-    public function __construct(string $name, $default)
+    public function __construct(string $name, ?ExpressionNode $default)
     {
         $this->name = $name;
         $this->default = $default;
@@ -37,10 +35,7 @@ class AlterColumnAction implements ColumnAction
         return $this->name;
     }
 
-    /**
-     * @return string|int|float|bool|Literal|null
-     */
-    public function getDefault()
+    public function getDefault(): ?ExpressionNode
     {
         return $this->default;
     }
@@ -50,8 +45,10 @@ class AlterColumnAction implements ColumnAction
         $result = 'ALTER COLUMN ' . $formatter->formatName($this->name);
         if ($this->default === null) {
             $result .= ' DROP DEFAULT';
+        } elseif ($this->default instanceof Literal) {
+            $result .= ' SET DEFAULT ' . $this->default->serialize($formatter);
         } else {
-            $result .= ' SET DEFAULT ' . $formatter->formatValue($this->default);
+            $result .= ' SET DEFAULT (' . $this->default->serialize($formatter) . ')';
         }
 
         return $result;
