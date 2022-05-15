@@ -21,31 +21,36 @@ class ShowColumnsCommand implements ShowCommand
     /** @var QualifiedName */
     private $table;
 
-    /** @var bool */
-    private $full;
-
     /** @var string|null */
     private $like;
 
     /** @var ExpressionNode|null */
     private $where;
 
-    public function __construct(QualifiedName $table, bool $full = false, ?string $like = null, ?ExpressionNode $where = null)
+    /** @var bool */
+    private $full;
+
+    /** @var bool */
+    private $extended;
+
+    public function __construct(
+        QualifiedName $table,
+        ?string $like = null,
+        ?ExpressionNode $where = null,
+        bool $full = false,
+        bool $extended = false
+    )
     {
         $this->table = $table;
-        $this->full = $full;
         $this->like = $like;
         $this->where = $where;
+        $this->full = $full;
+        $this->extended = $extended;
     }
 
     public function getTable(): QualifiedName
     {
         return $this->table;
-    }
-
-    public function isFull(): bool
-    {
-        return $this->full;
     }
 
     public function getLike(): ?string
@@ -56,6 +61,16 @@ class ShowColumnsCommand implements ShowCommand
     public function getWhere(): ?ExpressionNode
     {
         return $this->where;
+    }
+
+    public function full(): bool
+    {
+        return $this->full;
+    }
+
+    public function extended(): bool
+    {
+        return $this->extended;
     }
 
     public function serialize(Formatter $formatter): string

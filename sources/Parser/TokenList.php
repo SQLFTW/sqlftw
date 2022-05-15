@@ -790,6 +790,7 @@ class TokenList
 
     /**
      * @return array{string, string|null} ($name, $schema)
+     * @todo return QuelifiedName
      */
     public function expectQualifiedName(): array
     {
@@ -814,6 +815,7 @@ class TokenList
 
     /**
      * @return array{string, string|null}|null ($name, $schema)
+     * @todo: return QualifiedName
      */
     public function getQualifiedName(): ?array
     {
