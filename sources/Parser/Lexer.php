@@ -466,6 +466,22 @@ class Lexer
                     break;
                 case '-':
                     $next = $position < $length ? $string[$position] : '';
+                    $numberCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL
+                        || ($previous->type & T::END) !== 0
+                        || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
+                    if ($numberCanFollow) {
+                        try {
+                            [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '-');
+                        } catch (LexerException $e) {
+                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
+                            break;
+                        }
+                        if ($value !== null) {
+                            yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
+                            break;
+                        }
+                    }
+
                     if ($next === '-') {
                         $position++;
                         $column++;
@@ -506,21 +522,6 @@ class Lexer
                             yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
                         }
                         break;
-                    }
-                    $numberCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL
-                        || ($previous->type & T::END) !== 0
-                        || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
-                    if ($numberCanFollow && isset(self::$numbersKey[$next])) {
-                        try {
-                            [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '-');
-                        } catch (LexerException $e) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
-                            break;
-                        }
-                        if ($value !== null) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
-                            break;
-                        }
                     }
                     $value = $char;
                     while ($position < $length) {
@@ -1036,18 +1037,22 @@ class Lexer
     {
         $length = strlen($string);
         $offset = 0;
-        $num = isset(self::$numbersKey[$start]);
+        $isNumeric = isset(self::$numbersKey[$start]);
         $base = $start;
+        $minusAllowed = $start === '-';
         $exp = '';
         do {
-            // integer
+            // integer (prefixed by any number of "-")
             $next = '';
             while ($position + $offset < $length) {
                 $next = $string[$position + $offset];
-                if (isset(self::$numbersKey[$next])) {
+                if (isset(self::$numbersKey[$next]) || ($minusAllowed && $next === '-')) {
                     $base .= $next;
                     $offset++;
-                    $num = true;
+                    if ($next !== '-') {
+                        $isNumeric = true;
+                        $minusAllowed = false;
+                    }
                 } else {
                     break;
                 }
@@ -1066,7 +1071,7 @@ class Lexer
                         if (isset(self::$numbersKey[$next])) {
                             $base .= $next;
                             $offset++;
-                            $num = true;
+                            $isNumeric = true;
                         } else {
                             break;
                         }
@@ -1074,6 +1079,9 @@ class Lexer
                 } else {
                     break;
                 }
+            }
+            if (!$isNumeric) {
+                return [null, null];
             }
             if ($position + $offset >= $length) {
                 break;
@@ -1102,27 +1110,30 @@ class Lexer
                             $expComplete = true;
                         } else {
                             if (trim($exp, 'e+-') === '' && strpos($base, '.') !== false) {
-                                throw new LexerException('Invalid number exponent', $position, $string);
+                                throw new LexerException('Invalid number exponent ' . $exp, $position, $string);
                             }
                             break;
                         }
                     }
                     if (!$expComplete) {
-                        throw new LexerException('Invalid number exponent', $position, $string);
+                        throw new LexerException('Invalid number exponent ' . $exp, $position, $string);
                     }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
-                    $num = false;
+                    $isNumeric = false;
                     break 2;
                 }
             } while (false); // @phpstan-ignore-line
         } while (false); // @phpstan-ignore-line
 
-        if (!$num) {
+        if (!$isNumeric) {
             return [null, null];
         }
 
         $orig = $base;
         $value = strtolower(rtrim(ltrim($base, '+'), '.'));
+        while ($value[0] === '-' && $value[1] === '-') {
+            $value = substr($value, 2);
+        }
         if ($value[0] === '.') {
             $value = '0' . $value;
         }

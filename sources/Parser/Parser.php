@@ -16,6 +16,7 @@ use Generator;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
+use Throwable;
 use function count;
 use function in_array;
 use function iterator_to_array;
@@ -71,6 +72,10 @@ class Parser
                     $tokenList->expectEnd();
                 }
             } catch (ParserException $e) {
+                yield new InvalidCommand($tokenList, $e);
+
+                continue;
+            } catch (Throwable $e) {
                 yield new InvalidCommand($tokenList, $e);
 
                 continue;

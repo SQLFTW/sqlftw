@@ -36,6 +36,24 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::VALUE | TokenType::NUMBER, -123, 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 5);
 
+$tokens = $lexer->tokenizeAll(' --123 ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::NUMBER, 123, 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
+
+$tokens = $lexer->tokenizeAll(' ---123 ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::NUMBER, -123, 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 7);
+
+$tokens = $lexer->tokenizeAll(' ----123 ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], TokenType::VALUE | TokenType::NUMBER, 123, 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
+
 $tokens = $lexer->tokenizeAll(' 123.456 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
