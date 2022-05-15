@@ -13,6 +13,7 @@ use Dogma\Check;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 
 class GetDiagnosticsStatement implements CompoundStatementItem
@@ -25,7 +26,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem
     /** @var DiagnosticsItem[]|null */
     private $statementItems;
 
-    /** @var int|null */
+    /** @var ExpressionNode|null */
     private $conditionNumber;
 
     /** @var DiagnosticsItem[]|null */
@@ -38,7 +39,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem
     public function __construct(
         ?DiagnosticsArea $area,
         ?array $statementItems,
-        ?int $conditionNumber,
+        ?ExpressionNode $conditionNumber,
         ?array $conditionItems
     ) {
         Check::oneOf($conditionItems, $statementItems);
@@ -65,6 +66,32 @@ class GetDiagnosticsStatement implements CompoundStatementItem
         $this->conditionItems = $conditionItems;
     }
 
+    public function getArea(): ?DiagnosticsArea
+    {
+        return $this->area;
+    }
+
+    /**
+     * @return DiagnosticsItem[]
+     */
+    public function getStatementItems(): ?array
+    {
+        return $this->conditionItems;
+    }
+
+    public function getConditionNumber(): ?ExpressionNode
+    {
+        return $this->conditionNumber;
+    }
+
+    /**
+     * @return DiagnosticsItem[]
+     */
+    public function getConditionItems(): ?array
+    {
+        return $this->conditionItems;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'GET';
@@ -75,7 +102,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem
         if ($this->statementItems !== null) {
             $result .= $formatter->formatSerializablesList($this->statementItems);
         } elseif ($this->conditionItems !== null) {
-            $result .= 'CONDITION ' . $this->conditionNumber . ' ' . $formatter->formatSerializablesList($this->conditionItems);
+            $result .= 'CONDITION ' . $this->conditionNumber->serialize() . ' ' . $formatter->formatSerializablesList($this->conditionItems);
         } else {
             throw new ShouldNotHappenException('Either conditionItems or statementItems must be set.');
         }

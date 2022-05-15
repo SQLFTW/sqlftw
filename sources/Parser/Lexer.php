@@ -286,7 +286,10 @@ class Lexer
                     yield $previous = new Token(T::VALUE | T::PLACEHOLDER, $start, $char, null, $condition);
                     break;
                 case '@':
-                    if (($previous->type & (T::STRING | T::NAME)) !== 0 && ($previous->type & (T::KEYWORD | T::UNQUOTED_NAME)) !== (T::KEYWORD | T::UNQUOTED_NAME)) {
+                    if (($previous->type & (T::STRING | T::NAME)) !== 0
+                        && ($previous->type & (T::KEYWORD | T::UNQUOTED_NAME)) !== (T::KEYWORD | T::UNQUOTED_NAME)
+                        && ($previous->type & T::AT_VARIABLE) === 0
+                    ) {
                         // user @ host
                         yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $char, null, $condition);
                         break;

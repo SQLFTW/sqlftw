@@ -499,7 +499,8 @@ class CompoundStatementParser
 
         $statementItems = $conditionItems = $conditionNumber = null;
         if ($tokenList->hasKeyword(Keyword::CONDITION)) {
-            $conditionNumber = $tokenList->expectInt();
+            // todo: integer or variable
+            $conditionNumber = $this->expressionParser->parseExpression($tokenList);
             $conditionItems = [];
             do {
                 $target = $tokenList->expectName();
