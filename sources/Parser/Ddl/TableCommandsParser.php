@@ -49,6 +49,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\Action\OptimizePartitionAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\OrderByAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\RebuildPartitionAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\RemovePartitioningAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameIndexAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameToAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\ReorganizePartitionAction;
@@ -166,6 +167,7 @@ class TableCommandsParser
      *   | ALTER INDEX index_name {VISIBLE | INVISIBLE}
      *   | DISABLE KEYS
      *   | ENABLE KEYS
+     *   | RENAME COLUMN old_col_name TO new_col_name
      *   | RENAME [TO|AS] new_tbl_name
      *   | RENAME {INDEX|KEY} old_index_name TO new_index_name
      *   | ORDER BY col_name [ASC | DESC] [, col_name [ASC | DESC]] ...
@@ -535,7 +537,13 @@ class TableCommandsParser
                     $actions[] = new RemovePartitioningAction();
                     break;
                 case Keyword::RENAME:
-                    if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
+                    if ($tokenList->hasKeyword(Keyword::COLUMN)) {
+                        // RENAME COLUMN old_col_name TO new_col_name
+                        $oldName = $tokenList->expectName();
+                        $tokenList->expectKeyword(Keyword::TO);
+                        $newName = $tokenList->expectName();
+                        $actions[] = new RenameColumnAction($oldName, $newName);
+                    } elseif ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
                         // RENAME {INDEX|KEY} old_index_name TO new_index_name
                         $oldName = $tokenList->expectName();
                         $tokenList->expectKeyword(Keyword::TO);
