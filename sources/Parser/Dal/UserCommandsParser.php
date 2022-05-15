@@ -679,11 +679,11 @@ class UserCommandsParser
             $passwordFunction = $tokenList->using(null, 50700)
                 ? $tokenList->getAnyKeyword(Keyword::PASSWORD)
                 : $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::OLD_PASSWORD);
-            if ($passwordFunction) {
+            if ($passwordFunction !== null) {
                 $tokenList->expect(TokenType::LEFT_PARENTHESIS);
             }
             $password = $tokenList->expectString();
-            if ($passwordFunction) {
+            if ($passwordFunction !== null) {
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             $retain = false;

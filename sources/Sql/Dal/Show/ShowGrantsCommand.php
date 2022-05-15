@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\UserName;

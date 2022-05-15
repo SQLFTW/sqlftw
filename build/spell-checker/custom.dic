@@ -2,9 +2,10 @@
 args
 ansi
 armscii
-backtick
+buf
 crm
 cwd
+ddl
 dgray
 dll
 euc
@@ -18,9 +19,11 @@ iso
 jis
 keybcs
 mixin
+mysqlbinlog
 nul
 num
 parens
+perl
 postgresql
 refman
 remstr
@@ -42,6 +45,7 @@ hhhhhhhhhhhh
 
 # en
 acceptor
+backtick
 backtrace
 bitwise
 callstack
@@ -55,13 +59,16 @@ failover
 formatters
 instantiable
 introducer
+keyring
 leakproof
+login
 matchers
 ok
 ordinality
 preload
 preorder
 preparable
+pushdown
 reindex
 serializables
 startup

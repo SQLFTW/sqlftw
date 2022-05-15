@@ -9,6 +9,7 @@
 
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 // phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
+// phpcs:disable SlevomatCodingStandard.ControlStructures.AssignmentInCondition
 
 namespace SqlFtw\Parser;
 
@@ -26,6 +27,7 @@ use function array_flip;
 use function array_keys;
 use function array_merge;
 use function array_values;
+use function explode;
 use function implode;
 use function ltrim;
 use function ord;
@@ -327,7 +329,7 @@ class Lexer
                     } else {
                         $exception = new LexerException('Invalid @ variable name', $position, $string);
 
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, $exception, $value, $condition);
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, null, $value, $condition, $exception);
                         break;
                     }
                     break;
@@ -449,7 +451,7 @@ class Lexer
                         try {
                             [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '.');
                         } catch (LexerException $e) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, $e, null, $condition);
+                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
                             break;
                         }
                         if ($value !== null) {
@@ -509,7 +511,7 @@ class Lexer
                         try {
                             [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '-');
                         } catch (LexerException $e) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, $e, null, $condition);
+                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
                             break;
                         }
                         if ($value !== null) {
@@ -539,7 +541,7 @@ class Lexer
                         try {
                             [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '+');
                         } catch (LexerException $e) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, $e, null, $condition);
+                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
                             break;
                         }
                         if ($value !== null) {
@@ -627,7 +629,7 @@ class Lexer
                     try {
                         [$value, $orig] = $this->parseNumber($string, $position, $column, $row, $char);
                     } catch (LexerException $e) {
-                        yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, $e, null, $condition);
+                        yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
                         break;
                     }
                     if ($value !== null) {
@@ -664,7 +666,7 @@ class Lexer
                             $exception = new LexerException('Invalid binary literal', $position, $string);
                             $orig = $char . '\'' . $bits . $next;
 
-                            yield $previous = new Token(T::VALUE | T::BINARY_LITERAL | T::INVALID, $start, $exception, $orig, $condition);
+                            yield $previous = new Token(T::VALUE | T::BINARY_LITERAL | T::INVALID, $start, null, $orig, $condition, $exception);
                             break;
                         }
                         break;
@@ -718,7 +720,7 @@ class Lexer
                             $exception = new LexerException('Invalid hexadecimal literal', $position, $string);
                             $orig = $char . '\'' . $bits . $next;
 
-                            yield $previous = new Token(T::VALUE | T::HEXADECIMAL_LITERAL | T::INVALID, $start, $exception, $orig, $condition);
+                            yield $previous = new Token(T::VALUE | T::HEXADECIMAL_LITERAL | T::INVALID, $start, null, $orig, $condition, $exception);
                             break;
                         }
                         break;
@@ -800,7 +802,7 @@ class Lexer
                         }
                     } elseif (isset($this->keywordsKey[$upper])) {
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $upper, $value, $condition);
-                    } elseif ($value[0] === '_' && ($charset = substr($value, 1)) && Charset::validateValue($charset)) {
+                    } elseif ($value[0] === '_' && ($charset = substr($value, 1)) !== '' && Charset::validateValue($charset)) {
                         yield $previous = new Token(T::NAME | T::CHARSET_INTRODUCER, $start, $charset, $value, $condition);
                     } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
                         yield new Token(T::KEYWORD, $start, $upper, $value, $condition);
@@ -825,7 +827,7 @@ class Lexer
                         if ($del === '') {
                             $exception = new LexerException('Delimiter not found', $position, $string);
 
-                            yield $previous = new Token(T::INVALID, $start, $exception, $del, $condition);
+                            yield $previous = new Token(T::INVALID, $start, null, $del, $condition, $exception);
                             break;
                         }
                         if (Str::endsWith($del, $delimiter)) {
@@ -838,7 +840,7 @@ class Lexer
                         if ($this->settings->getPlatform()->getFeatures()->isReserved(strtoupper($del))) {
                             $exception = new LexerException('Delimiter can not be a reserved word', $position, $string);
 
-                            yield $previous = new Token(T::INVALID, $start, $exception, $del, $condition);
+                            yield $previous = new Token(T::INVALID, $start, null, $del, $condition, $exception);
                             break;
                         }
                         // todo: quoted delimiters :E
@@ -879,7 +881,7 @@ class Lexer
                     if (ord($char) < 32) {
                         $exception = new LexerException('Invalid ASCII control character', $position, $string);
 
-                        yield $previous = new Token(T::INVALID, $start, $exception, $char, $condition);
+                        yield $previous = new Token(T::INVALID, $start, null, $char, $condition, $exception);
                         break;
                     }
                     $value = $char;

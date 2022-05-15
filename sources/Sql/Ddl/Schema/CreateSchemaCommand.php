@@ -25,7 +25,8 @@ class CreateSchemaCommand implements SchemaCommand
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(string $name, ?SchemaOptions $options, bool $ifNotExists = false) {
+    public function __construct(string $name, ?SchemaOptions $options, bool $ifNotExists = false)
+    {
         $this->name = $name;
         $this->options = $options;
         $this->ifNotExists = $ifNotExists;

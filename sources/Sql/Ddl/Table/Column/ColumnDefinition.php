@@ -45,7 +45,7 @@ class ColumnDefinition implements TableItem
     /** @var bool|null */
     private $visible;
 
-    /** @var string|int|float|bool|Literal|Identifier|FunctionCall|null */
+    /** @var string|int|float|bool|ExpressionNode|null */
     private $defaultValue;
 
     /** @var bool */
@@ -76,7 +76,7 @@ class ColumnDefinition implements TableItem
     private $check;
 
     /**
-     * @param string|int|float|bool|Literal|Identifier|FunctionCall|null $defaultValue
+     * @param string|int|float|bool|ExpressionNode|null $defaultValue
      * @param Identifier|FunctionCall|null $onUpdate
      */
     public function __construct(
@@ -128,7 +128,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @param string|int|float|bool|Literal|Identifier|FunctionCall|null $defaultValue
+     * @param string|int|float|bool|ExpressionNode|null $defaultValue
      */
     public function duplicateWithDefaultValue($defaultValue): self
     {
@@ -180,7 +180,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @return string|int|float|bool|Literal|Identifier|FunctionCall|null
+     * @return string|int|float|bool|ExpressionNode|null
      */
     public function getDefaultValue()
     {
@@ -239,6 +239,8 @@ class ColumnDefinition implements TableItem
             }
             if ($this->defaultValue instanceof FunctionCall) {
                 $result .= ' DEFAULT ' . $this->defaultValue->serialize($formatter);
+            } elseif ($this->defaultValue instanceof ExpressionNode && !$this->defaultValue instanceof Literal) { // todo: better categorization of expressions nodes
+                $result .= ' DEFAULT (' . $this->defaultValue->serialize($formatter) . ')';
             } elseif ($this->defaultValue !== null) {
                 $result .= ' DEFAULT ' . $formatter->formatValue($this->defaultValue);
             }

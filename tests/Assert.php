@@ -5,6 +5,7 @@ namespace SqlFtw\Tests;
 use Dogma\Debug\Callstack;
 use Dogma\Debug\Debugger;
 use Dogma\Debug\Dumper;
+use Dogma\Re;
 use Dogma\Str;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
@@ -18,7 +19,6 @@ use SqlFtw\Parser\TokenType;
 use function class_exists;
 use function gettype;
 use function implode;
-use function preg_match;
 use function preg_replace;
 use function sprintf;
 use function str_replace;
@@ -54,11 +54,11 @@ class Assert extends DogmaAssert
             $typeDesc = implode('|', TokenType::getByValue($type)->getConstantNames());
             parent::fail(sprintf('Type of token "%s" is %s (%d) and should be %s (%d).', $token->value, $actualDesc, $token->type, $typeDesc, $type));
         }
-        if (!$token->value instanceof LexerException) {
+        if (!$token->exception instanceof LexerException) {
             parent::fail(sprintf('Token value is %s (%d) and should be a LexerException.', $token->value, gettype($token->value)));
         } else {
-            $message = $token->value->getMessage();
-            if (!preg_match($messageRegexp, $message)) {
+            $message = $token->exception->getMessage();
+            if (Re::match($message, $messageRegexp) === null) {
                 parent::fail(sprintf('Token exception message is "%s" and should match "%s".', $message, $messageRegexp));
             }
         }
@@ -69,7 +69,7 @@ class Assert extends DogmaAssert
 
     public static function parse(
         string $query,
-        string $expected = null,
+        ?string $expected = null,
         ?int $version = null
     ): void {
         /** @var string $query */
@@ -84,16 +84,14 @@ class Assert extends DogmaAssert
             $expected = $query;
         }
 
-        $parser = $parser ?? ParserHelper::getParserFactory(null, $version)->getParser();
-        $formatter = $formatter ?? new Formatter($parser->getSettings());
+        $parser = ParserHelper::getParserFactory(null, $version)->getParser();
+        $formatter = new Formatter($parser->getSettings());
 
         try {
             $actual = $parser->parseSingleCommand($query)->serialize($formatter);
         } catch (ParserException $e) {
             if (class_exists(Debugger::class)) {
-                if ($e instanceof ParserException) {
-                    Debugger::dump($e->getTokenList());
-                }
+                Debugger::dump($e->getTokenList());
             }
             self::fail($e->getMessage());
             return;
@@ -136,7 +134,7 @@ class Assert extends DogmaAssert
                     $source = $command->getTokenList()->serialize();
                     // filtering "false" negatives
                     // todo: also should filter false positives
-                    if (Str::contains($source, "--error ER_")) {
+                    if (Str::contains($source, "--error ")) {
                         self::true(true);
                     } else {
                         if (class_exists(Debugger::class)) {
@@ -152,9 +150,6 @@ class Assert extends DogmaAssert
             }
         } catch (LexerException $e) {
             if (class_exists(Debugger::class)) {
-                if ($e instanceof ParserException) {
-                    Debugger::dump($e->getTokenList());
-                }
                 if ($e->backtrace !== null) {
                     /** @var PhpBacktraceItem[] $trace */
                     $trace = $e->getTrace();

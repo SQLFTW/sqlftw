@@ -35,7 +35,7 @@ class Version
         if (is_int($version)) {
             $this->major = (int) floor($version / 10000);
             $this->minor = (int) floor(($version % 10000) / 100);
-            $this->patch = ((int) $version % 100) ?: null;
+            $this->patch = ($version % 100) ?: null; // @phpstan-ignore-line ?:
         } else {
             $parts = explode('.', $version);
             $this->major = (int) $parts[0];
@@ -49,7 +49,7 @@ class Version
         if ($this->major > 90) {
             return $this->major;
         } else {
-            return $this->major * 10000 + $this->minor * 100 + $this->patch;
+            return $this->major * 10000 + ($this->minor ?? 0) * 100 + ($this->patch ?? 0);
         }
     }
 

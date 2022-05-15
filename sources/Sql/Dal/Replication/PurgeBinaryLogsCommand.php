@@ -14,6 +14,7 @@ use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\BuiltInFunction;
 
 class PurgeBinaryLogsCommand implements ReplicationCommand
 {
@@ -22,10 +23,13 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
     /** @var string|null */
     private $toLog;
 
-    /** @var DateTime|null */
+    /** @var DateTime|BuiltInFunction|null */
     private $before;
 
-    public function __construct(?string $toLog, ?DateTime $before)
+    /**
+     * @param DateTime|BuiltInFunction|null $before
+     */
+    public function __construct(?string $toLog, $before)
     {
         Check::oneOf($toLog, $before);
 
@@ -38,7 +42,10 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
         return $this->toLog;
     }
 
-    public function getBefore(): ?DateTime
+    /**
+     * @return DateTime|BuiltInFunction|null
+     */
+    public function getBefore()
     {
         return $this->before;
     }
@@ -48,7 +55,9 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
         $result = 'PURGE BINARY LOGS';
         if ($this->toLog !== null) {
             $result .= ' TO ' . $formatter->formatString($this->toLog);
-        } elseif ($this->before !== null) {
+        } elseif ($this->before instanceof BuiltInFunction) {
+            $result .= ' BEFORE ' . $this->before->serialize($formatter);
+        } elseif ($this->before instanceof DateTime) {
             $result .= ' BEFORE ' . $formatter->formatDateTime($this->before);
         } else {
             throw new ShouldNotHappenException('Either toLog or before should be set.');

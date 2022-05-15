@@ -120,7 +120,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @return IndexColumn[]
+     * @return array<IndexColumn|ExpressionNode>
      */
     public function getParts(): array
     {

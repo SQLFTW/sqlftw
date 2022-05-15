@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ValueLiteral;
+use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\UserName;
 
@@ -28,10 +28,10 @@ class IdentifiedUser implements SqlSerializable
     /** @var string|null */
     private $plugin;
 
-    /** @var ValueLiteral|null */
+    /** @var Literal|null */
     private $password;
 
-    /** @var ValueLiteral|null */
+    /** @var Literal|null */
     private $replace;
 
     /** @var bool */
@@ -40,9 +40,9 @@ class IdentifiedUser implements SqlSerializable
     public function __construct(
         UserName $user,
         ?IdentifiedUserAction $action = null,
-        ?ValueLiteral $password = null,
+        ?Literal $password = null,
         ?string $plugin = null,
-        ?ValueLiteral $replace = null,
+        ?Literal $replace = null,
         bool $retainCurrent = false
     ) {
         $this->user = $user;
@@ -68,12 +68,12 @@ class IdentifiedUser implements SqlSerializable
         return $this->plugin;
     }
 
-    public function getPassword(): ?ValueLiteral
+    public function getPassword(): ?Literal
     {
         return $this->password;
     }
 
-    public function getReplace(): ?ValueLiteral
+    public function getReplace(): ?Literal
     {
         return $this->replace;
     }

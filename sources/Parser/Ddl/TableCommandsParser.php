@@ -517,7 +517,9 @@ class TableCommandsParser
                     $columns = [];
                     do {
                         $column = $tokenList->expectName();
-                        $columns[$column] = $tokenList->getAnyKeyword(Keyword::ASC, Keyword::DESC);
+                        /** @var 'ASC'|'DESC'|null $order */
+                        $order = $tokenList->getAnyKeyword(Keyword::ASC, Keyword::DESC);
+                        $columns[$column] = $order;
                     } while ($tokenList->hasComma());
                     $actions[] = new OrderByAction($columns);
                     break;
@@ -793,12 +795,12 @@ class TableCommandsParser
                     $null = true;
                     break;
                 case Keyword::DEFAULT:
-                    // [DEFAULT default_value]
-                    // [DEFAULT CURRENT_TIMESTAMP[(...)]]
                     if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                        // [DEFAULT (expr)]
                         $default = $this->expressionParser->parseExpression($tokenList);
                         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                     } elseif ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
+                        // [DEFAULT CURRENT_TIMESTAMP[(...)]]
                         if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                             $param = $tokenList->getInt();
                             $params = $param !== null ? [new ValueLiteral($param)] : [];
@@ -808,6 +810,7 @@ class TableCommandsParser
                             $default = new Identifier(Keyword::CURRENT_TIMESTAMP);
                         }
                     } else {
+                        // [DEFAULT default_value]
                         $default = $this->expressionParser->parseLiteralValue($tokenList);
                     }
                     break;

@@ -17,6 +17,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
+use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
@@ -91,12 +92,12 @@ class TokenList
         return $this->settings;
     }
 
-    public function using(string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool
+    public function using(?string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool
     {
         return $this->platform->matches($platform, $minVersion, $maxVersion);
     }
 
-    public function check(string $feature, ?int $minVersion = null, ?int $maxVersion = null, string $platform = null): void
+    public function check(string $feature, ?int $minVersion = null, ?int $maxVersion = null, ?string $platform = null): void
     {
         if (!$this->platform->matches($platform, $minVersion, $maxVersion)) {
             throw new InvalidVersionException($feature, $this);
@@ -243,6 +244,9 @@ class TokenList
         return (bool) $this->get($tokenType, $value);
     }
 
+    /**
+     * @param mixed $value
+     */
     public function pass(int $tokenType, $value = null): void
     {
         $this->has($tokenType, $value);
@@ -285,7 +289,7 @@ class TokenList
     {
         $token = $this->expect(TokenType::NAME, $name);
 
-        return $token->original ?? $token->value;
+        return $token->original ?? (string) $token->value;
     }
 
     public function getName(?string $name = null): ?string
@@ -305,7 +309,7 @@ class TokenList
             throw InvalidTokenException::tokens([TokenType::NAME], null, $token, $this);
         }
 
-        return $token->original ?? $token->value;
+        return $token->original ?? (string) $token->value;
     }
 
     public function getNonKeywordName(?string $name = null): ?string
@@ -341,12 +345,12 @@ class TokenList
         return $value;
     }
 
-    public function expectStringLike(): ValueLiteral
+    public function expectStringLike(): Literal
     {
         $token = $this->expect(TokenType::STRING | TokenType::HEXADECIMAL_LITERAL);
         $value = $token->value;
         if (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
-            $value = new HexadecimalLiteral($value);
+            return new HexadecimalLiteral((string) $value);
         }
 
         return new ValueLiteral($value);
@@ -398,7 +402,7 @@ class TokenList
         if (is_float($number)) {
             throw new InvalidValueException('integer', $this);
         } else {
-            return $number;
+            return (int) $number; // todo: beware uint64
         }
     }
 
@@ -416,10 +420,10 @@ class TokenList
             return null;
         }
 
-        return $number;
+        return (int) $number; // todo: beware uint64
     }
 
-    public function expectIntLike(): ValueLiteral
+    public function expectIntLike(): Literal
     {
         $number = $this->expect(TokenType::NUMBER | TokenType::STRING | TokenType::HEXADECIMAL_LITERAL | TokenType::BINARY_LITERAL);
         $value = $number->value;
@@ -429,9 +433,9 @@ class TokenList
             throw new InvalidValueException('integer', $this);
         }
         if (($number->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
-            $value = new HexadecimalLiteral($number->value);
+            return new HexadecimalLiteral((string) $value);
         } elseif (($number->type & TokenType::BINARY_LITERAL) !== 0) {
-            $value = new BinaryLiteral($number->value);
+            return new BinaryLiteral((string) $value);
         }
 
         return new ValueLiteral($value);

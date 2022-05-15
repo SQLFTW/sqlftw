@@ -100,6 +100,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const DIV_PRECISION_INCREMENT = 'div_precision_increment';
     public const END_MARKERS_IN_JSON = 'end_markers_in_json';
     public const ENFORCE_GTID_CONSISTENCY = 'enforce_gtid_consistency';
+    public const ENGINE_CONDITION_PUSHDOWN = 'engine_condition_pushdown';
     public const EQ_RANGE_INDEX_DIVE_LIMIT = 'eq_range_index_dive_limit';
     public const ERROR_COUNT = 'error_count';
     public const EVENT_SCHEDULER = 'event_scheduler';
@@ -138,6 +139,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const IDENTITY = 'identity';
     public const IGNORE_BUILTIN_INNODB = 'ignore_builtin_innodb';
     public const IGNORE_DB_DIRS = 'ignore_db_dirs'; // removed in 8.0
+    public const INFORMATION_SCHEMA_STATS_EXPIRY = 'information_schema_stats_expiry';
     public const INIT_CONNECT = 'init_connect';
     public const INIT_FILE = 'init_file';
     public const INIT_SLAVE = 'init_slave';

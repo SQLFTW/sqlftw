@@ -11,7 +11,6 @@ namespace SqlFtw\Sql\Expression;
 
 use DateInterval;
 use DateTimeInterface;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;

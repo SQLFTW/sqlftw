@@ -19,6 +19,7 @@ use SqlFtw\Sql\Keyword;
 use function count;
 use function in_array;
 use function iterator_to_array;
+use function strtolower;
 
 class Parser
 {
@@ -143,7 +144,7 @@ class Parser
                 $tokenList->expected('any keyword');
             }
         } elseif (($first->type & TokenType::INVALID) !== 0) {
-            return new InvalidCommand($tokenList, $first->value);
+            return new InvalidCommand($tokenList, $first->exception); // @phpstan-ignore-line LexerException!
         }
 
         switch ($first->value) {
@@ -328,10 +329,12 @@ class Parser
                 // DO
                 return $this->factory->getDoCommandParser()->parseDo($tokenList->resetPosition($start));
             case Keyword::DROP:
-                $second = $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA, Keyword::EVENT,
-                    Keyword::FUNCTION, Keyword::INDEX, Keyword::LOGFILE, Keyword::PREPARE, Keyword::PROCEDURE, Keyword::ROLE,
-                    Keyword::SERVER, Keyword::TABLE, Keyword::TABLES, Keyword::TEMPORARY, Keyword::TABLESPACE,
-                    Keyword::TRIGGER, Keyword::UNDO, Keyword::USER, Keyword::VIEW);
+                $second = $tokenList->expectAnyKeyword(
+                    Keyword::DATABASE, Keyword::SCHEMA, Keyword::EVENT, Keyword::FUNCTION, Keyword::INDEX,
+                    Keyword::LOGFILE, Keyword::PREPARE, Keyword::PROCEDURE, Keyword::ROLE, Keyword::SERVER,
+                    Keyword::TABLE, Keyword::TABLES, Keyword::TEMPORARY, Keyword::TABLESPACE, Keyword::TRIGGER,
+                    Keyword::UNDO, Keyword::USER, Keyword::VIEW
+                );
                 switch ($second) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
@@ -641,17 +644,19 @@ class Parser
                 // XA RECOVER
                 return $this->factory->getXaTransactionCommandsParser()->parseXa($tokenList->resetPosition($start));
             default:
+                // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
                 // avoiding Perl artifacts in MySQL test suite scripts
-                static $perlArtifacts = [Keyword::CLOSE, Keyword::CONNECTION, Keyword::DEC, Keyword::ERROR, Keyword::EXIT, Keyword::IF,
-                    Keyword::OPEN, Keyword::READ, Keyword::SOURCE, Keyword::WHILE, 'append_file', 'break', 'change_user',
-                    'connect', 'copy_file', 'die', 'diff_files', 'disable_query_log', 'disable_warnings', 'disconnect',
-                    'echo', 'enable_query_log', 'enable_warnings', 'END_OF_PROCEDURE', 'eval', 'EVAL', 'exec', 'file_exists',
-                    'inc', 'let', 'mkdir', 'my', 'perl', 'query_vertical', 'reap', 'remove_file', 'replace_regex',
-                    'reset_connection', 'rmdir', 'save_master_pos', 'send', 'sleep', 'sync_slave_with_master', 'sync_with_master',
-                    'wait_for_slave_to_stop', 'write_file', '$file', '[', '}'
+                static $perlArtifacts = [
+                    'append_file', 'break', 'cat_file', 'change_user', 'close', 'connect', 'connection', 'copy_file',
+                    'dec', 'die', 'diff_files', 'disable_query_log', 'disable_result_log', 'disable_warnings',
+                    'disconnect', 'echo', 'enable_query_log', 'enable_result_log', 'enable_warnings', 'end',
+                    'end_of_procedure', 'error', 'eval', 'exec', 'exit', 'file_exists', 'if', 'inc', 'let', 'mkdir',
+                    'my', 'open', 'perl', 'print', 'query_vertical', 'read', 'reap', 'remove_file', 'replace_regex',
+                    'reset_connection', 'rmdir', 'save_master_pos', 'send', 'sleep', 'source', 'sync_slave_with_master',
+                    'sync_with_master', 'wait_for_slave_to_stop', 'while', 'write_file', '$file', '$match', '[', '}', '<',
                 ];
 
-                if ($this->settings->mysqlTestMode && in_array($first->value, $perlArtifacts)) {
+                if ($this->settings->mysqlTestMode && in_array(strtolower((string) $first->value), $perlArtifacts, true)) {
                     return new TesterCommand($tokenList);
                 } else {
                     $tokenList->resetPosition($start)->expectedAnyKeyword(
