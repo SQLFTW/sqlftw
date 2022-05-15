@@ -232,6 +232,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::SMALLINT,
         Keyword::SPATIAL,
         Keyword::SPECIFIC,
+        Keyword::SRID,
         Keyword::SQL,
         Keyword::SQL_BIG_RESULT,
         Keyword::SQL_CALC_FOUND_ROWS,

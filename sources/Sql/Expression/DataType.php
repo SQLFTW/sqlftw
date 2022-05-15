@@ -42,14 +42,17 @@ class DataType implements ExpressionNode
     /** @var bool */
     private $unsigned;
 
-    /** @var bool */
-    private $zerofill;
-
     /** @var Charset|null */
     private $charset;
 
     /** @var Collation|null */
     private $collation;
+
+    /** @var int|null */
+    private $srid;
+
+    /** @var bool */
+    private $zerofill;
 
     /**
      * @param int|int[]|string[]|null $params
@@ -60,6 +63,7 @@ class DataType implements ExpressionNode
         bool $unsigned = false,
         ?Charset $charset = null,
         ?Collation $collation = null,
+        ?int $srid = null,
         bool $zerofill = false
     ) {
         if ($unsigned && !$type->isNumber()) {
@@ -69,18 +73,22 @@ class DataType implements ExpressionNode
             throw new InvalidDefinitionException("Non-numeric columns ({$type->getValue()}) cannot be zerofill.");
         }
         if ($charset !== null && !$type->isText()) {
-            throw new InvalidDefinitionException("Non-textual columns ({$type->getValue()}) cannot have charset (type: .");
+            throw new InvalidDefinitionException("Non-textual columns ({$type->getValue()}) cannot have charset.");
         }
         if ($collation !== null && !$type->isText()) {
             throw new InvalidDefinitionException("Non-textual columns ({$type->getValue()}) cannot have collation.");
+        }
+        if ($srid !== null && !$type->isSpatial()) {
+            throw new InvalidDefinitionException("Non-spatial columns ({$type->getValue()}) cannot have srid.");
         }
 
         $this->type = $type;
         $this->setParams($type, $params);
         $this->unsigned = $unsigned;
-        $this->zerofill = $zerofill;
         $this->charset = $charset;
         $this->collation = $collation;
+        $this->srid = $srid;
+        $this->zerofill = $zerofill;
     }
 
     /**
@@ -210,6 +218,23 @@ class DataType implements ExpressionNode
         return $this->collation;
     }
 
+    public function addSrid(int $srid): self
+    {
+        if ($this->srid !== null) {
+            throw new InvalidDefinitionException('Type already has an srid.');
+        }
+
+        $that = clone $this;
+        $that->srid = $srid;
+
+        return $that;
+    }
+
+    public function getSrid(): ?int
+    {
+        return $this->srid;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
@@ -240,6 +265,10 @@ class DataType implements ExpressionNode
 
         if ($this->collation !== null) {
             $result .= ' COLLATE ' . $this->collation->serialize($formatter);
+        }
+
+        if ($this->srid !== null) {
+            $result .= ' SRID ' . $this->srid;
         }
 
         return $result;

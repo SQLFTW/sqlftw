@@ -69,7 +69,7 @@ class TypeParser
             $dataType = $dataType->canonicalize($settings);
         }
 
-        $params = $charset = $collation = null;
+        $params = $charset = $collation = $srid = null;
         $unsigned = $zerofill = false;
 
         if ($dataType->hasLength()) {
@@ -114,20 +114,28 @@ class TypeParser
             $zerofill = $tokenList->hasKeyword(Keyword::ZEROFILL);
         }
 
-        if ($tokenList->hasKeywords(Keyword::CHARSET)) {
-            $charset = $tokenList->expectCharsetName();
-        } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
-            $charset = $tokenList->expectCharsetName();
-        } elseif ($tokenList->hasKeyword(Keyword::BINARY)) {
-            $charset = Charset::get(Charset::BINARY);
-        } elseif ($tokenList->hasKeyword(Keyword::ASCII)) {
-            $charset = Charset::get(Charset::ASCII);
-        }
-        if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-            $collation = $tokenList->expectCollationName();
+        if ($dataType->hasCharset()) {
+            if ($tokenList->hasKeywords(Keyword::CHARSET)) {
+                $charset = $tokenList->expectCharsetName();
+            } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
+                $charset = $tokenList->expectCharsetName();
+            } elseif ($tokenList->hasKeyword(Keyword::BINARY)) {
+                $charset = Charset::get(Charset::BINARY);
+            } elseif ($tokenList->hasKeyword(Keyword::ASCII)) {
+                $charset = Charset::get(Charset::ASCII);
+            }
+            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+                $collation = $tokenList->expectCollationName();
+            }
         }
 
-        return new DataType($dataType, $params, $unsigned, $charset, $collation, $zerofill);
+        if ($dataType->isSpatial()) {
+            if ($tokenList->hasKeyword(Keyword::SRID)) {
+                $srid = $tokenList->expectInt();
+            }
+        }
+
+        return new DataType($dataType, $params, $unsigned, $charset, $collation, $srid, $zerofill);
     }
 
 }

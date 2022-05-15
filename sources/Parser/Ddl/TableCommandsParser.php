@@ -791,12 +791,12 @@ class TableCommandsParser
 
     private function parseOrdinaryColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
     {
-        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $charset = $collation = $visible = null;
+        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $charset = $collation = $srid = $visible = null;
         $autoIncrement = false;
         // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
             Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK,
-            Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::VISIBLE, Keyword::INVISIBLE];
+            Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::SRID, Keyword::VISIBLE, Keyword::INVISIBLE];
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
             switch ($keyword) {
                 case Keyword::NOT:
@@ -885,18 +885,15 @@ class TableCommandsParser
                 case Keyword::CHARACTER:
                     $tokenList->expectKeyword(Keyword::SET);
                 case Keyword::CHARSET:
-                    $charset = $tokenList->expectCharsetName();
+                    $type->addCharset($tokenList->expectCharsetName());
                     break;
                 case Keyword::COLLATE:
-                    $collation = $tokenList->expectCollationName();
+                    $type->addCollation($tokenList->expectCollationName());
+                    break;
+                case Keyword::SRID:
+                    $type->addSrid($tokenList->expectInt());
                     break;
             }
-        }
-        if ($charset !== null) {
-            $type = $type->addCharset($charset);
-        }
-        if ($collation !== null) {
-            $type = $type->addCollation($collation);
         }
 
         return new ColumnDefinition($name, $type, $default, $null, $visible, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $reference, $check);
