@@ -11,14 +11,14 @@ namespace SqlFtw\Sql\Dml;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\Query\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\SqlSerializable;
 
 class WithExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var SelectCommand */
+    /** @var Query */
     private $query;
 
     /** @var string */
@@ -30,14 +30,14 @@ class WithExpression implements SqlSerializable
     /**
      * @param string[]|null $columns
      */
-    public function __construct(SelectCommand $query, string $name, ?array $columns = null)
+    public function __construct(Query $query, string $name, ?array $columns = null)
     {
         $this->query = $query;
         $this->name = $name;
         $this->columns = $columns;
     }
 
-    public function getQuery(): SelectCommand
+    public function getQuery(): Query
     {
         return $this->query;
     }

@@ -60,7 +60,7 @@ class WithParser
             }
             $tokenList->expectKeyword(Keyword::AS);
             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-            $query = $this->parserFactory->getQueryParser()->parseSelect($tokenList);
+            $query = $this->parserFactory->getQueryParser()->parseQuery($tokenList);
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
             $expressions[] = new WithExpression($query, $name, $columns);
