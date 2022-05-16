@@ -48,7 +48,7 @@ class InstanceCommandParser
             $noRollbackOnError = false;
             if ($action->equalsValue(AlterInstanceAction::RELOAD_TLS)) {
                 if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-                    $forChannel = $tokenList->expectName();
+                    $forChannel = $tokenList->expectNameOrString();
                 }
                 $noRollbackOnError = $tokenList->hasKeywords(Keyword::NO, Keyword::ROLLBACK, Keyword::ON, Keyword::ERROR);
             }
