@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
+use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 
 class AddColumnsAction implements ColumnAction
 {
@@ -19,11 +20,11 @@ class AddColumnsAction implements ColumnAction
 
     public const FIRST = true;
 
-    /** @var ColumnDefinition[] */
+    /** @var array<ColumnDefinition|IndexDefinition> */
     private $columns;
 
     /**
-     * @param ColumnDefinition[] $columns
+     * @param array<ColumnDefinition|IndexDefinition> $columns
      */
     public function __construct(array $columns)
     {
@@ -31,7 +32,7 @@ class AddColumnsAction implements ColumnAction
     }
 
     /**
-     * @return ColumnDefinition[]
+     * @return array<ColumnDefinition|IndexDefinition>
      */
     public function getColumns(): array
     {

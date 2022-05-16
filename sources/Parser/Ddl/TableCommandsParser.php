@@ -100,6 +100,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use function array_pop;
 
 class TableCommandsParser
 {
@@ -217,9 +218,15 @@ class TableCommandsParser
                         case Keyword::COLUMN:
                             if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
                                 // ADD [COLUMN] (col_name column_definition, ...)
+                                // note: unsure what continues after the ...
+                                // from tests: ALTER TABLE st1 ADD COLUMN (c2 INT GENERATED ALWAYS AS (c1+1) STORED, INDEX(c2));
                                 $addColumns = [];
                                 do {
-                                    $addColumns[] = $this->parseColumn($tokenList);
+                                    if ($tokenList->hasKeyword(Keyword::INDEX)) {
+                                        $addColumns[] = $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
+                                    } else {
+                                        $addColumns[] = $this->parseColumn($tokenList);
+                                    }
                                 } while ($tokenList->hasComma());
                                 $actions[] = new AddColumnsAction($addColumns);
                                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
