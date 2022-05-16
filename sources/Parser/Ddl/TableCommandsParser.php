@@ -1485,7 +1485,7 @@ class TableCommandsParser
                 $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 $values = [];
                 do {
-                    $values[] = $this->expressionParser->parseLiteralValue($tokenList);
+                    $values[] = $this->expressionParser->parseExpression($tokenList);
                 } while ($tokenList->hasComma());
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }

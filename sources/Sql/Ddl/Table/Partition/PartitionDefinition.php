@@ -30,7 +30,7 @@ class PartitionDefinition implements SqlSerializable
     /** @var mixed[]|ExpressionNode|bool|null */
     private $lessThan;
 
-    /** @var mixed[]|null */
+    /** @var ExpressionNode[]|null */
     private $values;
 
     /** @var mixed[]|null */
@@ -41,7 +41,7 @@ class PartitionDefinition implements SqlSerializable
 
     /**
      * @param mixed[]|ExpressionNode|bool|null $lessThan
-     * @param mixed[]|null $values
+     * @param ExpressionNode[]|null $values
      * @param mixed[]|null $options
      * @param mixed[][]|null[]|null $subpartitions
      */
@@ -83,7 +83,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return mixed[]|null
+     * @return ExpressionNode[]|null
      */
     public function getValues(): ?array
     {
@@ -120,7 +120,7 @@ class PartitionDefinition implements SqlSerializable
                 $result .= 'MAXVALUE';
             }
         } elseif ($this->values !== null) {
-            $result .= ' VALUES IN (' . $formatter->formatValuesList($this->values) . ')';
+            $result .= ' VALUES IN (' . $formatter->formatSerializablesList($this->values) . ')';
         }
         if ($this->options !== null) {
             foreach ($this->options as $option => $value) {
