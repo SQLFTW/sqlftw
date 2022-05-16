@@ -20,6 +20,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\FileFormat;
+use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\Expression\AssignOperator;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
@@ -610,12 +611,13 @@ class ExpressionParser
             $first = false;
         } while (true);
 
-        if ($tokenList->hasKeyword(Keyword::OVER)) {
+        $over = null;
+        if ($function instanceof BuiltInFunction && $function->isAggregate() && $tokenList->hasKeyword(Keyword::OVER)) {
+            // AGG_FUNC(...) [over_clause]
             $over = $this->parseOver($tokenList);
-            // todo: parse AGG_FUNC(...) [over_clause]
         }
 
-        return new FunctionCall($function, $arguments);
+        return new FunctionCall($function, $arguments, $over);
     }
 
     /**
@@ -709,11 +711,21 @@ class ExpressionParser
      *   | expr PRECEDING
      *   | expr FOLLOWING
      * }
+     *
+     * @return WindowSpecification|string
      */
-    private function parseOver(TokenList $tokenList): int
+    private function parseOver(TokenList $tokenList)
     {
-        // todo:
-        return 0;
+        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            /** @var QueryParser $queryParser */
+            $queryParser = ($this->queryParserProxy)();
+            $window = $queryParser->parseWindow($tokenList);
+            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+
+            return $window;
+        } else {
+            return $tokenList->expectNameOrString();
+        }
     }
 
     /**
@@ -806,7 +818,10 @@ class ExpressionParser
 
     private function parseSubquery(TokenList $tokenList): Subquery
     {
-        return new Subquery(($this->queryParserProxy)()->parseQuery($tokenList));
+        /** @var QueryParser $queryParser */
+        $queryParser = ($this->queryParserProxy)();
+
+        return new Subquery($queryParser->parseQuery($tokenList));
     }
 
     public function parseLiteral(TokenList $tokenList): Literal

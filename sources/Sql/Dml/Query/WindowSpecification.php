@@ -22,7 +22,7 @@ class WindowSpecification implements SqlSerializable
     use StrictBehaviorMixin;
 
     /** @var string|null */
-    private $reference;
+    private $name;
 
     /** @var ExpressionNode[]|null */
     private $partitionBy;
@@ -37,17 +37,17 @@ class WindowSpecification implements SqlSerializable
      * @param ExpressionNode[]|null $partitionBy
      * @param OrderByExpression[]|null $orderBy
      */
-    public function __construct(?string $reference, ?array $partitionBy, ?array $orderBy, ?WindowFrame $frame)
+    public function __construct(?string $name, ?array $partitionBy, ?array $orderBy, ?WindowFrame $frame)
     {
-        $this->reference = $reference;
+        $this->name = $name;
         $this->partitionBy = $partitionBy;
         $this->orderBy = $orderBy;
         $this->frame = $frame;
     }
 
-    public function getReference(): ?string
+    public function getName(): ?string
     {
-        return $this->reference;
+        return $this->name;
     }
 
     /**
@@ -74,8 +74,8 @@ class WindowSpecification implements SqlSerializable
     public function serialize(Formatter $formatter): string
     {
         $parts = [];
-        if ($this->reference !== null) {
-            $parts[] = $formatter->formatName($this->reference);
+        if ($this->name !== null) {
+            $parts[] = $formatter->formatName($this->name);
         }
         if ($this->partitionBy !== null) {
             $parts[] = 'PARTITION BY ' . implode(', ', array_map(static function (ExpressionNode $expression) use ($formatter): string {

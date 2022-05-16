@@ -12,6 +12,8 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\Query\WindowSpecification;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use function is_int;
@@ -29,17 +31,22 @@ class FunctionCall implements ExpressionNode
     /** @var ExpressionNode[] */
     private $arguments;
 
+    private $over;
+
     /**
      * @param QualifiedName|BuiltInFunction $function
      * @param ExpressionNode[] $arguments
+     * @param WindowSpecification|string $over
      */
-    public function __construct($function, array $arguments = [])
+    public function __construct($function, array $arguments = [], $over = null)
     {
-        Check::types($function, [QualifiedName::class, BuiltInFunction::class]);
-        Check::itemsOfType($arguments, ExpressionNode::class);
+        if ($over !== null && (!$function instanceof BuiltInFunction || !$function->isAggregate())) {
+            throw new InvalidDefinitionException('OVER clause is supported only on aggregation functions.');
+        }
 
         $this->function = $function;
         $this->arguments = $arguments;
+        $this->over = $over;
     }
 
     /**
@@ -82,7 +89,17 @@ class FunctionCall implements ExpressionNode
             $arguments = $formatter->formatSerializablesList($this->arguments);
         }
 
-        return $this->function->serialize($formatter) . '(' . $arguments . ')';
+        $result = $this->function->serialize($formatter) . '(' . $arguments . ')';
+
+        if ($this->over !== null) {
+            if ($this->over instanceof WindowSpecification) {
+                $result .= ' OVER (' . $this->over->serialize($formatter) . ')';
+            } else {
+                $result .= ' OVER ' . $formatter->formatName($this->over);
+            }
+        }
+
+        return $result;
     }
 
 }

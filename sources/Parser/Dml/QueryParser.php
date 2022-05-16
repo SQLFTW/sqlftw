@@ -484,9 +484,9 @@ class QueryParser
      * frame_between:
      *   BETWEEN frame_start AND frame_end
      */
-    private function parseWindow(TokenList $tokenList): WindowSpecification
+    public function parseWindow(TokenList $tokenList): WindowSpecification
     {
-        $reference = $tokenList->getName();
+        $name = $tokenList->getName();
 
         $partitionBy = $orderBy = $frame = null;
         if ($tokenList->hasKeywords(Keyword::PARTITION, Keyword::BY)) {
@@ -515,7 +515,7 @@ class QueryParser
             $frame = new WindowFrame($units, $startType, $endType, $startExpression, $endExpression);
         }
 
-        return new WindowSpecification($reference, $partitionBy, $orderBy, $frame);
+        return new WindowSpecification($name, $partitionBy, $orderBy, $frame);
     }
 
     /**

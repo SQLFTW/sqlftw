@@ -20,7 +20,6 @@ currently supports almost all SQL features up to MySQL 8.0.15 and some after tha
 
 notable not yet supported features:
 - some of new MySQL features after 8.0.15
-- OVER clause on aggregation functions
 - JSON_TABLE() function parameters
 - regular comments (conditional comments are parsed)
 - optimizer hint comments
