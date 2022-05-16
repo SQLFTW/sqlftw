@@ -40,7 +40,10 @@ use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 use function abs;
+use function array_shift;
+use function explode;
 use function is_a;
+use function trim;
 
 class ReplicationCommandsParser
 {
@@ -556,13 +559,29 @@ class ReplicationCommandsParser
      */
     private function parseGtidSet(TokenList $tokenList)
     {
-        $empty = $tokenList->getString();
-        if ($empty !== null) {
-            if ($empty !== '') {
-                throw new InvalidValueException('UUID', $tokenList);
+        $string = $tokenList->getString();
+        if ($string !== null) {
+            if ($string === '') {
+                return '';
             }
 
-            return '';
+            $gtids = [];
+            $sets = explode(',', $string);
+            foreach ($sets as $set) {
+                $parts = explode(':', trim($set));
+                $uuid = array_shift($parts);
+                $intervals = [];
+                foreach ($parts as $part) {
+                    $startEnd = explode('-', $part);
+                    $start = (int) $startEnd[0];
+                    $end = isset($startEnd[1]) ? (int) $startEnd[1] : null;
+                    $intervals[] = [$start, $end];
+                }
+
+                new UuidSet($uuid, $intervals);
+            }
+
+            return $gtids;
         }
 
         $gtids = [];
