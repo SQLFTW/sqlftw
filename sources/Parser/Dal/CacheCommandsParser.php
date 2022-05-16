@@ -47,7 +47,7 @@ class CacheCommandsParser
             $indexes = $this->parseIndexes($tokenList);
 
             $tableIndexLists[] = new TableIndexList($table, $indexes);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $partitions = $this->parsePartitions($tokenList);
 
@@ -82,7 +82,7 @@ class CacheCommandsParser
             $ignoreLeaves = $tokenList->hasKeywords(Keyword::IGNORE, Keyword::LEAVES);
 
             $tableIndexLists[] = new TableIndexList($table, $indexes, $partitions, $ignoreLeaves);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new LoadIndexIntoCacheCommand($tableIndexLists);
     }
@@ -98,7 +98,7 @@ class CacheCommandsParser
             $indexes = [];
             do {
                 $indexes[] = $tokenList->expectName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -121,7 +121,7 @@ class CacheCommandsParser
             $partitions = [];
             do {
                 $partitions[] = $tokenList->expectName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
         }
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 

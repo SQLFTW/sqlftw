@@ -28,7 +28,7 @@ class ImportCommandParser
         $files = [];
         do {
             $files[] = $tokenList->expectString();
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new ImportCommand($files);
     }

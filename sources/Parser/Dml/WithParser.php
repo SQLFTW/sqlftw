@@ -55,7 +55,7 @@ class WithParser
                 $columns = [];
                 do {
                     $columns[] = $tokenList->expectName();
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             $tokenList->expectKeyword(Keyword::AS);
@@ -64,7 +64,7 @@ class WithParser
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
             $expressions[] = new WithExpression($query, $name, $columns);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $with = new WithClause($expressions, $recursive);
 

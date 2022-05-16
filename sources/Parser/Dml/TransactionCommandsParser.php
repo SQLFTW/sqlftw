@@ -81,7 +81,7 @@ class TransactionCommandsParser
             }
             $lock = $tokenList->expectMultiKeywordsEnum(LockTableType::class);
             $items[] = new LockTablesItem($table, $lock, $alias);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new LockTablesCommand($items);
     }
@@ -184,7 +184,7 @@ class TransactionCommandsParser
                     $write = false;
                 }
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new SetTransactionCommand($scope, $isolationLevel, $write);
     }
@@ -223,7 +223,7 @@ class TransactionCommandsParser
                     $write = false;
                 }
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new StartTransactionCommand($consistent, $write);
     }

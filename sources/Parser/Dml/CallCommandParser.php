@@ -45,7 +45,7 @@ class CallCommandParser
             if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
                 do {
                     $params[] = $this->expressionParser->parseExpression($tokenList);
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
         }

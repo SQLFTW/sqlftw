@@ -391,7 +391,7 @@ class CompoundStatementParser
                     }
                 }
                 $conditions[] = new Condition($type, $value);
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
 
             $statement = $this->parseStatement($tokenList);
 
@@ -421,7 +421,7 @@ class CompoundStatementParser
         }
 
         $names = [$name];
-        while ($tokenList->hasComma()) {
+        while ($tokenList->hasSymbol(',')) {
             $names[] = $tokenList->expectName();
         }
         $type = $this->typeParser->parseType($tokenList);
@@ -448,7 +448,7 @@ class CompoundStatementParser
         $variables = [];
         do {
             $variables[] = $tokenList->expectName();
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new FetchStatement($cursor, $variables);
     }
@@ -508,7 +508,7 @@ class CompoundStatementParser
                 /** @var ConditionInformationItem $item */
                 $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class);
                 $conditionItems[] = new DiagnosticsItem($target, $item);
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
         } else {
             $statementItems = [];
             do {
@@ -517,7 +517,7 @@ class CompoundStatementParser
                 /** @var StatementInformationItem $item */
                 $item = $tokenList->expectKeywordEnum(StatementInformationItem::class);
                 $statementItems[] = new DiagnosticsItem($target, $item);
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
         }
 
         return new GetDiagnosticsStatement($area, $statementItems, $conditionNumber, $conditionItems);
@@ -580,7 +580,7 @@ class CompoundStatementParser
                 $tokenList->expectOperator(Operator::EQUAL);
                 $value = $this->expressionParser->parseLiteralValue($tokenList);
                 $items[$item] = $value;
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
         }
 
         if ($keyword === Keyword::SIGNAL) {

@@ -279,7 +279,7 @@ class ShowCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
             $limit = $tokenList->expectInt();
-            if ($tokenList->hasComma()) {
+            if ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
                 $limit = $tokenList->getInt();
             }
@@ -443,7 +443,7 @@ class ShowCommandsParser
         $limit = $offset = null;
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
             $limit = $tokenList->expectInt();
-            if ($tokenList->hasComma()) {
+            if ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
                 $limit = $tokenList->expectInt();
             }
@@ -497,7 +497,7 @@ class ShowCommandsParser
             if ($tokenList->hasKeyword(Keyword::USING)) {
                 do {
                     $usingRoles[] = $tokenList->expectUserName();
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
             }
         }
 
@@ -580,7 +580,7 @@ class ShowCommandsParser
         $type = $tokenList->getMultiKeywordsEnum(ShowProfileType::class);
         if ($type !== null) {
             $types[] = $type;
-            while ($tokenList->hasComma()) {
+            while ($tokenList->hasSymbol(',')) {
                 $types[] = $tokenList->expectMultiKeywordsEnum(ShowProfileType::class);
             }
         }
@@ -614,7 +614,7 @@ class ShowCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
             $limit = $tokenList->expectInt();
-            if ($tokenList->hasComma()) {
+            if ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
                 $limit = $tokenList->expectInt();
             }
@@ -733,7 +733,7 @@ class ShowCommandsParser
         $limit = $offset = null;
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
             $limit = $tokenList->expectInt();
-            if ($tokenList->hasComma()) {
+            if ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
                 $limit = $tokenList->expectInt();
             }

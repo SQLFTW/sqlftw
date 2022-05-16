@@ -173,7 +173,7 @@ class ExpressionParser
         $expressions = [];
         do {
             $expressions[] = $this->parseExpression($tokenList);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $expressions;
     }
@@ -771,7 +771,7 @@ class ExpressionParser
         $columns = [];
         do {
             $columns[] = $this->parseColumnName($tokenList);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         $tokenList->expectKeyword(Keyword::AGAINST);
@@ -918,7 +918,7 @@ class ExpressionParser
             }
 
             $orderBy[] = new OrderByExpression($order, $column, $expression, $position, $collation);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $orderBy;
     }
@@ -935,7 +935,7 @@ class ExpressionParser
         $offset = null;
         if ($tokenList->hasKeyword(Keyword::OFFSET)) {
             $offset = $tokenList->expectInt();
-        } elseif ($tokenList->hasComma()) {
+        } elseif ($tokenList->hasSymbol(',')) {
             $offset = $limit;
             $limit = $tokenList->expectInt();
         }

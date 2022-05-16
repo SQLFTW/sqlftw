@@ -165,7 +165,7 @@ class InsertCommandParser
             $partitions = [];
             do {
                 $partitions[] = $tokenList->expectName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -191,7 +191,7 @@ class InsertCommandParser
             $columns = [];
             do {
                 $columns[] = $tokenList->expectName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -223,7 +223,7 @@ class InsertCommandParser
             } else {
                 $assignments[] = new Assignment($column, $this->expressionParser->parseExpression($tokenList));
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $assignments;
     }
@@ -245,12 +245,12 @@ class InsertCommandParser
                     } else {
                         $values[] = $this->expressionParser->parseExpression($tokenList);
                     }
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
 
             $rows[] = $values;
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $rows;
     }

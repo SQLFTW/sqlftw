@@ -511,7 +511,7 @@ class Parser
                 }
                 $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::REPLICA, Keyword::SLAVE, Keyword::QUERY);
                 if ($keyword === Keyword::MASTER) {
-                    if ($tokenList->hasComma()) {
+                    if ($tokenList->hasSymbol(',')) {
                         // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
                         return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                     }
@@ -519,7 +519,7 @@ class Parser
                     // RESET MASTER
                     return $this->factory->getReplicationCommandsParser()->parseResetMaster($tokenList->resetPosition($start));
                 } elseif ($keyword === Keyword::REPLICA) {
-                    if ($tokenList->hasComma()) {
+                    if ($tokenList->hasSymbol(',')) {
                         // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
                         return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                     }
@@ -527,7 +527,7 @@ class Parser
                     // RESET REPLICA
                     return $this->factory->getReplicationCommandsParser()->parseResetReplica($tokenList->resetPosition($start));
                 } elseif ($keyword === Keyword::SLAVE) {
-                    if ($tokenList->hasComma()) {
+                    if ($tokenList->hasSymbol(',')) {
                         // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
                         return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                     }

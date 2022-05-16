@@ -95,9 +95,9 @@ class XaTransactionCommandsParser
     {
         $transactionId = $tokenList->expectString();
         $branch = $format = null;
-        if ($tokenList->hasComma()) {
+        if ($tokenList->hasSymbol(',')) {
             $branch = $tokenList->expectString();
-            if ($tokenList->hasComma()) {
+            if ($tokenList->hasSymbol(',')) {
                 /** @var int $format */
                 $format = $tokenList->expectInt();
             }

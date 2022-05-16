@@ -85,7 +85,7 @@ class UpdateCommandParser
                 $value = $this->expressionParser->parseAssignExpression($tokenList);
                 $values[$column->format()] = new SetColumnExpression($column, $value);
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $where = null;
         if ($tokenList->hasKeyword(Keyword::WHERE)) {

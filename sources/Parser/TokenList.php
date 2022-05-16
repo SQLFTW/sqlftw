@@ -273,11 +273,11 @@ class TokenList
     /**
      * @phpstan-impure
      */
-    public function hasComma(): bool
+    public function hasSymbol(string $symbol): bool
     {
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
-        if ($token !== null && ($token->type & TokenType::COMMA) !== 0) {
+        if ($token !== null && ($token->type & TokenType::SYMBOL) !== 0 && $token->value === $symbol) {
             $this->position++;
 
             return true;

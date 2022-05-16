@@ -200,7 +200,7 @@ class IndexCommandsParser
                 $order = $tokenList->getKeywordEnum(Order::class);
                 $parts[] = new IndexColumn($part, $length, $order);
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         return $parts;

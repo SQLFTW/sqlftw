@@ -36,7 +36,7 @@ class TableMaintenanceCommandsParser
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new AnalyzeTableCommand($tables, $local);
     }
@@ -59,7 +59,7 @@ class TableMaintenanceCommandsParser
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $option = $tokenList->getMultiKeywordsEnum(CheckTableOption::class);
 
@@ -75,7 +75,7 @@ class TableMaintenanceCommandsParser
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $quick = $tokenList->hasKeyword(Keyword::QUICK);
         $extended = $tokenList->hasKeyword(Keyword::EXTENDED);
@@ -95,7 +95,7 @@ class TableMaintenanceCommandsParser
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new OptimizeTableCommand($tables, $local);
     }
@@ -113,7 +113,7 @@ class TableMaintenanceCommandsParser
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $quick = $tokenList->hasKeyword(Keyword::QUICK);
         $extended = $tokenList->hasKeyword(Keyword::EXTENDED);

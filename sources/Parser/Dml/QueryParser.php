@@ -256,7 +256,7 @@ class QueryParser
                 }
             }
             $what[] = new SelectExpression($expression, $alias, $window);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $into = null;
         if ($tokenList->hasKeyword(Keyword::INTO)) {
@@ -291,7 +291,7 @@ class QueryParser
                 /** @var Order $order */
                 $order = $tokenList->getKeywordEnum(Order::class);
                 $groupBy[] = new GroupByExpression($expression, $order);
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
 
             $withRollup = $tokenList->hasKeywords(Keyword::WITH, Keyword::ROLLUP);
         }
@@ -313,7 +313,7 @@ class QueryParser
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
                 $windows[$name] = $window;
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
         }
 
         $orderBy = null;
@@ -345,7 +345,7 @@ class QueryParser
                 $lockTables = [];
                 do {
                     $lockTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
             }
             $lockWaitOption = $tokenList->getMultiKeywordsEnum(SelectLockWaitOption::class);
             $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
@@ -394,10 +394,10 @@ class QueryParser
             $values = [];
             do {
                 $values[] = $this->expressionParser->parseExpression($tokenList);
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             $rows[] = new Row($values);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
 
@@ -456,7 +456,7 @@ class QueryParser
                 /** @var string $variable */
                 $variable = $tokenList->expectAny(TokenType::AT_VARIABLE, TokenType::UNQUOTED_NAME)->value;
                 $variables[] = $variable;
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
 
             return new SelectInto($variables);
         }
@@ -493,7 +493,7 @@ class QueryParser
             $partitionBy = [];
             do {
                 $partitionBy[] = $this->expressionParser->parseExpression($tokenList);
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
         }
 
         if ($tokenList->hasKeywords(Keyword::ORDER, Keyword::BY)) {

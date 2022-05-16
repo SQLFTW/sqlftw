@@ -48,7 +48,7 @@ class PreparedCommandsParser
                 /** @var string $variable */
                 $variable = $tokenList->expect(TokenType::AT_VARIABLE)->value;
                 $variables[] = $variable;
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
         }
 
         return new ExecuteCommand($name, $variables);

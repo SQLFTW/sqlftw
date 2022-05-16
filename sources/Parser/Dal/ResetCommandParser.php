@@ -35,7 +35,7 @@ class ResetCommandParser
         $options = [];
         do {
             $options[] = $tokenList->expectMultiKeywordsEnum(ResetOption::class);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new ResetCommand($options);
     }

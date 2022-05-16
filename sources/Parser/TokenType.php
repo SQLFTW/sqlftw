@@ -31,7 +31,7 @@ use Dogma\Enum\IntSet;
  *    - DOUBLE_QUOTED_STRING - ""table1"" (standard, MySQL in ANSI_STRINGS mode)
  *    - BACKTICK_QUOTED_STRING - "`table1`" (MySQL, PostgreSQL, Sqlite)
  *    - SQUARE_BRACKETED_STRING - "[table1]" (MSSQL, SqLite)
- *    - AT_VARIABLE - "@var", "@@global"
+ *    - AT_VARIABLE - "@var", "@@global", "@`192.168.0.1`" (also includes host names)
  *    - CHARSET_INTRODUCER - "_utf8'string'", "n'string'", "N'string'"
  * - VALUE
  *    - STRING

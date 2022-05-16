@@ -51,7 +51,7 @@ class FlushCommandParser
             if ($option->equalsValue(FlushOption::RELAY_LOGS) && $tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
                 $channel = $tokenList->expectNameOrString();
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new FlushCommand($options, $channel, $local);
     }
@@ -70,7 +70,7 @@ class FlushCommandParser
         $table = $tokenList->getQualifiedName();
         if ($table !== null) {
             $tables = [new QualifiedName(...$table)];
-            while ($tokenList->hasComma()) {
+            while ($tokenList->hasSymbol(',')) {
                 $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
             }
         }

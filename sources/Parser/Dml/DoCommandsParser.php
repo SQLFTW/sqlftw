@@ -44,7 +44,7 @@ class DoCommandsParser
             }
 
             $expressions[] = $expression;
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new DoCommand($expressions);
     }

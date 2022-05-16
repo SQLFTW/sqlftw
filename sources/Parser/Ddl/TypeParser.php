@@ -99,7 +99,7 @@ class TypeParser
             $params = [];
             do {
                 $params[] = $tokenList->expectString();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         } elseif ($dataType->hasFsp() && $tokenList->has(TokenType::LEFT_PARENTHESIS)) {
             $params = $tokenList->expectInt();

@@ -109,7 +109,7 @@ class LoadCommandsParser
             $partitions = [];
             do {
                 $partitions[] = $tokenList->expectName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -137,7 +137,7 @@ class LoadCommandsParser
             $fields = [];
             do {
                 $fields[] = $tokenList->getName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -149,7 +149,7 @@ class LoadCommandsParser
                 $tokenList->expectOperator(Operator::EQUAL);
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 $setters[$field] = $expression;
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
         }
 
         return [$ignoreRows, $fields, $setters];

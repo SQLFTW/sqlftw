@@ -75,7 +75,7 @@ class HandlerCommandsParser
                 $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                 do {
                     $values[] = $this->expressionParser->parseLiteralValue($tokenList);
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             $what = HandlerReadTarget::get($what);

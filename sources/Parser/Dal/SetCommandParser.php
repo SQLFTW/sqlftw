@@ -114,7 +114,7 @@ class SetCommandParser
             $expression = $this->expressionParser->parseExpression($tokenList);
 
             $assignments[] = new SetAssignment($variable, $expression, $scope, $operator);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new SetCommand($assignments);
     }

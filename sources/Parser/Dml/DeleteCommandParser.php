@@ -90,7 +90,7 @@ class DeleteCommandParser
                 $partitions = [];
                 do {
                     $partitions[] = $tokenList->expectName();
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
         } else {
@@ -128,7 +128,7 @@ class DeleteCommandParser
             if ($tokenList->has(TokenType::DOT)) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $tables;
     }

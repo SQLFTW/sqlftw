@@ -112,7 +112,7 @@ class ViewCommandsParser
             $columns = [];
             do {
                 $columns[] = $tokenList->expectName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
 
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
@@ -140,7 +140,7 @@ class ViewCommandsParser
         $names = [];
         do {
             $names[] = new QualifiedName(...$tokenList->expectQualifiedName());
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $option = $tokenList->getAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE);
         if ($option !== null) {

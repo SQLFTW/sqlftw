@@ -163,7 +163,7 @@ class ReplicationCommandsParser
                     }
             }
             $options[$option->getValue()] = $value;
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
@@ -279,7 +279,7 @@ class ReplicationCommandsParser
                     }
             }
             $options[$option->getValue()] = $value;
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
@@ -338,13 +338,13 @@ class ReplicationCommandsParser
                             } else {
                                 $values[] = $tokenList->expectString();
                             }
-                        } while ($tokenList->hasComma());
+                        } while ($tokenList->hasSymbol(','));
                         break;
                     case 'array<' . QualifiedName::class . '>':
                         $values = [];
                         do {
                             $values[] = new QualifiedName(...$tokenList->expectQualifiedName());
-                        } while ($tokenList->hasComma());
+                        } while ($tokenList->hasSymbol(','));
                         break;
                     case 'array<string,string>':
                         $values = [];
@@ -355,7 +355,7 @@ class ReplicationCommandsParser
                             $value = $tokenList->expectName();
                             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                             $values[$key] = $value;
-                        } while ($tokenList->hasComma());
+                        } while ($tokenList->hasSymbol(','));
                         break;
                     default:
                         $values = [];
@@ -363,7 +363,7 @@ class ReplicationCommandsParser
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             $filters[$filter] = $values;
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new ChangeReplicationFilterCommand($filters);
     }
@@ -462,7 +462,7 @@ class ReplicationCommandsParser
             } else {
                 $defaultAuth = $tokenList->expectString();
             }
-            if ($tokenList->hasComma()) {
+            if ($tokenList->hasSymbol(',')) {
                 $keyword = $tokenList->expectAnyKeyword(...$keywords);
             } else {
                 $keyword = null;
@@ -501,7 +501,7 @@ class ReplicationCommandsParser
         $threadType = $tokenList->getKeywordEnum(ReplicationThreadType::class);
         if ($threadType !== null) {
             $threadTypes = [$threadType];
-            while ($tokenList->hasComma()) {
+            while ($tokenList->hasSymbol(',')) {
                 $threadTypes[] = $tokenList->expectKeywordEnum(ReplicationThreadType::class);
             }
         }
@@ -637,7 +637,7 @@ class ReplicationCommandsParser
                 }
             } while (true);
             $gtids[] = new UuidSet($uuid, $intervals);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $gtids;
     }
@@ -675,7 +675,7 @@ class ReplicationCommandsParser
                 $sqlThread = true;
             }
         }
-        if ($tokenList->hasComma()) {
+        if ($tokenList->hasSymbol(',')) {
             $thread = $tokenList->expectAnyKeyword(Keyword::IO_THREAD, Keyword::SQL_THREAD);
             if ($thread === Keyword::IO_THREAD) {
                 $ioThread = true;
@@ -714,7 +714,7 @@ class ReplicationCommandsParser
                 $sqlThread = true;
             }
         }
-        if ($tokenList->hasComma()) {
+        if ($tokenList->hasSymbol(',')) {
             $thread = $tokenList->expectAnyKeyword(Keyword::IO_THREAD, Keyword::SQL_THREAD);
             if ($thread === Keyword::IO_THREAD) {
                 $ioThread = true;

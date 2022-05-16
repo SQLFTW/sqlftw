@@ -200,7 +200,7 @@ class UserCommandsParser
             }
 
             $users[] = new IdentifiedUser($user, $action, $password, $plugin, $replace, $retainCurrent);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $users;
     }
@@ -484,11 +484,11 @@ class UserCommandsParser
                 $columns = [];
                 do {
                     $columns[] = $tokenList->expectName();
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             $privileges[] = new UserPrivilege(UserPrivilegeType::get(strtoupper($type)), $columns);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $privileges;
     }
@@ -555,7 +555,7 @@ class UserCommandsParser
             $users[] = $tokenList->expectUserName();
             $tokenList->expectKeyword(Keyword::TO);
             $newUsers[] = $tokenList->expectUserName();
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new RenameUserCommand($users, $newUsers);
     }
@@ -736,7 +736,7 @@ class UserCommandsParser
         $users = [];
         do {
             $users[] = $tokenList->expectUserName();
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $users;
     }
@@ -749,7 +749,7 @@ class UserCommandsParser
         $roles = [];
         do {
             $roles[] = $tokenList->expectNameOrString();
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $roles;
     }

@@ -177,7 +177,7 @@ class RoutineCommandsParser
                 $param = $tokenList->expectName();
                 $type = $this->typeParser->parseType($tokenList);
                 $params[$param] = $type;
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -236,7 +236,7 @@ class RoutineCommandsParser
                 $param = $tokenList->expectName();
                 $type = $this->typeParser->parseType($tokenList);
                 $params[] = new ProcedureParam($param, $type, $inOut);
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 

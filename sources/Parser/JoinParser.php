@@ -58,7 +58,7 @@ class JoinParser
         $references = [];
         do {
             $references[] = $this->parseTableReference($tokenList);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         if (count($references) === 1) {
             return $references[0];
@@ -183,7 +183,7 @@ class JoinParser
             $using = [];
             do {
                 $using[] = $tokenList->expectName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -232,7 +232,7 @@ class JoinParser
                 $columns = [];
                 do {
                     $columns[] = $tokenList->expectName();
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
 
@@ -250,7 +250,7 @@ class JoinParser
                 $partitions = [];
                 do {
                     $partitions[] = $tokenList->expectName();
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
             if ($tokenList->hasKeyword(Keyword::AS)) {
@@ -297,11 +297,11 @@ class JoinParser
             $indexes = [];
             do {
                 $indexes[] = $tokenList->expectName();
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
             $hints[] = new IndexHint($action, $target, $indexes);
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $hints;
     }

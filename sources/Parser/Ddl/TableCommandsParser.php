@@ -227,7 +227,7 @@ class TableCommandsParser
                                     } else {
                                         $addColumns[] = $this->parseColumn($tokenList);
                                     }
-                                } while ($tokenList->hasComma());
+                                } while ($tokenList->hasSymbol(','));
                                 $actions[] = new AddColumnsAction($addColumns);
                                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                             } else {
@@ -535,7 +535,7 @@ class TableCommandsParser
                         /** @var 'ASC'|'DESC'|null $order */
                         $order = $tokenList->getAnyKeyword(Keyword::ASC, Keyword::DESC);
                         $columns[$column] = $order;
-                    } while ($tokenList->hasComma());
+                    } while ($tokenList->hasSymbol(','));
                     $actions[] = new OrderByAction($columns);
                     break;
                 case Keyword::REBUILD:
@@ -581,7 +581,7 @@ class TableCommandsParser
                     $newPartitions = [];
                     do {
                         $newPartitions[] = $this->parsePartitionDefinition($tokenList);
-                    } while ($tokenList->hasComma());
+                    } while ($tokenList->hasSymbol(','));
                     $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                     $actions[] = new ReorganizePartitionAction($oldPartitions, $newPartitions);
                     break;
@@ -621,7 +621,7 @@ class TableCommandsParser
                     }
                     $tableOptions[$option] = $value;
                     $position = $tokenList->getPosition();
-                    $trailingComma = $tokenList->hasComma();
+                    $trailingComma = $tokenList->hasSymbol(',');
                     do {
                         [$option, $value] = $this->parseTableOption($tokenList->resetPosition($position));
                         if ($option === null) {
@@ -629,13 +629,13 @@ class TableCommandsParser
                         }
                         $tableOptions[$option] = $value;
                         $position = $tokenList->getPosition();
-                        $trailingComma = $tokenList->hasComma();
+                        $trailingComma = $tokenList->hasSymbol(',');
                     } while (true);
                     if ($trailingComma) {
                         $tokenList->resetPosition($position);
                     }
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new AlterTableCommand($name, $actions, $alterOptions, $tableOptions);
     }
@@ -693,7 +693,7 @@ class TableCommandsParser
             }
             $options[$option] = $value;
             $position = $tokenList->getPosition();
-            $trailingComma = $tokenList->hasComma();
+            $trailingComma = $tokenList->hasSymbol(',');
         } while (true);
         if ($trailingComma) {
             $tokenList->resetPosition($position);
@@ -755,7 +755,7 @@ class TableCommandsParser
             } else {
                 $items[] = $this->parseColumn($tokenList);
             }
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
@@ -1324,7 +1324,7 @@ class TableCommandsParser
                 $tables = [];
                 do {
                     $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
                 return [TableOption::UNION, $tables];
@@ -1372,7 +1372,7 @@ class TableCommandsParser
             $partitions = [];
             do {
                 $partitions[] = $this->parsePartitionDefinition($tokenList);
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -1493,7 +1493,7 @@ class TableCommandsParser
                 $values = [];
                 do {
                     $values[] = $this->expressionParser->parseExpression($tokenList);
-                } while ($tokenList->hasComma());
+                } while ($tokenList->hasSymbol(','));
                 $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
             }
         }
@@ -1508,7 +1508,7 @@ class TableCommandsParser
                 $subName = $tokenList->expectName();
                 $subOptions = $this->parsePartitionOptions($tokenList);
                 $subpartitions[$subName] = $subOptions;
-            } while ($tokenList->hasComma());
+            } while ($tokenList->hasSymbol(','));
             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
         }
 
@@ -1578,7 +1578,7 @@ class TableCommandsParser
         $names = [];
         do {
             $names[] = $tokenList->expectName();
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return $names;
     }
@@ -1596,7 +1596,7 @@ class TableCommandsParser
 
         do {
             $columns[] = $tokenList->expectName();
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
         return $columns;
@@ -1619,7 +1619,7 @@ class TableCommandsParser
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         // ignored in MySQL 5.7, 8.0
         $cascadeRestrict = $tokenList->getAnyKeyword(Keyword::CASCADE, Keyword::RESTRICT);
@@ -1642,7 +1642,7 @@ class TableCommandsParser
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
             $tokenList->expectKeyword(Keyword::TO);
             $newTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-        } while ($tokenList->hasComma());
+        } while ($tokenList->hasSymbol(','));
 
         return new RenameTableCommand($tables, $newTables);
     }
