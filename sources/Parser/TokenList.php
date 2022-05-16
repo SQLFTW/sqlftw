@@ -301,6 +301,18 @@ class TokenList
         }
     }
 
+    /**
+     * @phpstan-impure
+     */
+    public function passSymbol(string $symbol): void
+    {
+        $this->doAutoSkip();
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token !== null && ($token->type & TokenType::SYMBOL) !== 0 && $token->value === $symbol) {
+            $this->position++;
+        }
+    }
+
     public function expectName(?string $name = null): string
     {
         $token = $this->expect(TokenType::NAME, $name);
@@ -497,19 +509,6 @@ class TokenList
             $this->position = $position;
 
             return false;
-        }
-    }
-
-    /**
-     * @phpstan-impure
-     */
-    public function passEqual(): void
-    {
-        $position = $this->position;
-
-        $token = $this->get(TokenType::OPERATOR);
-        if ($token === null || $token->value !== Operator::EQUAL) {
-            $this->position = $position;
         }
     }
 

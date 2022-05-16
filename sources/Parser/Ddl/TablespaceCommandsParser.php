@@ -46,7 +46,7 @@ class TablespaceCommandsParser
             $options[$keyword . ' ' . Keyword::DATAFILE] = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::WAIT)) {
@@ -59,11 +59,11 @@ class TablespaceCommandsParser
             $options[TablespaceOption::SET] = $tokenList->expectAnyKeyword(Keyword::ACTIVE, Keyword::INACTIVE);
         }
         if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
         }
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
 
@@ -98,45 +98,45 @@ class TablespaceCommandsParser
             $options[TablespaceOption::ADD_DATAFILE] = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::FILE_BLOCK_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
         }
         if ($tokenList->hasKeywords(Keyword::USE, Keyword::LOGFILE, Keyword::GROUP)) {
             $options[TablespaceOption::USE_LOGFILE_GROUP] = $tokenList->expectName();
         }
         if ($tokenList->hasKeyword(Keyword::EXTENT_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::EXTENT_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::AUTOEXTEND_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::MAX_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::MAX_SIZE] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::NODEGROUP] = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $options[TablespaceOption::WAIT] = true;
         }
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::COMMENT] = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
 
@@ -156,7 +156,7 @@ class TablespaceCommandsParser
         $name = $tokenList->expectName();
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $engine = $tokenList->expectName();
         }
 

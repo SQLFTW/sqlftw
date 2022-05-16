@@ -39,13 +39,13 @@ class LogfileGroupCommandsParser
 
         $initialSize = null;
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $initialSize = $tokenList->expectInt();
         }
         $wait = $tokenList->hasKeyword(Keyword::WAIT);
 
         $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->passEqual();
+        $tokenList->passSymbol('=');
         $engine = $tokenList->expectNameOrString();
 
         return new AlterLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $wait);
@@ -71,29 +71,29 @@ class LogfileGroupCommandsParser
 
         $initialSize = $undoBufferSize = $redoBufferSize = $nodeGroup = $comment = null;
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $initialSize = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::UNDO_BUFFER_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $undoBufferSize = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::REDO_BUFFER_SIZE)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $redoBufferSize = $tokenList->expectInt();
         }
         if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $nodeGroup = $tokenList->expectInt();
         }
         $wait = $tokenList->hasKeyword(Keyword::WAIT);
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $comment = $tokenList->expectString();
         }
 
         $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->passEqual();
+        $tokenList->passSymbol('=');
         $engine = $tokenList->expectNameOrString();
 
         return new CreateLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $undoBufferSize, $redoBufferSize, $nodeGroup, $wait, $comment);
@@ -108,7 +108,7 @@ class LogfileGroupCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::LOGFILE, Keyword::GROUP);
         $name = $tokenList->expectName();
         $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->passEqual();
+        $tokenList->passSymbol('=');
         $engine = $tokenList->expectNameOrString();
 
         return new DropLogfileGroupCommand($name, $engine);

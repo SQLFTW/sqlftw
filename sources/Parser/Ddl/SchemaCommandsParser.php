@@ -86,19 +86,19 @@ class SchemaCommandsParser
                 if ($keyword === Keyword::CHARACTER) {
                     $tokenList->expectKeyword(Keyword::SET);
                 }
-                $tokenList->passEqual();
+                $tokenList->passSymbol('=');
                 $charset = $tokenList->expectCharsetName();
             } elseif ($keyword === Keyword::COLLATE) {
-                $tokenList->passEqual();
+                $tokenList->passSymbol('=');
                 $collation = $tokenList->expectCollationName();
             } elseif ($keyword === Keyword::ENCRYPTION) {
                 $tokenList->check('schema encryption', 80016);
-                $tokenList->passEqual();
+                $tokenList->passSymbol('=');
                 $encryption = $tokenList->expectBool();
             } else {
                 $tokenList->check('schema read only', 80022);
                 $tokenList->expectKeyword(Keyword::ONLY);
-                $tokenList->passEqual();
+                $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     $readOnly = ThreeStateValue::get(ThreeStateValue::DEFAULT);
                 } else {

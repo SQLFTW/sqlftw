@@ -100,7 +100,7 @@ class EventCommandsParser
         $definer = $preserve = $comment = null;
 
         if ($tokenList->hasKeyword(Keyword::DEFINER)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::EVENT);

@@ -153,11 +153,11 @@ class IndexCommandsParser
                 $visible = false;
             } elseif ($keyword === Keyword::ENGINE_ATTRIBUTE) {
                 $tokenList->check(Keyword::ENGINE_ATTRIBUTE, 80021);
-                $tokenList->passEqual();
+                $tokenList->passSymbol('=');
                 $engineAttribute = $tokenList->expectString();
             } elseif ($keyword === Keyword::SECONDARY_ENGINE_ATTRIBUTE) {
                 $tokenList->check(Keyword::SECONDARY_ENGINE_ATTRIBUTE, 80021);
-                $tokenList->passEqual();
+                $tokenList->passSymbol('=');
                 $secondaryEngineAttribute = $tokenList->expectString();
             }
         }
@@ -224,13 +224,13 @@ class IndexCommandsParser
         $table = new QualifiedName(...$tokenList->expectQualifiedName());
         $algorithm = null;
         if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             /** @var AlterTableAlgorithm $algorithm */
             $algorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
         }
         $lock = null;
         if ($tokenList->hasKeyword(Keyword::LOCK)) {
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             /** @var AlterTableLock $lock */
             $lock = $tokenList->expectKeywordEnum(AlterTableLock::class);
         }

@@ -454,7 +454,7 @@ class ReplicationCommandsParser
         $keyword = $tokenList->getAnyKeyword(...$keywords);
         while ($keyword !== null) {
             $tokenList->check('group replication credentials', 80021);
-            $tokenList->passEqual();
+            $tokenList->passSymbol('=');
             if ($keyword === Keyword::USER) {
                 $user = $tokenList->expectString();
             } elseif ($keyword === Keyword::PASSWORD) {
