@@ -16,6 +16,7 @@ class IndexAlgorithm extends SqlEnum
 {
 
     public const BTREE = Keyword::BTREE;
+    public const RTREE = Keyword::RTREE;
     public const HASH = Keyword::HASH;
 
 }
