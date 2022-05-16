@@ -17,5 +17,6 @@ class ShowEngineOption extends SqlEnum
 
     public const STATUS = Keyword::STATUS;
     public const MUTEX = Keyword::MUTEX;
+    public const LOGS = Keyword::LOGS;
 
 }

@@ -424,7 +424,7 @@ class ShowCommandsParser
     }
 
     /**
-     * SHOW ENGINE engine_name {STATUS | MUTEX}
+     * SHOW ENGINE engine_name {STATUS | MUTEX | LOGS}
      */
     private function parseShowEngine(TokenList $tokenList): ShowEngineCommand
     {
