@@ -52,7 +52,7 @@ use Dogma\Enum\IntSet;
  *    * OBJECT - OLD, NEW, VALUES
  *    - PLACEHOLDER - "?"
  * - SYMBOL ()[]{}.,;
- *    - LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET
+ *    - LEFT_PARENTHESIS, RIGHT_PARENTHESIS
  *    - DELIMITER - default ";"
  *    - DELIMITER_DEFINITION
  *    - OPERATOR - everything else
@@ -140,12 +140,6 @@ class TokenType extends IntSet
 
     /** ")" */
     public const RIGHT_PARENTHESIS = 0x4000000;
-
-    /** "[" */
-    public const LEFT_SQUARE_BRACKET = 0x8000000;
-
-    /** "]" */
-    public const RIGHT_SQUARE_BRACKET = 0x10000000;
 
     /** Group/label separator */
     public const DOUBLE_COLON = 0x200000000;
