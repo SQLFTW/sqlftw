@@ -125,7 +125,7 @@ class DeleteCommandParser
         $tables = [];
         do {
             $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
-            if ($tokenList->has(TokenType::DOT)) {
+            if ($tokenList->hasSymbol('.')) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
             }
         } while ($tokenList->hasSymbol(','));

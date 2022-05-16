@@ -518,7 +518,7 @@ class UserCommandsParser
         $resourceType = $tokenList->getKeywordEnum(UserPrivilegeResourceType::class);
         if ($tokenList->hasOperator(Operator::MULTIPLY)) {
             $object = false;
-            if ($tokenList->has(TokenType::DOT)) {
+            if ($tokenList->hasSymbol('.')) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
                 $object = true;
             }
@@ -526,7 +526,7 @@ class UserCommandsParser
             return new UserPrivilegeResource(UserPrivilegeResource::ALL, $object ? UserPrivilegeResource::ALL : null, $resourceType);
         } else {
             $name = $tokenList->expectName();
-            if ($tokenList->has(TokenType::DOT)) {
+            if ($tokenList->hasSymbol('.')) {
                 $schema = $name;
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     return new UserPrivilegeResource($schema, UserPrivilegeResource::ALL, $resourceType);

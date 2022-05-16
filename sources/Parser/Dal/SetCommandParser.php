@@ -101,7 +101,7 @@ class SetCommandParser
                 } else {
                     // !@
                     $name = $tokenList->expectName();
-                    if ($tokenList->has(TokenType::DOT)) {
+                    if ($tokenList->hasSymbol('.')) {
                         $name2 = $tokenList->expectName();
                         $variable = new QualifiedName($name2, $name);
                     } else {

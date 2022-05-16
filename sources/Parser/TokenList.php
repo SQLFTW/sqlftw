@@ -796,7 +796,7 @@ class TokenList
     public function expectQualifiedName(): array
     {
         $first = $this->expectName();
-        if ($this->has(TokenType::DOT)) {
+        if ($this->hasSymbol('.')) {
             // a reserved keyword may follow after "." unescaped as we know it is a name context
             $keyword = $this->get(TokenType::KEYWORD);
             if ($keyword !== null) {
@@ -828,7 +828,7 @@ class TokenList
 
             return null;
         }
-        if ($this->has(TokenType::DOT)) {
+        if ($this->hasSymbol('.')) {
             // a reserved keyword may follow after "." unescaped as we know it is a name context
             $secondToken = $this->get(TokenType::KEYWORD);
             if ($secondToken !== null) {

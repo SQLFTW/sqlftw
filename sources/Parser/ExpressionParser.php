@@ -483,13 +483,13 @@ class ExpressionParser
                 if ($name1 !== null) {
                     $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
                     $name2 = $name3 = null;
-                    if ($tokenList->has(TokenType::DOT)) {
+                    if ($tokenList->hasSymbol('.')) {
                         if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                             $name2 = '*'; // tbl.*
                         } else {
                             $name2 = $tokenList->expectName();
                         }
-                        if ($name2 !== '*' && $tokenList->has(TokenType::DOT)) {
+                        if ($name2 !== '*' && $tokenList->hasSymbol('.')) {
                             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                                 $name3 = '*'; // db.tbl.*
                             } else {
@@ -788,7 +788,7 @@ class ExpressionParser
     public function parseColumnName(TokenList $tokenList): ColumnName
     {
         $first = $tokenList->expectName();
-        if ($tokenList->has(TokenType::DOT)) {
+        if ($tokenList->hasSymbol('.')) {
             // a reserved keyword may follow after "." unescaped as we know it is a name context
             $secondToken = $tokenList->get(TokenType::KEYWORD);
             if ($secondToken !== null) {
@@ -797,7 +797,7 @@ class ExpressionParser
             } else {
                 $second = $tokenList->expectName();
             }
-            if ($tokenList->has(TokenType::DOT)) {
+            if ($tokenList->hasSymbol('.')) {
                 // a reserved keyword may follow after "." unescaped as we know it is a name context
                 $thirdToken = $tokenList->get(TokenType::KEYWORD);
                 if ($thirdToken !== null) {
