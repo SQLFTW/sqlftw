@@ -441,12 +441,35 @@ class ReplicationCommandsParser
 
     /**
      * START GROUP_REPLICATION
+     *     [USER='user_name']
+     *     [, PASSWORD='user_pass']
+     *     [, DEFAULT_AUTH='plugin_name']
      */
     public function parseStartGroupReplication(TokenList $tokenList): StartGroupReplicationCommand
     {
         $tokenList->expectKeywords(Keyword::START, Keyword::GROUP_REPLICATION);
 
-        return new StartGroupReplicationCommand();
+        $user = $password = $defaultAuth = null;
+        $keywords = [Keyword::USER, Keyword::PASSWORD, Keyword::DEFAULT_AUTH];
+        $keyword = $tokenList->getAnyKeyword(...$keywords);
+        while ($keyword !== null) {
+            $tokenList->check('group replication credentials', 80021);
+            $tokenList->passEqual();
+            if ($keyword === Keyword::USER) {
+                $user = $tokenList->expectString();
+            } elseif ($keyword === Keyword::PASSWORD) {
+                $password = $tokenList->expectString();
+            } else {
+                $defaultAuth = $tokenList->expectString();
+            }
+            if ($tokenList->hasComma()) {
+                $keyword = $tokenList->expectAnyKeyword(...$keywords);
+            } else {
+                $keyword = null;
+            }
+        }
+
+        return new StartGroupReplicationCommand($user, $password, $defaultAuth);
     }
 
     /**

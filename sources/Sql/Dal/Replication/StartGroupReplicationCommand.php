@@ -16,9 +16,51 @@ class StartGroupReplicationCommand implements GroupReplicationCommand
 {
     use StrictBehaviorMixin;
 
+    /** @var string|null */
+    private $user;
+
+    /** @var string|null */
+    private $password;
+
+    /** @var string|null */
+    private $defaultAuth;
+
+    public function __construct(?string $user = null, ?string $password = null, ?string $defaultAuth = null)
+    {
+        $this->user = $user;
+        $this->password = $password;
+        $this->defaultAuth = $defaultAuth;
+    }
+
+    public function getUser(): ?string
+    {
+        return $this->user;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function getDefaultAuth(): ?string
+    {
+        return $this->defaultAuth;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'START GROUP_REPLICATION';
+        $result = 'START GROUP_REPLICATION';
+        if ($this->user !== null) {
+            $result .= ' USER ' . $formatter->formatString($this->user);
+            if ($this->password !== null) {
+                $result .= ', PASSWORD ' . $formatter->formatString($this->password);
+                if ($this->defaultAuth !== null) {
+                    $result .= ', DEFAULT_AUTH ' . $formatter->formatString($this->defaultAuth);
+                }
+            }
+        }
+
+        return $result;
     }
 
 }
