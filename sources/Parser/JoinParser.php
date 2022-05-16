@@ -77,7 +77,7 @@ class JoinParser
         if ($tokenList->hasSymbol('{')) {
             $token = $tokenList->expectName();
             if ($token !== 'OJ') {
-                $tokenList->expected('Expected ODBC escaped table reference introducer "OJ".');
+                $tokenList->missing('Expected ODBC escaped table reference introducer "OJ".');
             } else {
                 $reference = $this->parseTableReference($tokenList);
                 $tokenList->expectSymbol('}');

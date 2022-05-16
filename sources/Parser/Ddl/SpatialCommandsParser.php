@@ -71,7 +71,7 @@ class SpatialCommandsParser
         }
 
         if ($name === null || $definition === null) {
-            $tokenList->expectedAnyKeyword(Keyword::NAME, Keyword::DEFINITION);
+            $tokenList->missingAnyKeyword(Keyword::NAME, Keyword::DEFINITION);
         }
 
         return new CreateSpatialReferenceSystemCommand($srid, $name, $definition, $organization, $identifiedBy, $description, $orReplace, $ifNotExists);

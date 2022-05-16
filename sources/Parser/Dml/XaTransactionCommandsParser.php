@@ -76,7 +76,7 @@ class XaTransactionCommandsParser
 
                 return new XaRecoverCommand($convertXid);
             default:
-                $tokenList->expectedAnyKeyword(
+                $tokenList->missingAnyKeyword(
                     Keyword::START,
                     Keyword::BEGIN,
                     Keyword::END,

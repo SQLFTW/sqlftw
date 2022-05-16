@@ -145,7 +145,7 @@ class EventCommandsParser
         } elseif ($tokenList->hasKeyword(Keyword::EVERY)) {
             $every = $this->expressionParser->parseInterval($tokenList);
         } else {
-            $tokenList->expectedAnyKeyword(Keyword::ON, Keyword::EVERY);
+            $tokenList->missingAnyKeyword(Keyword::ON, Keyword::EVERY);
         }
 
         if ($tokenList->hasKeyword(Keyword::STARTS)) {

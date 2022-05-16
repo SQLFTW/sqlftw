@@ -289,7 +289,7 @@ class TableCommandsParser
                                 }
                                 $actions[] = new AddColumnAction($column, $after);
                             } else {
-                                $tokenList->expectedAnyKeyword(
+                                $tokenList->missingAnyKeyword(
                                     Keyword::COLUMN,
                                     Keyword::CONSTRAINT,
                                     Keyword::FOREIGN,
@@ -438,7 +438,7 @@ class TableCommandsParser
                             // DROP PARTITION partition_names
                             $partitions = $this->parsePartitionNames($tokenList);
                             if ($partitions === null) {
-                                $tokenList->expected('Expected specific partition names, found "ALL".');
+                                $tokenList->missing('Expected specific partition names, found "ALL".');
                             }
                             $actions[] = new DropPartitionAction($partitions);
                             break;
@@ -460,7 +460,7 @@ class TableCommandsParser
                                 $columnName = $second->original;
                                 $actions[] = new DropColumnAction($columnName);
                             } else {
-                                $tokenList->expectedAnyKeyword(Keyword::COLUMN, Keyword::INDEX, Keyword::KEY, Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY);
+                                $tokenList->missingAnyKeyword(Keyword::COLUMN, Keyword::INDEX, Keyword::KEY, Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY);
                             }
                     }
                     break;
@@ -574,7 +574,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::PARTITION);
                     $oldPartitions = $this->parsePartitionNames($tokenList);
                     if ($oldPartitions === null) {
-                        $tokenList->expected('Expected specific partition names, found "ALL".');
+                        $tokenList->missing('Expected specific partition names, found "ALL".');
                     }
                     $tokenList->expectKeyword(Keyword::INTO);
                     $tokenList->expectSymbol('(');
@@ -617,7 +617,7 @@ class TableCommandsParser
                     if ($option === null) {
                         $keywords = AlterTableActionType::getAllowedValues() + AlterTableOption::getAllowedValues()
                             + [Keyword::ALGORITHM, Keyword::LOCK, Keyword::WITH, Keyword::WITHOUT];
-                        $tokenList->expectedAnyKeyword(...$keywords);
+                        $tokenList->missingAnyKeyword(...$keywords);
                     }
                     $tableOptions[$option] = $value;
                     $position = $tokenList->getPosition();

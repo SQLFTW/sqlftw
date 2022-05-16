@@ -163,7 +163,7 @@ class QueryParser
         } elseif ($tokenList->hasKeyword(Keyword::VALUES)) {
             return $this->parseValues($tokenList->resetPosition(-1));
         } else {
-            $tokenList->expectedAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
+            $tokenList->missingAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
         }
     }
 

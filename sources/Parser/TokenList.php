@@ -53,7 +53,7 @@ use function trim;
  * - expectFoo() - consume token or throw an exception
  * - expectFoos() - consume all tokens or throw an exception
  * - expectAnyFoo() - consume one token or throw an exception
- * - expectedFoo() - always throws an exception (just formats the error message)
+ * - missingFoo() - always throws an exception (just formats the error message)
  */
 class TokenList
 {
@@ -234,7 +234,7 @@ class TokenList
     /**
      * @return never
      */
-    public function expected(string $description): void
+    public function missing(string $description): void
     {
         throw new InvalidTokenException($description, $this);
     }
@@ -614,7 +614,7 @@ class TokenList
      * @return never
      * @throws InvalidTokenException
      */
-    public function expectedAnyKeyword(string ...$keywords): void
+    public function missingAnyKeyword(string ...$keywords): void
     {
         $this->position--;
         $token = $this->get(TokenType::KEYWORD);
@@ -695,7 +695,7 @@ class TokenList
     {
         $keyword = $this->expect(TokenType::KEYWORD)->value;
         if (!in_array($keyword, $keywords, true)) {
-            $this->expectedAnyKeyword(...$keywords);
+            $this->missingAnyKeyword(...$keywords);
         }
 
         return $keyword;

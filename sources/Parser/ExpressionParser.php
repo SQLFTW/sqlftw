@@ -852,7 +852,7 @@ class ExpressionParser
             } elseif ($token->value === Keyword::MAXVALUE){
                 return new KeywordLiteral($token->value);
             } else {
-                $tokenList->expectedAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::MAXVALUE);
+                $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::MAXVALUE);
             }
         } elseif (($token->type & TokenType::BINARY_LITERAL) !== 0) {
             /** @var string $value */

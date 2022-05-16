@@ -193,7 +193,7 @@ class CompoundStatementParser
         if ($label !== null) {
             $endLabel = $tokenList->getName();
             if ($endLabel !== null && $endLabel !== $label) {
-                $tokenList->expected($label);
+                $tokenList->missing($label);
             }
         }
 
@@ -213,7 +213,7 @@ class CompoundStatementParser
         if ($label !== null) {
             $endLabel = $tokenList->getName();
             if ($endLabel !== null && $endLabel !== $label) {
-                $tokenList->expected($label);
+                $tokenList->missing($label);
             }
         }
 
@@ -236,7 +236,7 @@ class CompoundStatementParser
         if ($label !== null) {
             $endLabel = $tokenList->getName();
             if ($endLabel !== null && $endLabel !== $label) {
-                $tokenList->expected($label);
+                $tokenList->missing($label);
             }
         }
 
@@ -258,7 +258,7 @@ class CompoundStatementParser
         if ($label !== null) {
             $endLabel = $tokenList->getName();
             if ($endLabel !== null && $endLabel !== $label) {
-                $tokenList->expected($label);
+                $tokenList->missing($label);
             }
         }
 

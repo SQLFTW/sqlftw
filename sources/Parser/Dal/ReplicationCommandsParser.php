@@ -383,7 +383,7 @@ class ReplicationCommandsParser
         } elseif ($tokenList->hasKeyword(Keyword::BEFORE)) {
             $before = $this->expressionParser->parseDateTime($tokenList);
         } else {
-            $tokenList->expectedAnyKeyword(Keyword::TO, Keyword::BEFORE);
+            $tokenList->missingAnyKeyword(Keyword::TO, Keyword::BEFORE);
         }
 
         return new PurgeBinaryLogsCommand($log, $before);
@@ -532,7 +532,7 @@ class ReplicationCommandsParser
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::RELAY_LOG_POS] = $tokenList->expectInt();
             } else {
-                $tokenList->expectedAnyKeyword(
+                $tokenList->missingAnyKeyword(
                     Keyword::SQL_AFTER_MTS_GAPS,
                     Keyword::SQL_BEFORE_GTIDS,
                     Keyword::SQL_AFTER_GTIDS,

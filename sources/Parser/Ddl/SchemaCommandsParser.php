@@ -41,7 +41,7 @@ class SchemaCommandsParser
 
         $options = $this->parseOptions($tokenList);
         if ($options === null) {
-            $tokenList->expectedAnyKeyword(Keyword::DEFAULT, Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::ENCRYPTION, Keyword::READ);
+            $tokenList->missingAnyKeyword(Keyword::DEFAULT, Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::ENCRYPTION, Keyword::READ);
         }
 
         return new AlterSchemaCommand($schema, $options);

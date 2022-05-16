@@ -60,7 +60,7 @@ class ServerCommandsParser
             }
         } while ($tokenList->hasSymbol(','));
         if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
-            $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
+            $tokenList->missingAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
 
         $tokenList->expectSymbol(')');
@@ -110,7 +110,7 @@ class ServerCommandsParser
             }
         } while ($tokenList->hasSymbol(','));
         if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
-            $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
+            $tokenList->missingAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
         $tokenList->expectSymbol(')');
 

@@ -146,7 +146,7 @@ class Parser
             if ($tokenList->onlyContainsComments()) {
                 return new EmptyCommand($tokenList);
             } else {
-                $tokenList->expected('any keyword');
+                $tokenList->missing('any keyword');
             }
         } elseif (($first->type & TokenType::INVALID) !== 0) {
             return new InvalidCommand($tokenList, $first->exception); // @phpstan-ignore-line LexerException!
@@ -202,7 +202,7 @@ class Parser
                         } elseif ($tokenList->seekKeyword(Keyword::VIEW, 15)) {
                             return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->resetPosition($start));
                         }
-                        $tokenList->expectedAnyKeyword(
+                        $tokenList->missingAnyKeyword(
                             Keyword::DATABASE, Keyword::SCHEMA, Keyword::FUNCTION, Keyword::INSTANCE, Keyword::LOGFILE,
                             Keyword::SERVER, Keyword::TABLE, Keyword::TABLESPACE, Keyword::USER, Keyword::EVENT, Keyword::VIEW,
                             Keyword::DEFINER, Keyword::ALGORITHM, Keyword::SQL
@@ -321,7 +321,7 @@ class Parser
                     // CREATE [OR REPLACE] [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
                     return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
                 }
-                $tokenList->expectedAnyKeyword(
+                $tokenList->missingAnyKeyword(
                     Keyword::DATABASE, Keyword::SCHEMA, Keyword::LOGFILE, Keyword::ROLE, Keyword::SERVER,
                     Keyword::TABLESPACE, Keyword::TABLE, Keyword::USER, Keyword::EVENT, Keyword::FUNCTION,
                     Keyword::INDEX, Keyword::PROCEDURE, Keyword::TABLE, Keyword::TRIGGER, Keyword::VIEW, Keyword::DEFINER
@@ -682,7 +682,7 @@ class Parser
                 if ($this->settings->mysqlTestMode && in_array(strtolower((string) $first->value), $perlArtifacts, true)) {
                     return new TesterCommand($tokenList);
                 } else {
-                    $tokenList->resetPosition($start)->expectedAnyKeyword(
+                    $tokenList->resetPosition($start)->missingAnyKeyword(
                         Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE,
                         Keyword::CALL, Keyword::CHANGE, Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE,
                         Keyword::DEALLOCATE, Keyword::DELETE, Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE,
