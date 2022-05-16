@@ -35,6 +35,7 @@ use SqlFtw\Parser\Ddl\LogfileGroupCommandsParser;
 use SqlFtw\Parser\Ddl\RoutineCommandsParser;
 use SqlFtw\Parser\Ddl\SchemaCommandsParser;
 use SqlFtw\Parser\Ddl\ServerCommandsParser;
+use SqlFtw\Parser\Ddl\SpatialCommandsParser;
 use SqlFtw\Parser\Ddl\TableCommandsParser;
 use SqlFtw\Parser\Ddl\TablespaceCommandsParser;
 use SqlFtw\Parser\Ddl\TriggerCommandsParser;
@@ -293,6 +294,11 @@ class ParserFactory
     public function getShutdownCommandParser(): ShutdownCommandParser
     {
         return new ShutdownCommandParser();
+    }
+
+    public function getSpatialCommandsParser(): SpatialCommandsParser
+    {
+        return new SpatialCommandsParser();
     }
 
     public function getTableCommandsParser(): TableCommandsParser

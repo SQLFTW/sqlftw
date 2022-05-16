@@ -285,13 +285,24 @@ class Parser
                         return $this->factory->getTableCommandsParser()->parseCreateTable($tokenList->resetPosition($start));
                     case Keyword::UNIQUE:
                     case Keyword::FULLTEXT:
-                    case Keyword::SPATIAL:
                     case Keyword::INDEX:
                         // CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX
                         return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->resetPosition($start));
+                    case Keyword::SPATIAL:
+                        $third = $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::REFERENCE);
+                        if ($third === Keyword::INDEX) {
+                            // CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX
+                            return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->resetPosition($start));
+                        } else {
+                            // CREATE SPATIAL REFERENCE SYSTEM
+                            return $this->factory->getSpatialCommandsParser()->parseCreateSpatialReferenceSystem($tokenList->resetPosition($start));
+                        }
                 }
                 $tokenList->resetPosition(-1);
-                if ($tokenList->seekKeyword(Keyword::EVENT, 8)) {
+                if ($tokenList->hasKeywords(Keyword::OR, Keyword::REPLACE, Keyword::SPATIAL)) {
+                    // CREATE OR REPLACE SPATIAL REFERENCE SYSTEM
+                    return $this->factory->getSpatialCommandsParser()->parseCreateSpatialReferenceSystem($tokenList->resetPosition($start));
+                } elseif ($tokenList->seekKeyword(Keyword::EVENT, 8)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] EVENT
                     return $this->factory->getEventCommandsParser()->parseCreateEvent($tokenList->resetPosition($start));
                 } elseif ($tokenList->seekKeyword(Keyword::SONAME, 8)) {
@@ -337,8 +348,8 @@ class Parser
                 $second = $tokenList->expectAnyKeyword(
                     Keyword::DATABASE, Keyword::SCHEMA, Keyword::EVENT, Keyword::FUNCTION, Keyword::INDEX,
                     Keyword::LOGFILE, Keyword::PREPARE, Keyword::PROCEDURE, Keyword::ROLE, Keyword::SERVER,
-                    Keyword::TABLE, Keyword::TABLES, Keyword::TEMPORARY, Keyword::TABLESPACE, Keyword::TRIGGER,
-                    Keyword::UNDO, Keyword::USER, Keyword::VIEW
+                    Keyword::SPATIAL, Keyword::TABLE, Keyword::TABLES, Keyword::TEMPORARY, Keyword::TABLESPACE,
+                    Keyword::TRIGGER, Keyword::UNDO, Keyword::USER, Keyword::VIEW
                 );
                 switch ($second) {
                     case Keyword::DATABASE:
@@ -369,6 +380,9 @@ class Parser
                     case Keyword::SERVER:
                         // DROP SERVER
                         return $this->factory->getServerCommandsParser()->parseDropServer($tokenList->resetPosition($start));
+                    case Keyword::SPATIAL:
+                        // DROP SPATIAL REFERENCE SYSTEM
+                        return $this->factory->getSpatialCommandsParser()->parseDropSpatialReferenceSystem($tokenList->resetPosition($start));
                     case Keyword::TABLE:
                     case Keyword::TABLES:
                     case Keyword::TEMPORARY:
