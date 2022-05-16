@@ -330,6 +330,7 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const ST_Buffer = 'ST_Buffer';
     public const ST_Buffer_Strategy = 'ST_Buffer_Strategy';
     public const ST_Centroid = 'ST_Centroid';
+    public const ST_Collect = 'ST_Collect';
     public const ST_Contains = 'ST_Contains';
     public const ST_ConvexHull = 'ST_ConvexHull';
     public const ST_Crosses = 'ST_Crosses';
@@ -565,6 +566,8 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::MIN => [Keyword::DISTINCT => ExpressionNode::class],
         // POSITION(substr IN str)
         self::POSITION => [Keyword::IN => ExpressionNode::class],
+        // ST_COLLECT(DISTINCT location)
+        self::ST_Collect => [Keyword::DISTINCT => ExpressionNode::class],
         // SUBSTR(str,pos), SUBSTR(str FROM pos), SUBSTR(str,pos,len), SUBSTR(str FROM pos FOR len)
         self::SUBSTR => [Keyword::FROM => ExpressionNode::class, Keyword::FOR => ExpressionNode::class],
         // SUBSTRING(str,pos), SUBSTRING(str FROM pos), SUBSTRING(str,pos,len), SUBSTRING(str FROM pos FOR len)
@@ -593,6 +596,7 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::JSON_OBJECTAGG,
         self::MAX,
         self::MIN,
+        self::ST_Collect,
         self::STD,
         self::STDDEV,
         self::STDDEV_POP,
