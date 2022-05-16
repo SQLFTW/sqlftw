@@ -31,6 +31,7 @@ use SqlFtw\Sql\Dal\Replication\SlaveOption;
 use SqlFtw\Sql\Dal\Replication\StartGroupReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\StartSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\StopGroupReplicationCommand;
+use SqlFtw\Sql\Dal\Replication\StopReplicaCommand;
 use SqlFtw\Sql\Dal\Replication\StopSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\UuidSet;
 use SqlFtw\Sql\Expression\Operator;
@@ -165,7 +166,7 @@ class ReplicationCommandsParser
     }
 
     /**
-     * CHANGE MASTER TO option [, option] ... [ channel_option ]
+     * CHANGE REPLICATION SOURCE TO option [, option] ... [ channel_option ]
      *
      * option: {
      *     SOURCE_BIND = 'interface_name'
@@ -637,6 +638,45 @@ class ReplicationCommandsParser
         }
 
         return new StopSlaveCommand($ioThread, $sqlThread, $channel);
+    }
+
+    /**
+     * STOP REPLICA [thread_types] [channel_option]
+     *
+     * thread_types:
+     *     [thread_type [, thread_type] ... ]
+     *
+     * thread_type: IO_THREAD | SQL_THREAD
+     *
+     * channel_option:
+     *     FOR CHANNEL channel
+     */
+    public function parseStopReplica(TokenList $tokenList): StopReplicaCommand
+    {
+        $tokenList->expectKeywords(Keyword::STOP, Keyword::REPLICA);
+        $ioThread = $sqlThread = false;
+        $thread = $tokenList->getAnyKeyword(Keyword::IO_THREAD, Keyword::SQL_THREAD);
+        if ($thread !== null) {
+            if ($thread === Keyword::IO_THREAD) {
+                $ioThread = true;
+            } else {
+                $sqlThread = true;
+            }
+        }
+        if ($tokenList->hasComma()) {
+            $thread = $tokenList->expectAnyKeyword(Keyword::IO_THREAD, Keyword::SQL_THREAD);
+            if ($thread === Keyword::IO_THREAD) {
+                $ioThread = true;
+            } else {
+                $sqlThread = true;
+            }
+        }
+        $channel = null;
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectString();
+        }
+
+        return new StopReplicaCommand($ioThread, $sqlThread, $channel);
     }
 
 }

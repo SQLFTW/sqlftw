@@ -610,13 +610,16 @@ class Parser
                     return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->resetPosition($start));
                 }
             case Keyword::STOP:
-                $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE);
+                $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA);
                 if ($second === Keyword::GROUP_REPLICATION) {
                     // STOP GROUP_REPLICATION
                     return $this->factory->getReplicationCommandsParser()->parseStopGroupReplication($tokenList->resetPosition($start));
-                } else {
+                } elseif ($second === Keyword::SLAVE) {
                     // STOP SLAVE
                     return $this->factory->getReplicationCommandsParser()->parseStopSlave($tokenList->resetPosition($start));
+                } else {
+                    // STOP REPLICA
+                    return $this->factory->getReplicationCommandsParser()->parseStopReplica($tokenList->resetPosition($start));
                 }
             case Keyword::TABLE:
                 // TABLE
