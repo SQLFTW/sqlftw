@@ -317,6 +317,8 @@ class ExpressionParser
      *   | bit_expr ^ bit_expr
      *   | bit_expr + interval_expr
      *   | bit_expr - interval_expr
+     *   | bit_expr -> json_path
+     *   | bit_expr ->> json_path
      *   | simple_expr
      */
     private function parseBitExpression(TokenList $tokenList): ExpressionNode
@@ -332,6 +334,8 @@ class ExpressionParser
             Operator::DIVIDE,
             Operator::MODULO,
             Operator::BIT_XOR,
+            Operator::JSON_EXTRACT,
+            Operator::JSON_EXTRACT_UNQUOTE,
         ];
 
         $left = $this->parseSimpleExpression($tokenList);
