@@ -507,7 +507,7 @@ class Lexer
                             $position += strlen($block) - 6;
                             $row += Str::count($block, "\n");
 
-                            yield new Token(T::PERL, $start, $block, null, $condition);
+                            yield new Token(T::TEST_CODE, $start, $block, null, $condition);
                         } elseif ($this->settings->mysqlTestMode && Str::startsWith(strtolower($value), '--delimiter')) {
                             // change delimiter outside SQL
                             [, $del] = explode(' ', $value);
@@ -860,19 +860,31 @@ class Lexer
                         $this->settings->setDelimiter($delimiter);
                         yield $previous = new Token(T::SYMBOL | T::DELIMITER_DEFINITION, $start, $delimiter, $condition);
                     } elseif ($value === 'EOF' && $this->settings->mysqlTestMode && $string[$position - 4] === "\n" && $string[$position] === "\n") {
-                        yield new Token(T::PERL, $start, 'EOF');
+                        yield new Token(T::TEST_CODE, $start, 'EOF');
                     } elseif ($value === 'perl' && $this->settings->mysqlTestMode && $string[$position - 5] === "\n" && $string[$position] === ';') {
                         // Perl code blocks from MySQL tests
                         $end = strpos($string, "\nEOF\n", $position);
                         if ($end === false) {
-                            throw new LexerException('End of Perl block not found.', $position, $string);
+                            throw new LexerException('End of test code block not found.', $position, $string);
                         } else {
                             $block = substr($string, $position - 4, $end - $position + 8);
                         }
                         $position += strlen($block) - 4;
                         $row += Str::count($block, "\n");
 
-                        yield new Token(T::PERL, $start, $block);
+                        yield new Token(T::TEST_CODE, $start, $block);
+                    } elseif ($value === 'Mysqlx' && $this->settings->mysqlTestMode && substr($string, $position, 5) === '.Crud') {
+                        // some other testing thing...
+                        $end = strpos($string, "\n-->recvresult\n", $position);
+                        if ($end === false) {
+                            throw new LexerException('End of test code block not found.', $position, $string);
+                        } else {
+                            $block = substr($string, $position - 6, $end - $position + 20);
+                        }
+                        $position += strlen($block) - 6;
+                        $row += Str::count($block, "\n");
+
+                        yield new Token(T::TEST_CODE, $start, $block);
                     } else {
                         yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $value, $value, $condition);
                     }

@@ -185,6 +185,6 @@ class TokenType extends IntSet
     public const INVALID = 0x10000000000;
 
     /** Block of Perl code from MySQL tests */
-    public const PERL = 0x20000000000;
+    public const TEST_CODE = 0x20000000000;
 
 }
