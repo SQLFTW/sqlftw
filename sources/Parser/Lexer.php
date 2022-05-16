@@ -225,7 +225,7 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
                     break;
                 case ';':
-                    yield $previous = new Token(T::SYMBOL | T::SEMICOLON, $start, $char, null, $condition);
+                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
                     break;
                 case ':':
                     $value = $char;

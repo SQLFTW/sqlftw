@@ -892,7 +892,7 @@ class TokenList
     {
         $this->doAutoSkip();
         // pass trailing ; when delimiter is something else
-        while ($this->has(TokenType::SEMICOLON)) {
+        while ($this->hasSymbol(';')) {
             $this->doAutoSkip();
         }
 

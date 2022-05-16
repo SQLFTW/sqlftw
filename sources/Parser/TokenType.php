@@ -53,7 +53,6 @@ use Dogma\Enum\IntSet;
  *    - PLACEHOLDER - "?"
  * - SYMBOL ()[]{}.,;
  *    - LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, LEFT_CURLY_BRACKET, RIGHT_CURLY_BRACKET
- *    - SEMICOLON
  *    - DELIMITER - default ";"
  *    - DELIMITER_DEFINITION
  *    - OPERATOR - everything else
@@ -156,9 +155,6 @@ class TokenType extends IntSet
 
     /** Group/label separator */
     public const DOUBLE_COLON = 0x200000000;
-
-    /** Semicolon when not used as a statement delimiter - expression separator in PLSQL */
-    public const SEMICOLON = 0x400000000;
 
     /** Placeholder for variables in prepared statements */
     public const PLACEHOLDER = 0x800000000;

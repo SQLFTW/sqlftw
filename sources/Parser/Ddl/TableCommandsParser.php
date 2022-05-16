@@ -712,7 +712,7 @@ class TableCommandsParser
             $select = $this->queryParser->parseQuery($tokenList);
         } elseif (!$tokenList->isFinished()) {
             $position = $tokenList->getPosition();
-            if (!$tokenList->has(TokenType::SEMICOLON)) {
+            if (!$tokenList->hasSymbol(';')) {
                 $select = $this->queryParser->parseQuery($tokenList);
             } else {
                 $tokenList->resetPosition($position);

@@ -117,7 +117,7 @@ class CompoundStatementParser
                 break;
             }
             $statements[] = $this->parseStatement($tokenList);
-        } while ($tokenList->has(TokenType::SEMICOLON));
+        } while ($tokenList->hasSymbol(';'));
 
         return $statements;
     }
