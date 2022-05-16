@@ -33,6 +33,7 @@ use function in_array;
 use function is_bool;
 use function is_float;
 use function is_string;
+use function ltrim;
 use function trim;
 
 /**
@@ -849,6 +850,12 @@ class TokenList
         $host = null;
         if ($this->has(TokenType::SYMBOL, '@')) {
             $host = (string) ($this->getInt() ?? $this->expectNameOrString());
+        } else {
+            // todo: cannot distinguish between `foo@bar` vs `foo @bar` at lexer level
+            $variable = $this->get(TokenType::AT_VARIABLE);
+            if ($variable !== null) {
+                $host = ltrim($variable->value, '@');
+            }
         }
 
         return new UserName($name, $host);
