@@ -1474,11 +1474,11 @@ class TableCommandsParser
                     $lessThan = PartitionDefinition::MAX_VALUE;
                 } else {
                     $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-                    if ($tokenList->seek(TokenType::COMMA, 2) !== null) {
+                    if ($tokenList->seek(TokenType::SYMBOL, ',', 2) !== null) {
                         $lessThan = [];
                         do {
                             $lessThan[] = $this->expressionParser->parseLiteralValue($tokenList);
-                            if (!$tokenList->has(TokenType::COMMA)) {
+                            if (!$tokenList->hasSymbol(',')) {
                                 break;
                             }
                         } while (true);

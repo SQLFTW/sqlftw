@@ -141,7 +141,7 @@ class ReplicationCommandsParser
                         if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
                             break;
                         } else {
-                            $tokenList->expect(TokenType::COMMA);
+                            $tokenList->expectSymbol(',');
                         }
                     } while (true);
                     break;
@@ -257,7 +257,7 @@ class ReplicationCommandsParser
                         if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
                             break;
                         } else {
-                            $tokenList->expect(TokenType::COMMA);
+                            $tokenList->expectSymbol(',');
                         }
                     } while (true);
                     break;
@@ -351,7 +351,7 @@ class ReplicationCommandsParser
                         do {
                             $tokenList->expect(TokenType::LEFT_PARENTHESIS);
                             $key = $tokenList->expectName();
-                            $tokenList->expect(TokenType::COMMA);
+                            $tokenList->expectSymbol(',');
                             $value = $tokenList->expectName();
                             $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
                             $values[$key] = $value;
@@ -520,14 +520,14 @@ class ReplicationCommandsParser
             } elseif ($tokenList->hasKeyword(Keyword::MASTER_LOG_FILE)) {
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::MASTER_LOG_FILE] = $tokenList->expectString();
-                $tokenList->expect(TokenType::COMMA);
+                $tokenList->expectSymbol(',');
                 $tokenList->expectKeyword(Keyword::MASTER_LOG_POS);
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::MASTER_LOG_POS] = $tokenList->expectInt();
             } elseif ($tokenList->hasKeyword(Keyword::RELAY_LOG_FILE)) {
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::RELAY_LOG_FILE] = $tokenList->expectString();
-                $tokenList->expect(TokenType::COMMA);
+                $tokenList->expectSymbol(',');
                 $tokenList->expectKeyword(Keyword::RELAY_LOG_POS);
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::RELAY_LOG_POS] = $tokenList->expectInt();

@@ -78,11 +78,11 @@ class TypeParser
                 $length = $tokenList->expectInt();
                 if ($dataType->hasDecimals()) {
                     if ($dataType->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
-                        if ($tokenList->has(TokenType::COMMA)) {
+                        if ($tokenList->hasSymbol(',')) {
                             $decimals = $tokenList->expectInt();
                         }
                     } else {
-                        $tokenList->expect(TokenType::COMMA);
+                        $tokenList->expectSymbol(',');
                         $decimals = $tokenList->expectInt();
                     }
                 }

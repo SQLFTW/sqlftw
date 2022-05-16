@@ -270,6 +270,21 @@ class TokenList
         throw InvalidTokenException::tokens($tokenTypes, null, $token, $this);
     }
 
+    public function expectSymbol(string $symbol): Token
+    {
+        $this->doAutoSkip();
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token === null || ($token->type & TokenType::SYMBOL) === 0) {
+            throw InvalidTokenException::tokens([TokenType::SYMBOL], $symbol, $token, $this);
+        }
+        if ($token->value !== $symbol) {
+            throw InvalidTokenException::tokens([TokenType::SYMBOL], $symbol, $token, $this);
+        }
+        $this->position++;
+
+        return $token;
+    }
+
     /**
      * @phpstan-impure
      */
@@ -747,7 +762,7 @@ class TokenList
         }
     }
 
-    public function seek(int $type, int $maxOffset): ?Token
+    public function seek(int $type, string $value = null, int $maxOffset = 1000): ?Token
     {
         $position = $this->position;
         for ($n = 0; $n < $maxOffset; $n++) {
@@ -757,7 +772,7 @@ class TokenList
                 break;
             }
             $this->position++;
-            if (($token->type & $type) !== 0) {
+            if (($token->type & $type) !== 0 && ($value === null || $value === $token->value)) {
                 $this->position = $position;
 
                 return $token;

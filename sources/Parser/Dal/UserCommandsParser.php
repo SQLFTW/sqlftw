@@ -583,7 +583,7 @@ class UserCommandsParser
         if ($tokenList->hasKeyword(Keyword::ALL)) {
             if (!$tokenList->seekKeyword(Keyword::ON, 15)) {
                 $tokenList->passKeyword(Keyword::PRIVILEGES);
-                $tokenList->expect(TokenType::COMMA);
+                $tokenList->expectSymbol(',');
                 $tokenList->expectKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
                 $users = $this->parseUserList($tokenList);
 

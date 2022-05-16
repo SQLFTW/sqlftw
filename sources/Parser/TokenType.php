@@ -51,9 +51,9 @@ use Dogma\Enum\IntSet;
  *    ~ DEFAULT (+ KEYWORD)
  *    * OBJECT - OLD, NEW, VALUES
  *    - PLACEHOLDER - "?"
- * - SYMBOL
+ * - SYMBOL ()[]{}.,;
  *    - LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, LEFT_CURLY_BRACKET, RIGHT_CURLY_BRACKET
- *    - DOT, COMMA, SEMICOLON
+ *    - DOT, SEMICOLON
  *    - DELIMITER - default ";"
  *    - DELIMITER_DEFINITION
  *    - OPERATOR - everything else
@@ -156,9 +156,6 @@ class TokenType extends IntSet
 
     /** Name separator */
     public const DOT = 0x80000000;
-
-    /** List separator */
-    public const COMMA = 0x100000000;
 
     /** Group/label separator */
     public const DOUBLE_COLON = 0x200000000;

@@ -605,7 +605,7 @@ class ExpressionParser
             }
 
             if (!$first) {
-                $tokenList->expect(TokenType::COMMA);
+                $tokenList->expectSymbol(',');
             }
             $arguments[] = $this->parseExpression($tokenList);
             $first = false;
