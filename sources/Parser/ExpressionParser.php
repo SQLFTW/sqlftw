@@ -206,9 +206,9 @@ class ExpressionParser
         if ($operator !== null) {
             $quantifier = $tokenList->getAnyKeyword(Keyword::ALL, Keyword::ANY, Keyword::SOME);
             if ($quantifier !== null) {
-                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 $subquery = new Parentheses($this->parseSubquery($tokenList));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
 
                 return new BinaryOperator($left, [$operator, $quantifier], $subquery);
             } else {
@@ -251,7 +251,7 @@ class ExpressionParser
         $position = $tokenList->getPosition();
         if ($tokenList->hasKeyword(Keyword::IN)) {
             // lonely IN can be a named parameter "POSITION(substr IN str)"
-            if (!$not && !$tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if (!$not && !$tokenList->hasSymbol('(')) {
                 $tokenList->resetPosition($position);
 
                 return $left;
@@ -259,15 +259,15 @@ class ExpressionParser
 
             $tokenList->resetPosition($position);
             $tokenList->expectKeyword(Keyword::IN);
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 $subquery = new Parentheses($this->parseSubquery($tokenList->resetPosition(-1)));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
 
                 return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IN] : [Operator::IN], $subquery);
             } else {
                 $expressions = new Parentheses(new ListExpression($this->parseExpressionList($tokenList)));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
 
                 return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IN] : [Operator::IN], $expressions);
             }
@@ -413,28 +413,28 @@ class ExpressionParser
 
         } elseif ($tokenList->hasKeyword(Keyword::EXISTS)) {
             // EXISTS (subquery)
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $subquery = $this->parseSubquery($tokenList);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
             $expression = new ExistsExpression($subquery);
 
-        } elseif ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        } elseif ($tokenList->hasSymbol('(')) {
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // (subquery)
                 $subquery = $this->parseSubquery($tokenList->resetPosition(-1));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
                 $expression = new Parentheses($subquery);
             } else {
                 // (expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
                 $expression = new Parentheses(new ListExpression($expressions));
             }
         } elseif ($tokenList->hasKeyword(Keyword::ROW)) {
-            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasSymbol('(')) {
                 // ROW (expr, expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
                 $expression = new RowExpression($expressions);
             } else {
                 // e.g. SET @@session.binlog_format = ROW;
@@ -501,7 +501,7 @@ class ExpressionParser
                         // identifier
                         $expression = new Identifier(new ColumnName($name3, $name2, $name1));
 
-                    } elseif ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                    } elseif ($tokenList->hasSymbol('(')) {
                         // function_call
                         $expression = $this->parseFunctionCall($tokenList, $name1, $name2);
 
@@ -548,7 +548,7 @@ class ExpressionParser
             ? BuiltInFunction::get($name1)
             : new QualifiedName($name2 ?? $name1, $name2 !== null ? $name1 : null);
 
-        if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol(')')) {
             return new FunctionCall($function, []);
         }
 
@@ -556,7 +556,7 @@ class ExpressionParser
             $name = $function->getValue();
             if ($name === Keyword::COUNT) {
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                    $tokenList->expectSymbol(')');
 
                     return new FunctionCall($function, [new Identifier('*')]);
                 }
@@ -573,7 +573,7 @@ class ExpressionParser
         $arguments = [];
         $first = true;
         do {
-            if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+            if ($tokenList->hasSymbol(')')) {
                 break;
             }
             foreach ($namedParams as $keyword => $type) {
@@ -650,7 +650,7 @@ class ExpressionParser
             }
         }
 
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         return new FunctionCall($function, $arguments);
     }
@@ -716,11 +716,11 @@ class ExpressionParser
      */
     private function parseOver(TokenList $tokenList)
     {
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
             /** @var QueryParser $queryParser */
             $queryParser = ($this->queryParserProxy)();
             $window = $queryParser->parseWindow($tokenList);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
 
             return $window;
         } else {
@@ -767,20 +767,20 @@ class ExpressionParser
      */
     private function parseMatch(TokenList $tokenList): MatchExpression
     {
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         $columns = [];
         do {
             $columns[] = $this->parseColumnName($tokenList);
         } while ($tokenList->hasSymbol(','));
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         $tokenList->expectKeyword(Keyword::AGAINST);
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         $query = $tokenList->expectString();
         /** @var MatchMode|null $mode */
         $mode = $tokenList->getMultiKeywordsEnum(MatchMode::class);
         $expansion = $tokenList->hasKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         return new MatchExpression($columns, $query, $mode, $expansion);
     }
@@ -965,8 +965,8 @@ class ExpressionParser
     public function parseDateTime(TokenList $tokenList)
     {
         if ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
-            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            if ($tokenList->hasSymbol('(')) {
+                $tokenList->expectSymbol(')');
             }
 
             return new BuiltInFunction(BuiltInFunction::CURRENT_TIMESTAMP);
@@ -1032,7 +1032,10 @@ class ExpressionParser
     public function parseUserExpression(TokenList $tokenList): UserExpression
     {
         if ($tokenList->hasKeyword(Keyword::CURRENT_USER)) {
-            $tokenList->passParens(); // CURRENT_USER()
+            // CURRENT_USER()
+            if ($this->hasSymbol('(')) {
+                $this->expectSymbol(')');
+            }
 
             return new UserExpression(null, Keyword::CURRENT_USER);
         } else {

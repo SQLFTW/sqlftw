@@ -84,9 +84,9 @@ class ShowCommandsParser
         // COUNT is not a keyword in 8.0
         // todo: case sensitive?
         if ($tokenList->hasNameOrKeyword(Keyword::COUNT)) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $tokenList->expectOperator(Operator::MULTIPLY);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
             $third = $tokenList->expectAnyKeyword(Keyword::ERRORS, Keyword::WARNINGS);
             if ($third === Keyword::ERRORS) {
                 // SHOW COUNT(*) ERRORS

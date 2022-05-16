@@ -204,26 +204,12 @@ class Lexer
                     }
                     break;
                 case '(':
-                    yield $previous = new Token(T::SYMBOL | T::LEFT_PARENTHESIS, $start, $char, null, $condition);
-                    break;
                 case ')':
-                    yield $previous = new Token(T::SYMBOL | T::RIGHT_PARENTHESIS, $start, $char, null, $condition);
-                    break;
                 case '[':
-                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
-                    break;
                 case ']':
-                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
-                    break;
                 case '{':
-                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
-                    break;
                 case '}':
-                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
-                    break;
                 case ',':
-                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
-                    break;
                 case ';':
                     yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
                     break;
@@ -471,8 +457,8 @@ class Lexer
                     break;
                 case '-':
                     $next = $position < $length ? $string[$position] : '';
-                    $numberCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL
-                        || ($previous->type & T::END) !== 0
+                    $numberCanFollow = ($previous->type & T::END) !== 0
+                        || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($numberCanFollow) {
                         try {
@@ -543,8 +529,8 @@ class Lexer
                     break;
                 case '+':
                     $next = $position < $length ? $string[$position] : '';
-                    $numberCanFollow = ($previous->type & (T::SYMBOL | T::RIGHT_PARENTHESIS)) === T::SYMBOL
-                        || ($previous->type & T::END) !== 0
+                    $numberCanFollow = ($previous->type & T::END) !== 0
+                        || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($numberCanFollow && isset(self::$numbersKey[$next])) {
                         try {

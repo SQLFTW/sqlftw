@@ -154,7 +154,7 @@ class QueryParser
 
     public function parseQueryBlock(TokenList $tokenList): Query
     {
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
             return $this->parseParenthesizedQueryExpression($tokenList->resetPosition(-1));
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH)) {
             return $this->parseSelect($tokenList->resetPosition(-1));
@@ -169,9 +169,9 @@ class QueryParser
 
     private function parseParenthesizedQueryExpression(TokenList $tokenList): ParenthesizedQueryExpression
     {
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         $query = $this->parseQuery($tokenList);
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
 
@@ -240,9 +240,9 @@ class QueryParser
             }
             $window = null;
             if ($tokenList->hasKeyword(Keyword::OVER)) {
-                if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                if ($tokenList->hasSymbol('(')) {
                     $window = $this->parseWindow($tokenList);
-                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                    $tokenList->expectSymbol(')');
                 } else {
                     $window = $tokenList->expectName();
                 }
@@ -308,9 +308,9 @@ class QueryParser
                 $name = $tokenList->expectName();
                 $tokenList->expectKeyword(Keyword::AS);
 
-                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 $window = $this->parseWindow($tokenList);
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
 
                 $windows[$name] = $window;
             } while ($tokenList->hasSymbol(','));
@@ -390,12 +390,12 @@ class QueryParser
         $rows = [];
         do {
             $tokenList->expectKeyword(Keyword::ROW);
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $values = [];
             do {
                 $values[] = $this->expressionParser->parseExpression($tokenList);
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
             $rows[] = new Row($values);
         } while ($tokenList->hasSymbol(','));
 

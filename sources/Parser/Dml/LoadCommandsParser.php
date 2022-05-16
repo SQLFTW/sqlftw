@@ -105,12 +105,12 @@ class LoadCommandsParser
 
         $partitions = null;
         if ($parsePartitions && $tokenList->hasKeyword(Keyword::PARTITION)) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $partitions = [];
             do {
                 $partitions[] = $tokenList->expectName();
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         $charset = null;
@@ -133,12 +133,12 @@ class LoadCommandsParser
         }
 
         $fields = null;
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
             $fields = [];
             do {
                 $fields[] = $tokenList->getName();
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         $setters = null;

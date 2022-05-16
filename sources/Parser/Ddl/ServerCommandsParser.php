@@ -40,7 +40,7 @@ class ServerCommandsParser
         $name = $tokenList->expectNameOrString();
 
         $tokenList->expectKeyword(Keyword::OPTIONS);
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         $host = $schema = $user = $password = $socket = $owner = $port = null;
         do {
             if ($tokenList->hasKeyword(Keyword::HOST)) {
@@ -63,7 +63,7 @@ class ServerCommandsParser
             $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
 
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         return new AlterServerCommand($name, $host, $schema, $user, $password, $socket, $owner, $port);
     }
@@ -90,7 +90,7 @@ class ServerCommandsParser
         $wrapper = $tokenList->expectNameOrString();
 
         $tokenList->expectKeyword(Keyword::OPTIONS);
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         $host = $schema = $user = $password = $socket = $owner = $port = null;
         do {
             if ($tokenList->hasKeyword(Keyword::HOST)) {
@@ -112,7 +112,7 @@ class ServerCommandsParser
         if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
             $tokenList->expectedAnyKeyword(Keyword::HOST, Keyword::DATABASE, Keyword::USER, Keyword::PASSWORD, Keyword::SOCKET, Keyword::OWNER, Keyword::PORT);
         }
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         return new CreateServerCommand($name, $wrapper, $host, $schema, $user, $password, $socket, $owner, $port);
     }

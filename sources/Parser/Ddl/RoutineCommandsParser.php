@@ -171,14 +171,14 @@ class RoutineCommandsParser
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $params = [];
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-        if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+        $tokenList->expectSymbol('(');
+        if (!$tokenList->hasSymbol(')')) {
             do {
                 $param = $tokenList->expectName();
                 $type = $this->typeParser->parseType($tokenList);
                 $params[$param] = $type;
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         $tokenList->expectKeyword(Keyword::RETURNS);
@@ -228,8 +228,8 @@ class RoutineCommandsParser
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $params = [];
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-        if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+        $tokenList->expectSymbol('(');
+        if (!$tokenList->hasSymbol(')')) {
             do {
                 /** @var InOutParamFlag $inOut */
                 $inOut = $tokenList->getKeywordEnum(InOutParamFlag::class);
@@ -237,7 +237,7 @@ class RoutineCommandsParser
                 $type = $this->typeParser->parseType($tokenList);
                 $params[] = new ProcedureParam($param, $type, $inOut);
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);

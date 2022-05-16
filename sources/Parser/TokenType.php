@@ -35,8 +35,8 @@ use Dogma\Enum\IntSet;
  *    - CHARSET_INTRODUCER - "_utf8'string'", "n'string'", "N'string'"
  * - VALUE
  *    - STRING
- *        - SINGLE_QUOTED_STRING "'string'" (standard)
- *        - DOUBLE_QUOTED_STRING ""string"" (MySQL in default mode)
+ *        - SINGLE_QUOTED_STRING - "'string'" (standard)
+ *        - DOUBLE_QUOTED_STRING - ""string"" (MySQL in default mode)
  *        * DOLLAR_QUOTED_STRING - "$foo$table1$foo$" (PostgreSQL)
  *    - NUMBER
  *         ~ INTEGER
@@ -51,8 +51,7 @@ use Dogma\Enum\IntSet;
  *    ~ DEFAULT (+ KEYWORD)
  *    * OBJECT - OLD, NEW, VALUES
  *    - PLACEHOLDER - "?"
- * - SYMBOL ()[]{}.,;
- *    - LEFT_PARENTHESIS, RIGHT_PARENTHESIS
+ * - SYMBOL - ()[]{}.,;
  *    - DELIMITER - default ";"
  *    - DELIMITER_DEFINITION
  *    - OPERATOR - everything else
@@ -134,12 +133,6 @@ class TokenType extends IntSet
 
     /** "0xDEADBEEF" */
     public const HEXADECIMAL_LITERAL = 0x1000000;
-
-    /** "(" */
-    public const LEFT_PARENTHESIS = 0x2000000;
-
-    /** ")" */
-    public const RIGHT_PARENTHESIS = 0x4000000;
 
     /** Group/label separator */
     public const DOUBLE_COLON = 0x200000000;

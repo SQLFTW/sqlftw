@@ -77,8 +77,8 @@ class UserCommandsParser
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
         if ($tokenList->hasKeyword(Keyword::USER)) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
+            $tokenList->expectSymbol(')');
             $tokenList->expectKeywords(Keyword::IDENTIFIED, Keyword::BY);
             $password = $tokenList->expectString();
 
@@ -480,12 +480,12 @@ class UserCommandsParser
             }
 
             $columns = null;
-            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasSymbol('(')) {
                 $columns = [];
                 do {
                     $columns[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
             $privileges[] = new UserPrivilege(UserPrivilegeType::get(strtoupper($type)), $columns);
         } while ($tokenList->hasSymbol(','));
@@ -680,11 +680,11 @@ class UserCommandsParser
                 ? $tokenList->getAnyKeyword(Keyword::PASSWORD)
                 : $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::OLD_PASSWORD);
             if ($passwordFunction !== null) {
-                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
             }
             $password = $tokenList->expectString();
             if ($passwordFunction !== null) {
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
             $retain = false;
         }

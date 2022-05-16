@@ -51,17 +51,17 @@ class WithParser
         do {
             $name = $tokenList->expectName();
             $columns = null;
-            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasSymbol('(')) {
                 $columns = [];
                 do {
                     $columns[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
             $tokenList->expectKeyword(Keyword::AS);
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $query = $this->parserFactory->getQueryParser()->parseQuery($tokenList);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
 
             $expressions[] = new WithExpression($query, $name, $columns);
         } while ($tokenList->hasSymbol(','));

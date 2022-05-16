@@ -182,26 +182,26 @@ class IndexCommandsParser
      */
     private function parseIndexParts(TokenList $tokenList): array
     {
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         $parts = [];
         do {
-            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasSymbol('(')) {
                 $tokenList->check('functional indexes', 80013);
                 $parts[] = $this->expressionParser->parseExpression($tokenList);
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             } else {
                 $part = $tokenList->expectName();
                 $length = null;
-                if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                if ($tokenList->hasSymbol('(')) {
                     $length = $tokenList->expectInt();
-                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                    $tokenList->expectSymbol(')');
                 }
                 /** @var Order $order */
                 $order = $tokenList->getKeywordEnum(Order::class);
                 $parts[] = new IndexColumn($part, $length, $order);
             }
         } while ($tokenList->hasSymbol(','));
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         return $parts;
     }

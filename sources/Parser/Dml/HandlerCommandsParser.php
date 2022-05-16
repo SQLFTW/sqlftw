@@ -72,11 +72,11 @@ class HandlerCommandsParser
             if ($what === null) {
                 $what = $tokenList->expectAnyOperator(...HandlerReadTarget::getOperators());
                 $values = [];
-                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 do {
                     $values[] = $this->expressionParser->parseLiteralValue($tokenList);
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
             $what = HandlerReadTarget::get($what);
         } else {

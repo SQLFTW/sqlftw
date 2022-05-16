@@ -134,11 +134,11 @@ class ReplicationCommandsParser
                     }
                     break;
                 case 'array<int>':
-                    $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                    $tokenList->expectSymbol('(');
                     $value = [];
                     do {
                         $value[] = $tokenList->expectInt();
-                        if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+                        if ($tokenList->hasSymbol(')')) {
                             break;
                         } else {
                             $tokenList->expectSymbol(',');
@@ -250,11 +250,11 @@ class ReplicationCommandsParser
                     }
                     break;
                 case 'array<int>':
-                    $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                    $tokenList->expectSymbol('(');
                     $value = [];
                     do {
                         $value[] = $tokenList->expectInt();
-                        if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+                        if ($tokenList->hasSymbol(')')) {
                             break;
                         } else {
                             $tokenList->expectSymbol(',');
@@ -325,8 +325,8 @@ class ReplicationCommandsParser
         do {
             $filter = $tokenList->expectKeywordEnum(ReplicationFilter::class)->getValue();
             $tokenList->expectOperator(Operator::EQUAL);
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-            if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+            $tokenList->expectSymbol('(');
+            if ($tokenList->hasSymbol(')')) {
                 $values = [];
             } else {
                 switch ($types[$filter]) {
@@ -349,18 +349,18 @@ class ReplicationCommandsParser
                     case 'array<string,string>':
                         $values = [];
                         do {
-                            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                            $tokenList->expectSymbol('(');
                             $key = $tokenList->expectName();
                             $tokenList->expectSymbol(',');
                             $value = $tokenList->expectName();
-                            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                            $tokenList->expectSymbol(')');
                             $values[$key] = $value;
                         } while ($tokenList->hasSymbol(','));
                         break;
                     default:
                         $values = [];
                 }
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
             $filters[$filter] = $values;
         } while ($tokenList->hasSymbol(','));

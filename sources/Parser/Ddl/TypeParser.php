@@ -74,7 +74,7 @@ class TypeParser
 
         if ($dataType->hasLength()) {
             $length = $decimals = null;
-            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasSymbol('(')) {
                 $length = $tokenList->expectInt();
                 if ($dataType->hasDecimals()) {
                     if ($dataType->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
@@ -86,7 +86,7 @@ class TypeParser
                         $decimals = $tokenList->expectInt();
                     }
                 }
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
             if ($decimals !== null) {
                 /** @var int[] $params */
@@ -95,15 +95,15 @@ class TypeParser
                 $params = $length;
             }
         } elseif ($dataType->hasValues()) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $params = [];
             do {
                 $params[] = $tokenList->expectString();
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
-        } elseif ($dataType->hasFsp() && $tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            $tokenList->expectSymbol(')');
+        } elseif ($dataType->hasFsp() && $tokenList->hasSymbol('(')) {
             $params = $tokenList->expectInt();
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         if ($dataType->isNumber()) {

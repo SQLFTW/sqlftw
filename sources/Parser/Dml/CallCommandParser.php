@@ -40,13 +40,13 @@ class CallCommandParser
 
         $name = new QualifiedName(...$tokenList->expectQualifiedName());
         $params = null;
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
             $params = [];
-            if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+            if (!$tokenList->hasSymbol(')')) {
                 do {
                     $params[] = $this->expressionParser->parseExpression($tokenList);
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
         }
 

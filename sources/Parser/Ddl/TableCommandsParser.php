@@ -216,7 +216,7 @@ class TableCommandsParser
                     switch ($secondValue) {
                         case null:
                         case Keyword::COLUMN:
-                            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                            if ($tokenList->hasSymbol('(')) {
                                 // ADD [COLUMN] (col_name column_definition, ...)
                                 // note: unsure what continues after the ...
                                 // from tests: ALTER TABLE st1 ADD COLUMN (c2 INT GENERATED ALWAYS AS (c1+1) STORED, INDEX(c2));
@@ -229,7 +229,7 @@ class TableCommandsParser
                                     }
                                 } while ($tokenList->hasSymbol(','));
                                 $actions[] = new AddColumnsAction($addColumns);
-                                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                                $tokenList->expectSymbol(')');
                             } else {
                                 // ADD [COLUMN] col_name column_definition [FIRST | AFTER col_name ]
                                 $column = $this->parseColumn($tokenList);
@@ -271,9 +271,9 @@ class TableCommandsParser
                             break;
                         case Keyword::PARTITION:
                             // ADD PARTITION (partition_definition)
-                            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                            $tokenList->expectSymbol('(');
                             $partition = $this->parsePartitionDefinition($tokenList);
-                            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                            $tokenList->expectSymbol(')');
                             $actions[] = new AddPartitionAction($partition);
                             break;
                         default:
@@ -338,9 +338,9 @@ class TableCommandsParser
                         $tokenList->passKeyword(Keyword::COLUMN);
                         $column = $tokenList->expectName();
                         if ($tokenList->hasKeywords(Keyword::SET, Keyword::DEFAULT)) {
-                            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                            if ($tokenList->hasSymbol('(')) {
                                 $value = $this->expressionParser->parseExpression($tokenList);
-                                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                                $tokenList->expectSymbol(')');
                             } else {
                                 $value = $this->expressionParser->parseLiteral($tokenList);
                             }
@@ -577,12 +577,12 @@ class TableCommandsParser
                         $tokenList->expected('Expected specific partition names, found "ALL".');
                     }
                     $tokenList->expectKeyword(Keyword::INTO);
-                    $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                    $tokenList->expectSymbol('(');
                     $newPartitions = [];
                     do {
                         $newPartitions[] = $this->parsePartitionDefinition($tokenList);
                     } while ($tokenList->hasSymbol(','));
-                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                    $tokenList->expectSymbol(')');
                     $actions[] = new ReorganizePartitionAction($oldPartitions, $newPartitions);
                     break;
                 case Keyword::REPAIR:
@@ -668,18 +668,18 @@ class TableCommandsParser
         $table = new QualifiedName(...$tokenList->expectQualifiedName());
 
         $position = $tokenList->getPosition();
-        $bodyOpen = $tokenList->get(TokenType::LEFT_PARENTHESIS);
+        $bodyOpen = $tokenList->hasSymbol('(');
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $oldTable = new QualifiedName(...$tokenList->expectQualifiedName());
-            if ($bodyOpen !== null) {
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            if ($bodyOpen) {
+                $tokenList->expectSymbol(')');
             }
 
             return new CreateTableLikeCommand($table, $oldTable, $temporary, $ifNotExists);
         }
 
         $items = [];
-        if ($bodyOpen !== null) {
+        if ($bodyOpen) {
             $items = $this->parseCreateTableBody($tokenList->resetPosition($position));
         }
 
@@ -739,7 +739,7 @@ class TableCommandsParser
     private function parseCreateTableBody(TokenList $tokenList): array
     {
         $items = [];
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
 
         do {
             if ($tokenList->hasKeyword(Keyword::CHECK)) {
@@ -757,7 +757,7 @@ class TableCommandsParser
             }
         } while ($tokenList->hasSymbol(','));
 
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         return $items;
     }
@@ -825,16 +825,16 @@ class TableCommandsParser
                     $null = true;
                     break;
                 case Keyword::DEFAULT:
-                    if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                    if ($tokenList->hasSymbol('(')) {
                         // [DEFAULT (expr)]
                         $default = $this->expressionParser->parseExpression($tokenList);
-                        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                        $tokenList->expectSymbol(')');
                     } elseif ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
                         // [DEFAULT CURRENT_TIMESTAMP[(...)]]
-                        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                        if ($tokenList->hasSymbol('(')) {
                             $param = $tokenList->getInt();
                             $params = $param !== null ? [new ValueLiteral($param)] : [];
-                            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                            $tokenList->expectSymbol(')');
                             $default = new FunctionCall(new QualifiedName(Keyword::CURRENT_TIMESTAMP), $params);
                         } else {
                             $default = new Identifier(Keyword::CURRENT_TIMESTAMP);
@@ -862,10 +862,10 @@ class TableCommandsParser
                     // [ON UPDATE CURRENT_TIMESTAMP[(...)]]
                     $tokenList->expectKeyword(Keyword::UPDATE);
                     $tokenList->expectKeyword(Keyword::CURRENT_TIMESTAMP);
-                    if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                    if ($tokenList->hasSymbol('(')) {
                         $param = $tokenList->getInt();
                         $params = $param !== null ? [new ValueLiteral($param)] : [];
-                        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                        $tokenList->expectSymbol(')');
                         $onUpdate = new FunctionCall(new QualifiedName(Keyword::CURRENT_TIMESTAMP), $params);
                     } else {
                         $onUpdate = new Identifier(Keyword::CURRENT_TIMESTAMP);
@@ -943,9 +943,9 @@ class TableCommandsParser
      */
     private function parseGeneratedColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
     {
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         $expression = $this->expressionParser->parseExpression($tokenList);
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         $null = $index = $comment = $generatedType = $reference = $check = $visible = null;
         $keywords = [
@@ -1028,9 +1028,9 @@ class TableCommandsParser
      */
     private function parseCheck(TokenList $tokenList): CheckDefinition
     {
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         $expression = $this->expressionParser->parseExpression($tokenList);
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         $enforced = null;
         if ($tokenList->hasKeyword(Keyword::ENFORCED)) {
@@ -1320,12 +1320,12 @@ class TableCommandsParser
                 return [TableOption::TABLESPACE, $tokenList->expectNameOrString()];
             case Keyword::UNION:
                 $tokenList->passEqual();
-                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 $tables = [];
                 do {
                     $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
 
                 return [TableOption::UNION, $tables];
             default:
@@ -1368,12 +1368,12 @@ class TableCommandsParser
             }
         }
         $partitions = null;
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
             $partitions = [];
             do {
                 $partitions[] = $this->parsePartitionDefinition($tokenList);
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         return new PartitioningDefinition($condition, $partitions, $partitionsNumber, $subpartitionsCondition, $subpartitionsNumber);
@@ -1396,9 +1396,9 @@ class TableCommandsParser
         }
         $keyword = $tokenList->expectAnyKeyword(...$keywords);
         if ($keyword === Keyword::HASH) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $expression = $this->expressionParser->parseExpression($tokenList);
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
             $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_HASH : PartitioningConditionType::HASH);
             $condition = new PartitioningCondition($type, $expression);
         } elseif ($keyword === Keyword::KEY) {
@@ -1416,9 +1416,9 @@ class TableCommandsParser
                 $columns = $this->parseColumnList($tokenList);
                 $condition = new PartitioningCondition($type, null, $columns);
             } else {
-                $tokenList->get(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 $expression = $this->expressionParser->parseExpression($tokenList);
-                $tokenList->get(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
                 $condition = new PartitioningCondition($type, $expression);
             }
         } else {
@@ -1427,9 +1427,9 @@ class TableCommandsParser
                 $columns = $this->parseColumnList($tokenList);
                 $condition = new PartitioningCondition($type, null, $columns);
             } else {
-                $tokenList->get(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 $expression = $this->expressionParser->parseExpression($tokenList);
-                $tokenList->get(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
                 $condition = new PartitioningCondition($type, $expression);
             }
         }
@@ -1473,7 +1473,7 @@ class TableCommandsParser
                 if ($tokenList->hasKeyword(Keyword::MAXVALUE)) {
                     $lessThan = PartitionDefinition::MAX_VALUE;
                 } else {
-                    $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                    $tokenList->expectSymbol('(');
                     if ($tokenList->seek(TokenType::SYMBOL, ',', 2) !== null) {
                         $lessThan = [];
                         do {
@@ -1485,23 +1485,23 @@ class TableCommandsParser
                     } else {
                         $lessThan = $this->expressionParser->parseExpression($tokenList);
                     }
-                    $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                    $tokenList->expectSymbol(')');
                 }
             } else {
                 $tokenList->expectKeyword(Keyword::IN);
-                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 $values = [];
                 do {
                     $values[] = $this->expressionParser->parseExpression($tokenList);
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
         }
 
         $options = $this->parsePartitionOptions($tokenList);
 
         $subpartitions = null;
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
             $subpartitions = [];
             do {
                 $tokenList->expectKeyword(Keyword::SUBPARTITION);
@@ -1509,7 +1509,7 @@ class TableCommandsParser
                 $subOptions = $this->parsePartitionOptions($tokenList);
                 $subpartitions[$subName] = $subOptions;
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         return new PartitionDefinition($name, $lessThan, $values, $options, $subpartitions);
@@ -1589,15 +1589,15 @@ class TableCommandsParser
     private function parseColumnList(TokenList $tokenList, bool $allowEmpty = false): array
     {
         $columns = [];
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
-        if ($allowEmpty && $tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+        $tokenList->expectSymbol('(');
+        if ($allowEmpty && $tokenList->hasSymbol(')')) {
             return $columns;
         }
 
         do {
             $columns[] = $tokenList->expectName();
         } while ($tokenList->hasSymbol(','));
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         return $columns;
     }

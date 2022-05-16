@@ -179,12 +179,12 @@ class JoinParser
         if ($tokenList->hasKeyword(Keyword::ON)) {
             $on = $this->expressionParser->parseExpression($tokenList);
         } elseif ($tokenList->hasKeyword(Keyword::USING)) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $using = [];
             do {
                 $using[] = $tokenList->expectName();
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         return [$on, $using];
@@ -200,11 +200,11 @@ class JoinParser
     {
         // todo: QueryParser should be able to detect this better and resolve with ParenthesizedQueryExpression
         $selectInParentheses = false;
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
             $selectInParentheses = $tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
             if (!$selectInParentheses) {
                 $references = $this->parseTableReferences($tokenList);
-                $tokenList->get(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
 
                 return new TableReferenceParentheses($references);
             }
@@ -213,7 +213,7 @@ class JoinParser
         $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH, Keyword::LATERAL);
         if ($selectInParentheses || $keyword !== null) {
             if ($keyword === Keyword::LATERAL) {
-                if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+                if ($tokenList->hasSymbol('(')) {
                     $selectInParentheses = true;
                 }
                 $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
@@ -222,18 +222,18 @@ class JoinParser
             $query = ($this->queryParserProxy)()->parseQuery($tokenList->resetPosition(-1));
 
             if ($selectInParentheses) {
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
 
             $tokenList->passKeyword(Keyword::AS);
             $alias = $tokenList->expectName();
             $columns = null;
-            if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+            if ($tokenList->hasSymbol('(')) {
                 $columns = [];
                 do {
                     $columns[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
 
             return new TableReferenceSubquery($query, $alias, $columns, $selectInParentheses, $keyword === Keyword::LATERAL);
@@ -246,12 +246,12 @@ class JoinParser
             }
             $partitions = null;
             if ($tokenList->hasKeyword(Keyword::PARTITION)) {
-                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 $partitions = [];
                 do {
                     $partitions[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectName();
@@ -293,12 +293,12 @@ class JoinParser
                 $target = $tokenList->expectMultiKeywordsEnum(IndexHintTarget::class);
             }
 
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $indexes = [];
             do {
                 $indexes[] = $tokenList->expectName();
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
 
             $hints[] = new IndexHint($action, $target, $indexes);
         } while ($tokenList->hasSymbol(','));

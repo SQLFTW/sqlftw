@@ -132,10 +132,10 @@ class InsertCommandParser
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
 
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
             $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::VALUES);
             $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
 
             return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE)) { // no Keyword::VALUES!
@@ -161,12 +161,12 @@ class InsertCommandParser
     {
         $partitions = null;
         if ($tokenList->hasKeyword(Keyword::PARTITION)) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $partitions = [];
             do {
                 $partitions[] = $tokenList->expectName();
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         return $partitions;
@@ -179,8 +179,8 @@ class InsertCommandParser
     {
         $position = $tokenList->getPosition();
         $columns = null;
-        if ($tokenList->has(TokenType::LEFT_PARENTHESIS)) {
-            if ($tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+        if ($tokenList->hasSymbol('(')) {
+            if ($tokenList->hasSymbol(')')) {
                 return [];
             }
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
@@ -192,7 +192,7 @@ class InsertCommandParser
             do {
                 $columns[] = $tokenList->expectName();
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         return $columns;
@@ -235,10 +235,10 @@ class InsertCommandParser
     {
         $rows = [];
         do {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
 
             $values = [];
-            if (!$tokenList->has(TokenType::RIGHT_PARENTHESIS)) {
+            if (!$tokenList->hasSymbol(')')) {
                 do {
                     if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                         $values[] = new KeywordLiteral(Keyword::DEFAULT);
@@ -246,7 +246,7 @@ class InsertCommandParser
                         $values[] = $this->expressionParser->parseExpression($tokenList);
                     }
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
 
             $rows[] = $values;

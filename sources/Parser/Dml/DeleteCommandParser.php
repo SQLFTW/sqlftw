@@ -86,12 +86,12 @@ class DeleteCommandParser
             if ($tokenList->hasKeyword(Keyword::USING)) {
                 $references = $this->joinParser->parseTableReferences($tokenList);
             } elseif ($tokenList->hasKeyword(Keyword::PARTITION)) {
-                $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+                $tokenList->expectSymbol('(');
                 $partitions = [];
                 do {
                     $partitions[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
-                $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+                $tokenList->expectSymbol(')');
             }
         } else {
             $tables = $this->parseTablesList($tokenList);

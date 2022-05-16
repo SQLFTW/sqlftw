@@ -94,12 +94,12 @@ class CacheCommandsParser
     {
         $indexes = null;
         if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
-            $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+            $tokenList->expectSymbol('(');
             $indexes = [];
             do {
                 $indexes[] = $tokenList->expectName();
             } while ($tokenList->hasSymbol(','));
-            $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+            $tokenList->expectSymbol(')');
         }
 
         return $indexes;
@@ -114,7 +114,7 @@ class CacheCommandsParser
             return null;
         }
 
-        $tokenList->expect(TokenType::LEFT_PARENTHESIS);
+        $tokenList->expectSymbol('(');
         if ($tokenList->hasKeyword(Keyword::ALL)) {
             $partitions = true;
         } else {
@@ -123,7 +123,7 @@ class CacheCommandsParser
                 $partitions[] = $tokenList->expectName();
             } while ($tokenList->hasSymbol(','));
         }
-        $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
+        $tokenList->expectSymbol(')');
 
         return $partitions;
     }
