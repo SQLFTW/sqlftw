@@ -69,6 +69,15 @@ class ColumnDefinition implements TableItem
     /** @var ColumnFormat|null */
     private $columnFormat;
 
+    /** @var string|null */
+    private $engineAttribute;
+
+    /** @var string|null */
+    private $secondaryEngineAttribute;
+
+    /** @var ColumnStorage|null */
+    private $storage;
+
     /** @var ReferenceDefinition|null */
     private $reference;
 
@@ -90,6 +99,9 @@ class ColumnDefinition implements TableItem
         ?string $comment = null,
         ?IndexType $indexType = null,
         ?ColumnFormat $columnFormat = null,
+        ?string $engineAttribute = null,
+        ?string $secondaryEngineAttribute = null,
+        ?ColumnStorage $storage = null,
         ?ReferenceDefinition $reference = null,
         ?CheckDefinition $check = null
     )
@@ -104,6 +116,9 @@ class ColumnDefinition implements TableItem
         $this->comment = $comment;
         $this->indexType = $indexType;
         $this->columnFormat = $columnFormat;
+        $this->engineAttribute = $engineAttribute;
+        $this->secondaryEngineAttribute = $secondaryEngineAttribute;
+        $this->storage = $storage;
         $this->reference = $reference;
         $this->check = $check;
     }
@@ -116,10 +131,12 @@ class ColumnDefinition implements TableItem
         ?bool $nullable = null,
         ?bool $visible = null,
         ?string $comment = null,
-        ?IndexType $indexType = null
+        ?IndexType $indexType = null,
+        ?ReferenceDefinition $reference = null,
+        ?CheckDefinition $check = null
     ): self
     {
-        $instance = new self($name, $type, null, $nullable, $visible, false, null, $comment, $indexType);
+        $instance = new self($name, $type, null, $nullable, $visible, false, null, $comment, $indexType, null, null, null, null, $reference, $check);
 
         $instance->generatedColumnType = $generatedColumnType;
         $instance->expression = $expression;
@@ -217,6 +234,21 @@ class ColumnDefinition implements TableItem
         return $this->columnFormat;
     }
 
+    public function getEngineAttribute(): ?string
+    {
+        return $this->engineAttribute;
+    }
+
+    public function getSecondaryEngineAttribute(): ?string
+    {
+        return $this->secondaryEngineAttribute;
+    }
+
+    public function getStorage(): ?ColumnStorage
+    {
+        return $this->storage;
+    }
+
     public function getReference(): ?ReferenceDefinition
     {
         return $this->reference;
@@ -262,6 +294,15 @@ class ColumnDefinition implements TableItem
             if ($this->columnFormat !== null) {
                 $result .= ' COLUMN_FORMAT ' . $this->columnFormat->serialize($formatter);
             }
+            if ($this->engineAttribute !== null) {
+                $result .= ' ENGINE_ATTRIBUTE ' . $formatter->formatString($this->engineAttribute);
+            }
+            if ($this->secondaryEngineAttribute !== null) {
+                $result .= ' SECONDARY_ENGINE_ATTRIBUTE ' . $formatter->formatString($this->secondaryEngineAttribute);
+            }
+            if ($this->storage !== null) {
+                $result .= ' STORAGE ' . $this->storage->serialize($formatter);
+            }
             if ($this->reference !== null) {
                 $result .= ' ' . $this->reference->serialize($formatter);
             }
@@ -289,6 +330,12 @@ class ColumnDefinition implements TableItem
                 $result .= ' PRIMARY KEY';
             } elseif ($this->indexType === IndexType::get(IndexType::INDEX)) {
                 $result .= ' KEY';
+            }
+            if ($this->reference !== null) {
+                $result .= ' ' . $this->reference->serialize($formatter);
+            }
+            if ($this->check !== null) {
+                $result .= ' ' . $this->check->serialize($formatter);
             }
         }
 

@@ -64,6 +64,7 @@ use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnFormat;
+use SqlFtw\Sql\Ddl\Table\Column\ColumnStorage;
 use SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType;
 use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
@@ -759,18 +760,8 @@ class TableCommandsParser
      *     col_name column_definition
      *
      * column_definition:
-     *     data_type [NOT NULL | NULL] [DEFAULT default_value]
-     *       [VISIBLE | INVISIBLE]
-     *       [AUTO_INCREMENT] [UNIQUE [KEY] | [PRIMARY] KEY]
-     *       [COMMENT 'string']
-     *       [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
-     *       [ON UPDATE CURRENT_TIMESTAMP[(...)]] -- not documented in main article: @see https://dev.mysql.com/doc/refman/8.0/en/timestamp-initialization.html
-     *       [reference_definition]
-     *       [check_constraint_definition]
-     *   | data_type [GENERATED ALWAYS] AS (expression)
-     *       [VIRTUAL | STORED] [UNIQUE [KEY]] [COMMENT comment]
-     *       [VISIBLE | INVISIBLE]
-     *       [NOT NULL | NULL] [[PRIMARY] KEY]
+     *     ordinary_column_definition
+     *   | generated_column_definition
      */
     private function parseColumn(TokenList $tokenList): ColumnDefinition
     {
@@ -780,23 +771,42 @@ class TableCommandsParser
         $keyword = $tokenList->getAnyKeyword(Keyword::GENERATED, Keyword::AS);
         if ($keyword === null) {
             return $this->parseOrdinaryColumn($name, $type, $tokenList);
-        }
+        } else {
+            if ($keyword === Keyword::GENERATED) {
+                $tokenList->expectKeywords(Keyword::ALWAYS, Keyword::AS);
+            }
 
-        if ($keyword === Keyword::GENERATED) {
-            $tokenList->expectKeywords(Keyword::ALWAYS, Keyword::AS);
+            return $this->parseGeneratedColumn($name, $type, $tokenList);
         }
-
-        return $this->parseGeneratedColumn($name, $type, $tokenList);
     }
 
+    /**
+     * ordinary_column_definition:
+     *     data_type [NOT NULL | NULL] [DEFAULT default_value]
+     *       [COLLATE collation_name]
+     *       [VISIBLE | INVISIBLE]
+     *       [AUTO_INCREMENT] [UNIQUE [KEY]] [[PRIMARY] KEY]
+     *       [COMMENT 'string']
+     *       [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
+     *       [ENGINE_ATTRIBUTE [=] 'string']
+     *       [SECONDARY_ENGINE_ATTRIBUTE [=] 'string']
+     *       [STORAGE {DISK | MEMORY}]
+     *       [ON UPDATE CURRENT_TIMESTAMP[(...)]] -- not documented in main article: @see https://dev.mysql.com/doc/refman/8.0/en/timestamp-initialization.html
+     *       [reference_definition]
+     *       [check_constraint_definition]
+     */
     private function parseOrdinaryColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
     {
-        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $charset = $collation = $srid = $visible = null;
+        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $visible = null;
+        $engineAttribute = $secondaryEngineAttribute = $storage = null;
         $autoIncrement = false;
         // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
-        $keywords = [Keyword::NOT, Keyword::NULL, Keyword::DEFAULT, Keyword::AUTO_INCREMENT, Keyword::ON, Keyword::UNIQUE,
-            Keyword::PRIMARY, Keyword::KEY, Keyword::COMMENT, Keyword::COLUMN_FORMAT, Keyword::REFERENCES, Keyword::CHECK,
-            Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::SRID, Keyword::VISIBLE, Keyword::INVISIBLE];
+        $keywords = [
+            Keyword::AUTO_INCREMENT, Keyword::CHARACTER, Keyword::CHARSET, Keyword::CHECK, Keyword::COLLATE,
+            Keyword::COLUMN_FORMAT, Keyword::COMMENT, Keyword::DEFAULT, Keyword::ENGINE_ATTRIBUTE, Keyword::INVISIBLE,
+            Keyword::KEY, Keyword::NOT, Keyword::NULL, Keyword::ON, Keyword::PRIMARY, Keyword::REFERENCES,
+            Keyword::SECONDARY_ENGINE_ATTRIBUTE, Keyword::SRID, Keyword::STORAGE, Keyword::UNIQUE, Keyword::VISIBLE,
+        ];
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
             switch ($keyword) {
                 case Keyword::NOT:
@@ -871,8 +881,21 @@ class TableCommandsParser
                     break;
                 case Keyword::COLUMN_FORMAT:
                     // [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
-                    /** @var ColumnFormat $columnFormat */
                     $columnFormat = $tokenList->expectKeywordEnum(ColumnFormat::class);
+                    break;
+                case Keyword::ENGINE_ATTRIBUTE:
+                    // [ENGINE_ATTRIBUTE [=] 'string']
+                    $tokenList->passEqual();
+                    $engineAttribute = $tokenList->expectString();
+                    break;
+                case Keyword::SECONDARY_ENGINE_ATTRIBUTE:
+                    // [SECONDARY_ENGINE_ATTRIBUTE [=] 'string']
+                    $tokenList->passEqual();
+                    $secondaryEngineAttribute = $tokenList->expectString();
+                    break;
+                case Keyword::STORAGE:
+                    // [STORAGE {DISK | MEMORY}]
+                    $storage = $tokenList->expectKeywordEnum(ColumnStorage::class);
                     break;
                 case Keyword::REFERENCES:
                     // [reference_definition]
@@ -896,46 +919,100 @@ class TableCommandsParser
             }
         }
 
-        return new ColumnDefinition($name, $type, $default, $null, $visible, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $reference, $check);
+        return new ColumnDefinition($name, $type, $default, $null, $visible, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $engineAttribute, $secondaryEngineAttribute, $storage, $reference, $check);
     }
 
+    /**
+     * generated_column_definition:
+     *     data_type [NOT NULL | NULL]
+     *       [COLLATE collation_name]
+     *       [GENERATED ALWAYS] AS (expression)
+     *       [VIRTUAL | STORED]
+     *       [VISIBLE | INVISIBLE]
+     *       [UNIQUE [KEY]] [[PRIMARY] KEY]
+     *       [COMMENT comment]
+     *       [reference_definition]
+     *       [check_constraint_definition]
+     */
     private function parseGeneratedColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
     {
         $tokenList->expect(TokenType::LEFT_PARENTHESIS);
         $expression = $this->expressionParser->parseExpression($tokenList);
         $tokenList->expect(TokenType::RIGHT_PARENTHESIS);
 
-        /** @var GeneratedColumnType $generatedType */
-        $generatedType = $tokenList->getKeywordEnum(GeneratedColumnType::class);
-        $index = $comment = $visible = $null = null;
-        if ($tokenList->hasKeyword(Keyword::UNIQUE)) {
-            $tokenList->passKeyword(Keyword::KEY);
-            $index = IndexType::get(IndexType::UNIQUE);
-        }
-        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-            $comment = $tokenList->expectString();
-        }
-        if ($tokenList->hasKeyword(Keyword::VISIBLE)) {
-            $tokenList->check('column visibility', 80023);
-            $visible = true;
-        } elseif ($tokenList->hasKeyword(Keyword::INVISIBLE)) {
-            $tokenList->check('column visibility', 80023);
-            $visible = false;
-        }
-        if ($tokenList->hasKeywords(Keyword::NOT, Keyword::NULL)) {
-            $null = false;
-        } elseif ($tokenList->hasKeyword(Keyword::NULL)) {
-            $null = true;
+        $null = $index = $comment = $generatedType = $reference = $check = $visible = null;
+        $keywords = [
+            Keyword::CHARACTER, Keyword::CHARSET, Keyword::CHECK, Keyword::COLLATE, Keyword::COMMENT,
+            Keyword::INVISIBLE, Keyword::KEY, Keyword::NOT, Keyword::NULL, Keyword::PRIMARY, Keyword::REFERENCES,
+            Keyword::SRID, Keyword::STORED, Keyword::UNIQUE, Keyword::VIRTUAL, Keyword::VISIBLE,
+        ];
+        while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
+            switch ($keyword) {
+                case Keyword::NOT:
+                    // [NOT NULL | NULL]
+                    $tokenList->expectKeyword(Keyword::NULL);
+                    $null = false;
+                    break;
+                case Keyword::NULL:
+                    $null = true;
+                    break;
+                case Keyword::VIRTUAL:
+                    // [VIRTUAL | STORED]
+                    $generatedType = GeneratedColumnType::get(GeneratedColumnType::VIRTUAL);
+                    break;
+                case Keyword::STORED:
+                    // [VIRTUAL | STORED]
+                    $generatedType = GeneratedColumnType::get(GeneratedColumnType::STORED);
+                    break;
+                case Keyword::VISIBLE:
+                    // [VISIBLE | INVISIBLE]
+                    $tokenList->check('column visibility', 80023);
+                    $visible = true;
+                    break;
+                case Keyword::INVISIBLE:
+                    // [VISIBLE | INVISIBLE]
+                    $tokenList->check('column visibility', 80023);
+                    $visible = false;
+                    break;
+                case Keyword::UNIQUE:
+                    // [UNIQUE [KEY] | [PRIMARY] KEY]
+                    $tokenList->passKeyword(Keyword::KEY);
+                    $index = IndexType::get(IndexType::UNIQUE);
+                    break;
+                case Keyword::PRIMARY:
+                    $tokenList->expectKeyword(Keyword::KEY);
+                    $index = IndexType::get(IndexType::PRIMARY);
+                    break;
+                case Keyword::KEY:
+                    $index = IndexType::get(IndexType::INDEX);
+                    break;
+                case Keyword::COMMENT:
+                    // [COMMENT 'string']
+                    $comment = $tokenList->expectString();
+                    break;
+                case Keyword::REFERENCES:
+                    // [reference_definition]
+                    $reference = $this->parseReference($tokenList->resetPosition(-1));
+                    break;
+                case Keyword::CHECK:
+                    // [check_constraint_definition]
+                    $check = $this->parseCheck($tokenList);
+                    break;
+                case Keyword::CHARACTER:
+                    $tokenList->expectKeyword(Keyword::SET);
+                case Keyword::CHARSET:
+                    $type->addCharset($tokenList->expectCharsetName());
+                    break;
+                case Keyword::COLLATE:
+                    $type->addCollation($tokenList->expectCollationName());
+                    break;
+                case Keyword::SRID:
+                    $type->addSrid($tokenList->expectInt());
+                    break;
+            }
         }
 
-        if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
-            $tokenList->passKeyword(Keyword::KEY);
-            $index = IndexType::get(IndexType::PRIMARY);
-        } elseif ($tokenList->hasKeyword(Keyword::KEY)) {
-            $index = IndexType::get(IndexType::INDEX);
-        }
-
-        return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $visible, $comment, $index);
+        return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $visible, $comment, $index, $reference, $check);
     }
 
     /**
