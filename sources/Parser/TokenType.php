@@ -53,7 +53,7 @@ use Dogma\Enum\IntSet;
  *    - PLACEHOLDER - "?"
  * - SYMBOL ()[]{}.,;
  *    - LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, LEFT_CURLY_BRACKET, RIGHT_CURLY_BRACKET
- *    - DOT, SEMICOLON
+ *    - SEMICOLON
  *    - DELIMITER - default ";"
  *    - DELIMITER_DEFINITION
  *    - OPERATOR - everything else
@@ -153,9 +153,6 @@ class TokenType extends IntSet
 
     /** "}" */
     public const RIGHT_CURLY_BRACKET = 0x40000000;
-
-    /** Name separator */
-    public const DOT = 0x80000000;
 
     /** Group/label separator */
     public const DOUBLE_COLON = 0x200000000;

@@ -93,7 +93,7 @@ class SetCommandParser
                             throw new InvalidValueException('System variable name', $tokenList);
                         }
                         if ($name === null) {
-                            $tokenList->expect(TokenType::DOT);
+                            $tokenList->expectSymbol('.');
                             $name = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
                         }
                     }

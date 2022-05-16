@@ -472,7 +472,7 @@ class ExpressionParser
                 $variableName = $variable->value;
                 // variable
                 if (in_array(strtoupper($variableName), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
-                    $tokenList->expect(TokenType::DOT);
+                    $tokenList->expectSymbol('.');
                     // todo: better type here
                     $variableName .= '.' . $tokenList->expectName();
                 }

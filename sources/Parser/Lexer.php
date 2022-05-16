@@ -467,7 +467,7 @@ class Lexer
                             break;
                         }
                     }
-                    yield $previous = new Token(T::SYMBOL | T::DOT, $start, $char, null, $condition);
+                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
                     break;
                 case '-':
                     $next = $position < $length ? $string[$position] : '';
