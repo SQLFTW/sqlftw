@@ -48,6 +48,8 @@ use SqlFtw\Sql\Dal\Show\ShowProfileCommand;
 use SqlFtw\Sql\Dal\Show\ShowProfilesCommand;
 use SqlFtw\Sql\Dal\Show\ShowProfileType;
 use SqlFtw\Sql\Dal\Show\ShowRelaylogEventsCommand;
+use SqlFtw\Sql\Dal\Show\ShowReplicasCommand;
+use SqlFtw\Sql\Dal\Show\ShowReplicaStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowSchemasCommand;
 use SqlFtw\Sql\Dal\Show\ShowSlaveHostsCommand;
 use SqlFtw\Sql\Dal\Show\ShowSlaveStatusCommand;
@@ -101,8 +103,8 @@ class ShowCommandsParser
             Keyword::EVENTS, Keyword::FIELDS, Keyword::FULL, Keyword::FUNCTION, Keyword::GLOBAL, Keyword::GRANTS,
             Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS, Keyword::MASTER, Keyword::OPEN, Keyword::PLUGINS,
             Keyword::PRIVILEGES, Keyword::PROCEDURE, Keyword::PROFILE, Keyword::PROCESSLIST, Keyword::PROFILES,
-            Keyword::RELAYLOG, Keyword::SCHEMAS, Keyword::SESSION, Keyword::SLAVE, Keyword::STATUS, Keyword::TABLE,
-            Keyword::TABLES, Keyword::TRIGGERS, Keyword::VARIABLES, Keyword::WARNINGS
+            Keyword::RELAYLOG, Keyword::REPLICA, Keyword::REPLICAS, Keyword::SCHEMAS, Keyword::SESSION, Keyword::SLAVE,
+            Keyword::STATUS, Keyword::TABLE, Keyword::TABLES, Keyword::TRIGGERS, Keyword::VARIABLES, Keyword::WARNINGS
         );
         switch ($second) {
             case Keyword::BINARY:
@@ -224,6 +226,12 @@ class ShowCommandsParser
             case Keyword::RELAYLOG:
                 // SHOW RELAYLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count]
                 return $this->parseShowRelaylogEvents($tokenList);
+            case Keyword::REPLICA:
+                // SHOW REPLICA STATUS [FOR CHANNEL channel]
+                return $this->parseShowReplicaStatus($tokenList);
+            case Keyword::REPLICAS:
+                // SHOW REPLICAS
+                return new ShowReplicasCommand();
             case Keyword::SLAVE:
                 $third = $tokenList->expectAnyKeyword(Keyword::HOSTS, Keyword::STATUS);
                 if ($third === Keyword::HOSTS) {
@@ -622,10 +630,24 @@ class ShowCommandsParser
     {
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectName();
+            $channel = $tokenList->expectNameOrString();
         }
 
         return new ShowSlaveStatusCommand($channel);
+    }
+
+    /**
+     * SHOW REPLICA STATUS [FOR CHANNEL channel]
+     */
+    private function parseShowReplicaStatus(TokenList $tokenList): ShowReplicaStatusCommand
+    {
+        $tokenList->expectKeyword(Keyword::STATUS);
+        $channel = null;
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectNameOrString();
+        }
+
+        return new ShowReplicaStatusCommand($channel);
     }
 
     /**

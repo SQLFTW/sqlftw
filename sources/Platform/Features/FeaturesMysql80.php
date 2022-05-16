@@ -593,6 +593,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::REPAIR,
         Keyword::REPEATABLE,
         Keyword::REPLICA,
+        Keyword::REPLICAS,
         Keyword::REPLICATE_DO_DB,
         Keyword::REPLICATE_DO_TABLE,
         Keyword::REPLICATE_IGNORE_DB,

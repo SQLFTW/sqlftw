@@ -796,6 +796,7 @@ class Keyword extends SqlEnum implements Feature
     public const REPEATABLE = 'REPEATABLE';
     public const REPLACE = 'REPLACE';
     public const REPLICA = 'REPLICA';
+    public const REPLICAS = 'REPLICAS';
     public const REPLICATE_DO_DB = 'REPLICATE_DO_DB';
     public const REPLICATE_DO_TABLE = 'REPLICATE_DO_TABLE';
     public const REPLICATE_IGNORE_DB = 'REPLICATE_IGNORE_DB';
