@@ -44,7 +44,6 @@ use function trim;
 /**
  * todo:
  * - quoted delimiters
- * - quoted user variables
  * - Date and Time Literals?
  * - Mysql string charset declaration (_utf* & N)
  * - \N is synonym for NULL (until 8.0)
@@ -286,15 +285,6 @@ class Lexer
                     yield $previous = new Token(T::VALUE | T::PLACEHOLDER, $start, $char, null, $condition);
                     break;
                 case '@':
-                    if (($previous->type & (T::STRING | T::NAME)) !== 0
-                        && ($previous->type & (T::KEYWORD | T::UNQUOTED_NAME)) !== (T::KEYWORD | T::UNQUOTED_NAME)
-                        && ($previous->type & T::AT_VARIABLE) === 0
-                    ) {
-                        // user @ host
-                        yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $char, null, $condition);
-                        break;
-                    }
-
                     $value = $char;
                     $second = $string[$position];
                     if ($second === '@') {
@@ -313,6 +303,21 @@ class Lexer
                             }
                         }
                         yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+                    } elseif ($second === '`') {
+                        $position++;
+                        $column++;
+                        [$name, $orig] = $this->parseString($string, $position, $column, $row, $second);
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, '@' . $name, '@' . $orig, $condition);
+                    } elseif ($second === "'") {
+                        $position++;
+                        $column++;
+                        [$name, $orig] = $this->parseString($string, $position, $column, $row, $second);
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, '@' . $name, '@' . $orig, $condition);
+                    } elseif ($second === '"') {
+                        $position++;
+                        $column++;
+                        [$name, $orig] = $this->parseString($string, $position, $column, $row, $second);
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, '@' . $name, '@' . $orig, $condition);
                     } elseif (isset(self::$userVariableNameCharsKey[$second]) || ord($second) > 127) {
                         // @variable
                         $value .= $second;

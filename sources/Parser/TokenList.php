@@ -791,7 +791,7 @@ class TokenList
 
     /**
      * @return array{string, string|null} ($name, $schema)
-     * @todo return QuelifiedName
+     * @todo return QualifiedName
      */
     public function expectQualifiedName(): array
     {
@@ -847,15 +847,9 @@ class TokenList
     public function expectUserName(): UserName
     {
         $name = $this->expectNameOrString();
-        $host = null;
-        if ($this->has(TokenType::SYMBOL, '@')) {
-            $host = (string) ($this->getInt() ?? $this->expectNameOrString());
-        } else {
-            // todo: cannot distinguish between `foo@bar` vs `foo @bar` at lexer level
-            $variable = $this->get(TokenType::AT_VARIABLE);
-            if ($variable !== null) {
-                $host = ltrim($variable->value, '@');
-            }
+        $host = $this->get(TokenType::AT_VARIABLE);
+        if ($host !== null) {
+            $host = ltrim($host->value, '@');
         }
 
         return new UserName($name, $host);

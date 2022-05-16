@@ -103,6 +103,7 @@ Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' `name1');
 }, LexerException::class, '~^End of string not found~');
 
+
 // AT_VARIABLE
 $tokens = $lexer->tokenizeAll(' @var1 ');
 Assert::count($tokens, 3);
@@ -110,19 +111,36 @@ Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::NAME | TokenType::AT_VARIABLE, '@var1', 1);
 Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 6);
 
-// not AT_VARIABLE
+$tokens = $lexer->tokenizeAll(' @`var1` ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], TokenType::NAME | TokenType::AT_VARIABLE, '@var1', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
+
+$tokens = $lexer->tokenizeAll(' @\'var1\' ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], TokenType::NAME | TokenType::AT_VARIABLE, '@var1', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
+
+$tokens = $lexer->tokenizeAll(' @"var1" ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], TokenType::NAME | TokenType::AT_VARIABLE, '@var1', 1);
+Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 8);
+
 $tokens = $lexer->tokenizeAll(' name1@name2 ');
-Assert::count($tokens, 5);
+Assert::count($tokens, 4);
 Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], TokenType::NAME | TokenType::UNQUOTED_NAME, 'name1', 1);
-Assert::token($tokens[2], TokenType::SYMBOL | TokenType::OPERATOR, '@', 6);
-Assert::token($tokens[3], TokenType::NAME | TokenType::UNQUOTED_NAME, 'name2', 7);
-Assert::token($tokens[4], TokenType::WHITESPACE, ' ', 12);
+Assert::token($tokens[2], TokenType::NAME | TokenType::AT_VARIABLE, '@name2', 6);
+Assert::token($tokens[3], TokenType::WHITESPACE, ' ', 12);
 
-// ENCODING_DEFINITION
-//$tokens = $lexer->tokenizeAll(" _utf8'string1' ");
-//Assert::count($tokens, 5);
-//Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-//Assert::token($tokens[1], TokenType::NAME | TokenType::ENCODING_DEFINITION, '_utf8', 1);
-//Assert::token($tokens[2], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'string1', 1);
-//Assert::token($tokens[3], TokenType::WHITESPACE, ' ', 12);
+
+// CHARSET_INTRODUCER
+$tokens = $lexer->tokenizeAll(" _utf8'string1' ");
+Assert::count($tokens, 4);
+Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], TokenType::NAME | TokenType::CHARSET_INTRODUCER, 'utf8', 1);
+Assert::token($tokens[2], TokenType::VALUE | TokenType::STRING | TokenType::SINGLE_QUOTED_STRING, 'string1', 6);
+Assert::token($tokens[3], TokenType::WHITESPACE, ' ', 15);
