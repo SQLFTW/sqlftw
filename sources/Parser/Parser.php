@@ -674,8 +674,9 @@ class Parser
                     'disconnect', 'echo', 'enable_query_log', 'enable_result_log', 'enable_warnings', 'end',
                     'end_of_procedure', 'error', 'eval', 'exec', 'exit', 'file_exists', 'if', 'inc', 'let', 'mkdir',
                     'my', 'open', 'perl', 'print', 'query_vertical', 'read', 'reap', 'remove_file', 'replace_regex',
-                    'reset_connection', 'rmdir', 'save_master_pos', 'send', 'sleep', 'source', 'sync_slave_with_master',
-                    'sync_with_master', 'wait_for_slave_to_stop', 'while', 'write_file', '$file', '$match', '[', '}', '<',
+                    'reset_connection', 'rmdir', 'save_master_pos', 'send', 'sleep', 'source', 'sorted_result',
+                    'sync_slave_with_master', 'sync_with_master', 'unlink', 'wait_for_slave_to_stop', 'while',
+                    'write_file', '$file', '$match', '[', '}', '<',
                 ];
 
                 if ($this->settings->mysqlTestMode && in_array(strtolower((string) $first->value), $perlArtifacts, true)) {
