@@ -35,7 +35,7 @@ class ChangeReplicationSourceToCommand implements ReplicationCommand
 
         foreach ($options as $option => $value) {
             ReplicaOption::get($option);
-            Check::type($value, $types[$option]);
+            Check::types($value, explode('|', $types[$option]));
 
             $this->options[$option] = $value;
         }

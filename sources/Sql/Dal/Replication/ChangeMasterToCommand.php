@@ -14,6 +14,7 @@ use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeInterval;
+use function explode;
 use function implode;
 
 class ChangeMasterToCommand implements ReplicationCommand
@@ -35,7 +36,7 @@ class ChangeMasterToCommand implements ReplicationCommand
 
         foreach ($options as $option => $value) {
             SlaveOption::get($option);
-            Check::type($value, $types[$option]);
+            Check::types($value, explode('|', $types[$option]));
 
             $this->options[$option] = $value;
         }

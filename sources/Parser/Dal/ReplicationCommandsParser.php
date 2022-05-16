@@ -34,6 +34,7 @@ use SqlFtw\Sql\Dal\Replication\StopGroupReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\StopReplicaCommand;
 use SqlFtw\Sql\Dal\Replication\StopSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\UuidSet;
+use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -125,8 +126,12 @@ class ReplicationCommandsParser
                 case Type::BOOL:
                     $value = $tokenList->expectBool();
                     break;
-                case UserName::class:
-                    $value = $tokenList->expectUserName();
+                case UserName::class . '|' . KeywordLiteral::class:
+                    if ($tokenList->hasKeyword(Keyword::NULL)) {
+                        $value = new KeywordLiteral(Keyword::NULL);
+                    } else {
+                        $value = $tokenList->expectUserName();
+                    }
                     break;
                 case 'array<int>':
                     $tokenList->expect(TokenType::LEFT_PARENTHESIS);
@@ -237,8 +242,12 @@ class ReplicationCommandsParser
                 case Type::BOOL:
                     $value = $tokenList->expectBool();
                     break;
-                case UserName::class:
-                    $value = $tokenList->expectUserName();
+                case UserName::class . '|' . KeywordLiteral::class:
+                    if ($tokenList->hasKeyword(Keyword::NULL)) {
+                        $value = new KeywordLiteral(Keyword::NULL);
+                    } else {
+                        $value = $tokenList->expectUserName();
+                    }
                     break;
                 case 'array<int>':
                     $tokenList->expect(TokenType::LEFT_PARENTHESIS);
