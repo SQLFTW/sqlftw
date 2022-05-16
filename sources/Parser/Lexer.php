@@ -216,10 +216,10 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL | T::RIGHT_SQUARE_BRACKET, $start, $char, null, $condition);
                     break;
                 case '{':
-                    yield $previous = new Token(T::SYMBOL | T::LEFT_CURLY_BRACKET, $start, $char, null, $condition);
+                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
                     break;
                 case '}':
-                    yield $previous = new Token(T::SYMBOL | T::RIGHT_CURLY_BRACKET, $start, $char, null, $condition);
+                    yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
                     break;
                 case ',':
                     yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);

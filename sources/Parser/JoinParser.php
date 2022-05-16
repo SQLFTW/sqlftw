@@ -74,13 +74,13 @@ class JoinParser
      */
     public function parseTableReference(TokenList $tokenList): TableReferenceNode
     {
-        if ($tokenList->has(TokenType::LEFT_CURLY_BRACKET)) {
+        if ($tokenList->hasSymbol('{')) {
             $token = $tokenList->expectName();
             if ($token !== 'OJ') {
                 $tokenList->expected('Expected ODBC escaped table reference introducer "OJ".');
             } else {
                 $reference = $this->parseTableReference($tokenList);
-                $tokenList->expect(TokenType::RIGHT_CURLY_BRACKET);
+                $tokenList->expectSymbol('}');
 
                 return new EscapedTableReference($reference);
             }

@@ -458,11 +458,11 @@ class ExpressionParser
             // param_marker
             $expression = new Placeholder();
 
-        } elseif ($tokenList->has(TokenType::LEFT_CURLY_BRACKET)) {
+        } elseif ($tokenList->hasSymbol('{')) {
             // {identifier expr}
             $name = $tokenList->expectName();
             $expression = $this->parseExpression($tokenList);
-            $tokenList->expect(TokenType::RIGHT_CURLY_BRACKET);
+            $tokenList->expectSymbol('}');
             $expression = new CurlyExpression($name, $expression);
 
         } else {
