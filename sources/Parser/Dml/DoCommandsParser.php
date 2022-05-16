@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\DoCommand\DoCommand;
+use SqlFtw\Sql\Expression\AliasExpression;
 use SqlFtw\Sql\Keyword;
 
 class DoCommandsParser
@@ -36,7 +37,13 @@ class DoCommandsParser
 
         $expressions = [];
         do {
-            $expressions[] = $this->expressionParser->parseExpression($tokenList);
+            $expression = $this->expressionParser->parseExpression($tokenList);
+            if ($tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectNameOrString();
+                $expression = new AliasExpression($expression, $alias);
+            }
+
+            $expressions[] = $expression;
         } while ($tokenList->hasComma());
 
         return new DoCommand($expressions);
