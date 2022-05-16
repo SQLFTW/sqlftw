@@ -185,7 +185,51 @@ class TokenList
         return true;
     }
 
-    // matchers --------------------------------------------------------------------------------------------------------
+    // seek ------------------------------------------------------------------------------------------------------------
+
+    public function seek(int $type, string $value = null, int $maxOffset = 1000): ?Token
+    {
+        $position = $this->position;
+        for ($n = 0; $n < $maxOffset; $n++) {
+            $this->doAutoSkip();
+            $token = $this->tokens[$this->position] ?? null;
+            if ($token === null) {
+                break;
+            }
+            $this->position++;
+            if (($token->type & $type) !== 0 && ($value === null || $value === $token->value)) {
+                $this->position = $position;
+
+                return $token;
+            }
+        }
+        $this->position = $position;
+
+        return null;
+    }
+
+    public function seekKeyword(string $keyword, int $maxOffset): bool
+    {
+        $position = $this->position;
+        for ($n = 0; $n < $maxOffset; $n++) {
+            $this->doAutoSkip();
+            $token = $this->tokens[$this->position] ?? null;
+            if ($token === null) {
+                break;
+            }
+            $this->position++;
+            if (($token->type & TokenType::KEYWORD) !== 0 && $token->value === $keyword) {
+                $this->position = $position;
+
+                return true;
+            }
+        }
+        $this->position = $position;
+
+        return false;
+    }
+
+    // general ---------------------------------------------------------------------------------------------------------
 
     /**
      * @return never
@@ -270,6 +314,8 @@ class TokenList
         throw InvalidTokenException::tokens($tokenTypes, null, $token, $this);
     }
 
+    // symbols ---------------------------------------------------------------------------------------------------------
+
     public function expectSymbol(string $symbol): Token
     {
         $this->doAutoSkip();
@@ -313,92 +359,60 @@ class TokenList
         }
     }
 
-    public function expectName(?string $name = null): string
-    {
-        $token = $this->expect(TokenType::NAME, $name);
+    // operators -------------------------------------------------------------------------------------------------------
 
-        return $token->original ?? (string) $token->value;
+    public function expectOperator(string $operator): string
+    {
+        /** @var string $value */
+        $value = $this->expect(TokenType::OPERATOR, $operator)->value;
+
+        return $value;
     }
 
-    public function getName(?string $name = null): ?string
-    {
-        $token = $this->get(TokenType::NAME, $name);
-        if ($token !== null) {
-            return $token->value; // @phpstan-ignore-line string!
-        }
-
-        return null;
-    }
-
-    public function expectNonKeywordName(?string $name = null): string
-    {
-        $token = $this->expect(TokenType::NAME, $name);
-        if (($token->type & TokenType::KEYWORD) !== 0) {
-            throw InvalidTokenException::tokens([TokenType::NAME], null, $token, $this);
-        }
-
-        return $token->original ?? (string) $token->value;
-    }
-
-    public function getNonKeywordName(?string $name = null): ?string
+    /**
+     * @phpstan-impure
+     */
+    public function hasOperator(string $operator): bool
     {
         $position = $this->position;
-        $token = $this->get(TokenType::NAME, $name);
+
+        $token = $this->get(TokenType::OPERATOR);
         if ($token === null) {
-            return null;
-        } elseif (($token->type & TokenType::KEYWORD) !== 0) {
+            return false;
+        } elseif ($token->value === $operator) {
+            return true;
+        } else {
+            $this->position = $position;
+
+            return false;
+        }
+    }
+
+    public function expectAnyOperator(string ...$operators): string
+    {
+        $operator = $this->expect(TokenType::OPERATOR);
+        if (!in_array($operator->value, $operators, true)) {
+            throw InvalidTokenException::tokens([TokenType::OPERATOR], $operators, $operator, $this);
+        }
+
+        return $operator->value;
+    }
+
+    public function getAnyOperator(string ...$operators): ?string
+    {
+        $position = $this->position;
+
+        $operator = $this->get(TokenType::OPERATOR);
+        if ($operator === null || !in_array($operator->value, $operators, true)) {
             $this->position = $position;
 
             return null;
         }
 
-        return $token->value; // @phpstan-ignore-line string
+        return $operator->value;
     }
 
-    public function expectString(): string
-    {
-        /** @var string $value */
-        $value = $this->expect(TokenType::STRING)->value;
-
-        return $value;
-    }
-
-    public function getString(): ?string
-    {
-        $token = $this->get(TokenType::STRING);
-
-        /** @var string|null $value */
-        $value = $token !== null ? $token->value : null;
-
-        return $value;
-    }
-
-    public function expectStringLike(): Literal
-    {
-        $token = $this->expect(TokenType::STRING | TokenType::HEXADECIMAL_LITERAL);
-        $value = $token->value;
-        if (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
-            return new HexadecimalLiteral((string) $value);
-        }
-
-        return new ValueLiteral($value);
-    }
-
-    public function expectNameOrString(): string
-    {
-        $token = $this->expectAny(TokenType::NAME, TokenType::STRING);
-        /** @var string $value */
-        $value = ($token->type & TokenType::KEYWORD) !== 0
-            ? $token->original ?? $token->value // NAME|KEYWORD is automatically upper-cased
-            : $token->value;
-
-        return $value;
-    }
-
-    public function hasNameOrKeyword(string $name): bool
-    {
-        return $this->hasKeyword($name) || (bool) $this->getName($name);
-    }
+    // numbers ---------------------------------------------------------------------------------------------------------
 
     /**
      * @return int|float|string
@@ -485,56 +499,116 @@ class TokenList
         throw new InvalidValueException("boolean", $this);
     }
 
-    public function expectOperator(string $operator): string
+    // strings ---------------------------------------------------------------------------------------------------------
+
+    public function expectString(): string
     {
         /** @var string $value */
-        $value = $this->expect(TokenType::OPERATOR, $operator)->value;
+        $value = $this->expect(TokenType::STRING)->value;
+
+        return $value;
+    }
+
+    public function getString(): ?string
+    {
+        $token = $this->get(TokenType::STRING);
+
+        /** @var string|null $value */
+        $value = $token !== null ? $token->value : null;
+
+        return $value;
+    }
+
+    public function expectStringLike(): Literal
+    {
+        $token = $this->expect(TokenType::STRING | TokenType::HEXADECIMAL_LITERAL);
+        $value = $token->value;
+        if (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
+            return new HexadecimalLiteral((string) $value);
+        }
+
+        return new ValueLiteral($value);
+    }
+
+    public function expectNameOrString(): string
+    {
+        $token = $this->expectAny(TokenType::NAME, TokenType::STRING);
+        /** @var string $value */
+        $value = ($token->type & TokenType::KEYWORD) !== 0
+            ? $token->original ?? $token->value // NAME|KEYWORD is automatically upper-cased
+            : $token->value;
 
         return $value;
     }
 
     /**
-     * @phpstan-impure
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T
      */
-    public function hasOperator(string $operator): bool
+    public function expectNameOrStringEnum(string $className): SqlEnum
+    {
+        $value = $this->expectNameOrString();
+
+        try {
+            return call_user_func([$className, 'get'], $value);
+        } catch (InvalidEnumValueException $e) {
+            $values = call_user_func([$className, 'getAllowedValues']);
+
+            throw InvalidTokenException::tokens([TokenType::NAME], $values, $this->tokens[$this->position - 1], $this);
+        }
+    }
+
+    // names ---------------------------------------------------------------------------------------------------------
+
+    public function expectName(?string $name = null): string
+    {
+        $token = $this->expect(TokenType::NAME, $name);
+
+        return $token->original ?? (string) $token->value;
+    }
+
+    public function getName(?string $name = null): ?string
+    {
+        $token = $this->get(TokenType::NAME, $name);
+        if ($token !== null) {
+            return $token->value; // @phpstan-ignore-line string!
+        }
+
+        return null;
+    }
+
+    public function expectNonKeywordName(?string $name = null): string
+    {
+        $token = $this->expect(TokenType::NAME, $name);
+        if (($token->type & TokenType::KEYWORD) !== 0) {
+            throw InvalidTokenException::tokens([TokenType::NAME], null, $token, $this);
+        }
+
+        return $token->original ?? (string) $token->value;
+    }
+
+    public function getNonKeywordName(?string $name = null): ?string
     {
         $position = $this->position;
-
-        $token = $this->get(TokenType::OPERATOR);
+        $token = $this->get(TokenType::NAME, $name);
         if ($token === null) {
-            return false;
-        } elseif ($token->value === $operator) {
-            return true;
-        } else {
-            $this->position = $position;
-
-            return false;
-        }
-    }
-
-    public function expectAnyOperator(string ...$operators): string
-    {
-        $operator = $this->expect(TokenType::OPERATOR);
-        if (!in_array($operator->value, $operators, true)) {
-            throw InvalidTokenException::tokens([TokenType::OPERATOR], $operators, $operator, $this);
-        }
-
-        return $operator->value;
-    }
-
-    public function getAnyOperator(string ...$operators): ?string
-    {
-        $position = $this->position;
-
-        $operator = $this->get(TokenType::OPERATOR);
-        if ($operator === null || !in_array($operator->value, $operators, true)) {
+            return null;
+        } elseif (($token->type & TokenType::KEYWORD) !== 0) {
             $this->position = $position;
 
             return null;
         }
 
-        return $operator->value;
+        return $token->value; // @phpstan-ignore-line string
     }
+
+    public function hasNameOrKeyword(string $name): bool
+    {
+        return $this->hasKeyword($name) || (bool) $this->getName($name);
+    }
+
+    // keywords --------------------------------------------------------------------------------------------------------
 
     /**
      * @return never
@@ -655,6 +729,8 @@ class TokenList
         return false;
     }
 
+    // keyword enums ---------------------------------------------------------------------------------------------------
+
     /**
      * @template T of SqlEnum
      * @param class-string<T> $className
@@ -668,25 +744,16 @@ class TokenList
     /**
      * @template T of SqlEnum
      * @param class-string<T> $className
-     * @return T
+     * @return T|null
      */
-    public function getMultiKeywordsEnum(string $className): ?SqlEnum
+    public function getKeywordEnum(string $className): ?SqlEnum
     {
-        $start = $this->position;
-        $values = call_user_func([$className, 'getAllowedValues']);
-        foreach ($values as $value) {
-            $this->position = $start;
-            $keywords = explode(' ', $value);
-            foreach ($keywords as $keyword) {
-                if (!$this->hasKeyword($keyword)) {
-                    continue 2;
-                }
-            }
-
-            return call_user_func([$className, 'get'], $value);
+        $token = $this->getAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues'])));
+        if ($token === null) {
+            return null;
+        } else {
+            return call_user_func([$className, 'get'], $token);
         }
-
-        return null;
     }
 
     /**
@@ -719,75 +786,26 @@ class TokenList
      * @param class-string<T> $className
      * @return T
      */
-    public function expectNameOrStringEnum(string $className): SqlEnum
+    public function getMultiKeywordsEnum(string $className): ?SqlEnum
     {
-        $value = $this->expectNameOrString();
+        $start = $this->position;
+        $values = call_user_func([$className, 'getAllowedValues']);
+        foreach ($values as $value) {
+            $this->position = $start;
+            $keywords = explode(' ', $value);
+            foreach ($keywords as $keyword) {
+                if (!$this->hasKeyword($keyword)) {
+                    continue 2;
+                }
+            }
 
-        try {
             return call_user_func([$className, 'get'], $value);
-        } catch (InvalidEnumValueException $e) {
-            $values = call_user_func([$className, 'getAllowedValues']);
-
-            throw InvalidTokenException::tokens([TokenType::NAME], $values, $this->tokens[$this->position - 1], $this);
         }
-    }
-
-    /**
-     * @template T of SqlEnum
-     * @param class-string<T> $className
-     * @return T|null
-     */
-    public function getKeywordEnum(string $className): ?SqlEnum
-    {
-        $token = $this->getAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues'])));
-        if ($token === null) {
-            return null;
-        } else {
-            return call_user_func([$className, 'get'], $token);
-        }
-    }
-
-    public function seek(int $type, string $value = null, int $maxOffset = 1000): ?Token
-    {
-        $position = $this->position;
-        for ($n = 0; $n < $maxOffset; $n++) {
-            $this->doAutoSkip();
-            $token = $this->tokens[$this->position] ?? null;
-            if ($token === null) {
-                break;
-            }
-            $this->position++;
-            if (($token->type & $type) !== 0 && ($value === null || $value === $token->value)) {
-                $this->position = $position;
-
-                return $token;
-            }
-        }
-        $this->position = $position;
 
         return null;
     }
 
-    public function seekKeyword(string $keyword, int $maxOffset): bool
-    {
-        $position = $this->position;
-        for ($n = 0; $n < $maxOffset; $n++) {
-            $this->doAutoSkip();
-            $token = $this->tokens[$this->position] ?? null;
-            if ($token === null) {
-                break;
-            }
-            $this->position++;
-            if (($token->type & TokenType::KEYWORD) !== 0 && $token->value === $keyword) {
-                $this->position = $position;
-
-                return true;
-            }
-        }
-        $this->position = $position;
-
-        return false;
-    }
+    // special values --------------------------------------------------------------------------------------------------
 
     /**
      * @return array{string, string|null} ($name, $schema)
@@ -872,6 +890,8 @@ class TokenList
             return $this->expectNameOrStringEnum(Collation::class);
         }
     }
+
+    // end -------------------------------------------------------------------------------------------------------------
 
     public function expectEnd(): void
     {
