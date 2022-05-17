@@ -16,7 +16,7 @@ class DropSpatialReferenceSystemCommand implements ServerCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var int */
     private $srid;
 
     /** @var bool */
@@ -28,7 +28,7 @@ class DropSpatialReferenceSystemCommand implements ServerCommand
         $this->ifExists = $ifExists;
     }
 
-    public function getSrid(): string
+    public function getSrid(): int
     {
         return $this->srid;
     }

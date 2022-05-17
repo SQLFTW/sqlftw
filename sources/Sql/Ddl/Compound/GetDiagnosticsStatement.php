@@ -101,8 +101,8 @@ class GetDiagnosticsStatement implements CompoundStatementItem
         $result .= ' DIAGNOSTICS ';
         if ($this->statementItems !== null) {
             $result .= $formatter->formatSerializablesList($this->statementItems);
-        } elseif ($this->conditionItems !== null) {
-            $result .= 'CONDITION ' . $this->conditionNumber->serialize() . ' ' . $formatter->formatSerializablesList($this->conditionItems);
+        } elseif ($this->conditionNumber !== null && $this->conditionItems !== null) {
+            $result .= 'CONDITION ' . $this->conditionNumber->serialize($formatter) . ' ' . $formatter->formatSerializablesList($this->conditionItems);
         } else {
             throw new ShouldNotHappenException('Either conditionItems or statementItems must be set.');
         }

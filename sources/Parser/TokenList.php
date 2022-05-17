@@ -834,12 +834,14 @@ class TokenList
     public function expectUserName(): UserName
     {
         $name = $this->expectNameOrString();
-        $host = $this->get(TokenType::AT_VARIABLE);
-        if ($host !== null) {
-            $host = ltrim($host->value, '@');
+        $token = $this->get(TokenType::AT_VARIABLE);
+        if ($token !== null) {
+            /** @var string $host */
+            $host = $token->value;
+            $token = ltrim($host, '@');
         }
 
-        return new UserName($name, $host);
+        return new UserName($name, $token);
     }
 
     public function expectCharsetName(): Charset

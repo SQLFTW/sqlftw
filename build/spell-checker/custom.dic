@@ -8,6 +8,7 @@ cwd
 ddl
 dgray
 dll
+enums
 euc
 fk
 fn
@@ -31,11 +32,13 @@ rl
 sdi
 sqlftw
 sqlmode
+srs
 tagname
 tbl
 termino
 tls
 ucs
+uint
 unary
 xyz
 
@@ -92,6 +95,7 @@ aes
 agg
 aio
 alloc
+allowlist
 api
 arrayagg
 aton
@@ -99,6 +103,8 @@ attrs
 auth
 autoextend
 autoincrement
+autorejoin
+autotune
 avgx
 avgy
 bernoulli
@@ -107,6 +113,7 @@ bqual
 builtin
 calc
 capath
+certifier
 chk
 ciphersuite
 ciphersuites
@@ -126,6 +133,7 @@ doublewrite
 eq
 expr
 filesystem
+fips
 frac
 frm
 gcol
@@ -156,6 +164,7 @@ nullif
 objectagg
 oids
 passwordless
+paxos
 pli
 pll
 plsql
@@ -195,6 +204,7 @@ unlisten
 unnest
 variadic
 vcpu
+whitelist
 wlock
 xmlattributes
 xmlconcat

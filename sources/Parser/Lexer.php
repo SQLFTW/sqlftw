@@ -10,6 +10,7 @@
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 // phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
 // phpcs:disable SlevomatCodingStandard.ControlStructures.AssignmentInCondition
+// spell-check-ignore: recvresult
 
 namespace SqlFtw\Parser;
 

@@ -11,7 +11,6 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Collation;
 
 /**
  * expression AS name
@@ -23,7 +22,7 @@ class AliasExpression implements ExpressionNode
     /** @var ExpressionNode */
     private $expression;
 
-    /** @var Collation */
+    /** @var string */
     private $name;
 
     public function __construct(ExpressionNode $expression, string $name)
@@ -37,14 +36,14 @@ class AliasExpression implements ExpressionNode
         return $this->expression;
     }
 
-    public function getName(): Collation
+    public function getName(): string
     {
         return $this->name;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->expression->serialize($formatter) . ' AS ' . $this->name->serialize($formatter);
+        return $this->expression->serialize($formatter) . ' AS ' . $formatter->formatName($this->name);
     }
 
 }

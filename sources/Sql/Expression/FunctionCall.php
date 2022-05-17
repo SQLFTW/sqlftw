@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
@@ -31,6 +30,7 @@ class FunctionCall implements ExpressionNode
     /** @var ExpressionNode[] */
     private $arguments;
 
+    /** @var WindowSpecification|string|null */
     private $over;
 
     /**
@@ -63,6 +63,14 @@ class FunctionCall implements ExpressionNode
     public function getArguments(): array
     {
         return $this->arguments;
+    }
+
+    /**
+     * @return WindowSpecification|string|null
+     */
+    public function getOver()
+    {
+        return $this->over;
     }
 
     public function serialize(Formatter $formatter): string
