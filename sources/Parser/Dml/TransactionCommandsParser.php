@@ -26,7 +26,6 @@ use SqlFtw\Sql\Dml\Transaction\TransactionIsolationLevel;
 use SqlFtw\Sql\Dml\Transaction\UnlockInstanceCommand;
 use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
 
 class TransactionCommandsParser
@@ -73,7 +72,7 @@ class TransactionCommandsParser
         $tokenList->expectAnyKeyword(Keyword::TABLES, Keyword::TABLE);
         $items = [];
         do {
-            $table = new QualifiedName(...$tokenList->expectQualifiedName());
+            $table = $tokenList->expectQualifiedName();
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectName();
             } else {

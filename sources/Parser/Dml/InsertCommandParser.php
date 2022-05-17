@@ -12,7 +12,6 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\Insert\InsertCommand;
 use SqlFtw\Sql\Dml\Insert\InsertPriority;
@@ -28,7 +27,6 @@ use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class InsertCommandParser
 {
@@ -79,7 +77,7 @@ class InsertCommandParser
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
         $tokenList->passKeyword(Keyword::INTO);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
 
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
@@ -127,7 +125,7 @@ class InsertCommandParser
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
         $tokenList->passKeyword(Keyword::INTO);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
 
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
@@ -216,7 +214,7 @@ class InsertCommandParser
     {
         $assignments = [];
         do {
-            $column = new QualifiedName(...$tokenList->expectQualifiedName());
+            $column = $tokenList->expectQualifiedName();
             $tokenList->expectOperator(Operator::EQUAL);
             if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                 $assignments[] = new Assignment($column, new KeywordLiteral(Keyword::DEFAULT));

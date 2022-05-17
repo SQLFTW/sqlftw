@@ -12,13 +12,11 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Handler\HandlerCloseCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerOpenCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadTarget;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class HandlerCommandsParser
 {
@@ -38,7 +36,7 @@ class HandlerCommandsParser
     public function parseHandlerOpen(TokenList $tokenList): HandlerOpenCommand
     {
         $tokenList->expectKeyword(Keyword::HANDLER);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
         $tokenList->expectKeyword(Keyword::OPEN);
 
         $tokenList->passKeyword(Keyword::AS);
@@ -58,7 +56,7 @@ class HandlerCommandsParser
     public function parseHandlerRead(TokenList $tokenList): HandlerReadCommand
     {
         $tokenList->expectKeyword(Keyword::HANDLER);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
         $tokenList->expectKeyword(Keyword::READ);
 
         $values = null;
@@ -101,7 +99,7 @@ class HandlerCommandsParser
     public function parseHandlerClose(TokenList $tokenList): HandlerCloseCommand
     {
         $tokenList->expectKeyword(Keyword::HANDLER);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
         $tokenList->expectKeyword(Keyword::CLOSE);
 
         return new HandlerCloseCommand($table);

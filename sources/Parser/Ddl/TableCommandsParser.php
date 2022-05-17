@@ -100,7 +100,6 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
-use function array_pop;
 
 class TableCommandsParser
 {
@@ -201,7 +200,7 @@ class TableCommandsParser
     public function parseAlterTable(TokenList $tokenList): AlterTableCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::TABLE);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         $actions = [];
         $alterOptions = [];
@@ -474,7 +473,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::PARTITION);
                     $partition = $tokenList->expectName();
                     $tokenList->expectKeywords(Keyword::WITH, Keyword::TABLE);
-                    $table = new QualifiedName(...$tokenList->expectQualifiedName());
+                    $table = $tokenList->expectQualifiedName();
                     $validation = $tokenList->getAnyKeyword(Keyword::WITH, Keyword::WITHOUT);
                     if ($validation === Keyword::WITH) {
                         $tokenList->expectKeyword(Keyword::VALIDATION);
@@ -565,7 +564,7 @@ class TableCommandsParser
                     } else {
                         // RENAME [TO|AS] new_tbl_name
                         $tokenList->getAnyKeyword(Keyword::TO, Keyword::AS);
-                        $newName = new QualifiedName(...$tokenList->expectQualifiedName());
+                        $newName = $tokenList->expectQualifiedName();
                         $actions[] = new RenameToAction($newName);
                     }
                     break;
@@ -665,12 +664,12 @@ class TableCommandsParser
         $temporary = $tokenList->hasKeyword(Keyword::TEMPORARY);
         $tokenList->expectKeyword(Keyword::TABLE);
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
 
         $position = $tokenList->getPosition();
         $bodyOpen = $tokenList->hasSymbol('(');
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
-            $oldTable = new QualifiedName(...$tokenList->expectQualifiedName());
+            $oldTable = $tokenList->expectQualifiedName();
             if ($bodyOpen) {
                 $tokenList->expectSymbol(')');
             }
@@ -1127,7 +1126,7 @@ class TableCommandsParser
     private function parseReference(TokenList $tokenList): ReferenceDefinition
     {
         $tokenList->expectKeyword(Keyword::REFERENCES);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
 
         $columns = $this->parseColumnList($tokenList);
 
@@ -1323,7 +1322,7 @@ class TableCommandsParser
                 $tokenList->expectSymbol('(');
                 $tables = [];
                 do {
-                    $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+                    $tables[] = $tokenList->expectQualifiedName();
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
 
@@ -1618,7 +1617,7 @@ class TableCommandsParser
         }
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tables[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
         // ignored in MySQL 5.7, 8.0
@@ -1639,9 +1638,9 @@ class TableCommandsParser
         $tables = [];
         $newTables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tables[] = $tokenList->expectQualifiedName();
             $tokenList->expectKeyword(Keyword::TO);
-            $newTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $newTables[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
         return new RenameTableCommand($tables, $newTables);
@@ -1654,7 +1653,7 @@ class TableCommandsParser
     {
         $tokenList->expectKeyword(Keyword::TRUNCATE);
         $tokenList->passKeyword(Keyword::TABLE);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
 
         return new TruncateTableCommand($table);
     }

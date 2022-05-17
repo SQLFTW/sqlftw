@@ -19,7 +19,6 @@ use SqlFtw\Sql\Ddl\Event\EventDefinition;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class EventCommandsParser
 {
@@ -57,7 +56,7 @@ class EventCommandsParser
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::EVENT);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         if ($tokenList->hasKeywords(Keyword::ON, Keyword::SCHEDULE)) {
             $schedule = $this->parseSchedule($tokenList);
@@ -67,7 +66,7 @@ class EventCommandsParser
             $tokenList->expectKeyword(Keyword::PRESERVE);
         }
         if ($tokenList->hasKeywords(Keyword::RENAME, Keyword::TO)) {
-            $newName = new QualifiedName(...$tokenList->expectQualifiedName());
+            $newName = $tokenList->expectQualifiedName();
         }
 
         $state = $tokenList->getMultiKeywordsEnum(EventState::class);
@@ -105,7 +104,7 @@ class EventCommandsParser
         }
         $tokenList->expectKeyword(Keyword::EVENT);
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         $tokenList->expectKeywords(Keyword::ON, Keyword::SCHEDULE);
         $schedule = $this->parseSchedule($tokenList);
@@ -166,7 +165,7 @@ class EventCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::EVENT);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         return new DropEventCommand($name, $ifExists);
     }

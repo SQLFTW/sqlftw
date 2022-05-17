@@ -13,7 +13,6 @@ use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Show\ShowBinaryLogsCommand;
 use SqlFtw\Sql\Dal\Show\ShowBinlogEventsCommand;
 use SqlFtw\Sql\Dal\Show\ShowCharacterSetCommand;
@@ -165,7 +164,7 @@ class ShowCommandsParser
                 $third = $tokenList->expectAnyKeyword(Keyword::CODE, Keyword::STATUS);
                 if ($third === Keyword::CODE) {
                     // SHOW FUNCTION CODE func_name
-                    return new ShowFunctionCodeCommand(new QualifiedName(...$tokenList->expectQualifiedName()));
+                    return new ShowFunctionCodeCommand($tokenList->expectQualifiedName());
                 } else {
                     // SHOW FUNCTION STATUS [LIKE 'pattern' | WHERE expr]
                     return $this->parseShowFunctionStatus($tokenList);
@@ -209,7 +208,7 @@ class ShowCommandsParser
                 $third = $tokenList->expectAnyKeyword(Keyword::CODE, Keyword::STATUS);
                 if ($third === Keyword::CODE) {
                     // SHOW PROCEDURE CODE proc_name
-                    return new ShowProcedureCodeCommand(new QualifiedName(...$tokenList->expectQualifiedName()));
+                    return new ShowProcedureCodeCommand($tokenList->expectQualifiedName());
                 } else {
                     // SHOW PROCEDURE STATUS [LIKE 'pattern' | WHERE expr]
                     return $this->parseShowProcedureStatus($tokenList);
@@ -332,7 +331,7 @@ class ShowCommandsParser
         $tokenList->expectAnyKeyword(Keyword::COLUMNS, Keyword::FIELDS);
 
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
         if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
             $schema = $tokenList->expectName();
             $table = new QualifiedName($table->getName(), $schema);
@@ -365,44 +364,28 @@ class ShowCommandsParser
             case Keyword::DATABASE:
             case Keyword::SCHEMA:
                 // SHOW CREATE {DATABASE | SCHEMA} db_name
-                $name = $tokenList->expectName();
-
-                return new ShowCreateSchemaCommand($name);
+                return new ShowCreateSchemaCommand($tokenList->expectName());
             case Keyword::EVENT:
                 // SHOW CREATE EVENT event_name
-                $name = new QualifiedName(...$tokenList->expectQualifiedName());
-
-                return new ShowCreateEventCommand($name);
+                return new ShowCreateEventCommand($tokenList->expectQualifiedName());
             case Keyword::FUNCTION:
                 // SHOW CREATE FUNCTION func_name
-                $name = new QualifiedName(...$tokenList->expectQualifiedName());
-
-                return new ShowCreateFunctionCommand($name);
+                return new ShowCreateFunctionCommand($tokenList->expectQualifiedName());
             case Keyword::PROCEDURE:
                 // SHOW CREATE PROCEDURE proc_name
-                $name = new QualifiedName(...$tokenList->expectQualifiedName());
-
-                return new ShowCreateProcedureCommand($name);
+                return new ShowCreateProcedureCommand($tokenList->expectQualifiedName());
             case Keyword::TABLE:
                 // SHOW CREATE TABLE tbl_name
-                $name = new QualifiedName(...$tokenList->expectQualifiedName());
-
-                return new ShowCreateTableCommand($name);
+                return new ShowCreateTableCommand($tokenList->expectQualifiedName());
             case Keyword::TRIGGER:
                 // SHOW CREATE TRIGGER trigger_name
-                $name = new QualifiedName(...$tokenList->expectQualifiedName());
-
-                return new ShowCreateTriggerCommand($name);
+                return new ShowCreateTriggerCommand($tokenList->expectQualifiedName());
             case Keyword::USER:
                 // SHOW CREATE USER user
-                $name = $tokenList->expectName();
-
-                return new ShowCreateUserCommand($name);
+                return new ShowCreateUserCommand($tokenList->expectName());
             case Keyword::VIEW:
                 // SHOW CREATE VIEW view_name
-                $name = new QualifiedName(...$tokenList->expectQualifiedName());
-
-                return new ShowCreateViewCommand($name);
+                return new ShowCreateViewCommand($tokenList->expectQualifiedName());
             default:
                 throw new ShouldNotHappenException('');
         }
@@ -510,7 +493,7 @@ class ShowCommandsParser
     private function parseShowIndexes(TokenList $tokenList): ShowIndexesCommand
     {
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
         if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
             $schema = $tokenList->expectName();
             $table = new QualifiedName($table->getName(), $schema);

@@ -14,7 +14,6 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Operator;
@@ -124,7 +123,7 @@ class DeleteCommandParser
     {
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tables[] = $tokenList->expectQualifiedName();
             if ($tokenList->hasSymbol('.')) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
             }

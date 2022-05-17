@@ -12,10 +12,8 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Call\CallCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class CallCommandParser
 {
@@ -38,7 +36,7 @@ class CallCommandParser
     {
         $tokenList->expectKeyword(Keyword::CALL);
 
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
         $params = null;
         if ($tokenList->hasSymbol('(')) {
             $params = [];

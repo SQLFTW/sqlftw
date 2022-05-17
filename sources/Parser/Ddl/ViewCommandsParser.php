@@ -13,7 +13,6 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
@@ -105,7 +104,7 @@ class ViewCommandsParser
         }
 
         $tokenList->expectKeyword(Keyword::VIEW);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         $columns = null;
         if ($tokenList->hasSymbol('(')) {
@@ -139,7 +138,7 @@ class ViewCommandsParser
 
         $names = [];
         do {
-            $names[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $names[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
         $option = $tokenList->getAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE);

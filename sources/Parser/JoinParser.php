@@ -242,7 +242,7 @@ class JoinParser
             if ($tokenList->hasKeyword(Keyword::DUAL)) {
                 $table = new QualifiedName(Keyword::DUAL);
             } else {
-                $table = new QualifiedName(...$tokenList->expectQualifiedName());
+                $table = $tokenList->expectQualifiedName();
             }
             $partitions = null;
             if ($tokenList->hasKeyword(Keyword::PARTITION)) {

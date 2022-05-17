@@ -13,7 +13,6 @@ use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Type;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
@@ -40,7 +39,6 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
-use function abs;
 use function array_shift;
 use function explode;
 use function is_a;
@@ -343,7 +341,7 @@ class ReplicationCommandsParser
                     case 'array<' . QualifiedName::class . '>':
                         $values = [];
                         do {
-                            $values[] = new QualifiedName(...$tokenList->expectQualifiedName());
+                            $values[] = $tokenList->expectQualifiedName();
                         } while ($tokenList->hasSymbol(','));
                         break;
                     case 'array<string,string>':

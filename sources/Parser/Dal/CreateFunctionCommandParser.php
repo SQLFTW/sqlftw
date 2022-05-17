@@ -14,7 +14,6 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Routines\CreateFunctionSonameCommand;
 use SqlFtw\Sql\Ddl\Routines\UdfReturnDataType;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class CreateFunctionCommandParser
 {
@@ -29,7 +28,7 @@ class CreateFunctionCommandParser
         $tokenList->expectKeyword(Keyword::CREATE);
         $aggregate = $tokenList->hasKeyword(Keyword::AGGREGATE);
         $tokenList->expectKeyword(Keyword::FUNCTION);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
         $tokenList->expectKeyword(Keyword::RETURNS);
         /** @var UdfReturnDataType $type */
         $type = $tokenList->expectKeywordEnum(UdfReturnDataType::class);

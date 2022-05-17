@@ -19,7 +19,6 @@ use SqlFtw\Sql\Ddl\Trigger\TriggerOrder;
 use SqlFtw\Sql\Ddl\Trigger\TriggerPosition;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class TriggerCommandsParser
 {
@@ -66,12 +65,12 @@ class TriggerCommandsParser
 
         $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
 
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         $event = $tokenList->expectMultiKeywordsEnum(TriggerEvent::class);
 
         $tokenList->expectKeyword(Keyword::ON);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
         $tokenList->expectKeywords(Keyword::FOR, Keyword::EACH, Keyword::ROW);
 
         $order = $tokenList->getAnyKeyword(Keyword::FOLLOWS, Keyword::PRECEDES);
@@ -95,7 +94,7 @@ class TriggerCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::TRIGGER);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         return new DropTriggerCommand($name, $ifExists);
     }

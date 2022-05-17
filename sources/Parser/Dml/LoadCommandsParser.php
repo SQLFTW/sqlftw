@@ -12,14 +12,12 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadPriority;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class LoadCommandsParser
 {
@@ -101,7 +99,7 @@ class LoadCommandsParser
         $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
 
         $tokenList->expectKeywords(Keyword::INTO, Keyword::TABLE);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
 
         $partitions = null;
         if ($parsePartitions && $tokenList->hasKeyword(Keyword::PARTITION)) {

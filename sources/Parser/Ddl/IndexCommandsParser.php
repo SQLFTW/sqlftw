@@ -13,7 +13,6 @@ use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
@@ -26,7 +25,6 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
-use SqlFtw\Sql\QualifiedName;
 
 class IndexCommandsParser
 {
@@ -118,7 +116,7 @@ class IndexCommandsParser
         $table = null;
         if (!$inTable) {
             $tokenList->expectKeyword(Keyword::ON);
-            $table = new QualifiedName(...$tokenList->expectQualifiedName());
+            $table = $tokenList->expectQualifiedName();
         }
 
         $parts = $this->parseIndexParts($tokenList);
@@ -221,7 +219,7 @@ class IndexCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::INDEX);
         $name = $tokenList->expectName();
         $tokenList->expectKeyword(Keyword::ON);
-        $table = new QualifiedName(...$tokenList->expectQualifiedName());
+        $table = $tokenList->expectQualifiedName();
         $algorithm = null;
         if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
             $tokenList->passSymbol('=');

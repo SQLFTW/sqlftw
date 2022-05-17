@@ -12,7 +12,6 @@ namespace SqlFtw\Parser\Ddl;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routines\CreateFunctionCommand;
@@ -25,7 +24,6 @@ use SqlFtw\Sql\Ddl\Routines\RoutineSideEffects;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class RoutineCommandsParser
 {
@@ -62,7 +60,7 @@ class RoutineCommandsParser
     public function parseAlterFunction(TokenList $tokenList): AlterFunctionCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::FUNCTION);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         [$comment, $language, $sideEffects, $sqlSecurity] = $this->parseRoutineCharacteristics($tokenList, false);
 
@@ -81,7 +79,7 @@ class RoutineCommandsParser
     public function parseAlterProcedure(TokenList $tokenList): AlterProcedureCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::PROCEDURE);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         [$comment, $language, $sideEffects, $sqlSecurity] = $this->parseRoutineCharacteristics($tokenList, false);
 
@@ -168,7 +166,7 @@ class RoutineCommandsParser
 
         $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
 
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         $params = [];
         $tokenList->expectSymbol('(');
@@ -225,7 +223,7 @@ class RoutineCommandsParser
 
         $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
 
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         $params = [];
         $tokenList->expectSymbol('(');
@@ -254,7 +252,7 @@ class RoutineCommandsParser
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::FUNCTION);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         return new DropFunctionCommand($name, $ifExists);
     }
@@ -266,7 +264,7 @@ class RoutineCommandsParser
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::PROCEDURE);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         return new DropProcedureCommand($name, $ifExists);
     }

@@ -21,6 +21,7 @@ use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 use function array_values;
@@ -782,11 +783,7 @@ class TokenList
 
     // special values --------------------------------------------------------------------------------------------------
 
-    /**
-     * @return array{string, string|null} ($name, $schema)
-     * @todo return QualifiedName
-     */
-    public function expectQualifiedName(): array
+    public function expectQualifiedName(): QualifiedName
     {
         $first = $this->expectName();
         if ($this->hasSymbol('.')) {
@@ -801,17 +798,13 @@ class TokenList
                 $second = $this->expectName();
             }
 
-            return [$second, $first];
+            return new QualifiedName($second, $first);
         }
 
-        return [$first, null];
+        return new QualifiedName($first);
     }
 
-    /**
-     * @return array{string, string|null}|null ($name, $schema)
-     * @todo: return QualifiedName
-     */
-    public function getQualifiedName(): ?array
+    public function getQualifiedName(): ?QualifiedName
     {
         $position = $this->position;
 
@@ -821,6 +814,7 @@ class TokenList
 
             return null;
         }
+
         if ($this->hasSymbol('.')) {
             // a reserved keyword may follow after "." unescaped as we know it is a name context
             $secondToken = $this->get(TokenType::KEYWORD);
@@ -831,10 +825,10 @@ class TokenList
                 $second = $this->expectName();
             }
 
-            return [$second, $first];
+            return new QualifiedName($second, $first);
         }
 
-        return [$first, null];
+        return new QualifiedName($first);
     }
 
     public function expectUserName(): UserName

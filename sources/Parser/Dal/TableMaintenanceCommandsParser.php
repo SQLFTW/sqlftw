@@ -18,7 +18,6 @@ use SqlFtw\Sql\Dal\Table\CheckTableOption;
 use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
 use SqlFtw\Sql\Dal\Table\RepairTableCommand;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class TableMaintenanceCommandsParser
 {
@@ -35,7 +34,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tables[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
         return new AnalyzeTableCommand($tables, $local);
@@ -58,7 +57,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectKeywords(Keyword::CHECK, Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tables[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
         $option = $tokenList->getMultiKeywordsEnum(CheckTableOption::class);
@@ -74,7 +73,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectKeywords(Keyword::CHECKSUM, Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tables[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
         $quick = $tokenList->hasKeyword(Keyword::QUICK);
@@ -94,7 +93,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tables[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
         return new OptimizeTableCommand($tables, $local);
@@ -112,7 +111,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectKeyword(Keyword::TABLE);
         $tables = [];
         do {
-            $tables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+            $tables[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
         $quick = $tokenList->hasKeyword(Keyword::QUICK);

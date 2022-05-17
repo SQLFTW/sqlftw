@@ -17,7 +17,6 @@ use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class ExplainCommandParser
 {
@@ -119,8 +118,7 @@ class ExplainCommandParser
                 break;
             case null:
                 // DESCRIBE
-                $qualifiedName = $tokenList->expectQualifiedName();
-                $table = new QualifiedName(...$qualifiedName);
+                $table = $tokenList->expectQualifiedName();
                 $column = $tokenList->getName();
                 if ($column === null) {
                     $column = $tokenList->getString();

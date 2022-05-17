@@ -43,7 +43,6 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
-use SqlFtw\Sql\QualifiedName;
 use function array_pop;
 use function count;
 
@@ -344,7 +343,7 @@ class QueryParser
             if ($tokenList->hasKeyword(Keyword::OF)) {
                 $lockTables = [];
                 do {
-                    $lockTables[] = new QualifiedName(...$tokenList->expectQualifiedName());
+                    $lockTables[] = $tokenList->expectQualifiedName();
                 } while ($tokenList->hasSymbol(','));
             }
             $lockWaitOption = $tokenList->getMultiKeywordsEnum(SelectLockWaitOption::class);
@@ -365,7 +364,7 @@ class QueryParser
     public function parseTable(TokenList $tokenList): TableCommand
     {
         $tokenList->expectKeyword(Keyword::TABLE);
-        $name = new QualifiedName(...$tokenList->expectQualifiedName());
+        $name = $tokenList->expectQualifiedName();
 
         [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);
 
