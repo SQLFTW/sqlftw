@@ -1033,8 +1033,8 @@ class ExpressionParser
     {
         if ($tokenList->hasKeyword(Keyword::CURRENT_USER)) {
             // CURRENT_USER()
-            if ($this->hasSymbol('(')) {
-                $this->expectSymbol(')');
+            if ($tokenList->hasSymbol('(')) {
+                $tokenList->expectSymbol(')');
             }
 
             return new UserExpression(null, Keyword::CURRENT_USER);
