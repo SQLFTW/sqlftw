@@ -47,7 +47,7 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectInt();
+            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $options[TablespaceOption::WAIT] = true;
@@ -99,7 +99,7 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::FILE_BLOCK_SIZE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectInt();
+            $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
             $tokenList->passSymbol('=');
@@ -110,23 +110,23 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::EXTENT_SIZE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::EXTENT_SIZE] = $tokenList->expectInt();
+            $options[TablespaceOption::EXTENT_SIZE] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectInt();
+            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::AUTOEXTEND_SIZE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectInt();
+            $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::MAX_SIZE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::MAX_SIZE] = $tokenList->expectInt();
+            $options[TablespaceOption::MAX_SIZE] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::NODEGROUP] = $tokenList->expectInt();
+            $options[TablespaceOption::NODEGROUP] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $options[TablespaceOption::WAIT] = true;

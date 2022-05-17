@@ -96,7 +96,7 @@ class ExplainCommandParser
         switch ($keyword) {
             case Keyword::FOR:
                 $tokenList->expectKeyword(Keyword::CONNECTION);
-                $connectionId = $tokenList->expectInt();
+                $connectionId = $tokenList->expectUnsignedInt();
                 break;
             case Keyword::SELECT:
             case Keyword::WITH:

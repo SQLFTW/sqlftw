@@ -46,7 +46,7 @@ class SpatialCommandsParser
             $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
         }
 
-        $srid = $tokenList->expectInt();
+        $srid = $tokenList->expectUnsignedInt();
 
         $name = $definition = $organization = $identifiedBy = $description = null;
         $keywords = [Keyword::NAME, Keyword::DEFINITION, Keyword::ORGANIZATION, Keyword::DESCRIPTION];
@@ -61,7 +61,7 @@ class SpatialCommandsParser
                 case Keyword::ORGANIZATION:
                     $organization = $tokenList->expectString();
                     if ($tokenList->hasKeywords(Keyword::IDENTIFIED, Keyword::BY)) {
-                        $identifiedBy = $tokenList->expectInt();
+                        $identifiedBy = $tokenList->expectUnsignedInt();
                     }
                     break;
                 case Keyword::DESCRIPTION:
@@ -85,7 +85,7 @@ class SpatialCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::SPATIAL, Keyword::REFERENCE, Keyword::SYSTEM);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
-        $srid = $tokenList->expectInt();
+        $srid = $tokenList->expectUnsignedInt();
 
         return new DropSpatialReferenceSystemCommand($srid, $ifExists);
     }

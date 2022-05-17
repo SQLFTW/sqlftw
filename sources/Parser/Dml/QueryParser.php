@@ -414,9 +414,9 @@ class QueryParser
             $orderBy = $this->expressionParser->parseOrderBy($tokenList);
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $tokenList->expectInt();
+            $limit = $tokenList->expectUnsignedInt();
             if ($parseOffset && $tokenList->hasKeyword(Keyword::OFFSET)) {
-                $offset = $tokenList->expectInt();
+                $offset = $tokenList->expectUnsignedInt();
             }
         }
         if ($tokenList->hasKeyword(Keyword::INTO)) {

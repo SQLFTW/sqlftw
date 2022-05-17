@@ -482,10 +482,12 @@ class ReplicationCommandsParser
      *     IO_THREAD | SQL_THREAD
      *
      * until_option:
-     *     UNTIL {   {SQL_BEFORE_GTIDS | SQL_AFTER_GTIDS} = gtid_set
-     *   |   MASTER_LOG_FILE = 'log_name', MASTER_LOG_POS = log_pos
-     *   |   RELAY_LOG_FILE = 'log_name', RELAY_LOG_POS = log_pos
-     *   |   SQL_AFTER_MTS_GAPS  }
+     *     UNTIL {
+     *         {SQL_BEFORE_GTIDS | SQL_AFTER_GTIDS} = gtid_set
+     *       | MASTER_LOG_FILE = 'log_name', MASTER_LOG_POS = log_pos
+     *       | RELAY_LOG_FILE = 'log_name', RELAY_LOG_POS = log_pos
+     *       | SQL_AFTER_MTS_GAPS
+     *     }
      *
      * connection_options:
      *     [USER='user_name'] [PASSWORD='user_pass'] [DEFAULT_AUTH='plugin_name'] [PLUGIN_DIR='plugin_dir']
@@ -523,14 +525,14 @@ class ReplicationCommandsParser
                 $tokenList->expectSymbol(',');
                 $tokenList->expectKeyword(Keyword::MASTER_LOG_POS);
                 $tokenList->expectOperator(Operator::EQUAL);
-                $until[Keyword::MASTER_LOG_POS] = $tokenList->expectInt();
+                $until[Keyword::MASTER_LOG_POS] = $tokenList->expectUnsignedInt();
             } elseif ($tokenList->hasKeyword(Keyword::RELAY_LOG_FILE)) {
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::RELAY_LOG_FILE] = $tokenList->expectString();
                 $tokenList->expectSymbol(',');
                 $tokenList->expectKeyword(Keyword::RELAY_LOG_POS);
                 $tokenList->expectOperator(Operator::EQUAL);
-                $until[Keyword::RELAY_LOG_POS] = $tokenList->expectInt();
+                $until[Keyword::RELAY_LOG_POS] = $tokenList->expectUnsignedInt();
             } else {
                 $tokenList->missingAnyKeyword(
                     Keyword::SQL_AFTER_MTS_GAPS,
@@ -623,13 +625,11 @@ class ReplicationCommandsParser
             $intervals = [];
             $tokenList->expect(TokenType::DOUBLE_COLON);
             do {
-                $start = $tokenList->expectInt();
+                $start = $tokenList->expectUnsignedInt();
+                $end = null;
                 if ($tokenList->hasOperator(Operator::MINUS)) {
-                    $end = $tokenList->expectInt();
+                    $end = $tokenList->expectUnsignedInt();
                     // phpcs:ignore
-                } elseif (($end = $tokenList->getInt()) !== null) {
-                    // todo: lexer returns "10-20" as tokens of int and negative int :/
-                    $end = abs($end);
                 }
                 $intervals[] = [$start, $end];
                 if (!$tokenList->has(TokenType::DOUBLE_COLON)) {

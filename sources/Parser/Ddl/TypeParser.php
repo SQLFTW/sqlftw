@@ -75,15 +75,15 @@ class TypeParser
         if ($dataType->hasLength()) {
             $length = $decimals = null;
             if ($tokenList->hasSymbol('(')) {
-                $length = $tokenList->expectInt();
+                $length = $tokenList->expectUnsignedInt();
                 if ($dataType->hasDecimals()) {
                     if ($dataType->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
                         if ($tokenList->hasSymbol(',')) {
-                            $decimals = $tokenList->expectInt();
+                            $decimals = $tokenList->expectUnsignedInt();
                         }
                     } else {
                         $tokenList->expectSymbol(',');
-                        $decimals = $tokenList->expectInt();
+                        $decimals = $tokenList->expectUnsignedInt();
                     }
                 }
                 $tokenList->expectSymbol(')');
@@ -102,7 +102,7 @@ class TypeParser
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         } elseif ($dataType->hasFsp() && $tokenList->hasSymbol('(')) {
-            $params = $tokenList->expectInt();
+            $params = $tokenList->expectUnsignedInt();
             $tokenList->expectSymbol(')');
         }
 
@@ -131,7 +131,7 @@ class TypeParser
 
         if ($dataType->isSpatial()) {
             if ($tokenList->hasKeyword(Keyword::SRID)) {
-                $srid = $tokenList->expectInt();
+                $srid = $tokenList->expectUnsignedInt();
             }
         }
 

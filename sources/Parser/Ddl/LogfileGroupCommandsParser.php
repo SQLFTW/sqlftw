@@ -40,7 +40,7 @@ class LogfileGroupCommandsParser
         $initialSize = null;
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
             $tokenList->passSymbol('=');
-            $initialSize = $tokenList->expectInt();
+            $initialSize = $tokenList->expectUnsignedInt();
         }
         $wait = $tokenList->hasKeyword(Keyword::WAIT);
 
@@ -72,15 +72,15 @@ class LogfileGroupCommandsParser
         $initialSize = $undoBufferSize = $redoBufferSize = $nodeGroup = $comment = null;
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
             $tokenList->passSymbol('=');
-            $initialSize = $tokenList->expectInt();
+            $initialSize = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::UNDO_BUFFER_SIZE)) {
             $tokenList->passSymbol('=');
-            $undoBufferSize = $tokenList->expectInt();
+            $undoBufferSize = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::REDO_BUFFER_SIZE)) {
             $tokenList->passSymbol('=');
-            $redoBufferSize = $tokenList->expectInt();
+            $redoBufferSize = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
             $tokenList->passSymbol('=');

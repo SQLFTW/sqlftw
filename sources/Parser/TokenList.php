@@ -414,55 +414,30 @@ class TokenList
 
     // numbers ---------------------------------------------------------------------------------------------------------
 
-    /**
-     * @return int|float|string
-     */
-    public function expectNumber()
+    public function expectUnsignedInt(): int
     {
-        /** @var int|float|string $value */
-        $value = $this->expect(TokenType::NUMBER)->value;
+        /** @var int $int */
+        $int = $this->expect(TokenType::UINT)->value;
 
-        return $value;
+        return $int;
     }
 
-    /**
-     * @return int|float|string|null
-     */
-    public function getNumber()
+    public function getUnsignedInt(): ?int
     {
-        $token = $this->get(TokenType::NUMBER);
+        $token = $this->get(TokenType::UINT);
+        if ($token === null) {
+            return null;
+        }
 
-        /** @var string|null $value */
-        $value = $token !== null ? $token->value : null;
-
-        return $value;
+        return (int) $token->value;
     }
 
     public function expectInt(): int
     {
-        $number = $this->expectNumber();
-        if (is_float($number)) {
-            throw new InvalidValueException('integer', $this);
-        } else {
-            return (int) $number; // todo: beware uint64
-        }
-    }
+        /** @var int $int */
+        $int = $this->expect(TokenType::INT)->value;
 
-    public function getInt(): ?int
-    {
-        $position = $this->position;
-
-        $number = $this->getNumber();
-        if ($number === null) {
-            return null;
-        }
-        if (is_float($number)) {
-            $this->position = $position;
-
-            return null;
-        }
-
-        return (int) $number; // todo: beware uint64
+        return $int;
     }
 
     public function expectIntLike(): Literal

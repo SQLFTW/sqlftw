@@ -56,7 +56,7 @@ class ServerCommandsParser
             } elseif ($tokenList->hasKeyword(Keyword::OWNER)) {
                 $owner = $tokenList->expectString();
             } elseif ($tokenList->hasKeyword(Keyword::PORT)) {
-                $port = $tokenList->expectInt();
+                $port = $tokenList->expectUnsignedInt();
             }
         } while ($tokenList->hasSymbol(','));
         if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {
@@ -106,7 +106,7 @@ class ServerCommandsParser
             } elseif ($tokenList->hasKeyword(Keyword::OWNER)) {
                 $owner = $tokenList->expectString();
             } elseif ($tokenList->hasKeyword(Keyword::PORT)) {
-                $port = $tokenList->expectInt();
+                $port = $tokenList->expectUnsignedInt();
             }
         } while ($tokenList->hasSymbol(','));
         if ($host === null && $schema === null && $user === null && $password === null && $socket === null && $owner === null && $port === null) {

@@ -379,7 +379,7 @@ class TableCommandsParser
                 case Keyword::COALESCE:
                     // COALESCE PARTITION number
                     $tokenList->expectKeyword(Keyword::PARTITION);
-                    $actions[] = new CoalescePartitionAction($tokenList->expectInt());
+                    $actions[] = new CoalescePartitionAction($tokenList->expectUnsignedInt());
                     break;
                 case Keyword::CONVERT:
                     // CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]
@@ -832,7 +832,7 @@ class TableCommandsParser
                     } elseif ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
                         // [DEFAULT CURRENT_TIMESTAMP[(...)]]
                         if ($tokenList->hasSymbol('(')) {
-                            $param = $tokenList->getInt();
+                            $param = $tokenList->getUnsignedInt();
                             $params = $param !== null ? [new ValueLiteral($param)] : [];
                             $tokenList->expectSymbol(')');
                             $default = new FunctionCall(new QualifiedName(Keyword::CURRENT_TIMESTAMP), $params);
@@ -863,7 +863,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::UPDATE);
                     $tokenList->expectKeyword(Keyword::CURRENT_TIMESTAMP);
                     if ($tokenList->hasSymbol('(')) {
-                        $param = $tokenList->getInt();
+                        $param = $tokenList->getUnsignedInt();
                         $params = $param !== null ? [new ValueLiteral($param)] : [];
                         $tokenList->expectSymbol(')');
                         $onUpdate = new FunctionCall(new QualifiedName(Keyword::CURRENT_TIMESTAMP), $params);
@@ -921,7 +921,7 @@ class TableCommandsParser
                     $type->addCollation($tokenList->expectCollationName());
                     break;
                 case Keyword::SRID:
-                    $type->addSrid($tokenList->expectInt());
+                    $type->addSrid($tokenList->expectUnsignedInt());
                     break;
             }
         }
@@ -1014,7 +1014,7 @@ class TableCommandsParser
                     $type->addCollation($tokenList->expectCollationName());
                     break;
                 case Keyword::SRID:
-                    $type->addSrid($tokenList->expectInt());
+                    $type->addSrid($tokenList->expectUnsignedInt());
                     break;
             }
         }
@@ -1195,11 +1195,11 @@ class TableCommandsParser
             case Keyword::AUTO_INCREMENT:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::AUTO_INCREMENT, $tokenList->expectInt()];
+                return [TableOption::AUTO_INCREMENT, $tokenList->expectUnsignedInt()];
             case Keyword::AVG_ROW_LENGTH:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::AVG_ROW_LENGTH, $tokenList->expectInt()];
+                return [TableOption::AVG_ROW_LENGTH, $tokenList->expectUnsignedInt()];
             case Keyword::CHARACTER:
                 $tokenList->expectKeyword(Keyword::SET);
                 // fall-through
@@ -1272,21 +1272,21 @@ class TableCommandsParser
             case Keyword::KEY_BLOCK_SIZE:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::KEY_BLOCK_SIZE, $tokenList->expectInt()];
+                return [TableOption::KEY_BLOCK_SIZE, $tokenList->expectUnsignedInt()];
             case Keyword::MAX_ROWS:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::MAX_ROWS, $tokenList->expectInt()];
+                return [TableOption::MAX_ROWS, $tokenList->expectUnsignedInt()];
             case Keyword::MIN_ROWS:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::MIN_ROWS, $tokenList->expectInt()];
+                return [TableOption::MIN_ROWS, $tokenList->expectUnsignedInt()];
             case Keyword::PACK_KEYS:
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::PACK_KEYS, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::PACK_KEYS, ThreeStateValue::get((string) $tokenList->expectInt())];
+                    return [TableOption::PACK_KEYS, ThreeStateValue::get((string) $tokenList->expectUnsignedInt())];
                 }
             case Keyword::PASSWORD:
                 $tokenList->passSymbol('=');
@@ -1301,19 +1301,19 @@ class TableCommandsParser
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get((string) $tokenList->expectInt())];
+                    return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get((string) $tokenList->expectUnsignedInt())];
                 }
             case Keyword::STATS_PERSISTENT:
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_PERSISTENT, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::STATS_PERSISTENT, ThreeStateValue::get((string) $tokenList->expectInt())];
+                    return [TableOption::STATS_PERSISTENT, ThreeStateValue::get((string) $tokenList->expectUnsignedInt())];
                 }
             case Keyword::STATS_SAMPLE_PAGES:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::STATS_SAMPLE_PAGES, $tokenList->expectInt()];
+                return [TableOption::STATS_SAMPLE_PAGES, $tokenList->expectUnsignedInt()];
             case Keyword::TABLESPACE:
                 $tokenList->passSymbol('=');
 
@@ -1358,13 +1358,13 @@ class TableCommandsParser
 
         $partitionsNumber = null;
         if ($tokenList->hasKeyword(Keyword::PARTITIONS)) {
-            $partitionsNumber = $tokenList->expectInt();
+            $partitionsNumber = $tokenList->expectUnsignedInt();
         }
         $subpartitionsCondition = $subpartitionsNumber = null;
         if ($tokenList->hasKeywords(Keyword::SUBPARTITION, Keyword::BY)) {
             $subpartitionsCondition = $this->parsePartitionCondition($tokenList, true);
             if ($tokenList->hasKeyword(Keyword::SUBPARTITIONS)) {
-                $subpartitionsNumber = $tokenList->expectInt();
+                $subpartitionsNumber = $tokenList->expectUnsignedInt();
             }
         }
         $partitions = null;
@@ -1405,7 +1405,7 @@ class TableCommandsParser
             $algorithm = null;
             if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
                 $tokenList->expectOperator(Operator::EQUAL);
-                $algorithm = $tokenList->expectInt();
+                $algorithm = $tokenList->expectUnsignedInt();
             }
             $columns = $this->parseColumnList($tokenList, true);
             $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_KEY : PartitioningConditionType::KEY);
@@ -1553,11 +1553,11 @@ class TableCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::MAX_ROWS)) {
             $tokenList->passSymbol('=');
-            $options[PartitionOption::MAX_ROWS] = $tokenList->expectInt();
+            $options[PartitionOption::MAX_ROWS] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::MIN_ROWS)) {
             $tokenList->passSymbol('=');
-            $options[PartitionOption::MIN_ROWS] = $tokenList->expectInt();
+            $options[PartitionOption::MIN_ROWS] = $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::TABLESPACE)) {
             $tokenList->passSymbol('=');

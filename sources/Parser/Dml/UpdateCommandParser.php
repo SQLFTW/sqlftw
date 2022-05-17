@@ -98,7 +98,7 @@ class UpdateCommandParser
                 $orderBy = $this->expressionParser->parseOrderBy($tokenList);
             }
             if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-                $limit = $tokenList->expectInt();
+                $limit = $tokenList->expectUnsignedInt();
             }
         }
 

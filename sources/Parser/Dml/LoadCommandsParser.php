@@ -128,7 +128,7 @@ class LoadCommandsParser
     {
         $ignoreRows = null;
         if ($tokenList->hasKeyword(Keyword::IGNORE)) {
-            $ignoreRows = $tokenList->expectInt();
+            $ignoreRows = $tokenList->expectUnsignedInt();
             $tokenList->expectAnyKeyword(Keyword::LINES, Keyword::ROWS);
         }
 

@@ -931,13 +931,13 @@ class ExpressionParser
      */
     public function parseLimitAndOffset(TokenList $tokenList): array
     {
-        $limit = $tokenList->expectInt();
+        $limit = $tokenList->expectUnsignedInt();
         $offset = null;
         if ($tokenList->hasKeyword(Keyword::OFFSET)) {
-            $offset = $tokenList->expectInt();
+            $offset = $tokenList->expectUnsignedInt();
         } elseif ($tokenList->hasSymbol(',')) {
             $offset = $limit;
-            $limit = $tokenList->expectInt();
+            $limit = $tokenList->expectUnsignedInt();
         }
 
         return [$limit, $offset];
@@ -972,7 +972,7 @@ class ExpressionParser
             return new BuiltInFunction(BuiltInFunction::CURRENT_TIMESTAMP);
         }
 
-        $string = (string) $tokenList->getInt();
+        $string = (string) $tokenList->getUnsignedInt();
         if ($string === '') {
             $string = $tokenList->expectString();
         }

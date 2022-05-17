@@ -442,14 +442,9 @@ class Lexer
                 case '.':
                     $next = $position < $length ? $string[$position] : '';
                     if (isset(self::$numbersKey[$next])) {
-                        try {
-                            [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '.');
-                        } catch (LexerException $e) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
-                            break;
-                        }
-                        if ($value !== null) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
+                        [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, '.');
+                        if ($type !== null) {
+                            yield $previous = new Token($type, $start, $value, $orig, $condition, $exception);
                             break;
                         }
                     }
@@ -461,14 +456,9 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($numberCanFollow) {
-                        try {
-                            [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '-');
-                        } catch (LexerException $e) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
-                            break;
-                        }
-                        if ($value !== null) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
+                        [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, '-');
+                        if ($type !== null) {
+                            yield $previous = new Token($type, $start, $value, $orig, $condition, $exception);
                             break;
                         }
                     }
@@ -491,7 +481,7 @@ class Lexer
                             // Perl code blocks from MySQL tests
                             $end = strpos($string, "\nEOF\n", $position);
                             if ($end === false) {
-                                throw new LexerException('End of Perl block not found.', $position, $string);
+                                throw new LexerException('End of code block not found.', $position, $string);
                             } else {
                                 $block = substr($string, $position - 6, $end - $position + 10);
                             }
@@ -533,14 +523,9 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($numberCanFollow && isset(self::$numbersKey[$next])) {
-                        try {
-                            [$value, $orig] = $this->parseNumber($string, $position, $column, $row, '+');
-                        } catch (LexerException $e) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
-                            break;
-                        }
-                        if ($value !== null) {
-                            yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
+                        [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, '+');
+                        if ($type !== null) {
+                            yield $previous = new Token($type, $start, $value, $orig, $condition, $exception);
                             break;
                         }
                     }
@@ -621,14 +606,9 @@ class Lexer
                         yield $previous = new Token(T::VALUE | T::STRING, $start, $ip, null, $condition);
                         break;
                     }
-                    try {
-                        [$value, $orig] = $this->parseNumber($string, $position, $column, $row, $char);
-                    } catch (LexerException $e) {
-                        yield $previous = new Token(T::VALUE | T::NUMBER | T::INVALID, $start, null, null, $condition, $e);
-                        break;
-                    }
-                    if ($value !== null) {
-                        yield $previous = new Token(T::VALUE | T::NUMBER, $start, $value, $orig, $condition);
+                    [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, $char);
+                    if ($type !== null) {
+                        yield $previous = new Token($type, $start, $value, $orig, $condition, $exception);
                         break;
                     }
                     // continue
@@ -1034,10 +1014,11 @@ class Lexer
     }
 
     /**
-     * @return mixed[]|array{int|float|string|null, string|null}
+     * @return array{int|null, int|float|string|null, string|null, LexerException|null} ($value, $original, $tokenType, $exception)
      */
     private function parseNumber(string &$string, int &$position, int &$column, int &$row, string $start): array
     {
+        $type = T::VALUE | T::NUMBER;
         $length = strlen($string);
         $offset = 0;
         $isNumeric = isset(self::$numbersKey[$start]);
@@ -1084,7 +1065,7 @@ class Lexer
                 }
             }
             if (!$isNumeric) {
-                return [null, null];
+                return [null, null, null, null];
             }
             if ($position + $offset >= $length) {
                 break;
@@ -1113,13 +1094,13 @@ class Lexer
                             $expComplete = true;
                         } else {
                             if (trim($exp, 'e+-') === '' && strpos($base, '.') !== false) {
-                                throw new LexerException('Invalid number exponent ' . $exp, $position, $string);
+                                return [$type | T::INVALID, null, $base . $exp, new LexerException('Invalid number exponent ' . $exp, $position, $string)];
                             }
                             break;
                         }
                     }
                     if (!$expComplete) {
-                        throw new LexerException('Invalid number exponent ' . $exp, $position, $string);
+                        return [$type | T::INVALID, null, $base . $exp, new LexerException('Invalid number exponent ' . $exp, $position, $string)];
                     }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                     $isNumeric = false;
@@ -1129,32 +1110,45 @@ class Lexer
         } while (false); // @phpstan-ignore-line
 
         if (!$isNumeric) {
-            return [null, null];
+            return [null, null, null, null];
         }
 
-        $orig = $base;
-        $value = strtolower(rtrim(ltrim($base, '+'), '.'));
-        while ($value[0] === '-' && $value[1] === '-') {
-            $value = substr($value, 2);
-        }
-        if ($value[0] === '.') {
-            $value = '0' . $value;
-        }
-        if ($exp !== '') {
-            $orig .= $exp;
-            $value = (string) (float) ($value . $exp);
-        }
-        if ($value === (string) (int) $value) {
-            $value = (int) $value;
-        } elseif ($value === (string) (float) $value) {
-            $value = (float) $value;
-        }
+        $orig = $base . $exp;
+        $value = $base . str_replace('e+', 'e', strtolower($exp));
 
         $len = strlen($orig) - 1;
         $position += $len;
         $column += $len;
 
-        return [$value, $orig];
+        if ($value === (string) (int) $value) {
+            $value = (int) $value;
+            $type |= T::INT;
+            if ($value >= 0) {
+                $type |= T::UINT;
+            }
+
+            return [$type, $value, $orig, null];
+        }
+
+        // value clean-up: --+.123E+2 => 0.123e2
+        while ($value[0] === '-' && $value[1] === '-') {
+            $value = substr($value, 2);
+        }
+        $value = ltrim($value, '+');
+        $value = rtrim($value, '.');
+        if ($value[0] === '.') {
+            $value = '0' . $value;
+        }
+        $value = str_replace('.e', '.0e', $value);
+
+        if ($value === (string) (int) $value && $exp === '' && strpos($base, '.') === false) {
+            $value = (int) $value;
+            $type |= TokenType::INT;
+        } elseif ($value === (string) (float) $value) {
+            $value = (float) $value;
+        }
+
+        return [$type, $value, $orig, null];
     }
 
 }

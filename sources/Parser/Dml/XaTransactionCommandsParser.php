@@ -98,8 +98,7 @@ class XaTransactionCommandsParser
         if ($tokenList->hasSymbol(',')) {
             $branch = $tokenList->expectString();
             if ($tokenList->hasSymbol(',')) {
-                /** @var int $format */
-                $format = $tokenList->expectInt();
+                $format = $tokenList->expectUnsignedInt();
             }
         }
 

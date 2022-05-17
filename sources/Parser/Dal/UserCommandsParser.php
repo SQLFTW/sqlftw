@@ -263,7 +263,7 @@ class UserCommandsParser
         $resourceOptions = [];
         $type = $tokenList->expectKeywordEnum(UserResourceOptionType::class);
         do {
-            $value = $tokenList->expectInt();
+            $value = $tokenList->expectUnsignedInt();
             $resourceOptions[] = new UserResourceOption($type, $value);
             $type = $tokenList->getKeywordEnum(UserResourceOptionType::class);
         } while ($type !== null);

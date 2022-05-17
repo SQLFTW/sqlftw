@@ -377,7 +377,7 @@ class CompoundStatementParser
                     $type = ConditionType::get(ConditionType::SQL_WARNING);
                 } elseif ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
                     $type = ConditionType::get(ConditionType::SQL_STATE);
-                    $value = $tokenList->getInt();
+                    $value = $tokenList->getUnsignedInt();
                     if ($value === null) {
                         $value = $tokenList->expectNameOrString();
                     }
@@ -386,7 +386,7 @@ class CompoundStatementParser
                     if ($value !== null) {
                         $type = ConditionType::get(ConditionType::CONDITION);
                     } else {
-                        $value = $tokenList->expectInt();
+                        $value = $tokenList->expectUnsignedInt();
                         $type = ConditionType::get(ConditionType::ERROR);
                     }
                 }
@@ -409,12 +409,12 @@ class CompoundStatementParser
             $tokenList->expectKeywords(Keyword::FOR);
             if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
                 $tokenList->passKeyword(Keyword::VALUE);
-                $value = $tokenList->getInt();
+                $value = $tokenList->getUnsignedInt();
                 if ($value === null) {
                     $value = $tokenList->expectNameOrString();
                 }
             } else {
-                $value = $tokenList->expectInt();
+                $value = $tokenList->expectUnsignedInt();
             }
 
             return new DeclareConditionStatement($name, $value);
@@ -567,7 +567,7 @@ class CompoundStatementParser
      */
     private function parseSignalResignal(TokenList $tokenList, string $keyword)
     {
-        $condition = $tokenList->getInt();
+        $condition = $tokenList->getUnsignedInt();
         if ($condition === null) {
             $tokenList->expectKeyword(Keyword::SQLSTATE);
             $tokenList->passKeyword(Keyword::VALUE);
