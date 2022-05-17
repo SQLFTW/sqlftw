@@ -2,6 +2,7 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Tests\Assert;
@@ -14,9 +15,9 @@ $lexer = new Lexer($settings, true, true);
 // BLOCK_COMMENT
 $tokens = $lexer->tokenizeAll(' /* comment */ ');
 Assert::count($tokens, 3);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::BLOCK_COMMENT, '/* comment */', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 14);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT, '/* comment */', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 14);
 
 Assert::exception(static function () use ($lexer): void {
     $lexer->tokenizeAll(' /* comment ');
@@ -25,51 +26,51 @@ Assert::exception(static function () use ($lexer): void {
 // HINT_COMMENT
 $tokens = $lexer->tokenizeAll(' /*+ comment */ ');
 Assert::count($tokens, 3);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::HINT_COMMENT, '/*+ comment */', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 15);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::HINT_COMMENT, '/*+ comment */', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 15);
 
 // OPTIONAL_COMMENT
 $tokens = $lexer->tokenizeAll(' /*! comment */ ');
 //Assert::count($tokens, 3);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::BLOCK_COMMENT | TokenType::OPTIONAL_COMMENT, '/*! comment */', 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, ' ', 15);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, '/*! comment */', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 15);
 
 
 
 // DOUBLE_HYPHEN_COMMENT
 $tokens = $lexer->tokenizeAll(' -- comment');
 Assert::count($tokens, 2);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::DOUBLE_HYPHEN_COMMENT, '-- comment', 1);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, '-- comment', 1);
 
 $tokens = $lexer->tokenizeAll(" -- comment\n ");
 Assert::count($tokens, 3);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::DOUBLE_HYPHEN_COMMENT, "-- comment", 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, "\n ", 11);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, "-- comment", 1);
+Assert::token($tokens[2], T::WHITESPACE, "\n ", 11);
 
 // DOUBLE_SLASH_COMMENT
 $tokens = $lexer->tokenizeAll(' // comment');
 Assert::count($tokens, 2);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::DOUBLE_SLASH_COMMENT, '// comment', 1);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::DOUBLE_SLASH_COMMENT, '// comment', 1);
 
 $tokens = $lexer->tokenizeAll(" // comment\n ");
 Assert::count($tokens, 3);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::DOUBLE_SLASH_COMMENT, "// comment", 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, "\n ", 11);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::DOUBLE_SLASH_COMMENT, "// comment", 1);
+Assert::token($tokens[2], T::WHITESPACE, "\n ", 11);
 
 // HASH_COMMENT
 $tokens = $lexer->tokenizeAll(' # comment');
 Assert::count($tokens, 2);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::HASH_COMMENT, '# comment', 1);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::HASH_COMMENT, '# comment', 1);
 
 $tokens = $lexer->tokenizeAll(" # comment\n ");
 Assert::count($tokens, 3);
-Assert::token($tokens[0], TokenType::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], TokenType::COMMENT | TokenType::HASH_COMMENT, "# comment", 1);
-Assert::token($tokens[2], TokenType::WHITESPACE, "\n ", 10);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::HASH_COMMENT, "# comment", 1);
+Assert::token($tokens[2], T::WHITESPACE, "\n ", 10);

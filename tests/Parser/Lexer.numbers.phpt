@@ -2,9 +2,9 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
-use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Tests\Assert;
 
 require '../bootstrap.php';
