@@ -10,7 +10,6 @@
 namespace SqlFtw\Formatter;
 
 use DateTimeInterface;
-use Dogma\Arr;
 use Dogma\NotImplementedException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
@@ -19,6 +18,7 @@ use Dogma\Time\Time;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlSerializable;
+use function array_map;
 use function implode;
 use function is_numeric;
 use function is_string;
@@ -69,13 +69,13 @@ class Formatter
     }
 
     /**
-     * @param string[] $names
+     * @param non-empty-array<string> $names
      */
     public function formatNamesList(array $names, string $separator = ', '): string
     {
-        return implode($separator, Arr::map($names, function (string $name): string {
+        return implode($separator, array_map(function (string $name): string {
             return $this->formatName($name);
-        }));
+        }, $names));
     }
 
     /**
@@ -107,13 +107,13 @@ class Formatter
     }
 
     /**
-     * @param mixed[] $values
+     * @param non-empty-array<mixed> $values
      */
     public function formatValuesList(array $values, string $separator = ', '): string
     {
-        return implode($separator, Arr::map($values, function ($value): string {
+        return implode($separator, array_map(function ($value): string {
             return $this->formatValue($value);
-        }));
+        }, $values));
     }
 
     public function formatString(string $string): string
@@ -123,23 +123,23 @@ class Formatter
     }
 
     /**
-     * @param string[] $strings
+     * @param non-empty-array<string> $strings
      */
     public function formatStringList(array $strings, string $separator = ', '): string
     {
-        return implode($separator, Arr::map($strings, function (string $string): string {
+        return implode($separator, array_map(function (string $string): string {
             return $this->formatString($string);
-        }));
+        }, $strings));
     }
 
     /**
-     * @param SqlSerializable[] $serializables
+     * @param non-empty-array<SqlSerializable> $serializables
      */
     public function formatSerializablesList(array $serializables, string $separator = ', '): string
     {
-        return implode($separator, Arr::map($serializables, function (SqlSerializable $serializable): string {
+        return implode($separator, array_map(function (SqlSerializable $serializable): string {
             return $serializable->serialize($this);
-        }));
+        }, $serializables));
     }
 
     /**

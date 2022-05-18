@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Update;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
@@ -28,7 +27,7 @@ class UpdateCommand implements DmlCommand
     /** @var TableReferenceNode */
     private $tableReferences;
 
-    /** @var SetColumnExpression[] */
+    /** @var non-empty-array<SetColumnExpression> */
     private $values;
 
     /** @var ExpressionNode|null */
@@ -37,7 +36,7 @@ class UpdateCommand implements DmlCommand
     /** @var WithClause|null */
     private $with;
 
-    /** @var OrderByExpression[]|null */
+    /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|null */
@@ -50,8 +49,8 @@ class UpdateCommand implements DmlCommand
     private $lowPriority;
 
     /**
-     * @param SetColumnExpression[] $values
-     * @param OrderByExpression[]|null $orderBy
+     * @param non-empty-array<SetColumnExpression> $values
+     * @param non-empty-array<OrderByExpression>|null $orderBy
      */
     public function __construct(
         TableReferenceNode $tableReferences,
@@ -63,10 +62,6 @@ class UpdateCommand implements DmlCommand
         bool $ignore = false,
         bool $lowPriority = false
     ) {
-        Check::itemsOfType($values, SetColumnExpression::class);
-        if ($orderBy !== null) {
-            Check::itemsOfType($orderBy, OrderByExpression::class);
-        }
         if ($tableReferences instanceof TableReferenceList && count($tableReferences) > 1 && ($orderBy !== null || $limit !== null)) {
             throw new InvalidDefinitionException('ORDER BY and LIMIT must not be set, when more table references are used.');
         }
@@ -87,7 +82,7 @@ class UpdateCommand implements DmlCommand
     }
 
     /**
-     * @return SetColumnExpression[]
+     * @return non-empty-array<SetColumnExpression>
      */
     public function getValues(): array
     {
@@ -105,7 +100,7 @@ class UpdateCommand implements DmlCommand
     }
 
     /**
-     * @return OrderByExpression[]|null
+     * @return non-empty-array<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

@@ -10,41 +10,45 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeInterval;
+use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Util\TypeChecker;
 use function implode;
 
 class ChangeReplicationSourceToCommand implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var mixed[] */
-    private $options = [];
+    /** @var non-empty-array<mixed> */
+    private $options;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param mixed[] $options
+     * @param non-empty-array<mixed> $options
      */
     public function __construct(array $options, ?string $channel = null)
     {
         $types = ReplicaOption::getTypes();
 
         foreach ($options as $option => $value) {
-            ReplicaOption::get($option);
-            Check::types($value, explode('|', $types[$option]));
+            if (!ReplicaOption::validateValue($option)) {
+                throw new InvalidDefinitionException("Unknown option '$option' for CHANGE REPLICATION SOURCE.");
+            }
+            TypeChecker::check($value, $types[$option], $option);
 
-            $this->options[$option] = $value;
+            $options[$option] = $value;
         }
 
+        $this->options = $options;
         $this->channel = $channel;
     }
 
     /**
-     * @return mixed[]
+     * @return non-empty-array<mixed>
      */
     public function getOptions(): array
     {
@@ -67,7 +71,7 @@ class ChangeReplicationSourceToCommand implements ReplicationCommand
     public function setOption(string $option, $value): void
     {
         ReplicaOption::get($option);
-        Check::type($value, ReplicaOption::getTypes()[$option]);
+        TypeChecker::check($value, ReplicaOption::getTypes()[$option], $option);
 
         $this->options[$option] = $value;
     }

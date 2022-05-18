@@ -10,9 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\Arr;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Literal;
 use function implode;
@@ -25,16 +23,15 @@ class ResignalStatement implements CompoundStatementItem
     /** @var int|string */
     private $condition;
 
-    /** @var int[]|string[]|float[]|bool[]|Literal[] */
+    /** @var array<string, int|string|float|bool|Literal> */
     private $items;
 
     /**
      * @param int|string $condition
-     * @param int[]|string[]|float[]|bool[]|Literal[] $items
+     * @param array<string, int|string|float|bool|Literal> $items
      */
     public function __construct($condition, array $items)
     {
-        Check::types($condition, [Type::INT, Type::STRING]);
         foreach ($items as $key => $value) {
             ConditionInformationItem::get($key);
         }
@@ -51,7 +48,7 @@ class ResignalStatement implements CompoundStatementItem
     }
 
     /**
-     * @return int[]|string[]|float[]|bool[]|Literal[]
+     * @return array<string, int|string|float|bool|Literal>
      */
     public function getItems(): array
     {

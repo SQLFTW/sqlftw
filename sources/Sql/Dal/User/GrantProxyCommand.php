@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
@@ -21,19 +20,17 @@ class GrantProxyCommand implements UserCommand
     /** @var UserName */
     private $proxy;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     private $users;
 
     /** @var bool */
     private $withGrantOption;
 
     /**
-     * @param UserName[] $users
+     * @param non-empty-array<UserName> $users
      */
     public function __construct(UserName $proxy, array $users, bool $withGrantOption = false)
     {
-        Check::itemsOfType($users, UserName::class);
-
         $this->proxy = $proxy;
         $this->users = $users;
         $this->withGrantOption = $withGrantOption;
@@ -45,7 +42,7 @@ class GrantProxyCommand implements UserCommand
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getUsers(): array
     {

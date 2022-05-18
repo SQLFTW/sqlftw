@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
@@ -34,8 +33,6 @@ class ShowProfileCommand implements ShowCommand
      */
     public function __construct(array $types, ?int $queryId, ?int $limit, ?int $offset)
     {
-        Check::itemsOfType($types, ShowProfileType::class);
-
         $this->types = $types;
         $this->queryId = $queryId;
         $this->limit = $limit;

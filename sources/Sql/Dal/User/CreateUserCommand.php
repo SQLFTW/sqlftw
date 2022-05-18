@@ -17,19 +17,19 @@ class CreateUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var IdentifiedUser[] */
+    /** @var non-empty-array<IdentifiedUser> */
     private $users;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $defaultRoles;
 
-    /** @var UserTlsOption[]|null */
+    /** @var array<UserTlsOption>|null */
     private $tlsOptions;
 
-    /** @var UserResourceOption[]|null */
+    /** @var non-empty-array<UserResourceOption>|null */
     private $resourceOptions;
 
-    /** @var UserPasswordLockOption[]|null */
+    /** @var non-empty-array<UserPasswordLockOption>|null */
     private $passwordLockOptions;
 
     /** @var string|null */
@@ -42,11 +42,11 @@ class CreateUserCommand implements UserCommand
     private $ifNotExists;
 
     /**
-     * @param IdentifiedUser[] $users
-     * @param string[]|null $defaultRoles
-     * @param UserTlsOption[]|null $tlsOptions
-     * @param UserResourceOption[]|null $resourceOptions
-     * @param UserPasswordLockOption[]|null $passwordLockOptions
+     * @param non-empty-array<IdentifiedUser> $users
+     * @param non-empty-array<string>|null $defaultRoles
+     * @param array<UserTlsOption>|null $tlsOptions
+     * @param non-empty-array<UserResourceOption>|null $resourceOptions
+     * @param non-empty-array<UserPasswordLockOption>|null $passwordLockOptions
      */
     public function __construct(
         array $users,
@@ -74,7 +74,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return IdentifiedUser[]
+     * @return non-empty-array<IdentifiedUser>
      */
     public function getUsers(): array
     {
@@ -82,7 +82,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getDefaultRoles(): ?array
     {
@@ -90,7 +90,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return UserTlsOption[]|null
+     * @return array<UserTlsOption>|null
      */
     public function getTlsOptions(): ?array
     {
@@ -98,7 +98,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return UserResourceOption[]|null
+     * @return non-empty-array<UserResourceOption>|null
      */
     public function getResourceOptions(): ?array
     {
@@ -106,7 +106,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return UserPasswordLockOption[]|null
+     * @return non-empty-array<UserPasswordLockOption>|null
      */
     public function getPasswordLockOptions(): ?array
     {

@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Cache;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use function is_array;
 
@@ -25,23 +23,18 @@ class CacheIndexCommand implements CacheCommand
     /** @var string */
     private $keyCache;
 
-    /** @var TableIndexList[] */
+    /** @var non-empty-array<TableIndexList> */
     private $tableIndexLists;
 
-    /** @var string[]|bool|null */
+    /** @var non-empty-array<string>|bool|null */
     private $partitions;
 
     /**
-     * @param TableIndexList[] $tableIndexLists
-     * @param string[]|bool|null $partitions
+     * @param non-empty-array<TableIndexList> $tableIndexLists
+     * @param non-empty-array<string>|bool|null $partitions
      */
     public function __construct(string $keyCache, array $tableIndexLists, $partitions = null)
     {
-        Check::itemsOfType($tableIndexLists, TableIndexList::class);
-        if (is_array($partitions)) {
-            Check::itemsOfType($partitions, Type::STRING, 1);
-        }
-
         $this->keyCache = $keyCache;
         $this->tableIndexLists = $tableIndexLists;
         $this->partitions = $partitions;
@@ -53,7 +46,7 @@ class CacheIndexCommand implements CacheCommand
     }
 
     /**
-     * @return TableIndexList[]
+     * @return non-empty-array<TableIndexList>
      */
     public function getTableIndexLists(): array
     {
@@ -61,7 +54,7 @@ class CacheIndexCommand implements CacheCommand
     }
 
     /**
-     * @return string[]|bool|null
+     * @return non-empty-array<string>|bool|null
      */
     public function getPartitions()
     {

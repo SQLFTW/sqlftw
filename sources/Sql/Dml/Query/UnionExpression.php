@@ -26,7 +26,7 @@ class UnionExpression implements Query
     /** @var non-empty-array<UnionType> */
     private $types;
 
-    /** @var OrderByExpression[]|null */
+    /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|null */
@@ -38,7 +38,7 @@ class UnionExpression implements Query
     /**
      * @param non-empty-array<Query> $queries
      * @param non-empty-array<UnionType> $types
-     * @param OrderByExpression[]|null $orderBy
+     * @param non-empty-array<OrderByExpression>|null $orderBy
      */
     public function __construct(
         array $queries,
@@ -75,7 +75,7 @@ class UnionExpression implements Query
     }
 
     /**
-     * @return OrderByExpression[]|null
+     * @return non-empty-array<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

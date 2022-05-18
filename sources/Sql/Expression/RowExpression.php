@@ -19,11 +19,11 @@ class RowExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode[] */
+    /** @var non-empty-array<ExpressionNode> */
     private $contents;
 
     /**
-     * @param ExpressionNode[] $contents
+     * @param non-empty-array<ExpressionNode> $contents
      */
     public function __construct(array $contents)
     {
@@ -31,7 +31,7 @@ class RowExpression implements ExpressionNode
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return non-empty-array<ExpressionNode>
      */
     public function getContents(): array
     {

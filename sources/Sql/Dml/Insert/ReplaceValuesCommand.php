@@ -20,13 +20,13 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode[][] */
+    /** @var non-empty-array<array<ExpressionNode>> */
     private $rows;
 
     /**
-     * @param ExpressionNode[][] $rows
-     * @param string[]|null $columns
-     * @param string[]|null $partitions
+     * @param non-empty-array<array<ExpressionNode>> $rows
+     * @param array<string>|null $columns
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         QualifiedName $table,
@@ -42,7 +42,7 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
     }
 
     /**
-     * @return ExpressionNode[]|ExpressionNode[][]
+     * @return non-empty-array<array<ExpressionNode>>
      */
     public function getRows(): array
     {

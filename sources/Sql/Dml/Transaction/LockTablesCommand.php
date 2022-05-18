@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
@@ -17,21 +16,19 @@ class LockTablesCommand implements TransactionCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var LockTablesItem[] */
+    /** @var non-empty-array<LockTablesItem> */
     private $items;
 
     /**
-     * @param LockTablesItem[] $items
+     * @param non-empty-array<LockTablesItem> $items
      */
     public function __construct(array $items)
     {
-        Check::itemsOfType($items, LockTablesItem::class);
-
         $this->items = $items;
     }
 
     /**
-     * @return LockTablesItem[]
+     * @return non-empty-array<LockTablesItem>
      */
     public function getItems(): array
     {

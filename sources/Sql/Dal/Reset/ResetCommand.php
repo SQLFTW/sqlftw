@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Reset;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
@@ -18,22 +17,19 @@ class ResetCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var ResetOption[] */
+    /** @var non-empty-array<ResetOption> */
     private $options;
 
     /**
-     * @param ResetOption[] $options
+     * @param non-empty-array<ResetOption> $options
      */
     public function __construct(array $options)
     {
-        Check::array($options, 1);
-        Check::itemsOfType($options, ResetOption::class);
-
         $this->options = $options;
     }
 
     /**
-     * @return ResetOption[]
+     * @return non-empty-array<ResetOption>
      */
     public function getOptions(): array
     {

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\ColumnName;
@@ -21,7 +20,7 @@ class MatchExpression implements ExpressionNode
 {
     use StrictBehaviorMixin;
 
-    /** @var ColumnName[] */
+    /** @var non-empty-array<ColumnName> */
     private $columns;
 
     /** @var string */
@@ -34,12 +33,10 @@ class MatchExpression implements ExpressionNode
     private $queryExpansion;
 
     /**
-     * @param ColumnName[] $columns
+     * @param non-empty-array<ColumnName> $columns
      */
     public function __construct(array $columns, string $query, ?MatchMode $mode, bool $queryExpansion = false)
     {
-        Check::itemsOfType($columns, ColumnName::class);
-
         $this->columns = $columns;
         $this->query = $query;
         $this->mode = $mode;
@@ -47,7 +44,7 @@ class MatchExpression implements ExpressionNode
     }
 
     /**
-     * @return ColumnName[]
+     * @return non-empty-array<ColumnName>
      */
     public function getColumns(): array
     {

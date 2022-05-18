@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
@@ -19,22 +18,19 @@ class SetCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var SetAssignment[] */
+    /** @var non-empty-array<SetAssignment> */
     private $assignments;
 
     /**
-     * @param SetAssignment[] $assignments
+     * @param non-empty-array<SetAssignment> $assignments
      */
     public function __construct(array $assignments)
     {
-        Check::array($assignments, 1);
-        Check::itemsOfType($assignments, SetAssignment::class);
-
         $this->assignments = $assignments;
     }
 
     /**
-     * @return SetAssignment[]
+     * @return non-empty-array<SetAssignment>
      */
     public function getAssignments(): array
     {

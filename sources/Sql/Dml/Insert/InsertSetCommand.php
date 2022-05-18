@@ -18,16 +18,16 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var Assignment[] */
+    /** @var non-empty-array<Assignment> */
     private $assignments;
 
     /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
 
     /**
-     * @param Assignment[] $assignments
-     * @param string[]|null $columns
-     * @param string[]|null $partitions
+     * @param non-empty-array<Assignment> $assignments
+     * @param array<string>|null $columns
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         QualifiedName $table,
@@ -45,7 +45,7 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     }
 
     /**
-     * @return Assignment[]
+     * @return non-empty-array<Assignment>
      */
     public function getAssignments(): array
     {

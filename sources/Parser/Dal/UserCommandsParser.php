@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\User\AlterCurrentUserCommand;
 use SqlFtw\Sql\Dal\User\AlterUserCommand;
@@ -156,7 +155,7 @@ class UserCommandsParser
      *   | DISCARD OLD PASSWORD
      * }
      *
-     * @return IdentifiedUser[]
+     * @return non-empty-array<IdentifiedUser>
      */
     private function parseIdentifiedUsers(TokenList $tokenList): array
     {
@@ -252,7 +251,7 @@ class UserCommandsParser
      *   | MAX_USER_CONNECTIONS count
      * }
      *
-     * @return UserResourceOption[]|null
+     * @return non-empty-array<UserResourceOption>|null
      */
     private function parseResourceOptions(TokenList $tokenList): ?array
     {
@@ -284,11 +283,11 @@ class UserCommandsParser
      *   | ACCOUNT UNLOCK
      * }
      *
-     * @return UserPasswordLockOption[]|null
+     * @return non-empty-array<UserPasswordLockOption>|null
      */
     private function parsePasswordLockOptions(TokenList $tokenList): ?array
     {
-        $passwordLockOptions = null;
+        $passwordLockOptions = [];
         while ($keyword = $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT)) {
             if ($keyword === Keyword::ACCOUNT) {
                 $keyword = $tokenList->expectAnyKeyword(Keyword::LOCK, Keyword::UNLOCK);
@@ -325,7 +324,7 @@ class UserCommandsParser
             }
         }
 
-        return $passwordLockOptions;
+        return $passwordLockOptions !== [] ? $passwordLockOptions : null;
     }
 
     /**
@@ -437,7 +436,7 @@ class UserCommandsParser
     /**
      * priv_type [(column_list)] [, priv_type [(column_list)]] ...
      *
-     * @return UserPrivilege[]
+     * @return non-empty-array<UserPrivilege>
      */
     private function parsePrivilegesList(TokenList $tokenList): array
     {
@@ -729,7 +728,7 @@ class UserCommandsParser
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     private function parseUserList(TokenList $tokenList): array
     {
@@ -742,7 +741,7 @@ class UserCommandsParser
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     private function parseRolesList(TokenList $tokenList): array
     {

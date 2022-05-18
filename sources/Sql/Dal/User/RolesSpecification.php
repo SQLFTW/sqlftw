@@ -9,8 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -20,19 +18,14 @@ class RolesSpecification implements SqlSerializable
     /** @var RolesSpecificationType */
     private $type;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $roles;
 
     /**
-     * @param string[]|null $roles
+     * @param non-empty-array<string>|null $roles
      */
     public function __construct(RolesSpecificationType $type, ?array $roles = null)
     {
-        if ($roles !== null) {
-            Check::array($roles, 1);
-            Check::itemsOfType($roles, Type::STRING);
-        }
-
         $this->type = $type;
         $this->roles = $roles;
     }
@@ -43,7 +36,7 @@ class RolesSpecification implements SqlSerializable
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getRoles(): ?array
     {

@@ -176,7 +176,7 @@ class IndexCommandsParser
     }
 
     /**
-     * @return array<IndexColumn|ExpressionNode>
+     * @return non-empty-array<IndexColumn|ExpressionNode>
      */
     private function parseIndexParts(TokenList $tokenList): array
     {

@@ -9,35 +9,30 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
 class CreateRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $roles;
 
     /** @var bool */
     private $ifNotExists;
 
     /**
-     * @param string[] $roles
+     * @param non-empty-array<string> $roles
      */
     public function __construct(array $roles, bool $ifNotExists = false)
     {
-        Check::array($roles, 1);
-        Check::itemsOfType($roles, Type::STRING);
-
         $this->roles = $roles;
         $this->ifNotExists = $ifNotExists;
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getRoles(): array
     {

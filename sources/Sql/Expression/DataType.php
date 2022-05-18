@@ -16,10 +16,7 @@ use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function count;
 use function implode;
-use function is_array;
-use function is_int;
 use function is_null;
-use function is_string;
 
 /**
  * e.g. CAST(expr AS type)
@@ -33,10 +30,10 @@ class DataType implements ExpressionNode
     /** @var BaseType */
     private $type;
 
-    /** @var int|int[]|null */
+    /** @var non-empty-array<int>|null */
     private $size;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $values;
 
     /** @var bool */
@@ -55,11 +52,13 @@ class DataType implements ExpressionNode
     private $zerofill;
 
     /**
-     * @param int|int[]|string[]|null $params
+     * @param non-empty-array<int>|null $size
+     * @param non-empty-array<string>|null $values
      */
     public function __construct(
         BaseType $type,
-        $params = null,
+        ?array $size = null,
+        ?array $values = null,
         bool $unsigned = false,
         ?Charset $charset = null,
         ?Collation $collation = null,
@@ -81,9 +80,16 @@ class DataType implements ExpressionNode
         if ($srid !== null && !$type->isSpatial()) {
             throw new InvalidDefinitionException("Non-spatial columns ({$type->getValue()}) cannot have srid.");
         }
+        if ($values !== null && !$type->hasValues()) {
+            throw new InvalidDefinitionException("Only enum and set columns can have list of values.");
+        } elseif ($values === null && $type->hasValues()) {
+            throw new InvalidDefinitionException("Enum and set columns must have list of values.");
+        }
+        $this->checkSize($type, $size);
 
         $this->type = $type;
-        $this->setParams($type, $params);
+        $this->size = $size;
+        $this->values = $values;
         $this->unsigned = $unsigned;
         $this->charset = $charset;
         $this->collation = $collation;
@@ -92,55 +98,36 @@ class DataType implements ExpressionNode
     }
 
     /**
-     * @param int|int[]|string[]|null $params
+     * @param non-empty-array<int>|null $size
      */
-    private function setParams(BaseType $type, $params = null): void
+    private function checkSize(BaseType $type, ?array $size): void
     {
         // phpcs:disable SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
         if ($type->isDecimal() || $type->equalsValue(BaseType::FLOAT)) {
-            if ($params !== null && !is_int($params) && (count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
+            if ($size !== null && !(count($size) === 1 || count($size) === 2)) {
                 throw new InvalidDefinitionException("One or two integer size parameters required for type {$type->getValue()}.");
             }
-            /** @var int[] $params */
-            $this->size = $params;
         } elseif ($type->isFloatingPointNumber()) {
-            if ($params !== null && (!is_array($params) || count($params) !== 2 || !is_int($params[0]) || !is_int($params[1]))) {
+            if ($size !== null && count($size) !== 2) {
                 throw new InvalidDefinitionException("Two integer size parameters required for type {$type->getValue()}.");
             }
-            /** @var int[] $params */
-            $this->size = $params;
         } elseif ($type->isInteger() || $type->getValue() === BaseType::BIT) {
-            if ($params !== null && !is_int($params)) {
-                throw new InvalidDefinitionException("An integer size parameter or null required for type {$type->getValue()}.");
+            if ($size !== null && count($size) !== 1) {
+                throw new InvalidDefinitionException("One integer size parameter or null required for type {$type->getValue()}.");
             }
-            $this->size = $params;
         } elseif ($type->needsLength()) {
-            if (!is_int($params)) {
-                throw new InvalidDefinitionException("An integer size parameter required for type {$type->getValue()}.");
+            if ($size === null || count($size) !== 1) {
+                throw new InvalidDefinitionException("One integer size parameter required for type {$type->getValue()}.");
             }
-            $this->size = $params;
         } elseif ($type->hasLength()) {
-            if ($params !== null && !is_int($params)) {
-                throw new InvalidDefinitionException("An integer size parameter required for type {$type->getValue()}.");
+            if ($size !== null && count($size) !== 1) {
+                throw new InvalidDefinitionException("One integer size parameter required for type {$type->getValue()}.");
             }
-            $this->size = $params;
-        } elseif ($type->hasValues()) {
-            if (!is_array($params)) {
-                throw new InvalidDefinitionException("List of string values required for type {$type->getValue()}.");
-            }
-            foreach ($params as $param) {
-                if (!is_string($param)) {
-                    throw new InvalidDefinitionException("List of string values required for type {$type->getValue()}.");
-                }
-            }
-            /** @var string[] $params */
-            $this->values = $params;
         } elseif ($type->hasFsp()) {
-            if (!is_null($params) && !(is_int($params) && $params >= 0 && $params <= 6)) {
-                throw new InvalidDefinitionException("Parameter of type {$type->getValue()} must be integer from 0 to 6.");
+            if (!is_null($size) && !(count($size) === 1 && $size[0] >= 0 && $size[0] <= 6)) {
+                throw new InvalidDefinitionException("One integer size parameter in range from 0 to 6 required for type {$type->getValue()}.");
             }
-            $this->size = $params;
-        } elseif ($params !== null) {
+        } elseif ($size !== null) {
             throw new InvalidDefinitionException("Type parameters do not match data type {$type->getValue()}.");
         }
     }
@@ -151,23 +138,24 @@ class DataType implements ExpressionNode
     }
 
     /**
-     * @return int|int[]|null
+     * @return non-empty-array<int>|null
      */
-    public function getSize()
+    public function getSize(): ?array
     {
         return $this->size;
     }
 
     /**
-     * @param int|int[]|null $size
+     * @param non-empty-array<int>|null $size
      */
-    public function setSize($size): void
+    public function setSize(?array $size): void
     {
-        $this->setParams($this->type, $size);
+        $this->checkSize($this->type, $size);
+        $this->size = $size;
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getValues(): ?array
     {
@@ -239,16 +227,10 @@ class DataType implements ExpressionNode
     {
         $result = $this->type->serialize($formatter);
 
-        $params = $this->size ?? $this->values;
-
-        if (is_array($params)) {
-            if ($this->type->hasLength()) {
-                $result .= '(' . implode(', ', $params) . ')';
-            } else {
-                $result .= '(' . $formatter->formatStringList($params) . ')';
-            }
-        } elseif (is_int($params)) {
-            $result .= '(' . $params . ')';
+        if ($this->size !== null) {
+            $result .= '(' . implode(', ', $this->size) . ')';
+        } elseif ($this->values !== null) {
+            $result .= '(' . $formatter->formatStringList($this->values) . ')';
         }
 
         if ($this->unsigned === true) {

@@ -20,6 +20,15 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
 
+/**
+ * Types to use as argument type names (@see TypeChecker):
+ * - CHAR for strings
+ * - BOOL for booleans
+ * - SIGNED for signed integers
+ * - UNSIGNED for unsigned integers
+ * - FLOAT for floating point numbers
+ * - DECIMAL for decimal numbers
+ */
 class BaseType extends SqlEnum implements Feature
 {
 
@@ -48,7 +57,7 @@ class BaseType extends SqlEnum implements Feature
     // floats
     public const DOUBLE_PRECISION = Keyword::DOUBLE . ' ' . Keyword::PRECISION; // alias for DOUBLE
     public const REAL = Keyword::REAL;
-    public const FLOAT = Keyword::FLOAT;
+    public const FLOAT = Keyword::FLOAT; // as of MySQL 8.0.17, the nonstandard FLOAT(M,D) and DOUBLE(M,D) syntax is deprecated
     public const DOUBLE = Keyword::DOUBLE;
     public const FLOAT4 = Keyword::FLOAT4; // FLOAT
     public const FLOAT8 = Keyword::FLOAT8; // DOUBLE
@@ -228,7 +237,7 @@ class BaseType extends SqlEnum implements Feature
     public function hasLength(): bool
     {
         return $this->isNumber() || $this->needsLength() || in_array($this->getValue(), [
-            self::BINARY, self::BLOB, self::CHAR, self::TEXT
+            self::BINARY, self::BLOB, self::CHAR, self::TEXT,
         ], true);
     }
 

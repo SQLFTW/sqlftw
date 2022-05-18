@@ -15,6 +15,7 @@ use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushOption;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\QualifiedName;
 
 class FlushCommandParser
 {
@@ -68,6 +69,7 @@ class FlushCommandParser
         $tables = null;
         $table = $tokenList->getQualifiedName();
         if ($table !== null) {
+            /** @var non-empty-array<QualifiedName> $tables */
             $tables = [$table];
             while ($tokenList->hasSymbol(',')) {
                 $tables[] = $tokenList->expectQualifiedName();

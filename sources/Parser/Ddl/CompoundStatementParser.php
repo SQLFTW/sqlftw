@@ -43,6 +43,7 @@ use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
 use SqlFtw\Sql\Ddl\Compound\SignalStatement;
 use SqlFtw\Sql\Ddl\Compound\StatementInformationItem;
 use SqlFtw\Sql\Ddl\Compound\WhileStatement;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
@@ -106,7 +107,7 @@ class CompoundStatementParser
     }
 
     /**
-     * @return Statement[]
+     * @return array<Statement>
      */
     private function parseStatementList(TokenList $tokenList): array
     {
@@ -285,7 +286,10 @@ class CompoundStatementParser
             $condition = $this->expressionParser->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::WHEN);
         }
-        $values = $statementLists = [];
+        /** @var non-empty-array<ExpressionNode> $values */
+        $values = [];
+        /** @var non-empty-array<array<Statement>> $statementLists */
+        $statementLists = [];
         do {
             $values[] = $this->expressionParser->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::THEN);
@@ -308,7 +312,10 @@ class CompoundStatementParser
      */
     private function parseIf(TokenList $tokenList): IfStatement
     {
-        $conditions = $statementLists = [];
+        /** @var non-empty-array<ExpressionNode> $conditions */
+        $conditions = [];
+        /** @var non-empty-array<array<Statement>> $statementLists */
+        $statementLists = [];
         $conditions[] = $this->expressionParser->parseExpression($tokenList);
         $tokenList->expectKeyword(Keyword::THEN);
         $statementLists[] = $this->parseStatementList($tokenList);
@@ -420,6 +427,7 @@ class CompoundStatementParser
             return new DeclareConditionStatement($name, $value);
         }
 
+        /** @var non-empty-array<string> $names */
         $names = [$name];
         while ($tokenList->hasSymbol(',')) {
             $names[] = $tokenList->expectName();

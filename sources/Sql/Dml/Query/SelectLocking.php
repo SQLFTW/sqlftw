@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
@@ -25,18 +24,14 @@ class SelectLocking implements SqlSerializable
     /** @var SelectLockWaitOption|null */
     private $wait;
 
-    /** @var QualifiedName[]|null */
+    /** @var non-empty-array<QualifiedName>|null */
     private $tables;
 
     /**
-     * @param QualifiedName[]|null $tables
+     * @param non-empty-array<QualifiedName>|null $tables
      */
     public function __construct(SelectLockOption $for, ?SelectLockWaitOption $wait = null, ?array $tables = null)
     {
-        if ($tables !== null) {
-            Check::itemsOfType($tables, QualifiedName::class);
-        }
-
         $this->for = $for;
         $this->wait = $wait;
         $this->tables = $tables;
@@ -53,7 +48,7 @@ class SelectLocking implements SqlSerializable
     }
 
     /**
-     * @return QualifiedName[]|null
+     * @return non-empty-array<QualifiedName>|null
      */
     public function getTables(): ?array
     {

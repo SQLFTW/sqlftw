@@ -9,10 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
+use function is_string;
 
 class UserTlsOption implements SqlSerializable
 {
@@ -27,7 +28,9 @@ class UserTlsOption implements SqlSerializable
     public function __construct(UserTlsOptionType $type, ?string $value = null)
     {
         if (!$type->equalsAny(UserTlsOptionType::SSL, UserTlsOptionType::X509)) {
-            Check::string($value, 1);
+            if (!is_string($value) || $value === '') {
+                throw new InvalidDefinitionException("Value of option '$type' must be a non-empty string.");
+            }
         }
         $this->type = $type;
         $this->value = $value;

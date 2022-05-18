@@ -404,7 +404,7 @@ class QueryParser
     }
 
     /**
-     * @return array{OrderByExpression[]|null, int|null, int|null, SelectInto|null}
+     * @return array{non-empty-array<OrderByExpression>|null, int|null, int|null, SelectInto|null}
      */
     private function parseOrderLimitOffsetInto(TokenList $tokenList, bool $parseOffset = true): array
     {

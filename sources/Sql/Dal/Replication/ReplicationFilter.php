@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
@@ -26,13 +27,13 @@ class ReplicationFilter extends SqlEnum
 
     /** @var string[] */
     private static $types = [
-        self::REPLICATE_DO_DB => 'array<string>',
-        self::REPLICATE_IGNORE_DB => 'array<string>',
-        self::REPLICATE_DO_TABLE => 'array<' . QualifiedName::class . '>',
-        self::REPLICATE_IGNORE_TABLE => 'array<' . QualifiedName::class . '>',
-        self::REPLICATE_WILD_DO_TABLE => 'array<string>',
-        self::REPLICATE_WILD_IGNORE_TABLE => 'array<string>',
-        self::REPLICATE_REWRITE_DB => 'array<string,string>',
+        self::REPLICATE_DO_DB => BaseType::CHAR . '[]',
+        self::REPLICATE_IGNORE_DB => BaseType::CHAR . '[]',
+        self::REPLICATE_DO_TABLE => QualifiedName::class . '[]',
+        self::REPLICATE_IGNORE_TABLE => QualifiedName::class . '[]',
+        self::REPLICATE_WILD_DO_TABLE => BaseType::CHAR . '[]',
+        self::REPLICATE_WILD_IGNORE_TABLE => BaseType::CHAR . '[]',
+        self::REPLICATE_REWRITE_DB => BaseType::CHAR . '{}',
     ];
 
     /**

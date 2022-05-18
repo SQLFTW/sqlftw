@@ -44,9 +44,13 @@ class LoopStatement implements CompoundStatementItem
         if ($this->label !== null) {
             $result .= $formatter->formatName($this->label) . ': ';
         }
-        $result .= "LOOP \n" . $formatter->formatSerializablesList($this->statements, ";\n") . 'END LOOP';
 
-        return $result;
+        $result .= "LOOP \n";
+        if ($this->statements !== []) {
+            $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+        }
+
+        return $result . 'END LOOP';
     }
 
 }

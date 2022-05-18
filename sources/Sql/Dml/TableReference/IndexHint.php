@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -25,16 +23,14 @@ class IndexHint implements SqlSerializable
     /** @var IndexHintTarget|null */
     private $target;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $indexes;
 
     /**
-     * @param string[] $indexes
+     * @param non-empty-array<string> $indexes
      */
     public function __construct(IndexHintAction $action, ?IndexHintTarget $target, array $indexes)
     {
-        Check::itemsOfType($indexes, Type::STRING);
-
         $this->action = $action;
         $this->target = $target;
         $this->indexes = $indexes;
@@ -51,7 +47,7 @@ class IndexHint implements SqlSerializable
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getIndexes(): array
     {

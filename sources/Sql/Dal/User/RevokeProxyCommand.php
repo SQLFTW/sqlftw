@@ -20,11 +20,11 @@ class RevokeProxyCommand implements UserCommand
     /** @var UserName */
     private $proxy;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     private $users;
 
     /**
-     * @param UserName[] $users
+     * @param non-empty-array<UserName> $users
      */
     public function __construct(UserName $proxy, array $users)
     {
@@ -38,7 +38,7 @@ class RevokeProxyCommand implements UserCommand
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getUsers(): array
     {

@@ -54,8 +54,11 @@ class WhileStatement implements CompoundStatementItem
         if ($this->label !== null) {
             $result .= $formatter->formatName($this->label) . ': ';
         }
-        $result .= 'WHILE ' . $this->condition->serialize($formatter) . " DO\n"
-            . $formatter->formatSerializablesList($this->statements, ";\n") . "\nEND WHILE";
+        $result .= 'WHILE ' . $this->condition->serialize($formatter) . " DO\n";
+        if ($this->statements !== []) {
+            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+        }
+        $result .= "END WHILE";
 
         return $result;
     }

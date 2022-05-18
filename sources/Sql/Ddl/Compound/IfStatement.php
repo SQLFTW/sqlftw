@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function count;
 
@@ -20,24 +20,20 @@ class IfStatement implements Statement
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode[] */
+    /** @var non-empty-array<ExpressionNode> */
     private $conditions;
 
-    /** @var Statement[][] */
+    /** @var non-empty-array<array<Statement>> */
     private $statementLists;
 
     /**
-     * @param ExpressionNode[] $conditions
-     * @param Statement[][] $statementLists
+     * @param non-empty-array<ExpressionNode> $conditions
+     * @param non-empty-array<array<Statement>> $statementLists
      */
     public function __construct(array $conditions, array $statementLists)
     {
-        Check::array($conditions, 1);
-        Check::itemsOfType($conditions, ExpressionNode::class);
-        Check::array($statementLists, count($conditions), count($conditions) + 1);
-        foreach ($statementLists as $list) {
-            Check::array($list, 1);
-            Check::itemsOfType($list, Statement::class);
+        if (count($statementLists) < count($conditions) || count($statementLists) > count($conditions) + 1) {
+            throw new InvalidDefinitionException('Count of statement lists should be same or one higher then count of values.');
         }
 
         $this->conditions = $conditions;
@@ -45,7 +41,7 @@ class IfStatement implements Statement
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return non-empty-array<ExpressionNode>
      */
     public function getConditions(): array
     {
@@ -53,7 +49,7 @@ class IfStatement implements Statement
     }
 
     /**
-     * @return Statement[][]
+     * @return non-empty-array<array<Statement>>
      */
     public function getStatementLists(): array
     {
@@ -64,15 +60,21 @@ class IfStatement implements Statement
     {
         $result = '';
         foreach ($this->conditions as $i => $condition) {
-            $result = ($i === 0 ? 'IF ' : 'ELSEIF ') . $this->conditions[0]->serialize($formatter) . " THAN \n"
-                . $formatter->formatSerializablesList($this->statementLists[$i], ";\n") . ";\n";
+            $result = ($i === 0 ? 'IF ' : 'ELSEIF ') . $this->conditions[0]->serialize($formatter) . " THAN \n";
+            $statements = $this->statementLists[$i];
+            if ($statements !== []) {
+                $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";
+            }
         }
         if (count($this->conditions) < count($this->statementLists)) {
-            $result .= "ELSE\n" . $formatter->formatSerializablesList($this->statementLists[count($this->conditions)], ";\n") . ";\n";
+            $result .= "ELSE\n";
+            $statements = $this->statementLists[count($this->conditions)];
+            if ($statements !== []) {
+                $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";
+            }
         }
-        $result .= 'END IF';
 
-        return $result;
+        return $result . 'END IF';
     }
 
 }

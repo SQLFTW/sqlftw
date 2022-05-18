@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use Dogma\Check;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Util\TypeChecker;
 
 class GetDiagnosticsStatement implements CompoundStatementItem
 {
@@ -23,18 +23,18 @@ class GetDiagnosticsStatement implements CompoundStatementItem
     /** @var DiagnosticsArea|null */
     private $area;
 
-    /** @var DiagnosticsItem[]|null */
+    /** @var non-empty-array<DiagnosticsItem>|null */
     private $statementItems;
 
     /** @var ExpressionNode|null */
     private $conditionNumber;
 
-    /** @var DiagnosticsItem[]|null */
+    /** @var non-empty-array<DiagnosticsItem>|null */
     private $conditionItems;
 
     /**
-     * @param DiagnosticsItem[]|null $statementItems
-     * @param DiagnosticsItem[]|null $conditionItems
+     * @param non-empty-array<DiagnosticsItem>|null $statementItems
+     * @param non-empty-array<DiagnosticsItem>|null $conditionItems
      */
     public function __construct(
         ?DiagnosticsArea $area,
@@ -42,8 +42,9 @@ class GetDiagnosticsStatement implements CompoundStatementItem
         ?ExpressionNode $conditionNumber,
         ?array $conditionItems
     ) {
-        Check::oneOf($conditionItems, $statementItems);
-
+        if ((($statementItems !== null) ^ ($conditionItems === null))) { // @phpstan-ignore-line XOR needed
+            throw new InvalidDefinitionException('When statementItems are set, conditionItems must not be set.');
+        }
         if (!(($conditionNumber !== null) ^ ($conditionItems === null))) { // @phpstan-ignore-line XOR needed
             throw new InvalidDefinitionException('When conditionNumber is set, conditionItems must be set.');
         }
@@ -51,12 +52,12 @@ class GetDiagnosticsStatement implements CompoundStatementItem
         if ($conditionItems !== null) {
             foreach ($conditionItems as $item) {
                 $item = $item->getItem();
-                Check::type($item, ConditionInformationItem::class);
+                TypeChecker::check($item, ConditionInformationItem::class);
             }
         } elseif ($statementItems !== null) {
             foreach ($statementItems as $item) {
                 $item = $item->getItem();
-                Check::type($item, StatementInformationItem::class);
+                TypeChecker::check($item, StatementInformationItem::class);
             }
         }
 
@@ -72,7 +73,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem
     }
 
     /**
-     * @return DiagnosticsItem[]
+     * @return non-empty-array<DiagnosticsItem>
      */
     public function getStatementItems(): ?array
     {
@@ -85,7 +86,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem
     }
 
     /**
-     * @return DiagnosticsItem[]
+     * @return non-empty-array<DiagnosticsItem>
      */
     public function getConditionItems(): ?array
     {

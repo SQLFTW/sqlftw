@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
-use Dogma\Check;
-use Dogma\Type;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
+use SqlFtw\Util\TypeChecker;
 use function in_array;
 
 class TablespaceOption extends SqlEnum
@@ -39,20 +39,20 @@ class TablespaceOption extends SqlEnum
     /** @var mixed[] */
     private static $values = [
         self::ENGINE => [StorageEngine::INNODB, StorageEngine::NDB],
-        self::ENCRYPTION => Type::BOOL,
-        self::COMMENT => Type::STRING,
-        self::ADD_DATAFILE => Type::STRING,
-        self::DROP_DATAFILE => Type::STRING,
-        self::USE_LOGFILE_GROUP => Type::STRING,
-        self::NODEGROUP => Type::INT,
-        self::RENAME_TO => Type::STRING,
-        self::INITIAL_SIZE => Type::INT,
-        self::FILE_BLOCK_SIZE => Type::INT,
-        self::EXTENT_SIZE => Type::INT,
-        self::AUTOEXTEND_SIZE => Type::INT,
-        self::MAX_SIZE => Type::INT,
+        self::ENCRYPTION => BaseType::BOOL,
+        self::COMMENT => BaseType::CHAR,
+        self::ADD_DATAFILE => BaseType::CHAR,
+        self::DROP_DATAFILE => BaseType::CHAR,
+        self::USE_LOGFILE_GROUP => BaseType::CHAR,
+        self::NODEGROUP => BaseType::UNSIGNED,
+        self::RENAME_TO => BaseType::CHAR,
+        self::INITIAL_SIZE => BaseType::UNSIGNED,
+        self::FILE_BLOCK_SIZE => BaseType::UNSIGNED,
+        self::EXTENT_SIZE => BaseType::UNSIGNED,
+        self::AUTOEXTEND_SIZE => BaseType::UNSIGNED,
+        self::MAX_SIZE => BaseType::UNSIGNED,
         self::SET => [Keyword::ACTIVE, Keyword::INACTIVE],
-        self::WAIT => Type::BOOL,
+        self::WAIT => BaseType::BOOL,
     ];
 
     /** @var string[][] */
@@ -101,12 +101,12 @@ class TablespaceOption extends SqlEnum
                 throw new InvalidDefinitionException("Option $key cannot be used in $for TABLESPACE command.");
             }
             $allowedValues = self::$values[$key];
-            if ($allowedValues === Type::INT) {
-                Check::int($value);
-            } elseif ($allowedValues === Type::STRING) {
-                Check::string($value);
-            } elseif ($allowedValues === Type::BOOL) {
-                Check::bool($value);
+            if ($allowedValues === BaseType::UNSIGNED) {
+                TypeChecker::check($value, BaseType::UNSIGNED);
+            } elseif ($allowedValues === BaseType::CHAR) {
+                TypeChecker::check($value, BaseType::CHAR);
+            } elseif ($allowedValues === BaseType::BOOL) {
+                TypeChecker::check($value, BaseType::BOOL);
             } else {
                 if (!in_array($value, $allowedValues, true)) {
                     throw new InvalidDefinitionException("Invalid values \"$value\" for option $key.");

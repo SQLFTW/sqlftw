@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use DateInterval;
-use Dogma\Check;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeExpression;
 use SqlFtw\Sql\Expression\TimeInterval;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 
 class EventSchedule implements SqlSerializable
@@ -44,7 +44,9 @@ class EventSchedule implements SqlSerializable
         ?TimeExpression $startTime = null,
         ?TimeExpression $endTime = null
     ) {
-        Check::oneOf($time, $interval);
+        if (!(($time === null) ^ ($interval === null))) { // @phpstan-ignore-line XOR needed
+            throw new InvalidDefinitionException('Either time or interval must be set.');
+        }
 
         if ($interval !== null && !$interval instanceof TimeInterval) {
             $interval = TimeInterval::create($interval);

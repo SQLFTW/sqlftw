@@ -17,7 +17,7 @@ class DropTableCommand implements DdlTablesCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName[] */
+    /** @var non-empty-array<QualifiedName> */
     private $names;
 
     /** @var bool */
@@ -30,7 +30,7 @@ class DropTableCommand implements DdlTablesCommand
     private $cascadeRestrict;
 
     /**
-     * @param QualifiedName[] $names
+     * @param non-empty-array<QualifiedName> $names
      */
     public function __construct(
         array $names,
@@ -45,7 +45,7 @@ class DropTableCommand implements DdlTablesCommand
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     public function getNames(): array
     {

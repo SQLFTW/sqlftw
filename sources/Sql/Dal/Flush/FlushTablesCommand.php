@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Flush;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
@@ -19,7 +18,7 @@ class FlushTablesCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName[]|null */
+    /** @var non-empty-array<QualifiedName>|null */
     private $tables;
 
     /** @var bool */
@@ -32,7 +31,7 @@ class FlushTablesCommand implements DalCommand
     private $local;
 
     /**
-     * @param QualifiedName[]|null $tables
+     * @param non-empty-array<QualifiedName>|null $tables
      */
     public function __construct(
         ?array $tables = null,
@@ -40,11 +39,6 @@ class FlushTablesCommand implements DalCommand
         bool $forExport = false,
         bool $local = false
     ) {
-        if ($tables !== null) {
-            Check::array($tables, 1);
-            Check::itemsOfType($tables, QualifiedName::class);
-        }
-
         $this->tables = $tables;
         $this->withReadLock = $withReadLock;
         $this->forExport = $forExport;
@@ -52,7 +46,7 @@ class FlushTablesCommand implements DalCommand
     }
 
     /**
-     * @return QualifiedName[]|null
+     * @return non-empty-array<QualifiedName>|null
      */
     public function getTables(): ?array
     {

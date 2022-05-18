@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\DataType;
@@ -69,13 +68,13 @@ class TypeParser
             $dataType = $dataType->canonicalize($settings);
         }
 
-        $params = $charset = $collation = $srid = null;
+        $size = $values = $charset = $collation = $srid = null;
         $unsigned = $zerofill = false;
 
         if ($dataType->hasLength()) {
-            $length = $decimals = null;
             if ($tokenList->hasSymbol('(')) {
                 $length = $tokenList->expectUnsignedInt();
+                $decimals = null;
                 if ($dataType->hasDecimals()) {
                     if ($dataType->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
                         if ($tokenList->hasSymbol(',')) {
@@ -87,22 +86,22 @@ class TypeParser
                     }
                 }
                 $tokenList->expectSymbol(')');
-            }
-            if ($decimals !== null) {
-                /** @var int[] $params */
-                $params = [$length, $decimals];
-            } else {
-                $params = $length;
+
+                if ($decimals !== null) {
+                    $size = [$length, $decimals];
+                } else {
+                    $size = [$length];
+                }
             }
         } elseif ($dataType->hasValues()) {
             $tokenList->expectSymbol('(');
-            $params = [];
+            $values = [];
             do {
-                $params[] = $tokenList->expectString();
+                $values[] = $tokenList->expectString();
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         } elseif ($dataType->hasFsp() && $tokenList->hasSymbol('(')) {
-            $params = $tokenList->expectUnsignedInt();
+            $size = [$tokenList->expectUnsignedInt()];
             $tokenList->expectSymbol(')');
         }
 
@@ -135,7 +134,7 @@ class TypeParser
             }
         }
 
-        return new DataType($dataType, $params, $unsigned, $charset, $collation, $srid, $zerofill);
+        return new DataType($dataType, $size, $values, $unsigned, $charset, $collation, $srid, $zerofill);
     }
 
 }

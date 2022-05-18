@@ -83,7 +83,7 @@ class ViewCommandsParser
     }
 
     /**
-     * @return array{QualifiedName, Query, string[]|null, UserExpression|null, SqlSecurity|null, ViewAlgorithm|null, ViewCheckOption|null}
+     * @return array{QualifiedName, Query, non-empty-array<string>|null, UserExpression|null, SqlSecurity|null, ViewAlgorithm|null, ViewCheckOption|null}
      */
     private function parseViewDefinition(TokenList $tokenList): array
     {

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
 use Dogma\CombineIterator;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
@@ -23,22 +22,18 @@ class RenameUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     protected $users;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     private $newUsers;
 
     /**
-     * @param UserName[] $users
-     * @param UserName[] $newUsers
+     * @param non-empty-array<UserName> $users
+     * @param non-empty-array<UserName> $newUsers
      */
     public function __construct(array $users, array $newUsers)
     {
-        Check::array($users, 1);
-        Check::itemsOfType($users, UserName::class);
-        Check::array($newUsers, 1);
-        Check::itemsOfType($newUsers, UserName::class);
         if (count($users) !== count($newUsers)) {
             throw new InvalidDefinitionException('Count of old user names and new user names do not match.');
         }
@@ -48,7 +43,7 @@ class RenameUserCommand implements UserCommand
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getUsers(): array
     {
@@ -56,7 +51,7 @@ class RenameUserCommand implements UserCommand
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getNewUsers(): array
     {

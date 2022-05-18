@@ -9,31 +9,26 @@
 
 namespace SqlFtw\Sql\Dal\Component;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 
 class UninstallComponentCommand implements ComponentCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $components;
 
     /**
-     * @param string[] $components
+     * @param non-empty-array<string> $components
      */
     public function __construct(array $components)
     {
-        Check::array($components, 1);
-        Check::itemsOfType($components, Type::STRING);
-
         $this->components = $components;
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getComponents(): array
     {

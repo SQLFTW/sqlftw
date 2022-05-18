@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use Dogma\Arr;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterTableAction;
@@ -29,8 +28,6 @@ class AlterActionsList implements SqlSerializable
      */
     public function __construct(array $actions)
     {
-        Check::itemsOfType($actions, AlterTableAction::class);
-
         $this->actions = $actions;
     }
 

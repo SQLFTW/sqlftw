@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
@@ -19,35 +17,28 @@ class SetDefaultRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     private $users;
 
     /** @var UserDefaultRolesSpecification|null */
     private $roles;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $rolesList;
 
     /**
-     * @param UserName[] $users
-     * @param string[]|null $rolesList
+     * @param non-empty-array<UserName> $users
+     * @param non-empty-array<string>|null $rolesList
      */
     public function __construct(array $users, ?UserDefaultRolesSpecification $roles, ?array $rolesList = null)
     {
-        Check::array($users, 1);
-        Check::itemsOfType($users, UserName::class);
-        if ($rolesList !== null) {
-            Check::array($rolesList, 1);
-            Check::itemsOfType($rolesList, Type::STRING);
-        }
-
         $this->users = $users;
         $this->roles = $roles;
         $this->rolesList = $rolesList;
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getUsers(): array
     {
@@ -60,7 +51,7 @@ class SetDefaultRoleCommand implements UserCommand
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getRolesList(): ?array
     {

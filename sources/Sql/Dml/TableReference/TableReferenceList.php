@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Countable;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use function count;
@@ -19,16 +18,14 @@ class TableReferenceList implements TableReferenceNode, Countable
 {
     use StrictBehaviorMixin;
 
-    /** @var TableReferenceNode[] */
+    /** @var non-empty-array<TableReferenceNode> */
     private $references;
 
     /**
-     * @param TableReferenceNode[] $references
+     * @param non-empty-array<TableReferenceNode> $references
      */
     public function __construct(array $references)
     {
-        Check::itemsOfType($references, TableReferenceNode::class);
-
         $this->references = $references;
     }
 
@@ -43,7 +40,7 @@ class TableReferenceList implements TableReferenceNode, Countable
     }
 
     /**
-     * @return TableReferenceNode[]
+     * @return non-empty-array<TableReferenceNode>
      */
     public function getReferences(): array
     {

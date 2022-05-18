@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use Dogma\Check;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterTableAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\RenameToAction;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList;
+use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
+use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\QualifiedName;
@@ -24,6 +24,9 @@ use function is_bool;
 use function rtrim;
 use function trim;
 
+/**
+ * @phpstan-import-type TableOptionValue from TableOptionsList
+ */
 class AlterTableCommand implements DdlTableCommand
 {
 
@@ -33,7 +36,7 @@ class AlterTableCommand implements DdlTableCommand
     /** @var AlterActionsList */
     private $actions;
 
-    /** @var mixed[] */
+    /** @var array<string, bool|AlterTableLock|AlterTableAlgorithm> */
     private $alterOptions;
 
     /** @var TableOptionsList|null */
@@ -41,8 +44,8 @@ class AlterTableCommand implements DdlTableCommand
 
     /**
      * @param AlterActionsList|AlterTableAction[] $actions
-     * @param mixed[] $alterOptions
-     * @param TableOptionsList|mixed[]|null $tableOptions
+     * @param array<string, bool|AlterTableLock|AlterTableAlgorithm> $alterOptions
+     * @param TableOptionsList|array<TableOptionValue>|null $tableOptions
      */
     public function __construct(
         QualifiedName $name,
@@ -50,8 +53,6 @@ class AlterTableCommand implements DdlTableCommand
         array $alterOptions = [],
         $tableOptions = null
     ) {
-        Check::types($actions, [AlterActionsList::class, Type::PHP_ARRAY]);
-        Check::types($tableOptions, [TableOptionsList::class, Type::PHP_ARRAY, Type::NULL]);
         if ($alterOptions !== []) {
             foreach ($alterOptions as $option => $value) {
                 AlterTableOption::get($option);
@@ -75,7 +76,7 @@ class AlterTableCommand implements DdlTableCommand
     }
 
     /**
-     * @return mixed[]
+     * @return array<string, bool|AlterTableLock|AlterTableAlgorithm>
      */
     public function getAlterOptions(): array
     {

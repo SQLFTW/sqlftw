@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use Dogma\Check;
 use Dogma\CombineIterator;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
@@ -23,22 +22,18 @@ class RenameTableCommand implements DdlTablesCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName[] */
+    /** @var non-empty-array<QualifiedName> */
     protected $names;
 
-    /** @var QualifiedName[] */
+    /** @var non-empty-array<QualifiedName> */
     private $newNames;
 
     /**
-     * @param QualifiedName[] $names
-     * @param QualifiedName[] $newNames
+     * @param non-empty-array<QualifiedName> $names
+     * @param non-empty-array<QualifiedName> $newNames
      */
     public function __construct(array $names, array $newNames)
     {
-        Check::array($names, 1);
-        Check::itemsOfType($names, QualifiedName::class);
-        Check::array($newNames, 1);
-        Check::itemsOfType($newNames, QualifiedName::class);
         if (count($names) !== count($newNames)) {
             throw new InvalidDefinitionException('Count of old table names and new table names do not match.');
         }
@@ -48,7 +43,7 @@ class RenameTableCommand implements DdlTablesCommand
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     public function getNames(): array
     {
@@ -56,7 +51,7 @@ class RenameTableCommand implements DdlTablesCommand
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     public function getNewNames(): array
     {

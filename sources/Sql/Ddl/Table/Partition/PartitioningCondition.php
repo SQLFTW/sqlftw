@@ -24,14 +24,14 @@ class PartitioningCondition implements SqlSerializable
     /** @var ExpressionNode|null */
     private $expression;
 
-    /** @var string[]|null */
+    /** @var array<string>|null */
     private $columns;
 
     /** @var int|null */
     private $algorithm;
 
     /**
-     * @param string[]|null $columns
+     * @param array<string>|null $columns
      */
     public function __construct(
         PartitioningConditionType $type,
@@ -56,7 +56,7 @@ class PartitioningCondition implements SqlSerializable
     }
 
     /**
-     * @return string[]|null
+     * @return array<string>|null
      */
     public function getColumns(): ?array
     {
@@ -81,7 +81,11 @@ class PartitioningCondition implements SqlSerializable
             if ($this->type->equalsAny(PartitioningConditionType::RANGE, PartitioningConditionType::LIST)) {
                 $result .= ' COLUMNS';
             }
-            $result .= '(' . $formatter->formatNamesList($this->columns) . ')';
+            $result .= '(';
+            if ($this->columns !== []) {
+                $result .= $formatter->formatNamesList($this->columns);
+            }
+            $result .= ')';
         }
 
         return $result;

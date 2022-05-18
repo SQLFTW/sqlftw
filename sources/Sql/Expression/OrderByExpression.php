@@ -9,11 +9,11 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
 use function is_string;
@@ -51,7 +51,9 @@ class OrderByExpression implements ExpressionNode
         ?Collation $collation = null
     )
     {
-        Check::oneOf($column, $expression, $position);
+        if (($column !== null) + ($expression !== null) + ($position !== null) !== 1) { // @phpstan-ignore-line
+            throw new InvalidDefinitionException('Exactly one of column, expression or position should be set.');
+        }
 
         $this->order = $order;
         $this->column = $column;

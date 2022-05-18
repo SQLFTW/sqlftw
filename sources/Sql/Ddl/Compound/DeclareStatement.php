@@ -9,40 +9,36 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\DataType;
+use SqlFtw\Sql\Expression\ExpressionNode;
 
 class DeclareStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $names;
 
     /** @var DataType */
     private $type;
 
-    /** @var string|int|float|bool|null */
+    /** @var ExpressionNode|null */
     private $default;
 
     /**
-     * @param string[] $names
-     * @param mixed|null $default
+     * @param non-empty-array<string> $names
      */
-    public function __construct(array $names, DataType $type, $default = null)
+    public function __construct(array $names, DataType $type, ?ExpressionNode $default = null)
     {
-        Check::itemsOfType($names, Type::STRING);
-
         $this->names = $names;
         $this->type = $type;
         $this->default = $default;
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getNames(): array
     {
@@ -54,10 +50,7 @@ class DeclareStatement implements CompoundStatementItem
         return $this->type;
     }
 
-    /**
-     * @return string|int|float|bool|null
-     */
-    public function getDefault()
+    public function getDefault(): ?ExpressionNode
     {
         return $this->default;
     }

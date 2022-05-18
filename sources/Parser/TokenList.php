@@ -188,7 +188,7 @@ class TokenList
 
     // seek ------------------------------------------------------------------------------------------------------------
 
-    public function seek(int $type, string $value = null, int $maxOffset = 1000): ?Token
+    public function seek(int $type, ?string $value = null, int $maxOffset = 1000): ?Token
     {
         $position = $this->position;
         for ($n = 0; $n < $maxOffset; $n++) {

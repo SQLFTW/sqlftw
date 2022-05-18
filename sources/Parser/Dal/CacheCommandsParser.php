@@ -86,7 +86,7 @@ class CacheCommandsParser
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     private function parseIndexes(TokenList $tokenList): ?array
     {
@@ -104,7 +104,7 @@ class CacheCommandsParser
     }
 
     /**
-     * @return string[]|true|null
+     * @return non-empty-array<string>|true|null
      */
     private function parsePartitions(TokenList $tokenList)
     {

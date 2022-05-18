@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
@@ -21,7 +20,7 @@ class PartitioningDefinition implements SqlSerializable
     /** @var PartitioningCondition */
     private $condition;
 
-    /** @var PartitionDefinition[]|null */
+    /** @var non-empty-array<PartitionDefinition>|null */
     private $partitions;
 
     /** @var int|null */
@@ -34,7 +33,7 @@ class PartitioningDefinition implements SqlSerializable
     private $subpartitionsNumber;
 
     /**
-     * @param PartitionDefinition[]|null $partitions
+     * @param non-empty-array<PartitionDefinition>|null $partitions
      */
     public function __construct(
         PartitioningCondition $condition,
@@ -43,9 +42,6 @@ class PartitioningDefinition implements SqlSerializable
         ?PartitioningCondition $subpartitionsCondition = null,
         ?int $subpartitionsNumber = null
     ) {
-        if ($partitions !== null) {
-            Check::itemsOfType($partitions, PartitionDefinition::class);
-        }
         $this->condition = $condition;
         $this->partitions = $partitions;
         $this->partitionsNumber = $partitionsNumber;
@@ -59,7 +55,7 @@ class PartitioningDefinition implements SqlSerializable
     }
 
     /**
-     * @return PartitionDefinition[]|null
+     * @return non-empty-array<PartitionDefinition>|null
      */
     public function getPartitions(): ?array
     {

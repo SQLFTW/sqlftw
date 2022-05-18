@@ -23,11 +23,11 @@ class MultilineString implements Literal
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $parts;
 
     /**
-     * @param string[] $parts
+     * @param non-empty-array<string> $parts
      */
     public function __construct(array $parts)
     {
@@ -35,7 +35,7 @@ class MultilineString implements Literal
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getParts(): array
     {

@@ -32,10 +32,10 @@ abstract class LoadCommand implements DmlCommand
     /** @var Charset|null */
     private $charset;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $fields;
 
-    /** @var ExpressionNode[]|null */
+    /** @var non-empty-array<ExpressionNode>|null */
     private $setters;
 
     /** @var int|null */
@@ -50,13 +50,13 @@ abstract class LoadCommand implements DmlCommand
     /** @var DuplicateOption|null */
     private $duplicateOption;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $partitions;
 
     /**
-     * @param string[]|null $fields
-     * @param ExpressionNode[]|null $setters
-     * @param string[]|null $partitions
+     * @param non-empty-array<string>|null $fields
+     * @param non-empty-array<ExpressionNode>|null $setters
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         string $file,

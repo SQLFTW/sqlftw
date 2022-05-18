@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\Check;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BuiltInFunction;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class PurgeBinaryLogsCommand implements ReplicationCommand
 {
@@ -31,7 +31,9 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
      */
     public function __construct(?string $toLog, $before)
     {
-        Check::oneOf($toLog, $before);
+        if (!($toLog !== null ^ $before !== null)) { // @phpstan-ignore-line XOR needed
+            throw new InvalidDefinitionException('Either TO or BEFORE must be set.');
+        }
 
         $this->toLog = $toLog;
         $this->before = $before;

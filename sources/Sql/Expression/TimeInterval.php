@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Expression;
 
 use DateInterval;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
@@ -58,8 +57,6 @@ class TimeInterval implements SqlSerializable
      */
     public static function createIntervals($interval): array
     {
-        Check::types($interval, [DateInterval::class, DateTimeSpan::class]);
-
         if ($interval instanceof DateInterval) {
             $interval = DateTimeSpan::createFromDateInterval($interval);
         }

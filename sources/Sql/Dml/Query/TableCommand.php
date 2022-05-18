@@ -19,7 +19,7 @@ class TableCommand implements SimpleQuery
     /** @var QualifiedName */
     private $table;
 
-    /** @var OrderByExpression[]|null */
+    /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|null */
@@ -32,7 +32,7 @@ class TableCommand implements SimpleQuery
     private $into;
 
     /**
-     * @param OrderByExpression[]|null $orderBy
+     * @param non-empty-array<OrderByExpression>|null $orderBy
      */
     public function __construct(
         QualifiedName $table,
@@ -55,7 +55,7 @@ class TableCommand implements SimpleQuery
     }
 
     /**
-     * @return OrderByExpression[]|null
+     * @return non-empty-array<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

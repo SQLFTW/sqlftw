@@ -16,11 +16,11 @@ class ImportPartitionTablespaceAction implements PartitioningAction, TablespaceA
 {
     use StrictBehaviorMixin;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $partitions;
 
     /**
-     * @param string[]|null $partitions
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(?array $partitions = null)
     {
@@ -28,7 +28,7 @@ class ImportPartitionTablespaceAction implements PartitioningAction, TablespaceA
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getPartitions(): ?array
     {

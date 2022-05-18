@@ -9,11 +9,10 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class OuterJoin extends Join
 {
@@ -25,11 +24,11 @@ class OuterJoin extends Join
     /** @var ExpressionNode|null */
     private $condition;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $using;
 
     /**
-     * @param string[]|null $using
+     * @param non-empty-array<string>|null $using
      */
     public function __construct(
         TableReferenceNode $left,
@@ -40,10 +39,8 @@ class OuterJoin extends Join
     ) {
         parent::__construct($left, $right);
 
-        if ($condition !== null) {
-            Check::oneOf($condition, $using);
-        } elseif ($using !== null) {
-            Check::itemsOfType($using, Type::STRING);
+        if ($condition === null && $using === null) {
+            throw new InvalidDefinitionException('Either join condition or USING can be set, not both.');
         }
 
         $this->joinSide = $joinSide;
@@ -67,7 +64,7 @@ class OuterJoin extends Join
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getUsing(): ?array
     {

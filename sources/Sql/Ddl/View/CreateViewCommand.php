@@ -27,7 +27,7 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
     /** @var Query */
     private $query;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $columns;
 
     /** @var UserExpression|null */
@@ -46,7 +46,7 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
     private $orReplace;
 
     /**
-     * @param string[]|null $columns
+     * @param non-empty-array<string>|null $columns
      */
     public function __construct(
         QualifiedName $name,
@@ -79,7 +79,7 @@ class CreateViewCommand implements ViewCommand, SchemaObjectCommand
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getColumns(): ?array
     {

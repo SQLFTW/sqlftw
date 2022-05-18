@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Delete;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
@@ -25,13 +23,13 @@ class DeleteCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName[] */
+    /** @var non-empty-array<QualifiedName> */
     private $tables;
 
     /** @var TableReferenceNode|null */
     private $references;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $partitions;
 
     /** @var ExpressionNode|null */
@@ -40,7 +38,7 @@ class DeleteCommand implements DmlCommand
     /** @var WithClause|null */
     private $with;
 
-    /** @var OrderByExpression[]|null */
+    /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|null */
@@ -56,9 +54,9 @@ class DeleteCommand implements DmlCommand
     private $ignore;
 
     /**
-     * @param QualifiedName[] $tables
-     * @param OrderByExpression[]|null $orderBy
-     * @param string[]|null $partitions
+     * @param non-empty-array<QualifiedName> $tables
+     * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         array $tables,
@@ -72,18 +70,12 @@ class DeleteCommand implements DmlCommand
         bool $quick = false,
         bool $ignore = false
     ) {
-        Check::itemsOfType($tables, QualifiedName::class);
-        if ($orderBy !== null) {
-            Check::itemsOfType($orderBy, OrderByExpression::class);
-        }
         if ($references !== null && $partitions !== null) {
             throw new InvalidDefinitionException('Either table references or partition may be set. Not both a once.');
         } elseif ($references !== null) {
             if ($orderBy !== null || $limit !== null) {
                 throw new InvalidDefinitionException('ORDER BY and LIMIT must not be set, when table references are used.');
             }
-        } elseif ($partitions !== null) {
-            Check::itemsOfType($partitions, Type::STRING);
         }
 
         $this->tables = $tables;
@@ -99,7 +91,7 @@ class DeleteCommand implements DmlCommand
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     public function getTables(): array
     {
@@ -112,7 +104,7 @@ class DeleteCommand implements DmlCommand
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getPartitions(): ?array
     {
@@ -130,7 +122,7 @@ class DeleteCommand implements DmlCommand
     }
 
     /**
-     * @return OrderByExpression[]|null
+     * @return non-empty-array<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

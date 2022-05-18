@@ -9,10 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Util\TypeChecker;
 
 class Condition implements SqlSerializable
 {
@@ -30,11 +32,11 @@ class Condition implements SqlSerializable
     public function __construct(ConditionType $type, $value = null)
     {
         if ($type->equalsAny(ConditionType::ERROR)) {
-            Check::int($value);
+            TypeChecker::check($value, BaseType::UNSIGNED, $type->getValue());
         } elseif ($type->equalsAny(ConditionType::CONDITION, ConditionType::SQL_STATE)) {
-            Check::string($value);
-        } else {
-            Check::null($value);
+            TypeChecker::check($value, BaseType::CHAR, $type->getValue());
+        } elseif ($value !== null) {
+            throw new InvalidDefinitionException("No value allowed for condition of type {$type->getValue()}.");
         }
 
         $this->type = $type;

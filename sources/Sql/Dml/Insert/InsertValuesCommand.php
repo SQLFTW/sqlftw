@@ -20,16 +20,16 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode[][] */
+    /** @var non-empty-array<array<ExpressionNode>> */
     private $rows;
 
     /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
 
     /**
-     * @param ExpressionNode[][] $rows
-     * @param string[]|null $columns
-     * @param string[]|null $partitions
+     * @param non-empty-array<array<ExpressionNode>> $rows
+     * @param array<string>|null $columns
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         QualifiedName $table,
@@ -47,7 +47,7 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
     }
 
     /**
-     * @return ExpressionNode[]|ExpressionNode[][]
+     * @return non-empty-array<array<ExpressionNode>>
      */
     public function getRows(): array
     {

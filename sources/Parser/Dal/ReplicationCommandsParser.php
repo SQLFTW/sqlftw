@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -33,6 +32,7 @@ use SqlFtw\Sql\Dal\Replication\StopGroupReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\StopReplicaCommand;
 use SqlFtw\Sql\Dal\Replication\StopSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\UuidSet;
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
@@ -115,13 +115,13 @@ class ReplicationCommandsParser
             $type = $types[$option->getValue()];
             $value = null;
             switch ($type) {
-                case Type::STRING:
+                case BaseType::CHAR:
                     $value = $tokenList->expectString();
                     break;
-                case Type::INT:
-                    $value = $tokenList->expectInt();
+                case BaseType::UNSIGNED:
+                    $value = $tokenList->expectUnsignedInt();
                     break;
-                case Type::BOOL:
+                case BaseType::BOOL:
                     $value = $tokenList->expectBool();
                     break;
                 case UserName::class . '|' . KeywordLiteral::class:
@@ -131,11 +131,11 @@ class ReplicationCommandsParser
                         $value = $tokenList->expectUserName();
                     }
                     break;
-                case 'array<int>':
+                case BaseType::UNSIGNED . '[]':
                     $tokenList->expectSymbol('(');
                     $value = [];
                     do {
-                        $value[] = $tokenList->expectInt();
+                        $value[] = $tokenList->expectUnsignedInt();
                         if ($tokenList->hasSymbol(')')) {
                             break;
                         } else {
@@ -157,7 +157,7 @@ class ReplicationCommandsParser
                         $value = $tokenList->expectKeywordEnum($type);
                         break;
                     } else {
-                        throw new ShouldNotHappenException('Unknown type');
+                        throw new ShouldNotHappenException("Unknown type $type.");
                     }
             }
             $options[$option->getValue()] = $value;
@@ -231,13 +231,13 @@ class ReplicationCommandsParser
             $type = $types[$option->getValue()];
             $value = null;
             switch ($type) {
-                case Type::STRING:
+                case BaseType::CHAR:
                     $value = $tokenList->expectString();
                     break;
-                case Type::INT:
-                    $value = $tokenList->expectInt();
+                case BaseType::UNSIGNED:
+                    $value = $tokenList->expectUnsignedInt();
                     break;
-                case Type::BOOL:
+                case BaseType::BOOL:
                     $value = $tokenList->expectBool();
                     break;
                 case UserName::class . '|' . KeywordLiteral::class:
@@ -247,11 +247,11 @@ class ReplicationCommandsParser
                         $value = $tokenList->expectUserName();
                     }
                     break;
-                case 'array<int>':
+                case BaseType::UNSIGNED . '[]':
                     $tokenList->expectSymbol('(');
                     $value = [];
                     do {
-                        $value[] = $tokenList->expectInt();
+                        $value[] = $tokenList->expectUnsignedInt();
                         if ($tokenList->hasSymbol(')')) {
                             break;
                         } else {
@@ -273,7 +273,7 @@ class ReplicationCommandsParser
                         $value = $tokenList->expectKeywordEnum($type);
                         break;
                     } else {
-                        throw new ShouldNotHappenException('Unknown type');
+                        throw new ShouldNotHappenException("Unknown type $type.");
                     }
             }
             $options[$option->getValue()] = $value;
@@ -328,7 +328,7 @@ class ReplicationCommandsParser
                 $values = [];
             } else {
                 switch ($types[$filter]) {
-                    case 'array<string>':
+                    case BaseType::CHAR . '[]':
                         $values = [];
                         do {
                             if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
@@ -338,13 +338,13 @@ class ReplicationCommandsParser
                             }
                         } while ($tokenList->hasSymbol(','));
                         break;
-                    case 'array<' . QualifiedName::class . '>':
+                    case QualifiedName::class . '[]':
                         $values = [];
                         do {
                             $values[] = $tokenList->expectQualifiedName();
                         } while ($tokenList->hasSymbol(','));
                         break;
-                    case 'array<string,string>':
+                    case BaseType::CHAR . '{}':
                         $values = [];
                         do {
                             $tokenList->expectSymbol('(');
@@ -500,6 +500,7 @@ class ReplicationCommandsParser
         $threadTypes = null;
         $threadType = $tokenList->getKeywordEnum(ReplicationThreadType::class);
         if ($threadType !== null) {
+            /** @var non-empty-array<ReplicationThreadType> $threadTypes */
             $threadTypes = [$threadType];
             while ($tokenList->hasSymbol(',')) {
                 $threadTypes[] = $tokenList->expectKeywordEnum(ReplicationThreadType::class);
@@ -532,13 +533,7 @@ class ReplicationCommandsParser
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::RELAY_LOG_POS] = $tokenList->expectUnsignedInt();
             } else {
-                $tokenList->missingAnyKeyword(
-                    Keyword::SQL_AFTER_MTS_GAPS,
-                    Keyword::SQL_BEFORE_GTIDS,
-                    Keyword::SQL_AFTER_GTIDS,
-                    Keyword::MASTER_LOG_FILE,
-                    Keyword::RELAY_LOG_FILE
-                );
+                $tokenList->missingAnyKeyword(Keyword::SQL_AFTER_MTS_GAPS, Keyword::SQL_BEFORE_GTIDS, Keyword::SQL_AFTER_GTIDS, Keyword::MASTER_LOG_FILE, Keyword::RELAY_LOG_FILE);
             }
         }
 
@@ -587,7 +582,7 @@ class ReplicationCommandsParser
      *
      *     (n >= 1)
      *
-     * @return mixed[]|string
+     * @return non-empty-array<UuidSet>|string
      */
     private function parseGtidSet(TokenList $tokenList)
     {
@@ -610,7 +605,7 @@ class ReplicationCommandsParser
                     $intervals[] = [$start, $end];
                 }
 
-                new UuidSet($uuid, $intervals);
+                $gtids[] = new UuidSet($uuid, $intervals);
             }
 
             return $gtids;

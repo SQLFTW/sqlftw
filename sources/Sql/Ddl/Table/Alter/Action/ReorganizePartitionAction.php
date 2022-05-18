@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
 
@@ -19,27 +17,24 @@ class ReorganizePartitionAction implements PartitioningAction
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $partitions;
 
-    /** @var PartitionDefinition[] */
+    /** @var non-empty-array<PartitionDefinition> */
     private $newPartitions;
 
     /**
-     * @param string[] $partitions (where null means ALL)
-     * @param PartitionDefinition[] $newPartitions
+     * @param non-empty-array<string> $partitions
+     * @param non-empty-array<PartitionDefinition> $newPartitions
      */
     public function __construct(array $partitions, array $newPartitions)
     {
-        if ($partitions !== []) {
-            Check::itemsOfType($partitions, Type::STRING);
-        }
         $this->partitions = $partitions;
         $this->newPartitions = $newPartitions;
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getPartitions(): array
     {
@@ -47,7 +42,7 @@ class ReorganizePartitionAction implements PartitioningAction
     }
 
     /**
-     * @return PartitionDefinition[]
+     * @return non-empty-array<PartitionDefinition>
      */
     public function getNewPartitions(): array
     {

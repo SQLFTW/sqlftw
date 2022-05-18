@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function count;
 
@@ -23,24 +23,20 @@ class CaseStatement implements CompoundStatementItem
     /** @var ExpressionNode|null */
     private $condition;
 
-    /** @var ExpressionNode[] */
+    /** @var non-empty-array<ExpressionNode> */
     private $values;
 
-    /** @var Statement[][] */
+    /** @var non-empty-array<array<Statement>> */
     private $statementLists;
 
     /**
-     * @param ExpressionNode[] $values
-     * @param Statement[][] $statementLists
+     * @param non-empty-array<ExpressionNode> $values
+     * @param non-empty-array<array<Statement>> $statementLists
      */
     public function __construct(?ExpressionNode $condition, array $values, array $statementLists)
     {
-        Check::array($values, 1);
-        Check::itemsOfType($values, ExpressionNode::class);
-        Check::array($statementLists, count($values), count($values) + 1);
-        foreach ($statementLists as $list) {
-            Check::array($list, 1);
-            Check::itemsOfType($list, Statement::class);
+        if (count($statementLists) < count($values) || count($statementLists) > count($values) + 1) {
+            throw new InvalidDefinitionException('Count of statement lists should be same or one higher then count of values.');
         }
 
         $this->condition = $condition;
@@ -54,7 +50,7 @@ class CaseStatement implements CompoundStatementItem
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return non-empty-array<ExpressionNode>
      */
     public function getValues(): array
     {
@@ -62,7 +58,7 @@ class CaseStatement implements CompoundStatementItem
     }
 
     /**
-     * @return Statement[][]
+     * @return non-empty-array<array<Statement>>
      */
     public function getStatementLists(): array
     {
@@ -76,15 +72,21 @@ class CaseStatement implements CompoundStatementItem
             $result .= ' ' . $this->condition->serialize($formatter) . "\n";
         }
         foreach ($this->values as $i => $condition) {
-            $result = 'WHEN ' . $this->values[$i]->serialize($formatter) . " THAN \n"
-                . $formatter->formatSerializablesList($this->statementLists[$i], ";\n") . ";\n";
+            $result = 'WHEN ' . $this->values[$i]->serialize($formatter) . " THAN \n";
+            $statements = $this->statementLists[$i];
+            if ($statements !== []) {
+                $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";
+            }
         }
         if (count($this->values) < count($this->statementLists)) {
-            $result .= "ELSE\n" . $formatter->formatSerializablesList($this->statementLists[count($this->values)], ";\n") . ";\n";
+            $result .= "ELSE\n";
+            $statements = $this->statementLists[count($this->values)];
+            if ($statements !== []) {
+                $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";
+            }
         }
-        $result .= 'END CASE';
 
-        return $result;
+        return $result . 'END CASE';
     }
 
 }

@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
@@ -21,6 +19,9 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use function is_array;
 
+/**
+ * @phpstan-import-type TableOptionValue from TableOptionsList
+ */
 class CreateTableCommand implements AnyCreateTableCommand
 {
     use StrictBehaviorMixin;
@@ -28,10 +29,10 @@ class CreateTableCommand implements AnyCreateTableCommand
     /** @var QualifiedName */
     private $name;
 
-    /** @var TableItem[] */
+    /** @var non-empty-array<TableItem>|null */
     private $items;
 
-    /** @var TableOptionsList */
+    /** @var TableOptionsList|null */
     private $options;
 
     /** @var PartitioningDefinition|null */
@@ -50,12 +51,12 @@ class CreateTableCommand implements AnyCreateTableCommand
     private $query;
 
     /**
-     * @param TableItem[] $items
-     * @param TableOptionsList|mixed[]|null $options
+     * @param non-empty-array<TableItem>|null $items
+     * @param TableOptionsList|array<TableOptionValue>|null $options
      */
     public function __construct(
         QualifiedName $name,
-        array $items,
+        ?array $items,
         $options = null,
         ?PartitioningDefinition $partitioning = null,
         bool $temporary = false,
@@ -63,7 +64,6 @@ class CreateTableCommand implements AnyCreateTableCommand
         ?DuplicateOption $duplicateOption = null,
         ?Query $query = null
     ) {
-        Check::types($options, [TableOptionsList::class, Type::PHP_ARRAY, Type::NULL]);
         if ($duplicateOption !== null && $query === null) {
             throw new InvalidDefinitionException('IGNORE/REPLACE can be uses only with CREATE TABLE AS ... command.');
         }
@@ -84,9 +84,9 @@ class CreateTableCommand implements AnyCreateTableCommand
     }
 
     /**
-     * @return TableItem[]
+     * @return non-empty-array<TableItem>|null
      */
-    public function getItems(): array
+    public function getItems(): ?array
     {
         return $this->items;
     }

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\View;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SchemaObjectsCommand;
@@ -19,7 +18,7 @@ class DropViewCommand implements ViewCommand, SchemaObjectsCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName[] */
+    /** @var non-empty-array<QualifiedName> */
     private $names;
 
     /** @var bool */
@@ -29,20 +28,17 @@ class DropViewCommand implements ViewCommand, SchemaObjectsCommand
     private $option;
 
     /**
-     * @param QualifiedName[] $names
+     * @param non-empty-array<QualifiedName> $names
      */
     public function __construct(array $names, bool $ifExists = false, ?DropViewOption $option = null)
     {
-        Check::array($names, 1);
-        Check::itemsOfType($names, QualifiedName::class);
-
         $this->names = $names;
         $this->ifExists = $ifExists;
         $this->option = $option;
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     public function getNames(): array
     {

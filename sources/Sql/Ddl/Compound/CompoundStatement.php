@@ -44,7 +44,11 @@ class CompoundStatement implements Statement
         if ($this->label !== null) {
             $result .= $formatter->formatName($this->label) . ': ';
         }
-        $result .= "BEGIN \n" . $formatter->formatSerializablesList($this->statements, ";\n") . ' END';
+        $result .= "BEGIN \n";
+        if ($this->statements !== []) {
+            $result .= $formatter->formatSerializablesList($this->statements, ";\n");
+        }
+        $result .= ' END';
 
         return $result;
     }

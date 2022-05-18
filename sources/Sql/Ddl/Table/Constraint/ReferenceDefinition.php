@@ -11,10 +11,8 @@ namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
-use function count;
 
 class ReferenceDefinition implements SqlSerializable
 {
@@ -23,7 +21,7 @@ class ReferenceDefinition implements SqlSerializable
     /** @var QualifiedName */
     private $sourceTable;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $sourceColumns;
 
     /** @var ForeignKeyAction|null */
@@ -36,7 +34,7 @@ class ReferenceDefinition implements SqlSerializable
     private $matchType;
 
     /**
-     * @param string[] $sourceColumns
+     * @param non-empty-array<string> $sourceColumns
      */
     public function __construct(
         QualifiedName $sourceTable,
@@ -45,10 +43,6 @@ class ReferenceDefinition implements SqlSerializable
         ?ForeignKeyAction $onUpdate = null,
         ?ForeignKeyMatchType $matchType = null
     ) {
-        if (count($sourceColumns) < 1) {
-            throw new InvalidDefinitionException('List of source columns must not be empty.');
-        }
-
         $this->sourceTable = $sourceTable;
         $this->sourceColumns = $sourceColumns;
         $this->onDelete = $onDelete;
@@ -62,7 +56,7 @@ class ReferenceDefinition implements SqlSerializable
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getSourceColumns(): array
     {

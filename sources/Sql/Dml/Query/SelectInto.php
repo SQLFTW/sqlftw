@@ -9,19 +9,19 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\Check;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\FileFormat;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 
 class SelectInto implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $variables;
 
     /** @var string|null */
@@ -37,7 +37,7 @@ class SelectInto implements SqlSerializable
     private $format;
 
     /**
-     * @param string[]|null $variables
+     * @param non-empty-array<string>|null $variables
      */
     public function __construct(
         ?array $variables,
@@ -46,7 +46,9 @@ class SelectInto implements SqlSerializable
         ?Charset $charset = null,
         ?FileFormat $format = null
     ) {
-        Check::oneOf($variables, $dumpFile, $outFile);
+        if ((($variables !== null) + ($dumpFile !== null) + ($outFile !== null)) !== 1) { // @phpstan-ignore-line
+            throw new InvalidDefinitionException('Only one of variables, dumpFile and outFile should be set.');
+        }
 
         $this->variables = $variables;
         $this->dumpFile = $dumpFile;
@@ -56,7 +58,7 @@ class SelectInto implements SqlSerializable
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getVariables(): ?array
     {

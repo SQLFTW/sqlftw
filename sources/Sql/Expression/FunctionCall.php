@@ -75,8 +75,8 @@ class FunctionCall implements ExpressionNode
 
     public function serialize(Formatter $formatter): string
     {
+        $arguments = '';
         if ($this->function instanceof BuiltInFunction && $this->function->hasNamedParams()) {
-            $arguments = '';
             $first = true;
             foreach ($this->arguments as $name => $argument) {
                 if (is_int($name)) {
@@ -93,7 +93,7 @@ class FunctionCall implements ExpressionNode
                 }
                 $first = false;
             }
-        } else {
+        } elseif ($this->arguments !== []) {
             $arguments = $formatter->formatSerializablesList($this->arguments);
         }
 

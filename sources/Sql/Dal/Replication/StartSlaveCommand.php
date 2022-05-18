@@ -31,18 +31,18 @@ class StartSlaveCommand implements ReplicationCommand
     /** @var string|null */
     private $pluginDir;
 
-    /** @var string[]|int[]|bool[]|UuidSet[][]|null */
+    /** @var non-empty-array<string, string|int|bool|non-empty-array<UuidSet>>|null */
     private $until;
 
-    /** @var ReplicationThreadType[]|null */
+    /** @var non-empty-array<ReplicationThreadType>|null */
     private $threadTypes;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param string[]|int[]|bool[]|UuidSet[][]|null $until
-     * @param ReplicationThreadType[]|null $threadTypes
+     * @param non-empty-array<string, string|int|bool|non-empty-array<UuidSet>>|null $until
+     * @param non-empty-array<ReplicationThreadType>|null $threadTypes
      */
     public function __construct(
         ?string $user,
@@ -83,7 +83,7 @@ class StartSlaveCommand implements ReplicationCommand
     }
 
     /**
-     * @return string[]|int[]|bool[]|UuidSet[][]|null
+     * @return non-empty-array<string, string|int|bool|non-empty-array<UuidSet>>|null
      */
     public function getUntil(): ?array
     {
@@ -91,7 +91,7 @@ class StartSlaveCommand implements ReplicationCommand
     }
 
     /**
-     * @return ReplicationThreadType[]|null
+     * @return non-empty-array<ReplicationThreadType>|null
      */
     public function getThreadTypes(): ?array
     {
@@ -116,6 +116,8 @@ class StartSlaveCommand implements ReplicationCommand
                 if ($value === true) {
                     return $name;
                 } elseif (is_array($value)) {
+                    // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
+                    /** @var non-empty-array<UuidSet> $value */
                     return $name . ' = ' . $formatter->formatSerializablesList($value);
                 } else {
                     return $name . ' = ' . $formatter->formatValue($value);

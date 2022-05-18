@@ -10,42 +10,43 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeInterval;
-use function explode;
+use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Util\TypeChecker;
 use function implode;
 
 class ChangeMasterToCommand implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var mixed[] */
-    private $options = [];
+    /** @var non-empty-array<mixed> */
+    private $options;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param mixed[] $options
+     * @param non-empty-array<mixed> $options
      */
     public function __construct(array $options, ?string $channel = null)
     {
-        $types = SlaveOption::getTypes();
-
         foreach ($options as $option => $value) {
-            SlaveOption::get($option);
-            Check::types($value, explode('|', $types[$option]));
+            if (!SlaveOption::validateValue($option)) {
+                throw new InvalidDefinitionException("Unknown option '$option' for CHANGE MASTER TO.");
+            }
+            TypeChecker::check($value, SlaveOption::getTypes()[$option], $option);
 
-            $this->options[$option] = $value;
+            $options[$option] = $value;
         }
 
+        $this->options = $options;
         $this->channel = $channel;
     }
 
     /**
-     * @return mixed[]
+     * @return non-empty-array<mixed>
      */
     public function getOptions(): array
     {
@@ -68,7 +69,7 @@ class ChangeMasterToCommand implements ReplicationCommand
     public function setOption(string $option, $value): void
     {
         SlaveOption::get($option);
-        Check::type($value, SlaveOption::getTypes()[$option]);
+        TypeChecker::check($value, SlaveOption::getTypes()[$option], $option);
 
         $this->options[$option] = $value;
     }

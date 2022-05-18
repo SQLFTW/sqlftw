@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
@@ -18,26 +17,23 @@ class DropUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     private $users;
 
     /** @var bool */
     private $ifExists;
 
     /**
-     * @param UserName[] $users
+     * @param non-empty-array<UserName> $users
      */
     public function __construct(array $users, bool $ifExists = false)
     {
-        Check::array($users, 1);
-        Check::itemsOfType($users, UserName::class);
-
         $this->users = $users;
         $this->ifExists = $ifExists;
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getUsers(): array
     {

@@ -677,7 +677,7 @@ class TableCommandsParser
             return new CreateTableLikeCommand($table, $oldTable, $temporary, $ifNotExists);
         }
 
-        $items = [];
+        $items = null;
         if ($bodyOpen) {
             $items = $this->parseCreateTableBody($tokenList->resetPosition($position));
         }
@@ -705,20 +705,20 @@ class TableCommandsParser
 
         /** @var DuplicateOption|null $duplicateOption */
         $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
-        $select = null;
 
-        if ($tokenList->hasKeyword(Keyword::AS) || $items === [] || $duplicateOption !== null) {
-            $select = $this->queryParser->parseQuery($tokenList);
+        $query = null;
+        if ($tokenList->hasKeyword(Keyword::AS) || $items === null || $duplicateOption !== null) {
+            $query = $this->queryParser->parseQuery($tokenList);
         } elseif (!$tokenList->isFinished()) {
             $position = $tokenList->getPosition();
             if (!$tokenList->hasSymbol(';')) {
-                $select = $this->queryParser->parseQuery($tokenList);
+                $query = $this->queryParser->parseQuery($tokenList);
             } else {
                 $tokenList->resetPosition($position);
             }
         }
 
-        return new CreateTableCommand($table, $items, $options, $partitioning, $temporary, $ifNotExists, $duplicateOption, $select);
+        return new CreateTableCommand($table, $items, $options, $partitioning, $temporary, $ifNotExists, $duplicateOption, $query);
     }
 
     /**
@@ -733,7 +733,7 @@ class TableCommandsParser
      *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
      *   | check_constraint_definition
      *
-     * @return TableItem[]
+     * @return non-empty-array<TableItem>
      */
     private function parseCreateTableBody(TokenList $tokenList): array
     {
@@ -1107,7 +1107,7 @@ class TableCommandsParser
         $tokenList->expectKeywords(Keyword::FOREIGN, Keyword::KEY);
         $indexName = $tokenList->getName();
 
-        $columns = $this->parseColumnList($tokenList);
+        $columns = $this->parseNonEmptyColumnList($tokenList);
         $reference = $this->parseReference($tokenList);
 
         return new ForeignKeyDefinition($columns, $reference, $indexName);
@@ -1128,7 +1128,7 @@ class TableCommandsParser
         $tokenList->expectKeyword(Keyword::REFERENCES);
         $table = $tokenList->expectQualifiedName();
 
-        $columns = $this->parseColumnList($tokenList);
+        $columns = $this->parseNonEmptyColumnList($tokenList);
 
         $matchType = null;
         if ($tokenList->hasKeyword(Keyword::MATCH)) {
@@ -1406,13 +1406,13 @@ class TableCommandsParser
                 $tokenList->expectOperator(Operator::EQUAL);
                 $algorithm = $tokenList->expectUnsignedInt();
             }
-            $columns = $this->parseColumnList($tokenList, true);
+            $columns = $this->parseColumnList($tokenList);
             $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_KEY : PartitioningConditionType::KEY);
             $condition = new PartitioningCondition($type, null, $columns, $algorithm);
         } elseif ($keyword === Keyword::RANGE) {
             $type = PartitioningConditionType::get(PartitioningConditionType::RANGE);
             if ($tokenList->hasKeyword(Keyword::COLUMNS)) {
-                $columns = $this->parseColumnList($tokenList);
+                $columns = $this->parseNonEmptyColumnList($tokenList);
                 $condition = new PartitioningCondition($type, null, $columns);
             } else {
                 $tokenList->expectSymbol('(');
@@ -1423,7 +1423,7 @@ class TableCommandsParser
         } else {
             $type = PartitioningConditionType::get(PartitioningConditionType::LIST);
             if ($tokenList->hasKeyword(Keyword::COLUMNS)) {
-                $columns = $this->parseColumnList($tokenList);
+                $columns = $this->parseNonEmptyColumnList($tokenList);
                 $condition = new PartitioningCondition($type, null, $columns);
             } else {
                 $tokenList->expectSymbol('(');
@@ -1524,7 +1524,7 @@ class TableCommandsParser
      *     [MIN_ROWS [=] min_number_of_rows]
      *     [TABLESPACE [=] tablespace_name]
      *
-     * @return mixed[]
+     * @return non-empty-array<string, int|string>
      */
     private function parsePartitionOptions(TokenList $tokenList): ?array
     {
@@ -1567,7 +1567,7 @@ class TableCommandsParser
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     private function parsePartitionNames(TokenList $tokenList): ?array
     {
@@ -1585,13 +1585,29 @@ class TableCommandsParser
     /**
      * @return string[]
      */
-    private function parseColumnList(TokenList $tokenList, bool $allowEmpty = false): array
+    private function parseColumnList(TokenList $tokenList): array
     {
         $columns = [];
         $tokenList->expectSymbol('(');
-        if ($allowEmpty && $tokenList->hasSymbol(')')) {
+        if ($tokenList->hasSymbol(')')) {
             return $columns;
         }
+
+        do {
+            $columns[] = $tokenList->expectName();
+        } while ($tokenList->hasSymbol(','));
+        $tokenList->expectSymbol(')');
+
+        return $columns;
+    }
+
+    /**
+     * @return non-empty-array<string>
+     */
+    private function parseNonEmptyColumnList(TokenList $tokenList): array
+    {
+        $columns = [];
+        $tokenList->expectSymbol('(');
 
         do {
             $columns[] = $tokenList->expectName();

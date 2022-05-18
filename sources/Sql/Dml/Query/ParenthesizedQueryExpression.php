@@ -18,7 +18,7 @@ class ParenthesizedQueryExpression implements Query
     /** @var Query */
     private $query;
 
-    /** @var OrderByExpression[]|null */
+    /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|null */
@@ -28,7 +28,7 @@ class ParenthesizedQueryExpression implements Query
     private $into;
 
     /**
-     * @param OrderByExpression[]|null $orderBy
+     * @param non-empty-array<OrderByExpression>|null $orderBy
      */
     public function __construct(
         Query $query,
@@ -49,7 +49,7 @@ class ParenthesizedQueryExpression implements Query
     }
 
     /**
-     * @return OrderByExpression[]|null
+     * @return non-empty-array<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

@@ -17,13 +17,13 @@ class GrantCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserPrivilege[] */
+    /** @var non-empty-array<UserPrivilege> */
     private $privileges;
 
     /** @var UserPrivilegeResource */
     private $resource;
 
-    /** @var IdentifiedUser[] */
+    /** @var non-empty-array<IdentifiedUser> */
     private $users;
 
     /** @var UserName|null */
@@ -32,20 +32,20 @@ class GrantCommand implements UserCommand
     /** @var RolesSpecification|null */
     private $withRole;
 
-    /** @var UserTlsOption[]|null */
+    /** @var array<UserTlsOption>|null */
     private $tlsOptions;
 
-    /** @var UserResourceOption[]|null */
+    /** @var non-empty-array<UserResourceOption>|null */
     private $resourceOptions;
 
     /** @var bool */
     private $withGrantOption;
 
     /**
-     * @param UserPrivilege[] $privileges
-     * @param IdentifiedUser[] $users
-     * @param UserTlsOption[]|null $tlsOptions
-     * @param UserResourceOption[]|null $resourceOptions
+     * @param non-empty-array<UserPrivilege> $privileges
+     * @param non-empty-array<IdentifiedUser> $users
+     * @param array<UserTlsOption>|null $tlsOptions
+     * @param non-empty-array<UserResourceOption>|null $resourceOptions
      */
     public function __construct(
         array $privileges,
@@ -68,7 +68,7 @@ class GrantCommand implements UserCommand
     }
 
     /**
-     * @return UserPrivilege[]
+     * @return non-empty-array<UserPrivilege>
      */
     public function getPrivileges(): array
     {
@@ -81,7 +81,7 @@ class GrantCommand implements UserCommand
     }
 
     /**
-     * @return IdentifiedUser[]
+     * @return non-empty-array<IdentifiedUser>
      */
     public function getUsers(): array
     {
@@ -99,7 +99,7 @@ class GrantCommand implements UserCommand
     }
 
     /**
-     * @return UserTlsOption[]|null
+     * @return array<UserTlsOption>|null
      */
     public function getTlsOptions(): ?array
     {
@@ -107,7 +107,7 @@ class GrantCommand implements UserCommand
     }
 
     /**
-     * @return UserResourceOption[]|null
+     * @return non-empty-array<UserResourceOption>|null
      */
     public function getResourceOptions(): ?array
     {

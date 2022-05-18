@@ -16,11 +16,11 @@ class DiscardPartitionTablespaceAction implements PartitioningAction, Tablespace
 {
     use StrictBehaviorMixin;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $partitions;
 
     /**
-     * @param string[]|null $partitions
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(?array $partitions = null)
     {
@@ -28,7 +28,7 @@ class DiscardPartitionTablespaceAction implements PartitioningAction, Tablespace
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getPartitions(): ?array
     {

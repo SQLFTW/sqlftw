@@ -17,18 +17,18 @@ class RevokeCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserPrivilege[] */
+    /** @var non-empty-array<UserPrivilege> */
     private $privileges;
 
     /** @var UserPrivilegeResource */
     private $resource;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     private $users;
 
     /**
-     * @param UserPrivilege[] $privileges
-     * @param UserName[] $users
+     * @param non-empty-array<UserPrivilege> $privileges
+     * @param non-empty-array<UserName> $users
      */
     public function __construct(array $privileges, UserPrivilegeResource $resource, array $users)
     {
@@ -38,7 +38,7 @@ class RevokeCommand implements UserCommand
     }
 
     /**
-     * @return UserPrivilege[]
+     * @return non-empty-array<UserPrivilege>
      */
     public function getPrivileges(): array
     {
@@ -51,7 +51,7 @@ class RevokeCommand implements UserCommand
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getUsers(): array
     {

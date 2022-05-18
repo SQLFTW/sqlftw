@@ -25,9 +25,9 @@ class LoadDataCommand extends LoadCommand
     private $format;
 
     /**
-     * @param string[]|null $fields
-     * @param ExpressionNode[]|null $setters
-     * @param string[]|null $partitions
+     * @param non-empty-array<string>|null $fields
+     * @param non-empty-array<ExpressionNode>|null $setters
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         string $file,

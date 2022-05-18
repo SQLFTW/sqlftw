@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Table;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
@@ -18,26 +17,23 @@ class OptimizeTableCommand implements DalTablesCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName[] */
+    /** @var non-empty-array<QualifiedName> */
     private $names;
 
     /** @var bool */
     private $local;
 
     /**
-     * @param QualifiedName[] $names
+     * @param non-empty-array<QualifiedName> $names
      */
     public function __construct(array $names, bool $local = false)
     {
-        Check::array($names, 1);
-        Check::itemsOfType($names, QualifiedName::class);
-
         $this->names = $names;
         $this->local = $local;
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     public function getNames(): array
     {

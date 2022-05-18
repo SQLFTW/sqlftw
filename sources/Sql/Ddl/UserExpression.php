@@ -9,41 +9,41 @@
 
 namespace SqlFtw\Sql\Ddl;
 
-use Dogma\Check;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\BuiltInFunction;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\UserName;
 
 class UserExpression implements SqlSerializable
 {
 
-    /** @var UserName|null */
-    private $userName;
+    /** @var UserName|BuiltInFunction */
+    private $user;
 
-    /** @var string|null */
-    private $variable;
-
-    public function __construct(?UserName $userName, ?string $variable = null)
+    /**
+     * @param UserName|BuiltInFunction $user
+     */
+    public function __construct($user)
     {
-        Check::oneOf($userName, $variable);
+        if ($user instanceof BuiltInFunction && !$user->equalsValue(BuiltInFunction::CURRENT_USER)) {
+            throw new InvalidDefinitionException('Only CURRENT_USER function is accepted in place of user name.');
+        }
 
-        $this->userName = $userName;
-        $this->variable = $variable;
+        $this->user = $user;
     }
 
-    public function getUserName(): ?UserName
+    /**
+     * @return UserName|BuiltInFunction
+     */
+    public function getUser()
     {
-        return $this->userName;
-    }
-
-    public function getVariable(): ?string
-    {
-        return $this->variable;
+        return $this->user;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->userName !== null ? $this->userName->serialize($formatter) : $this->variable; // @phpstan-ignore-line non-null $variable is guaranteed
+        return $this->user->serialize($formatter);
     }
 
 }

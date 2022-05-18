@@ -19,7 +19,7 @@ class ValuesCommand implements SimpleQuery
     /** @var non-empty-array<Row> */
     private $rows;
 
-    /** @var OrderByExpression[]|null */
+    /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|null */
@@ -30,7 +30,7 @@ class ValuesCommand implements SimpleQuery
 
     /**
      * @param non-empty-array<Row> $rows
-     * @param OrderByExpression[]|null $orderBy
+     * @param non-empty-array<OrderByExpression>|null $orderBy
      */
     public function __construct(
         array $rows,
@@ -54,7 +54,7 @@ class ValuesCommand implements SimpleQuery
     }
 
     /**
-     * @return OrderByExpression[]|null
+     * @return non-empty-array<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

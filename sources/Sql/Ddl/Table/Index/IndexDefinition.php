@@ -14,7 +14,6 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use function count;
 
@@ -30,7 +29,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     /** @var IndexType */
     private $type;
 
-    /** @var array<IndexColumn|ExpressionNode> */
+    /** @var non-empty-array<IndexColumn|ExpressionNode> */
     private $parts;
 
     /** @var IndexAlgorithm|null */
@@ -43,7 +42,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     private $table;
 
     /**
-     * @param array<IndexColumn|ExpressionNode> $parts
+     * @param non-empty-array<IndexColumn|ExpressionNode> $parts
      */
     public function __construct(
         ?string $name,
@@ -53,10 +52,6 @@ class IndexDefinition implements TableItem, ConstraintBody
         ?IndexOptions $options = null,
         ?QualifiedName $table = null
     ) {
-        if (count($parts) < 1) {
-            throw new InvalidDefinitionException('Index must contain at least one column. None given.');
-        }
-
         $this->name = $name;
         $this->type = $type;
         $this->parts = $parts;
@@ -120,7 +115,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @return array<IndexColumn|ExpressionNode>
+     * @return non-empty-array<IndexColumn|ExpressionNode>
      */
     public function getParts(): array
     {

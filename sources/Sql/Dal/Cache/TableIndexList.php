@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\Cache;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
@@ -24,18 +22,18 @@ class TableIndexList implements SqlSerializable
     /** @var QualifiedName */
     private $table;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $indexes;
 
-    /** @var string[]|bool|null */
+    /** @var non-empty-array<string>|bool|null */
     private $partitions;
 
     /** @var bool */
     private $ignoreLeaves;
 
     /**
-     * @param string[]|null $indexes
-     * @param string[]|true|null $partitions
+     * @param non-empty-array<string>|null $indexes
+     * @param non-empty-array<string>|true|null $partitions
      */
     public function __construct(
         QualifiedName $table,
@@ -43,13 +41,6 @@ class TableIndexList implements SqlSerializable
         $partitions = null,
         bool $ignoreLeaves = false
     ) {
-        if ($indexes !== null) {
-            Check::itemsOfType($indexes, Type::STRING, 1);
-        }
-        if ($partitions !== null && $partitions !== true) {
-            Check::itemsOfType($partitions, Type::STRING);
-        }
-
         $this->table = $table;
         $this->indexes = $indexes;
         $this->partitions = $partitions;
@@ -62,7 +53,7 @@ class TableIndexList implements SqlSerializable
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getIndexes(): ?array
     {
@@ -70,7 +61,7 @@ class TableIndexList implements SqlSerializable
     }
 
     /**
-     * @return string[]|bool|null
+     * @return non-empty-array<string>|bool|null
      */
     public function getPartitions()
     {

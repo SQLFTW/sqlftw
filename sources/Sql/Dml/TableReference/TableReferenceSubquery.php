@@ -10,9 +10,7 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Countable;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 
@@ -26,7 +24,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
     /** @var string|null */
     private $alias;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $columnList;
 
     /** @var bool */
@@ -36,7 +34,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
     private $lateral;
 
     /**
-     * @param string[]|null $columnList
+     * @param non-empty-array<string>|null $columnList
      */
     public function __construct(
         Query $query,
@@ -45,9 +43,6 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
         bool $parentheses = false,
         bool $lateral = false
     ) {
-        if ($columnList !== null) {
-            Check::itemsOfType($columnList, Type::STRING);
-        }
         $this->query = $query;
         $this->alias = $alias;
         $this->columnList = $columnList;
@@ -76,7 +71,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getColumnList(): ?array
     {

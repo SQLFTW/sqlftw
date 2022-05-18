@@ -249,6 +249,8 @@ class JoinParser
                 $tokenList->expectSymbol('(');
                 $partitions = [];
                 do {
+                    // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
+                    /** @var non-empty-array<string> $partitions */
                     $partitions[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
@@ -279,7 +281,7 @@ class JoinParser
      * index_list:
      *     index_name [, index_name] ...
      *
-     * @return IndexHint[]
+     * @return non-empty-array<IndexHint>
      */
     private function parseIndexHints(TokenList $tokenList): array
     {

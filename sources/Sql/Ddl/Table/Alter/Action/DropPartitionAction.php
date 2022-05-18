@@ -16,11 +16,11 @@ class DropPartitionAction implements PartitioningAction
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $names;
 
     /**
-     * @param string[] $names
+     * @param non-empty-array<string> $names
      */
     public function __construct(array $names)
     {
@@ -28,7 +28,7 @@ class DropPartitionAction implements PartitioningAction
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getNames(): array
     {

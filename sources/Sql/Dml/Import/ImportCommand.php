@@ -17,11 +17,11 @@ class ImportCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $files;
 
     /**
-     * @param string[] $files
+     * @param non-empty-array<string> $files
      */
     public function __construct(array $files)
     {

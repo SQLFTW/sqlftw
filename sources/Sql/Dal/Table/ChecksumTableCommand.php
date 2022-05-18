@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Table;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
@@ -18,7 +17,7 @@ class ChecksumTableCommand implements DalTablesCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName[] */
+    /** @var non-empty-array<QualifiedName> */
     private $names;
 
     /** @var bool */
@@ -28,20 +27,17 @@ class ChecksumTableCommand implements DalTablesCommand
     private $extended;
 
     /**
-     * @param QualifiedName[] $names
+     * @param non-empty-array<QualifiedName> $names
      */
     public function __construct(array $names, bool $quick, bool $extended)
     {
-        Check::array($names, 1);
-        Check::itemsOfType($names, QualifiedName::class);
-
         $this->names = $names;
         $this->quick = $quick;
         $this->extended = $extended;
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     public function getNames(): array
     {

@@ -18,13 +18,13 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var Assignment[] */
+    /** @var non-empty-array<Assignment> */
     private $assignments;
 
     /**
-     * @param Assignment[] $assignments
-     * @param string[]|null $columns
-     * @param string[]|null $partitions
+     * @param non-empty-array<Assignment> $assignments
+     * @param array<string>|null $columns
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         QualifiedName $table,
@@ -40,7 +40,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
     }
 
     /**
-     * @return Assignment[]
+     * @return non-empty-array<Assignment>
      */
     public function getAssignments(): array
     {

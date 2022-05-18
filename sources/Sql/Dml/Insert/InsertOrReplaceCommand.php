@@ -21,10 +21,10 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     /** @var QualifiedName */
     protected $table;
 
-    /** @var string[]|null */
+    /** @var array<string>|null */
     protected $columns;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     protected $partitions;
 
     /** @var InsertPriority|null */
@@ -34,8 +34,8 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     protected $ignore;
 
     /**
-     * @param string[]|null $columns
-     * @param string[]|null $partitions
+     * @param array<string>|null $columns
+     * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         QualifiedName $table,
@@ -58,7 +58,7 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     }
 
     /**
-     * @return string[]|null
+     * @return array<string>|null
      */
     public function getColumns(): ?array
     {
@@ -66,7 +66,7 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getPartitions(): ?array
     {
@@ -99,7 +99,11 @@ abstract class InsertOrReplaceCommand implements DmlCommand
             $result .= ' PARTITION (' . $formatter->formatNamesList($this->partitions) . ')';
         }
         if ($this->columns !== null) {
-            $result .= ' (' . $formatter->formatNamesList($this->columns) . ')';
+            $result .= ' (';
+            if ($this->columns !== []) {
+                $result .= $formatter->formatNamesList($this->columns);
+            }
+            $result .= ')';
         }
 
         return $result;

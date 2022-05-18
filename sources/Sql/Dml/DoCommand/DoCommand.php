@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\DoCommand;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
@@ -19,21 +18,19 @@ class DoCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode[] */
+    /** @var non-empty-array<ExpressionNode> */
     private $expressions;
 
     /**
-     * @param ExpressionNode[] $expressions
+     * @param non-empty-array<ExpressionNode> $expressions
      */
     public function __construct(array $expressions)
     {
-        Check::itemsOfType($expressions, ExpressionNode::class);
-
         $this->expressions = $expressions;
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return non-empty-array<ExpressionNode>
      */
     public function getExpressions(): array
     {

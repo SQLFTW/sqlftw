@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
@@ -25,24 +23,18 @@ class TableReferenceTable implements TableReferenceNode
     /** @var string|null */
     private $alias;
 
-    /** @var string[]|null */
+    /** @var non-empty-array<string>|null */
     private $partitions;
 
-    /** @var IndexHint[]|null */
+    /** @var non-empty-array<IndexHint>|null */
     private $indexHints;
 
     /**
-     * @param string[]|null $partitions
-     * @param IndexHint[]|null $indexHints
+     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-array<IndexHint>|null $indexHints
      */
     public function __construct(QualifiedName $table, ?string $alias = null, ?array $partitions = null, ?array $indexHints = null)
     {
-        if ($partitions !== null) {
-            Check::itemsOfType($partitions, Type::STRING);
-        }
-        if ($indexHints !== null) {
-            Check::itemsOfType($indexHints, IndexHint::class);
-        }
         $this->table = $table;
         $this->alias = $alias;
         $this->partitions = $partitions;
@@ -65,7 +57,7 @@ class TableReferenceTable implements TableReferenceNode
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     public function getPartitions(): ?array
     {
@@ -73,7 +65,7 @@ class TableReferenceTable implements TableReferenceNode
     }
 
     /**
-     * @return IndexHint[]|null
+     * @return non-empty-array<IndexHint>|null
      */
     public function getIndexHints(): ?array
     {

@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use function strlen;
 
@@ -30,8 +28,6 @@ class DeclareConditionStatement implements CompoundStatementItem
      */
     public function __construct(string $name, $value)
     {
-        Check::types($value, [Type::INT, Type::STRING]);
-
         $this->name = $name;
         $this->value = (string) $value;
     }

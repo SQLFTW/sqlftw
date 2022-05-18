@@ -17,16 +17,16 @@ class AlterUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var IdentifiedUser[] */
+    /** @var non-empty-array<IdentifiedUser> */
     private $users;
 
-    /** @var UserTlsOption[]|null */
+    /** @var array<UserTlsOption>|null */
     private $tlsOptions;
 
-    /** @var UserResourceOption[]|null */
+    /** @var non-empty-array<UserResourceOption>|null */
     private $resourceOptions;
 
-    /** @var UserPasswordLockOption[]|null */
+    /** @var non-empty-array<UserPasswordLockOption>|null */
     private $passwordLockOptions;
 
     /** @var string|null */
@@ -39,10 +39,10 @@ class AlterUserCommand implements UserCommand
     private $ifExists;
 
     /**
-     * @param IdentifiedUser[] $users
-     * @param UserTlsOption[]|null $tlsOptions
-     * @param UserResourceOption[]|null $resourceOptions
-     * @param UserPasswordLockOption[]|null $passwordLockOptions
+     * @param non-empty-array<IdentifiedUser> $users
+     * @param array<UserTlsOption>|null $tlsOptions
+     * @param non-empty-array<UserResourceOption>|null $resourceOptions
+     * @param non-empty-array<UserPasswordLockOption>|null $passwordLockOptions
      */
     public function __construct(
         array $users,
@@ -68,7 +68,7 @@ class AlterUserCommand implements UserCommand
     }
 
     /**
-     * @return IdentifiedUser[]
+     * @return non-empty-array<IdentifiedUser>
      */
     public function getUsers(): array
     {
@@ -76,7 +76,7 @@ class AlterUserCommand implements UserCommand
     }
 
     /**
-     * @return UserTlsOption[]|null
+     * @return array<UserTlsOption>|null
      */
     public function getTlsOptions(): ?array
     {
@@ -84,7 +84,7 @@ class AlterUserCommand implements UserCommand
     }
 
     /**
-     * @return UserResourceOption[]|null
+     * @return non-empty-array<UserResourceOption>|null
      */
     public function getResourceOptions(): ?array
     {
@@ -92,7 +92,7 @@ class AlterUserCommand implements UserCommand
     }
 
     /**
-     * @return UserPasswordLockOption[]|null
+     * @return non-empty-array<UserPasswordLockOption>|null
      */
     public function getPasswordLockOptions(): ?array
     {

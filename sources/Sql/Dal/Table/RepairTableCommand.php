@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Table;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
@@ -18,7 +17,7 @@ class RepairTableCommand implements DalTablesCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName[] */
+    /** @var non-empty-array<QualifiedName> */
     private $names;
 
     /** @var bool */
@@ -34,7 +33,7 @@ class RepairTableCommand implements DalTablesCommand
     private $useFrm;
 
     /**
-     * @param QualifiedName[] $names
+     * @param non-empty-array<QualifiedName> $names
      */
     public function __construct(
         array $names,
@@ -43,9 +42,6 @@ class RepairTableCommand implements DalTablesCommand
         bool $extended = false,
         bool $useFrm = false
     ) {
-        Check::array($names, 1);
-        Check::itemsOfType($names, QualifiedName::class);
-
         $this->names = $names;
         $this->local = $local;
         $this->quick = $quick;
@@ -54,7 +50,7 @@ class RepairTableCommand implements DalTablesCommand
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     public function getNames(): array
     {

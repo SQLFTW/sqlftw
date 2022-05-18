@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
-use Dogma\Type;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
@@ -47,30 +47,30 @@ class TableOption extends SqlEnum
 
     /** @var string[] */
     private static $types = [
-        self::AUTO_INCREMENT => Type::INT,
-        self::AVG_ROW_LENGTH => Type::INT,
+        self::AUTO_INCREMENT => BaseType::UNSIGNED,
+        self::AVG_ROW_LENGTH => BaseType::UNSIGNED,
         self::CHARACTER_SET => Charset::class,
-        self::CHECKSUM => Type::BOOL,
+        self::CHECKSUM => BaseType::BOOL,
         self::COLLATE => Collation::class,
-        self::COMMENT => Type::STRING,
+        self::COMMENT => BaseType::CHAR,
         self::COMPRESSION => TableCompression::class,
-        self::CONNECTION => Type::STRING,
-        self::DATA_DIRECTORY => Type::STRING,
-        self::DELAY_KEY_WRITE => Type::BOOL,
-        self::ENCRYPTION => Type::BOOL,
+        self::CONNECTION => BaseType::CHAR,
+        self::DATA_DIRECTORY => BaseType::CHAR,
+        self::DELAY_KEY_WRITE => BaseType::BOOL,
+        self::ENCRYPTION => BaseType::BOOL,
         self::ENGINE => StorageEngine::class,
-        self::INDEX_DIRECTORY => Type::STRING,
+        self::INDEX_DIRECTORY => BaseType::CHAR,
         self::INSERT_METHOD => TableInsertMethod::class,
-        self::KEY_BLOCK_SIZE => Type::INT,
-        self::MAX_ROWS => Type::INT,
-        self::MIN_ROWS => Type::INT,
+        self::KEY_BLOCK_SIZE => BaseType::UNSIGNED,
+        self::MAX_ROWS => BaseType::UNSIGNED,
+        self::MIN_ROWS => BaseType::UNSIGNED,
         self::PACK_KEYS => ThreeStateValue::class,
-        self::PASSWORD => Type::STRING,
+        self::PASSWORD => BaseType::CHAR,
         self::ROW_FORMAT => TableRowFormat::class,
         self::STATS_AUTO_RECALC => ThreeStateValue::class,
         self::STATS_PERSISTENT => ThreeStateValue::class,
-        self::STATS_SAMPLE_PAGES => Type::INT,
-        self::TABLESPACE => Type::STRING,
+        self::STATS_SAMPLE_PAGES => BaseType::UNSIGNED,
+        self::TABLESPACE => BaseType::CHAR,
         self::UNION => QualifiedName::class . '[]',
     ];
 

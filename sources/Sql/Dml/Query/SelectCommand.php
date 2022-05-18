@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
@@ -22,7 +21,7 @@ class SelectCommand implements SimpleQuery
 {
     use StrictBehaviorMixin;
 
-    /** @var SelectExpression[] */
+    /** @var non-empty-array<SelectExpression> */
     private $columns;
 
     /** @var TableReferenceNode|null */
@@ -31,7 +30,7 @@ class SelectCommand implements SimpleQuery
     /** @var ExpressionNode|null */
     private $where;
 
-    /** @var GroupByExpression[]|null */
+    /** @var non-empty-array<GroupByExpression>|null */
     private $groupBy;
 
     /** @var ExpressionNode|null */
@@ -40,10 +39,10 @@ class SelectCommand implements SimpleQuery
     /** @var WithClause|null */
     private $with;
 
-    /** @var WindowSpecification[]|null */
+    /** @var non-empty-array<WindowSpecification>|null */
     private $windows;
 
-    /** @var OrderByExpression[]|null */
+    /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|null */
@@ -68,10 +67,10 @@ class SelectCommand implements SimpleQuery
     private $withRollup;
 
     /**
-     * @param SelectExpression[] $columns
-     * @param GroupByExpression[]|null $groupBy
-     * @param WindowSpecification[]|null $windows ($name => $spec)
-     * @param OrderByExpression[]|null $orderBy
+     * @param non-empty-array<SelectExpression> $columns
+     * @param non-empty-array<GroupByExpression>|null $groupBy
+     * @param non-empty-array<WindowSpecification>|null $windows ($name => $spec)
+     * @param non-empty-array<OrderByExpression>|null $orderBy
      * @param array<string, bool> $options
      */
     public function __construct(
@@ -91,14 +90,8 @@ class SelectCommand implements SimpleQuery
         ?SelectLocking $locking = null,
         bool $withRollup = false
     ) {
-        Check::itemsOfType($columns, SelectExpression::class);
-        if ($groupBy !== null) {
-            Check::itemsOfType($groupBy, GroupByExpression::class);
-        } elseif ($withRollup === true) {
+        if ($groupBy === null && $withRollup === true) {
             throw new InvalidDefinitionException('WITH ROLLUP can be used only with GROUP BY.');
-        }
-        if ($orderBy !== null) {
-            Check::itemsOfType($orderBy, OrderByExpression::class);
         }
         foreach ($options as $option => $value) {
             SelectOption::get($option);
@@ -122,7 +115,7 @@ class SelectCommand implements SimpleQuery
     }
 
     /**
-     * @return SelectExpression[]
+     * @return non-empty-array<SelectExpression>
      */
     public function getColumns(): array
     {
@@ -140,7 +133,7 @@ class SelectCommand implements SimpleQuery
     }
 
     /**
-     * @return GroupByExpression[]|null
+     * @return non-empty-array<GroupByExpression>|null
      */
     public function getGroupBy(): ?array
     {
@@ -163,7 +156,7 @@ class SelectCommand implements SimpleQuery
     }
 
     /**
-     * @return WindowSpecification[]|null
+     * @return non-empty-array<WindowSpecification>|null
      */
     public function getWindows(): ?array
     {
@@ -171,7 +164,7 @@ class SelectCommand implements SimpleQuery
     }
 
     /**
-     * @return OrderByExpression[]|null
+     * @return non-empty-array<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

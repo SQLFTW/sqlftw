@@ -22,11 +22,11 @@ class CallCommand implements DmlCommand
     /** @var QualifiedName */
     private $procedure;
 
-    /** @var ExpressionNode[]|null */
+    /** @var array<ExpressionNode>|null */
     private $params;
 
     /**
-     * @param ExpressionNode[]|null $params
+     * @param array<ExpressionNode>|null $params
      */
     public function __construct(QualifiedName $procedure, ?array $params = null)
     {
@@ -40,7 +40,7 @@ class CallCommand implements DmlCommand
     }
 
     /**
-     * @return ExpressionNode[]|null
+     * @return array<ExpressionNode>|null
      */
     public function getParams(): ?array
     {
@@ -51,7 +51,11 @@ class CallCommand implements DmlCommand
     {
         $result = 'CALL ' . $this->procedure->serialize($formatter);
         if ($this->params !== null) {
-            $result .= '(' . $formatter->formatSerializablesList($this->params) . ')';
+            $result .= '(';
+            if ($this->params !== []) {
+                $result .= $formatter->formatSerializablesList($this->params);
+            }
+            $result .= ')';
         }
 
         return $result;

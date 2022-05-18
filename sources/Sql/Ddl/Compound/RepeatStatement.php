@@ -54,8 +54,11 @@ class RepeatStatement implements CompoundStatementItem
         if ($this->label !== null) {
             $result .= $formatter->formatName($this->label) . ': ';
         }
-        $result .= "REPEAT\n" . $formatter->formatSerializablesList($this->statements, ";\n")
-            . "\nUNTIL " . $this->condition->serialize($formatter) . "\nEND REPEAT";
+        $result .= "REPEAT\n";
+        if ($this->statements !== []) {
+            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+        }
+        $result .= "UNTIL " . $this->condition->serialize($formatter) . "\nEND REPEAT";
 
         return $result;
     }

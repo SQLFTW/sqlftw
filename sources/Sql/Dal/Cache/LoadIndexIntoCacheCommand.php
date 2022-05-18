@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Cache;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
@@ -20,21 +19,19 @@ class LoadIndexIntoCacheCommand implements CacheCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var TableIndexList[] */
+    /** @var non-empty-array<TableIndexList> */
     private $tableIndexLists;
 
     /**
-     * @param TableIndexList[] $tableIndexLists
+     * @param non-empty-array<TableIndexList> $tableIndexLists
      */
     public function __construct(array $tableIndexLists)
     {
-        Check::itemsOfType($tableIndexLists, TableIndexList::class);
-
         $this->tableIndexLists = $tableIndexLists;
     }
 
     /**
-     * @return TableIndexList[]
+     * @return non-empty-array<TableIndexList>
      */
     public function getTableIndexLists(): array
     {

@@ -18,11 +18,11 @@ class OnDuplicateKeyActions implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var Assignment[] */
+    /** @var non-empty-array<Assignment> */
     private $assignments;
 
     /**
-     * @param Assignment[] $assignments
+     * @param non-empty-array<Assignment> $assignments
      */
     public function __construct(array $assignments)
     {
@@ -30,7 +30,7 @@ class OnDuplicateKeyActions implements SqlSerializable
     }
 
     /**
-     * @return Assignment[]
+     * @return non-empty-array<Assignment>
      */
     public function getAssignments(): array
     {

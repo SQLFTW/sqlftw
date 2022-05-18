@@ -142,7 +142,11 @@ class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCom
         }
         $result .= $this->name->serialize($formatter);
 
-        $result .= '(' . $formatter->formatSerializablesList($this->params) . ')';
+        $result .= '(';
+        if ($this->params !== []) {
+             $result .= $formatter->formatSerializablesList($this->params);
+        }
+        $result .= ')';
 
         if ($this->comment !== null) {
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);

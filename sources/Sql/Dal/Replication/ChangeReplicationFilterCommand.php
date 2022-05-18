@@ -10,35 +10,43 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
-use Dogma\Check;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Util\TypeChecker;
 use function implode;
 
 class ChangeReplicationFilterCommand implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var mixed[] */
+    /** @var non-empty-array<string, array<string>|array<QualifiedName>> */
     private $filters;
 
     /**
-     * @param mixed[] $filters
+     * @param non-empty-array<string, array<string>|array<QualifiedName>> $filters
      */
     public function __construct(array $filters)
     {
         $types = ReplicationFilter::getTypes();
         foreach ($filters as $filter => $values) {
-            ReplicationFilter::get($filter);
-            $type = $types[$filter];
-            if ($type === 'array<string,string>') {
-                $type = 'array<string>';
+            if (!ReplicationFilter::isValid($filter)) {
+                throw new InvalidDefinitionException("Unknown filter '$filter' for CHANGE REPLICATION FILTER.");
             }
-            Check::type($values, $type);
+            TypeChecker::check($values, $types[$filter]);
         }
         $this->filters = $filters;
+    }
+
+    /**
+     * @return non-empty-array<string, array<string>|array<QualifiedName>>
+     */
+    public function getFilters(): array
+    {
+        return $this->filters;
     }
 
     public function serialize(Formatter $formatter): string
@@ -48,21 +56,27 @@ class ChangeReplicationFilterCommand implements ReplicationCommand
         return "CHANGE REPLICATION FILTER\n  " . implode(",\n  ", Arr::mapPairs(
             $this->filters,
             static function (string $filter, array $values) use ($formatter, $types): string {
-                switch ($types[$filter]) {
-                    case 'array<string>':
-                        if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
-                            return $filter . ' = (' . $formatter->formatNamesList($values) . ')';
-                        } else {
-                            return $filter . ' = (' . $formatter->formatStringList($values) . ')';
-                        }
-                    case 'array<' . QualifiedName::class . '>':
-                        return $filter . ' = (' . $formatter->formatSerializablesList($values) . ')';
-                    case 'array<string,string>':
-                        return $filter . ' = (' . implode(', ', Arr::mapPairs($values, static function (string $key, string $value) use ($formatter) {
-                            return '(' . $formatter->formatName($key) . ', ' . $formatter->formatName($value) . ')';
-                        })) . ')';
-                    default:
-                        throw new ShouldNotHappenException('');
+                if ($values === []) {
+                    return $filter . ' = ()';
+                } else {
+                    switch ($types[$filter]) {
+                        case BaseType::CHAR . '[]':
+                            if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
+                                return $filter . ' = (' . $formatter->formatNamesList($values) . ')';
+                            } else {
+                                return $filter . ' = (' . $formatter->formatStringList($values) . ')';
+                            }
+                        case QualifiedName::class . '[]':
+                            // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
+                            /** @var non-empty-array<QualifiedName> $values */
+                            return $filter . ' = (' . $formatter->formatSerializablesList($values) . ')';
+                        case BaseType::CHAR . '{}':
+                            return $filter . ' = (' . implode(', ', Arr::mapPairs($values, static function (string $key, string $value) use ($formatter) {
+                                return '(' . $formatter->formatName($key) . ', ' . $formatter->formatName($value) . ')';
+                            })) . ')';
+                        default:
+                            throw new ShouldNotHappenException('');
+                    }
                 }
             }
         ));

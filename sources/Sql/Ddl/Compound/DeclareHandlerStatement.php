@@ -20,14 +20,14 @@ class DeclareHandlerStatement implements CompoundStatementItem
     /** @var HandlerAction */
     private $action;
 
-    /** @var Condition[] */
+    /** @var non-empty-array<Condition> */
     private $conditions;
 
     /** @var Statement */
     private $statement;
 
     /**
-     * @param Condition[] $conditions
+     * @param non-empty-array<Condition> $conditions
      */
     public function __construct(HandlerAction $action, array $conditions, Statement $statement)
     {
@@ -42,7 +42,7 @@ class DeclareHandlerStatement implements CompoundStatementItem
     }
 
     /**
-     * @return Condition[]
+     * @return non-empty-array<Condition>
      */
     public function getConditions(): array
     {

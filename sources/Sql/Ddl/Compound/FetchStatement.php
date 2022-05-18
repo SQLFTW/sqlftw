@@ -20,11 +20,11 @@ class FetchStatement implements Statement
     /** @var string */
     private $cursor;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $variables;
 
     /**
-     * @param string[] $variables
+     * @param non-empty-array<string> $variables
      */
     public function __construct(string $cursor, array $variables)
     {
@@ -38,7 +38,7 @@ class FetchStatement implements Statement
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getVariables(): array
     {

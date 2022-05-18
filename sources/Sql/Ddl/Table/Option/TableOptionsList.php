@@ -10,25 +10,29 @@
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use Dogma\Arr;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Util\TypeChecker;
 use function implode;
 use function is_int;
 
+/**
+ * @phpstan-type TableOptionValue int|string|bool|Charset|Collation|TableCompression|StorageEngine|TableInsertMethod|ThreeStateValue|TableRowFormat|QualifiedName[]
+ */
 class TableOptionsList
 {
     use StrictBehaviorMixin;
 
-    /** @var mixed[] */
+    /** @var array<TableOptionValue> */
     private $options = [];
 
     /**
-     * @param mixed[] $options (string $name => mixed $value)
+     * @param array<TableOptionValue> $options (string $name => mixed $value)
      */
     public function __construct(array $options)
     {
@@ -57,18 +61,20 @@ class TableOptionsList
                         break;
                 }
             } elseif ($option === TableOption::UNION) {
-                Check::itemsOfType($value, QualifiedName::class);
+                TypeChecker::check($value, QualifiedName::class . '[]');
                 $this->options[$option] = $value;
             } else {
-                TableOption::get($option);
-                Check::type($value, $types[$option]);
+                if (!TableOption::isValid($option)) {
+                    throw new InvalidDefinitionException("Invalid table option '$option'.");
+                }
+                TypeChecker::check($value, $types[$option]);
                 $this->options[$option] = $value;
             }
         }
     }
 
     /**
-     * @return mixed[]
+     * @return array<TableOptionValue>
      */
     public function getOptions(): array
     {
@@ -80,7 +86,9 @@ class TableOptionsList
      */
     public function get(string $option)
     {
-        TableOption::get($option);
+        if (!TableOption::isValid($option)) {
+            throw new InvalidDefinitionException("Invalid table option '$option'.");
+        }
 
         return $this->options[$option] ?? null;
     }
@@ -90,8 +98,10 @@ class TableOptionsList
      */
     public function set(string $option, $value): void
     {
-        TableOption::get($option);
-        Check::type($value, TableOption::getTypes()[$option]);
+        if (!TableOption::isValid($option)) {
+            throw new InvalidDefinitionException("Invalid table option '$option'.");
+        }
+        TypeChecker::check($value, TableOption::getTypes()[$option], $option);
 
         $this->options[$option] = $value;
     }
@@ -101,9 +111,12 @@ class TableOptionsList
      */
     public function setDefault(string $option, $value): void
     {
-        TableOption::get($option);
+        if (!TableOption::isValid($option)) {
+            throw new InvalidDefinitionException("Invalid table option '$option'.");
+        }
+        $types = TableOption::getTypes();
         if (!isset($this->options[$option])) {
-            Check::type($value, TableOption::getTypes()[$option]);
+            TypeChecker::check($value, $types[$option], $option);
             $this->options[$option] = $value;
         }
     }

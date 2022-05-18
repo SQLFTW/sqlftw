@@ -13,6 +13,7 @@ use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\SqlSerializable;
 use function implode;
 use function is_array;
@@ -27,23 +28,23 @@ class PartitionDefinition implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var mixed[]|ExpressionNode|bool|null */
+    /** @var non-empty-array<string|int|float|bool|Literal>|ExpressionNode|bool|null */
     private $lessThan;
 
-    /** @var ExpressionNode[]|null */
+    /** @var non-empty-array<ExpressionNode>|null */
     private $values;
 
-    /** @var mixed[]|null */
+    /** @var non-empty-array<string, int|string>|null */
     private $options;
 
-    /** @var mixed[][]|null[]|null */
+    /** @var non-empty-array<string, non-empty-array<int|string>|null>|null */
     private $subpartitions;
 
     /**
-     * @param mixed[]|ExpressionNode|bool|null $lessThan
-     * @param ExpressionNode[]|null $values
-     * @param mixed[]|null $options
-     * @param mixed[][]|null[]|null $subpartitions
+     * @param non-empty-array<string|int|float|bool|Literal>|ExpressionNode|bool|null $lessThan
+     * @param non-empty-array<ExpressionNode>|null $values
+     * @param non-empty-array<string, int|string>|null $options
+     * @param non-empty-array<string, non-empty-array<int|string>|null>|null $subpartitions
      */
     public function __construct(string $name, $lessThan, ?array $values = null, ?array $options = null, ?array $subpartitions = null)
     {
@@ -75,7 +76,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return mixed[]|ExpressionNode|bool|null
+     * @return non-empty-array<string|int|float|bool|Literal>|ExpressionNode|bool|null
      */
     public function getLessThan()
     {
@@ -83,7 +84,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return ExpressionNode[]|null
+     * @return non-empty-array<ExpressionNode>|null
      */
     public function getValues(): ?array
     {
@@ -91,7 +92,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return mixed[]|null
+     * @return non-empty-array<string, int|string>|null
      */
     public function getOptions(): ?array
     {
@@ -99,7 +100,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return mixed[][]|null[]|null
+     * @return non-empty-array<string, non-empty-array<int|string>|null>|null
      */
     public function getSubpartitions(): ?array
     {

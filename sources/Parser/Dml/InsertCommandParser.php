@@ -153,7 +153,7 @@ class InsertCommandParser
     }
 
     /**
-     * @return string[]|null
+     * @return non-empty-array<string>|null
      */
     private function parsePartitionsList(TokenList $tokenList): ?array
     {
@@ -184,7 +184,7 @@ class InsertCommandParser
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // this is not a column list
                 $tokenList->resetPosition($position);
-                return $columns;
+                return null;
             }
             $columns = [];
             do {
@@ -208,7 +208,7 @@ class InsertCommandParser
     }
 
     /**
-     * @return Assignment[]
+     * @return non-empty-array<Assignment>
      */
     private function parseAssignments(TokenList $tokenList): array
     {
@@ -227,7 +227,7 @@ class InsertCommandParser
     }
 
     /**
-     * @return ExpressionNode[][]
+     * @return non-empty-array<array<ExpressionNode>>
      */
     private function parseRows(TokenList $tokenList): array
     {

@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Handler;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\QualifiedName;
 
 class HandlerReadCommand implements HandlerCommand
@@ -27,7 +28,7 @@ class HandlerReadCommand implements HandlerCommand
     /** @var string|null */
     private $index;
 
-    /** @var mixed[]|null */
+    /** @var non-empty-array<string|int|float|bool|Literal>|null */
     private $values;
 
     /** @var ExpressionNode|null */
@@ -40,7 +41,7 @@ class HandlerReadCommand implements HandlerCommand
     private $offset;
 
     /**
-     * @param mixed[]|null $values
+     * @param non-empty-array<string|int|float|bool|Literal>|null $values
      */
     public function __construct(
         QualifiedName $table,
@@ -76,7 +77,7 @@ class HandlerReadCommand implements HandlerCommand
     }
 
     /**
-     * @return mixed[]|null
+     * @return non-empty-array<string|int|float|bool|Literal>|null
      */
     public function getValues(): ?array
     {

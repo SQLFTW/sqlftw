@@ -166,7 +166,7 @@ class ExpressionParser
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return non-empty-array<ExpressionNode>
      */
     private function parseExpressionList(TokenList $tokenList): array
     {
@@ -849,7 +849,7 @@ class ExpressionParser
                 return new KeywordLiteral(Keyword::DEFAULT);
             } elseif ($token->value === Keyword::ON || $token->value === Keyword::OFF) {
                 return new KeywordLiteral($token->value);
-            } elseif ($token->value === Keyword::MAXVALUE){
+            } elseif ($token->value === Keyword::MAXVALUE) {
                 return new KeywordLiteral($token->value);
             } else {
                 $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::MAXVALUE);
@@ -867,6 +867,7 @@ class ExpressionParser
         } elseif (($token->type & TokenType::STRING) !== 0) {
             /** @var string $value */
             $value = $token->value;
+            /** @var non-empty-array<string> $values */
             $values = [$value];
             while (($next = $tokenList->getString()) !== null) {
                 $values[] = $next;
@@ -884,7 +885,7 @@ class ExpressionParser
      * order_by:
      *     [ORDER BY {col_name | expr | position} [ASC | DESC], ...]
      *
-     * @return OrderByExpression[]
+     * @return non-empty-array<OrderByExpression>
      */
     public function parseOrderBy(TokenList $tokenList): array
     {
@@ -1037,7 +1038,7 @@ class ExpressionParser
                 $tokenList->expectSymbol(')');
             }
 
-            return new UserExpression(null, Keyword::CURRENT_USER);
+            return new UserExpression(BuiltInFunction::get(BuiltInFunction::CURRENT_USER));
         } else {
             return new UserExpression($tokenList->expectUserName());
         }

@@ -19,7 +19,7 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $columns;
 
     /** @var ReferenceDefinition */
@@ -29,16 +29,13 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
     private $indexName;
 
     /**
-     * @param string[] $columns
+     * @param non-empty-array<string> $columns
      */
     public function __construct(
         array $columns,
         ReferenceDefinition $reference,
         ?string $indexName = null
     ) {
-        if (count($columns) < 1) {
-            throw new InvalidDefinitionException('List of columns must not be empty.');
-        }
         if (count($columns) !== count($reference->getSourceColumns())) {
             throw new InvalidDefinitionException('Number of foreign key columns and source columns does not match.');
         }
@@ -49,7 +46,7 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getColumns(): array
     {

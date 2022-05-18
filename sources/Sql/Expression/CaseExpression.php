@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function count;
 
@@ -37,7 +37,9 @@ class CaseExpression implements Statement, ExpressionNode
      */
     public function __construct(?ExpressionNode $condition, array $values, array $results)
     {
-        Check::array($results, count($values), count($values) + 1);
+        if (count($results) < count($values) || count($results) > count($values) + 1) {
+            throw new InvalidDefinitionException('Count of results should be same or one higher then count of values.');
+        }
 
         $this->condition = $condition;
         $this->values = $values;

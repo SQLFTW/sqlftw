@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Lexer;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use function implode;
+use function preg_match;
 use function strtolower;
 
 class UuidSet implements SqlSerializable
@@ -25,19 +26,17 @@ class UuidSet implements SqlSerializable
     /** @var string */
     private $uuid;
 
-    /** @var int[][]|null[][] */
+    /** @var array<array<int, int|null>> */
     private $intervals;
 
     /**
-     * @param int[][]|null[][] $intervals
+     * @param array<array<int, int|null>> $intervals
      */
     public function __construct(string $uuid, array $intervals)
     {
         $uuid = strtolower($uuid);
-        Check::match($uuid, Lexer::UUID_REGEXP);
-        foreach ($intervals as $interval) {
-            Check::int($interval[0], 1);
-            Check::nullableInt($interval[1], 1);
+        if (preg_match(Lexer::UUID_REGEXP, $uuid) === 0) {
+            throw new InvalidDefinitionException("Invalid UUID value '$uuid'.");
         }
         $this->uuid = $uuid;
         $this->intervals = $intervals;
@@ -49,7 +48,7 @@ class UuidSet implements SqlSerializable
     }
 
     /**
-     * @return int[][]|null[][]
+     * @return array<array<int, int|null>>
      */
     public function getIntervals(): array
     {

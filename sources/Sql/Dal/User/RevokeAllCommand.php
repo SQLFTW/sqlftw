@@ -17,11 +17,11 @@ class RevokeAllCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     private $users;
 
     /**
-     * @param UserName[] $users
+     * @param non-empty-array<UserName> $users
      */
     public function __construct(array $users)
     {
@@ -29,7 +29,7 @@ class RevokeAllCommand implements UserCommand
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getUsers(): array
     {

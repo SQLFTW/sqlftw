@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\Check;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Type;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\UserName;
 
@@ -19,27 +17,24 @@ class RevokeRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
+    /** @var non-empty-array<string> */
     private $roles;
 
-    /** @var UserName[] */
+    /** @var non-empty-array<UserName> */
     private $users;
 
     /**
-     * @param string[] $roles
-     * @param UserName[] $users
+     * @param non-empty-array<string> $roles
+     * @param non-empty-array<UserName> $users
      */
     public function __construct(array $roles, array $users)
     {
-        Check::itemsOfType($roles, Type::STRING);
-        Check::itemsOfType($users, UserName::class);
-
         $this->roles = $roles;
         $this->users = $users;
     }
 
     /**
-     * @return string[]
+     * @return non-empty-array<string>
      */
     public function getRoles(): array
     {
@@ -47,7 +42,7 @@ class RevokeRoleCommand implements UserCommand
     }
 
     /**
-     * @return UserName[]
+     * @return non-empty-array<UserName>
      */
     public function getUsers(): array
     {

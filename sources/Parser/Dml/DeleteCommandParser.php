@@ -117,7 +117,7 @@ class DeleteCommandParser
     }
 
     /**
-     * @return QualifiedName[]
+     * @return non-empty-array<QualifiedName>
      */
     private function parseTablesList(TokenList $tokenList): array
     {
