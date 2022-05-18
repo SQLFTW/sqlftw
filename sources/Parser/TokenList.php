@@ -19,6 +19,7 @@ use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -35,6 +36,7 @@ use function is_bool;
 use function is_float;
 use function is_string;
 use function ltrim;
+use function preg_match;
 use function trim;
 
 /**
@@ -457,6 +459,21 @@ class TokenList
         }
 
         return new ValueLiteral($value);
+    }
+
+    public function expectSize(): SizeLiteral
+    {
+        $token = $this->expect(TokenType::UINT | TokenType::NAME);
+        if (($token->type & TokenType::UINT) !== 0) {
+            return new SizeLiteral((string) $token->value);
+        }
+
+        $value = (string) $token->value;
+        if (preg_match(SizeLiteral::REGEXP, $value) === 0) {
+            throw new InvalidValueException('size', $this);
+        }
+
+        return new SizeLiteral($value);
     }
 
     public function expectBool(): bool

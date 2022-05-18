@@ -11,10 +11,16 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
 use function assert;
 use function is_bool;
+use function is_int;
+use function is_string;
 
+/**
+ * @phpstan-import-type TablespaceOptionValue from TablespaceOption
+ */
 class AlterTablespaceCommand implements TablespaceCommand
 {
     use StrictBehaviorMixin;
@@ -22,14 +28,14 @@ class AlterTablespaceCommand implements TablespaceCommand
     /** @var string */
     private $name;
 
-    /** @var mixed[] */
+    /** @var array<TablespaceOptionValue> */
     private $options;
 
     /** @var bool */
     private $undo;
 
     /**
-     * @param mixed[] $options
+     * @param array<TablespaceOptionValue> $options
      */
     public function __construct(string $name, array $options, bool $undo = false)
     {
@@ -46,7 +52,7 @@ class AlterTablespaceCommand implements TablespaceCommand
     }
 
     /**
-     * @return mixed[]
+     * @return array<TablespaceOptionValue>
      */
     public function getOptions(): array
     {
@@ -67,14 +73,18 @@ class AlterTablespaceCommand implements TablespaceCommand
         $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
 
         foreach ($this->options as $name => $value) {
-            if ($name === TablespaceOption::WAIT) {
-                assert(is_bool($value));
-                $result .= $value ? ' ' . $name : '';
+            if (is_bool($value)) {
+                if ($name === TablespaceOption::WAIT) {
+                    $result .= $value ? ' ' . $name : '';
+                } elseif ($name === TablespaceOption::ENCRYPTION) {
+                    $result .= ' ' . $name . ' ' . $formatter->formatString($value ? 'Y' : 'N');
+                }
+            } elseif (is_int($value)) {
+                $result .= ' ' . $name . ' ' . $value;
+            } elseif ($value instanceof SizeLiteral) {
+                $result .= ' ' . $name . ' ' . $value->serialize($formatter);
             } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::RENAME_TO) {
                 $result .= ' ' . $name . ' ' . $formatter->formatName($value);
-            } elseif ($name === TablespaceOption::ENCRYPTION) {
-                assert(is_bool($value));
-                $result .= ' ' . $name . ' ' . $formatter->formatString($value ? 'Y' : 'N');
             } elseif ($name === TablespaceOption::SET) {
                 $result .= ' ' . $name . ' ' . $value;
             } else {

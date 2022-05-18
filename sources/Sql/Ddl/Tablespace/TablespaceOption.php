@@ -11,12 +11,17 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Util\TypeChecker;
 use function in_array;
+use function is_array;
 
+/**
+ * @phpstan-type TablespaceOptionValue int|string|bool|SizeLiteral
+ */
 class TablespaceOption extends SqlEnum
 {
 
@@ -36,7 +41,7 @@ class TablespaceOption extends SqlEnum
     public const SET = Keyword::SET;
     public const WAIT = Keyword::WAIT;
 
-    /** @var mixed[] */
+    /** @var string[]|string[][] */
     private static $values = [
         self::ENGINE => [StorageEngine::INNODB, StorageEngine::NDB],
         self::ENCRYPTION => BaseType::BOOL,
@@ -47,7 +52,7 @@ class TablespaceOption extends SqlEnum
         self::NODEGROUP => BaseType::UNSIGNED,
         self::RENAME_TO => BaseType::CHAR,
         self::INITIAL_SIZE => BaseType::UNSIGNED,
-        self::FILE_BLOCK_SIZE => BaseType::UNSIGNED,
+        self::FILE_BLOCK_SIZE => SizeLiteral::class,
         self::EXTENT_SIZE => BaseType::UNSIGNED,
         self::AUTOEXTEND_SIZE => BaseType::UNSIGNED,
         self::MAX_SIZE => BaseType::UNSIGNED,
@@ -92,7 +97,7 @@ class TablespaceOption extends SqlEnum
     }
 
     /**
-     * @param mixed[] $values
+     * @param array<TablespaceOptionValue> $values
      */
     public static function validate(string $for, array &$values): void
     {
@@ -107,9 +112,11 @@ class TablespaceOption extends SqlEnum
                 TypeChecker::check($value, BaseType::CHAR);
             } elseif ($allowedValues === BaseType::BOOL) {
                 TypeChecker::check($value, BaseType::BOOL);
-            } else {
+            } elseif ($allowedValues === SizeLiteral::class) {
+                TypeChecker::check($value, SizeLiteral::class);
+            } elseif (is_array($allowedValues)) {
                 if (!in_array($value, $allowedValues, true)) {
-                    throw new InvalidDefinitionException("Invalid values \"$value\" for option $key.");
+                    throw new InvalidDefinitionException("Invalid values '$value' for option $key."); // @phpstan-ignore-line
                 }
             }
             $values[$key] = $value;

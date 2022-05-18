@@ -99,7 +99,7 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::FILE_BLOCK_SIZE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectUnsignedInt();
+            $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectSize();
         }
         if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
             $tokenList->passSymbol('=');
