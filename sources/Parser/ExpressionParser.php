@@ -777,8 +777,10 @@ class ExpressionParser
         $tokenList->expectKeyword(Keyword::AGAINST);
         $tokenList->expectSymbol('(');
         $query = $tokenList->expectString();
-        /** @var MatchMode|null $mode */
-        $mode = $tokenList->getMultiKeywordsEnum(MatchMode::class);
+        $mode = null;
+        if ($tokenList->hasKeyword(Keyword::IN)) {
+            $mode = $tokenList->expectMultiKeywordsEnum(MatchMode::class);
+        }
         $expansion = $tokenList->hasKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
         $tokenList->expectSymbol(')');
 
