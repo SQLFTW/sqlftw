@@ -17,22 +17,28 @@ class AddPartitionAction implements PartitioningAction
 {
     use StrictBehaviorMixin;
 
-    /** @var PartitionDefinition */
-    private $partition;
+    /** @var non-empty-array<PartitionDefinition> */
+    private $partitions;
 
-    public function __construct(PartitionDefinition $partition)
+    /**
+     * @param non-empty-array<PartitionDefinition> $partition
+     */
+    public function __construct(array $partition)
     {
-        $this->partition = $partition;
+        $this->partitions = $partition;
     }
 
-    public function getPartition(): PartitionDefinition
+    /**
+     * @return non-empty-array<PartitionDefinition>
+     */
+    public function getPartitions(): array
     {
-        return $this->partition;
+        return $this->partitions;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ADD PARTITION (' . $this->partition->serialize($formatter) . ')';
+        return 'ADD PARTITION (' . $formatter->formatSerializablesList($this->partitions) . ')';
     }
 
 }

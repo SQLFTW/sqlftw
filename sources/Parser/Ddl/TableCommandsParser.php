@@ -179,7 +179,7 @@ class TableCommandsParser
      *   | IMPORT TABLESPACE
      *   | FORCE
      *   | {WITHOUT|WITH} VALIDATION
-     *   | ADD PARTITION (partition_definition)
+     *   | ADD PARTITION (partition_definition[, ...])
      *   | DROP PARTITION partition_names
      *   | DISCARD PARTITION {partition_names | ALL} TABLESPACE
      *   | IMPORT PARTITION {partition_names | ALL} TABLESPACE
@@ -272,9 +272,12 @@ class TableCommandsParser
                         case Keyword::PARTITION:
                             // ADD PARTITION (partition_definition)
                             $tokenList->expectSymbol('(');
-                            $partition = $this->parsePartitionDefinition($tokenList);
+                            $partitions = [];
+                            do {
+                                $partitions[] = $this->parsePartitionDefinition($tokenList);
+                            } while ($tokenList->hasSymbol(','));
                             $tokenList->expectSymbol(')');
-                            $actions[] = new AddPartitionAction($partition);
+                            $actions[] = new AddPartitionAction($partitions);
                             break;
                         default:
                             // keyword used as a column name
