@@ -69,7 +69,7 @@ class CreateTablespaceCommand implements TablespaceCommand
         foreach ($this->options as $name => $value) {
             if ($name === TablespaceOption::WAIT) {
                 assert(is_bool($value));
-                $result .= $value ? ' ' . $name : '';
+                $result .= $value ? ' WAIT' : ' NO_WAIT';
             } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::USE_LOGFILE_GROUP) {
                 $result .= ' ' . $name . ' ' . $formatter->formatName($value);
             } elseif ($name === TablespaceOption::FILE_BLOCK_SIZE) {

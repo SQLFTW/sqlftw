@@ -81,7 +81,7 @@ class TablespaceCommandsParser
      *     [AUTOEXTEND_SIZE [=] autoextend_size] -- NDB only
      *     [MAX_SIZE [=] max_size]          -- NDB only
      *     [NODEGROUP [=] nodegroup_id]     -- NDB only
-     *     [WAIT]                           -- NDB only
+     *     [WAIT | NO_WAIT]                 -- NDB only (NO_WAIT not documented)
      *     [COMMENT [=] 'string']           -- NDB only
      *     [ENGINE [=] engine_name]
      */
@@ -130,6 +130,8 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $options[TablespaceOption::WAIT] = true;
+        } elseif ($tokenList->hasKeyword(Keyword::NO_WAIT)) {
+            $options[TablespaceOption::WAIT] = false;
         }
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
             $tokenList->passSymbol('=');
