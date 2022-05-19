@@ -93,53 +93,64 @@ class TablespaceCommandsParser
 
         $name = $tokenList->expectName();
 
+        $keywords = [
+            Keyword::ADD, Keyword::FILE_BLOCK_SIZE, Keyword::ENCRYPTION, Keyword::USE, Keyword::EXTENT_SIZE,
+            Keyword::INITIAL_SIZE, Keyword::AUTOEXTEND_SIZE, Keyword::MAX_SIZE, Keyword::NODEGROUP, Keyword::WAIT,
+            Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE];
         $options = [];
-        if ($tokenList->hasKeywords(Keyword::ADD, Keyword::DATAFILE)) {
-            $options[TablespaceOption::ADD_DATAFILE] = $tokenList->expectString();
-        }
-        if ($tokenList->hasKeyword(Keyword::FILE_BLOCK_SIZE)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectSize();
-        }
-        if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
-        }
-        if ($tokenList->hasKeywords(Keyword::USE, Keyword::LOGFILE, Keyword::GROUP)) {
-            $options[TablespaceOption::USE_LOGFILE_GROUP] = $tokenList->expectName();
-        }
-        if ($tokenList->hasKeyword(Keyword::EXTENT_SIZE)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::EXTENT_SIZE] = $tokenList->expectUnsignedInt();
-        }
-        if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectUnsignedInt();
-        }
-        if ($tokenList->hasKeyword(Keyword::AUTOEXTEND_SIZE)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectUnsignedInt();
-        }
-        if ($tokenList->hasKeyword(Keyword::MAX_SIZE)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::MAX_SIZE] = $tokenList->expectUnsignedInt();
-        }
-        if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::NODEGROUP] = $tokenList->expectUnsignedInt();
-        }
-        if ($tokenList->hasKeyword(Keyword::WAIT)) {
-            $options[TablespaceOption::WAIT] = true;
-        } elseif ($tokenList->hasKeyword(Keyword::NO_WAIT)) {
-            $options[TablespaceOption::WAIT] = false;
-        }
-        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::COMMENT] = $tokenList->expectString();
-        }
-        if ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->passSymbol('=');
-            $options[TablespaceOption::ENGINE] = $tokenList->expectName();
+        while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
+            switch ($keyword) {
+                case Keyword::ADD:
+                    $tokenList->expectKeyword(Keyword::DATAFILE);
+                    $options[TablespaceOption::ADD_DATAFILE] = $tokenList->expectString();
+                    break;
+                case Keyword::FILE_BLOCK_SIZE:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectSize();
+                    break;
+                case Keyword::ENCRYPTION:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
+                    break;
+                case Keyword::USE:
+                    $tokenList->expectKeywords(Keyword::LOGFILE, Keyword::GROUP);
+                    $options[TablespaceOption::USE_LOGFILE_GROUP] = $tokenList->expectName();
+                    break;
+                case Keyword::EXTENT_SIZE:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::EXTENT_SIZE] = $tokenList->expectSize();
+                    break;
+                case Keyword::INITIAL_SIZE:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectUnsignedInt();
+                    break;
+                case Keyword::AUTOEXTEND_SIZE:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectUnsignedInt();
+                    break;
+                case Keyword::MAX_SIZE:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::MAX_SIZE] = $tokenList->expectUnsignedInt();
+                    break;
+                case Keyword::NODEGROUP:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::NODEGROUP] = $tokenList->expectUnsignedInt();
+                    break;
+                case Keyword::WAIT:
+                    $options[TablespaceOption::WAIT] = true;
+                    break;
+                case Keyword::NO_WAIT:
+                    $options[TablespaceOption::WAIT] = false;
+                    break;
+                case Keyword::COMMENT:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::COMMENT] = $tokenList->expectString();
+                    break;
+                case Keyword::ENGINE:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::ENGINE] = $tokenList->expectName();
+                    break;
+            }
         }
 
         return new CreateTablespaceCommand($name, $options, $undo);
