@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
-use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -18,6 +17,7 @@ use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Util\TypeChecker;
 use function in_array;
 use function is_array;
+use function strtoupper;
 
 /**
  * @phpstan-type TablespaceOptionValue int|string|bool|SizeLiteral
@@ -43,7 +43,7 @@ class TablespaceOption extends SqlEnum
 
     /** @var string[]|string[][] */
     private static $values = [
-        self::ENGINE => [StorageEngine::INNODB, StorageEngine::NDB],
+        self::ENGINE => [Keyword::INNODB, Keyword::NDB],
         self::ENCRYPTION => BaseType::BOOL,
         self::COMMENT => BaseType::CHAR,
         self::ADD_DATAFILE => BaseType::CHAR,
@@ -116,7 +116,7 @@ class TablespaceOption extends SqlEnum
             } elseif ($allowedValues === SizeLiteral::class) {
                 TypeChecker::check($value, SizeLiteral::class);
             } elseif (is_array($allowedValues)) {
-                if (!in_array($value, $allowedValues, true)) {
+                if (!in_array(strtoupper($value), $allowedValues, true)) {
                     throw new InvalidDefinitionException("Invalid values '$value' for option $key."); // @phpstan-ignore-line
                 }
             }
