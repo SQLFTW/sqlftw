@@ -55,6 +55,7 @@ class Charset extends SqlEnum implements ExpressionNode
     public const UTF_16LE = 'utf16le';
     public const UTF_32 = 'utf32';
     public const UTF_8_OLD = 'utf8';
+    public const UTF_8_MB3 = 'utf8mb3';
     public const UTF_8 = 'utf8mb4';
 
     /** @var array<string, int> */
@@ -81,6 +82,7 @@ class Charset extends SqlEnum implements ExpressionNode
         self::LATIN_5 => 30,
         self::ARMSCII_8 => 32,
         self::UTF_8_OLD => 33,
+        self::UTF_8_MB3 => 33, // ???
         self::UCS_2 => 35,
         self::CP866 => 36,
         self::KEYBCS_2 => 37,
