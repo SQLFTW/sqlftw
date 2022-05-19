@@ -164,6 +164,17 @@ class TokenList
         return $token ?? $this->tokens[0];
     }
 
+    public function getFirstSignificantToken(): ?Token
+    {
+        foreach ($this->tokens as $token) {
+            if (($token->type & (TokenType::WHITESPACE | TokenType::COMMENT | TokenType::TEST_CODE)) === 0) {
+                return $token;
+            }
+        }
+
+        return null;
+    }
+
     public function serialize(): string
     {
         $result = '';
@@ -175,17 +186,6 @@ class TokenList
         }
 
         return trim($result);
-    }
-
-    public function onlyContainsComments(): bool
-    {
-        foreach ($this->tokens as $token) {
-            if (($token->type & (TokenType::WHITESPACE | TokenType::COMMENT | TokenType::TEST_CODE)) === 0) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     // seek ------------------------------------------------------------------------------------------------------------
