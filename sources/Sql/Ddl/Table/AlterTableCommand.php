@@ -17,6 +17,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
+use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\QualifiedName;
 use function assert;
 use function is_array;
@@ -42,6 +43,9 @@ class AlterTableCommand implements DdlTableCommand
     /** @var TableOptionsList|null */
     private $tableOptions;
 
+    /** @var PartitioningDefinition|null */
+    private $partitioning;
+
     /**
      * @param AlterActionsList|AlterTableAction[] $actions
      * @param array<string, bool|AlterTableLock|AlterTableAlgorithm> $alterOptions
@@ -51,7 +55,8 @@ class AlterTableCommand implements DdlTableCommand
         QualifiedName $name,
         $actions = [],
         array $alterOptions = [],
-        $tableOptions = null
+        $tableOptions = null,
+        ?PartitioningDefinition $partitioning = null
     ) {
         if ($alterOptions !== []) {
             foreach ($alterOptions as $option => $value) {
@@ -63,6 +68,7 @@ class AlterTableCommand implements DdlTableCommand
         $this->actions = is_array($actions) ? new AlterActionsList($actions) : $actions;
         $this->alterOptions = $alterOptions;
         $this->tableOptions = is_array($tableOptions) ? new TableOptionsList($tableOptions) : $tableOptions;
+        $this->partitioning = $partitioning;
     }
 
     public function getName(): QualifiedName
@@ -96,6 +102,11 @@ class AlterTableCommand implements DdlTableCommand
         return $rename;
     }
 
+    public function getPartitioning(): ?PartitioningDefinition
+    {
+        return $this->partitioning;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER TABLE ' . $this->name->serialize($formatter);
@@ -123,6 +134,10 @@ class AlterTableCommand implements DdlTableCommand
                     $result .= "\n" . $formatter->indent . $option . ' ' . $formatter->formatValue($value) . ',';
                 }
             }
+        }
+
+        if ($this->partitioning !== null) {
+            $result .= "\n" . $this->partitioning->serialize($formatter);
         }
 
         return trim(rtrim($result, ' '), ',');

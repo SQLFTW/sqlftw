@@ -636,7 +636,12 @@ class TableCommandsParser
             }
         } while ($tokenList->hasSymbol(','));
 
-        return new AlterTableCommand($name, $actions, $alterOptions, $tableOptions);
+        $partitioning = null;
+        if ($tokenList->hasKeyword(Keyword::PARTITION)) {
+            $partitioning = $this->parsePartitioning($tokenList->resetPosition(-1));
+        }
+
+        return new AlterTableCommand($name, $actions, $alterOptions, $tableOptions, $partitioning);
     }
 
     /**
