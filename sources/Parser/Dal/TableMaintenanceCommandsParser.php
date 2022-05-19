@@ -11,7 +11,9 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Dal\Table\AnalyzeTableCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTablesCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTableDropHistogramCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTableUpdateHistogramCommand;
 use SqlFtw\Sql\Dal\Table\ChecksumTableCommand;
 use SqlFtw\Sql\Dal\Table\CheckTableCommand;
 use SqlFtw\Sql\Dal\Table\CheckTableOption;
@@ -24,10 +26,21 @@ class TableMaintenanceCommandsParser
     use StrictBehaviorMixin;
 
     /**
-     * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE
-     *     tbl_name [, tbl_name] ...
+     * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL]
+     *     TABLE tbl_name [, tbl_name] ...
+     *
+     * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL]
+     *     TABLE tbl_name
+     *     UPDATE HISTOGRAM ON col_name [, col_name] ...
+     *     [WITH N BUCKETS]
+     *
+     * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL]
+     *     TABLE tbl_name
+     *     DROP HISTOGRAM ON col_name [, col_name] ...
+     *
+     * @return AnalyzeTablesCommand|AnalyzeTableUpdateHistogramCommand|AnalyzeTableDropHistogramCommand
      */
-    public function parseAnalyzeTable(TokenList $tokenList): AnalyzeTableCommand
+    public function parseAnalyzeTable(TokenList $tokenList)
     {
         $tokenList->expectKeyword(Keyword::ANALYZE);
         $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
@@ -37,7 +50,29 @@ class TableMaintenanceCommandsParser
             $tables[] = $tokenList->expectQualifiedName();
         } while ($tokenList->hasSymbol(','));
 
-        return new AnalyzeTableCommand($tables, $local);
+        $columns = $buckets = null;
+        if (count($tables) === 1) {
+            if ($tokenList->hasKeywords(Keyword::UPDATE, Keyword::HISTOGRAM, Keyword::ON)) {
+                do {
+                    $columns[] = $tokenList->expectName();
+                } while ($tokenList->hasSymbol(','));
+
+                if ($tokenList->hasKeyword(Keyword::WITH)) {
+                    $buckets = $tokenList->expectUnsignedInt();
+                    $tokenList->expectKeyword(Keyword::BUCKETS);
+                }
+
+                return new AnalyzeTableUpdateHistogramCommand($tables[0], $columns, $buckets, $local);
+            } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::HISTOGRAM, Keyword::ON)) {
+                do {
+                    $columns[] = $tokenList->expectName();
+                } while ($tokenList->hasSymbol(','));
+
+                return new AnalyzeTableDropHistogramCommand($tables[0], $columns, $local);
+            }
+        }
+
+        return new AnalyzeTablesCommand($tables, $local);
     }
 
     /**
