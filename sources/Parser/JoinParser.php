@@ -26,6 +26,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use function count;
@@ -298,7 +299,11 @@ class JoinParser
             $tokenList->expectSymbol('(');
             $indexes = [];
             do {
-                $indexes[] = $tokenList->expectName();
+                if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
+                    $indexes[] = new KeywordLiteral(Keyword::PRIMARY);
+                } else {
+                    $indexes[] = $tokenList->expectName();
+                }
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
 
