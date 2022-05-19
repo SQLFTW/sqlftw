@@ -42,6 +42,7 @@ class CharsetCommandsParser
     /**
      * SET NAMES {'charset_name'
      *     [COLLATE 'collation_name'] | DEFAULT}
+     *     [, collation_connection [=] 'collation_name']
      */
     public function parseSetNames(TokenList $tokenList): SetNamesCommand
     {
@@ -50,6 +51,10 @@ class CharsetCommandsParser
         if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
             $charset = $tokenList->expectCharsetName();
             if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+                $collation = $tokenList->expectCollationName();
+            } elseif ($tokenList->hasSymbol(',')) {
+                $tokenList->expectName('collation_connection');
+                $tokenList->passSymbol('=');
                 $collation = $tokenList->expectCollationName();
             }
         }
