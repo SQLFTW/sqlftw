@@ -1565,7 +1565,7 @@ class TableCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::TABLESPACE)) {
             $tokenList->passSymbol('=');
-            $options[PartitionOption::TABLESPACE] = $tokenList->expectString();
+            $options[PartitionOption::TABLESPACE] = $tokenList->expectNameOrString();
         }
 
         return $options !== [] ? $options : null;
