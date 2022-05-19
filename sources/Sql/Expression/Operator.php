@@ -86,6 +86,7 @@ class Operator extends SqlEnum implements Feature
     // JSON
     public const JSON_EXTRACT = '->';
     public const JSON_EXTRACT_UNQUOTE = '->>';
+    public const MEMBER_OF = Keyword::MEMBER . ' ' . Keyword::OF;
 
     public function isUnary(): bool
     {

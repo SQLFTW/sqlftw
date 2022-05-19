@@ -235,6 +235,7 @@ class ExpressionParser
      *   | bit_expr SOUNDS LIKE bit_expr
      *   | bit_expr [NOT] LIKE simple_expr [ESCAPE simple_expr]
      *   | bit_expr [NOT] REGEXP bit_expr
+     *   | bit_expr MEMBER OF (json_array) // 8.0.17
      *   | bit_expr
      */
     private function parsePredicate(TokenList $tokenList): ExpressionNode
@@ -297,6 +298,12 @@ class ExpressionParser
             $right = $this->parseBitExpression($tokenList);
 
             return new BinaryOperator($left, $not ? [Operator::NOT, $operator] : [$operator], $right);
+        }
+
+        if (!$not && $tokenList->hasKeywords(Keyword::MEMBER, Keyword::OF)) {
+            $right = $this->parseBitExpression($tokenList);
+
+            return new BinaryOperator($left, [Operator::MEMBER_OF], $right);
         }
 
         return $left;
