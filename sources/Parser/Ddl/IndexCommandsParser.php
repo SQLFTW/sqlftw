@@ -78,9 +78,11 @@ class IndexCommandsParser
         $alterAlgorithm = $alterLock = null;
         while ($keyword = $tokenList->getAnyKeyword(Keyword::ALGORITHM, Keyword::LOCK)) {
             if ($keyword === Keyword::ALGORITHM) {
+                $tokenList->passSymbol('=');
                 /** @var AlterTableAlgorithm $alterAlgorithm */
                 $alterAlgorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
             } elseif ($keyword === Keyword::LOCK) {
+                $tokenList->passSymbol('=');
                 /** @var AlterTableLock $alterLock */
                 $alterLock = $tokenList->expectKeywordEnum(AlterTableLock::class);
             }
