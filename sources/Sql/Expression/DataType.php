@@ -175,7 +175,8 @@ class DataType implements ExpressionNode
     public function addCharset(Charset $charset): self
     {
         if ($this->charset !== null) {
-            throw new InvalidDefinitionException('Type already has a charset.');
+            // todo: can be defined twice as CHAR(10) BINARY CHARSET BINARY
+            //throw new InvalidDefinitionException('Type already has a charset.');
         }
 
         $that = clone $this;
