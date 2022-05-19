@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
@@ -19,6 +20,7 @@ use SqlFtw\Sql\SqlEnum;
 class TableOption extends SqlEnum
 {
 
+    public const AUTOEXTEND_SIZE = Keyword::AUTOEXTEND_SIZE;
     public const AUTO_INCREMENT = Keyword::AUTO_INCREMENT;
     public const AVG_ROW_LENGTH = Keyword::AVG_ROW_LENGTH;
     public const CHARACTER_SET = Keyword::CHARACTER . ' ' . Keyword::SET;
@@ -47,6 +49,7 @@ class TableOption extends SqlEnum
 
     /** @var string[] */
     private static $types = [
+        self::AUTOEXTEND_SIZE => SizeLiteral::class,
         self::AUTO_INCREMENT => BaseType::UNSIGNED,
         self::AVG_ROW_LENGTH => BaseType::UNSIGNED,
         self::CHARACTER_SET => Charset::class,

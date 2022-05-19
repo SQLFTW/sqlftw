@@ -1162,7 +1162,8 @@ class TableCommandsParser
 
     /**
      * table_option:
-     *     AUTO_INCREMENT [=] value
+     *     AUTOEXTEND_SIZE [=] value
+     *   | AUTO_INCREMENT [=] value
      *   | AVG_ROW_LENGTH [=] value
      *   | [DEFAULT] CHARACTER SET [=] charset_name
      *   | CHECKSUM [=] {0 | 1}
@@ -1200,6 +1201,10 @@ class TableCommandsParser
 
         $keyword = $token->value;
         switch ($keyword) {
+            case Keyword::AUTOEXTEND_SIZE:
+                $tokenList->passSymbol('=');
+
+                return [TableOption::AUTOEXTEND_SIZE, $tokenList->expectSize()];
             case Keyword::AUTO_INCREMENT:
                 $tokenList->passSymbol('=');
 

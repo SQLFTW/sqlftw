@@ -13,10 +13,8 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
-use function assert;
 use function is_bool;
 use function is_int;
-use function is_string;
 
 /**
  * @phpstan-import-type TablespaceOptionValue from TablespaceOption

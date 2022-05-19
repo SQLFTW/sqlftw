@@ -25,6 +25,7 @@ class TablespaceCommandsParser
      * ALTER [UNDO] TABLESPACE tablespace_name
      *     [{ADD|DROP} DATAFILE 'file_name'] -- NDB only
      *     [INITIAL_SIZE [=] size]      -- NDB only
+     *     [AUTOEXTEND_SIZE [=] autoextend_size] -- NDB only
      *     [WAIT]                       -- NDB only
      *     [RENAME TO tablespace_name]
      *     [SET {ACTIVE|INACTIVE}]      -- InnoDB only
@@ -47,7 +48,11 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectUnsignedInt();
+            $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectSize();
+        }
+        if ($tokenList->hasKeyword(Keyword::AUTOEXTEND_SIZE)) {
+            $tokenList->passSymbol('=');
+            $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectSize();
         }
         if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $options[TablespaceOption::WAIT] = true;
@@ -122,15 +127,15 @@ class TablespaceCommandsParser
                     break;
                 case Keyword::INITIAL_SIZE:
                     $tokenList->passSymbol('=');
-                    $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectUnsignedInt();
+                    $options[TablespaceOption::INITIAL_SIZE] = $tokenList->expectSize();
                     break;
                 case Keyword::AUTOEXTEND_SIZE:
                     $tokenList->passSymbol('=');
-                    $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectUnsignedInt();
+                    $options[TablespaceOption::AUTOEXTEND_SIZE] = $tokenList->expectSize();
                     break;
                 case Keyword::MAX_SIZE:
                     $tokenList->passSymbol('=');
-                    $options[TablespaceOption::MAX_SIZE] = $tokenList->expectUnsignedInt();
+                    $options[TablespaceOption::MAX_SIZE] = $tokenList->expectSize();
                     break;
                 case Keyword::NODEGROUP:
                     $tokenList->passSymbol('=');
