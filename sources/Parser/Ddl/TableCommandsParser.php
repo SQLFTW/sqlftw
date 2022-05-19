@@ -96,6 +96,7 @@ use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\DataType;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
+use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
@@ -1326,7 +1327,11 @@ class TableCommandsParser
             case Keyword::STATS_SAMPLE_PAGES:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::STATS_SAMPLE_PAGES, $tokenList->expectUnsignedInt()];
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                    return [TableOption::STATS_SAMPLE_PAGES, new KeywordLiteral(Keyword::DEFAULT)];
+                } else {
+                    return [TableOption::STATS_SAMPLE_PAGES, $tokenList->expectUnsignedInt()];
+                }
             case Keyword::TABLESPACE:
                 $tokenList->passSymbol('=');
 
