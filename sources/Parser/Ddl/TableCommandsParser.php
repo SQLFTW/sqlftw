@@ -21,6 +21,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\Action\AddConstraintAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddForeignKeyAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddIndexAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddPartitionAction;
+use SqlFtw\Sql\Ddl\Table\Alter\Action\AddPartitionNumberAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterCheckAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterConstraintAction;
@@ -180,6 +181,7 @@ class TableCommandsParser
      *   | FORCE
      *   | {WITHOUT|WITH} VALIDATION
      *   | ADD PARTITION (partition_definition[, ...])
+     *   | ADD PARTITION PARTITIONS n // todo: undocumented. adding partitions when on PARTITION BY HASH
      *   | DROP PARTITION partition_names
      *   | DISCARD PARTITION {partition_names | ALL} TABLESPACE
      *   | IMPORT PARTITION {partition_names | ALL} TABLESPACE
@@ -271,13 +273,17 @@ class TableCommandsParser
                             break;
                         case Keyword::PARTITION:
                             // ADD PARTITION (partition_definition)
-                            $tokenList->expectSymbol('(');
-                            $partitions = [];
-                            do {
-                                $partitions[] = $this->parsePartitionDefinition($tokenList);
-                            } while ($tokenList->hasSymbol(','));
-                            $tokenList->expectSymbol(')');
-                            $actions[] = new AddPartitionAction($partitions);
+                            if ($tokenList->hasKeyword(Keyword::PARTITIONS)) {
+                                $actions[] = new AddPartitionNumberAction($tokenList->getUnsignedInt());
+                            } else {
+                                $tokenList->expectSymbol('(');
+                                $partitions = [];
+                                do {
+                                    $partitions[] = $this->parsePartitionDefinition($tokenList);
+                                } while ($tokenList->hasSymbol(','));
+                                $tokenList->expectSymbol(')');
+                                $actions[] = new AddPartitionAction($partitions);
+                            }
                             break;
                         default:
                             // keyword used as a column name
