@@ -49,7 +49,9 @@ class TernaryOperator implements OperatorExpression
     ) {
         if (is_array($leftOperator)) {
             foreach ($leftOperator as $op) {
-                Operator::get($op)->checkTernaryLeft();
+                if ($op !== Operator::NOT) {
+                    Operator::get($op)->checkTernaryLeft();
+                }
             }
         } else {
             Operator::get($leftOperator)->checkTernaryLeft();
