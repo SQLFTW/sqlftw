@@ -286,7 +286,7 @@ class QueryParser
         if ($tokenList->hasKeywords(Keyword::GROUP, Keyword::BY)) {
             $groupBy = [];
             do {
-                $expression = $this->expressionParser->parseExpression($tokenList);
+                $expression = $this->expressionParser->parseAssignExpression($tokenList);
                 /** @var Order $order */
                 $order = $tokenList->getKeywordEnum(Order::class);
                 $groupBy[] = new GroupByExpression($expression, $order);
