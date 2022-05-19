@@ -613,10 +613,14 @@ class TableCommandsParser
                     break;
                 default:
                     [$option, $value] = $this->parseTableOption($tokenList->resetPosition($position));
+                    if ($keyword === Keyword::PARTITION) {
+                        $tokenList->resetPosition(-1);
+                        break;
+                    }
                     if ($option === null) {
                         $keywords = AlterTableActionType::getAllowedValues() + AlterTableOption::getAllowedValues()
                             + [Keyword::ALGORITHM, Keyword::LOCK, Keyword::WITH, Keyword::WITHOUT];
-                        $tokenList->missingAnyKeyword(...$keywords);
+                        $tokenList->missingAnyKeyword(...array_values($keywords));
                     }
                     $tableOptions[$option] = $value;
                     $position = $tokenList->getPosition();
