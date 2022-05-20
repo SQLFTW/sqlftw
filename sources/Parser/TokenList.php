@@ -563,6 +563,16 @@ class TokenList
         return $token->original ?? (string) $token->value;
     }
 
+    public function expectAnyName(string ...$names): string
+    {
+        $name = strtoupper($this->expect(TokenType::NAME)->value);
+        if (!in_array($name, $names, true)) {
+            $this->missingAnyKeyword(...$names);
+        }
+
+        return $name;
+    }
+
     public function getName(?string $name = null): ?string
     {
         $token = $this->get(TokenType::NAME, $name);

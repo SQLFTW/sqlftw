@@ -789,11 +789,7 @@ class ExpressionParser
 
         $tokenList->expectKeyword(Keyword::AGAINST);
         $tokenList->expectSymbol('(');
-        if ($tokenList->hasKeyword(Keyword::NULL)) {
-            $query = new KeywordLiteral(Keyword::NULL);
-        } else {
-            $query = $tokenList->expectStringLike();
-        }
+        $query = $this->parseExpression($tokenList);
         $mode = null;
         if ($tokenList->hasKeyword(Keyword::IN)) {
             $mode = $tokenList->expectMultiKeywordsEnum(MatchMode::class);

@@ -17,6 +17,7 @@ use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use function strtoupper;
 
 class ExplainCommandParser
 {
@@ -64,6 +65,7 @@ class ExplainCommandParser
      * format_name: {
      *     TRADITIONAL
      *   | JSON
+     *   | TREE
      * }
      *
      * explainable_stmt: {
@@ -84,7 +86,7 @@ class ExplainCommandParser
         if ($type !== null) {
             if ($type === Keyword::FORMAT) {
                 $tokenList->expectOperator(Operator::EQUAL);
-                $format = $tokenList->expectAnyKeyword(Keyword::JSON, Keyword::TRADITIONAL);
+                $format = strtoupper($tokenList->expectAnyName(Keyword::TRADITIONAL, Keyword::JSON, 'TREE'));
                 $type = ExplainType::get($type . '=' . $format);
             } else {
                 $type = ExplainType::get($type);
