@@ -764,7 +764,7 @@ class ExpressionParser
     }
 
     /**
-     * MATCH {col|(col1, col2, ...)} AGAINST (expr [search_modifier])
+     * MATCH {col1, col2, ...|(col1, col2, ...)} AGAINST (expr [search_modifier])
      *
      * search_modifier:
      *     IN NATURAL LANGUAGE MODE
@@ -781,7 +781,10 @@ class ExpressionParser
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         } else {
-            $columns = [$this->parseColumnName($tokenList)];
+            $columns = [];
+            do {
+                $columns[] = $this->parseColumnName($tokenList);
+            } while ($tokenList->hasSymbol(','));
         }
 
         $tokenList->expectKeyword(Keyword::AGAINST);
