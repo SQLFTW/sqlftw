@@ -249,7 +249,7 @@ class QueryParser
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectNameOrString();
             } else {
-                $alias = $tokenList->getNonKeywordName();
+                $alias = $tokenList->getName();
                 if ($alias === null) {
                     $alias = $tokenList->getString();
                 }
