@@ -220,6 +220,18 @@ class QueryParser
 
         /** @var SelectDistinctOption $distinct */
         $distinct = $tokenList->getKeywordEnum(SelectDistinctOption::class);
+        if ($distinct !== null && $distinct->equalsValue(SelectDistinctOption::DISTINCT_ROW)) {
+            // alias
+            $distinct = SelectDistinctOption::get(SelectDistinctOption::DISTINCT);
+        }
+        while (($distinct2 = $tokenList->getKeywordEnum(SelectDistinctOption::class)) !== null) {
+            if ($distinct2->equalsValue(SelectDistinctOption::DISTINCT_ROW)) {
+                $distinct2 = SelectDistinctOption::get(SelectDistinctOption::DISTINCT);
+            }
+            if (!$distinct->equals($distinct2)) {
+                throw new ParserException('Cannot use both DISTINCT and ALL', $tokenList);
+            }
+        }
         $options = [];
         $options[SelectOption::HIGH_PRIORITY] = $tokenList->hasKeyword(Keyword::HIGH_PRIORITY);
         $options[SelectOption::STRAIGHT_JOIN] = $tokenList->hasKeyword(Keyword::STRAIGHT_JOIN);

@@ -28,7 +28,7 @@ Assert::parse("SELECT db1.tbl1.*, db2.tbl2.*");
 // modifiers
 Assert::parse("SELECT ALL @var1, @var2");
 Assert::parse("SELECT DISTINCT @var1, @var2");
-Assert::parse("SELECT DISTINCTROW @var1, @var2");
+Assert::parse("SELECT DISTINCTROW @var1, @var2", "SELECT DISTINCT @var1, @var2");
 Assert::parse("SELECT HIGH_PRIORITY @var1, @var2");
 Assert::parse("SELECT STRAIGHT_JOIN @var1, @var2");
 Assert::parse("SELECT SQL_SMALL_RESULT @var1, @var2");
