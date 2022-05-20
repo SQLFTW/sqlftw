@@ -73,6 +73,8 @@ class ExplainCommandParser
      *   | REPLACE statement
      *   | UPDATE statement
      * }
+     *
+     * @return ExplainStatementCommand|DescribeTableCommand
      */
     public function parseExplain(TokenList $tokenList): Command
     {
@@ -99,7 +101,7 @@ class ExplainCommandParser
                 break;
             case Keyword::SELECT:
             case Keyword::WITH:
-                $statement = $this->queryParser->parseSelect($tokenList->resetPosition($position));
+                $statement = $this->queryParser->parseQuery($tokenList->resetPosition($position));
                 break;
             case Keyword::TABLE:
                 $statement = $this->queryParser->parseTable($tokenList->resetPosition($position));
