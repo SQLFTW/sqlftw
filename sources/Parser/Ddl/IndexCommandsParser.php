@@ -134,6 +134,7 @@ class IndexCommandsParser
                 /** @var IndexAlgorithm $algorithm */
                 $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
             } elseif ($keyword === Keyword::KEY_BLOCK_SIZE) {
+                $tokenList->passSymbol('=');
                 $keyBlockSize = $tokenList->expectUnsignedInt();
             } elseif ($keyword === Keyword::WITH) {
                 $tokenList->expectKeyword(Keyword::PARSER);
