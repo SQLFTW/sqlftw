@@ -110,6 +110,8 @@ class TokenList
 
     public function isFinished(): bool
     {
+        $this->doAutoSkip();
+
         return $this->position >= count($this->tokens);
     }
 
