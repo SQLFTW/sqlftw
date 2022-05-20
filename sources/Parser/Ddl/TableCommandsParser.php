@@ -9,9 +9,11 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
@@ -1244,8 +1246,14 @@ class TableCommandsParser
                 return [TableOption::COMMENT, $tokenList->expectString()];
             case Keyword::COMPRESSION:
                 $tokenList->passSymbol('=');
+                $compression = $tokenList->expectString();
+                try {
+                    $compression = $compression === '' ? TableCompression::get(TableCompression::NONE) : TableCompression::get($compression);
+                } catch (InvalidEnumValueException $e) {
+                    throw new InvalidValueException('TableCompression', $tokenList, $e);
+                }
 
-                return [TableOption::COMPRESSION, TableCompression::get($tokenList->expectString())];
+                return [TableOption::COMPRESSION, $compression];
             case Keyword::CONNECTION:
                 $tokenList->passSymbol('=');
 
