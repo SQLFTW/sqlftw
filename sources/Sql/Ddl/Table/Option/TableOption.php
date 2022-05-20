@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -72,7 +73,7 @@ class TableOption extends SqlEnum
         self::ROW_FORMAT => TableRowFormat::class,
         self::STATS_AUTO_RECALC => ThreeStateValue::class,
         self::STATS_PERSISTENT => ThreeStateValue::class,
-        self::STATS_SAMPLE_PAGES => BaseType::UNSIGNED,
+        self::STATS_SAMPLE_PAGES => BaseType::UNSIGNED . '|' . KeywordLiteral::class,
         self::TABLESPACE => BaseType::CHAR,
         self::UNION => QualifiedName::class . '[]',
     ];
