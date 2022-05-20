@@ -764,7 +764,7 @@ class ExpressionParser
     }
 
     /**
-     * MATCH (col1, col2, ...) AGAINST (expr [search_modifier])
+     * MATCH {col|(col1, col2, ...)} AGAINST (expr [search_modifier])
      *
      * search_modifier:
      *     IN NATURAL LANGUAGE MODE
@@ -774,12 +774,15 @@ class ExpressionParser
      */
     private function parseMatch(TokenList $tokenList): MatchExpression
     {
-        $tokenList->expectSymbol('(');
-        $columns = [];
-        do {
-            $columns[] = $this->parseColumnName($tokenList);
-        } while ($tokenList->hasSymbol(','));
-        $tokenList->expectSymbol(')');
+        if ($tokenList->hasSymbol('(')) {
+            $columns = [];
+            do {
+                $columns[] = $this->parseColumnName($tokenList);
+            } while ($tokenList->hasSymbol(','));
+            $tokenList->expectSymbol(')');
+        } else {
+            $columns = [$this->parseColumnName($tokenList)];
+        }
 
         $tokenList->expectKeyword(Keyword::AGAINST);
         $tokenList->expectSymbol('(');
