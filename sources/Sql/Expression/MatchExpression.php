@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\ColumnName;
+use function is_string;
 
 /**
  * MATCH x AGAINST y
@@ -23,7 +24,7 @@ class MatchExpression implements ExpressionNode
     /** @var non-empty-array<ColumnName> */
     private $columns;
 
-    /** @var string */
+    /** @var string|Literal */
     private $query;
 
     /** @var MatchMode|null */
@@ -34,8 +35,9 @@ class MatchExpression implements ExpressionNode
 
     /**
      * @param non-empty-array<ColumnName> $columns
+     * @param string|Literal $query
      */
-    public function __construct(array $columns, string $query, ?MatchMode $mode, bool $queryExpansion = false)
+    public function __construct(array $columns, $query, ?MatchMode $mode, bool $queryExpansion = false)
     {
         $this->columns = $columns;
         $this->query = $query;
@@ -51,7 +53,10 @@ class MatchExpression implements ExpressionNode
         return $this->columns;
     }
 
-    public function getQuery(): string
+    /**
+     * @return string|Literal
+     */
+    public function getQuery()
     {
         return $this->query;
     }
@@ -69,7 +74,7 @@ class MatchExpression implements ExpressionNode
     public function serialize(Formatter $formatter): string
     {
         $result = 'MATCH(' . $formatter->formatSerializablesList($this->columns)
-            . ') AGAINST(' . $formatter->formatString($this->query);
+            . ') AGAINST(' . is_string($this->query) ? $formatter->formatString($this->query) : $this->query->serialize($formatter);
 
         if ($this->mode !== null) {
             $result .= ' IN ' . $this->mode->serialize($formatter);
