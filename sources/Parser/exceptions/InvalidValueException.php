@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Throwable;
+use function sprintf;
 
 class InvalidValueException extends ParserException
 {
@@ -21,7 +22,13 @@ class InvalidValueException extends ParserException
     {
         $value = $tokenList->getLast();
 
-        parent::__construct("Invalid value $value->original for type $expectedType.", $tokenList, $previous);
+        $context = self::formatContext($tokenList);
+
+        parent::__construct(
+            sprintf("Invalid value $value->original for type $expectedType at position %d in:\n%s", $tokenList->getPosition(), $context),
+            $tokenList,
+            $previous
+        );
 
         $this->expectedType = $expectedType;
     }

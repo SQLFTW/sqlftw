@@ -83,7 +83,7 @@ class ParserException extends ParsingException
         ), $tokenList, $previous);
     }
 
-    private static function formatContext(TokenList $tokenList): string
+    protected static function formatContext(TokenList $tokenList): string
     {
         $before = 30;
         $after = 10;
