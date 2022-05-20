@@ -92,10 +92,10 @@ class BaseType extends SqlEnum implements Feature
     public const TEXT = Keyword::TEXT;
     public const MEDIUMTEXT = Keyword::MEDIUMTEXT;
     public const LONGTEXT = Keyword::LONGTEXT;
+    public const CHARACTER_VARYING = Keyword::CHARACTER . ' ' . Keyword::VARYING; // VARCHAR
     public const CHARACTER = Keyword::CHARACTER; // CHAR
     public const NCHAR = Keyword::NCHAR; // CHAR
     public const NATIONAL_CHAR = Keyword::NATIONAL . ' ' . Keyword::CHAR; // CHAR
-    public const CHARACTER_VARYING = Keyword::CHARACTER . ' ' . Keyword::VARYING; // VARCHAR
     public const NVARCHAR = Keyword::NVARCHAR; // VARCHAR
     public const NATIONAL_VARCHAR = Keyword::NATIONAL . ' ' . Keyword::VARCHAR; // VARCHAR
     public const LONG_VARCHAR = Keyword::LONG . ' ' . Keyword::VARCHAR; // MEDIUMTEXT
