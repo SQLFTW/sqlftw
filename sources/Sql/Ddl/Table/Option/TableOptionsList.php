@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
@@ -22,7 +23,7 @@ use function implode;
 use function is_int;
 
 /**
- * @phpstan-type TableOptionValue int|string|bool|Charset|Collation|TableCompression|StorageEngine|TableInsertMethod|ThreeStateValue|TableRowFormat|QualifiedName[]
+ * @phpstan-type TableOptionValue int|string|bool|Charset|Collation|TableCompression|StorageEngine|StorageType|TableInsertMethod|ThreeStateValue|TableRowFormat|QualifiedName[]
  */
 class TableOptionsList
 {
@@ -43,6 +44,9 @@ class TableOptionsList
                 switch (true) {
                     case $value instanceof StorageEngine:
                         $this->options[TableOption::ENGINE] = $value;
+                        break;
+                    case $value instanceof StorageType:
+                        $this->options[TableOption::STORAGE] = $value;
                         break;
                     case $value instanceof Charset:
                         $this->options[TableOption::CHARACTER_SET] = $value;

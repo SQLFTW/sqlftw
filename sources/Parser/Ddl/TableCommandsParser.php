@@ -17,6 +17,7 @@ use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnsAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddConstraintAction;
@@ -67,7 +68,6 @@ use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\AnyCreateTableCommand;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnFormat;
-use SqlFtw\Sql\Ddl\Table\Column\ColumnStorage;
 use SqlFtw\Sql\Ddl\Table\Column\GeneratedColumnType;
 use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
@@ -916,7 +916,7 @@ class TableCommandsParser
                     break;
                 case Keyword::STORAGE:
                     // [STORAGE {DISK | MEMORY}]
-                    $storage = $tokenList->expectKeywordEnum(ColumnStorage::class);
+                    $storage = $tokenList->expectKeywordEnum(StorageType::class);
                     break;
                 case Keyword::REFERENCES:
                     // [reference_definition]
@@ -1189,6 +1189,7 @@ class TableCommandsParser
      *   | PACK_KEYS [=] {0 | 1 | DEFAULT}
      *   | PASSWORD [=] 'string'
      *   | ROW_FORMAT [=] {DEFAULT|DYNAMIC|FIXED|COMPRESSED|REDUNDANT|COMPACT}
+     *   | STORAGE [=] {DISK | MEMORY}
      *   | STATS_AUTO_RECALC [=] {DEFAULT|0|1}
      *   | STATS_PERSISTENT [=] {DEFAULT|0|1}
      *   | STATS_SAMPLE_PAGES [=] value
@@ -1321,6 +1322,10 @@ class TableCommandsParser
                 $tokenList->passSymbol('=');
 
                 return [TableOption::ROW_FORMAT, $tokenList->expectKeywordEnum(TableRowFormat::class)];
+            case Keyword::STORAGE:
+                $tokenList->passSymbol('=');
+
+                return [TableOption::STORAGE, $tokenList->expectKeywordEnum(StorageType::class)];
             case Keyword::STATS_AUTO_RECALC:
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {

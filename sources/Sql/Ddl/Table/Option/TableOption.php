@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\SizeLiteral;
@@ -42,6 +43,7 @@ class TableOption extends SqlEnum
     public const PACK_KEYS = Keyword::PACK_KEYS;
     public const PASSWORD = Keyword::PASSWORD;
     public const ROW_FORMAT = Keyword::ROW_FORMAT;
+    public const STORAGE = Keyword::STORAGE;
     public const STATS_AUTO_RECALC = Keyword::STATS_AUTO_RECALC;
     public const STATS_PERSISTENT = Keyword::STATS_PERSISTENT;
     public const STATS_SAMPLE_PAGES = Keyword::STATS_SAMPLE_PAGES;
@@ -71,6 +73,7 @@ class TableOption extends SqlEnum
         self::PACK_KEYS => ThreeStateValue::class,
         self::PASSWORD => BaseType::CHAR,
         self::ROW_FORMAT => TableRowFormat::class,
+        self::STORAGE => StorageType::class,
         self::STATS_AUTO_RECALC => ThreeStateValue::class,
         self::STATS_PERSISTENT => ThreeStateValue::class,
         self::STATS_SAMPLE_PAGES => BaseType::UNSIGNED . '|' . KeywordLiteral::class,

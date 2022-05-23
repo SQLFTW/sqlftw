@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Column;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
@@ -75,7 +76,7 @@ class ColumnDefinition implements TableItem
     /** @var string|null */
     private $secondaryEngineAttribute;
 
-    /** @var ColumnStorage|null */
+    /** @var StorageType|null */
     private $storage;
 
     /** @var ReferenceDefinition|null */
@@ -101,7 +102,7 @@ class ColumnDefinition implements TableItem
         ?ColumnFormat $columnFormat = null,
         ?string $engineAttribute = null,
         ?string $secondaryEngineAttribute = null,
-        ?ColumnStorage $storage = null,
+        ?StorageType $storage = null,
         ?ReferenceDefinition $reference = null,
         ?CheckDefinition $check = null
     )
@@ -244,7 +245,7 @@ class ColumnDefinition implements TableItem
         return $this->secondaryEngineAttribute;
     }
 
-    public function getStorage(): ?ColumnStorage
+    public function getStorage(): ?StorageType
     {
         return $this->storage;
     }

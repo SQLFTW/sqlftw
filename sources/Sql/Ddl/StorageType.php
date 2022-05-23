@@ -7,12 +7,12 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Table\Column;
+namespace SqlFtw\Sql\Ddl;
 
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
-class ColumnStorage extends SqlEnum
+class StorageType extends SqlEnum
 {
 
     public const DISK = Keyword::DISK;
