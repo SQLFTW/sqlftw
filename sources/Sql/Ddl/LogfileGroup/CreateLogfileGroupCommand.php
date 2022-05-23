@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\SizeLiteral;
 
 class CreateLogfileGroupCommand implements LogfileGroupCommand
@@ -20,7 +21,7 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var StorageEngine|null */
     private $engine;
 
     /** @var string */
@@ -46,7 +47,7 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
 
     public function __construct(
         string $name,
-        string $engine,
+        ?StorageEngine $engine,
         string $undoFile,
         ?SizeLiteral $initialSize = null,
         ?SizeLiteral $undoBufferSize = null,
@@ -72,7 +73,7 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
         return $this->name;
     }
 
-    public function getEngine(): string
+    public function getEngine(): ?StorageEngine
     {
         return $this->engine;
     }
@@ -133,7 +134,9 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
         if ($this->comment !== null) {
             $result .= ' COMMENT = ' . $formatter->formatString($this->comment);
         }
-        $result .= ' ENGINE = ' . $formatter->formatName($this->engine);
+        if ($this->engine !== null) {
+            $result .= ' ENGINE = ' . $this->engine->serialize($formatter);
+        }
 
         return $result;
     }

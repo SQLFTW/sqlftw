@@ -14,6 +14,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\LogfileGroup\AlterLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\CreateLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\DropLogfileGroupCommand;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Keyword;
 
 /**
@@ -28,7 +29,7 @@ class LogfileGroupCommandsParser
      *     ADD UNDOFILE 'file_name'
      *     [INITIAL_SIZE [=] size]
      *     [WAIT]
-     *     ENGINE [=] engine_name
+     *     [ENGINE [=] engine_name]
      */
     public function parseAlterLogfileGroup(TokenList $tokenList): AlterLogfileGroupCommand
     {
@@ -42,11 +43,14 @@ class LogfileGroupCommandsParser
             $tokenList->passSymbol('=');
             $initialSize = $tokenList->expectSize();
         }
+
         $wait = $tokenList->hasKeyword(Keyword::WAIT);
 
-        $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->passSymbol('=');
-        $engine = $tokenList->expectNameOrString();
+        $engine = null;
+        if ($tokenList->hasKeyword(Keyword::ENGINE)) {
+            $tokenList->passSymbol('=');
+            $engine = $tokenList->expectNameOrStringEnum(StorageEngine::class);
+        }
 
         return new AlterLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $wait);
     }
@@ -60,7 +64,7 @@ class LogfileGroupCommandsParser
      *     [NODEGROUP [=] nodegroup_id]
      *     [WAIT]
      *     [COMMENT [=] comment_text]
-     *     ENGINE [=] engine_name
+     *     [ENGINE [=] engine_name]
      */
     public function parseCreateLogfileGroup(TokenList $tokenList): CreateLogfileGroupCommand
     {
@@ -91,10 +95,11 @@ class LogfileGroupCommandsParser
             $tokenList->passSymbol('=');
             $comment = $tokenList->expectString();
         }
-
-        $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->passSymbol('=');
-        $engine = $tokenList->expectNameOrString();
+        $engine = null;
+        if ($tokenList->hasKeyword(Keyword::ENGINE)) {
+            $tokenList->passSymbol('=');
+            $engine = $tokenList->expectNameOrStringEnum(StorageEngine::class);
+        }
 
         return new CreateLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $undoBufferSize, $redoBufferSize, $nodeGroup, $wait, $comment);
     }
@@ -107,9 +112,12 @@ class LogfileGroupCommandsParser
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::LOGFILE, Keyword::GROUP);
         $name = $tokenList->expectName();
-        $tokenList->expectKeyword(Keyword::ENGINE);
-        $tokenList->passSymbol('=');
-        $engine = $tokenList->expectNameOrString();
+
+        $engine = null;
+        if ($tokenList->hasKeyword(Keyword::ENGINE)) {
+            $tokenList->passSymbol('=');
+            $engine = $tokenList->expectNameOrStringEnum(StorageEngine::class);
+        }
 
         return new DropLogfileGroupCommand($name, $engine);
     }

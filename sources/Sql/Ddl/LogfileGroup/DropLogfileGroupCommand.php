@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 
 class DropLogfileGroupCommand implements LogfileGroupCommand
 {
@@ -19,10 +20,10 @@ class DropLogfileGroupCommand implements LogfileGroupCommand
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var StorageEngine|null */
     private $engine;
 
-    public function __construct(string $name, string $engine)
+    public function __construct(string $name, ?StorageEngine $engine)
     {
         $this->name = $name;
         $this->engine = $engine;
@@ -33,14 +34,19 @@ class DropLogfileGroupCommand implements LogfileGroupCommand
         return $this->name;
     }
 
-    public function getEngine(): string
+    public function getEngine(): ?StorageEngine
     {
         return $this->engine;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DROP LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ENGINE = ' . $formatter->formatName($this->engine);
+        $result = 'DROP LOGFILE GROUP ' . $formatter->formatName($this->name);
+        if ($this->engine !== null) {
+            $result .= ' ENGINE = ' . $this->engine->serialize($formatter);
+        }
+
+        return $result;
     }
 
 }

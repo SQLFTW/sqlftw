@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\SizeLiteral;
 
 class AlterLogfileGroupCommand implements LogfileGroupCommand
@@ -20,7 +21,7 @@ class AlterLogfileGroupCommand implements LogfileGroupCommand
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var StorageEngine|null */
     private $engine;
 
     /** @var string */
@@ -32,7 +33,7 @@ class AlterLogfileGroupCommand implements LogfileGroupCommand
     /** @var bool */
     private $wait;
 
-    public function __construct(string $name, string $engine, string $undoFile, ?SizeLiteral $initialSize = null, bool $wait = false)
+    public function __construct(string $name, ?StorageEngine $engine, string $undoFile, ?SizeLiteral $initialSize = null, bool $wait = false)
     {
         $this->name = $name;
         $this->engine = $engine;
@@ -46,7 +47,7 @@ class AlterLogfileGroupCommand implements LogfileGroupCommand
         return $this->name;
     }
 
-    public function getEngine(): string
+    public function getEngine(): ?StorageEngine
     {
         return $this->engine;
     }
@@ -75,7 +76,9 @@ class AlterLogfileGroupCommand implements LogfileGroupCommand
         if ($this->wait) {
             $result .= ' WAIT';
         }
-        $result .= ' ENGINE = ' . $formatter->formatName($this->engine);
+        if ($this->engine !== null) {
+            $result .= ' ENGINE = ' . $this->engine->serialize($formatter);
+        }
 
         return $result;
     }
