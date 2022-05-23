@@ -623,24 +623,6 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::PERCENT_RANK,
         self::RANK,
         self::ROW_NUMBER,
-
-        self::AVG,
-        self::BIT_AND,
-        self::BIT_OR,
-        self::BIT_XOR,
-        self::COUNT,
-        self::JSON_ARRAYAGG,
-        self::JSON_OBJECTAGG,
-        self::MAX,
-        self::MIN,
-        self::STDDEV_POP,
-        self::STDDEV,
-        self::STD,
-        self::STDDEV_SAMP,
-        self::SUM,
-        self::VAR_POP,
-        self::VARIANCE,
-        self::VAR_SAMP,
     ];
 
     /** @var string[] */
@@ -676,7 +658,7 @@ class BuiltInFunction extends SqlEnum implements Feature
 
     public function isWindow(): bool
     {
-        return in_array($this->getValue(), self::$window, true);
+        return in_array($this->getValue(), self::$window, true) || $this->isAggregate();
     }
 
     public function isBare(): bool
