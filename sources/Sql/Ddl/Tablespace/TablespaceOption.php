@@ -43,7 +43,7 @@ class TablespaceOption extends SqlEnum
 
     /** @var string[]|string[][] */
     private static $values = [
-        self::ENGINE => [Keyword::INNODB, Keyword::NDB],
+        self::ENGINE => [Keyword::INNODB, Keyword::NDB, Keyword::NDBCLUSTER],
         self::ENCRYPTION => BaseType::BOOL,
         self::COMMENT => BaseType::CHAR,
         self::ADD_DATAFILE => BaseType::CHAR,
