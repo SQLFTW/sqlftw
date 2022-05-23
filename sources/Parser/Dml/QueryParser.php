@@ -218,29 +218,60 @@ class QueryParser
 
         $tokenList->expectKeyword(Keyword::SELECT);
 
-        /** @var SelectDistinctOption $distinct */
-        $distinct = $tokenList->getKeywordEnum(SelectDistinctOption::class);
-        if ($distinct !== null && $distinct->equalsValue(SelectDistinctOption::DISTINCT_ROW)) {
-            // alias
-            $distinct = SelectDistinctOption::get(SelectDistinctOption::DISTINCT);
-        }
-        while (($distinct2 = $tokenList->getKeywordEnum(SelectDistinctOption::class)) !== null) {
-            if ($distinct2->equalsValue(SelectDistinctOption::DISTINCT_ROW)) {
-                $distinct2 = SelectDistinctOption::get(SelectDistinctOption::DISTINCT);
-            }
-            if (!$distinct->equals($distinct2)) {
-                throw new ParserException('Cannot use both DISTINCT and ALL', $tokenList);
-            }
-        }
+        $keywords = [
+            Keyword::ALL, Keyword::DISTINCT, Keyword::DISTINCTROW, Keyword::HIGH_PRIORITY, Keyword::STRAIGHT_JOIN,
+            Keyword::SQL_SMALL_RESULT, Keyword::SQL_BIG_RESULT, Keyword::SQL_BUFFER_RESULT, Keyword::SQL_CACHE,
+            Keyword::SQL_NO_CACHE, Keyword::SQL_CALC_FOUND_ROWS
+        ];
+        $distinct = null;
         $options = [];
-        $options[SelectOption::HIGH_PRIORITY] = $tokenList->hasKeyword(Keyword::HIGH_PRIORITY);
-        $options[SelectOption::STRAIGHT_JOIN] = $tokenList->hasKeyword(Keyword::STRAIGHT_JOIN);
-        $options[SelectOption::SMALL_RESULT] = $tokenList->hasKeyword(Keyword::SQL_SMALL_RESULT);
-        $options[SelectOption::BIG_RESULT] = $tokenList->hasKeyword(Keyword::SQL_BIG_RESULT);
-        $options[SelectOption::BUFFER_RESULT] = $tokenList->hasKeyword(Keyword::SQL_BUFFER_RESULT);
-        $options[SelectOption::CACHE] = $tokenList->hasKeyword(Keyword::SQL_CACHE);
-        $options[SelectOption::NO_CACHE] = $tokenList->hasKeyword(Keyword::SQL_NO_CACHE);
-        $options[SelectOption::CALC_FOUND_ROWS] = $tokenList->hasKeyword(Keyword::SQL_CALC_FOUND_ROWS);
+        while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
+            switch ($keyword) {
+                case Keyword::ALL:
+                case Keyword::DISTINCT:
+                case Keyword::DISTINCTROW:
+                    if ($keyword === Keyword::DISTINCTROW) {
+                        $keyword = Keyword::DISTINCT;
+                    }
+                    if ($distinct !== null) {
+                        if (!$distinct->equalsValue($keyword)) {
+                            throw new ParserException('Cannot use both DISTINCT and ALL', $tokenList);
+                        }
+                    }
+                    $distinct = SelectDistinctOption::get($keyword);
+                    break;
+                case Keyword::HIGH_PRIORITY>
+                    $options[SelectOption::HIGH_PRIORITY] = true;
+                    break;
+                case Keyword::STRAIGHT_JOIN:
+                    $options[SelectOption::STRAIGHT_JOIN] = true;
+                    break;
+                case Keyword::SQL_SMALL_RESULT:
+                    $options[SelectOption::SMALL_RESULT] = true;
+                    break;
+                case Keyword::SQL_BIG_RESULT:
+                    $options[SelectOption::BIG_RESULT] = true;
+                    break;
+                case Keyword::SQL_BUFFER_RESULT:
+                    $options[SelectOption::BUFFER_RESULT] = true;
+                    break;
+                case Keyword::SQL_CACHE:
+                    if (isset($options[SelectOption::NO_CACHE])) {
+                        throw new ParserException('Cannot combine SQL_CACHE and SQL_NO_CACHE options.', $tokenList);
+                    }
+                    $options[SelectOption::CACHE] = true;
+                    break;
+                case Keyword::SQL_NO_CACHE:
+                    if (isset($options[SelectOption::CACHE])) {
+                        throw new ParserException('Cannot combine SQL_CACHE and SQL_NO_CACHE options.', $tokenList);
+                    }
+                    $options[SelectOption::NO_CACHE] = true;
+                    break;
+                case Keyword::SQL_CALC_FOUND_ROWS:
+                    $options[SelectOption::CALC_FOUND_ROWS] = true;
+                    break;
+            }
+        }
 
         $what = [];
         do {
