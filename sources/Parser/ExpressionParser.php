@@ -707,49 +707,55 @@ class ExpressionParser
         $tokenList->expectSymbol('(');
         $columns = [];
         do {
-            $name = $tokenList->expectName();
-            if ($tokenList->hasKeywords(Keyword::FOR, Keyword::ORDINALITY)) {
-                $columns[] = new JsonTableOrdinalityColumn($name);
-            } elseif ($tokenList->hasKeyword(Keyword::NESTED)) {
+            if ($tokenList->hasKeyword(Keyword::NESTED)) {
                 $tokenList->passKeyword(Keyword::PATH);
                 $path = $tokenList->expectString();
+                $tokenList->expectKeyword(Keyword::COLUMNS);
                 $columns[] = new JsonTableNestedColumns($path, $this->parseJsonTableColumns($tokenList));
-            } else {
-                $type = $this->parseColumnType($tokenList);
-                $keyword = $tokenList->expectAnyKeyword(Keyword::PATH, Keyword::EXISTS);
-                if ($keyword === Keyword::PATH) {
-                    $path = $tokenList->expectString();
-                    $onEmpty = $onError = null;
-                    while (($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
-                        if ($keyword === Keyword::NULL) {
-                            $default = true;
-                        } elseif ($keyword === Keyword::ERROR) {
-                            $default = false;
-                        } else {
-                            $default = $tokenList->expectString();
-                        }
-                        $tokenList->expectKeyword(Keyword::ON);
-                        $event = $tokenList->expectAnyKeyword(Keyword::EMPTY, Keyword::ERROR);
-                        if ($event === Keyword::EMPTY) {
-                            if (isset($onEmpty)) {
-                                throw new ParserException('ON EMPTY defined twice in JSON_TABLE', $tokenList);
-                            }
-                            $onEmpty = $default;
-                        } else {
-                            if (isset($onEmpty)) {
-                                throw new ParserException('ON EMPTY defined twice in JSON_TABLE', $tokenList);
-                            }
-                            $onError = $default;
-                        }
+                continue;
+            }
+
+            $name = $tokenList->expectName();
+
+            if ($tokenList->hasKeywords(Keyword::FOR, Keyword::ORDINALITY)) {
+                $columns[] = new JsonTableOrdinalityColumn($name);
+                continue;
+            }
+
+            $type = $this->parseColumnType($tokenList);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::PATH, Keyword::EXISTS);
+            if ($keyword === Keyword::PATH) {
+                $path = $tokenList->expectString();
+                $onEmpty = $onError = null;
+                while (($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
+                    if ($keyword === Keyword::NULL) {
+                        $default = true;
+                    } elseif ($keyword === Keyword::ERROR) {
+                        $default = false;
+                    } else {
+                        $default = $tokenList->expectString();
                     }
-
-                    $columns[] = new JsonTablePathColumn($name, $type, $path, $onEmpty, $onError);
-                } else {
-                    $tokenList->expectKeyword(Keyword::PATH);
-                    $path = $tokenList->expectString();
-
-                    $columns[] = new JsonTableExistsPathColumn($name, $type, $path);
+                    $tokenList->expectKeyword(Keyword::ON);
+                    $event = $tokenList->expectAnyKeyword(Keyword::EMPTY, Keyword::ERROR);
+                    if ($event === Keyword::EMPTY) {
+                        if (isset($onEmpty)) {
+                            throw new ParserException('ON EMPTY defined twice in JSON_TABLE', $tokenList);
+                        }
+                        $onEmpty = $default;
+                    } else {
+                        if (isset($onError)) {
+                            throw new ParserException('ON ERROR defined twice in JSON_TABLE', $tokenList);
+                        }
+                        $onError = $default;
+                    }
                 }
+
+                $columns[] = new JsonTablePathColumn($name, $type, $path, $onEmpty, $onError);
+            } else {
+                $tokenList->expectKeyword(Keyword::PATH);
+                $path = $tokenList->expectString();
+
+                $columns[] = new JsonTableExistsPathColumn($name, $type, $path);
             }
         } while ($tokenList->hasSymbol(','));
 
