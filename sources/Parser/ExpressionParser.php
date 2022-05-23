@@ -183,7 +183,7 @@ class ExpressionParser
 
     /**
      * boolean_primary:
-     *     boolean_primary IS [NOT] NULL
+     *     boolean_primary IS [NOT] [NULL|TRUE|FALSE]
      *   | boolean_primary <=> predicate
      *   | boolean_primary comparison_operator predicate
      *   | boolean_primary comparison_operator {ALL | ANY | SOME} (subquery)
@@ -221,8 +221,8 @@ class ExpressionParser
             }
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
-            $tokenList->expectKeyword(Keyword::NULL);
-            $right = new ValueLiteral(null);
+            $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE);
+            $right = new ValueLiteral($keyword);
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         } else {
