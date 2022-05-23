@@ -37,6 +37,7 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalLiteral;
+use SqlFtw\Sql\Expression\JsonErrorCondition;
 use SqlFtw\Sql\Expression\JsonTableExistsPathColumn;
 use SqlFtw\Sql\Expression\JsonTableNestedColumns;
 use SqlFtw\Sql\Expression\JsonTableOrdinalityColumn;
@@ -568,14 +569,16 @@ class ExpressionParser
 
         if ($function instanceof BuiltInFunction) {
             $name = $function->getValue();
-            if ($name === Keyword::COUNT) {
+            if ($name === BuiltInFunction::COUNT) {
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     $tokenList->expectSymbol(')');
 
                     return new FunctionCall($function, [new Identifier('*')]);
                 }
-            } elseif ($name === Keyword::TRIM) {
+            } elseif ($name === BuiltInFunction::TRIM) {
                 return $this->parseTrim($tokenList, $function);
+            } elseif ($name === BuiltInFunction::JSON_VALUE) {
+                return $this->parseJsonValue($tokenList, $function);
             }
             $namedParams = $function->getNamedParams();
         } else {
@@ -668,6 +671,38 @@ class ExpressionParser
     }
 
     /**
+     * JSON_VALUE(json_doc, path [RETURNING type] [on_empty] [on_error])
+     *
+     * on_empty:
+     *     {NULL | ERROR | DEFAULT value} ON EMPTY
+     *
+     * on_error:
+     *     {NULL | ERROR | DEFAULT value} ON ERROR
+     */
+    private function parseJsonValue(TokenList $tokenList, BuiltInFunction $function): FunctionCall
+    {
+        $params = [$this->parseExpression($tokenList)];
+        $tokenList->expectSymbol(',');
+        $params[] = $this->parseExpression($tokenList);
+
+        if ($tokenList->hasKeyword(Keyword::RETURNING)) {
+            $params[Keyword::RETURNING] = $this->parseCastType($tokenList);
+        }
+
+        [$onEmpty, $onError] = $this->parseOnEmptyOnError($tokenList);
+        if ($onEmpty !== null) {
+            $params[Keyword::ON . ' ' . Keyword::EMPTY] = $onEmpty;
+        }
+        if ($onError !== null) {
+            $params[Keyword::ON . ' ' . Keyword::ERROR] = $onError;
+        }
+
+        $tokenList->expectSymbol(')');
+
+        return new FunctionCall($function, $params);
+    }
+
+    /**
      * JSON_TABLE(expr, path COLUMNS (column_list)) [AS] alias
      *
      * column_list:
@@ -726,29 +761,7 @@ class ExpressionParser
             $keyword = $tokenList->expectAnyKeyword(Keyword::PATH, Keyword::EXISTS);
             if ($keyword === Keyword::PATH) {
                 $path = $tokenList->expectString();
-                $onEmpty = $onError = null;
-                while (($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
-                    if ($keyword === Keyword::NULL) {
-                        $default = true;
-                    } elseif ($keyword === Keyword::ERROR) {
-                        $default = false;
-                    } else {
-                        $default = $tokenList->expectString();
-                    }
-                    $tokenList->expectKeyword(Keyword::ON);
-                    $event = $tokenList->expectAnyKeyword(Keyword::EMPTY, Keyword::ERROR);
-                    if ($event === Keyword::EMPTY) {
-                        if (isset($onEmpty)) {
-                            throw new ParserException('ON EMPTY defined twice in JSON_TABLE', $tokenList);
-                        }
-                        $onEmpty = $default;
-                    } else {
-                        if (isset($onError)) {
-                            throw new ParserException('ON ERROR defined twice in JSON_TABLE', $tokenList);
-                        }
-                        $onError = $default;
-                    }
-                }
+                [$onEmpty, $onError] = $this->parseOnEmptyOnError($tokenList);
 
                 $columns[] = new JsonTablePathColumn($name, $type, $path, $onEmpty, $onError);
             } else {
@@ -762,6 +775,38 @@ class ExpressionParser
         $tokenList->expectSymbol(')');
 
         return new ListExpression($columns);
+    }
+
+    /**
+     * @return array{JsonErrorCondition|null, JsonErrorCondition|null}
+     */
+    private function parseOnEmptyOnError(TokenList $tokenList): array
+    {
+        $onEmpty = $onError = null;
+        while (($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
+            if ($keyword === Keyword::NULL) {
+                $default = true;
+            } elseif ($keyword === Keyword::ERROR) {
+                $default = false;
+            } else {
+                $default = $this->parseLiteral($tokenList);
+            }
+            $tokenList->expectKeyword(Keyword::ON);
+            $event = $tokenList->expectAnyKeyword(Keyword::EMPTY, Keyword::ERROR);
+            if ($event === Keyword::EMPTY) {
+                if (isset($onEmpty)) {
+                    throw new ParserException('ON EMPTY defined twice in JSON_TABLE', $tokenList);
+                }
+                $onEmpty = new JsonErrorCondition($default);
+            } else {
+                if (isset($onError)) {
+                    throw new ParserException('ON ERROR defined twice in JSON_TABLE', $tokenList);
+                }
+                $onError = new JsonErrorCondition($default);
+            }
+        }
+
+        return [$onEmpty, $onError];
     }
 
     /**

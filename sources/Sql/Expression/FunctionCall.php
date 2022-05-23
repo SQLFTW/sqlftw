@@ -81,12 +81,23 @@ class FunctionCall implements ExpressionNode
             foreach ($this->arguments as $name => $argument) {
                 if (is_int($name)) {
                     $arguments .= ($first ? '' : ', ') . ' ' . $argument->serialize($formatter);
-                } elseif ($this->function->getValue() === Keyword::TRIM) {
+                } elseif ($this->function->equalsValue(BuiltInFunction::TRIM)) {
                     // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
                     if ($name === Keyword::FROM) {
                         $arguments .= $argument->serialize($formatter) . ' ' . Keyword::FROM;
                     } else {
                         $arguments .= $name . ' ' . $argument->serialize($formatter) . ' ' . Keyword::FROM;
+                    }
+                } elseif ($this->function->equalsValue(BuiltInFunction::JSON_VALUE)) {
+                    // JSON_VALUE(json_doc, path [RETURNING type] [on_empty] [on_error])
+                    static $onEmpty = Keyword::ON . ' ' . Keyword::EMPTY;
+                    static $onError = Keyword::ON . ' ' . Keyword::ERROR;
+                    if ($name === $onEmpty || $name === $onError) {
+                        $arguments .= $argument->serialize($formatter) . ' ' . $name;
+                    } elseif ($name === Keyword::RETURNING) {
+                        $arguments .= ' RETURNING ' . $argument->serialize($formatter);
+                    } else {
+                        $arguments .= $arguments === '' ? $argument->serialize($formatter) : ', ' . $argument->serialize($formatter);
                     }
                 } else {
                     $arguments .= ($first ? '' : ', ') . $name . ' ' . $argument->serialize($formatter);

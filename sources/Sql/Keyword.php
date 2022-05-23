@@ -461,6 +461,7 @@ class Keyword extends SqlEnum implements Feature
     public const JOIN = 'JOIN';
     public const JSON = 'JSON';
     public const JSON_TABLE = 'JSON_TABLE';
+    public const JSON_VALUE = 'JSON_VALUE';
     public const K = 'K';
     public const KEY = 'KEY';
     public const KEY_BLOCK_SIZE = 'KEY_BLOCK_SIZE';

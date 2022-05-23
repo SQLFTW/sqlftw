@@ -433,6 +433,7 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const JSON_TYPE = 'JSON_TYPE';
     public const JSON_UNQUOTE = 'JSON_UNQUOTE';
     public const JSON_VALID = 'JSON_VALID';
+    public const JSON_VALUE = 'JSON_VALUE';
 
     // GTID
     public const GTID_SUBSET = 'GTID_SUBSET';
@@ -560,6 +561,8 @@ class BuiltInFunction extends SqlEnum implements Feature
         ],
         // JSON_TABLE(expr, path COLUMNS (column_list) [AS] alias)
         self::JSON_TABLE => [Keyword::COLUMNS => false, Keyword::AS => false],
+        // JSON_VALUE(json_doc, path [RETURNING type] [on_empty] [on_error])
+        self::JSON_VALUE => [Keyword::RETURNING => CastType::class, Keyword::ON . ' ' . Keyword::EMPTY => false, Keyword::ON . ' ' . Keyword::ERROR => false],
         // MAX([DISTINCT] expr)
         self::MAX => [Keyword::DISTINCT => ExpressionNode::class],
         // MIN([DISTINCT] expr)

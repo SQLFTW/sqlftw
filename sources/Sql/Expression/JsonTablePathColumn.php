@@ -23,18 +23,19 @@ class JsonTablePathColumn implements JsonTableColumn
     /** @var string */
     private $path;
 
-    /** @var bool|string|null */
+    /** @var JsonErrorCondition|null */
     private $onEmpty;
 
-    /** @var bool|string|null */
+    /** @var JsonErrorCondition|null */
     private $onError;
 
-    /**
-     * @param bool|string|null $onEmpty (true = nullable, false = non-nullable, string = default)
-     * @param bool|string|null $onError (true = nullable, false = non-nullable, string = default)
-     */
-    public function __construct(string $name, ColumnType $type, string $path, $onEmpty = null, $onError = null)
-    {
+    public function __construct(
+        string $name,
+        ColumnType $type,
+        string $path,
+        ?JsonErrorCondition $onEmpty = null,
+        ?JsonErrorCondition $onError = null
+    ) {
         $this->name = $name;
         $this->type = $type;
         $this->path = $path;
@@ -57,18 +58,12 @@ class JsonTablePathColumn implements JsonTableColumn
         return $this->path;
     }
 
-    /**
-     * @return bool|string|null
-     */
-    public function getOnEmpty()
+    public function getOnEmpty(): ?JsonErrorCondition
     {
         return $this->onEmpty;
     }
 
-    /**
-     * @return bool|string|null
-     */
-    public function getOnError()
+    public function getOnError(): ?JsonErrorCondition
     {
         return $this->onError;
     }
@@ -82,14 +77,14 @@ class JsonTablePathColumn implements JsonTableColumn
         } elseif ($this->onEmpty === false) {
             $result .= ' ERROR ON EMPTY';
         } elseif ($this->onEmpty !== null) {
-            $result .= ' DEFAULT ' . $formatter->formatString($this->onEmpty) . ' ON EMPTY';
+            $result .= ' DEFAULT ' . $this->onEmpty->serialize($formatter) . ' ON EMPTY';
         }
         if ($this->onError === true) {
             $result .= ' NULL ON ERROR';
         } elseif ($this->onError === false) {
             $result .= ' ERROR ON ERROR';
         } elseif ($this->onError !== null) {
-            $result .= ' DEFAULT ' . $formatter->formatString($this->onError) . ' ON ERROR';
+            $result .= ' DEFAULT ' . $this->onError->serialize($formatter) . ' ON ERROR';
         }
 
         return $result;
