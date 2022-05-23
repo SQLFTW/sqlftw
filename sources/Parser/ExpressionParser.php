@@ -35,6 +35,10 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalLiteral;
+use SqlFtw\Sql\Expression\JsonTableExistsPathColumn;
+use SqlFtw\Sql\Expression\JsonTableNestedColumns;
+use SqlFtw\Sql\Expression\JsonTableOrdinalityColumn;
+use SqlFtw\Sql\Expression\JsonTablePathColumn;
 use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
@@ -403,6 +407,8 @@ class ExpressionParser
      */
     private function parseSimpleExpression(TokenList $tokenList): ExpressionNode
     {
+        $position = $tokenList->getPosition();
+
         $operator = $tokenList->getAnyOperator(
             Operator::PLUS,
             Operator::MINUS,
@@ -488,7 +494,9 @@ class ExpressionParser
 
             } else {
                 $name1 = $tokenList->getName();
-                if ($name1 !== null) {
+                if ($name1 === Keyword::JSON_TABLE) {
+                    $expression = $this->parseJsonTable($tokenList->resetPosition($position));
+                } elseif ($name1 !== null) {
                     $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
                     $name2 = $name3 = null;
                     if ($tokenList->hasSymbol('.')) {
@@ -570,8 +578,6 @@ class ExpressionParser
                 }
             } elseif ($name === Keyword::TRIM) {
                 return $this->parseTrim($tokenList, $function);
-            } elseif ($name === Keyword::JSON_TABLE) {
-                return $this->parseJsonTable($tokenList, $function);
             }
             $namedParams = $function->getNamedParams();
         } else {
@@ -664,7 +670,7 @@ class ExpressionParser
     }
 
     /**
-     * JSON_TABLE(expr, path COLUMNS column_list)  AS alias
+     * JSON_TABLE(expr, path COLUMNS (column_list)) [AS] alias
      *
      * column_list:
      *   column[, column][, ...]
@@ -681,10 +687,77 @@ class ExpressionParser
      * on_error:
      *   {NULL | DEFAULT json_string | ERROR} ON ERROR
      */
-    private function parseJsonTable(TokenList $tokenList, BuiltInFunction $function): FunctionCall
+    public function parseJsonTable(TokenList $tokenList): FunctionCall
     {
-        // todo:
-        return new FunctionCall(new QualifiedName('foo'), []);
+        $tokenList->expectKeyword(Keyword::JSON_TABLE);
+        $tokenList->expectSymbol('(');
+
+        $expression = $this->parseExpression($tokenList);
+        $tokenList->expectSymbol(',');
+        $path = $tokenList->expectString();
+
+        $tokenList->expectKeyword(Keyword::COLUMNS);
+        $columns = $this->parseJsonTableColumns($tokenList);
+
+        $tokenList->expectSymbol(')');
+
+        return new FunctionCall(new BuiltInFunction(BuiltInFunction::JSON_TABLE), [$expression, $path, Keyword::COLUMNS => $columns]);
+    }
+
+    private function parseJsonTableColumns(TokenList $tokenList): ListExpression
+    {
+        $tokenList->expectSymbol('(');
+        $columns = [];
+        do {
+            $name = $tokenList->expectName();
+            if ($tokenList->hasKeywords(Keyword::FOR, Keyword::ORDINALITY)) {
+                $columns[] = new JsonTableOrdinalityColumn($name);
+            } elseif ($tokenList->hasKeyword(Keyword::NESTED)) {
+                $tokenList->passKeyword(Keyword::PATH);
+                $path = $tokenList->expectString();
+                $columns[] = new JsonTableNestedColumns($path, $this->parseJsonTableColumns($tokenList));
+            } else {
+                $type = $this->typeParser->parseType($tokenList);
+                $keyword = $tokenList->expectAnyKeyword(Keyword::PATH, Keyword::EXISTS);
+                if ($keyword === Keyword::PATH) {
+                    $path = $tokenList->expectString();
+                    $onEmpty = $onError = null;
+                    while (($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
+                        if ($keyword === Keyword::NULL) {
+                            $default = true;
+                        } elseif ($keyword === Keyword::ERROR) {
+                            $default = false;
+                        } else {
+                            $default = $tokenList->expectString();
+                        }
+                        $tokenList->expectKeyword(Keyword::ON);
+                        $event = $tokenList->expectAnyKeyword(Keyword::EMPTY, Keyword::ERROR);
+                        if ($event === Keyword::EMPTY) {
+                            if (isset($onEmpty)) {
+                                throw new ParserException('ON EMPTY defined twice in JSON_TABLE', $tokenList);
+                            }
+                            $onEmpty = $default;
+                        } else {
+                            if (isset($onEmpty)) {
+                                throw new ParserException('ON EMPTY defined twice in JSON_TABLE', $tokenList);
+                            }
+                            $onError = $default;
+                        }
+                    }
+
+                    $columns[] = new JsonTablePathColumn($name, $type, $path, $onEmpty, $onError);
+                } else {
+                    $tokenList->expectKeyword(Keyword::PATH);
+                    $path = $tokenList->expectString();
+
+                    $columns[] = new JsonTableExistsPathColumn($name, $type, $path);
+                }
+            }
+        } while ($tokenList->hasSymbol(','));
+
+        $tokenList->expectSymbol(')');
+
+        return new ListExpression($columns);
     }
 
     /**

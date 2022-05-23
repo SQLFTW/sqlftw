@@ -20,6 +20,7 @@ use SqlFtw\Sql\Dml\TableReference\JoinSide;
 use SqlFtw\Sql\Dml\TableReference\NaturalJoin;
 use SqlFtw\Sql\Dml\TableReference\OuterJoin;
 use SqlFtw\Sql\Dml\TableReference\StraightJoin;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceJsonTable;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
@@ -199,6 +200,21 @@ class JoinParser
      */
     private function parseTableFactor(TokenList $tokenList): TableReferenceNode
     {
+        $position = $tokenList->getPosition();
+
+        if ($tokenList->hasKeyword(Keyword::JSON_TABLE)) {
+            $tokenList->expectSymbol('(');
+            $table = $this->expressionParser->parseJsonTable($tokenList->resetPosition($position));
+
+            if ($tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectName();
+            } else {
+                $alias = $tokenList->getName();
+            }
+
+            return new TableReferenceJsonTable($table, $alias);
+        }
+
         // todo: QueryParser should be able to detect this better and resolve with ParenthesizedQueryExpression
         $selectInParentheses = false;
         if ($tokenList->hasSymbol('(')) {
