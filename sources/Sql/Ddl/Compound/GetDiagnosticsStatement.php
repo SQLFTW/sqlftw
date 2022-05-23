@@ -12,11 +12,12 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Util\TypeChecker;
 
-class GetDiagnosticsStatement implements CompoundStatementItem
+class GetDiagnosticsStatement implements CompoundStatementItem, Command
 {
     use StrictBehaviorMixin;
 

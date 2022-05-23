@@ -417,6 +417,9 @@ class Parser
                     // FLUSH
                     return $this->factory->getFlushCommandParser()->parseFlush($tokenList->resetPosition($start));
                 }
+            case Keyword::GET:
+                // GET DIAGNOSTICS
+                return $this->factory->getCompoundStatementParser()->parseGetDiagnostics($tokenList->resetPosition($start));
             case Keyword::GRANT:
                 // GRANT
                 return $this->factory->getUserCommandsParser()->parseGrant($tokenList->resetPosition($start));

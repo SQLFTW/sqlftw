@@ -133,6 +133,8 @@ class CompoundStatementParser
      */
     private function parseStatement(TokenList $tokenList): Statement
     {
+        $position = $tokenList->getPosition();
+
         $label = $tokenList->getNonKeywordName();
         if ($label !== null) {
             $tokenList->expect(TokenType::DOUBLE_COLON);
@@ -166,7 +168,7 @@ class CompoundStatementParser
             case Keyword::CLOSE:
                 return new CloseCursorStatement($tokenList->expectName());
             case Keyword::GET:
-                return $this->parseGetDiagnostics($tokenList);
+                return $this->parseGetDiagnostics($tokenList->resetPosition($position));
             case Keyword::SIGNAL:
             case Keyword::RESIGNAL:
                 return $this->parseSignalResignal($tokenList, $keyword); // @phpstan-ignore-line non-null
@@ -494,8 +496,10 @@ class CompoundStatementParser
      * condition_number, target:
      *     (see following discussion)
      */
-    private function parseGetDiagnostics(TokenList $tokenList): GetDiagnosticsStatement
+    public function parseGetDiagnostics(TokenList $tokenList): GetDiagnosticsStatement
     {
+        $tokenList->expectKeyword(Keyword::GET);
+
         /** @var DiagnosticsArea|null $area */
         $area = $tokenList->getKeywordEnum(DiagnosticsArea::class);
         $tokenList->expectKeyword(Keyword::DIAGNOSTICS);

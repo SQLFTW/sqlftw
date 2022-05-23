@@ -121,6 +121,11 @@ class ParserFactory
         return $this->queryParser;
     }
 
+    public function getCompoundStatementParser(): CompoundStatementParser
+    {
+        return $this->compoundStatementParser;
+    }
+
     public function getBinlogCommandParser(): BinlogCommandParser
     {
         return new BinlogCommandParser();
