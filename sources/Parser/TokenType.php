@@ -107,7 +107,7 @@ class TokenType extends IntSet
     public const AT_VARIABLE = PowersOfTwo::_16K;
 
     /** Encoding definition starting with "_" and preceding a quoted string */
-    public const CHARSET_INTRODUCER = PowersOfTwo::_32K;
+    public const STRING_INTRODUCER = PowersOfTwo::_32K;
 
     /** Quoted string value (not name) */
     public const STRING = PowersOfTwo::_64K;

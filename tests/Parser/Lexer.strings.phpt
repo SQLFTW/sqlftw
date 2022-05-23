@@ -142,6 +142,6 @@ Assert::token($tokens[3], T::WHITESPACE, ' ', 12);
 $tokens = $lexer->tokenizeAll(" _utf8'string1' ");
 Assert::count($tokens, 4);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::NAME | T::CHARSET_INTRODUCER, 'utf8', 1);
+Assert::token($tokens[1], T::NAME | T::STRING_INTRODUCER, 'utf8', 1);
 Assert::token($tokens[2], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, 'string1', 6);
 Assert::token($tokens[3], T::WHITESPACE, ' ', 15);

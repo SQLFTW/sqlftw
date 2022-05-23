@@ -30,6 +30,7 @@ use function array_merge;
 use function array_values;
 use function explode;
 use function implode;
+use function in_array;
 use function ltrim;
 use function ord;
 use function preg_match;
@@ -44,6 +45,7 @@ use function trim;
 
 /**
  * todo:
+ * - prefix casts: timestamp'2001-01-01 00:00:00'
  * - quoted delimiters
  * - Date and Time Literals?
  * - Mysql string charset declaration (_utf* & N)
@@ -762,12 +764,16 @@ class Lexer
                     }
 
                     $upper = strtoupper($value);
+                    static $types = [Keyword::TIMESTAMP, Keyword::DATE, Keyword::TIME];
                     if ($upper === Keyword::NULL) {
                         yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::NULL, $value, $condition);
                     } elseif ($upper === Keyword::TRUE) {
                         yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::TRUE, $value, $condition);
                     } elseif ($upper === Keyword::FALSE) {
                         yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::FALSE, $value, $condition);
+                    } elseif (in_array($upper, $types, true) && ($string[$position] === "'")) {
+                        // timestamp'2001-01-01 00:00:00'
+                        yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $upper, $value, $condition);
                     } elseif (isset($this->reservedKey[$upper])) {
                         if (isset($this->operatorKeywordsKey[$upper])) {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::OPERATOR, $start, $upper, $value, $condition);
@@ -779,7 +785,8 @@ class Lexer
                     } elseif (isset($this->keywordsKey[$upper])) {
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $upper, $value, $condition);
                     } elseif ($value[0] === '_' && ($charset = substr($value, 1)) !== '' && Charset::validateValue($charset)) {
-                        yield $previous = new Token(T::NAME | T::CHARSET_INTRODUCER, $start, $charset, $value, $condition);
+                        // _utf8'foo'
+                        yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $charset, $value, $condition);
                     } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
                         yield new Token(T::KEYWORD, $start, $upper, $value, $condition);
                         $start = $position;
