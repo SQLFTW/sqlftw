@@ -25,11 +25,6 @@ class TableReferenceParentheses implements TableReferenceNode, Countable
         $this->content = $content;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::PARENTHESES);
-    }
-
     public function count(): int
     {
         return $this->content instanceof Countable ? $this->content->count() : 1;

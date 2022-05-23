@@ -27,11 +27,6 @@ class StraightJoin extends Join
         $this->condition = $condition;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::STRAIGHT_JOIN);
-    }
-
     public function getCondition(): ?ExpressionNode
     {
         return $this->condition;

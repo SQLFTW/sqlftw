@@ -41,11 +41,6 @@ class TableReferenceTable implements TableReferenceNode
         $this->indexHints = $indexHints;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::TABLE);
-    }
-
     public function getTable(): QualifiedName
     {
         return $this->table;

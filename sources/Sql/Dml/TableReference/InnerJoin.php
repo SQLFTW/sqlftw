@@ -48,11 +48,6 @@ class InnerJoin extends Join
         $this->using = $using;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::STRAIGHT_JOIN);
-    }
-
     public function isCrossJoin(): bool
     {
         return $this->crossJoin;

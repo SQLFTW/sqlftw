@@ -48,11 +48,6 @@ class OuterJoin extends Join
         $this->using = $using;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::STRAIGHT_JOIN);
-    }
-
     public function getJoinSide(): JoinSide
     {
         return $this->joinSide;

@@ -26,11 +26,6 @@ class NaturalJoin extends Join
         $this->joinSide = $joinSide;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::STRAIGHT_JOIN);
-    }
-
     public function getJoinSide(): ?JoinSide
     {
         return $this->joinSide;

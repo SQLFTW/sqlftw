@@ -29,11 +29,6 @@ class TableReferenceList implements TableReferenceNode, Countable
         $this->references = $references;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::LIST);
-    }
-
     public function count(): int
     {
         return count($this->references);

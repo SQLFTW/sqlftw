@@ -50,11 +50,6 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
         $this->lateral = $lateral;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::PARENTHESES);
-    }
-
     public function count(): int
     {
         return $this->query instanceof Countable ? $this->query->count() : 1;

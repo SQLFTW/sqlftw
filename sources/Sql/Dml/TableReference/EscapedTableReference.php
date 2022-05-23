@@ -24,11 +24,6 @@ class EscapedTableReference implements TableReferenceNode
         $this->node = $node;
     }
 
-    public function getType(): TableReferenceNodeType
-    {
-        return TableReferenceNodeType::get(TableReferenceNodeType::ESCAPED);
-    }
-
     public function getNode(): TableReferenceNode
     {
         return $this->node;
