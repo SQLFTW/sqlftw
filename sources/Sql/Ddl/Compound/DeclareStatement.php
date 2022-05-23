@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\DataType;
+use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\ExpressionNode;
 
 class DeclareStatement implements CompoundStatementItem
@@ -21,7 +21,7 @@ class DeclareStatement implements CompoundStatementItem
     /** @var non-empty-array<string> */
     private $names;
 
-    /** @var DataType */
+    /** @var ColumnType */
     private $type;
 
     /** @var ExpressionNode|null */
@@ -30,7 +30,7 @@ class DeclareStatement implements CompoundStatementItem
     /**
      * @param non-empty-array<string> $names
      */
-    public function __construct(array $names, DataType $type, ?ExpressionNode $default = null)
+    public function __construct(array $names, ColumnType $type, ?ExpressionNode $default = null)
     {
         $this->names = $names;
         $this->type = $type;
@@ -45,7 +45,7 @@ class DeclareStatement implements CompoundStatementItem
         return $this->names;
     }
 
-    public function getType(): DataType
+    public function getType(): ColumnType
     {
         return $this->type;
     }

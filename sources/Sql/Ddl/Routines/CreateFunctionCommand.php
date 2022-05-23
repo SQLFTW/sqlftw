@@ -14,7 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Expression\DataType;
+use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Statement;
 use function implode;
@@ -29,10 +29,10 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     /** @var Statement */
     private $body;
 
-    /** @var DataType[] ($name => $type) */
+    /** @var ColumnType[] ($name => $type) */
     private $params;
 
-    /** @var DataType */
+    /** @var ColumnType */
     private $returnType;
 
     /** @var UserExpression|null */
@@ -57,13 +57,13 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     private $ifNotExists;
 
     /**
-     * @param DataType[] $params
+     * @param ColumnType[] $params
      */
     public function __construct(
         QualifiedName $name,
         Statement $body,
         array $params,
-        DataType $returnType,
+        ColumnType $returnType,
         ?UserExpression $definer = null,
         ?bool $deterministic = null,
         ?SqlSecurity $security = null,
@@ -96,14 +96,14 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
     }
 
     /**
-     * @return DataType[] ($name => $type)
+     * @return ColumnType[] ($name => $type)
      */
     public function getParams(): array
     {
         return $this->params;
     }
 
-    public function getReturnType(): DataType
+    public function getReturnType(): ColumnType
     {
         return $this->returnType;
     }
@@ -155,7 +155,7 @@ class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineComma
         }
         $result .= $this->name->serialize($formatter);
 
-        $result .= '(' . implode(', ', Arr::mapPairs($this->params, static function (string $name, DataType $type) use ($formatter) {
+        $result .= '(' . implode(', ', Arr::mapPairs($this->params, static function (string $name, ColumnType $type) use ($formatter) {
             return $formatter->formatName($name) . ' ' . $type->serialize($formatter);
         })) . ')';
         $result .= ' RETURNS ' . $this->returnType->serialize($formatter);

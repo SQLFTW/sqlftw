@@ -96,7 +96,7 @@ use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
-use SqlFtw\Sql\Expression\DataType;
+use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\KeywordLiteral;
@@ -109,9 +109,6 @@ class TableCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var TypeParser */
-    private $typeParser;
-
     /** @var ExpressionParser */
     private $expressionParser;
 
@@ -122,13 +119,10 @@ class TableCommandsParser
     private $queryParser;
 
     public function __construct(
-        TypeParser $typeParser,
         ExpressionParser $expressionParser,
         IndexCommandsParser $indexCommandsParser,
         QueryParser $queryParser
-    )
-    {
-        $this->typeParser = $typeParser;
+    ) {
         $this->expressionParser = $expressionParser;
         $this->indexCommandsParser = $indexCommandsParser;
         $this->queryParser = $queryParser;
@@ -793,7 +787,7 @@ class TableCommandsParser
     private function parseColumn(TokenList $tokenList): ColumnDefinition
     {
         $name = $tokenList->expectName();
-        $type = $this->typeParser->parseType($tokenList);
+        $type = $this->expressionParser->parseColumnType($tokenList);
 
         $keyword = $tokenList->getAnyKeyword(Keyword::GENERATED, Keyword::AS);
         if ($keyword === null) {
@@ -822,7 +816,7 @@ class TableCommandsParser
      *       [reference_definition]
      *       [check_constraint_definition]
      */
-    private function parseOrdinaryColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
+    private function parseOrdinaryColumn(string $name, ColumnType $type, TokenList $tokenList): ColumnDefinition
     {
         $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $visible = null;
         $engineAttribute = $secondaryEngineAttribute = $storage = null;
@@ -961,7 +955,7 @@ class TableCommandsParser
      *       [reference_definition]
      *       [check_constraint_definition]
      */
-    private function parseGeneratedColumn(string $name, DataType $type, TokenList $tokenList): ColumnDefinition
+    private function parseGeneratedColumn(string $name, ColumnType $type, TokenList $tokenList): ColumnDefinition
     {
         $tokenList->expectSymbol('(');
         $expression = $this->expressionParser->parseExpression($tokenList);

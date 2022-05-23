@@ -58,21 +58,16 @@ class CompoundStatementParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var TypeParser */
-    private $typeParser;
-
     /** @var QueryParser */
     private $queryParser;
 
     public function __construct(
         Parser $parser,
         ExpressionParser $expressionParser,
-        TypeParser $typeParser,
         QueryParser $queryParser
     ) {
         $this->parser = $parser;
         $this->expressionParser = $expressionParser;
-        $this->typeParser = $typeParser;
         $this->queryParser = $queryParser;
     }
 
@@ -432,7 +427,7 @@ class CompoundStatementParser
         while ($tokenList->hasSymbol(',')) {
             $names[] = $tokenList->expectName();
         }
-        $type = $this->typeParser->parseType($tokenList);
+        $type = $this->expressionParser->parseColumnType($tokenList);
         $default = null;
         if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
             $default = $this->expressionParser->parseExpression($tokenList);

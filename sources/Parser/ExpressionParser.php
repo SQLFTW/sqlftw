@@ -13,22 +13,24 @@ use Dogma\Re;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
-use SqlFtw\Parser\Ddl\TypeParser;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\FileFormat;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\Expression\AssignOperator;
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CaseExpression;
+use SqlFtw\Sql\Expression\CastType;
 use SqlFtw\Sql\Expression\CollateExpression;
 use SqlFtw\Sql\Expression\CurlyExpression;
-use SqlFtw\Sql\Expression\DataType;
+use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
@@ -85,9 +87,6 @@ class ExpressionParser
         . self::PUNCTUATION . '(?:[0-5][0-9]))'
         . '(\\.[0-9]+)?$/';
 
-    /** @var TypeParser */
-    private $typeParser;
-
     /** @var callable(): QueryParser */
     private $queryParserProxy;
 
@@ -97,9 +96,8 @@ class ExpressionParser
     /**
      * @param callable(): QueryParser $queryParserProxy
      */
-    public function __construct(TypeParser $typeParser, callable $queryParserProxy)
+    public function __construct(callable $queryParserProxy)
     {
-        $this->typeParser = $typeParser;
         $this->queryParserProxy = $queryParserProxy;
     }
 
@@ -604,8 +602,8 @@ class ExpressionParser
                     case Charset::class:
                         $arguments[$keyword] = $tokenList->expectCharsetName();
                         continue 3;
-                    case DataType::class:
-                        $arguments[$keyword] = $this->typeParser->parseType($tokenList);
+                    case CastType::class:
+                        $arguments[$keyword] = $this->parseCastType($tokenList);
                         continue 3;
                     case OrderByExpression::class:
                         $arguments[$keyword] = new ListExpression($this->parseOrderBy($tokenList));
@@ -717,7 +715,7 @@ class ExpressionParser
                 $path = $tokenList->expectString();
                 $columns[] = new JsonTableNestedColumns($path, $this->parseJsonTableColumns($tokenList));
             } else {
-                $type = $this->typeParser->parseType($tokenList);
+                $type = $this->parseColumnType($tokenList);
                 $keyword = $tokenList->expectAnyKeyword(Keyword::PATH, Keyword::EXISTS);
                 if ($keyword === Keyword::PATH) {
                     $path = $tokenList->expectString();
@@ -1133,6 +1131,164 @@ class ExpressionParser
         } else {
             return new UserExpression($tokenList->expectUserName());
         }
+    }
+
+    /**
+     * data_type:
+     *     BIT[(length)]
+     *   | TINYINT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | SMALLINT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | MEDIUMINT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | INT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | INTEGER[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | BIGINT[(length)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | REAL[(length,decimals)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | DOUBLE[(length,decimals)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | FLOAT[(length,decimals)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | FLOAT[(precision)] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | DECIMAL[(length[,decimals])] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | NUMERIC[(length[,decimals])] [UNSIGNED | SIGNED] [ZEROFILL]
+     *   | DATE
+     *   | TIME[(fsp)]
+     *   | TIMESTAMP[(fsp)]
+     *   | DATETIME[(fsp)]
+     *   | YEAR
+     *   | CHAR[(length)] [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | VARCHAR(length) [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | BINARY[(length)]
+     *   | VARBINARY(length)
+     *   | TINYBLOB
+     *   | BLOB[(length)]
+     *   | MEDIUMBLOB
+     *   | LONGBLOB
+     *   | TINYTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | TEXT[(length)] [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | MEDIUMTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | LONGTEXT [BINARY] [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | ENUM(value1,value2,value3, ...) [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | SET(value1,value2,value3, ...) [CHARACTER SET charset_name] [COLLATE collation_name]
+     *   | JSON
+     *   | spatial_type
+     *
+     *   + aliases defined in BaseType class
+     */
+    public function parseColumnType(TokenList $tokenList): ColumnType
+    {
+        $type = $tokenList->expectMultiKeywordsEnum(BaseType::class);
+
+        $settings = $tokenList->getSettings();
+        if ($settings->canonicalizeTypes()) {
+            $type = $type->canonicalize($settings);
+        }
+
+        [$size, $values, $unsigned, $zerofill, $charset, $collation, $srid] = $this->parseOptions($type, $tokenList);
+
+        return new ColumnType($type, $size, $values, $unsigned, $charset, $collation, $srid, $zerofill);
+    }
+
+    public function parseCastType(TokenList $tokenList): CastType
+    {
+        $sign = null;
+        if ($tokenList->hasKeyword(Keyword::SIGNED)) {
+            $sign = true;
+        } elseif ($tokenList->hasKeyword(Keyword::UNSIGNED)) {
+            $sign = false;
+        }
+
+        if ($sign !== null) {
+            $type = $tokenList->getMultiKeywordsEnum(BaseType::class);
+        } else {
+            $type = $tokenList->expectMultiKeywordsEnum(BaseType::class);
+        }
+
+        if ($type !== null) {
+            $settings = $tokenList->getSettings();
+            if ($settings->canonicalizeTypes()) {
+                $type = $type->canonicalize($settings);
+            }
+
+            [$size, , , , $charset, $collation, $srid] = $this->parseOptions($type, $tokenList);
+        } else {
+            $size = $charset = $collation = $srid = null;
+        }
+
+        $array = $tokenList->hasKeyword(Keyword::ARRAY);
+
+        return new CastType($type, $size, $sign, $array, $charset, $collation, $srid);
+    }
+
+    /**
+     * @return array{non-empty-array<int>|null, non-empty-array<string>|null, bool, bool, Charset|null, Collation|null, int|null}
+     */
+    private function parseOptions(BaseType $type, TokenList $tokenList): array
+    {
+        $size = $values = $charset = $collation = $srid = null;
+        $unsigned = $zerofill = false;
+
+        if ($type->hasLength()) {
+            if ($tokenList->hasSymbol('(')) {
+                $length = $tokenList->expectUnsignedInt();
+                $decimals = null;
+                if ($type->hasDecimals()) {
+                    if ($type->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
+                        if ($tokenList->hasSymbol(',')) {
+                            $decimals = $tokenList->expectUnsignedInt();
+                        }
+                    } else {
+                        $tokenList->expectSymbol(',');
+                        $decimals = $tokenList->expectUnsignedInt();
+                    }
+                }
+                $tokenList->expectSymbol(')');
+
+                if ($decimals !== null) {
+                    $size = [$length, $decimals];
+                } else {
+                    $size = [$length];
+                }
+            }
+        } elseif ($type->hasValues()) {
+            $tokenList->expectSymbol('(');
+            $values = [];
+            do {
+                $values[] = $tokenList->expectString();
+            } while ($tokenList->hasSymbol(','));
+            $tokenList->expectSymbol(')');
+        } elseif ($type->hasFsp() && $tokenList->hasSymbol('(')) {
+            $size = [$tokenList->expectUnsignedInt()];
+            $tokenList->expectSymbol(')');
+        }
+
+        if ($type->isNumber()) {
+            $unsigned = $tokenList->hasKeyword(Keyword::UNSIGNED);
+            if ($unsigned === false) {
+                $tokenList->passKeyword(Keyword::SIGNED);
+            }
+            $zerofill = $tokenList->hasKeyword(Keyword::ZEROFILL);
+        }
+
+        if ($type->hasCharset()) {
+            if ($tokenList->hasKeywords(Keyword::CHARSET)) {
+                $charset = $tokenList->expectCharsetName();
+            } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
+                $charset = $tokenList->expectCharsetName();
+            } elseif ($tokenList->hasKeyword(Keyword::BINARY)) {
+                $charset = Charset::get(Charset::BINARY);
+            } elseif ($tokenList->hasKeyword(Keyword::ASCII)) {
+                $charset = Charset::get(Charset::ASCII);
+            }
+            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+                $collation = $tokenList->expectCollationName();
+            }
+        }
+
+        if ($type->isSpatial()) {
+            if ($tokenList->hasKeyword(Keyword::SRID)) {
+                $srid = $tokenList->expectUnsignedInt();
+            }
+        }
+
+        return [$size, $values, $unsigned, $zerofill, $charset, $collation, $srid];
     }
 
     /**

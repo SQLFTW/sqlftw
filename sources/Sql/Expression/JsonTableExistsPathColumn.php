@@ -17,13 +17,13 @@ class JsonTableExistsPathColumn implements JsonTableColumn
     /** @var string */
     private $name;
 
-    /** @var DataType */
+    /** @var ColumnType */
     private $type;
 
     /** @var string */
     private $path;
 
-    public function __construct(string $name, DataType $type, string $path)
+    public function __construct(string $name, ColumnType $type, string $path)
     {
         $this->name = $name;
         $this->type = $type;
@@ -35,7 +35,7 @@ class JsonTableExistsPathColumn implements JsonTableColumn
         return $this->name;
     }
 
-    public function getType(): DataType
+    public function getType(): ColumnType
     {
         return $this->type;
     }

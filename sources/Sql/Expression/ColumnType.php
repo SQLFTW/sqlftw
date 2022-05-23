@@ -14,14 +14,12 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\SqlSerializable;
 use function count;
 use function implode;
 use function is_null;
 
-/**
- * e.g. CAST(expr AS type)
- */
-class DataType implements ExpressionNode
+class ColumnType implements SqlSerializable
 {
     use StrictBehaviorMixin;
 

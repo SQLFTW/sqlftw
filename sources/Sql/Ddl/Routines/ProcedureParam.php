@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Routines;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\DataType;
+use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\SqlSerializable;
 
 class ProcedureParam implements SqlSerializable
@@ -21,13 +21,13 @@ class ProcedureParam implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var DataType */
+    /** @var ColumnType */
     private $type;
 
     /** @var InOutParamFlag|null */
     private $inOutFlag;
 
-    public function __construct(string $name, DataType $type, ?InOutParamFlag $inOutFlag = null)
+    public function __construct(string $name, ColumnType $type, ?InOutParamFlag $inOutFlag = null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -39,7 +39,7 @@ class ProcedureParam implements SqlSerializable
         return $this->name;
     }
 
-    public function getType(): DataType
+    public function getType(): ColumnType
     {
         return $this->type;
     }

@@ -29,21 +29,13 @@ class RoutineCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var TypeParser */
-    private $typeParser;
-
     /** @var ExpressionParser */
     private $expressionParser;
 
     /** @var CompoundStatementParser */
     private $compoundStatementParser;
 
-    public function __construct(
-        TypeParser $typeParser,
-        ExpressionParser $expressionParser,
-        CompoundStatementParser $compoundStatementParser
-    ) {
-        $this->typeParser = $typeParser;
+    public function __construct(ExpressionParser $expressionParser, CompoundStatementParser $compoundStatementParser) {
         $this->expressionParser = $expressionParser;
         $this->compoundStatementParser = $compoundStatementParser;
     }
@@ -173,14 +165,14 @@ class RoutineCommandsParser
         if (!$tokenList->hasSymbol(')')) {
             do {
                 $param = $tokenList->expectName();
-                $type = $this->typeParser->parseType($tokenList);
+                $type = $this->expressionParser->parseColumnType($tokenList);
                 $params[$param] = $type;
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
 
         $tokenList->expectKeyword(Keyword::RETURNS);
-        $returnType = $this->typeParser->parseType($tokenList);
+        $returnType = $this->expressionParser->parseColumnType($tokenList);
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
@@ -232,7 +224,7 @@ class RoutineCommandsParser
                 /** @var InOutParamFlag $inOut */
                 $inOut = $tokenList->getKeywordEnum(InOutParamFlag::class);
                 $param = $tokenList->expectName();
-                $type = $this->typeParser->parseType($tokenList);
+                $type = $this->expressionParser->parseColumnType($tokenList);
                 $params[] = new ProcedureParam($param, $type, $inOut);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');

@@ -518,8 +518,8 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::AVG => [Keyword::DISTINCT => ExpressionNode::class],
         // CHAR(N, ... [USING charset_name])
         self::CHAR => [Keyword::USING => Charset::class],
-        // CAST(expr AS type [ARRAY])
-        self::CAST => [Keyword::AS => DataType::class, Keyword::ARRAY => null],
+        // CAST(expr AS type)
+        self::CAST => [Keyword::AS => CastType::class],
         /*
          * CONVERT(string, type), CONVERT(expr USING charset_name)
          *
@@ -579,7 +579,7 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::TRIM => [Keyword::BOTH => false, Keyword::LEADING => false, Keyword::TRAILING => false, Keyword::FROM => false],
         // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags])
         // "The flags clause currently is unused."
-        self::WEIGHT_STRING => [Keyword::AS => DataType::class],
+        self::WEIGHT_STRING => [Keyword::AS => ColumnType::class],
     ];
 
     /** @var string[] */

@@ -15,7 +15,7 @@ use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Ddl\Table\TableItem;
-use SqlFtw\Sql\Expression\DataType;
+use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
@@ -36,7 +36,7 @@ class ColumnDefinition implements TableItem
     /** @var string */
     private $name;
 
-    /** @var DataType */
+    /** @var ColumnType */
     private $type;
 
     /** @var bool|null */
@@ -90,7 +90,7 @@ class ColumnDefinition implements TableItem
      */
     public function __construct(
         string $name,
-        DataType $type,
+        ColumnType $type,
         $defaultValue = null,
         ?bool $nullable = null,
         ?bool $visible = null,
@@ -125,7 +125,7 @@ class ColumnDefinition implements TableItem
 
     public static function createGenerated(
         string $name,
-        DataType $type,
+        ColumnType $type,
         ExpressionNode $expression,
         ?GeneratedColumnType $generatedColumnType,
         ?bool $nullable = null,
@@ -168,7 +168,7 @@ class ColumnDefinition implements TableItem
         return $this->name;
     }
 
-    public function getType(): DataType
+    public function getType(): ColumnType
     {
         return $this->type;
     }

@@ -39,7 +39,6 @@ use SqlFtw\Parser\Ddl\SpatialCommandsParser;
 use SqlFtw\Parser\Ddl\TableCommandsParser;
 use SqlFtw\Parser\Ddl\TablespaceCommandsParser;
 use SqlFtw\Parser\Ddl\TriggerCommandsParser;
-use SqlFtw\Parser\Ddl\TypeParser;
 use SqlFtw\Parser\Ddl\ViewCommandsParser;
 use SqlFtw\Parser\Dml\CallCommandParser;
 use SqlFtw\Parser\Dml\DeleteCommandParser;
@@ -70,9 +69,6 @@ class ParserFactory
     /** @var Parser */
     private $parser;
 
-    /** @var TypeParser */
-    private $typeParser;
-
     /** @var ExpressionParser */
     private $expressionParser;
 
@@ -96,12 +92,11 @@ class ParserFactory
         $queryParserProxy = function (): QueryParser {
             return $this->queryParser;
         };
-        $this->typeParser = new TypeParser();
-        $this->expressionParser = new ExpressionParser($this->typeParser, $queryParserProxy);
+        $this->expressionParser = new ExpressionParser($queryParserProxy);
         $this->joinParser = new JoinParser($this->expressionParser, $queryParserProxy);
         $this->withParser = new WithParser($this);
         $this->queryParser = new QueryParser($this->expressionParser, $this->joinParser, $this->withParser);
-        $this->compoundStatementParser = new CompoundStatementParser($this->parser, $this->expressionParser, $this->typeParser, $this->queryParser);
+        $this->compoundStatementParser = new CompoundStatementParser($this->parser, $this->expressionParser, $this->queryParser);
     }
 
     public function getParser(): Parser
@@ -273,7 +268,7 @@ class ParserFactory
 
     public function getRoutineCommandsParser(): RoutineCommandsParser
     {
-        return new RoutineCommandsParser($this->typeParser, $this->expressionParser, $this->compoundStatementParser);
+        return new RoutineCommandsParser($this->expressionParser, $this->compoundStatementParser);
     }
 
     public function getServerCommandsParser(): ServerCommandsParser
@@ -303,12 +298,7 @@ class ParserFactory
 
     public function getTableCommandsParser(): TableCommandsParser
     {
-        return new TableCommandsParser(
-            $this->typeParser,
-            $this->expressionParser,
-            $this->getIndexCommandsParser(),
-            $this->queryParser
-        );
+        return new TableCommandsParser($this->expressionParser, $this->getIndexCommandsParser(), $this->queryParser);
     }
 
     public function getTableMaintenanceCommandsParser(): TableMaintenanceCommandsParser

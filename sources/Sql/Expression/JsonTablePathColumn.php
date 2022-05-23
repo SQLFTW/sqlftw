@@ -17,7 +17,7 @@ class JsonTablePathColumn implements JsonTableColumn
     /** @var string */
     private $name;
 
-    /** @var DataType */
+    /** @var ColumnType */
     private $type;
 
     /** @var string */
@@ -33,7 +33,7 @@ class JsonTablePathColumn implements JsonTableColumn
      * @param bool|string|null $onEmpty (true = nullable, false = non-nullable, string = default)
      * @param bool|string|null $onError (true = nullable, false = non-nullable, string = default)
      */
-    public function __construct(string $name, DataType $type, string $path, $onEmpty = null, $onError = null)
+    public function __construct(string $name, ColumnType $type, string $path, $onEmpty = null, $onError = null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -47,7 +47,7 @@ class JsonTablePathColumn implements JsonTableColumn
         return $this->name;
     }
 
-    public function getType(): DataType
+    public function getType(): ColumnType
     {
         return $this->type;
     }
