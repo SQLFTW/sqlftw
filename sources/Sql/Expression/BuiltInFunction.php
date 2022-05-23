@@ -499,7 +499,7 @@ class BuiltInFunction extends SqlEnum implements Feature
     public const LAG = 'LAG';
     public const LAST_VALUE = 'LAST_VALUE';
     public const LEAD = 'LEAD';
-    public const NTH_VALUwE = 'NTH_VALUwE';
+    public const NTH_VALUE = 'NTH_VALUwE';
     public const NTILE = 'NTILE';
     public const PERCENT_RANK = 'PERCENT_RANK';
     public const RANK = 'RANK';
@@ -615,7 +615,7 @@ class BuiltInFunction extends SqlEnum implements Feature
         self::LAG,
         self::LAST_VALUE,
         self::LEAD,
-        self::NTH_VALUwE,
+        self::NTH_VALUE,
         self::NTILE,
         self::PERCENT_RANK,
         self::RANK,
