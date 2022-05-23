@@ -40,8 +40,8 @@ class FunctionCall implements ExpressionNode
      */
     public function __construct($function, array $arguments = [], $over = null)
     {
-        if ($over !== null && (!$function instanceof BuiltInFunction || !$function->isAggregate())) {
-            throw new InvalidDefinitionException('OVER clause is supported only on aggregation functions.');
+        if ($over !== null && (!$function instanceof BuiltInFunction || !$function->isWindow())) {
+            throw new InvalidDefinitionException('OVER clause is supported only on window functions.');
         }
 
         $this->function = $function;

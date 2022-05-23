@@ -624,7 +624,7 @@ class ExpressionParser
         } while (true);
 
         $over = null;
-        if ($function instanceof BuiltInFunction && $function->isAggregate() && $tokenList->hasKeyword(Keyword::OVER)) {
+        if ($function instanceof BuiltInFunction && $function->isWindow() && $tokenList->hasKeyword(Keyword::OVER)) {
             // AGG_FUNC(...) [over_clause]
             $over = $this->parseOver($tokenList);
         }
