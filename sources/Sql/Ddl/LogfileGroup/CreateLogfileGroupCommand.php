@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\SizeLiteral;
 
 class CreateLogfileGroupCommand implements LogfileGroupCommand
 {
@@ -25,13 +26,13 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
     /** @var string */
     private $undoFile;
 
-    /** @var int|null */
+    /** @var SizeLiteral|null */
     private $initialSize;
 
-    /** @var int|null */
+    /** @var SizeLiteral|null */
     private $undoBufferSize;
 
-    /** @var int|null */
+    /** @var SizeLiteral|null */
     private $redoBufferSize;
 
     /** @var int|null */
@@ -47,9 +48,9 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
         string $name,
         string $engine,
         string $undoFile,
-        ?int $initialSize = null,
-        ?int $undoBufferSize = null,
-        ?int $redoBufferSize = null,
+        ?SizeLiteral $initialSize = null,
+        ?SizeLiteral $undoBufferSize = null,
+        ?SizeLiteral $redoBufferSize = null,
         ?int $nodeGroup = null,
         bool $wait = false,
         ?string $comment = null
@@ -81,17 +82,17 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
         return $this->undoFile;
     }
 
-    public function getInitialSize(): ?int
+    public function getInitialSize(): ?SizeLiteral
     {
         return $this->initialSize;
     }
 
-    public function getUndoBufferSize(): ?int
+    public function getUndoBufferSize(): ?SizeLiteral
     {
         return $this->undoBufferSize;
     }
 
-    public function getRedoBufferSize(): ?int
+    public function getRedoBufferSize(): ?SizeLiteral
     {
         return $this->redoBufferSize;
     }
@@ -115,13 +116,13 @@ class CreateLogfileGroupCommand implements LogfileGroupCommand
     {
         $result = 'CREATE LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ADD UNDOFILE ' . $formatter->formatString($this->undoFile);
         if ($this->initialSize !== null) {
-            $result .= ' INITIAL_SIZE = ' . $this->initialSize;
+            $result .= ' INITIAL_SIZE = ' . $this->initialSize->serialize($formatter);
         }
         if ($this->undoBufferSize !== null) {
-            $result .= ' UNDO_BUFFER_SIZE = ' . $this->undoBufferSize;
+            $result .= ' UNDO_BUFFER_SIZE = ' . $this->undoBufferSize->serialize($formatter);
         }
         if ($this->redoBufferSize !== null) {
-            $result .= ' REDO_BUFFER_SIZE = ' . $this->redoBufferSize;
+            $result .= ' REDO_BUFFER_SIZE = ' . $this->redoBufferSize->serialize($formatter);
         }
         if ($this->nodeGroup !== null) {
             $result .= ' NODEGROUP = ' . $this->nodeGroup;

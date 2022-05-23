@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\SizeLiteral;
 
 class AlterLogfileGroupCommand implements LogfileGroupCommand
 {
@@ -25,13 +26,13 @@ class AlterLogfileGroupCommand implements LogfileGroupCommand
     /** @var string */
     private $undoFile;
 
-    /** @var int|null */
+    /** @var SizeLiteral|null */
     private $initialSize;
 
     /** @var bool */
     private $wait;
 
-    public function __construct(string $name, string $engine, string $undoFile, ?int $initialSize = null, bool $wait = false)
+    public function __construct(string $name, string $engine, string $undoFile, ?SizeLiteral $initialSize = null, bool $wait = false)
     {
         $this->name = $name;
         $this->engine = $engine;
@@ -55,7 +56,7 @@ class AlterLogfileGroupCommand implements LogfileGroupCommand
         return $this->undoFile;
     }
 
-    public function getInitialSize(): ?int
+    public function getInitialSize(): ?SizeLiteral
     {
         return $this->initialSize;
     }
@@ -69,7 +70,7 @@ class AlterLogfileGroupCommand implements LogfileGroupCommand
     {
         $result = 'ALTER LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ADD UNDOFILE ' . $formatter->formatString($this->undoFile);
         if ($this->initialSize !== null) {
-            $result .= ' INITIAL_SIZE = ' . $this->initialSize;
+            $result .= ' INITIAL_SIZE = ' . $this->initialSize->serialize($formatter);
         }
         if ($this->wait) {
             $result .= ' WAIT';
