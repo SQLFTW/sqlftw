@@ -183,7 +183,7 @@ class TableCommandsParser
      *   | IMPORT PARTITION {partition_names | ALL} TABLESPACE
      *   | TRUNCATE PARTITION {partition_names | ALL}
      *   | COALESCE PARTITION number
-     *   | REORGANIZE PARTITION partition_names INTO (partition_definitions)
+     *   | REORGANIZE PARTITION [partition_names INTO (partition_definitions)]
      *   | EXCHANGE PARTITION partition_name WITH TABLE tbl_name [{WITH|WITHOUT} VALIDATION]
      *   | ANALYZE PARTITION {partition_names | ALL}
      *   | CHECK PARTITION {partition_names | ALL}
@@ -575,19 +575,23 @@ class TableCommandsParser
                     }
                     break;
                 case Keyword::REORGANIZE:
-                    // REORGANIZE PARTITION partition_names INTO (partition_definitions, ...)
+                    // REORGANIZE PARTITION [partition_names INTO (partition_definitions, ...)]
                     $tokenList->expectKeyword(Keyword::PARTITION);
-                    $oldPartitions = $this->parsePartitionNames($tokenList);
-                    if ($oldPartitions === null) {
-                        $tokenList->missing('Expected specific partition names, found "ALL".');
+                    $position = $tokenList->getPosition();
+                    $oldPartitions = $newPartitions = null;
+                    if ($tokenList->has(TokenType::NAME)) {
+                        $oldPartitions = $this->parsePartitionNames($tokenList->resetPosition($position));
+                        if ($oldPartitions === null) {
+                            $tokenList->missing('Expected specific partition names, found "ALL".');
+                        }
+                        $tokenList->expectKeyword(Keyword::INTO);
+                        $tokenList->expectSymbol('(');
+                        $newPartitions = [];
+                        do {
+                            $newPartitions[] = $this->parsePartitionDefinition($tokenList);
+                        } while ($tokenList->hasSymbol(','));
+                        $tokenList->expectSymbol(')');
                     }
-                    $tokenList->expectKeyword(Keyword::INTO);
-                    $tokenList->expectSymbol('(');
-                    $newPartitions = [];
-                    do {
-                        $newPartitions[] = $this->parsePartitionDefinition($tokenList);
-                    } while ($tokenList->hasSymbol(','));
-                    $tokenList->expectSymbol(')');
                     $actions[] = new ReorganizePartitionAction($oldPartitions, $newPartitions);
                     break;
                 case Keyword::REPAIR:

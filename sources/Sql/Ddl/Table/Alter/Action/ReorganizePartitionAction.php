@@ -12,47 +12,57 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
+use SqlFtw\Sql\InvalidDefinitionException;
 
 class ReorganizePartitionAction implements PartitioningAction
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-array<string>|null */
     private $partitions;
 
-    /** @var non-empty-array<PartitionDefinition> */
+    /** @var non-empty-array<PartitionDefinition>|null */
     private $newPartitions;
 
     /**
-     * @param non-empty-array<string> $partitions
-     * @param non-empty-array<PartitionDefinition> $newPartitions
+     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-array<PartitionDefinition>|null $newPartitions
      */
-    public function __construct(array $partitions, array $newPartitions)
+    public function __construct(?array $partitions, ?array $newPartitions)
     {
+        if (($partitions === null) ^ ($newPartitions === null)) { // @phpstan-ignore-line XOR needed
+            throw new InvalidDefinitionException('Old partitions and new partitions must be both null or both defined.');
+        }
+
         $this->partitions = $partitions;
         $this->newPartitions = $newPartitions;
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-array<string>|null
      */
-    public function getPartitions(): array
+    public function getPartitions(): ?array
     {
         return $this->partitions;
     }
 
     /**
-     * @return non-empty-array<PartitionDefinition>
+     * @return non-empty-array<PartitionDefinition>|null
      */
-    public function getNewPartitions(): array
+    public function getNewPartitions(): ?array
     {
         return $this->newPartitions;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'REORGANIZE PARTITION ' . $formatter->formatNamesList($this->partitions)
-            . ' INTO (' . $formatter->formatSerializablesList($this->newPartitions) . ')';
+        $result = 'REORGANIZE PARTITION';
+        if ($this->partitions !== null && $this->newPartitions !== null) {
+            $result .= ' ' . $formatter->formatNamesList($this->partitions)
+                . ' INTO (' . $formatter->formatSerializablesList($this->newPartitions) . ')';
+        }
+
+        return $result;
     }
 
 }
