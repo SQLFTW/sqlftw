@@ -37,9 +37,16 @@ class DoCommandsParser
 
         $expressions = [];
         do {
-            $expression = $this->expressionParser->parseExpression($tokenList);
+            $expression = $this->expressionParser->parseAssignExpression($tokenList);
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectNameOrString();
+            } else {
+                $alias = $tokenList->getName();
+                if ($alias === null) {
+                    $alias = $tokenList->getString();
+                }
+            }
+            if ($alias !== null) {
                 $expression = new AliasExpression($expression, $alias);
             }
 
