@@ -621,12 +621,11 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::VALIDATION);
                     $alterOptions[Keyword::VALIDATION] = false;
                     break;
+                case Keyword::PARTITION:
+                    $tokenList->resetPosition(-1);
+                    break;
                 default:
                     [$option, $value] = $this->parseTableOption($tokenList->resetPosition($position));
-                    if ($keyword === Keyword::PARTITION) {
-                        $tokenList->resetPosition(-1);
-                        break;
-                    }
                     if ($option === null) {
                         $keywords = AlterTableActionType::getAllowedValues() + AlterTableOption::getAllowedValues()
                             + [Keyword::ALGORITHM, Keyword::LOCK, Keyword::WITH, Keyword::WITHOUT];
@@ -648,7 +647,7 @@ class TableCommandsParser
                         $tokenList->resetPosition($position);
                     }
             }
-        } while ($tokenList->hasSymbol(','));
+        } while ($tokenList->hasSymbol(',') || $tokenList->seekKeyword(Keyword::REMOVE, 10));
 
         $partitioning = null;
         if ($tokenList->hasKeyword(Keyword::PARTITION)) {
