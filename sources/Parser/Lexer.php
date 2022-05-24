@@ -777,29 +777,29 @@ class Lexer
                     $upper = strtoupper($value);
                     static $types = [Keyword::TIMESTAMP, Keyword::DATE, Keyword::TIME];
                     if ($upper === Keyword::NULL) {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::NULL, $value, $condition);
+                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, $value, null, $condition);
                     } elseif ($upper === Keyword::TRUE) {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::TRUE, $value, $condition);
+                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, $value, null, $condition);
                     } elseif ($upper === Keyword::FALSE) {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, Keyword::FALSE, $value, $condition);
+                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, $value, null, $condition);
                     } elseif (in_array($upper, $types, true) && ($string[$position] === "'")) {
                         // timestamp'2001-01-01 00:00:00'
-                        yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $upper, $value, $condition);
+                        yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $value, null, $condition);
                     } elseif (isset($this->reservedKey[$upper])) {
                         if (isset($this->operatorKeywordsKey[$upper])) {
-                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::OPERATOR, $start, $upper, $value, $condition);
+                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::OPERATOR, $start, $value, null, $condition);
                         } elseif (isset($this->functionsKey[$upper])) {
-                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, $start, $upper, $value, $condition);
+                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
                         } else {
-                            yield $previous = new Token(T::KEYWORD | T::RESERVED, $start, $upper, $value, $condition);
+                            yield $previous = new Token(T::KEYWORD | T::RESERVED, $start, $value, null, $condition);
                         }
                     } elseif (isset($this->keywordsKey[$upper])) {
-                        yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $upper, $value, $condition);
+                        yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
                     } elseif ($value[0] === '_' && ($charset = substr($value, 1)) !== '' && Charset::validateValue($charset)) {
                         // _utf8'foo'
-                        yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $charset, $value, $condition);
+                        yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $value, null, $condition);
                     } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
-                        yield new Token(T::KEYWORD, $start, $upper, $value, $condition);
+                        yield new Token(T::KEYWORD, $start, $value, null, $condition);
                         $start = $position;
                         $whitespace = $this->parseWhitespace($string, $position, $column, $row);
                         $whitespace = new Token(T::WHITESPACE, $start, $whitespace, null, $condition);
@@ -848,10 +848,10 @@ class Lexer
                          */
                         $delimiter = $del;
                         $this->settings->setDelimiter($delimiter);
-                        yield $previous = new Token(T::SYMBOL | T::DELIMITER_DEFINITION, $start, $delimiter, $condition);
+                        yield $previous = new Token(T::SYMBOL | T::DELIMITER_DEFINITION, $start, $delimiter, null, $condition);
                     } elseif ($value === 'EOF' && $this->settings->mysqlTestMode && $string[$position - 4] === "\n" && $string[$position] === "\n") {
                         yield new Token(T::TEST_CODE, $start, 'EOF');
-                        yield new Token(T::DELIMITER, $start, 'EOF');
+                        yield new Token(T::DELIMITER, $start, $delimiter);
                     } elseif ($value === 'perl' && $this->settings->mysqlTestMode && $string[$position - 5] === "\n" && $string[$position] === ';') {
                         // Perl code blocks from MySQL tests
                         $end = strpos($string, "\nEOF\n", $position);
@@ -877,7 +877,7 @@ class Lexer
 
                         yield new Token(T::TEST_CODE, $start, $block);
                     } else {
-                        yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $value, $value, $condition);
+                        yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
                     }
 
                     if ($yieldDelimiter) {
@@ -902,7 +902,7 @@ class Lexer
                             break;
                         }
                     }
-                    yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $value, $value, $condition);
+                    yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
             }
         }
     }
