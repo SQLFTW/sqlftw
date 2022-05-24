@@ -22,5 +22,6 @@ class PartitionOption extends SqlEnum
     public const MAX_ROWS = Keyword::MAX_ROWS;
     public const MIN_ROWS = Keyword::MIN_ROWS;
     public const TABLESPACE = Keyword::TABLESPACE;
+    public const NODEGROUP = Keyword::NODEGROUP;
 
 }

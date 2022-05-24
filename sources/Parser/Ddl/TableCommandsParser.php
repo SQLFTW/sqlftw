@@ -1487,6 +1487,7 @@ class TableCommandsParser
      *         [MAX_ROWS [=] max_number_of_rows]
      *         [MIN_ROWS [=] min_number_of_rows]
      *         [TABLESPACE [=] tablespace_name]
+     *         [NODEGROUP [=] number]             // NDB only
      *         [(subpartition_definition [, subpartition_definition] ...)]
      *
      * subpartition_definition:
@@ -1498,6 +1499,7 @@ class TableCommandsParser
      *         [MAX_ROWS [=] max_number_of_rows]
      *         [MIN_ROWS [=] min_number_of_rows]
      *         [TABLESPACE [=] tablespace_name]
+     *         [NODEGROUP [=] number]             // NDB only
      */
     private function parsePartitionDefinition(TokenList $tokenList): PartitionDefinition
     {
@@ -1561,6 +1563,7 @@ class TableCommandsParser
      *     [MAX_ROWS [=] max_number_of_rows]
      *     [MIN_ROWS [=] min_number_of_rows]
      *     [TABLESPACE [=] tablespace_name]
+     *     [NODEGROUP [=] number]             // NDB only
      *
      * @return non-empty-array<string, int|string>
      */
@@ -1599,6 +1602,10 @@ class TableCommandsParser
         if ($tokenList->hasKeyword(Keyword::TABLESPACE)) {
             $tokenList->passSymbol('=');
             $options[PartitionOption::TABLESPACE] = $tokenList->expectNameOrString();
+        }
+        if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
+            $tokenList->passSymbol('=');
+            $options[PartitionOption::NODEGROUP] = $tokenList->expectUnsignedInt();
         }
 
         return $options !== [] ? $options : null;
