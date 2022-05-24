@@ -480,7 +480,7 @@ class Lexer
                                 $column++;
                             }
                         }
-                        if ($value === '--perl' && $this->settings->mysqlTestMode) {
+                        if ($this->settings->mysqlTestMode && $value === '--perl') {
                             // Perl code blocks from MySQL tests
                             $end = strpos($string, "\nEOF\n", $position);
                             if ($end === false) {
@@ -489,6 +489,17 @@ class Lexer
                                 $block = substr($string, $position - 6, $end - $position + 10);
                             }
                             $position += strlen($block) - 6;
+                            $row += Str::count($block, "\n");
+
+                            yield new Token(T::TEST_CODE, $start, $block, null, $condition);
+                        } elseif ($this->settings->mysqlTestMode && Str::startsWith(strtolower($value), '--write_file')) {
+                            $end = strpos($string, "\nEOF\n", $position);
+                            if ($end === false) {
+                                throw new LexerException('End of code block not found.', $position, $string);
+                            } else {
+                                $block = substr($string, $position - strlen($value), $end - $position + strlen($value) + 4);
+                            }
+                            $position += strlen($block) - strlen($value);
                             $row += Str::count($block, "\n");
 
                             yield new Token(T::TEST_CODE, $start, $block, null, $condition);
@@ -840,6 +851,7 @@ class Lexer
                         yield $previous = new Token(T::SYMBOL | T::DELIMITER_DEFINITION, $start, $delimiter, $condition);
                     } elseif ($value === 'EOF' && $this->settings->mysqlTestMode && $string[$position - 4] === "\n" && $string[$position] === "\n") {
                         yield new Token(T::TEST_CODE, $start, 'EOF');
+                        yield new Token(T::DELIMITER, $start, 'EOF');
                     } elseif ($value === 'perl' && $this->settings->mysqlTestMode && $string[$position - 5] === "\n" && $string[$position] === ';') {
                         // Perl code blocks from MySQL tests
                         $end = strpos($string, "\nEOF\n", $position);
