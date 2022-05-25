@@ -27,7 +27,7 @@ class ComponentCommandsParser
         $tokenList->expectKeywords(Keyword::INSTALL, Keyword::COMPONENT);
         $components = [];
         do {
-            $components[] = $tokenList->expectNameOrString();
+            $components[] = $tokenList->expectNonReservedNameOrString();
         } while ($tokenList->hasSymbol(','));
 
         return new InstallComponentCommand($components);
@@ -41,7 +41,7 @@ class ComponentCommandsParser
         $tokenList->expectKeywords(Keyword::UNINSTALL, Keyword::COMPONENT);
         $components = [];
         do {
-            $components[] = $tokenList->expectNameOrString();
+            $components[] = $tokenList->expectNonReservedNameOrString();
         } while ($tokenList->hasSymbol(','));
 
         return new UninstallComponentCommand($components);

@@ -39,9 +39,9 @@ class DoCommandsParser
         do {
             $expression = $this->expressionParser->parseAssignExpression($tokenList);
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectNameOrString();
+                $alias = $tokenList->expectNonReservedNameOrString();
             } else {
-                $alias = $tokenList->getName();
+                $alias = $tokenList->getNonReservedName();
                 if ($alias === null) {
                     $alias = $tokenList->getString();
                 }

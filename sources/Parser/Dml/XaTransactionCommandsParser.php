@@ -43,7 +43,7 @@ class XaTransactionCommandsParser
     public function parseXa(TokenList $tokenList): Command
     {
         $tokenList->expectKeyword(Keyword::XA);
-        $second = $tokenList->expect(TokenType::KEYWORD)->value;
+        $second = $tokenList->expectKeyword();
         switch ($second) {
             case Keyword::START:
             case Keyword::BEGIN:

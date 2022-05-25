@@ -104,7 +104,7 @@ class IndexCommandsParser
 
         if ($inTable) {
             $tokenList->getAnyKeyword(Keyword::INDEX, Keyword::KEY);
-            $name = $tokenList->getName();
+            $name = $tokenList->getNonReservedName();
         } else {
             $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::KEY);
             $name = $tokenList->expectName();

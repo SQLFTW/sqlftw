@@ -104,6 +104,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
+use function strtoupper;
 
 class TableCommandsParser
 {
@@ -206,11 +207,11 @@ class TableCommandsParser
         $tableOptions = [];
         do {
             $position = $tokenList->getPosition();
-            $keyword = $tokenList->expect(TokenType::KEYWORD)->value;
+            $keyword = $tokenList->expectKeyword();
             switch ($keyword) {
                 case Keyword::ADD:
                     $second = $tokenList->get(TokenType::KEYWORD);
-                    $secondValue = $second !== null ? $second->value : null;
+                    $secondValue = $second !== null ? strtoupper($second->value) : null;
                     switch ($secondValue) {
                         case null:
                         case Keyword::COLUMN:
@@ -419,8 +420,8 @@ class TableCommandsParser
                     break;
                 case Keyword::DROP:
                     $second = $tokenList->get(TokenType::KEYWORD);
-                    $secondValue = $second !== null ? $second->value : null;
-                    switch ($secondValue) {
+                    $keyword = $second !== null ? strtoupper($second->value) : null;
+                    switch ($keyword) {
                         case Keyword::INDEX:
                         case Keyword::KEY:
                             // DROP {INDEX|KEY} index_name
@@ -462,7 +463,7 @@ class TableCommandsParser
                             if ($second !== null && ($second->type & TokenType::UNQUOTED_NAME) !== 0) {
                                 // DROP [COLUMN] col_name
                                 /** @var string $columnName */
-                                $columnName = $second->original;
+                                $columnName = $second->value;
                                 $actions[] = new DropColumnAction($columnName);
                             } else {
                                 $tokenList->missingAnyKeyword(Keyword::COLUMN, Keyword::INDEX, Keyword::KEY, Keyword::FOREIGN, Keyword::PARTITION, Keyword::PRIMARY);
@@ -1088,7 +1089,7 @@ class TableCommandsParser
     {
         $name = null;
         if ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
-            $name = $tokenList->getName();
+            $name = $tokenList->getNonKeywordName();
         }
 
         $keyword = $tokenList->expectAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN, Keyword::CHECK);
@@ -1204,12 +1205,11 @@ class TableCommandsParser
     private function parseTableOption(TokenList $tokenList): array
     {
         $position = $tokenList->getPosition();
-        $token = $tokenList->get(TokenType::KEYWORD);
-        if ($token === null) {
+        $keyword = $tokenList->getKeyword();
+        if ($keyword === null) {
             return [null, null];
         }
 
-        $keyword = $token->value;
         switch ($keyword) {
             case Keyword::AUTOEXTEND_SIZE:
                 $tokenList->passSymbol('=');
@@ -1354,7 +1354,7 @@ class TableCommandsParser
             case Keyword::TABLESPACE:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::TABLESPACE, $tokenList->expectNameOrString()];
+                return [TableOption::TABLESPACE, $tokenList->expectNonReservedNameOrString()];
             case Keyword::UNION:
                 $tokenList->passSymbol('=');
                 $tokenList->expectSymbol('(');
@@ -1574,10 +1574,10 @@ class TableCommandsParser
         if ($tokenList->hasKeyword(Keyword::STORAGE)) {
             $tokenList->expectKeyword(Keyword::ENGINE);
             $tokenList->passSymbol('=');
-            $options[PartitionOption::ENGINE] = $tokenList->expectNameOrString();
+            $options[PartitionOption::ENGINE] = $tokenList->expectNonReservedNameOrString();
         } elseif ($tokenList->hasKeyword(Keyword::ENGINE)) {
             $tokenList->passSymbol('=');
-            $options[PartitionOption::ENGINE] = $tokenList->expectNameOrString();
+            $options[PartitionOption::ENGINE] = $tokenList->expectNonReservedNameOrString();
         }
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {
             $tokenList->passSymbol('=');
@@ -1601,7 +1601,7 @@ class TableCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::TABLESPACE)) {
             $tokenList->passSymbol('=');
-            $options[PartitionOption::TABLESPACE] = $tokenList->expectNameOrString();
+            $options[PartitionOption::TABLESPACE] = $tokenList->expectNonReservedNameOrString();
         }
         if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
             $tokenList->passSymbol('=');

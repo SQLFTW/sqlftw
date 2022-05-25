@@ -95,7 +95,8 @@ class RoutineCommandsParser
             if ($keyword === Keyword::COMMENT) {
                 $comment = $tokenList->expectString();
             } elseif ($keyword === Keyword::LANGUAGE) {
-                $language = $tokenList->expectKeyword(Keyword::SQL);
+                $tokenList->expectKeyword(Keyword::SQL);
+                $language = Keyword::SQL;
             } elseif ($keyword === Keyword::CONTAINS) {
                 $tokenList->expectKeyword(Keyword::SQL);
                 $sideEffects = RoutineSideEffects::get(RoutineSideEffects::CONTAINS_SQL);

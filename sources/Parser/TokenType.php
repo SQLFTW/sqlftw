@@ -23,17 +23,16 @@ use Dogma\Math\PowersOfTwo;
  *    - DOUBLE_HYPHEN_COMMENT - "-- ..."
  *    - DOUBLE_SLASH_COMMENT - "// ..."
  *    - HASH_COMMENT - "# ..."
- * - KEYWORD
- *    - NAME + UNQUOTED_NAME
- *    - RESERVED
- *        - OPERATOR - "AND", "OR" etc.
  * - NAME
- *    - UNQUOTED_NAME - "table1"
+ *    - UNQUOTED_NAME - "table1" etc.
+ *        - KEYWORD - "datetime" etc.
+ *            - RESERVED - "SELECT" etc.
+ *                - OPERATOR - "AND", "OR" etc.
  *    - DOUBLE_QUOTED_STRING - ""table1"" (standard, MySQL in ANSI_STRINGS mode)
  *    - BACKTICK_QUOTED_STRING - "`table1`" (MySQL, PostgreSQL, Sqlite)
  *    - SQUARE_BRACKETED_STRING - "[table1]" (MSSQL, SqLite)
  *    - AT_VARIABLE - "@var", "@@global", "@`192.168.0.1`" (also includes host names)
- *    - CHARSET_INTRODUCER - "_utf8'string'", "n'string'", "N'string'"
+ *    - STRING_INTRODUCER - "date'2020-01-01'", "_utf8'string'", "n'string'", "N'string'"
  * - VALUE
  *    - STRING
  *        - SINGLE_QUOTED_STRING - "'string'" (standard)
@@ -56,7 +55,7 @@ use Dogma\Math\PowersOfTwo;
  * - SYMBOL - ()[]{}.,;
  *    - DELIMITER - default ";"
  *    - DELIMITER_DEFINITION
- *    - OPERATOR - everything else
+ *    - OPERATOR - "+", "||" etc.
  */
 class TokenType extends IntSet
 {

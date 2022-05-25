@@ -19,6 +19,7 @@ use SqlFtw\Sql\Keyword;
 use Throwable;
 use function count;
 use function iterator_to_array;
+use function strtoupper;
 
 class Parser
 {
@@ -148,12 +149,12 @@ class Parser
             return new InvalidCommand($tokenList, $first->exception); // @phpstan-ignore-line LexerException!
         }
 
-        switch ($first->value) {
+        switch (strtoupper($first->value)) {
             case '(':
                 // ({SELECT|TABLE|VALUES} ...) ...
                 return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
             case Keyword::ALTER:
-                $second = $tokenList->expect(TokenType::KEYWORD)->value;
+                $second = strtoupper($tokenList->expect(TokenType::KEYWORD)->value);
                 switch ($second) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
@@ -253,7 +254,7 @@ class Parser
                 // COMMIT
                 return $this->factory->getTransactionCommandsParser()->parseCommit($tokenList->resetPosition($start));
             case Keyword::CREATE:
-                $second = $tokenList->expect(TokenType::KEYWORD)->value;
+                $second = $tokenList->expectKeyword();
                 switch ($second) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
@@ -557,8 +558,7 @@ class Parser
                 // SELECT
                 return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
             case Keyword::SET:
-                $second = $tokenList->get(TokenType::KEYWORD);
-                $second = $second !== null ? $second->value : '';
+                $second = $tokenList->getKeyword();
                 switch ($second) {
                     case Keyword::CHARACTER:
                     case Keyword::CHARSET:
@@ -665,7 +665,7 @@ class Parser
                 // XA RECOVER
                 return $this->factory->getXaTransactionCommandsParser()->parseXa($tokenList->resetPosition($start));
             default:
-                $tokenList->resetPosition($start)->missingAnyKeyword(
+                $tokenList->resetPosition($start + 1)->missingAnyKeyword(
                     Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE,
                     Keyword::CALL, Keyword::CHANGE, Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE,
                     Keyword::DEALLOCATE, Keyword::DELETE, Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE,

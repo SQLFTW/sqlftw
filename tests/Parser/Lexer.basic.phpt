@@ -70,20 +70,20 @@ Assert::invalidToken($tokens[2], T::INVALID, '~^Delimiter can not be a reserved 
 $tokens = $lexer->tokenizeAll(' NULL ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::VALUE, 'NULL', 1);
+Assert::token($tokens[1], T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, 'NULL', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 // BOOL
 $tokens = $lexer->tokenizeAll(' TRUE ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::VALUE, 'TRUE', 1);
+Assert::token($tokens[1], T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, 'TRUE', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = $lexer->tokenizeAll(' FALSE ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::VALUE, 'FALSE', 1);
+Assert::token($tokens[1], T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, 'FALSE', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 6);
 
 // uuid

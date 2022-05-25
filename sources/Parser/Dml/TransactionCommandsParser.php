@@ -76,7 +76,7 @@ class TransactionCommandsParser
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectName();
             } else {
-                $alias = $tokenList->getName();
+                $alias = $tokenList->getNonReservedName();
             }
             $lock = $tokenList->expectMultiKeywordsEnum(LockTableType::class);
             $items[] = new LockTablesItem($table, $lock, $alias);

@@ -177,7 +177,7 @@ class UserCommandsParser
             $retainCurrent = false;
             if ($tokenList->hasKeyword(Keyword::WITH)) {
                 $action = IdentifiedUserAction::SET_PLUGIN;
-                $plugin = $tokenList->expectNameOrString();
+                $plugin = $tokenList->expectNonReservedNameOrString();
                 if ($tokenList->hasKeyword(Keyword::AS)) {
                     $action = IdentifiedUserAction::SET_HASH;
                     $password = $tokenList->expectStringLike();
@@ -747,7 +747,7 @@ class UserCommandsParser
     {
         $roles = [];
         do {
-            $roles[] = $tokenList->expectNameOrString();
+            $roles[] = $tokenList->expectNonReservedNameOrString();
         } while ($tokenList->hasSymbol(','));
 
         return $roles;

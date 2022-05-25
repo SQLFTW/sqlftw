@@ -854,7 +854,7 @@ class ExpressionParser
 
             return $window;
         } else {
-            return $tokenList->expectNameOrString();
+            return $tokenList->expectNonReservedNameOrString();
         }
     }
 
@@ -927,23 +927,9 @@ class ExpressionParser
     {
         $first = $tokenList->expectName();
         if ($tokenList->hasSymbol('.')) {
-            // a reserved keyword may follow after "." unescaped as we know it is a name context
-            $secondToken = $tokenList->get(TokenType::KEYWORD);
-            if ($secondToken !== null) {
-                /** @var string $second */
-                $second = $secondToken->value;
-            } else {
-                $second = $tokenList->expectName();
-            }
+            $second = $tokenList->expectName();
             if ($tokenList->hasSymbol('.')) {
-                // a reserved keyword may follow after "." unescaped as we know it is a name context
-                $thirdToken = $tokenList->get(TokenType::KEYWORD);
-                if ($thirdToken !== null) {
-                    /** @var string $third */
-                    $third = $thirdToken->value;
-                } else {
-                    $third = $tokenList->expectName();
-                }
+                $third = $tokenList->expectName();
 
                 return new ColumnName($third, $second, $first);
             }
@@ -974,22 +960,23 @@ class ExpressionParser
      */
     public function parseLiteralValue(TokenList $tokenList)
     {
-        $token = $tokenList->expectAny(TokenType::VALUE, TokenType::KEYWORD);
+        $token = $tokenList->expect(TokenType::VALUE | TokenType::KEYWORD);
 
         if (($token->type & TokenType::KEYWORD) !== 0) {
-            if ($token->value === Keyword::NULL) {
+            $upper = strtoupper($token->value);
+            if ($upper === Keyword::NULL) {
                 return new ValueLiteral(null);
-            } elseif ($token->value === Keyword::TRUE) {
+            } elseif ($upper === Keyword::TRUE) {
                 return new ValueLiteral(true);
-            } elseif ($token->value === Keyword::FALSE) {
+            } elseif ($upper === Keyword::FALSE) {
                 return new ValueLiteral(false);
-            } elseif ($token->value === Keyword::DEFAULT) {
+            } elseif ($upper === Keyword::DEFAULT) {
                 return new KeywordLiteral(Keyword::DEFAULT);
-            } elseif ($token->value === Keyword::ON || $token->value === Keyword::OFF) {
+            } elseif ($upper === Keyword::ON || $upper === Keyword::OFF) {
                 return new KeywordLiteral($token->value);
-            } elseif ($token->value === Keyword::MAXVALUE) {
+            } elseif ($upper === Keyword::MAXVALUE) {
                 return new KeywordLiteral($token->value);
-            } elseif ($token->value === Keyword::ALL) {
+            } elseif ($upper === Keyword::ALL) {
                 return new KeywordLiteral($token->value);
             } else {
                 $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::MAXVALUE, Keyword::ALL);

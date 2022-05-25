@@ -33,7 +33,7 @@ class CreateFunctionCommandParser
         /** @var UdfReturnDataType $type */
         $type = $tokenList->expectKeywordEnum(UdfReturnDataType::class);
         $tokenList->expectKeyword(Keyword::SONAME);
-        $libName = $tokenList->expectNameOrString();
+        $libName = $tokenList->expectNonReservedNameOrString();
 
         return new CreateFunctionSonameCommand($name, $libName, $type, $aggregate);
     }

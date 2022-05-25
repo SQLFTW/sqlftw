@@ -457,7 +457,7 @@ class Lexer
                     $next = $position < $length ? $string[$position] : '';
                     $numberCanFollow = ($previous->type & T::END) !== 0
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
-                        || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
+                        || (($previous->type & T::KEYWORD) !== 0 && strtoupper($previous->value) === Keyword::DEFAULT);
                     if ($numberCanFollow) {
                         [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, '-');
                         if ($type !== null) {
@@ -776,22 +776,18 @@ class Lexer
 
                     $upper = strtoupper($value);
                     static $types = [Keyword::TIMESTAMP, Keyword::DATE, Keyword::TIME];
-                    if ($upper === Keyword::NULL) {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, $value, null, $condition);
-                    } elseif ($upper === Keyword::TRUE) {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, $value, null, $condition);
-                    } elseif ($upper === Keyword::FALSE) {
-                        yield $previous = new Token(T::KEYWORD | T::VALUE, $start, $value, null, $condition);
+                    if ($upper === Keyword::NULL || $upper === Keyword::TRUE || $upper === Keyword::FALSE) {
+                        yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, $start, $value, null, $condition);
                     } elseif (in_array($upper, $types, true) && ($string[$position] === "'")) {
                         // timestamp'2001-01-01 00:00:00'
                         yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $value, null, $condition);
                     } elseif (isset($this->reservedKey[$upper])) {
                         if (isset($this->operatorKeywordsKey[$upper])) {
-                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::OPERATOR, $start, $value, null, $condition);
+                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, $start, $value, null, $condition);
                         } elseif (isset($this->functionsKey[$upper])) {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
                         } else {
-                            yield $previous = new Token(T::KEYWORD | T::RESERVED, $start, $value, null, $condition);
+                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
                         }
                     } elseif (isset($this->keywordsKey[$upper])) {
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
@@ -799,7 +795,7 @@ class Lexer
                         // _utf8'foo'
                         yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $value, null, $condition);
                     } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
-                        yield new Token(T::KEYWORD, $start, $value, null, $condition);
+                        yield new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
                         $start = $position;
                         $whitespace = $this->parseWhitespace($string, $position, $column, $row);
                         $whitespace = new Token(T::WHITESPACE, $start, $whitespace, null, $condition);

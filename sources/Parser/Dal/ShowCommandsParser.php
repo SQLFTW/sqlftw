@@ -83,8 +83,7 @@ class ShowCommandsParser
         $position = $tokenList->getPosition();
 
         // COUNT is not a keyword in 8.0
-        // todo: case sensitive?
-        if ($tokenList->hasNameOrKeyword(Keyword::COUNT)) {
+        if ($tokenList->hasName(Keyword::COUNT)) {
             $tokenList->expectSymbol('(');
             $tokenList->expectOperator(Operator::MULTIPLY);
             $tokenList->expectSymbol(')');
@@ -615,7 +614,7 @@ class ShowCommandsParser
     {
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new ShowSlaveStatusCommand($channel);
@@ -629,7 +628,7 @@ class ShowCommandsParser
         $tokenList->expectKeyword(Keyword::STATUS);
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new ShowReplicaStatusCommand($channel);

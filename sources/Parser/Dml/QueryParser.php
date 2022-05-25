@@ -290,9 +290,9 @@ class QueryParser
                 }
             }
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectNameOrString();
+                $alias = $tokenList->expectNonReservedNameOrString();
             } else {
-                $alias = $tokenList->getName();
+                $alias = $tokenList->getNonReservedName();
                 if ($alias === null) {
                     $alias = $tokenList->getString();
                 }
@@ -496,7 +496,7 @@ class QueryParser
             $variables = [];
             do {
                 /** @var string $variable */
-                $variable = $tokenList->expectAny(TokenType::AT_VARIABLE, TokenType::UNQUOTED_NAME)->value;
+                $variable = $tokenList->expect(TokenType::AT_VARIABLE | TokenType::UNQUOTED_NAME)->value;
                 $variables[] = $variable;
             } while ($tokenList->hasSymbol(','));
 
@@ -528,7 +528,7 @@ class QueryParser
      */
     public function parseWindow(TokenList $tokenList): WindowSpecification
     {
-        $name = $tokenList->getName();
+        $name = $tokenList->getNonReservedName();
 
         $partitionBy = $orderBy = $frame = null;
         if ($tokenList->hasKeywords(Keyword::PARTITION, Keyword::BY)) {

@@ -383,7 +383,7 @@ class CompoundStatementParser
                     $type = ConditionType::get(ConditionType::SQL_STATE);
                     $value = $tokenList->getUnsignedInt();
                     if ($value === null) {
-                        $value = $tokenList->expectNameOrString();
+                        $value = $tokenList->expectNonReservedNameOrString();
                     }
                 } else {
                     $value = $tokenList->getName();
@@ -415,7 +415,7 @@ class CompoundStatementParser
                 $tokenList->passKeyword(Keyword::VALUE);
                 $value = $tokenList->getUnsignedInt();
                 if ($value === null) {
-                    $value = $tokenList->expectNameOrString();
+                    $value = $tokenList->expectNonReservedNameOrString();
                 }
             } else {
                 $value = $tokenList->expectUnsignedInt();
@@ -578,7 +578,7 @@ class CompoundStatementParser
         if ($condition === null) {
             $tokenList->expectKeyword(Keyword::SQLSTATE);
             $tokenList->passKeyword(Keyword::VALUE);
-            $condition = $tokenList->expectNameOrString();
+            $condition = $tokenList->expectNonReservedNameOrString();
         }
         $items = [];
         if ($tokenList->hasKeyword(Keyword::SET)) {

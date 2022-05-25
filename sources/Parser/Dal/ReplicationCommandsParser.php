@@ -165,7 +165,7 @@ class ReplicationCommandsParser
 
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new ChangeMasterToCommand($options, $channel);
@@ -281,7 +281,7 @@ class ReplicationCommandsParser
 
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new ChangeReplicationSourceToCommand($options, $channel);
@@ -413,7 +413,7 @@ class ReplicationCommandsParser
         $all = $tokenList->hasKeyword(Keyword::ALL);
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new ResetSlaveCommand($all, $channel);
@@ -431,7 +431,7 @@ class ReplicationCommandsParser
         $all = $tokenList->hasKeyword(Keyword::ALL);
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new ResetReplicaCommand($all, $channel);
@@ -557,7 +557,7 @@ class ReplicationCommandsParser
 
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new StartSlaveCommand($user, $password, $defaultAuth, $pluginDir, $until, $threadTypes, $channel);
@@ -678,7 +678,7 @@ class ReplicationCommandsParser
         }
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new StopSlaveCommand($ioThread, $sqlThread, $channel);
@@ -717,7 +717,7 @@ class ReplicationCommandsParser
         }
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-            $channel = $tokenList->expectNameOrString();
+            $channel = $tokenList->expectNonReservedNameOrString();
         }
 
         return new StopReplicaCommand($ioThread, $sqlThread, $channel);
