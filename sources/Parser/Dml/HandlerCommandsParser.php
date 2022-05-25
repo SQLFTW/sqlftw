@@ -72,7 +72,7 @@ class HandlerCommandsParser
                 $values = [];
                 $tokenList->expectSymbol('(');
                 do {
-                    $values[] = $this->expressionParser->parseLiteralValue($tokenList);
+                    $values[] = $this->expressionParser->parseLiteral($tokenList);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }

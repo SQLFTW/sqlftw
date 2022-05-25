@@ -34,9 +34,6 @@ class Parser
     /** @var ParserFactory */
     private $factory;
 
-    /** @var TokenList - debug info */
-    private $lastTokenList;
-
     public function __construct(PlatformSettings $settings, ?Lexer $lexer = null)
     {
         $this->settings = $settings;
@@ -133,8 +130,6 @@ class Parser
      */
     public function parseTokenList(TokenList $tokenList): Command
     {
-        $this->lastTokenList = $tokenList;
-
         $start = $tokenList->getPosition();
         $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT | TokenType::TEST_CODE | TokenType::STRING_INTRODUCER);
 

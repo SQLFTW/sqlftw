@@ -45,7 +45,6 @@ class PreparedCommandsParser
         if ($tokenList->hasKeyword(Keyword::USING)) {
             $variables = [];
             do {
-                /** @var string $variable */
                 $variable = $tokenList->expect(TokenType::AT_VARIABLE)->value;
                 $variables[] = $variable;
             } while ($tokenList->hasSymbol(','));
@@ -65,7 +64,6 @@ class PreparedCommandsParser
 
         $variable = $tokenList->get(TokenType::AT_VARIABLE);
         if ($variable !== null) {
-            /** @var string $statement */
             $statement = $variable->value;
         } else {
             $statement = $tokenList->expectString();

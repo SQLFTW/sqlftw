@@ -218,10 +218,11 @@ class QueryParser
 
         $tokenList->expectKeyword(Keyword::SELECT);
 
+        // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [
             Keyword::ALL, Keyword::DISTINCT, Keyword::DISTINCTROW, Keyword::HIGH_PRIORITY, Keyword::STRAIGHT_JOIN,
             Keyword::SQL_SMALL_RESULT, Keyword::SQL_BIG_RESULT, Keyword::SQL_BUFFER_RESULT, Keyword::SQL_CACHE,
-            Keyword::SQL_NO_CACHE, Keyword::SQL_CALC_FOUND_ROWS
+            Keyword::SQL_NO_CACHE, Keyword::SQL_CALC_FOUND_ROWS,
         ];
         $distinct = null;
         $options = [];
@@ -240,7 +241,7 @@ class QueryParser
                     }
                     $distinct = SelectDistinctOption::get($keyword);
                     break;
-                case Keyword::HIGH_PRIORITY>
+                case Keyword::HIGH_PRIORITY:
                     $options[SelectOption::HIGH_PRIORITY] = true;
                     break;
                 case Keyword::STRAIGHT_JOIN:
@@ -456,9 +457,9 @@ class QueryParser
             $orderBy = $this->expressionParser->parseOrderBy($tokenList);
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $tokenList->expectUnsignedInt();
+            $limit = (int) $tokenList->expectUnsignedInt();
             if ($parseOffset && $tokenList->hasKeyword(Keyword::OFFSET)) {
-                $offset = $tokenList->expectUnsignedInt();
+                $offset = (int) $tokenList->expectUnsignedInt();
             }
         }
         if ($tokenList->hasKeyword(Keyword::INTO)) {
@@ -495,7 +496,6 @@ class QueryParser
         } else {
             $variables = [];
             do {
-                /** @var string $variable */
                 $variable = $tokenList->expect(TokenType::AT_VARIABLE | TokenType::UNQUOTED_NAME)->value;
                 $variables[] = $variable;
             } while ($tokenList->hasSymbol(','));

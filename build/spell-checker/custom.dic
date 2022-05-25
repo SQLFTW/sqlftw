@@ -11,17 +11,21 @@ dgray
 dll
 enums
 euc
+jp
 fk
 fn
 fsp
 geostd
 getters
 hexadec
+hwm
 iso
+innochecksum
 jis
 keybcs
 mixin
 mysqlbinlog
+ndbinfo
 nul
 num
 parens
@@ -66,9 +70,11 @@ introducer
 keyring
 leakproof
 login
+lookups
 matchers
 ok
 ordinality
+prefetch
 preload
 preorder
 preparable
@@ -217,3 +223,8 @@ xmlpi
 xmlroot
 xmlserialize
 zstd
+
+# vars
+INNODB_FIL_MAKE_PAGE_DIRTY_DEBUG
+innodb_fil_make_page_dirty_debug
+ndb_autoincrement_prefetch_sz

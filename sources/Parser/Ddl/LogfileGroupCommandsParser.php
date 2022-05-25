@@ -88,7 +88,7 @@ class LogfileGroupCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
             $tokenList->passSymbol('=');
-            $nodeGroup = $tokenList->expectInt();
+            $nodeGroup = (int) $tokenList->expectInt();
         }
         $wait = $tokenList->hasKeyword(Keyword::WAIT);
         if ($tokenList->hasKeyword(Keyword::COMMENT)) {

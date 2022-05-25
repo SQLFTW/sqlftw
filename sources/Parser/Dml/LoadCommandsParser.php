@@ -12,12 +12,15 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadPriority;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
+use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\QualifiedName;
 
 class LoadCommandsParser
 {
@@ -86,7 +89,7 @@ class LoadCommandsParser
     }
 
     /**
-     * @return mixed[]
+     * @return array{LoadPriority|null, bool, string, DuplicateOption|null, QualifiedName, non-empty-array<string>|null, Charset|null}
      */
     private function parseOptions(TokenList $tokenList, bool $parsePartitions): array
     {
@@ -120,13 +123,13 @@ class LoadCommandsParser
     }
 
     /**
-     * @return mixed[]
+     * @return array{int|null, non-empty-array<string>|null, non-empty-array<string, ExpressionNode>|null}
      */
     private function parseRowsAndFields(TokenList $tokenList): array
     {
         $ignoreRows = null;
         if ($tokenList->hasKeyword(Keyword::IGNORE)) {
-            $ignoreRows = $tokenList->expectUnsignedInt();
+            $ignoreRows = (int) $tokenList->expectUnsignedInt();
             $tokenList->expectAnyKeyword(Keyword::LINES, Keyword::ROWS);
         }
 
@@ -134,7 +137,7 @@ class LoadCommandsParser
         if ($tokenList->hasSymbol('(')) {
             $fields = [];
             do {
-                $fields[] = $tokenList->getName();
+                $fields[] = $tokenList->expectName();
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }

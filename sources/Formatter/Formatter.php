@@ -16,7 +16,9 @@ use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
 use SqlFtw\Platform\PlatformSettings;
-use SqlFtw\Sql\Expression\KeywordLiteral;
+use SqlFtw\Sql\Expression\AllLiteral;
+use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlSerializable;
 use function array_map;
@@ -70,12 +72,12 @@ class Formatter
     }
 
     /**
-     * @param non-empty-array<string|KeywordLiteral> $names
+     * @param non-empty-array<string|AllLiteral|PrimaryLiteral> $names
      */
     public function formatNamesList(array $names, string $separator = ', '): string
     {
         return implode($separator, array_map(function ($name): string {
-            return $name instanceof KeywordLiteral ? $name->getValue() : $this->formatName($name);
+            return $name instanceof Literal ? $name->getValue() : $this->formatName($name);
         }, $names));
     }
 

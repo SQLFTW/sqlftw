@@ -23,11 +23,11 @@ class ParserHelper
     /**
      * @param int|string|null $version
      */
-    public static function getParserFactory(?string $platform = null, $version = null): ParserFactory
+    public static function getParserFactory(?string $platform = null, $version = null, ?string $delimiter = null): ParserFactory
     {
         $platform = Platform::get($platform ?? Platform::MYSQL, $version);
 
-        $settings = new PlatformSettings($platform);
+        $settings = new PlatformSettings($platform, $delimiter);
         $settings->setQuoteAllNames(false);
 
         $lexer = new Lexer($settings, true, true);

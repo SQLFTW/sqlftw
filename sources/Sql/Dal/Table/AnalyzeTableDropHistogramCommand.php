@@ -13,12 +13,11 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\QualifiedName;
 
-
 class AnalyzeTableDropHistogramCommand implements DalTableCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<QualifiedName> */
+    /** @var QualifiedName */
     private $name;
 
     /** @var non-empty-array<string> */
@@ -37,9 +36,6 @@ class AnalyzeTableDropHistogramCommand implements DalTableCommand
         $this->local = $local;
     }
 
-    /**
-     * @return QualifiedName
-     */
     public function getName(): QualifiedName
     {
         return $this->name;
@@ -64,7 +60,7 @@ class AnalyzeTableDropHistogramCommand implements DalTableCommand
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->name)
+        $result .= ' TABLE ' . $this->name->serialize($formatter)
             . ' DROP HISTOGRAM ON ' . $formatter->formatNamesList($this->columns);
 
         return $result;

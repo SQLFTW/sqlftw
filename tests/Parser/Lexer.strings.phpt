@@ -13,14 +13,52 @@ require '../bootstrap.php';
 $settings = new PlatformSettings(Platform::get(Platform::MYSQL, '5.7'));
 $lexer = new Lexer($settings, true, true);
 
-// KEYWORD
+// OPERATOR
+$tokens = $lexer->tokenizeAll(' AND ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, 'AND', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 4);
+
+$tokens = $lexer->tokenizeAll(' and ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, 'and', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 4);
+
+// RESERVED
 $tokens = $lexer->tokenizeAll(' SELECT ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::RESERVED, 'SELECT', 1);
+Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, 'SELECT', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
+$tokens = $lexer->tokenizeAll(' select ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, 'select', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
+
+// KEYWORD
+$tokens = $lexer->tokenizeAll(' JOIN ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, 'JOIN', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
+
+$tokens = $lexer->tokenizeAll(' join ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, 'join', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
+
 // UNQUOTED_NAME
+$tokens = $lexer->tokenizeAll(' NAME1 ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::NAME | T::UNQUOTED_NAME, 'NAME1', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 6);
+
 $tokens = $lexer->tokenizeAll(' name1 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
@@ -138,10 +176,17 @@ Assert::token($tokens[2], T::NAME | T::AT_VARIABLE, '@name2', 6);
 Assert::token($tokens[3], T::WHITESPACE, ' ', 12);
 
 
-// CHARSET_INTRODUCER
+// STRING_INTRODUCER
 $tokens = $lexer->tokenizeAll(" _utf8'string1' ");
 Assert::count($tokens, 4);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::NAME | T::STRING_INTRODUCER, 'utf8', 1);
+Assert::token($tokens[1], T::NAME | T::STRING_INTRODUCER, '_utf8', 1);
 Assert::token($tokens[2], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, 'string1', 6);
 Assert::token($tokens[3], T::WHITESPACE, ' ', 15);
+
+$tokens = $lexer->tokenizeAll(" date'2020-01-01' ");
+Assert::count($tokens, 4);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::NAME | T::STRING_INTRODUCER, 'date', 1);
+Assert::token($tokens[2], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, '2020-01-01', 5);
+Assert::token($tokens[3], T::WHITESPACE, ' ', 17);

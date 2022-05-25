@@ -275,13 +275,13 @@ class ShowCommandsParser
             $logName = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::FROM)) {
-            $offset = $tokenList->expectUnsignedInt();
+            $offset = (int) $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $tokenList->expectUnsignedInt();
+            $limit = (int) $tokenList->expectUnsignedInt();
             if ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
-                $limit = $tokenList->getUnsignedInt();
+                $limit = (int) $tokenList->expectUnsignedInt();
             }
         }
 
@@ -426,10 +426,10 @@ class ShowCommandsParser
     {
         $limit = $offset = null;
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $tokenList->expectUnsignedInt();
+            $limit = (int) $tokenList->expectUnsignedInt();
             if ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
-                $limit = $tokenList->expectUnsignedInt();
+                $limit = (int) $tokenList->expectUnsignedInt();
             }
         }
 
@@ -571,12 +571,12 @@ class ShowCommandsParser
         $query = $limit = $offset = null;
         if ($tokenList->hasKeyword(Keyword::FOR)) {
             $tokenList->expectKeyword(Keyword::QUERY);
-            $query = $tokenList->expectUnsignedInt();
+            $query = (int) $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $tokenList->expectUnsignedInt();
+            $limit = (int) $tokenList->expectUnsignedInt();
             if ($tokenList->hasKeyword(Keyword::OFFSET)) {
-                $offset = $tokenList->expectUnsignedInt();
+                $offset = (int) $tokenList->expectUnsignedInt();
             }
         }
 
@@ -594,13 +594,13 @@ class ShowCommandsParser
             $logName = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::FROM)) {
-            $from = $tokenList->expectUnsignedInt();
+            $from = (int) $tokenList->expectUnsignedInt();
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $tokenList->expectUnsignedInt();
+            $limit = (int) $tokenList->expectUnsignedInt();
             if ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
-                $limit = $tokenList->expectUnsignedInt();
+                $limit = (int) $tokenList->expectUnsignedInt();
             }
         }
 
@@ -716,10 +716,10 @@ class ShowCommandsParser
     {
         $limit = $offset = null;
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $tokenList->expectUnsignedInt();
+            $limit = (int) $tokenList->expectUnsignedInt();
             if ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
-                $limit = $tokenList->expectUnsignedInt();
+                $limit = (int) $tokenList->expectUnsignedInt();
             }
         }
 

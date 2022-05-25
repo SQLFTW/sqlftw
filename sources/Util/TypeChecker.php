@@ -14,6 +14,7 @@ use Dogma\Str;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function class_exists;
+use function ctype_digit;
 use function explode;
 use function get_class;
 use function gettype;
@@ -105,9 +106,11 @@ class TypeChecker
             case BaseType::CHAR:
                 return is_string($value);
             case BaseType::SIGNED:
-                return is_int($value);
+                // 64bit uint may be represented as string
+                return is_int($value) || (is_string($value) && preg_match('~^(?:0|-?[1-9][0-9]*)$~', $value) !== 0);
             case BaseType::UNSIGNED:
-                return is_int($value) && $value >= 0;
+                // 64bit uint may be represented as string
+                return (is_int($value) && $value >= 0) || (is_string($value) && ctype_digit($value));
             case BaseType::FLOAT:
                 return is_float($value);
             case BaseType::DECIMAL:

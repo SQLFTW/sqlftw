@@ -49,7 +49,7 @@ class PlatformSettings
 
     public function __construct(
         Platform $platform,
-        string $delimiter = ';',
+        ?string $delimiter = null,
         ?Charset $charset = null,
         ?Mode $mode = null,
         bool $quoteAllNames = true,
@@ -57,6 +57,9 @@ class PlatformSettings
         bool $verboseOutput = true,
         bool $optionalEquals = true
     ) {
+        if ($delimiter === null) {
+            $delimiter = ';';
+        }
         $this->platform = $platform;
         $this->delimiter = $delimiter;
         $this->charset = $charset;

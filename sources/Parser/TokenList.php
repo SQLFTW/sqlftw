@@ -17,9 +17,10 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
-use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\SizeLiteral;
+use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -28,13 +29,9 @@ use SqlFtw\Sql\UserName;
 use function array_values;
 use function call_user_func;
 use function count;
-use function ctype_digit;
 use function explode;
 use function implode;
 use function in_array;
-use function is_bool;
-use function is_float;
-use function is_string;
 use function ltrim;
 use function preg_match;
 use function strtoupper;
@@ -402,75 +399,65 @@ class TokenList
 
     // numbers ---------------------------------------------------------------------------------------------------------
 
-    public function expectUnsignedInt(): int
+    public function expectUnsignedInt(): string
     {
-        /** @var int $int */
-        $int = $this->expect(TokenType::UINT)->value;
-
-        return $int;
+        return $this->expect(TokenType::UINT)->value;
     }
 
-    public function getUnsignedInt(): ?int
+    public function getUnsignedInt(): ?string
     {
         $token = $this->get(TokenType::UINT);
         if ($token === null) {
             return null;
         }
 
-        return (int) $token->value;
+        return $token->value;
     }
 
-    public function expectInt(): int
+    public function expectInt(): string
     {
-        /** @var int $int */
-        $int = $this->expect(TokenType::INT)->value;
-
-        return $int;
+        return $this->expect(TokenType::INT)->value;
     }
 
-    public function expectIntLike(): Literal
+    public function expectIntLike(): ValueLiteral
     {
-        $number = $this->expect(TokenType::NUMBER | TokenType::STRING | TokenType::HEXADECIMAL_LITERAL | TokenType::BINARY_LITERAL);
+        $number = $this->expect(TokenType::INT | TokenType::STRING | TokenType::HEXADECIMAL_LITERAL | TokenType::BINARY_LITERAL);
         $value = $number->value;
-        if (is_float($value)) {
+        if (($number->type & TokenType::STRING) !== 0 && preg_match('~^(?:0|-[1-9][0-9]*)$~', $value) === 0) {
             throw new InvalidValueException('integer', $this);
-        } elseif (($number->type & TokenType::STRING) !== 0 && is_string($value) && !ctype_digit($value)) {
-            throw new InvalidValueException('integer', $this);
-        }
-        if (($number->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
-            return new HexadecimalLiteral((string) $value);
-        } elseif (($number->type & TokenType::BINARY_LITERAL) !== 0) {
-            return new BinaryLiteral((string) $value);
         }
 
-        return new ValueLiteral($value);
+        if (($number->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
+            return new HexadecimalLiteral($value);
+        } elseif (($number->type & TokenType::BINARY_LITERAL) !== 0) {
+            return new BinaryLiteral($value);
+        } else {
+            return new IntLiteral($value);
+        }
     }
 
     public function expectSize(): SizeLiteral
     {
         $token = $this->expect(TokenType::UINT | TokenType::NAME);
         if (($token->type & TokenType::UINT) !== 0) {
-            return new SizeLiteral((string) $token->value);
+            return new SizeLiteral($token->value);
         }
 
-        $value = (string) $token->value;
-        if (preg_match(SizeLiteral::REGEXP, $value) === 0) {
+        if (preg_match(SizeLiteral::REGEXP, $token->value) === 0) {
             throw new InvalidValueException('size', $this);
         }
 
-        return new SizeLiteral($value);
+        return new SizeLiteral($token->value);
     }
 
     public function expectBool(): bool
     {
         // TRUE, FALSE, ON, OFF, 1, 0, Y, N, T, F
         $value = $this->expect(TokenType::VALUE)->value;
-        if (is_bool($value)) {
-            return $value;
-        }
-        if ($value === 1 || $value === 'Y' || $value === 'T' || $value === 'y' || $value === 't') {
+
+        if ($value === '1' || $value === 'Y' || $value === 'T' || $value === 'y' || $value === 't') {
             return true;
-        } elseif ($value === 0 || $value === 'N' || $value === 'F' || $value === 'n' || $value === 'f' || $value === '') {
+        } elseif ($value === '0' || $value === 'N' || $value === 'F' || $value === 'n' || $value === 'f' || $value === '') {
             return false;
         }
 
@@ -481,42 +468,32 @@ class TokenList
 
     public function expectString(): string
     {
-        /** @var string $value */
-        $value = $this->expect(TokenType::STRING)->value;
-
-        return $value;
+        return $this->expect(TokenType::STRING)->value;
     }
 
     public function getString(): ?string
     {
         $token = $this->get(TokenType::STRING);
 
-        /** @var string|null $value */
-        $value = $token !== null ? $token->value : null;
-
-        return $value;
+        return $token !== null ? $token->value : null;
     }
 
-    public function expectStringLike(): Literal
+    public function expectStringLike(): ValueLiteral
     {
         $token = $this->expect(TokenType::STRING | TokenType::HEXADECIMAL_LITERAL);
         $value = $token->value;
+        // todo: BINARY_LITERAL ???
+        // todo: multiline strings ???
         if (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
-            return new HexadecimalLiteral((string) $value);
+            return new HexadecimalLiteral($value);
+        } else {
+            return new StringLiteral([$value]);
         }
-
-        return new ValueLiteral($value);
     }
 
     public function expectNonReservedNameOrString(): string
     {
-        $token = $this->expect(TokenType::NAME | TokenType::STRING, TokenType::RESERVED);
-        /** @var string $value */
-        $value = ($token->type & TokenType::KEYWORD) !== 0
-            ? $token->original ?? $token->value // NAME|KEYWORD is automatically upper-cased
-            : $token->value;
-
-        return $value;
+        return $this->expect(TokenType::NAME | TokenType::STRING, TokenType::RESERVED)->value;
     }
 
     /**
@@ -546,7 +523,7 @@ class TokenList
             throw InvalidTokenException::tokens([TokenType::NAME], $name, $token, $this);
         }
 
-        return (string) $token->value;
+        return $token->value;
     }
 
     public function expectAnyName(string ...$names): string
@@ -557,14 +534,14 @@ class TokenList
             $this->missingAnyKeyword(...$names);
         }
 
-        return (string) $token->value;
+        return $token->value;
     }
 
     public function getName(?string $name = null): ?string
     {
         $token = $this->get(TokenType::NAME, $name);
         if ($token !== null) {
-            return $token->value; // @phpstan-ignore-line string!
+            return $token->value;
         }
 
         return null;
@@ -580,7 +557,7 @@ class TokenList
             throw InvalidTokenException::tokens([TokenType::NAME], $name, $token, $this);
         }
 
-        return $token->original ?? (string) $token->value;
+        return $token->value;
     }
 
     public function getNonKeywordName(?string $name = null): ?string
@@ -595,7 +572,7 @@ class TokenList
             return null;
         }
 
-        return $token->value; // @phpstan-ignore-line string
+        return $token->value;
     }
 
     public function getNonReservedName(?string $name = null): ?string
@@ -610,7 +587,7 @@ class TokenList
             return null;
         }
 
-        return $token->value; // @phpstan-ignore-line string
+        return $token->value;
     }
 
     public function hasName(string $name): bool
@@ -850,7 +827,6 @@ class TokenList
             // a reserved keyword may follow after "." unescaped as we know it is a name context
             $secondToken = $this->get(TokenType::KEYWORD);
             if ($secondToken !== null) {
-                /** @var string $second */
                 $second = $secondToken->value;
             } else {
                 $second = $this->expectName();
@@ -867,7 +843,6 @@ class TokenList
         $name = $this->expectNonReservedNameOrString();
         $token = $this->get(TokenType::AT_VARIABLE);
         if ($token !== null) {
-            /** @var string $host */
             $host = $token->value;
             $token = ltrim($host, '@');
         }

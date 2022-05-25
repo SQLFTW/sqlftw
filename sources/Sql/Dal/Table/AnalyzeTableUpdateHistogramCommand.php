@@ -40,9 +40,6 @@ class AnalyzeTableUpdateHistogramCommand implements DalTableCommand
         $this->local = $local;
     }
 
-    /**
-     * @return QualifiedName
-     */
     public function getName(): QualifiedName
     {
         return $this->name;
@@ -72,7 +69,7 @@ class AnalyzeTableUpdateHistogramCommand implements DalTableCommand
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->name)
+        $result .= ' TABLE ' . $this->name->serialize($formatter)
             . ' UPDATE HISTOGRAM ON ' . $formatter->formatNamesList($this->columns);
         if ($this->buckets !== null) {
             $result .= ' WITH ' . $this->buckets . ' BUCKETS';

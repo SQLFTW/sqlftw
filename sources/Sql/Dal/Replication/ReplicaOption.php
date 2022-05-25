@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Sql\Expression\BaseType;
-use SqlFtw\Sql\Expression\KeywordLiteral;
+use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
@@ -63,7 +63,7 @@ class ReplicaOption extends SqlEnum
         self::SOURCE_USER => BaseType::CHAR,
         self::SOURCE_PASSWORD => BaseType::CHAR,
         self::SOURCE_PORT => BaseType::UNSIGNED,
-        self::PRIVILEGE_CHECKS_USER => UserName::class . '|' . KeywordLiteral::class,
+        self::PRIVILEGE_CHECKS_USER => UserName::class . '|' . NullLiteral::class,
         self::REQUIRE_ROW_FORMAT => BaseType::BOOL,
         self::REQUIRE_TABLE_PRIMARY_KEY_CHECK => ReplicationPrimaryKeyCheckOption::class,
         self::ASSIGN_GTIDS_TO_ANONYMOUS_TRANSACTIONS => ReplicationGtidAssignOption::class,

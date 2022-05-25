@@ -33,7 +33,7 @@ use SqlFtw\Sql\Dal\Replication\StopReplicaCommand;
 use SqlFtw\Sql\Dal\Replication\StopSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\UuidSet;
 use SqlFtw\Sql\Expression\BaseType;
-use SqlFtw\Sql\Expression\KeywordLiteral;
+use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
@@ -119,14 +119,14 @@ class ReplicationCommandsParser
                     $value = $tokenList->expectString();
                     break;
                 case BaseType::UNSIGNED:
-                    $value = $tokenList->expectUnsignedInt();
+                    $value = (int) $tokenList->expectUnsignedInt();
                     break;
                 case BaseType::BOOL:
                     $value = $tokenList->expectBool();
                     break;
-                case UserName::class . '|' . KeywordLiteral::class:
+                case UserName::class . '|' . NullLiteral::class:
                     if ($tokenList->hasKeyword(Keyword::NULL)) {
-                        $value = new KeywordLiteral(Keyword::NULL);
+                        $value = new NullLiteral();
                     } else {
                         $value = $tokenList->expectUserName();
                     }
@@ -135,7 +135,7 @@ class ReplicationCommandsParser
                     $tokenList->expectSymbol('(');
                     $value = [];
                     do {
-                        $value[] = $tokenList->expectUnsignedInt();
+                        $value[] = (int) $tokenList->expectUnsignedInt();
                         if ($tokenList->hasSymbol(')')) {
                             break;
                         } else {
@@ -147,7 +147,6 @@ class ReplicationCommandsParser
                     $uuid = null;
                     $keyword = $tokenList->getAnyKeyword(Keyword::OFF, Keyword::LOCAL);
                     if ($keyword === null) {
-                        /** @var string $uuid */
                         $uuid = $tokenList->expect(TokenType::UUID)->value;
                     }
                     $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
@@ -235,14 +234,14 @@ class ReplicationCommandsParser
                     $value = $tokenList->expectString();
                     break;
                 case BaseType::UNSIGNED:
-                    $value = $tokenList->expectUnsignedInt();
+                    $value = (int) $tokenList->expectUnsignedInt();
                     break;
                 case BaseType::BOOL:
                     $value = $tokenList->expectBool();
                     break;
-                case UserName::class . '|' . KeywordLiteral::class:
+                case UserName::class . '|' . NullLiteral::class:
                     if ($tokenList->hasKeyword(Keyword::NULL)) {
-                        $value = new KeywordLiteral(Keyword::NULL);
+                        $value = new NullLiteral();
                     } else {
                         $value = $tokenList->expectUserName();
                     }
@@ -251,7 +250,7 @@ class ReplicationCommandsParser
                     $tokenList->expectSymbol('(');
                     $value = [];
                     do {
-                        $value[] = $tokenList->expectUnsignedInt();
+                        $value[] = (int) $tokenList->expectUnsignedInt();
                         if ($tokenList->hasSymbol(')')) {
                             break;
                         } else {
@@ -263,7 +262,6 @@ class ReplicationCommandsParser
                     $uuid = null;
                     $keyword = $tokenList->getAnyKeyword(Keyword::OFF, Keyword::LOCAL);
                     if ($keyword === null) {
-                        /** @var string $uuid */
                         $uuid = $tokenList->expect(TokenType::UUID)->value;
                     }
                     $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
@@ -524,14 +522,14 @@ class ReplicationCommandsParser
                 $tokenList->expectSymbol(',');
                 $tokenList->expectKeyword(Keyword::MASTER_LOG_POS);
                 $tokenList->expectOperator(Operator::EQUAL);
-                $until[Keyword::MASTER_LOG_POS] = $tokenList->expectUnsignedInt();
+                $until[Keyword::MASTER_LOG_POS] = (int) $tokenList->expectUnsignedInt();
             } elseif ($tokenList->hasKeyword(Keyword::RELAY_LOG_FILE)) {
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::RELAY_LOG_FILE] = $tokenList->expectString();
                 $tokenList->expectSymbol(',');
                 $tokenList->expectKeyword(Keyword::RELAY_LOG_POS);
                 $tokenList->expectOperator(Operator::EQUAL);
-                $until[Keyword::RELAY_LOG_POS] = $tokenList->expectUnsignedInt();
+                $until[Keyword::RELAY_LOG_POS] = (int) $tokenList->expectUnsignedInt();
             } else {
                 $tokenList->missingAnyKeyword(Keyword::SQL_AFTER_MTS_GAPS, Keyword::SQL_BEFORE_GTIDS, Keyword::SQL_AFTER_GTIDS, Keyword::MASTER_LOG_FILE, Keyword::RELAY_LOG_FILE);
             }
@@ -613,16 +611,14 @@ class ReplicationCommandsParser
 
         $gtids = [];
         do {
-            /** @var string $uuid */
             $uuid = $tokenList->expect(TokenType::UUID)->value;
             $intervals = [];
             $tokenList->expect(TokenType::DOUBLE_COLON);
             do {
-                $start = $tokenList->expectUnsignedInt();
+                $start = (int) $tokenList->expectUnsignedInt();
                 $end = null;
                 if ($tokenList->hasOperator(Operator::MINUS)) {
-                    $end = $tokenList->expectUnsignedInt();
-                    // phpcs:ignore
+                    $end = (int) $tokenList->expectUnsignedInt();
                 }
                 $intervals[] = [$start, $end];
                 if (!$tokenList->has(TokenType::DOUBLE_COLON)) {

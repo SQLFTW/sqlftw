@@ -173,8 +173,10 @@ class ColumnType implements SqlSerializable
     public function addCharset(Charset $charset): self
     {
         if ($this->charset !== null) {
-            // todo: can be defined twice as CHAR(10) BINARY CHARSET BINARY
-            //throw new InvalidDefinitionException('Type already has a charset.');
+            // can be defined twice as CHAR(10) BINARY CHARSET BINARY
+            if (!$this->charset->equalsValue(Charset::BINARY) || !$charset->equalsValue(Charset::BINARY)) {
+                throw new InvalidDefinitionException('Type already has a charset.');
+            }
         }
 
         $that = clone $this;

@@ -390,7 +390,7 @@ class CompoundStatementParser
                     if ($value !== null) {
                         $type = ConditionType::get(ConditionType::CONDITION);
                     } else {
-                        $value = $tokenList->expectUnsignedInt();
+                        $value = (int) $tokenList->expectUnsignedInt();
                         $type = ConditionType::get(ConditionType::ERROR);
                     }
                 }
@@ -418,7 +418,7 @@ class CompoundStatementParser
                     $value = $tokenList->expectNonReservedNameOrString();
                 }
             } else {
-                $value = $tokenList->expectUnsignedInt();
+                $value = (int) $tokenList->expectUnsignedInt();
             }
 
             return new DeclareConditionStatement($name, $value);
@@ -585,7 +585,7 @@ class CompoundStatementParser
             do {
                 $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class)->getValue();
                 $tokenList->expectOperator(Operator::EQUAL);
-                $value = $this->expressionParser->parseLiteralValue($tokenList);
+                $value = $this->expressionParser->parseLiteral($tokenList);
                 $items[$item] = $value;
             } while ($tokenList->hasSymbol(','));
         }

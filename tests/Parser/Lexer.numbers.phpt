@@ -16,61 +16,61 @@ $lexer = new Lexer($settings, true, true);
 $tokens = $lexer->tokenizeAll(' 1 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT | T::UINT, 1, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT | T::UINT, '1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 2);
 
 $tokens = $lexer->tokenizeAll(' 123 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT | T::UINT, 123, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT | T::UINT, '123', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 4);
 
 $tokens = $lexer->tokenizeAll(' +123 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, 123, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '123', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = $lexer->tokenizeAll(' -123 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, -123, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '-123', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = $lexer->tokenizeAll(' --123 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, 123, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '123', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 6);
 
 $tokens = $lexer->tokenizeAll(' ---123 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, -123, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '-123', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
 $tokens = $lexer->tokenizeAll(' ----123 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, 123, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '123', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 $tokens = $lexer->tokenizeAll(' 123.456 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER, 123.456, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '123.456', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 $tokens = $lexer->tokenizeAll(' 123. ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER, 123.0, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '123.0', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = $lexer->tokenizeAll(' .456 ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER, 0.456, 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '0.456', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = $lexer->tokenizeAll(' 1.23e4 ');

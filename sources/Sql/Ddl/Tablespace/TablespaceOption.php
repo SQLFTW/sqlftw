@@ -116,8 +116,8 @@ class TablespaceOption extends SqlEnum
             } elseif ($allowedValues === SizeLiteral::class) {
                 TypeChecker::check($value, SizeLiteral::class);
             } elseif (is_array($allowedValues)) {
-                if (!in_array(strtoupper($value), $allowedValues, true)) {
-                    throw new InvalidDefinitionException("Invalid values '$value' for option $key."); // @phpstan-ignore-line
+                if (!in_array(strtoupper($value), $allowedValues, true)) { // @phpstan-ignore-line string!
+                    throw new InvalidDefinitionException("Invalid values '$value' for option $key."); // @phpstan-ignore-line string!
                 }
             }
             $values[$key] = $value;

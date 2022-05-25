@@ -16,11 +16,11 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCommand;
-use SqlFtw\Sql\Dal\SystemVariable;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\Scope;
+use SqlFtw\Sql\SystemVariable;
 use function ltrim;
 use function strpos;
 use function strtolower;
@@ -68,7 +68,6 @@ class SetCommandParser
                 $variableToken = $tokenList->get(TokenType::AT_VARIABLE);
                 if ($variableToken !== null) {
                     // @
-                    /** @var string $name */
                     $name = $variableToken->value;
                     if (strpos($name, '@@') === 0) {
                         // @@

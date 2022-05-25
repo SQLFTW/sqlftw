@@ -53,9 +53,9 @@ use Dogma\Math\PowersOfTwo;
  *    * OBJECT - OLD, NEW, VALUES
  *    - PLACEHOLDER - "?"
  * - SYMBOL - ()[]{}.,;
- *    - DELIMITER - default ";"
- *    - DELIMITER_DEFINITION
  *    - OPERATOR - "+", "||" etc.
+ * - DELIMITER - default ";"
+ * - DELIMITER_DEFINITION
  */
 class TokenType extends IntSet
 {

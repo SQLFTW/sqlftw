@@ -35,7 +35,8 @@ class RoutineCommandsParser
     /** @var CompoundStatementParser */
     private $compoundStatementParser;
 
-    public function __construct(ExpressionParser $expressionParser, CompoundStatementParser $compoundStatementParser) {
+    public function __construct(ExpressionParser $expressionParser, CompoundStatementParser $compoundStatementParser)
+    {
         $this->expressionParser = $expressionParser;
         $this->compoundStatementParser = $compoundStatementParser;
     }

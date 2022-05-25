@@ -135,7 +135,7 @@ class IndexCommandsParser
                 $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
             } elseif ($keyword === Keyword::KEY_BLOCK_SIZE) {
                 $tokenList->passSymbol('=');
-                $keyBlockSize = $tokenList->expectUnsignedInt();
+                $keyBlockSize = (int) $tokenList->expectUnsignedInt();
             } elseif ($keyword === Keyword::WITH) {
                 $tokenList->expectKeyword(Keyword::PARSER);
                 $withParser = $tokenList->expectName();
@@ -194,7 +194,7 @@ class IndexCommandsParser
                 $part = $tokenList->expectName();
                 $length = null;
                 if ($tokenList->hasSymbol('(')) {
-                    $length = $tokenList->expectUnsignedInt();
+                    $length = (int) $tokenList->expectUnsignedInt();
                     $tokenList->expectSymbol(')');
                 }
                 /** @var Order $order */

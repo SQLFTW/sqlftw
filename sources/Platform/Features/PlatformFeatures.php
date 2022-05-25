@@ -10,12 +10,12 @@
 namespace SqlFtw\Platform\Features;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Sql\Dal\SystemVariable;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SystemVariable;
 use function in_array;
 
 abstract class PlatformFeatures

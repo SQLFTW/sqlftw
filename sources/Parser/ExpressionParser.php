@@ -21,49 +21,57 @@ use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\FileFormat;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
+use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\AssignOperator;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
+use SqlFtw\Sql\Expression\BoolLiteral;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CaseExpression;
 use SqlFtw\Sql\Expression\CastType;
 use SqlFtw\Sql\Expression\CollateExpression;
-use SqlFtw\Sql\Expression\CurlyExpression;
 use SqlFtw\Sql\Expression\ColumnType;
+use SqlFtw\Sql\Expression\CurlyExpression;
+use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalLiteral;
+use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\JsonErrorCondition;
 use SqlFtw\Sql\Expression\JsonTableExistsPathColumn;
 use SqlFtw\Sql\Expression\JsonTableNestedColumns;
 use SqlFtw\Sql\Expression\JsonTableOrdinalityColumn;
 use SqlFtw\Sql\Expression\JsonTablePathColumn;
-use SqlFtw\Sql\Expression\KeywordLiteral;
 use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
-use SqlFtw\Sql\Expression\MultilineString;
+use SqlFtw\Sql\Expression\MaxValueLiteral;
+use SqlFtw\Sql\Expression\NullLiteral;
+use SqlFtw\Sql\Expression\NumberLiteral;
+use SqlFtw\Sql\Expression\OnOffLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\RowExpression;
+use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\TernaryOperator;
 use SqlFtw\Sql\Expression\TimeExpression;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Expression\TimeIntervalUnit;
+use SqlFtw\Sql\Expression\TimeTypeLiteral;
+use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UnaryOperator;
-use SqlFtw\Sql\Expression\ValueLiteral;
+use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\QualifiedName;
-use function count;
 use function explode;
 use function in_array;
 use function is_int;
@@ -80,13 +88,10 @@ class ExpressionParser
 
     private const INT_DATETIME_EXPRESSION = '/^(?:[1-9][0-9])?[0-9]{2}(?:0[1-9]|1[012])(?:0[1-9]|[12][0-9]|3[01])(?:[01][0-9]|2[0-3])(?:[0-5][0-9]){2}$/';
 
-    private const STRING_DATETIME_EXPRESSION = '/^((?:[1-9][0-9])?[0-9]{2}'
-        . self::PUNCTUATION . '(?:0[1-9]|1[012])'
-        . self::PUNCTUATION . '(?:0[1-9]|[12][0-9]|3[01])'
-        . '[ T](?:[01][0-9]|2[0-3])'
-        . self::PUNCTUATION . '(?:[0-5][0-9])'
-        . self::PUNCTUATION . '(?:[0-5][0-9]))'
-        . '(\\.[0-9]+)?$/';
+    private const STRING_DATETIME_EXPRESSION = '/^'
+        . '((?:[1-9][0-9])?[0-9]{2}' . self::PUNCTUATION . '(?:0[1-9]|1[012])' . self::PUNCTUATION . '(?:0[1-9]|[12][0-9]|3[01])' // date
+        . '[ T](?:[01][0-9]|2[0-3])' . self::PUNCTUATION . '[0-5][0-9]' . self::PUNCTUATION . '[0-5][0-9])' // time
+        . '(\\.[0-9]+)?$/'; // ms
 
     /** @var callable(): QueryParser */
     private $queryParserProxy;
@@ -153,10 +158,10 @@ class ExpressionParser
             return new BinaryOperator($left, [$operator], $right);
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
-            $keyword = $tokenList->expectAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
+            $keyword = strtoupper($tokenList->expectAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN));
             $right = $keyword === Keyword::UNKNOWN
-                ? new KeywordLiteral(Keyword::UNKNOWN)
-                : new ValueLiteral($keyword === Keyword::TRUE);
+                ? new UnknownLiteral()
+                : new BoolLiteral($keyword === Keyword::TRUE);
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         } elseif ($this->assignAllowed && $left instanceof Identifier && $left->isUserVariable() && $tokenList->hasOperator(Operator::ASSIGN)) {
@@ -222,7 +227,20 @@ class ExpressionParser
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
             $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
-            $right = new ValueLiteral($keyword);
+            switch ($keyword) {
+                case Keyword::TRUE:
+                    $right = new BoolLiteral(true);
+                    break;
+                case Keyword::FALSE:
+                    $right = new BoolLiteral(false);
+                    break;
+                case Keyword::NULL:
+                    $right = new NullLiteral();
+                    break;
+                default:
+                    $right = new UnknownLiteral();
+                    break;
+            }
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         } else {
@@ -481,7 +499,6 @@ class ExpressionParser
         } else {
             $variable = $tokenList->get(TokenType::AT_VARIABLE);
             if ($variable !== null) {
-                /** @var string $variableName */
                 $variableName = $variable->value;
                 // variable
                 if (in_array(strtoupper($variableName), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
@@ -596,9 +613,6 @@ class ExpressionParser
                     continue;
                 }
                 switch ($type) {
-                    case null:
-                        $arguments[] = new KeywordLiteral($keyword);
-                        continue 3;
                     case ExpressionNode::class:
                         $arguments[$keyword] = $this->parseExpression($tokenList);
                         continue 3;
@@ -614,6 +628,11 @@ class ExpressionParser
                     case Literal::class:
                         $arguments[$keyword] = $this->parseLiteral($tokenList);
                         continue 3;
+                    case null:
+                        if (in_array($keyword, [Keyword::DATE, Keyword::TIME, Keyword::DATETIME], true)) {
+                            $arguments[] = new TimeTypeLiteral($keyword);
+                            continue 3;
+                        }
                     default:
                         throw new ShouldNotHappenException('Unsupported named parameter type.');
                 }
@@ -727,7 +746,7 @@ class ExpressionParser
 
         $expression = $this->parseExpression($tokenList);
         $tokenList->expectSymbol(',');
-        $path = $tokenList->expectString();
+        $path = new StringLiteral([$tokenList->expectString()]);
 
         $tokenList->expectKeyword(Keyword::COLUMNS);
         $columns = $this->parseJsonTableColumns($tokenList);
@@ -737,7 +756,7 @@ class ExpressionParser
         return new FunctionCall(new BuiltInFunction(BuiltInFunction::JSON_TABLE), [$expression, $path, Keyword::COLUMNS => $columns]);
     }
 
-    private function parseJsonTableColumns(TokenList $tokenList): ListExpression
+    private function parseJsonTableColumns(TokenList $tokenList): Parentheses
     {
         $tokenList->expectSymbol('(');
         $columns = [];
@@ -774,7 +793,7 @@ class ExpressionParser
 
         $tokenList->expectSymbol(')');
 
-        return new ListExpression($columns);
+        return new Parentheses(new ListExpression($columns));
     }
 
     /**
@@ -897,14 +916,13 @@ class ExpressionParser
      */
     private function parseMatch(TokenList $tokenList): MatchExpression
     {
+        $columns = [];
         if ($tokenList->hasSymbol('(')) {
-            $columns = [];
             do {
                 $columns[] = $this->parseColumnName($tokenList);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         } else {
-            $columns = [];
             do {
                 $columns[] = $this->parseColumnName($tokenList);
             } while ($tokenList->hasSymbol(','));
@@ -950,61 +968,46 @@ class ExpressionParser
 
     public function parseLiteral(TokenList $tokenList): Literal
     {
-        $literal = $this->parseLiteralValue($tokenList);
-
-        return $literal instanceof Literal ? $literal : new ValueLiteral($literal);
-    }
-
-    /**
-     * @return string|int|float|bool|Literal
-     */
-    public function parseLiteralValue(TokenList $tokenList)
-    {
         $token = $tokenList->expect(TokenType::VALUE | TokenType::KEYWORD);
 
         if (($token->type & TokenType::KEYWORD) !== 0) {
             $upper = strtoupper($token->value);
             if ($upper === Keyword::NULL) {
-                return new ValueLiteral(null);
+                return new NullLiteral();
             } elseif ($upper === Keyword::TRUE) {
-                return new ValueLiteral(true);
+                return new BoolLiteral(true);
             } elseif ($upper === Keyword::FALSE) {
-                return new ValueLiteral(false);
+                return new BoolLiteral(false);
             } elseif ($upper === Keyword::DEFAULT) {
-                return new KeywordLiteral(Keyword::DEFAULT);
+                return new DefaultLiteral();
             } elseif ($upper === Keyword::ON || $upper === Keyword::OFF) {
-                return new KeywordLiteral($token->value);
+                return new OnOffLiteral($upper === Keyword::ON);
             } elseif ($upper === Keyword::MAXVALUE) {
-                return new KeywordLiteral($token->value);
+                return new MaxValueLiteral();
             } elseif ($upper === Keyword::ALL) {
-                return new KeywordLiteral($token->value);
+                return new AllLiteral();
             } else {
                 $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::MAXVALUE, Keyword::ALL);
             }
         } elseif (($token->type & TokenType::BINARY_LITERAL) !== 0) {
-            /** @var string $value */
-            $value = $token->value;
-
-            return new BinaryLiteral($value);
+            return new BinaryLiteral($token->value);
         } elseif (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
-            /** @var string $value */
-            $value = $token->value;
-
-            return new HexadecimalLiteral($value);
+            return new HexadecimalLiteral($token->value);
         } elseif (($token->type & TokenType::STRING) !== 0) {
-            /** @var string $value */
-            $value = $token->value;
             /** @var non-empty-array<string> $values */
-            $values = [$value];
+            $values = [$token->value];
             while (($next = $tokenList->getString()) !== null) {
                 $values[] = $next;
             }
-            return count($values) === 1 ? $values[0] : new MultilineString($values);
+            return new StringLiteral($values);
+        } elseif (($token->type & TokenType::UINT) !== 0) {
+            return new UintLiteral($token->value);
+        } elseif (($token->type & TokenType::INT) !== 0) {
+            return new IntLiteral($token->value);
+        } elseif (($token->type & TokenType::NUMBER) !== 0) {
+            return new NumberLiteral($token->value);
         } else {
-            /** @var string|int|float $value */
-            $value = $token->value;
-
-            return $value;
+            throw new ShouldNotHappenException("Unknown token '$token->value' of type $token->type.");
         }
     }
 
@@ -1059,13 +1062,13 @@ class ExpressionParser
      */
     public function parseLimitAndOffset(TokenList $tokenList): array
     {
-        $limit = $tokenList->expectUnsignedInt();
+        $limit = (int) $tokenList->expectUnsignedInt();
         $offset = null;
         if ($tokenList->hasKeyword(Keyword::OFFSET)) {
-            $offset = $tokenList->expectUnsignedInt();
+            $offset = (int) $tokenList->expectUnsignedInt();
         } elseif ($tokenList->hasSymbol(',')) {
             $offset = $limit;
-            $limit = $tokenList->expectUnsignedInt();
+            $limit = (int) $tokenList->expectUnsignedInt();
         }
 
         return [$limit, $offset];
@@ -1265,16 +1268,16 @@ class ExpressionParser
 
         if ($type->hasLength()) {
             if ($tokenList->hasSymbol('(')) {
-                $length = $tokenList->expectUnsignedInt();
+                $length = (int) $tokenList->expectUnsignedInt();
                 $decimals = null;
                 if ($type->hasDecimals()) {
                     if ($type->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
                         if ($tokenList->hasSymbol(',')) {
-                            $decimals = $tokenList->expectUnsignedInt();
+                            $decimals = (int) $tokenList->expectUnsignedInt();
                         }
                     } else {
                         $tokenList->expectSymbol(',');
-                        $decimals = $tokenList->expectUnsignedInt();
+                        $decimals = (int) $tokenList->expectUnsignedInt();
                     }
                 }
                 $tokenList->expectSymbol(')');
@@ -1293,7 +1296,7 @@ class ExpressionParser
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         } elseif ($type->hasFsp() && $tokenList->hasSymbol('(')) {
-            $size = [$tokenList->expectUnsignedInt()];
+            $size = [(int) $tokenList->expectUnsignedInt()];
             $tokenList->expectSymbol(')');
         }
 
@@ -1322,7 +1325,7 @@ class ExpressionParser
 
         if ($type->isSpatial()) {
             if ($tokenList->hasKeyword(Keyword::SRID)) {
-                $srid = $tokenList->expectUnsignedInt();
+                $srid = (int) $tokenList->expectUnsignedInt();
             }
         }
 

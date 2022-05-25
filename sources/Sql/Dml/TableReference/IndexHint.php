@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\KeywordLiteral;
+use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\SqlSerializable;
 
 class IndexHint implements SqlSerializable
@@ -24,11 +24,11 @@ class IndexHint implements SqlSerializable
     /** @var IndexHintTarget|null */
     private $target;
 
-    /** @var non-empty-array<string|KeywordLiteral> */
+    /** @var non-empty-array<string|PrimaryLiteral> */
     private $indexes;
 
     /**
-     * @param non-empty-array<string|KeywordLiteral> $indexes
+     * @param non-empty-array<string|PrimaryLiteral> $indexes
      */
     public function __construct(IndexHintAction $action, ?IndexHintTarget $target, array $indexes)
     {
@@ -48,7 +48,7 @@ class IndexHint implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string|KeywordLiteral>
+     * @return non-empty-array<string|PrimaryLiteral>
      */
     public function getIndexes(): array
     {

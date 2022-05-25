@@ -98,10 +98,12 @@ class TablespaceCommandsParser
 
         $name = $tokenList->expectName();
 
+        // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [
             Keyword::ADD, Keyword::FILE_BLOCK_SIZE, Keyword::ENCRYPTION, Keyword::USE, Keyword::EXTENT_SIZE,
             Keyword::INITIAL_SIZE, Keyword::AUTOEXTEND_SIZE, Keyword::MAX_SIZE, Keyword::NODEGROUP, Keyword::WAIT,
-            Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE];
+            Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE,
+        ];
         $options = [];
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
             switch ($keyword) {
@@ -139,7 +141,7 @@ class TablespaceCommandsParser
                     break;
                 case Keyword::NODEGROUP:
                     $tokenList->passSymbol('=');
-                    $options[TablespaceOption::NODEGROUP] = $tokenList->expectUnsignedInt();
+                    $options[TablespaceOption::NODEGROUP] = (int) $tokenList->expectUnsignedInt();
                     break;
                 case Keyword::WAIT:
                     $options[TablespaceOption::WAIT] = true;

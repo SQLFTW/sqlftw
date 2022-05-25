@@ -46,7 +46,7 @@ class CompoundStatement implements Statement
         }
         $result .= "BEGIN \n";
         if ($this->statements !== []) {
-            $result .= $formatter->formatSerializablesList($this->statements, ";\n");
+            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
         }
         $result .= ' END';
 

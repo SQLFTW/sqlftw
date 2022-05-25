@@ -27,14 +27,11 @@ class CastType implements ExpressionNode
 
     public const UNSIGNED = true;
 
-    /** @var BaseType */
+    /** @var BaseType|null */
     private $type;
 
     /** @var non-empty-array<int>|null */
     private $size;
-
-    /** @var non-empty-array<string>|null */
-    private $values;
 
     /** @var bool|null */
     private $sign;
@@ -53,7 +50,6 @@ class CastType implements ExpressionNode
 
     /**
      * @param non-empty-array<int>|null $size
-     * @param non-empty-array<string>|null $values
      */
     public function __construct(
         ?BaseType $type,
@@ -126,7 +122,7 @@ class CastType implements ExpressionNode
         }
     }
 
-    public function getBaseType(): BaseType
+    public function getBaseType(): ?BaseType
     {
         return $this->type;
     }
@@ -173,7 +169,9 @@ class CastType implements ExpressionNode
             $result = 'UNSIGNED';
         }
 
-        $result .= $this->type->serialize($formatter);
+        if ($this->type !== null) {
+            $result .= $this->type->serialize($formatter);
+        }
 
         if ($this->size !== null) {
             $result .= '(' . implode(', ', $this->size) . ')';

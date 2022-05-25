@@ -8,33 +8,33 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // ALTER LOGFILE GROUP logfile_group ADD UNDOFILE 'file_name' [INITIAL_SIZE [=] size] [WAIT] ENGINE [=] engine_name
-Assert::parse("ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' ENGINE = eng1");
-Assert::parse("ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' ENGINE eng1", "ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' ENGINE = eng1"); // [=]
-Assert::parse("ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' INITIAL_SIZE = 123 ENGINE = eng1");
-Assert::parse("ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' WAIT ENGINE = eng1");
+Assert::parse("ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' ENGINE = InnoDB");
+Assert::parse("ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' ENGINE InnoDB", "ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' ENGINE = InnoDB"); // [=]
+Assert::parse("ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' INITIAL_SIZE = 123 ENGINE = InnoDB");
+Assert::parse("ALTER LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' WAIT ENGINE = InnoDB");
 
 
 // CREATE LOGFILE GROUP logfile_group ADD UNDOFILE 'undo_file' ... ENGINE [=] engine_name
-Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' ENGINE = eng1");
+Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' ENGINE = InnoDB");
 
 // [INITIAL_SIZE [=] initial_size]
-Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' INITIAL_SIZE = 123 ENGINE = eng1");
+Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' INITIAL_SIZE = 123 ENGINE = InnoDB");
 
 // [UNDO_BUFFER_SIZE [=] undo_buffer_size]
-Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' UNDO_BUFFER_SIZE = 123 ENGINE = eng1");
+Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' UNDO_BUFFER_SIZE = 123 ENGINE = InnoDB");
 
 // [REDO_BUFFER_SIZE [=] redo_buffer_size]
-Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' REDO_BUFFER_SIZE = 123 ENGINE = eng1");
+Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' REDO_BUFFER_SIZE = 123 ENGINE = InnoDB");
 
 // [NODEGROUP [=] nodegroup_id]
-Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' NODEGROUP = 123 ENGINE = eng1");
+Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' NODEGROUP = 123 ENGINE = InnoDB");
 
 // [WAIT]
-Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' WAIT ENGINE = eng1");
+Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' WAIT ENGINE = InnoDB");
 
 // [COMMENT [=] comment_text]
-Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' COMMENT = 'com1' ENGINE = eng1");
+Assert::parse("CREATE LOGFILE GROUP grp1 ADD UNDOFILE 'file.log' COMMENT = 'com1' ENGINE = InnoDB");
 
 
 // DROP LOGFILE GROUP logfile_group ENGINE [=] engine_name
-Assert::parse("DROP LOGFILE GROUP grp1 ENGINE = eng1");
+Assert::parse("DROP LOGFILE GROUP grp1 ENGINE = InnoDB");

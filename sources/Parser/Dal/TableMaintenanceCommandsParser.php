@@ -11,8 +11,8 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Dal\Table\AnalyzeTablesCommand;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableDropHistogramCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTablesCommand;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableUpdateHistogramCommand;
 use SqlFtw\Sql\Dal\Table\ChecksumTableCommand;
 use SqlFtw\Sql\Dal\Table\CheckTableCommand;
@@ -20,6 +20,7 @@ use SqlFtw\Sql\Dal\Table\CheckTableOption;
 use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
 use SqlFtw\Sql\Dal\Table\RepairTableCommand;
 use SqlFtw\Sql\Keyword;
+use function count;
 
 class TableMaintenanceCommandsParser
 {
@@ -54,17 +55,19 @@ class TableMaintenanceCommandsParser
         if (count($tables) === 1) {
             if ($tokenList->hasKeywords(Keyword::UPDATE, Keyword::HISTOGRAM, Keyword::ON)) {
                 do {
+                    /** @var non-empty-array<string> $columns */
                     $columns[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
 
                 if ($tokenList->hasKeyword(Keyword::WITH)) {
-                    $buckets = $tokenList->expectUnsignedInt();
+                    $buckets = (int) $tokenList->expectUnsignedInt();
                     $tokenList->expectKeyword(Keyword::BUCKETS);
                 }
 
                 return new AnalyzeTableUpdateHistogramCommand($tables[0], $columns, $buckets, $local);
             } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::HISTOGRAM, Keyword::ON)) {
                 do {
+                    /** @var non-empty-array<string> $columns */
                     $columns[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
 

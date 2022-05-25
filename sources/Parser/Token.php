@@ -21,7 +21,7 @@ final class Token
     /** @var int */
     public $position;
 
-    /** @var string|int|float|bool|null */
+    /** @var string */
     public $value;
 
     /** @var string|null */
@@ -33,13 +33,10 @@ final class Token
     /** @var LexerException|null */
     public $exception;
 
-    /**
-     * @param string|int|float|bool|null $value
-     */
     public function __construct(
         int $type,
         int $position,
-        $value = null,
+        string $value,
         ?string $original = null,
         ?string $condition = null,
         ?LexerException $exception = null

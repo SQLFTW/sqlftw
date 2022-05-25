@@ -147,6 +147,8 @@ class TableOptionsList
                     return $option . $valueSeparator . ($value ? "'Y'" : "'N'");
                 } elseif ($option === TableOption::UNION) {
                     return $option . $valueSeparator . '(' . $formatter->formatSerializablesList($value) . ')';
+                } elseif ($option === TableOption::AUTO_INCREMENT) {
+                    return $option . $valueSeparator . $value;
                 } else {
                     return $option . $valueSeparator . $formatter->formatValue($value);
                 }

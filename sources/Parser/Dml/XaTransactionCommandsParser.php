@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dml;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\XaTransaction\XaCommitCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaEndCommand;
@@ -98,7 +97,7 @@ class XaTransactionCommandsParser
         if ($tokenList->hasSymbol(',')) {
             $branch = $tokenList->expectString();
             if ($tokenList->hasSymbol(',')) {
-                $format = $tokenList->expectUnsignedInt();
+                $format = (int) $tokenList->expectUnsignedInt();
             }
         }
 

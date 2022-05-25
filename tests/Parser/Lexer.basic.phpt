@@ -51,20 +51,20 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 2);
 $tokens = $lexer->tokenizeAll(' ; ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::SYMBOL | T::DELIMITER, ';', 1);
+Assert::token($tokens[1], T::DELIMITER, ';', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 2);
 
 // DELIMITER_DEFINITION, SEMICOLON
 $tokens = $lexer->tokenizeAll("DELIMITER ;;\n;");
 Assert::count($tokens, 5);
-Assert::token($tokens[0], T::KEYWORD, Keyword::DELIMITER, 0);
+Assert::token($tokens[0], T::KEYWORD | T::NAME | T::UNQUOTED_NAME, Keyword::DELIMITER, 0);
 Assert::token($tokens[1], T::WHITESPACE, ' ', 9);
-Assert::token($tokens[2], T::SYMBOL | T::DELIMITER_DEFINITION, ';;', 10);
+Assert::token($tokens[2], T::DELIMITER_DEFINITION, ';;', 10);
 Assert::token($tokens[3], T::WHITESPACE, "\n", 12);
 Assert::token($tokens[4], T::SYMBOL, ';', 13);
 
 $tokens = $lexer->tokenizeAll('DELIMITER SELECT');
-Assert::invalidToken($tokens[2], T::INVALID, '~^Delimiter can not be a reserved word~', 10);
+Assert::invalidToken($tokens[2], T::DELIMITER_DEFINITION | T::INVALID, '~^Delimiter can not be a reserved word~', 10);
 
 // NULL
 $tokens = $lexer->tokenizeAll(' NULL ');

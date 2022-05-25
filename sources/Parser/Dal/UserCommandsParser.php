@@ -262,7 +262,7 @@ class UserCommandsParser
         $resourceOptions = [];
         $type = $tokenList->expectKeywordEnum(UserResourceOptionType::class);
         do {
-            $value = $tokenList->expectUnsignedInt();
+            $value = (int) $tokenList->expectUnsignedInt();
             $resourceOptions[] = new UserResourceOption($type, $value);
             $type = $tokenList->getKeywordEnum(UserResourceOptionType::class);
         } while ($type !== null);
@@ -299,21 +299,21 @@ class UserCommandsParser
             if ($keyword === Keyword::EXPIRE) {
                 $value = $tokenList->getAnyKeyword(Keyword::DEFAULT, Keyword::NEVER, Keyword::INTERVAL);
                 if ($value === Keyword::INTERVAL) {
-                    $value = $tokenList->expectInt();
+                    $value = (int) $tokenList->expectInt();
                     $tokenList->expectKeyword(Keyword::DAY);
                 }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE), $value);
             } elseif ($keyword === Keyword::HISTORY) {
                 $value = Keyword::DEFAULT;
                 if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    $value = $tokenList->expectInt();
+                    $value = (int) $tokenList->expectInt();
                 }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_HISTORY), $value);
             } elseif ($keyword === Keyword::REUSE) {
                 $tokenList->expectKeyword(Keyword::INTERVAL);
                 $value = Keyword::DEFAULT;
                 if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    $value = $tokenList->expectInt();
+                    $value = (int) $tokenList->expectInt();
                     $tokenList->expectKeyword(Keyword::DAY);
                 }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_REUSE_INTERVAL), $value);
