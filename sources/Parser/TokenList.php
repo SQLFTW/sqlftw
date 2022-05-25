@@ -645,19 +645,13 @@ class TokenList
 
     public function getKeyword(?string $keyword = null): ?string
     {
-        $position = $this->position;
-
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
-            $this->position = $position;
-
             return null;
         }
         $value = strtoupper($token->value);
         if ($keyword !== null && $value !== $keyword) {
-            $this->position = $position;
-
             return null;
         }
         $this->position++;

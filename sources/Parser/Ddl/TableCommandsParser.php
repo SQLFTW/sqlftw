@@ -1566,47 +1566,55 @@ class TableCommandsParser
      *     [TABLESPACE [=] tablespace_name]
      *     [NODEGROUP [=] number]             // NDB only
      *
-     * @return non-empty-array<string, int|string>
+     * @return non-empty-array<string, int|string>|null
      */
     private function parsePartitionOptions(TokenList $tokenList): ?array
     {
         $options = [];
 
-        if ($tokenList->hasKeyword(Keyword::STORAGE)) {
-            $tokenList->expectKeyword(Keyword::ENGINE);
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::ENGINE] = $tokenList->expectNonReservedNameOrString();
-        } elseif ($tokenList->hasKeyword(Keyword::ENGINE)) {
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::ENGINE] = $tokenList->expectNonReservedNameOrString();
-        }
-        if ($tokenList->hasKeyword(Keyword::COMMENT)) {
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::COMMENT] = $tokenList->expectString();
-        }
-        if ($tokenList->hasKeywords(Keyword::DATA, Keyword::DIRECTORY)) {
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::DATA_DIRECTORY] = $tokenList->expectString();
-        }
-        if ($tokenList->hasKeywords(Keyword::INDEX, Keyword::DIRECTORY)) {
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::INDEX_DIRECTORY] = $tokenList->expectString();
-        }
-        if ($tokenList->hasKeyword(Keyword::MAX_ROWS)) {
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::MAX_ROWS] = (int) $tokenList->expectUnsignedInt();
-        }
-        if ($tokenList->hasKeyword(Keyword::MIN_ROWS)) {
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::MIN_ROWS] = (int) $tokenList->expectUnsignedInt();
-        }
-        if ($tokenList->hasKeyword(Keyword::TABLESPACE)) {
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::TABLESPACE] = $tokenList->expectNonReservedNameOrString();
-        }
-        if ($tokenList->hasKeyword(Keyword::NODEGROUP)) {
-            $tokenList->passSymbol('=');
-            $options[PartitionOption::NODEGROUP] = (int) $tokenList->expectUnsignedInt();
+        $keywords = [
+            Keyword::STORAGE, Keyword::ENGINE, Keyword::COMMENT, Keyword::DATA, Keyword::INDEX, Keyword::MAX_ROWS,
+            Keyword::MIN_ROWS, Keyword::TABLESPACE, Keyword::NODEGROUP,
+        ];
+        while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
+            switch ($keyword) {
+                case Keyword::STORAGE:
+                    $tokenList->expectKeyword(Keyword::ENGINE);
+                case Keyword::ENGINE:
+                    $tokenList->passSymbol('=');
+                    $options[PartitionOption::ENGINE] = $tokenList->expectNonReservedNameOrString();
+                    break;
+                case Keyword::COMMENT:
+                    $tokenList->passSymbol('=');
+                    $options[PartitionOption::COMMENT] = $tokenList->expectString();
+                    break;
+                case Keyword::DATA:
+                    $tokenList->expectKeyword(Keyword::DIRECTORY);
+                    $tokenList->passSymbol('=');
+                    $options[PartitionOption::DATA_DIRECTORY] = $tokenList->expectString();
+                    break;
+                case Keyword::INDEX:
+                    $tokenList->expectKeyword(Keyword::DIRECTORY);
+                    $tokenList->passSymbol('=');
+                    $options[PartitionOption::INDEX_DIRECTORY] = $tokenList->expectString();
+                    break;
+                case Keyword::MAX_ROWS:
+                    $tokenList->passSymbol('=');
+                    $options[PartitionOption::MAX_ROWS] = (int) $tokenList->expectUnsignedInt();
+                    break;
+                case Keyword::MIN_ROWS:
+                    $tokenList->passSymbol('=');
+                    $options[PartitionOption::MIN_ROWS] = (int) $tokenList->expectUnsignedInt();
+                    break;
+                case Keyword::TABLESPACE:
+                    $tokenList->passSymbol('=');
+                    $options[PartitionOption::TABLESPACE] = $tokenList->expectNonReservedNameOrString();
+                    break;
+                case Keyword::NODEGROUP:
+                    $tokenList->passSymbol('=');
+                    $options[PartitionOption::NODEGROUP] = (int) $tokenList->expectUnsignedInt();
+                    break;
+            }
         }
 
         return $options !== [] ? $options : null;
