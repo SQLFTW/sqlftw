@@ -29,6 +29,7 @@ use function array_keys;
 use function array_merge;
 use function array_values;
 use function count;
+use function ctype_digit;
 use function explode;
 use function implode;
 use function in_array;
@@ -1139,11 +1140,8 @@ class Lexer
         $position += $len;
         $column += $len;
 
-        if ($value === (string) (int) $value) {
-            $type |= T::INT;
-            if ($value >= 0) {
-                $type |= T::UINT;
-            }
+        if (ctype_digit($value)) {
+            $type |= T::INT | T::UINT;
 
             return new Token($type, $startAt, $value, $orig, $condition);
         }
@@ -1161,7 +1159,7 @@ class Lexer
         }
         $value = str_replace('.e', '.0e', $value);
 
-        if ($value === (string) (int) $value && $exp === '' && strpos($base, '.') === false) {
+        if (preg_match('~^0|-?[1-9][0-9]*$~', $value) !== 0) {
             $type |= TokenType::INT;
         }
 
