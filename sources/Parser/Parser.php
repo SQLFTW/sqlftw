@@ -16,6 +16,7 @@ use Generator;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\MultiStatement;
 use Throwable;
 use function count;
 use function iterator_to_array;
@@ -60,24 +61,49 @@ class Parser
             if ($tokenList === null) {
                 continue;
             }
-            try {
-                $command = $this->parseTokenList($tokenList);
-                if (!$command instanceof TesterCommand) {
-                    $tokenList->expectEnd();
+
+            $commands = [];
+            do {
+                try {
+                    $commands[] = $command = $this->parseTokenList($tokenList);
+                } catch (ParserException $e) {
+                    yield new InvalidCommand($tokenList, $e);
+
+                    continue 2;
+                } catch (Throwable $e) {
+                    yield new InvalidCommand($tokenList, $e);
+
+                    continue 2;
                 }
-            } catch (ParserException $e) {
-                yield new InvalidCommand($tokenList, $e);
 
-                continue;
-            } catch (Throwable $e) {
-                yield new InvalidCommand($tokenList, $e);
+                // todo: sniff for SET NAMES, SET CHARSET, SET sql_mode, multi-statement mode ...
 
-                continue;
-            }
+                if ($tokenList->isFinished()) {
+                    if (count($commands) === 1) {
+                        yield $command;
+                        continue 2;
+                    } else {
+                        yield new MultiStatement($commands);
+                        continue 2;
+                    }
+                } else {
+                    try {
+                        if (!$this->settings->multiStatements()) {
+                            $tokenList->expectEnd();
+                        }
 
-            // todo: sniff for SET NAMES, SET CHARSET, SET sql_mode ...
+                        $tokenList->expectSymbol(';');
+                    } catch (ParserException $e) {
+                        yield new InvalidCommand($tokenList, $e);
 
-            yield $command;
+                        continue 2;
+                    } catch (Throwable $e) {
+                        yield new InvalidCommand($tokenList, $e);
+
+                        continue 2;
+                    }
+                }
+            } while (true);
         }
     }
 

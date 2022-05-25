@@ -111,7 +111,24 @@ class TokenList
     {
         $this->doAutoSkip();
 
-        return $this->position >= count($this->tokens);
+        if ($this->position >= count($this->tokens)) {
+            return true;
+        }
+
+        // check that all remaining tokens can be ignored
+        for ($n = $this->position; $n < count($this->tokens); $n++) {
+            $token = $this->tokens[$n];
+            if (($token->type & $this->autoSkip) !== 0) {
+                continue;
+            } elseif (($token->type & T::SYMBOL) !== 0 && $token->value === ';') {
+                // trailing ;
+                continue;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function getPosition(): int

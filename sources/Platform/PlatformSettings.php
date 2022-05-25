@@ -30,6 +30,9 @@ class PlatformSettings
     private $mode;
 
     /** @var bool */
+    private $multiStatements;
+
+    /** @var bool */
     private $quoteAllNames;
 
     /** @var bool */
@@ -52,6 +55,7 @@ class PlatformSettings
         ?string $delimiter = null,
         ?Charset $charset = null,
         ?Mode $mode = null,
+        bool $multiStatements = false,
         bool $quoteAllNames = true,
         bool $canonicalizeTypes = true,
         bool $verboseOutput = true,
@@ -64,6 +68,7 @@ class PlatformSettings
         $this->delimiter = $delimiter;
         $this->charset = $charset;
         $this->mode = $mode ?? $platform->getDefaultMode();
+        $this->multiStatements = $multiStatements;
         $this->quoteAllNames = $quoteAllNames;
         $this->canonicalizeTypes = $canonicalizeTypes;
         $this->verboseOutput = $verboseOutput;
@@ -108,6 +113,16 @@ class PlatformSettings
     public function setSqlMode(SqlMode $sqlMode): void
     {
         $this->mode = $sqlMode->getMode();
+    }
+
+    public function multiStatements(): bool
+    {
+        return $this->multiStatements;
+    }
+
+    public function setMultiStatements(bool $value): void
+    {
+        $this->multiStatements = $value;
     }
 
     public function setQuoteAllNames(bool $quote): void
