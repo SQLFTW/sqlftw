@@ -128,12 +128,15 @@ class Platform
 
     public function interpretOptionalComment(string $versionId): bool
     {
-        $maria = $versionId[0] === 'M';
+        $maria = $versionId !== '' && $versionId[0] === 'M';
         $versionId = (int) ltrim($versionId, 'M');
 
         if ($this->name !== self::MYSQL && $this->name !== self::MARIA) {
             // no support for optional comments
             return false;
+        } elseif ($versionId === '') {
+            // MySQL and Maria only, no version limit
+            return true;
         } elseif ($maria && $this->name !== self::MARIA) {
             // Maria only
             return false;

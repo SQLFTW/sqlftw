@@ -370,7 +370,7 @@ class Lexer
                         if ($condition !== null) {
                             throw new LexerException('Comment inside conditional comment', $position, $string);
                         }
-                        if (preg_match('~^[Mm]?!(?:[0-9]{5,6})?~', $string, $m, 0, $position) === 1) {
+                        if (preg_match('~^[Mm]?!(?:[0-9]{5,6})?~', substr($string, $position, 10), $m) === 1) {
                             $versionId = strtoupper(str_replace('!', '', $m[0]));
                             if ($this->platform->interpretOptionalComment($versionId)) {
                                 $condition = $versionId;
