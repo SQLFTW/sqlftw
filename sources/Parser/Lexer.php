@@ -441,9 +441,9 @@ class Lexer
                 case '.':
                     $next = $position < $length ? $string[$position] : '';
                     if (isset(self::$numbersKey[$next])) {
-                        [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, '.');
-                        if ($type !== null) {
-                            yield $previous = new Token($type, $start, $value, $orig, $condition, $exception);
+                        $token = $this->parseNumber($string, $position, $column, $row, '.', $condition);
+                        if ($token !== null) {
+                            yield $previous = $token;
                             break;
                         }
                     }
@@ -455,9 +455,9 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && strtoupper($previous->value) === Keyword::DEFAULT);
                     if ($numberCanFollow) {
-                        [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, '-');
-                        if ($type !== null) {
-                            yield $previous = new Token($type, $start, $value, $orig, $condition, $exception);
+                        $token = $this->parseNumber($string, $position, $column, $row, '-', $condition);
+                        if ($token !== null) {
+                            yield $previous = $token;
                             break;
                         }
                     }
@@ -540,9 +540,9 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($numberCanFollow && isset(self::$numbersKey[$next])) {
-                        [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, '+');
-                        if ($type !== null) {
-                            yield $previous = new Token($type, $start, $value, $orig, $condition, $exception);
+                        $token = $this->parseNumber($string, $position, $column, $row, '+', $condition);
+                        if ($token !== null) {
+                            yield $previous = $token;
                             break;
                         }
                     }
@@ -623,9 +623,9 @@ class Lexer
                         yield $previous = new Token(T::VALUE | T::STRING, $start, $ip, null, $condition);
                         break;
                     }
-                    [$type, $value, $orig, $exception] = $this->parseNumber($string, $position, $column, $row, $char);
-                    if ($type !== null) {
-                        yield $previous = new Token($type, $start, $value, $orig, $condition, $exception);
+                    $token = $this->parseNumber($string, $position, $column, $row, $char, $condition);
+                    if ($token !== null) {
+                        yield $previous = $token;
                         break;
                     }
                     // continue
@@ -1030,11 +1030,9 @@ class Lexer
         return $string;
     }
 
-    /**
-     * @return array{int|null, string, string|null, LexerException|null} ($type, $value, $original, $exception)
-     */
-    private function parseNumber(string &$string, int &$position, int &$column, int &$row, string $start): array
+    private function parseNumber(string &$string, int &$position, int &$column, int &$row, string $start, ?string $condition): ?Token
     {
+        $startAt = $position;
         $type = T::VALUE | T::NUMBER;
         $length = strlen($string);
         $offset = 0;
@@ -1082,7 +1080,7 @@ class Lexer
                 }
             }
             if (!$isNumeric) {
-                return [null, '', null, null];
+                return null;
             }
             if ($position + $offset >= $length) {
                 break;
@@ -1111,13 +1109,17 @@ class Lexer
                             $expComplete = true;
                         } else {
                             if (trim($exp, 'e+-') === '' && strpos($base, '.') !== false) {
-                                return [$type | T::INVALID, $base . $exp, $base . $exp, new LexerException('Invalid number exponent ' . $exp, $position, $string)];
+                                $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
+
+                                return new Token($type | T::INVALID, $startAt, $base . $exp, $base . $exp, $condition, $exception);
                             }
                             break;
                         }
                     }
                     if (!$expComplete) {
-                        return [$type | T::INVALID, $base . $exp, $base . $exp, new LexerException('Invalid number exponent ' . $exp, $position, $string)];
+                        $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
+
+                        return new Token($type | T::INVALID, $startAt, $base . $exp, $base . $exp, $condition, $exception);
                     }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                     $isNumeric = false;
@@ -1127,7 +1129,7 @@ class Lexer
         } while (false); // @phpstan-ignore-line
 
         if (!$isNumeric) {
-            return [null, '', null, null];
+            return null;
         }
 
         $orig = $base . $exp;
@@ -1143,7 +1145,7 @@ class Lexer
                 $type |= T::UINT;
             }
 
-            return [$type, $value, $orig, null];
+            return new Token($type, $startAt, $value, $orig, $condition);
         }
 
         // value clean-up: --+.123E+2 => 0.123e2
@@ -1163,7 +1165,7 @@ class Lexer
             $type |= TokenType::INT;
         }
 
-        return [$type, $value, $orig, null];
+        return new Token($type, $startAt, $value, $orig, $condition);
     }
 
 }
