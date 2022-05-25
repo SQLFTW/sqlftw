@@ -477,23 +477,13 @@ class Lexer
                                 $column++;
                             }
                         }
-                        if ($this->settings->mysqlTestMode && $value === '--perl') {
-                            // Perl code blocks from MySQL tests
-                            $end = strpos($string, "\nEOF\n", $position);
-                            if ($end === false) {
-                                throw new LexerException('End of code block not found. Starts with: ' . substr($string, $position - 6, 100), $position, $string);
-                            } else {
-                                $block = substr($string, $position - 6, $end - $position + 10);
-                            }
-                            $position += strlen($block) - 6;
-                            $row += Str::count($block, "\n");
-
-                            yield new Token(T::TEST_CODE, $start, $block, null, $condition);
-                        } elseif ($this->settings->mysqlTestMode && Str::startsWith(strtolower($value), '--write_file')) {
-                            $parts = explode(' ', $value);
-                            if (count($parts) === 3 && preg_match('~^[A-Z_]+$~', $parts[2]) !== false) {
-                                $end = strpos($string, "\n$parts[2]\n", $position);
-                                $endLen = strlen($parts[2]) + 1;
+                        if ($this->settings->mysqlTestMode && preg_match('~^-- ?(perl|write_file|append_file)~i', strtolower($value)) !== 0) {
+                            // Perl code or file blocks from MySQL tests
+                            $parts = explode(' ', str_replace('-- ', '--', $value));
+                            $index = preg_match('~-- ?perl~i', $value) !== 0 ? 1 : 2;
+                            if (count($parts) === $index + 1 && preg_match('~^[A-Z_]+$~', $parts[$index]) !== false) {
+                                $end = strpos($string, "\n$parts[$index]\n", $position);
+                                $endLen = strlen($parts[$index]) + 1;
                             } else {
                                 $end = strpos($string, "\nEOF\n", $position);
                                 $endLen = 4;
