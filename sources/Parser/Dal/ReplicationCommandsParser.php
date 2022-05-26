@@ -19,6 +19,7 @@ use SqlFtw\Sql\Dal\Replication\ChangeReplicationFilterCommand;
 use SqlFtw\Sql\Dal\Replication\ChangeReplicationSourceToCommand;
 use SqlFtw\Sql\Dal\Replication\PurgeBinaryLogsCommand;
 use SqlFtw\Sql\Dal\Replication\ReplicaOption;
+use SqlFtw\Sql\Dal\Replication\ReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\ReplicationFilter;
 use SqlFtw\Sql\Dal\Replication\ReplicationGtidAssignOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationThreadType;
@@ -27,6 +28,7 @@ use SqlFtw\Sql\Dal\Replication\ResetReplicaCommand;
 use SqlFtw\Sql\Dal\Replication\ResetSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\SlaveOption;
 use SqlFtw\Sql\Dal\Replication\StartGroupReplicationCommand;
+use SqlFtw\Sql\Dal\Replication\StartReplicaCommand;
 use SqlFtw\Sql\Dal\Replication\StartSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\StopGroupReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\StopReplicaCommand;
@@ -481,6 +483,7 @@ class ReplicationCommandsParser
      *     UNTIL {
      *         {SQL_BEFORE_GTIDS | SQL_AFTER_GTIDS} = gtid_set
      *       | MASTER_LOG_FILE = 'log_name', MASTER_LOG_POS = log_pos
+     *       | SOURCE_LOG_FILE = 'log_name', SOURCE_LOG_POS = log_pos
      *       | RELAY_LOG_FILE = 'log_name', RELAY_LOG_POS = log_pos
      *       | SQL_AFTER_MTS_GAPS
      *     }
@@ -490,10 +493,13 @@ class ReplicationCommandsParser
      *
      * channel_option:
      *     FOR CHANNEL channel
+     *
+     * @return StartReplicaCommand|StartSlaveCommand
      */
-    public function parseStartSlave(TokenList $tokenList): StartSlaveCommand
+    public function parseStartReplicaOrSlave(TokenList $tokenList): ReplicationCommand
     {
-        $tokenList->expectKeywords(Keyword::START, Keyword::SLAVE);
+        $tokenList->expectKeyword(Keyword::START);
+        $which = $tokenList->expectAnyKeyword(Keyword::SLAVE, Keyword::REPLICA);
 
         $threadTypes = null;
         $threadType = $tokenList->getKeywordEnum(ReplicationThreadType::class);
@@ -523,6 +529,13 @@ class ReplicationCommandsParser
                 $tokenList->expectKeyword(Keyword::MASTER_LOG_POS);
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::MASTER_LOG_POS] = (int) $tokenList->expectUnsignedInt();
+            } elseif ($tokenList->hasKeyword(Keyword::SOURCE_LOG_FILE)) {
+                $tokenList->expectOperator(Operator::EQUAL);
+                $until[Keyword::SOURCE_LOG_FILE] = $tokenList->expectString();
+                $tokenList->expectSymbol(',');
+                $tokenList->expectKeyword(Keyword::SOURCE_LOG_POS);
+                $tokenList->expectOperator(Operator::EQUAL);
+                $until[Keyword::SOURCE_LOG_POS] = (int) $tokenList->expectUnsignedInt();
             } elseif ($tokenList->hasKeyword(Keyword::RELAY_LOG_FILE)) {
                 $tokenList->expectOperator(Operator::EQUAL);
                 $until[Keyword::RELAY_LOG_FILE] = $tokenList->expectString();
@@ -558,7 +571,11 @@ class ReplicationCommandsParser
             $channel = $tokenList->expectNonReservedNameOrString();
         }
 
-        return new StartSlaveCommand($user, $password, $defaultAuth, $pluginDir, $until, $threadTypes, $channel);
+        if ($which === Keyword::SLAVE) {
+            return new StartSlaveCommand($user, $password, $defaultAuth, $pluginDir, $until, $threadTypes, $channel);
+        } else {
+            return new StartReplicaCommand($user, $password, $defaultAuth, $pluginDir, $until, $threadTypes, $channel);
+        }
     }
 
     /**

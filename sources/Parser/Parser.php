@@ -621,13 +621,14 @@ class Parser
                 // SHUTDOWN
                 return $this->factory->getShutdownCommandParser()->parseShutdown($tokenList->resetPosition($start));
             case Keyword::START:
-                $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::TRANSACTION);
+                $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA, Keyword::TRANSACTION);
                 if ($second === Keyword::GROUP_REPLICATION) {
                     // START GROUP_REPLICATION
                     return $this->factory->getReplicationCommandsParser()->parseStartGroupReplication($tokenList->resetPosition($start));
-                } elseif ($second === Keyword::SLAVE) {
+                } elseif ($second === Keyword::SLAVE || $second === Keyword::REPLICA) {
                     // START SLAVE
-                    return $this->factory->getReplicationCommandsParser()->parseStartSlave($tokenList->resetPosition($start));
+                    // START REPLICA
+                    return $this->factory->getReplicationCommandsParser()->parseStartReplicaOrSlave($tokenList->resetPosition($start));
                 } else {
                     // START TRANSACTION
                     return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->resetPosition($start));
