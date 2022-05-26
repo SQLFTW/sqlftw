@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Charset;
 use function bindec;
 use function chr;
 use function hexdec;
@@ -28,14 +29,23 @@ class HexadecimalLiteral implements ValueLiteral
     /** @var string */
     private $value;
 
-    public function __construct(string $value)
+    /** @var Charset|null */
+    private $charset;
+
+    public function __construct(string $value, ?Charset $charset = null)
     {
         $this->value = $value;
+        $this->charset = $charset;
     }
 
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getCharset(): ?Charset
+    {
+        return $this->charset;
     }
 
     public function asString(): string
@@ -57,7 +67,12 @@ class HexadecimalLiteral implements ValueLiteral
 
     public function serialize(Formatter $formatter): string
     {
-        return '0x' . $this->value;
+        $result = '';
+        if ($this->charset !== null) {
+            $result .= '_' . $this->charset->serialize($formatter) . ' ';
+        }
+
+        return $result . '0x' . $this->value;
     }
 
 }

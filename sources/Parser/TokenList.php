@@ -496,9 +496,31 @@ class TokenList
         return $token !== null ? $token->value : null;
     }
 
+    /**
+     * @return StringLiteral|HexadecimalLiteral
+     */
     public function expectStringLike(): ValueLiteral
     {
         $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL);
+        $value = $token->value;
+        // todo: BINARY_LITERAL ???
+        // todo: multiline strings ???
+        if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
+            return new HexadecimalLiteral($value);
+        } else {
+            return new StringLiteral([$value]);
+        }
+    }
+
+    /**
+     * @return StringLiteral|HexadecimalLiteral|null
+     */
+    public function getStringLike(): ?ValueLiteral
+    {
+        $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL);
+        if ($token === null) {
+            return null;
+        }
         $value = $token->value;
         // todo: BINARY_LITERAL ???
         // todo: multiline strings ???

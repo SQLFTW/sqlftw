@@ -532,9 +532,13 @@ class ExpressionParser
                 } else {
                     $expression = new DatetimeLiteral($string);
                 }
-            } elseif ($name1[0] === '_' && Charset::isValid(substr($name1, 1)) && ($string = $tokenList->getString()) !== null) {
+            } elseif ($name1[0] === '_' && Charset::isValid(substr($name1, 1)) && ($string = $tokenList->getStringLike()) !== null) {
                 // _charset literal
-                $expression = new StringLiteral([$string], Charset::get(substr($name1, 1)));
+                if ($string instanceof StringLiteral) {
+                    $expression = new StringLiteral([$string->getValue()], Charset::get(substr($name1, 1)));
+                } else {
+                    $expression = new HexadecimalLiteral($string->getValue(), Charset::get(substr($name1, 1)));
+                }
             } else {
                 if ($tokenList->hasSymbol('.')) {
                     if ($tokenList->hasOperator(Operator::MULTIPLY)) {
