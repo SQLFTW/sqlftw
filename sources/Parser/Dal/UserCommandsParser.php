@@ -180,14 +180,14 @@ class UserCommandsParser
                 $plugin = $tokenList->expectNonReservedNameOrString();
                 if ($tokenList->hasKeyword(Keyword::AS)) {
                     $action = IdentifiedUserAction::SET_HASH;
-                    $password = $tokenList->expectStringLike();
+                    $password = $tokenList->expectStringValue();
                 }
             }
             if ($action !== IdentifiedUserAction::SET_HASH && $tokenList->hasKeyword(Keyword::BY)) {
                 $action = IdentifiedUserAction::SET_PASSWORD;
-                $password = $tokenList->expectStringLike();
+                $password = $tokenList->expectStringValue();
                 if ($tokenList->hasKeyword(Keyword::REPLACE)) {
-                    $replace = $tokenList->expectStringLike();
+                    $replace = $tokenList->expectStringValue();
                 }
                 if ($tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD)) {
                     $retainCurrent = true;

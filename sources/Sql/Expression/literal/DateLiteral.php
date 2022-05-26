@@ -15,7 +15,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * e.g. date '2020-01-01'
  */
-class DateLiteral implements ValueLiteral
+class DateLiteral implements TimeValue
 {
     use StrictBehaviorMixin;
 

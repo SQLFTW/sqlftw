@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class OnOffLiteral implements ValueLiteral, KeywordLiteral
+class OnOffLiteral implements Value, KeywordLiteral
 {
     use StrictBehaviorMixin;
 

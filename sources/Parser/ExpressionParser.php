@@ -77,6 +77,7 @@ use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Expression\TimeIntervalUnit;
 use SqlFtw\Sql\Expression\TimeLiteral;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
+use SqlFtw\Sql\Expression\TimeValue;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UnaryOperator;
 use SqlFtw\Sql\Expression\UnknownLiteral;
@@ -435,167 +436,155 @@ class ExpressionParser
      */
     private function parseSimpleExpression(TokenList $tokenList): RootNode
     {
-        $operator = $tokenList->getAnyOperator(
-            Operator::PLUS,
-            Operator::MINUS,
-            Operator::BIT_INVERT,
-            Operator::EXCLAMATION,
-            Operator::BINARY
-        );
+        $left = $this->parseSimpleExpressionLeft($tokenList);
 
+        if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+            // simple_expr COLLATE collation_name
+            $collation = $tokenList->expectCollationName();
+
+            return new CollateExpression($left, $collation);
+        }
+
+        if ($tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT) && $tokenList->hasOperator(Operator::PIPES)) {
+            // simple_expr || simple_expr
+            $right = $this->parseSimpleExpression($tokenList);
+
+            return new BinaryOperator($left, Operator::PIPES, $right);
+        }
+
+        return $left;
+    }
+
+    private function parseSimpleExpressionLeft(TokenList $tokenList): RootNode
+    {
+        $operator = $tokenList->getAnyOperator(Operator::PLUS, Operator::MINUS, Operator::BIT_INVERT, Operator::EXCLAMATION, Operator::BINARY);
         if ($operator !== null) {
             // + simple_expr
             // - simple_expr
             // ~ simple_expr
             // ! simple_expr
             // BINARY simple_expr
-            $expression = new UnaryOperator($operator, $this->parseSimpleExpression($tokenList));
-
+            return new UnaryOperator($operator, $this->parseSimpleExpression($tokenList));
         } elseif ($tokenList->hasKeyword(Keyword::EXISTS)) {
             // EXISTS (subquery)
             $tokenList->expectSymbol('(');
             $subquery = $this->parseSubquery($tokenList);
             $tokenList->expectSymbol(')');
-            $expression = new ExistsExpression($subquery);
 
+            return new ExistsExpression($subquery);
         } elseif ($tokenList->hasSymbol('(')) {
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // (subquery)
                 $subquery = $this->parseSubquery($tokenList->resetPosition(-1));
                 $tokenList->expectSymbol(')');
-                $expression = new Parentheses($subquery);
+
+                return new Parentheses($subquery);
             } else {
                 // (expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
                 $tokenList->expectSymbol(')');
-                $expression = new Parentheses(new ListExpression($expressions));
+
+                return new Parentheses(new ListExpression($expressions));
             }
         } elseif ($tokenList->hasKeyword(Keyword::ROW)) {
             if ($tokenList->hasSymbol('(')) {
                 // ROW (expr, expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
                 $tokenList->expectSymbol(')');
-                $expression = new RowExpression($expressions);
+
+                return new RowExpression($expressions);
             } else {
                 // e.g. SET @@session.binlog_format = ROW;
                 // todo: in fact a value
-                $expression = new SimpleName(Keyword::ROW);
+                return new SimpleName(Keyword::ROW);
             }
         } elseif ($tokenList->hasKeyword(Keyword::INTERVAL)) {
             // interval_expr
-            $interval = $this->parseInterval($tokenList);
-            $expression = new IntervalLiteral($interval);
-
+            return new IntervalLiteral($this->parseInterval($tokenList));
         } elseif ($tokenList->hasKeyword(Keyword::CASE)) {
             // case_expr
-            $expression = $this->parseCase($tokenList);
-
+            return $this->parseCase($tokenList);
         } elseif ($tokenList->hasKeyword(Keyword::MATCH)) {
             // match_expr
-            $expression = $this->parseMatch($tokenList);
-
+            return $this->parseMatch($tokenList);
         } elseif ($tokenList->has(TokenType::PLACEHOLDER)) {
             // param_marker
-            $expression = new Placeholder();
-
+            return new Placeholder();
         } elseif ($tokenList->hasSymbol('{')) {
             // {identifier expr}
             // @see https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/escape-sequences-in-odbc?view=sql-server-ver16
             $name = $tokenList->expectName();
             $expression = $this->parseExpression($tokenList);
             $tokenList->expectSymbol('}');
-            $expression = new CurlyExpression($name, $expression);
 
-        } elseif (($variable = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
+            return new CurlyExpression($name, $expression);
+        }
+
+        $variable = $tokenList->get(TokenType::AT_VARIABLE);
+        if ($variable !== null) {
             // @variable
             $variableName = $variable->value;
             if (in_array(strtoupper($variableName), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
                 $tokenList->expectSymbol('.');
                 $scope = Scope::get(substr($variableName, 2));
-                $expression = new SystemVariable($tokenList->expectName(), $scope);
+                return new SystemVariable($tokenList->expectName(), $scope);
             } elseif (substr($variableName, 0, 2) === '@@') {
-                $expression = new SystemVariable(substr($variableName, 2));
+                return new SystemVariable(substr($variableName, 2));
             } else {
-                $expression = new UserVariable($variableName);
+                return new UserVariable($variableName);
             }
-        } elseif (($name1 = $tokenList->getName()) !== null) {
-            $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
+        }
+
+        // may be preceded by charset introducer, e.g. _utf8
+        $string = $tokenList->getStringValue();
+        if ($string !== null) {
+            return $string;
+        }
+
+        // {DATE | TIME | DATETIME | TIMESTAMP} literal
+        $value = $this->parseTimeValue($tokenList);
+        if ($value !== null) {
+            return $value;
+        }
+
+        $name1 = $tokenList->getName();
+        if ($name1 !== null) {
             $name2 = $name3 = null;
-            $upper = strtoupper($name1);
-            $types = [Keyword::DATE, Keyword::TIME, Keyword::DATETIME, Keyword::TIMESTAMP];
-            if (in_array(strtoupper($name1), $types, true) && ($string = $tokenList->getString()) !== null) {
-                // {DATE | TIME | DATETIME | TIMESTAMP} literal
-                if ($upper === Keyword::DATE) {
-                    $expression = new DateLiteral($string);
-                } elseif ($upper === Keyword::TIME) {
-                    $expression = new TimeLiteral($string);
+            if ($tokenList->hasSymbol('.')) {
+                if ($tokenList->hasOperator(Operator::MULTIPLY)) {
+                    $name2 = '*'; // tbl.*
                 } else {
-                    // todo: is TimestampLiteral needed?
-                    $expression = new DatetimeLiteral($string);
+                    $name2 = $tokenList->expectName();
                 }
-            } elseif ($name1[0] === '_' && Charset::isValid(substr($name1, 1)) && ($string = $tokenList->getStringLike()) !== null) {
-                // _charset literal
-                if ($string instanceof StringLiteral) {
-                    $expression = new StringLiteral([$string->getValue()], Charset::get(substr($name1, 1)));
-                } else {
-                    $expression = new HexadecimalLiteral($string->getValue(), Charset::get(substr($name1, 1)));
-                }
-            } else {
-                if ($tokenList->hasSymbol('.')) {
+                if ($name2 !== '*' && $tokenList->hasSymbol('.')) {
                     if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                        $name2 = '*'; // tbl.*
+                        $name3 = '*'; // db.tbl.*
                     } else {
-                        $name2 = $tokenList->expectName();
+                        $name3 = $tokenList->expectName();
                     }
-                    if ($name2 !== '*' && $tokenList->hasSymbol('.')) {
-                        if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                            $name3 = '*'; // db.tbl.*
-                        } else {
-                            $name3 = $tokenList->expectName();
-                        }
-                    }
-                }
-                if ($name3 !== null) {
-                    // identifier
-                    $expression = new ColumnName($name3, $name2, $name1);
-
-                } elseif ($tokenList->hasSymbol('(')) {
-                    // function_call
-                    $expression = $this->parseFunctionCall($tokenList, $name1, $name2);
-
-                } elseif ($name2 !== null) {
-                    // identifier
-                    $expression = new QualifiedName($name2, $name1);
-
-                } elseif (BuiltInFunction::isValid($name1) && $platformFeatures->isReserved($name1)) {
-                    // function without parentheses
-                    $expression = new FunctionCall(BuiltInFunction::get($name1));
-
-                } else {
-                    // identifier
-                    $expression = new SimpleName($name1);
                 }
             }
-        } else {
-            // literal
-            $expression = $this->parseLiteral($tokenList);
+            $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
+            if ($name3 !== null) {
+                // identifier
+                return new ColumnName($name3, $name2, $name1);
+            } elseif ($tokenList->hasSymbol('(')) {
+                // function_call
+                return $this->parseFunctionCall($tokenList, $name1, $name2);
+            } elseif ($name2 !== null) {
+                // identifier
+                return new QualifiedName($name2, $name1);
+            } elseif (BuiltInFunction::isValid($name1) && $platformFeatures->isReserved($name1)) {
+                // function without parentheses
+                return new FunctionCall(BuiltInFunction::get($name1));
+            } else {
+                // identifier
+                return new SimpleName($name1);
+            }
         }
 
-        if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-            // simple_expr COLLATE collation_name
-            $collation = $tokenList->expectCollationName();
-
-            return new CollateExpression($expression, $collation);
-        } elseif ($tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT)
-            && $tokenList->hasOperator(Operator::PIPES)
-        ) {
-            // simple_expr || simple_expr
-            $right = $this->parseSimpleExpression($tokenList);
-
-            return new BinaryOperator($expression, Operator::PIPES, $right);
-        } else {
-            return $expression;
-        }
+        // literal
+        return $this->parseLiteral($tokenList);
     }
 
     private function parseFunctionCall(TokenList $tokenList, string $name1, ?string $name2 = null): FunctionCall
@@ -774,7 +763,7 @@ class ExpressionParser
 
         $expression = $this->parseExpression($tokenList);
         $tokenList->expectSymbol(',');
-        $path = new StringLiteral([$tokenList->expectString()]);
+        $path = $tokenList->expectStringValue();
 
         $tokenList->expectKeyword(Keyword::COLUMNS);
         $columns = $this->parseJsonTableColumns($tokenList);
@@ -791,7 +780,7 @@ class ExpressionParser
         do {
             if ($tokenList->hasKeyword(Keyword::NESTED)) {
                 $tokenList->passKeyword(Keyword::PATH);
-                $path = $tokenList->expectString();
+                $path = $tokenList->expectStringValue();
                 $tokenList->expectKeyword(Keyword::COLUMNS);
                 $columns[] = new JsonTableNestedColumns($path, $this->parseJsonTableColumns($tokenList));
                 continue;
@@ -807,13 +796,13 @@ class ExpressionParser
             $type = $this->parseColumnType($tokenList);
             $keyword = $tokenList->expectAnyKeyword(Keyword::PATH, Keyword::EXISTS);
             if ($keyword === Keyword::PATH) {
-                $path = $tokenList->expectString();
+                $path = $tokenList->expectStringValue();
                 [$onEmpty, $onError] = $this->parseOnEmptyOnError($tokenList);
 
                 $columns[] = new JsonTablePathColumn($name, $type, $path, $onEmpty, $onError);
             } else {
                 $tokenList->expectKeyword(Keyword::PATH);
-                $path = $tokenList->expectString();
+                $path = $tokenList->expectStringValue();
 
                 $columns[] = new JsonTableExistsPathColumn($name, $type, $path);
             }
@@ -996,6 +985,17 @@ class ExpressionParser
 
     public function parseLiteral(TokenList $tokenList): Literal
     {
+        // StringLiteral | HexadecimalLiteral
+        $value = $tokenList->getStringValue();
+        if ($value !== null) {
+            return $value;
+        }
+
+        $value = $this->parseTimeValue($tokenList);
+        if ($value !== null) {
+            return $value;
+        }
+
         $token = $tokenList->expect(TokenType::VALUE | TokenType::KEYWORD);
 
         if (($token->type & TokenType::KEYWORD) !== 0) {
@@ -1019,15 +1019,6 @@ class ExpressionParser
             }
         } elseif (($token->type & TokenType::BINARY_LITERAL) !== 0) {
             return new BinaryLiteral($token->value);
-        } elseif (($token->type & TokenType::HEXADECIMAL_LITERAL) !== 0) {
-            return new HexadecimalLiteral($token->value);
-        } elseif (($token->type & TokenType::STRING) !== 0) {
-            /** @var non-empty-array<string> $values */
-            $values = [$token->value];
-            while (($next = $tokenList->getString()) !== null) {
-                $values[] = $next;
-            }
-            return new StringLiteral($values);
         } elseif (($token->type & TokenType::UINT) !== 0) {
             return new UintLiteral($token->value);
         } elseif (($token->type & TokenType::INT) !== 0) {
@@ -1037,6 +1028,31 @@ class ExpressionParser
         } else {
             throw new ShouldNotHappenException("Unknown token '$token->value' of type $token->type.");
         }
+    }
+
+    private function parseTimeValue(TokenList $tokenList): ?TimeValue
+    {
+        $position = $tokenList->getPosition();
+
+        // {DATE | TIME | DATETIME | TIMESTAMP} literal
+        $keyword = $tokenList->getAnyKeyword(Keyword::DATE, Keyword::TIME, Keyword::DATETIME, Keyword::TIMESTAMP);
+        if ($keyword !== null) {
+            $string = $tokenList->getString();
+            if ($string !== null) {
+                if ($keyword === Keyword::DATE) {
+                    return new DateLiteral($string);
+                } elseif ($keyword === Keyword::TIME) {
+                    return new TimeLiteral($string);
+                } else {
+                    // todo: is TimestampLiteral needed?
+                    return new DatetimeLiteral($string);
+                }
+            } else {
+                $tokenList->resetPosition($position);
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -22,7 +22,7 @@ use function substr;
 /**
  * e.g. 0x001F
  */
-class HexadecimalLiteral implements ValueLiteral
+class HexadecimalLiteral implements StringValue, UintValue
 {
     use StrictBehaviorMixin;
 

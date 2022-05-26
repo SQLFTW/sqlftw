@@ -9,21 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
-use SqlFtw\Formatter\Formatter;
-
-class NullLiteral implements Value, KeywordLiteral
+interface StringValue extends Value
 {
-    use StrictBehaviorMixin;
-
-    public function getValue(): string
-    {
-        return 'NULL';
-    }
-
-    public function serialize(Formatter $formatter): string
-    {
-        return 'NULL';
-    }
 
 }

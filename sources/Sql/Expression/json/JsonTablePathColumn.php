@@ -20,7 +20,7 @@ class JsonTablePathColumn implements JsonTableColumn
     /** @var ColumnType */
     private $type;
 
-    /** @var string */
+    /** @var StringValue */
     private $path;
 
     /** @var JsonErrorCondition|null */
@@ -32,7 +32,7 @@ class JsonTablePathColumn implements JsonTableColumn
     public function __construct(
         string $name,
         ColumnType $type,
-        string $path,
+        StringValue $path,
         ?JsonErrorCondition $onEmpty = null,
         ?JsonErrorCondition $onError = null
     ) {
@@ -53,7 +53,7 @@ class JsonTablePathColumn implements JsonTableColumn
         return $this->type;
     }
 
-    public function getPath(): string
+    public function getPath(): StringValue
     {
         return $this->path;
     }
@@ -70,7 +70,7 @@ class JsonTablePathColumn implements JsonTableColumn
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $this->name . ' ' . $this->type->serialize($formatter) . ' EXISTS PATH ' . $formatter->formatString($this->path);
+        $result = $this->name . ' ' . $this->type->serialize($formatter) . ' EXISTS PATH ' . $this->path->serialize($formatter);
 
         if ($this->onEmpty !== null) {
             $result .= $this->onEmpty->serialize($formatter);

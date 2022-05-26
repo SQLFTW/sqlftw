@@ -23,7 +23,8 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Expression\StringLiteral;
-use SqlFtw\Sql\Expression\ValueLiteral;
+use SqlFtw\Sql\Expression\StringValue;
+use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
@@ -35,7 +36,9 @@ use function implode;
 use function in_array;
 use function ltrim;
 use function preg_match;
+use function strtolower;
 use function strtoupper;
+use function substr;
 use function trim;
 
 /**
@@ -437,7 +440,7 @@ class TokenList
         return $this->expect(T::INT)->value;
     }
 
-    public function expectIntLike(): ValueLiteral
+    public function expectIntLike(): Value
     {
         $number = $this->expect(T::INT | T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
         $value = $number->value;
@@ -496,38 +499,78 @@ class TokenList
         return $token !== null ? $token->value : null;
     }
 
-    /**
-     * @return StringLiteral|HexadecimalLiteral
-     */
-    public function expectStringLike(): ValueLiteral
+    public function expectStringValue(): StringValue
     {
-        $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL);
-        $value = $token->value;
+        $position = $this->position;
         // todo: BINARY_LITERAL ???
-        // todo: multiline strings ???
+        $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::UNQUOTED_NAME);
+
+        // charset introducer
+        $charset = null;
+        if (($token->type & T::UNQUOTED_NAME) !== 0) {
+            $charset = substr(strtolower($token->value), 1);
+            if ($token->value[0] === '_' && Charset::isValid($charset)) {
+                $charset = Charset::get($charset);
+                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL);
+            } else {
+                $charset = null;
+                $this->position = $position;
+
+                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL);
+            }
+        }
+
         if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
-            return new HexadecimalLiteral($value);
+            return new HexadecimalLiteral($token->value, $charset);
         } else {
-            return new StringLiteral([$value]);
+            /** @var non-empty-array<string> $values */
+            $values = [$token->value];
+            while (($next = $this->getString()) !== null) {
+                $values[] = $next;
+            }
+
+            return new StringLiteral($values, $charset);
         }
     }
 
-    /**
-     * @return StringLiteral|HexadecimalLiteral|null
-     */
-    public function getStringLike(): ?ValueLiteral
+    public function getStringValue(): ?StringValue
     {
-        $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL);
+        $position = $this->position;
+        // todo: BINARY_LITERAL ???
+        $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::UNQUOTED_NAME);
         if ($token === null) {
             return null;
         }
-        $value = $token->value;
-        // todo: BINARY_LITERAL ???
-        // todo: multiline strings ???
+
+        // charset introducer
+        $charset = null;
+        if (($token->type & T::UNQUOTED_NAME) !== 0) {
+            $lower = substr(strtolower($token->value), 1);
+            if ($token->value[0] === '_' && Charset::isValid($lower)) {
+                $charset = Charset::get($lower);
+                $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL);
+            } else {
+                $this->position = $position;
+
+                return null;
+            }
+        }
+        if ($token === null) {
+            $this->position = $position;
+
+            return null;
+        }
+
         if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
-            return new HexadecimalLiteral($value);
+            return new HexadecimalLiteral($token->value, $charset);
         } else {
-            return new StringLiteral([$value]);
+            /** @var non-empty-array<string> $values */
+            $values = [$token->value];
+            while (($next = $this->getString()) !== null) {
+                $values[] = $next;
+            }
+
+            return new StringLiteral($values, $charset);
         }
     }
 

@@ -24,16 +24,24 @@ note: classes in **bold**, interfaces in *italic*
       - *KeywordLiteral* - e.g. `DEFAULT`, `UNKNOWN`, `ON`, `OFF`...
         - **AllLiteral** - `ALL`
         - **DefaultLiteral** - `DEFAULT`
+        - **MaxValueLiteral** - `MAXVALUE`
+        - **PrimaryLiteral** - `PRIMARY`
         - **UnknownLiteral** - `UNKNOWN`
       - **Placeholder** - ?
-      - *ValueLiteral* - concrete value
-        - **BinaryLiteral** - e.g. `0b001101110`
-        - **HexadecimalLiteral** - e.g. `0x001F`
+      - *Value* - concrete value
+        - *UintValue* - types that can represent an unsigned integer
+          - **BinaryLiteral** - e.g. `0b001101110`
+          - **HexadecimalLiteral** (*StringValueLiteral*) - e.g. `0x001F`
         - **IntervalLiteral** - e.g. `INTERVAL 6 DAYS`
         - **NumberLiteral** - e.g. `-1.23e-4`
           - **IntLiteral** - e.g. `-123`
-            - **UintLiteral** - e.g. `123`
-        - **StringLiteral** - e.g. `"start " \n 'middle ' \n "end"`
+            - **UintLiteral** (*UintValueLiteral*) - e.g. `123`
+        - *StringValue* - types that can represent a string
+          - **StringLiteral** - e.g. `_utf8 "start " \n 'middle ' \n "end"`
+        - *TimeValue* - types that can represent a time
+          - **DateLiteral** - e.g. `DATE '2019-01-01'`
+          - **DatetimeLiteral** - e.g. `DATETIME '2019-01-01 00:00:00'`
+          - **TimeLiteral** - e.g. `TIME '12:34:56'`
         - **NullLiteral** (*KeywordLiteral*) - `NULL`
         - **BooleanLiteral** (*KeywordLiteral*) - `TRUE` | `FALSE`
         - **OnOffLiteral** (*KeywordLiteral*) - `ON` | `OFF`
@@ -44,6 +52,7 @@ note: classes in **bold**, interfaces in *italic*
       - **TernaryOperator** - e.g. `x BETWEEN y AND z`
       - **UnaryOperator** - e.g. `NOT x`
     - **Parentheses** - `(...)`
+    - **RowExpression** - `ROW (...[, ...])`  - used as operator parameter
   - *ArgumentNode* - can be used as argument of some functions
     - **Asterisk** - in `SELECT * FORM ...` and `COUNT(*)`
     - **CastType** - in `CAST(expr AS type)`
@@ -57,11 +66,10 @@ note: classes in **bold**, interfaces in *italic*
     - **JsonTablePathColumn**
     - **JsonTableNestedColumn**
   - **AliasExpression** - `expr AS alias` - used on highest level in queries
-  - **RowExpression** - `ROW (...[, ...])`  - used as operator parameter
-  - **Subquery** - `(SELECT ...)`  - used as operator parameter
+  - **Subquery** - `(SELECT ...)`  - used as operator argument
 
 maybes:
-- **SystemVariable** as node ???
+- *KeywordLiteral* probably should not be a *Literal* under *RootNode* -> *KeywordNode*
 - **Collation** as node ???
 - **UserName** as node ???
 - **ThreeStateValue** as *Literal* ???

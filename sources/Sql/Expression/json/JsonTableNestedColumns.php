@@ -14,19 +14,19 @@ use SqlFtw\Formatter\Formatter;
 class JsonTableNestedColumns implements JsonTableColumn
 {
 
-    /** @var string */
+    /** @var StringValue */
     private $path;
 
     /** @var Parentheses */
     private $columns;
 
-    public function __construct(string $path, Parentheses $columns)
+    public function __construct(StringValue $path, Parentheses $columns)
     {
         $this->path = $path;
         $this->columns = $columns;
     }
 
-    public function getPath(): string
+    public function getPath(): StringValue
     {
         return $this->path;
     }
@@ -38,7 +38,7 @@ class JsonTableNestedColumns implements JsonTableColumn
 
     public function serialize(Formatter $formatter): string
     {
-        return 'NESTED PATH ' . $formatter->formatString($this->path) . ' COLUMNS ' . $this->columns->serialize($formatter);
+        return 'NESTED PATH ' . $this->path->serialize($formatter) . ' COLUMNS ' . $this->columns->serialize($formatter);
     }
 
 }

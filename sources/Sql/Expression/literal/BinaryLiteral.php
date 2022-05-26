@@ -20,7 +20,7 @@ use function substr;
 /**
  * e.g. 0b01101110
  */
-class BinaryLiteral implements ValueLiteral
+class BinaryLiteral implements UintValue
 {
     use StrictBehaviorMixin;
 

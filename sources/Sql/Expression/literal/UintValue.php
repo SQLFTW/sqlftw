@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-interface ValueLiteral extends Literal
+interface UintValue extends Value
 {
-
-    public function getValue(): string;
 
 }

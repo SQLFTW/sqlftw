@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class NumberLiteral implements ValueLiteral
+class NumberLiteral implements Value
 {
     use StrictBehaviorMixin;
 

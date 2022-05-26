@@ -28,7 +28,7 @@ use function implode;
  * with charset:
  * _utf8 'string'
  */
-class StringLiteral implements ValueLiteral
+class StringLiteral implements StringValue
 {
     use StrictBehaviorMixin;
 

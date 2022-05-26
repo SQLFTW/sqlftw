@@ -177,6 +177,7 @@ class MysqlVariable extends SqlEnum implements Feature
     public const GROUP_REPLICATION_TRANSACTION_SIZE_LIMIT = 'group_replication_transaction_size_limit';
     public const GROUP_REPLICATION_UNREACHABLE_MAJORITY_TIMEOUT = 'group_replication_unreachable_majority_timeout';
     public const GROUP_REPLICATION_VIEW_CHANGE_UUID = 'group_replication_view_change_uuid';
+    public const GTID_EXECUTED = 'gtid_executed';
     public const GTID_EXECUTED_COMPRESSION_PERIOD = 'gtid_executed_compression_period';
     public const GTID_MODE = 'gtid_mode';
     public const GTID_NEXT = 'gtid_next';

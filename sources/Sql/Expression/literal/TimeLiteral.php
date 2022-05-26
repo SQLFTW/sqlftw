@@ -15,7 +15,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * e.g. time '12:00:00'
  */
-class TimeLiteral implements ValueLiteral
+class TimeLiteral implements TimeValue
 {
     use StrictBehaviorMixin;
 
