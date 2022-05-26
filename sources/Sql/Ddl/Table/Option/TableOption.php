@@ -14,9 +14,9 @@ use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
 
 class TableOption extends SqlEnum

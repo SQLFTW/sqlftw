@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl;
 
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 interface SchemaObjectsCommand extends DdlCommand
 {

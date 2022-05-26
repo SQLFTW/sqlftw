@@ -16,8 +16,8 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\QualifiedName;
 
 class DeleteCommand implements DmlCommand
 {

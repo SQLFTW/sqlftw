@@ -15,7 +15,7 @@ use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\Query\Query;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class CreateViewCommand implements ViewCommand, SchemaObjectCommand
 {

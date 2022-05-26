@@ -22,7 +22,6 @@ use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
-use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Keyword;
 use function array_flip;
 use function array_keys;
@@ -32,7 +31,6 @@ use function count;
 use function ctype_digit;
 use function explode;
 use function implode;
-use function in_array;
 use function ltrim;
 use function ord;
 use function preg_match;
@@ -1016,7 +1014,7 @@ class Lexer
 
     private function parseNumber(string &$string, int &$position, int &$column, int &$row, string $start, ?string $condition): ?Token
     {
-        $startAt = $position;
+        $startAt = $position - 1;
         $type = T::VALUE | T::NUMBER;
         $length = strlen($string);
         $offset = 0;
@@ -1142,7 +1140,7 @@ class Lexer
         }
         $value = str_replace('.e', '.0e', $value);
 
-        if (preg_match('~^0|-?[1-9][0-9]*$~', $value) !== 0) {
+        if (preg_match('~^(?:0|-?[1-9][0-9]*)$~', $value) !== 0) {
             $type |= TokenType::INT;
         }
 

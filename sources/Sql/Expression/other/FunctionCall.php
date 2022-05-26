@@ -14,7 +14,6 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 use function is_int;
 
 /**
@@ -24,21 +23,20 @@ class FunctionCall implements RootNode
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName|BuiltInFunction */
+    /** @var FunctionIdentifier */
     private $function;
 
-    /** @var ExpressionNode[] */
+    /** @var ArgumentNode[] */
     private $arguments;
 
     /** @var WindowSpecification|string|null */
     private $over;
 
     /**
-     * @param QualifiedName|BuiltInFunction $function
-     * @param ExpressionNode[] $arguments
+     * @param ArgumentNode[] $arguments
      * @param WindowSpecification|string $over
      */
-    public function __construct($function, array $arguments = [], $over = null)
+    public function __construct(FunctionIdentifier $function, array $arguments = [], $over = null)
     {
         if ($over !== null && (!$function instanceof BuiltInFunction || !$function->isWindow())) {
             throw new InvalidDefinitionException('OVER clause is supported only on window functions.');
@@ -49,16 +47,13 @@ class FunctionCall implements RootNode
         $this->over = $over;
     }
 
-    /**
-     * @return QualifiedName|BuiltInFunction
-     */
-    public function getFunction()
+    public function getFunction(): FunctionIdentifier
     {
         return $this->function;
     }
 
     /**
-     * @return ExpressionNode[]
+     * @return ArgumentNode[]
      */
     public function getArguments(): array
     {

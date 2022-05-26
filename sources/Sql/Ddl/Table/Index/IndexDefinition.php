@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 use function count;
 
 class IndexDefinition implements TableItem, ConstraintBody

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Update;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\ColumnName;
+use SqlFtw\Sql\Expression\ColumnName;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;

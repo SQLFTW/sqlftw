@@ -15,7 +15,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\ColumnType;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 use function implode;
 

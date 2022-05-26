@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\Show;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Scope;
+use SqlFtw\Sql\Expression\Scope;
 
 class ShowStatusCommand implements ShowCommand
 {

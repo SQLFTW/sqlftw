@@ -20,11 +20,11 @@ use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\ValueLiteral;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 use function array_values;
@@ -571,6 +571,9 @@ class TokenList
     {
         $position = $this->position;
         $token = $this->get(T::NAME);
+        if ($token === null) {
+            return null;
+        }
         $upper = strtoupper($token->value);
         if (in_array($upper, $names, true)) {
             return $token->value;

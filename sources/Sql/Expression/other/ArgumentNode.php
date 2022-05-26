@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-interface RootNode extends ExpressionNode
+interface ArgumentNode extends ExpressionNode
 {
 
 }

@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Dal\Set;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\Scope;
 
 class SetCommand implements DalCommand
 {
@@ -35,37 +34,6 @@ class SetCommand implements DalCommand
     public function getAssignments(): array
     {
         return $this->assignments;
-    }
-
-    /**
-     * @return SetAssignment[]
-     */
-    public function getAssignmentsByScope(?Scope $scope = null): array
-    {
-        $assignments = [];
-        foreach ($this->assignments as $assignment) {
-            if ($assignment->getScope() === $scope) {
-                $assignments[] = $assignment;
-            }
-        }
-
-        return $assignments;
-    }
-
-    public function getAssignment(string $variable, ?Scope $scope = null): ?SetAssignment
-    {
-        foreach ($this->assignments as $assignment) {
-            if ($assignment->getVariable()->format() !== $variable) {
-                continue;
-            }
-            if ($scope !== null && $assignment->getScope() !== $scope) {
-                continue;
-            }
-
-            return $assignment;
-        }
-
-        return null;
     }
 
     public function serialize(Formatter $formatter): string

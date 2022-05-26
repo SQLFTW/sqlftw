@@ -19,8 +19,8 @@ use SqlFtw\Sql\Dml\Load\LoadPriority;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class LoadCommandsParser
 {

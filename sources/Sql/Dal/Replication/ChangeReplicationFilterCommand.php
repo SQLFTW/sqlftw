@@ -14,8 +14,8 @@ use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Util\TypeChecker;
 use function implode;
 

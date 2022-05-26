@@ -15,7 +15,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\FileFormat;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class LoadDataCommand extends LoadCommand
 {

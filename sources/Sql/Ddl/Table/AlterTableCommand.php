@@ -18,7 +18,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 use function assert;
 use function is_array;
 use function is_bool;

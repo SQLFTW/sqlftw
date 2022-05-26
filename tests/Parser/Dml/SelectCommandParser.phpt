@@ -18,7 +18,7 @@ Assert::parse("SELECT col1, col2");
 Assert::parse("SELECT tbl1.col1, tbl2.col2");
 Assert::parse("SELECT db1.tbl1.col1, db2.tbl2.col2");
 Assert::parse("SELECT @var1, @var2");
-Assert::parse("SELECT @@global.var1, @@global.var2");
+Assert::parse("SELECT @@GLOBAL.basedir, @@GLOBAL.datadir");
 Assert::parse("SELECT func1(), func2()");
 Assert::parse("SELECT db1.func1(), db2.func2()");
 Assert::parse("SELECT *");

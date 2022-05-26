@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
 
 class ReferenceDefinition implements SqlSerializable

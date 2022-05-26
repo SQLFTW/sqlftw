@@ -3,7 +3,7 @@
 namespace AlterExecutor\Parser;
 
 use SqlFtw\Sql\Dal\Set\SetCommand;
-use SqlFtw\Sql\Scope;
+use SqlFtw\Sql\Expression\Scope;
 use Tester\Assert;
 
 require '../../../bootstrap.php';

@@ -14,7 +14,6 @@ use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BuiltInFunction;
-use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\InvalidDefinitionException;
 
 class PurgeBinaryLogsCommand implements ReplicationCommand
@@ -24,11 +23,11 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
     /** @var string|null */
     private $toLog;
 
-    /** @var DateTime|FunctionCall|null */
+    /** @var DateTime|BuiltInFunction|null */
     private $before;
 
     /**
-     * @param DateTime|FunctionCall|null $before
+     * @param DateTime|BuiltInFunction|null $before
      */
     public function __construct(?string $toLog, $before)
     {
@@ -46,7 +45,7 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
     }
 
     /**
-     * @return DateTime|FunctionCall|null
+     * @return DateTime|BuiltInFunction|null
      */
     public function getBefore()
     {

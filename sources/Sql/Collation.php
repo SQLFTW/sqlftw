@@ -159,6 +159,8 @@ class Collation extends SqlEnum
     public const UCS2_UNICODE_CI = 'ucs2_unicode_ci';
     public const UCS2_VIETNAMESE_CI = 'ucs2_vietnamese_ci';
 
+    public const UCS2_VN_CI = 'ucs2_vn_ci'; // todo: are all names short in 8.0?
+
     public const UJIS_BIN = 'ujis_bin';
     public const UJIS_JAPANESE_CI = 'ujis_japanese_ci';
 

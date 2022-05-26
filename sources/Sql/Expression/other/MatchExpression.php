@@ -11,7 +11,6 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\ColumnName;
 
 /**
  * MATCH x AGAINST y

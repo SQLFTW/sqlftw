@@ -13,7 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Ddl\Routines\UdfReturnDataType;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class CreateFunctionSonameCommand implements DalCommand
 {

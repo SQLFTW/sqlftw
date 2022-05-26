@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Trigger;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class CreateTriggerCommand implements TriggerCommand

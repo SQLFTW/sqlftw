@@ -21,7 +21,7 @@ use function is_null;
 /**
  * e.g. CAST(expr AS type)
  */
-class CastType implements ExpressionNode
+class CastType implements ArgumentNode
 {
     use StrictBehaviorMixin;
 

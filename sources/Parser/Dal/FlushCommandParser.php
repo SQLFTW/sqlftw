@@ -14,8 +14,8 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushOption;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class FlushCommandParser
 {

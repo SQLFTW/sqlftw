@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable SlevomatCodingStandard.ControlStructures.AssignmentInCondition
+
 namespace SqlFtw\Parser;
 
 use Dogma\Re;
@@ -17,12 +19,12 @@ use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Platform\Mode;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
-use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\FileFormat;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\AssignOperator;
+use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\BinaryOperator;
@@ -31,6 +33,8 @@ use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CaseExpression;
 use SqlFtw\Sql\Expression\CastType;
 use SqlFtw\Sql\Expression\CollateExpression;
+use SqlFtw\Sql\Expression\ColumnIdentifier;
+use SqlFtw\Sql\Expression\ColumnName;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\CurlyExpression;
 use SqlFtw\Sql\Expression\DateLiteral;
@@ -40,7 +44,6 @@ use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
-use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\JsonErrorCondition;
@@ -60,9 +63,14 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Placeholder;
+use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\RowExpression;
+use SqlFtw\Sql\Expression\Scope;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\Subquery;
+use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Expression\TernaryOperator;
 use SqlFtw\Sql\Expression\TimeExpression;
 use SqlFtw\Sql\Expression\TimeInterval;
@@ -72,9 +80,9 @@ use SqlFtw\Sql\Expression\TimeTypeLiteral;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UnaryOperator;
 use SqlFtw\Sql\Expression\UnknownLiteral;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
-use SqlFtw\Sql\QualifiedName;
 use function explode;
 use function in_array;
 use function is_int;
@@ -136,7 +144,7 @@ class ExpressionParser
      *   | boolean_primary IS [NOT] {TRUE | FALSE | UNKNOWN}
      *   | boolean_primary
      */
-    public function parseExpression(TokenList $tokenList): ExpressionNode
+    public function parseExpression(TokenList $tokenList): RootNode
     {
         $operators = [Operator::OR, Operator::XOR, Operator::AND, Operator::AMPERSANDS];
         if (!$tokenList->getSettings()->getMode()->containsAny(Mode::PIPES_AS_CONCAT)) {
@@ -167,7 +175,7 @@ class ExpressionParser
                 : new BoolLiteral($keyword === Keyword::TRUE);
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
-        } elseif ($this->assignAllowed && $left instanceof Identifier && $left->isUserVariable() && $tokenList->hasOperator(Operator::ASSIGN)) {
+        } elseif ($this->assignAllowed && $left instanceof UserVariable && $tokenList->hasOperator(Operator::ASSIGN)) {
             $right = $this->parseExpression($tokenList);
 
             return new AssignOperator($left, $right);
@@ -177,7 +185,7 @@ class ExpressionParser
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-array<RootNode>
      */
     private function parseExpressionList(TokenList $tokenList): array
     {
@@ -199,7 +207,7 @@ class ExpressionParser
      *
      * comparison_operator: = | >= | > | <= | < | <> | !=
      */
-    private function parseBooleanPrimary(TokenList $tokenList): ExpressionNode
+    private function parseBooleanPrimary(TokenList $tokenList): RootNode
     {
         static $operators = [
             Operator::SAFE_EQUAL,
@@ -262,7 +270,7 @@ class ExpressionParser
      *   | bit_expr MEMBER [OF] (json_array) // 8.0.17
      *   | bit_expr
      */
-    private function parsePredicate(TokenList $tokenList): ExpressionNode
+    private function parsePredicate(TokenList $tokenList): RootNode
     {
         $left = $this->parseBitExpression($tokenList);
         if ($tokenList->hasKeywords(Keyword::SOUNDS, Keyword::LIKE)) {
@@ -354,7 +362,7 @@ class ExpressionParser
      *   | bit_expr ->> json_path
      *   | simple_expr
      */
-    private function parseBitExpression(TokenList $tokenList): ExpressionNode
+    private function parseBitExpression(TokenList $tokenList): RootNode
     {
         $operators = [
             Operator::BIT_OR,
@@ -425,10 +433,8 @@ class ExpressionParser
      *   | simple_expr COLLATE collation_name
      *   | simple_expr || simple_expr
      */
-    private function parseSimpleExpression(TokenList $tokenList): ExpressionNode
+    private function parseSimpleExpression(TokenList $tokenList): RootNode
     {
-        $position = $tokenList->getPosition();
-
         $operator = $tokenList->getAnyOperator(
             Operator::PLUS,
             Operator::MINUS,
@@ -473,7 +479,7 @@ class ExpressionParser
             } else {
                 // e.g. SET @@session.binlog_format = ROW;
                 // todo: in fact a value
-                $expression = new Identifier(Keyword::ROW);
+                $expression = new SimpleName(Keyword::ROW);
             }
         } elseif ($tokenList->hasKeyword(Keyword::INTERVAL)) {
             // interval_expr
@@ -505,15 +511,19 @@ class ExpressionParser
             $variableName = $variable->value;
             if (in_array(strtoupper($variableName), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
                 $tokenList->expectSymbol('.');
-                // todo: better type here
-                $variableName .= '.' . $tokenList->expectName();
+                $scope = Scope::get(substr($variableName, 2));
+                $expression = new SystemVariable($tokenList->expectName(), $scope);
+            } elseif (substr($variableName, 0, 2) === '@@') {
+                $expression = new SystemVariable(substr($variableName, 2));
+            } else {
+                $expression = new UserVariable($variableName);
             }
-            $expression = new Identifier($variableName);
         } elseif (($name1 = $tokenList->getName()) !== null) {
             $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
             $name2 = $name3 = null;
             $upper = strtoupper($name1);
-            if (in_array(strtoupper($name1), [Keyword::DATE, Keyword::TIME, Keyword::DATETIME]) && ($string = $tokenList->getString()) !== null) {
+            $types = [Keyword::DATE, Keyword::TIME, Keyword::DATETIME];
+            if (in_array(strtoupper($name1), $types, true) && ($string = $tokenList->getString()) !== null) {
                 // {DATE | TIME | DATETIME} literal
                 if ($upper === Keyword::DATE) {
                     $expression = new DateLiteral($string);
@@ -542,7 +552,7 @@ class ExpressionParser
                 }
                 if ($name3 !== null) {
                     // identifier
-                    $expression = new Identifier(new ColumnName($name3, $name2, $name1));
+                    $expression = new ColumnName($name3, $name2, $name1);
 
                 } elseif ($tokenList->hasSymbol('(')) {
                     // function_call
@@ -550,7 +560,7 @@ class ExpressionParser
 
                 } elseif ($name2 !== null) {
                     // identifier
-                    $expression = new Identifier(new QualifiedName($name2, $name1));
+                    $expression = new QualifiedName($name2, $name1);
 
                 } elseif (BuiltInFunction::isValid($name1) && $platformFeatures->isReserved($name1)) {
                     // function without parentheses
@@ -558,7 +568,7 @@ class ExpressionParser
 
                 } else {
                     // identifier
-                    $expression = new Identifier($name1);
+                    $expression = new SimpleName($name1);
                 }
             }
         } else {
@@ -599,7 +609,7 @@ class ExpressionParser
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     $tokenList->expectSymbol(')');
 
-                    return new FunctionCall($function, [new Identifier('*')]);
+                    return new FunctionCall($function, [new Asterisk()]);
                 }
             } elseif ($name === BuiltInFunction::TRIM) {
                 return $this->parseTrim($tokenList, $function);
@@ -1049,8 +1059,8 @@ class ExpressionParser
                     $position = (int) $value;
                     $expression = null;
                 }
-            } elseif ($expression instanceof Identifier) {
-                $column = $expression->getName();
+            } elseif ($expression instanceof ColumnIdentifier) {
+                $column = $expression;
                 $expression = null;
             }
 
@@ -1104,7 +1114,7 @@ class ExpressionParser
     }
 
     /**
-     * @return DateTime|FunctionCall
+     * @return DateTime|BuiltInFunction
      */
     public function parseDateTime(TokenList $tokenList)
     {
@@ -1113,7 +1123,7 @@ class ExpressionParser
                 $tokenList->expectSymbol(')');
             }
 
-            return new FunctionCall(new BuiltInFunction($function));
+            return new BuiltInFunction($function);
         }
 
         $string = (string) $tokenList->getUnsignedInt();

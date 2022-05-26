@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Utility;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 use function strtr;
 
 class DescribeTableCommand implements DmlCommand

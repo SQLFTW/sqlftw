@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\Flush;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class FlushTablesCommand implements DalCommand
 {

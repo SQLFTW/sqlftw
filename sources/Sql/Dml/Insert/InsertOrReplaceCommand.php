@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 abstract class InsertOrReplaceCommand implements DmlCommand
 {

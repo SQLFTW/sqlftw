@@ -7,24 +7,26 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable SlevomatCodingStandard.ControlStructures.AssignmentInCondition
+
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\Scope;
+use SqlFtw\Sql\Expression\SystemVariable;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\Scope;
-use SqlFtw\Sql\SystemVariable;
-use function ltrim;
-use function strpos;
-use function strtolower;
+use SqlFtw\Sql\MysqlVariable;
+use function in_array;
 use function strtoupper;
+use function substr;
 
 class SetCommandParser
 {
@@ -62,57 +64,38 @@ class SetCommandParser
                 $scope = $tokenList->getKeywordEnum(Scope::class);
             }
             if ($scope !== null) {
-                $name = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
-                $variable = new QualifiedName($name);
-            } else {
-                $variableToken = $tokenList->get(TokenType::AT_VARIABLE);
-                if ($variableToken !== null) {
-                    // @
-                    $name = $variableToken->value;
-                    if (strpos($name, '@@') === 0) {
-                        // @@
-                        $upper = strtoupper($name);
-                        $lower = strtolower($name);
-                        if ($upper === '@@GLOBAL') {
-                            $scope = Scope::get(Scope::GLOBAL);
-                            $name = null;
-                        } elseif ($upper === '@@PERSIST') {
-                            $scope = Scope::get(Scope::PERSIST);
-                            $name = null;
-                        } elseif ($upper === '@@PERSIST_ONLY') {
-                            $scope = Scope::get(Scope::PERSIST_ONLY);
-                            $name = null;
-                        } elseif ($upper === '@@SESSION') {
-                            $scope = Scope::get(Scope::SESSION);
-                            $name = null;
-                        } elseif (SystemVariable::isValid(ltrim($lower, '@'))) {
-                            $scope = Scope::get(Scope::SESSION);
-                            $name = (new SystemVariable(ltrim($lower, '@')))->getValue();
-                        } else {
-                            throw new InvalidValueException('System variable name', $tokenList);
-                        }
-                        if ($name === null) {
-                            $tokenList->expectSymbol('.');
-                            $name = $tokenList->expectNameOrStringEnum(SystemVariable::class)->getValue();
-                        }
-                    }
-                    $variable = new QualifiedName($name);
+                // GLOBAL foo
+                $name = $tokenList->expectNameOrStringEnum(MysqlVariable::class)->getValue();
+                $variable = new SystemVariable($name, $scope);
+            } elseif (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
+                $variableName = $token->value;
+                if (in_array(strtoupper($variableName), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
+                    // @@global.foo
+                    $tokenList->expectSymbol('.');
+                    $scope = Scope::get(substr($variableName, 2));
+                    $variable = new SystemVariable($tokenList->expectName(), $scope);
+                } elseif (substr($variableName, 0, 2) === '@@') {
+                    // @@foo
+                    $variable = new SystemVariable(substr($variableName, 2));
                 } else {
-                    // !@
-                    $name = $tokenList->expectName();
-                    if ($tokenList->hasSymbol('.')) {
-                        $name2 = $tokenList->expectName();
-                        $variable = new QualifiedName($name2, $name);
-                    } else {
-                        $variable = new QualifiedName($name);
-                    }
+                    // @foo
+                    $variable = new UserVariable($variableName);
+                }
+            } else {
+                // foo
+                $name = $tokenList->expectName();
+                if ($tokenList->hasSymbol('.')) {
+                    $name2 = $tokenList->expectName();
+                    $variable = new QualifiedName($name2, $name);
+                } else {
+                    $variable = new QualifiedName($name);
                 }
             }
 
             $operator = $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
             $expression = $this->expressionParser->parseExpression($tokenList);
 
-            $assignments[] = new SetAssignment($variable, $expression, $scope, $operator);
+            $assignments[] = new SetAssignment($variable, $expression, $operator);
         } while ($tokenList->hasSymbol(','));
 
         return new SetCommand($assignments);

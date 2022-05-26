@@ -96,14 +96,13 @@ use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
+use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 use function array_values;
 use function strtoupper;
 
@@ -302,9 +301,11 @@ class TableCommandsParser
                                 }
                                 $actions[] = new AddColumnAction($column, $after);
                             } else {
-                                $tokenList->missingAnyKeyword(Keyword::COLUMN, Keyword::CONSTRAINT,
-                                    Keyword::FOREIGN, Keyword::FULLTEXT, Keyword::INDEX, Keyword::KEY, Keyword::PARTITION,
-                                    Keyword::PRIMARY, Keyword::SPATIAL, Keyword::UNIQUE);
+                                // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
+                                $tokenList->missingAnyKeyword(
+                                    Keyword::COLUMN, Keyword::CONSTRAINT, Keyword::FOREIGN, Keyword::FULLTEXT, Keyword::INDEX,
+                                    Keyword::KEY, Keyword::PARTITION, Keyword::PRIMARY, Keyword::SPATIAL, Keyword::UNIQUE
+                                );
                             }
                     }
                     break;
@@ -850,9 +851,9 @@ class TableCommandsParser
                             $param = $tokenList->getUnsignedInt();
                             $params = $param !== null ? [new UintLiteral($param)] : [];
                             $tokenList->expectSymbol(')');
-                            $default = new FunctionCall(new QualifiedName(Keyword::CURRENT_TIMESTAMP), $params);
+                            $default = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP), $params);
                         } else {
-                            $default = new Identifier(Keyword::CURRENT_TIMESTAMP);
+                            $default = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP));
                         }
                     } else {
                         // [DEFAULT default_value]
@@ -881,9 +882,9 @@ class TableCommandsParser
                         $param = $tokenList->getUnsignedInt();
                         $params = $param !== null ? [new UintLiteral($param)] : [];
                         $tokenList->expectSymbol(')');
-                        $onUpdate = new FunctionCall(new QualifiedName(Keyword::CURRENT_TIMESTAMP), $params);
+                        $onUpdate = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP), $params);
                     } else {
-                        $onUpdate = new Identifier(Keyword::CURRENT_TIMESTAMP);
+                        $onUpdate = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP));
                     }
                 case Keyword::UNIQUE:
                     // [UNIQUE [KEY] | [PRIMARY] KEY]

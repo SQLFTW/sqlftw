@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class TableCommand implements SimpleQuery
 {

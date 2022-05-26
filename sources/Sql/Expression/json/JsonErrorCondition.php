@@ -16,7 +16,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * {NULL | DEFAULT json_string | ERROR} ON ...
  */
-class JsonErrorCondition implements ExpressionNode
+class JsonErrorCondition implements ArgumentNode
 {
 
     public const NULL = true;

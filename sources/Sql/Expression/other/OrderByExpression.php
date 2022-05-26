@@ -12,23 +12,21 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Collation;
-use SqlFtw\Sql\ColumnName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Order;
-use SqlFtw\Sql\QualifiedName;
 use function is_string;
 
 /**
  * {col_name | expr | position} [ASC | DESC]
  */
-class OrderByExpression implements ExpressionNode
+class OrderByExpression implements ArgumentNode
 {
     use StrictBehaviorMixin;
 
     /** @var Order|null */
     private $order;
 
-    /** @var string|QualifiedName|ColumnName|null */
+    /** @var string|ColumnIdentifier|null */
     private $column;
 
     /** @var ExpressionNode|null */
@@ -41,7 +39,7 @@ class OrderByExpression implements ExpressionNode
     private $collation;
 
     /**
-     * @param string|QualifiedName|ColumnName|null $column
+     * @param string|ColumnIdentifier|null $column
      */
     public function __construct(
         ?Order $order,
@@ -68,7 +66,7 @@ class OrderByExpression implements ExpressionNode
     }
 
     /**
-     * @return string|ColumnName|QualifiedName|null
+     * @return string|ColumnIdentifier|null
      */
     public function getColumn()
     {

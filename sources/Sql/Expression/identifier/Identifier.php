@@ -7,15 +7,14 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql;
+namespace SqlFtw\Sql\Expression;
 
-class Scope extends SqlEnum
+/**
+ * e.g. `name`, @name, *
+ */
+interface Identifier extends RootNode
 {
 
-    public const GLOBAL = Keyword::GLOBAL;
-    public const SESSION = Keyword::SESSION;
-    public const PERSIST = Keyword::PERSIST;
-    public const PERSIST_ONLY = Keyword::PERSIST_ONLY;
-    public const DEFAULT = '';
+    public function getFullName(): string;
 
 }

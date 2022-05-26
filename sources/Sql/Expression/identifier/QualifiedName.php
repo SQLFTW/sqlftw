@@ -7,12 +7,12 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql;
+namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class QualifiedName implements SqlSerializable
+class QualifiedName implements ColumnIdentifier, FunctionIdentifier, TableIdentifier
 {
     use StrictBehaviorMixin;
 
@@ -59,14 +59,14 @@ class QualifiedName implements SqlSerializable
     }
 
     /**
-     * @return string[]|null[]|array{string, string|null}
+     * @return array{string, string|null}
      */
     public function toArray(): array
     {
         return [$this->name, $this->schema];
     }
 
-    public function format(): string
+    public function getFullName(): string
     {
         return $this->schema !== null
             ? $this->schema . '.' . $this->name

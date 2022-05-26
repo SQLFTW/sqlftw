@@ -14,16 +14,18 @@ use SqlFtw\Formatter\Formatter;
 
 /**
  * ROW (...[, ...])
+ *
+ * @see https://dev.mysql.com/doc/refman/8.0/en/row-subqueries.html
  */
-class RowExpression implements ExpressionNode
+class RowExpression implements RootNode
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<ExpressionNode> */
+    /** @var non-empty-array<RootNode> */
     private $contents;
 
     /**
-     * @param non-empty-array<ExpressionNode> $contents
+     * @param non-empty-array<RootNode> $contents
      */
     public function __construct(array $contents)
     {
@@ -31,7 +33,7 @@ class RowExpression implements ExpressionNode
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-array<RootNode>
      */
     public function getContents(): array
     {

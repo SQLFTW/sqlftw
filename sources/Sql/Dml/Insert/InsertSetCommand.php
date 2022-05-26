@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
 {

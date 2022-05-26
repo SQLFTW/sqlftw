@@ -82,10 +82,10 @@ class UpdateCommandParser
             $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
 
             if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $values[$column->format()] = new SetColumnExpression($column, null, true);
+                $values[$column->getFullName()] = new SetColumnExpression($column, null, true);
             } else {
                 $value = $this->expressionParser->parseAssignExpression($tokenList);
-                $values[$column->format()] = new SetColumnExpression($column, $value);
+                $values[$column->getFullName()] = new SetColumnExpression($column, $value);
             }
         } while ($tokenList->hasSymbol(','));
 

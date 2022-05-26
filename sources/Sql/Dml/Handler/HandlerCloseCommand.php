@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Handler;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class HandlerCloseCommand implements HandlerCommand
 {

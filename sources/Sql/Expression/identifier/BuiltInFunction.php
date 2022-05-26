@@ -15,7 +15,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
 
-class BuiltInFunction extends SqlEnum implements Feature
+class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
 {
 
     // comparison
@@ -664,6 +664,11 @@ class BuiltInFunction extends SqlEnum implements Feature
     public function isBare(): bool
     {
         return in_array($this->getValue(), self::$bare, true);
+    }
+
+    public function getFullName(): string
+    {
+        return $this->getValue();
     }
 
 }

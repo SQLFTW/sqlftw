@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Routines;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class AlterFunctionCommand implements StoredFunctionCommand, AlterRoutineCommand
 {

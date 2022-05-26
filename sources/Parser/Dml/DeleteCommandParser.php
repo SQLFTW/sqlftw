@@ -17,8 +17,8 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 
 class DeleteCommandParser
 {

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Routines;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class DropProcedureCommand implements StoredProcedureCommand, DropRoutineCommand
 {

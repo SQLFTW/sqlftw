@@ -15,7 +15,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * ..., ..., ...
  */
-class ListExpression implements ExpressionNode
+class ListExpression implements ArgumentNode
 {
     use StrictBehaviorMixin;
 

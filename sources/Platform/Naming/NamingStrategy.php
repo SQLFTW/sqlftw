@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Platform\Naming;
 
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 interface NamingStrategy
 {

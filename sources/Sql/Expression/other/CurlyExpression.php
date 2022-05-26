@@ -13,27 +13,27 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
- * {identifier expr}
+ * {type expr}
  */
 class CurlyExpression implements RootNode
 {
     use StrictBehaviorMixin;
 
     /** @var string */
-    private $name;
+    private $type;
 
     /** @var ExpressionNode */
     private $expression;
 
-    public function __construct(string $name, ExpressionNode $expression)
+    public function __construct(string $type, ExpressionNode $expression)
     {
-        $this->name = $name;
+        $this->type = $type;
         $this->expression = $expression;
     }
 
-    public function getName(): string
+    public function getType(): string
     {
-        return $this->name;
+        return $this->type;
     }
 
     public function getExpression(): ExpressionNode
@@ -43,7 +43,7 @@ class CurlyExpression implements RootNode
 
     public function serialize(Formatter $formatter): string
     {
-        return '{' . $formatter->formatName($this->name) . ' ' . $this->expression->serialize($formatter) . '}';
+        return '{' . $this->type . ' ' . $this->expression->serialize($formatter) . '}';
     }
 
 }

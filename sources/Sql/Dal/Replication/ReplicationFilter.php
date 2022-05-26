@@ -10,8 +10,8 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
 use SqlFtw\Sql\SqlEnum;
 
 class ReplicationFilter extends SqlEnum

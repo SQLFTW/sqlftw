@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Sql;
 
+use SqlFtw\Sql\Expression\QualifiedName;
+
 interface TablesCommand extends Command
 {
 

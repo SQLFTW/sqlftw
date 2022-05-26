@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-class SystemVariable extends SqlEnum implements Feature
+class MysqlVariable extends SqlEnum implements Feature
 {
 
     public const ACTIVATE_ALL_ROLES_ON_LOGIN = 'activate_all_roles_on_login';
@@ -454,9 +454,14 @@ class SystemVariable extends SqlEnum implements Feature
     public const NDB_BLOB_READ_BATCH_BYTES = 'ndb_blob_read_batch_bytes';
     public const NDB_BLOB_WRITE_BATCH_BYTES = 'ndb_blob_write_batch_bytes';
     public const NDB_DATA_NODE_NEIGHBOUR = 'ndb_data_node_neighbour';
+    public const NDB_DBG_CHECK_SHARES = 'ndb_dbg_check_shares';
     public const NDB_DEFAULT_COLUMN_FORMAT = 'ndb_default_column_format';
+    public const NDB_EVENTBUFFER_FREE_PERCENT = 'ndb_eventbuffer_free_percent';
+    public const NDB_EVENTBUFFER_MAX_ALLOC = 'ndb_eventbuffer_max_alloc';
     public const NDB_EXTRA_LOGGING = 'ndb_extra_logging';
     public const NDB_FULLY_REPLICATED = 'ndb_fully_replicated';
+    public const NDB_LOG_APPLY_STATUS = 'ndb_log_apply_status';
+    public const NDB_LOG_EMPTY_EPOCHS = 'ndb_log_empty_epochs';
     public const NDB_METADATA_CHECK = 'ndb_metadata_check';
     public const NDB_METADATA_CHECK_INTERVAL = 'ndb_metadata_check_interval';
     public const NDB_METADATA_SYNC = 'ndb_metadata_sync';
@@ -465,6 +470,7 @@ class SystemVariable extends SqlEnum implements Feature
     public const NDB_SCHEMA_DIST_LOCK_WAIT_TIMEOUT = 'ndb_schema_dist_lock_wait_timeout';
     public const NDB_SHOW_FOREIGN_KEY_MOCK_TABLES = 'ndb_show_foreign_key_mock_tables';
     public const NDB_TABLE_NO_LOGGING = 'ndb_table_no_logging';
+    public const NDB_USE_COPYING_ALTER_TABLE = 'ndb_use_copying_alter_table';
     public const NDBINFO_MAX_BYTES = 'ndbinfo_max_bytes';
     public const NDBINFO_MAX_ROWS = 'ndbinfo_max_rows';
     public const NDBINFO_OFFLINE = 'ndbinfo_offline';

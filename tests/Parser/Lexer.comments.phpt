@@ -31,11 +31,11 @@ Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::HINT_COMMENT, '/*+ 
 Assert::token($tokens[2], T::WHITESPACE, ' ', 15);
 
 // OPTIONAL_COMMENT
-$tokens = $lexer->tokenizeAll(' /*! comment */ ');
+$tokens = $lexer->tokenizeAll(' /*!90000 comment */ ');
 //Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, '/*! comment */', 1);
-Assert::token($tokens[2], T::WHITESPACE, ' ', 15);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, '/*!90000 comment */', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 20);
 
 
 

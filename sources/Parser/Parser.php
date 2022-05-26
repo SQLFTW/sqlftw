@@ -81,9 +81,11 @@ class Parser
                 if ($tokenList->isFinished()) {
                     if (count($commands) === 1) {
                         yield $command;
+
                         continue 2;
                     } else {
                         yield new MultiStatement($commands);
+
                         continue 2;
                     }
                 } else {

@@ -11,97 +11,44 @@ namespace SqlFtw\Sql\Dal\Set;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
-use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\Scope;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
-use function get_class;
-use function gettype;
-use function is_float;
-use function is_int;
-use function is_object;
-use function is_scalar;
-use function str_replace;
-use function ucfirst;
 
 class SetAssignment implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var Scope */
-    private $scope;
-
-    /** @var QualifiedName */
+    /** @var Identifier */
     private $variable;
 
-    /** @var bool|int|float|string|ExpressionNode */
+    /** @var RootNode */
     private $expression;
 
     /** @var string */
     private $operator;
 
-    /**
-     * @param bool|int|float|string|ExpressionNode|mixed $expression
-     */
-    public function __construct(QualifiedName $variable, $expression, ?Scope $scope = null, string $operator = Operator::EQUAL)
+    public function __construct(Identifier $variable, RootNode $expression, string $operator = Operator::EQUAL)
     {
-        if (!$expression instanceof ExpressionNode && !is_scalar($expression)) {
-            $given = is_object($expression) ? get_class($expression) : ucfirst(gettype($expression));
-            throw new InvalidDefinitionException("ExpressionNode assigned to variable must be a scalar value or an ExpressionNode. $given given.");
-        }
-        if ($scope === null) {
-            $scope = Scope::get(Scope::DEFAULT);
-        }
-        $this->scope = $scope;
         $this->variable = $variable;
         $this->expression = $expression;
         $this->operator = $operator;
     }
 
-    public function getScope(): Scope
-    {
-        return $this->scope;
-    }
-
-    public function getVariable(): QualifiedName
+    public function getVariable(): Identifier
     {
         return $this->variable;
     }
 
-    /**
-     * @return bool|int|float|string|ExpressionNode
-     */
-    public function getExpression()
+    public function getExpression(): RootNode
     {
         return $this->expression;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        $scope = $this->scope->serialize($formatter);
-        $scope .= $scope !== '' ? ' ' : '';
-
-        return $scope . $this->variable->serialize($formatter) . ' ' . $this->operator . ' ' . $this->formatExpression($formatter, $this->expression);
-    }
-
-    /**
-     * @param bool|int|float|string|ExpressionNode $expression
-     */
-    private function formatExpression(Formatter $formatter, $expression): string
-    {
-        if ($expression === true) {
-            return 'ON';
-        } elseif ($expression === false) {
-            return 'OFF';
-        } elseif (is_int($expression) || is_float($expression)) {
-            return (string) $expression;
-        } elseif ($expression instanceof ExpressionNode) {
-            return $expression->serialize($formatter);
-        } else {
-            return str_replace('\'', '\'\'', $expression);
-        }
+        return $this->variable->serialize($formatter) . ' ' . $this->operator . ' ' . $this->expression->serialize($formatter);
     }
 
 }

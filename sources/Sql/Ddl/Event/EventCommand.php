@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use SqlFtw\Sql\Ddl\SchemaObjectCommand;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 interface EventCommand extends SchemaObjectCommand
 {

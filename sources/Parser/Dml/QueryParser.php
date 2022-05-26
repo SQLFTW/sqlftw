@@ -37,8 +37,8 @@ use SqlFtw\Sql\Dml\Query\WindowFrameType;
 use SqlFtw\Sql\Dml\Query\WindowFrameUnits;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\Dml\WithClause;
+use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Keyword;
@@ -277,7 +277,7 @@ class QueryParser
         $what = [];
         do {
             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                $expression = new Identifier('*');
+                $expression = new Asterisk();
             } else {
                 $expression = $this->expressionParser->parseAssignExpression($tokenList);
             }

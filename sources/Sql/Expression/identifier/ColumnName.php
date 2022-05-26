@@ -7,12 +7,12 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql;
+namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class ColumnName implements SqlSerializable
+class ColumnName implements Identifier, ColumnIdentifier
 {
     use StrictBehaviorMixin;
 
@@ -56,7 +56,7 @@ class ColumnName implements SqlSerializable
         return $this->schema;
     }
 
-    public function format(): string
+    public function getFullName(): string
     {
         $result = '';
         if ($this->schema !== null) {

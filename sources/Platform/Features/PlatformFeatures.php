@@ -15,7 +15,7 @@ use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SystemVariable;
+use SqlFtw\Sql\MysqlVariable;
 use function in_array;
 
 abstract class PlatformFeatures
@@ -91,7 +91,7 @@ abstract class PlatformFeatures
         } elseif ($feature instanceof BuiltInFunction) {
             // todo: built in functions availability
             return false;
-        } elseif ($feature instanceof SystemVariable) {
+        } elseif ($feature instanceof MysqlVariable) {
             // todo: system variables availability
             return false;
         } elseif ($feature instanceof BaseType) {

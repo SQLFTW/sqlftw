@@ -25,8 +25,8 @@ use SqlFtw\Sql\Dml\Transaction\StartTransactionCommand;
 use SqlFtw\Sql\Dml\Transaction\TransactionIsolationLevel;
 use SqlFtw\Sql\Dml\Transaction\UnlockInstanceCommand;
 use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
+use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Scope;
 
 class TransactionCommandsParser
 {

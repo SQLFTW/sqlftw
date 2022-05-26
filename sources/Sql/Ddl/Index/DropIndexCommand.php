@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class DropIndexCommand implements IndexCommand, DdlTableCommand
 {

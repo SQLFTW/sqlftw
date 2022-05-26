@@ -16,6 +16,7 @@ use SqlFtw\Platform\Naming\NamingStrategy;
 use function in_array;
 use function ltrim;
 use function str_replace;
+use function strtoupper;
 use function ucfirst;
 
 class Platform
@@ -128,13 +129,13 @@ class Platform
 
     public function interpretOptionalComment(string $versionId): bool
     {
-        $maria = $versionId !== '' && $versionId[0] === 'M';
-        $versionId = (int) ltrim($versionId, 'M');
+        $maria = $versionId !== '' && strtoupper($versionId[0]) === 'M';
+        $versionId = (int) ltrim($versionId, 'Mm');
 
         if ($this->name !== self::MYSQL && $this->name !== self::MARIA) {
             // no support for optional comments
             return false;
-        } elseif ($versionId === '') {
+        } elseif ($versionId === 0) {
             // MySQL and Maria only, no version limit
             return true;
         } elseif ($maria && $this->name !== self::MARIA) {

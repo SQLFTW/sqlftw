@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class DropTableCommand implements DdlTablesCommand
 {

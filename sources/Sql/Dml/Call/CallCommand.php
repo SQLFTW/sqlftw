@@ -13,7 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\QualifiedName;
+use SqlFtw\Sql\Expression\QualifiedName;
 
 class CallCommand implements DmlCommand
 {

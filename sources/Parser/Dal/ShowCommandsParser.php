@@ -61,9 +61,9 @@ use SqlFtw\Sql\Dal\Show\ShowTriggersCommand;
 use SqlFtw\Sql\Dal\Show\ShowVariablesCommand;
 use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\QualifiedName;
-use SqlFtw\Sql\Scope;
 
 class ShowCommandsParser
 {
