@@ -12,23 +12,22 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
-use function strlen;
+use function is_numeric;
 
 class SignalStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var int|string|null */
+    /** @var string|null */
     private $condition;
 
     /** @var array<string, RootNode> */
     private $items;
 
     /**
-     * @param int|string|null $condition
      * @param array<string, RootNode> $items
      */
-    public function __construct($condition, array $items)
+    public function __construct(?string $condition, array $items)
     {
         foreach ($items as $key => $value) {
             ConditionInformationItem::get($key);
@@ -37,10 +36,7 @@ class SignalStatement implements CompoundStatementItem
         $this->items = $items;
     }
 
-    /**
-     * @return int|string|null
-     */
-    public function getCondition()
+    public function getCondition(): ?string
     {
         return $this->condition;
     }
@@ -56,8 +52,9 @@ class SignalStatement implements CompoundStatementItem
     public function serialize(Formatter $formatter): string
     {
         $result = 'SIGNAL';
+        $sqlState = is_numeric($this->condition);
         if ($this->condition !== null) {
-            $result .= ' ' . (strlen((string) $this->condition) > 4 ? 'SQLSTATE ' : '') . $formatter->formatValue($this->condition);
+            $result .= ' ' . ($sqlState ? 'SQLSTATE ' . $this->condition : $this->condition);
         }
         if ($this->items !== []) {
             $result .= ' SET ' . $formatter->formatSerializablesMap($this->items);

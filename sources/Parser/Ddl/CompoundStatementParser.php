@@ -574,11 +574,11 @@ class CompoundStatementParser
      */
     private function parseSignalResignal(TokenList $tokenList, string $keyword)
     {
-        $condition = $tokenList->getUnsignedInt();
-        if ($condition === null) {
-            $tokenList->expectKeyword(Keyword::SQLSTATE);
+        if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
             $tokenList->passKeyword(Keyword::VALUE);
-            $condition = $tokenList->expectNonReservedNameOrString();
+            $condition = $tokenList->expectString();
+        } else {
+            $condition = $tokenList->getNonReservedName();
         }
         $items = [];
         if ($tokenList->hasKeyword(Keyword::SET)) {

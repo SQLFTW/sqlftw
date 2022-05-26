@@ -9,26 +9,24 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\Literal;
-use function implode;
-use function strlen;
+use SqlFtw\Sql\Expression\RootNode;
+use function is_numeric;
 
 class ResignalStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var int|string */
+    /** @var string|null */
     private $condition;
 
-    /** @var array<string, int|string|float|bool|Literal> */
+    /** @var array<string, RootNode> */
     private $items;
 
     /**
      * @param int|string $condition
-     * @param array<string, int|string|float|bool|Literal> $items
+     * @param array<string, RootNode> $items
      */
     public function __construct($condition, array $items)
     {
@@ -39,16 +37,13 @@ class ResignalStatement implements CompoundStatementItem
         $this->items = $items;
     }
 
-    /**
-     * @return int|string
-     */
-    public function getCondition()
+    public function getCondition(): ?string
     {
         return $this->condition;
     }
 
     /**
-     * @return array<string, int|string|float|bool|Literal>
+     * @return array<string, RootNode>
      */
     public function getItems(): array
     {
@@ -58,13 +53,12 @@ class ResignalStatement implements CompoundStatementItem
     public function serialize(Formatter $formatter): string
     {
         $result = 'RESIGNAL';
+        $sqlState = is_numeric($this->condition);
         if ($this->condition !== null) {
-            $result .= ' ' . (strlen((string) $this->condition) > 4 ? 'SQLSTATE ' : '') . $formatter->formatValue($this->condition);
+            $result .= ' ' . ($sqlState ? 'SQLSTATE ' . $this->condition : $this->condition);
         }
         if ($this->items !== []) {
-            $result .= ' SET ' . implode(', ', Arr::mapPairs($this->items, static function ($item, $value) use ($formatter): string {
-                return $item . ' = ' . $formatter->formatValue($value);
-            }));
+            $result .= ' SET ' . $formatter->formatSerializablesMap($this->items);
         }
 
         return $result;
