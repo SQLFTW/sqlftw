@@ -11,6 +11,8 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
 use Tracy\Debugger;
+use function get_class;
+use function implode;
 
 ParsingException::$debug = true;
 
@@ -30,7 +32,7 @@ Dumper::$intFormatters = [
 ] + Dumper::$intFormatters;
 
 // Token
-Dumper::$objectFormatters[Token::class] = static function (Token $token, int $depth = 0): string {
+$tokenFormatter = static function (Token $token, int $depth = 0): string {
     $type = implode('|', TokenType::getByValue($token->type)->getConstantNames());
     $info = Dumper::$showInfo;
     Dumper::$showInfo = false;
@@ -48,6 +50,9 @@ Dumper::$objectFormatters[Token::class] = static function (Token $token, int $de
 
     return $res;
 };
+Dumper::$objectFormatters[Token::class] = $tokenFormatter;
+Dumper::$shortObjectFormatters[Token::class] = $tokenFormatter;
+unset($tokenFormatter);
 
 // TokenList
 Dumper::$shortObjectFormatters[TokenList::class] = static function (TokenList $tokenList): string {
