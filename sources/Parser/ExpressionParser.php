@@ -43,7 +43,6 @@ use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\IntervalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\JsonErrorCondition;
@@ -56,6 +55,7 @@ use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
 use SqlFtw\Sql\Expression\MaxValueLiteral;
+use SqlFtw\Sql\Expression\NoneLiteral;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\NumberLiteral;
 use SqlFtw\Sql\Expression\OnOffLiteral;
@@ -68,7 +68,6 @@ use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\RowExpression;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Expression\SimpleName;
-use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Expression\TernaryOperator;
@@ -1014,8 +1013,10 @@ class ExpressionParser
                 return new MaxValueLiteral();
             } elseif ($upper === Keyword::ALL) {
                 return new AllLiteral();
+            } elseif ($upper === Keyword::NONE) {
+                return new NoneLiteral();
             } else {
-                $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::MAXVALUE, Keyword::ALL);
+                $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::MAXVALUE, Keyword::ALL, Keyword::NONE);
             }
         } elseif (($token->type & TokenType::BINARY_LITERAL) !== 0) {
             return new BinaryLiteral($token->value);

@@ -25,6 +25,7 @@ note: classes in **bold**, interfaces in *italic*
         - **AllLiteral** - `ALL`
         - **DefaultLiteral** - `DEFAULT`
         - **MaxValueLiteral** - `MAXVALUE`
+        - **NoneLiteral** - `NONE`
         - **PrimaryLiteral** - `PRIMARY`
         - **UnknownLiteral** - `UNKNOWN`
       - **Placeholder** - ?

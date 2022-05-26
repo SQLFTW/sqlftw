@@ -65,7 +65,7 @@ class SetCommandParser
             }
             if ($scope !== null) {
                 // GLOBAL foo
-                $name = $tokenList->expectNameOrStringEnum(MysqlVariable::class)->getValue();
+                $name = $tokenList->expectNonReservedNameOrString();
                 $variable = new SystemVariable($name, $scope);
             } elseif (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
                 $variableName = $token->value;
