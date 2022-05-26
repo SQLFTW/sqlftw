@@ -1168,5 +1168,6 @@ class Keyword extends SqlEnum implements Feature
     public const SHARED = 'SHARED'; // lock
     public const TRADITIONAL = 'TRADITIONAL'; // sql mode
     public const REDO_LOG = 'REDO_LOG';
+    public const ONLINE = 'ONLINE'; // NDB cluster
 
 }

@@ -109,7 +109,11 @@ class AlterTableCommand implements DdlTableCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER TABLE ' . $this->name->serialize($formatter);
+        $result = 'ALTER ';
+        if (isset($this->alterOptions[AlterTableOption::ONLINE])) {
+            $result .= 'ONLINE ';
+        }
+        $result .= 'TABLE ' . $this->name->serialize($formatter);
 
         $result .= $this->actions->serialize($formatter);
 
@@ -125,7 +129,9 @@ class AlterTableCommand implements DdlTableCommand
 
         if ($this->alterOptions !== null) {
             foreach ($this->alterOptions as $option => $value) {
-                if ($option === AlterTableOption::FORCE) {
+                if ($option === AlterTableOption::ONLINE) {
+                    continue;
+                } elseif ($option === AlterTableOption::FORCE) {
                     $result .= "\n" . $formatter->indent . 'FORCE, ';
                 } elseif ($option === AlterTableOption::VALIDATION) {
                     assert(is_bool($value));

@@ -19,5 +19,6 @@ class AlterTableOption extends SqlEnum
     public const FORCE = Keyword::FORCE;
     public const LOCK = Keyword::LOCK;
     public const VALIDATION = Keyword::VALIDATION;
+    public const ONLINE = Keyword::ONLINE; // NDB
 
 }

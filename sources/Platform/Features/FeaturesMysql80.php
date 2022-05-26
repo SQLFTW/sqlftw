@@ -533,6 +533,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::OJ,
         Keyword::OLD,
         Keyword::ONE,
+        Keyword::ONLINE, // not doc, NDB
         Keyword::ONLY,
         Keyword::OPEN,
         Keyword::OPTIONAL,

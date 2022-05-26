@@ -197,7 +197,8 @@ class Parser
                         // ALTER SERVER
                         return $this->factory->getServerCommandsParser()->parseAlterServer($tokenList->resetPosition($start));
                     case Keyword::TABLE:
-                        // ALTER TABLE
+                    case Keyword::ONLINE:
+                        // ALTER [ONLINE] TABLE
                         return $this->factory->getTableCommandsParser()->parseAlterTable($tokenList->resetPosition($start));
                     case Keyword::TABLESPACE:
                     case Keyword::UNDO:

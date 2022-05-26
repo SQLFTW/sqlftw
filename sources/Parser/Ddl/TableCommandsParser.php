@@ -200,12 +200,17 @@ class TableCommandsParser
      */
     public function parseAlterTable(TokenList $tokenList): AlterTableCommand
     {
-        $tokenList->expectKeywords(Keyword::ALTER, Keyword::TABLE);
-        $name = $tokenList->expectQualifiedName();
-
         $actions = [];
         $alterOptions = [];
         $tableOptions = [];
+
+        $tokenList->expectKeyword(Keyword::ALTER);
+        if ($tokenList->hasKeyword(Keyword::ONLINE)) {
+            $alterOptions[AlterTableOption::ONLINE] = true;
+        }
+        $tokenList->expectKeyword(Keyword::TABLE);
+        $name = $tokenList->expectQualifiedName();
+
         do {
             $position = $tokenList->getPosition();
             $keyword = $tokenList->expectKeyword();
@@ -297,18 +302,9 @@ class TableCommandsParser
                                 }
                                 $actions[] = new AddColumnAction($column, $after);
                             } else {
-                                $tokenList->missingAnyKeyword(
-                                    Keyword::COLUMN,
-                                    Keyword::CONSTRAINT,
-                                    Keyword::FOREIGN,
-                                    Keyword::FULLTEXT,
-                                    Keyword::INDEX,
-                                    Keyword::KEY,
-                                    Keyword::PARTITION,
-                                    Keyword::PRIMARY,
-                                    Keyword::SPATIAL,
-                                    Keyword::UNIQUE
-                                );
+                                $tokenList->missingAnyKeyword(Keyword::COLUMN, Keyword::CONSTRAINT,
+                                    Keyword::FOREIGN, Keyword::FULLTEXT, Keyword::INDEX, Keyword::KEY, Keyword::PARTITION,
+                                    Keyword::PRIMARY, Keyword::SPATIAL, Keyword::UNIQUE);
                             }
                     }
                     break;
