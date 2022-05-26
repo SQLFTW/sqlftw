@@ -383,7 +383,7 @@ class ShowCommandsParser
                 return new ShowCreateTriggerCommand($tokenList->expectQualifiedName());
             case Keyword::USER:
                 // SHOW CREATE USER user
-                return new ShowCreateUserCommand($tokenList->expectName());
+                return new ShowCreateUserCommand($tokenList->expectUserName());
             case Keyword::VIEW:
                 // SHOW CREATE VIEW view_name
                 return new ShowCreateViewCommand($tokenList->expectQualifiedName());

@@ -11,27 +11,28 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class ShowCreateUserCommand implements ShowCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var UserName */
     private $name;
 
-    public function __construct(string $name)
+    public function __construct(UserName $name)
     {
         $this->name = $name;
     }
 
-    public function getName(): string
+    public function getName(): UserName
     {
         return $this->name;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW CREATE USER ' . $formatter->formatName($this->name);
+        return 'SHOW CREATE USER ' . $this->name->serialize($formatter);
     }
 
 }
