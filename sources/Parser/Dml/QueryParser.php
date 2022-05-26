@@ -322,7 +322,7 @@ class QueryParser
 
         $where = null;
         if ($tokenList->hasKeyword(Keyword::WHERE)) {
-            $where = $this->expressionParser->parseExpression($tokenList);
+            $where = $this->expressionParser->parseAssignExpression($tokenList);
         }
 
         $groupBy = null;
@@ -341,7 +341,7 @@ class QueryParser
 
         $having = null;
         if ($tokenList->hasKeyword(Keyword::HAVING)) {
-            $having = $this->expressionParser->parseExpression($tokenList);
+            $having = $this->expressionParser->parseAssignExpression($tokenList);
         }
 
         $windows = null;
