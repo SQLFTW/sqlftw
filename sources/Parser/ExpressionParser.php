@@ -522,14 +522,15 @@ class ExpressionParser
             $platformFeatures = $tokenList->getSettings()->getPlatform()->getFeatures();
             $name2 = $name3 = null;
             $upper = strtoupper($name1);
-            $types = [Keyword::DATE, Keyword::TIME, Keyword::DATETIME];
+            $types = [Keyword::DATE, Keyword::TIME, Keyword::DATETIME, Keyword::TIMESTAMP];
             if (in_array(strtoupper($name1), $types, true) && ($string = $tokenList->getString()) !== null) {
-                // {DATE | TIME | DATETIME} literal
+                // {DATE | TIME | DATETIME | TIMESTAMP} literal
                 if ($upper === Keyword::DATE) {
                     $expression = new DateLiteral($string);
                 } elseif ($upper === Keyword::TIME) {
                     $expression = new TimeLiteral($string);
                 } else {
+                    // todo: is TimestampLiteral needed?
                     $expression = new DatetimeLiteral($string);
                 }
             } elseif ($name1[0] === '_' && Charset::isValid(substr($name1, 1)) && ($string = $tokenList->getStringLike()) !== null) {
