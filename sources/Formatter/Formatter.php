@@ -10,6 +10,7 @@
 namespace SqlFtw\Formatter;
 
 use DateTimeInterface;
+use Dogma\Arr;
 use Dogma\NotImplementedException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
@@ -143,6 +144,16 @@ class Formatter
         return implode($separator, array_map(function (SqlSerializable $serializable): string {
             return $serializable->serialize($this);
         }, $serializables));
+    }
+
+    /**
+     * @param non-empty-array<SqlSerializable> $serializables
+     */
+    public function formatSerializablesMap(array $serializables, string $separator = ', ', string $keyValueSeparator = ' = '): string
+    {
+        return implode($separator, Arr::mapPairs($serializables, function (string $key, SqlSerializable $value) use ($keyValueSeparator): string {
+            return $key . $keyValueSeparator . $value->serialize($this);
+        }));
     }
 
     /**

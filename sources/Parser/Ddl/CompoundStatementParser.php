@@ -585,7 +585,7 @@ class CompoundStatementParser
             do {
                 $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class)->getValue();
                 $tokenList->expectOperator(Operator::EQUAL);
-                $value = $this->expressionParser->parseLiteral($tokenList);
+                $value = $this->expressionParser->parseExpression($tokenList);
                 $items[$item] = $value;
             } while ($tokenList->hasSymbol(','));
         }
