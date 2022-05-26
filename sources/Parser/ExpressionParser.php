@@ -43,6 +43,7 @@ use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\JsonErrorCondition;
@@ -522,16 +523,7 @@ class ExpressionParser
         $variable = $tokenList->get(TokenType::AT_VARIABLE);
         if ($variable !== null) {
             // @variable
-            $variableName = $variable->value;
-            if (in_array(strtoupper($variableName), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
-                $tokenList->expectSymbol('.');
-                $scope = Scope::get(substr($variableName, 2));
-                return new SystemVariable($tokenList->expectName(), $scope);
-            } elseif (substr($variableName, 0, 2) === '@@') {
-                return new SystemVariable(substr($variableName, 2));
-            } else {
-                return new UserVariable($variableName);
-            }
+            return $this->parseAtVariable($tokenList, $variable->value);
         }
 
         // may be preceded by charset introducer, e.g. _utf8
@@ -584,6 +576,36 @@ class ExpressionParser
 
         // literal
         return $this->parseLiteral($tokenList);
+    }
+
+    /**
+     * @return SystemVariable|UserVariable
+     */
+    public function parseAtVariable(TokenList $tokenList, string $atVariable): Identifier
+    {
+        if (in_array(strtoupper($atVariable), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
+            // @@global.foo
+            $tokenList->expectSymbol('.');
+            $scope = Scope::get(substr($atVariable, 2));
+
+            $name = $tokenList->expectName();
+            if ($tokenList->hasSymbol('.')) {
+                $name .= '.' . $tokenList->expectName();
+            }
+
+            return new SystemVariable($name, $scope);
+        } elseif (substr($atVariable, 0, 2) === '@@') {
+            // @@foo
+            $name = substr($atVariable, 2);
+            if ($tokenList->hasSymbol('.')) {
+                $name .= '.' . $tokenList->expectName();
+            }
+
+            return new SystemVariable($name);
+        } else {
+            // @foo
+            return new UserVariable($atVariable);
+        }
     }
 
     private function parseFunctionCall(TokenList $tokenList, string $name1, ?string $name2 = null): FunctionCall

@@ -21,12 +21,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Expression\SystemVariable;
-use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\MysqlVariable;
-use function in_array;
-use function strtoupper;
-use function substr;
 
 class SetCommandParser
 {
@@ -66,21 +61,13 @@ class SetCommandParser
             if ($scope !== null) {
                 // GLOBAL foo
                 $name = $tokenList->expectNonReservedNameOrString();
+                if ($tokenList->hasSymbol('.')) {
+                    $name .= '.' . $tokenList->expectName();
+                }
                 $variable = new SystemVariable($name, $scope);
             } elseif (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
-                $variableName = $token->value;
-                if (in_array(strtoupper($variableName), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
-                    // @@global.foo
-                    $tokenList->expectSymbol('.');
-                    $scope = Scope::get(substr($variableName, 2));
-                    $variable = new SystemVariable($tokenList->expectName(), $scope);
-                } elseif (substr($variableName, 0, 2) === '@@') {
-                    // @@foo
-                    $variable = new SystemVariable(substr($variableName, 2));
-                } else {
-                    // @foo
-                    $variable = new UserVariable($variableName);
-                }
+                // @foo, @@foo...
+                $variable = $this->expressionParser->parseAtVariable($tokenList, $token->value);
             } else {
                 // foo
                 $name = $tokenList->expectName();
