@@ -914,6 +914,7 @@ class Lexer
      */
     private function parseString(string &$string, int &$position, int &$column, int &$row, string $quote): array
     {
+        $startAt = $position;
         $length = strlen($string);
         $backslashes = !$this->settings->getMode()->containsAny(Mode::NO_BACKSLASH_ESCAPES);
 
@@ -956,7 +957,7 @@ class Lexer
             }
         }
         if (!$finished) {
-            throw new LexerException('End of string not found', $position, $string);
+            throw new LexerException("End of string not found. Starts with " . substr($string, $startAt - 1, 100), $position, $string);
         }
         $orig = implode('', $orig);
         $value = $this->unescapeString($orig, $quote);
