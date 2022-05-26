@@ -23,14 +23,14 @@ class TimeExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var Date|Time|DateTime|BuiltInFunction */
+    /** @var Date|Time|DateTime|FunctionCall */
     private $initial;
 
     /** @var TimeInterval[] */
     private $intervals;
 
     /**
-     * @param Date|Time|DateTimeInterface|BuiltInFunction $initial
+     * @param Date|Time|DateTimeInterface|FunctionCall $initial
      * @param DateInterval[]|DateTimeSpan[]|TimeInterval[] $intervals
      */
     public function __construct($initial, array $intervals = [])
@@ -62,7 +62,7 @@ class TimeExpression implements SqlSerializable
     }
 
     /**
-     * @return Date|Time|DateTime|BuiltInFunction
+     * @return Date|Time|DateTime|FunctionCall
      */
     public function getInitial()
     {

@@ -1091,16 +1091,16 @@ class ExpressionParser
     }
 
     /**
-     * @return DateTime|BuiltInFunction
+     * @return DateTime|FunctionCall
      */
     public function parseDateTime(TokenList $tokenList)
     {
-        if ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
+        if (($function = $tokenList->getAnyName(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW)) !== null) {
             if ($tokenList->hasSymbol('(')) {
                 $tokenList->expectSymbol(')');
             }
 
-            return new BuiltInFunction(BuiltInFunction::CURRENT_TIMESTAMP);
+            return new FunctionCall(new BuiltInFunction($function));
         }
 
         $string = (string) $tokenList->getUnsignedInt();

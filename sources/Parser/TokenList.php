@@ -557,12 +557,32 @@ class TokenList
 
     public function getName(?string $name = null): ?string
     {
+        $position = $this->position;
         $token = $this->get(T::NAME, $name);
         if ($token !== null) {
             return $token->value;
         }
+        $this->position = $position;
 
         return null;
+    }
+
+    public function getAnyName(string ...$names): ?string
+    {
+        $position = $this->position;
+        $token = $this->get(T::NAME);
+        $upper = strtoupper($token->value);
+        if (in_array($upper, $names, true)) {
+            return $token->value;
+        }
+        $this->position = $position;
+
+        return null;
+    }
+
+    public function hasName(string $name): bool
+    {
+        return (bool) $this->getName($name);
     }
 
     public function expectNonKeywordName(?string $name = null): string
@@ -606,11 +626,6 @@ class TokenList
         }
 
         return $token->value;
-    }
-
-    public function hasName(string $name): bool
-    {
-        return (bool) $this->getName($name);
     }
 
     // keywords --------------------------------------------------------------------------------------------------------
