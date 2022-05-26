@@ -174,19 +174,3 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::NAME | T::UNQUOTED_NAME, 'name1', 1);
 Assert::token($tokens[2], T::NAME | T::AT_VARIABLE, '@name2', 6);
 Assert::token($tokens[3], T::WHITESPACE, ' ', 12);
-
-
-// STRING_INTRODUCER
-$tokens = $lexer->tokenizeAll(" _utf8'string1' ");
-Assert::count($tokens, 4);
-Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::NAME | T::STRING_INTRODUCER, '_utf8', 1);
-Assert::token($tokens[2], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, 'string1', 6);
-Assert::token($tokens[3], T::WHITESPACE, ' ', 15);
-
-$tokens = $lexer->tokenizeAll(" date'2020-01-01' ");
-Assert::count($tokens, 4);
-Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::NAME | T::STRING_INTRODUCER, 'date', 1);
-Assert::token($tokens[2], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, '2020-01-01', 5);
-Assert::token($tokens[3], T::WHITESPACE, ' ', 17);

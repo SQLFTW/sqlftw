@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Charset;
 use function count;
 use function implode;
 
@@ -23,6 +24,9 @@ use function implode;
  * "second line, " -- comment in between
  * "third line, "
  * ...
+ *
+ * with charset:
+ * _utf8 'string'
  */
 class StringLiteral implements ValueLiteral
 {
@@ -31,12 +35,16 @@ class StringLiteral implements ValueLiteral
     /** @var non-empty-array<string> */
     private $parts;
 
+    /** @var Charset|null */
+    private $charset;
+
     /**
      * @param non-empty-array<string> $parts
      */
-    public function __construct(array $parts)
+    public function __construct(array $parts, ?Charset $charset = null)
     {
         $this->parts = $parts;
+        $this->charset = $charset;
     }
 
     /**
@@ -47,6 +55,11 @@ class StringLiteral implements ValueLiteral
         return $this->parts;
     }
 
+    public function getCharset(): ?Charset
+    {
+        return $this->charset;
+    }
+
     public function getValue(): string
     {
         return implode('', $this->parts);
@@ -54,10 +67,15 @@ class StringLiteral implements ValueLiteral
 
     public function serialize(Formatter $formatter): string
     {
+        $result = '';
+        if ($this->charset !== null) {
+            $result .= '_' . $this->charset->serialize($formatter) . ' ';
+        }
+
         if (count($this->parts) === 1) {
-            return $formatter->formatString($this->parts[0]);
+            return $result . $formatter->formatString($this->parts[0]);
         } else {
-            return $formatter->formatStringList($this->parts, "\n\t");
+            return $result . $formatter->formatStringList($this->parts, "\n\t");
         }
     }
 

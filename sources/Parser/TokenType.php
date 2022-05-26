@@ -32,7 +32,6 @@ use Dogma\Math\PowersOfTwo;
  *    - BACKTICK_QUOTED_STRING - "`table1`" (MySQL, PostgreSQL, Sqlite)
  *    - SQUARE_BRACKETED_STRING - "[table1]" (MSSQL, SqLite)
  *    - AT_VARIABLE - "@var", "@@global", "@`192.168.0.1`" (also includes host names)
- *    - STRING_INTRODUCER - "date'2020-01-01'", "_utf8'string'", "n'string'", "N'string'"
  * - VALUE
  *    - STRING
  *        - SINGLE_QUOTED_STRING - "'string'" (standard)

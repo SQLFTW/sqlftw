@@ -768,13 +768,9 @@ class Lexer
                     }
 
                     $upper = strtoupper($value);
-                    static $types = [Keyword::TIMESTAMP, Keyword::DATE, Keyword::TIME];
                     if ($upper === Keyword::NULL || $upper === Keyword::TRUE || $upper === Keyword::FALSE) {
                         // todo: probably not necessary
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, $start, $value, null, $condition);
-                    } elseif (in_array($upper, $types, true) && ($string[$position] === "'")) {
-                        // timestamp'2001-01-01 00:00:00'
-                        yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $value, null, $condition);
                     } elseif (isset($this->reservedKey[$upper])) {
                         if (isset($this->operatorKeywordsKey[$upper])) {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, $start, $value, null, $condition);
@@ -783,9 +779,6 @@ class Lexer
                         }
                     } elseif (isset($this->keywordsKey[$upper])) {
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
-                    } elseif ($value[0] === '_' && ($charset = substr($value, 1)) !== '' && Charset::validateValue($charset)) {
-                        // _utf8'foo'
-                        yield $previous = new Token(T::NAME | T::STRING_INTRODUCER, $start, $value, null, $condition);
                     } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
                         yield new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
                         $start = $position;

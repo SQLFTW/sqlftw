@@ -157,7 +157,7 @@ class Parser
     public function parseTokenList(TokenList $tokenList): Command
     {
         $start = $tokenList->getPosition();
-        $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT | TokenType::TEST_CODE | TokenType::STRING_INTRODUCER);
+        $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT | TokenType::TEST_CODE);
 
         $first = $tokenList->get();
         if ($first === null) {
