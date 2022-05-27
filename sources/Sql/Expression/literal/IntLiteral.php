@@ -15,4 +15,9 @@ class IntLiteral extends NumberLiteral
 {
     use StrictBehaviorMixin;
 
+    public function asInteger(): int
+    {
+        return (int) $this->value;
+    }
+
 }

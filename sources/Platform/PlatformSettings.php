@@ -26,7 +26,7 @@ class PlatformSettings
     /** @var Charset|null */
     private $charset;
 
-    /** @var Mode */
+    /** @var PlatformMode */
     private $mode;
 
     /** @var bool */
@@ -54,7 +54,7 @@ class PlatformSettings
         Platform $platform,
         ?string $delimiter = null,
         ?Charset $charset = null,
-        ?Mode $mode = null,
+        ?PlatformMode $mode = null,
         bool $multiStatements = false,
         bool $quoteAllNames = true,
         bool $canonicalizeTypes = true,
@@ -100,19 +100,19 @@ class PlatformSettings
         $this->charset = $charset;
     }
 
-    public function getMode(): Mode
+    public function getMode(): PlatformMode
     {
         return $this->mode;
     }
 
-    public function setMode(Mode $mode): void
+    public function setMode(PlatformMode $mode): void
     {
         $this->mode = $mode;
     }
 
     public function setSqlMode(SqlMode $sqlMode): void
     {
-        $this->mode = $sqlMode->getMode();
+        $this->mode = $sqlMode->getPlatformMode();
     }
 
     public function multiStatements(): bool

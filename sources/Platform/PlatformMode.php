@@ -11,7 +11,7 @@ namespace SqlFtw\Platform;
 
 use Dogma\Enum\IntSet;
 
-class Mode extends IntSet
+class PlatformMode extends IntSet
 {
 
     public const ANSI_QUOTES = 1;

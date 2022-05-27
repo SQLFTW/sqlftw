@@ -19,7 +19,7 @@ use Dogma\Str;
 use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Parser\TokenType as T;
-use SqlFtw\Platform\Mode;
+use SqlFtw\Platform\PlatformMode;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Keyword;
@@ -423,7 +423,7 @@ class Lexer
                     break;
                 case '"':
                     [$value, $orig] = $this->parseString($string, $position, $column, $row, $char);
-                    if ($this->settings->getMode()->containsAny(Mode::ANSI_QUOTES)) {
+                    if ($this->settings->getMode()->containsAny(PlatformMode::ANSI_QUOTES)) {
                         yield $previous = new Token(T::NAME | T::DOUBLE_QUOTED_STRING, $start, $value, $orig, $condition);
                     } else {
                         yield $previous = new Token(T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING, $start, $value, $orig, $condition);
@@ -916,7 +916,7 @@ class Lexer
     {
         $startAt = $position;
         $length = strlen($string);
-        $backslashes = !$this->settings->getMode()->containsAny(Mode::NO_BACKSLASH_ESCAPES);
+        $backslashes = !$this->settings->getMode()->containsAny(PlatformMode::NO_BACKSLASH_ESCAPES);
 
         $orig = [$quote];
         $escaped = false;
@@ -1004,7 +1004,7 @@ class Lexer
         $string = substr($string, 1, -1);
 
         $string = str_replace($quote . $quote, $quote, $string);
-        if (!$this->settings->getMode()->containsAny(Mode::NO_BACKSLASH_ESCAPES)) {
+        if (!$this->settings->getMode()->containsAny(PlatformMode::NO_BACKSLASH_ESCAPES)) {
             $string = str_replace(array_keys($translations), array_values($translations), $string);
 
             // todo: ???

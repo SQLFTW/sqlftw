@@ -65,6 +65,11 @@ class StringLiteral implements StringValue
         return implode('', $this->parts);
     }
 
+    public function asString(): string
+    {
+        return implode('', $this->parts);
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';

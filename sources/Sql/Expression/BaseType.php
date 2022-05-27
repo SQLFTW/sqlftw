@@ -12,7 +12,7 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Platform\Mode;
+use SqlFtw\Platform\PlatformMode;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Feature;
@@ -130,7 +130,7 @@ class BaseType extends SqlEnum implements Feature
 
         $value = $this->getValue();
         if ($platform === Platform::MYSQL && $value === self::REAL) {
-            if ($settings->getMode()->containsAny(Mode::REAL_AS_FLOAT)) {
+            if ($settings->getMode()->containsAny(PlatformMode::REAL_AS_FLOAT)) {
                 return self::get(self::FLOAT);
             } else {
                 return self::get(self::DOUBLE);

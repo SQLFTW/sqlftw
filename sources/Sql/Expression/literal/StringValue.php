@@ -12,4 +12,6 @@ namespace SqlFtw\Sql\Expression;
 interface StringValue extends Value
 {
 
+    public function asString(): string;
+
 }

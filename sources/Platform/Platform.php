@@ -13,6 +13,7 @@ use Dogma\InvalidArgumentException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Features\PlatformFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
+use SqlFtw\Sql\SqlMode;
 use function in_array;
 use function ltrim;
 use function str_replace;
@@ -39,6 +40,40 @@ class Platform
         self::SQL => '2011',
         self::MYSQL => '8.0',
         self::MARIA => '10.8',
+    ];
+
+    /** @var array<string, string[]> */
+    public static $defaultSqlModes = [
+        'mysql-5.6' => [
+            SqlMode::NO_ENGINE_SUBSTITUTION,
+        ],
+        'mysql-5.7' => [
+            SqlMode::NO_ENGINE_SUBSTITUTION,
+            SqlMode::ERROR_FOR_DIVISION_BY_ZERO,
+            SqlMode::STRICT_TRANS_TABLES,
+            SqlMode::ONLY_FULL_GROUP_BY,
+            SqlMode::NO_ZERO_IN_DATE,
+            SqlMode::NO_ZERO_DATE,
+            SqlMode::NO_AUTO_CREATE_USER,
+        ],
+        'mysql-8.0' => [
+            SqlMode::NO_ENGINE_SUBSTITUTION,
+            SqlMode::ERROR_FOR_DIVISION_BY_ZERO,
+            SqlMode::STRICT_TRANS_TABLES,
+            SqlMode::ONLY_FULL_GROUP_BY,
+            SqlMode::NO_ZERO_IN_DATE,
+            SqlMode::NO_ZERO_DATE,
+        ],
+        'maria-10.1' => [
+            SqlMode::NO_ENGINE_SUBSTITUTION,
+            SqlMode::NO_AUTO_CREATE_USER,
+        ],
+        'maria-10.2' => [
+            SqlMode::NO_ENGINE_SUBSTITUTION,
+            SqlMode::ERROR_FOR_DIVISION_BY_ZERO,
+            SqlMode::STRICT_TRANS_TABLES,
+            SqlMode::NO_AUTO_CREATE_USER,
+        ],
     ];
 
     /** @var self[] */
@@ -88,6 +123,11 @@ class Platform
     public function getVersions(): array
     {
         return self::$versions[$this->name];
+    }
+
+    public function getFamilyId(): string
+    {
+        return $this->name . $this->version->getMajorMinor();
     }
 
     public function getDefaultVersion(): string
@@ -157,12 +197,27 @@ class Platform
         return $this->name === self::MYSQL || $this->name === self::MARIA;
     }
 
-    public function getDefaultMode(): Mode
+    public function getDefaultMode(): PlatformMode
     {
         if ($this->name === self::MYSQL || $this->name === self::MARIA) {
-            return Mode::getByValue(0);
+            return SqlMode::getFromString(SqlMode::DEFAULT, $this)->getPlatformMode();
         } else {
-            return Mode::getAnsi();
+            return PlatformMode::getAnsi();
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getDefaultSqlModes(): array
+    {
+        $family = $this->getFamilyId();
+        if (isset(self::$defaultSqlModes[$family])) {
+            return self::$defaultSqlModes[$family];
+        } elseif ($this->name === self::MARIA && $family >= 'maria-10.2') {
+            return self::$defaultSqlModes['maria-10.2'];
+        } else {
+            return [];
         }
     }
 

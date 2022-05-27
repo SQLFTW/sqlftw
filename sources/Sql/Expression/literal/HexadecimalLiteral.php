@@ -60,7 +60,7 @@ class HexadecimalLiteral implements StringValue, UintValue
         return $string;
     }
 
-    public function asNumber(): int
+    public function asInteger(): int
     {
         return (int) hexdec($this->value);
     }

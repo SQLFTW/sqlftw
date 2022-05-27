@@ -49,7 +49,7 @@ class BinaryLiteral implements UintValue
         return $string;
     }
 
-    public function asNumber(): int
+    public function asInteger(): int
     {
         return (int) bindec($this->value);
     }

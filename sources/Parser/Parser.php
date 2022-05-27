@@ -15,8 +15,15 @@ use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Dal\Set\SetCommand;
+use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\StringValue;
+use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MultiStatement;
+use SqlFtw\Sql\MysqlVariable;
+use SqlFtw\Sql\SqlMode;
 use Throwable;
 use function count;
 use function iterator_to_array;
@@ -76,7 +83,7 @@ class Parser
                     continue 2;
                 }
 
-                // todo: sniff for SET NAMES, SET CHARSET, SET sql_mode, multi-statement mode ...
+                $this->detectModeChanges($command, $tokenList);
 
                 if ($tokenList->isFinished()) {
                     if (count($commands) === 1) {
@@ -701,6 +708,31 @@ class Parser
                     Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN, Keyword::START, Keyword::STOP,
                     Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
                 );
+        }
+    }
+
+    private function detectModeChanges(Command $command, TokenList $tokenList): void
+    {
+        // todo: sniff for SET NAMES, SET CHARSET, multi-statement mode ...
+
+        if ($command instanceof SetCommand) {
+            foreach ($command->getAssignments() as $assignment) {
+                $variable = $assignment->getVariable();
+                if ($variable instanceof SystemVariable && $variable->getName() === MysqlVariable::SQL_MODE) {
+                    $value = $assignment->getExpression();
+                    if ($value instanceof StringValue) {
+                        $value = $value->asString();
+                    } elseif ($value instanceof SimpleName) {
+                        $value = $value->getName();
+                    } elseif ($value instanceof DefaultLiteral) {
+                        $value = Keyword::DEFAULT;
+                    } else {
+                        throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
+                    }
+                    $sqlMode = SqlMode::getFromString($value, $this->settings->getPlatform());
+                    $this->settings->setSqlMode($sqlMode);
+                }
+            }
         }
     }
 

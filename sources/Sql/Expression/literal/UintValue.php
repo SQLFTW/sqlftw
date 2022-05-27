@@ -12,4 +12,6 @@ namespace SqlFtw\Sql\Expression;
 interface UintValue extends Value
 {
 
+    public function asInteger(): int;
+
 }

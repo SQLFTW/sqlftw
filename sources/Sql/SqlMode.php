@@ -10,10 +10,12 @@
 namespace SqlFtw\Sql;
 
 use Dogma\Enum\StringSet;
-use SqlFtw\Platform\Mode;
+use SqlFtw\Platform\Platform;
+use SqlFtw\Platform\PlatformMode;
 use function array_merge;
 use function array_unique;
 use function explode;
+use function strtoupper;
 
 class SqlMode extends StringSet
 {
@@ -42,6 +44,7 @@ class SqlMode extends StringSet
     public const STRICT_TRANS_TABLES = 'STRICT_TRANS_TABLES';
     public const TIME_TRUNCATE_FRACTIONAL = 'TIME_TRUNCATE_FRACTIONAL';
 
+    public const DEFAULT = 'DEFAULT';
     public const TRADITIONAL = 'TRADITIONAL';
 
     public const ANSI = 'ANSI';
@@ -113,14 +116,16 @@ class SqlMode extends StringSet
         ],
     ];
 
-    public static function getFromString(string $string): self
+    public static function getFromString(string $string, Platform $platform): self
     {
         /** @var string[] $parts */
-        $parts = explode(',', $string);
+        $parts = explode(',', strtoupper($string));
         self::checkValues($parts);
         $items = [];
         foreach ($parts as $part) {
-            if (isset(self::$groups[$part])) {
+            if ($part === self::DEFAULT) {
+                $items = $platform->getDefaultSqlModes();
+            } elseif (isset(self::$groups[$part])) {
                 $items = array_merge($items, self::$groups[$part]);
             } else {
                 $items[] = $part;
@@ -130,15 +135,15 @@ class SqlMode extends StringSet
         return self::get(...array_unique($items));
     }
 
-    public function getMode(): Mode
+    public function getPlatformMode(): PlatformMode
     {
         static $translate = [
-            self::ANSI_QUOTES => Mode::ANSI_QUOTES,
-            self::IGNORE_SPACE => Mode::IGNORE_SPACE,
-            self::NO_BACKSLASH_ESCAPES => Mode::NO_BACKSLASH_ESCAPES,
-            self::PIPES_AS_CONCAT => Mode::PIPES_AS_CONCAT,
-            self::REAL_AS_FLOAT => Mode::REAL_AS_FLOAT,
-            self::HIGH_NOT_PRECEDENCE => Mode::HIGH_NOT_PRECEDENCE,
+            self::ANSI_QUOTES => PlatformMode::ANSI_QUOTES,
+            self::IGNORE_SPACE => PlatformMode::IGNORE_SPACE,
+            self::NO_BACKSLASH_ESCAPES => PlatformMode::NO_BACKSLASH_ESCAPES,
+            self::PIPES_AS_CONCAT => PlatformMode::PIPES_AS_CONCAT,
+            self::REAL_AS_FLOAT => PlatformMode::REAL_AS_FLOAT,
+            self::HIGH_NOT_PRECEDENCE => PlatformMode::HIGH_NOT_PRECEDENCE,
         ];
 
         $mode = 0;
@@ -148,7 +153,7 @@ class SqlMode extends StringSet
             }
         }
 
-        return Mode::get($mode);
+        return PlatformMode::getByValue($mode);
     }
 
 }
