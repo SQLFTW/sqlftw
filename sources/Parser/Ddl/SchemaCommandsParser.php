@@ -37,7 +37,7 @@ class SchemaCommandsParser
     {
         $tokenList->expectKeyword(Keyword::ALTER);
         $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
-        $schema = $tokenList->getName();
+        $schema = $tokenList->getNonReservedName();
 
         $options = $this->parseOptions($tokenList);
         if ($options === null) {
