@@ -222,11 +222,12 @@ class TableCommandsParser
                         case Keyword::COLUMN:
                             if ($tokenList->hasSymbol('(')) {
                                 // ADD [COLUMN] (col_name column_definition, ...)
-                                // note: unsure what continues after the ...
+                                // note: apparently index can be added in ADD COLUMN. not documented.
                                 // from tests: ALTER TABLE st1 ADD COLUMN (c2 INT GENERATED ALWAYS AS (c1+1) STORED, INDEX(c2));
+                                // from tests: ALTER TABLE mysqltest.my_socket_summary ADD COLUMN (n INT AUTO_INCREMENT, PRIMARY KEY(n));
                                 $addColumns = [];
                                 do {
-                                    if ($tokenList->hasKeyword(Keyword::INDEX)) {
+                                    if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::PRIMARY)) {
                                         $addColumns[] = $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
                                     } else {
                                         $addColumns[] = $this->parseColumn($tokenList);
