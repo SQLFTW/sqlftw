@@ -568,7 +568,10 @@ class ExpressionParser
             } elseif (BuiltInFunction::isValid($name1) && $platformFeatures->isReserved($name1)) {
                 // function without parentheses
                 $function = BuiltInFunction::get($name1);
-                if (!$function->isBare()) {
+                if ($name1 === Keyword::DEFAULT) {
+                    return new DefaultLiteral();
+                } elseif (!$function->isBare()) {
+                    // throws
                     $tokenList->expectSymbol('(');
                     $tokenList->expectSymbol(')');
                 }
