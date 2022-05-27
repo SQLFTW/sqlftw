@@ -149,7 +149,7 @@ class ReplicationCommandsParser
                     $uuid = null;
                     $keyword = $tokenList->getAnyKeyword(Keyword::OFF, Keyword::LOCAL);
                     if ($keyword === null) {
-                        $uuid = $tokenList->expect(TokenType::UUID)->value;
+                        $uuid = $tokenList->expectUuid();
                     }
                     $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
                     break;
@@ -269,7 +269,7 @@ class ReplicationCommandsParser
                     $uuid = null;
                     $keyword = $tokenList->getAnyKeyword(Keyword::OFF, Keyword::LOCAL);
                     if ($keyword === null) {
-                        $uuid = $tokenList->expect(TokenType::UUID)->value;
+                        $uuid = $tokenList->expectUuid();
                     }
                     $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
                     break;
@@ -639,7 +639,7 @@ class ReplicationCommandsParser
 
         $gtids = [];
         do {
-            $uuid = $tokenList->expect(TokenType::UUID)->value;
+            $uuid = $tokenList->expectUuid();
             $intervals = [];
             $tokenList->expectSymbol(':');
             do {

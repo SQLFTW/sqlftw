@@ -488,6 +488,18 @@ class TokenList
         throw new InvalidValueException("boolean", $this);
     }
 
+    public function expectUuid(): string
+    {
+        $token = $this->expect(T::UUID | T::STRING);
+        if (($token->type & T::STRING) !== 0) {
+            if (!preg_match(Lexer::UUID_REGEXP, $token->value)) {
+                throw new InvalidValueException('uuid', $this);
+            }
+        }
+
+        return $token->value;
+    }
+
     // strings ---------------------------------------------------------------------------------------------------------
 
     public function expectString(): string
