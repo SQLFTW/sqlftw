@@ -365,6 +365,7 @@ class Keyword extends SqlEnum implements Feature
     public const GET = 'GET';
     public const GET_FORMAT = 'GET_FORMAT';
     public const GET_MASTER_PUBLIC_KEY = 'GET_MASTER_PUBLIC_KEY';
+    public const GET_SOURCE_PUBLIC_KEY = 'GET_SOURCE_PUBLIC_KEY';
     public const GLOB = 'GLOB';
     public const GLOBAL = 'GLOBAL';
     public const GO = 'GO';

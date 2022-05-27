@@ -416,6 +416,8 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::GEOMETRY,
         Keyword::GEOMETRYCOLLECTION,
         Keyword::GET_FORMAT,
+        Keyword::GET_MASTER_PUBLIC_KEY,
+        Keyword::GET_SOURCE_PUBLIC_KEY,
         Keyword::GLOBAL,
         Keyword::GRANTS,
         Keyword::GROUP_REPLICATION,

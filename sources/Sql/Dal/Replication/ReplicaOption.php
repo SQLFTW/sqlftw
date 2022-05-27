@@ -51,7 +51,7 @@ class ReplicaOption extends SqlEnum
     public const SOURCE_TLS_VERSION = Keyword::SOURCE_TLS_VERSION;
     public const SOURCE_TLS_CIPHERSUITES = Keyword::SOURCE_TLS_CIPHERSUITES;
     public const SOURCE_PUBLIC_KEY_PATH = Keyword::SOURCE_PUBLIC_KEY_PATH;
-    public const SOURCE_GET_PUBLIC_KEY = Keyword::SOURCE_GET_PUBLIC_KEY;
+    public const GET_SOURCE_PUBLIC_KEY = Keyword::GET_SOURCE_PUBLIC_KEY;
     public const NETWORK_NAMESPACE = Keyword::NETWORK_NAMESPACE;
     public const IGNORE_SERVER_IDS = Keyword::IGNORE_SERVER_IDS;
     public const GTID_ONLY = Keyword::GTID_ONLY;
@@ -91,7 +91,7 @@ class ReplicaOption extends SqlEnum
         self::SOURCE_TLS_VERSION => BaseType::CHAR,
         self::SOURCE_TLS_CIPHERSUITES => BaseType::CHAR,
         self::SOURCE_PUBLIC_KEY_PATH => BaseType::CHAR,
-        self::SOURCE_GET_PUBLIC_KEY => BaseType::BOOL,
+        self::GET_SOURCE_PUBLIC_KEY => BaseType::BOOL,
         self::NETWORK_NAMESPACE => BaseType::CHAR,
         self::IGNORE_SERVER_IDS => BaseType::UNSIGNED . '[]',
         self::GTID_ONLY => BaseType::BOOL,
