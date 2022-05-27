@@ -291,6 +291,7 @@ class ReplicationCommandsParser
 
     /**
      * CHANGE REPLICATION FILTER filter[, filter][, ...]
+     *     [FOR CHANNEL channel]
      *
      * filter:
      *     REPLICATE_DO_DB = (db_list)
@@ -365,7 +366,12 @@ class ReplicationCommandsParser
             $filters[$filter] = $values;
         } while ($tokenList->hasSymbol(','));
 
-        return new ChangeReplicationFilterCommand($filters);
+        $channel = null;
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectNonReservedNameOrString();
+        }
+
+        return new ChangeReplicationFilterCommand($filters, $channel);
     }
 
     /**

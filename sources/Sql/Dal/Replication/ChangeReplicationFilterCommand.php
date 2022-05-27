@@ -26,10 +26,13 @@ class ChangeReplicationFilterCommand implements ReplicationCommand
     /** @var non-empty-array<string, array<string>|array<QualifiedName>> */
     private $filters;
 
+    /** @var string|null */
+    private $channel;
+
     /**
      * @param non-empty-array<string, array<string>|array<QualifiedName>> $filters
      */
-    public function __construct(array $filters)
+    public function __construct(array $filters, ?string $channel = null)
     {
         $types = ReplicationFilter::getTypes();
         foreach ($filters as $filter => $values) {
@@ -39,6 +42,7 @@ class ChangeReplicationFilterCommand implements ReplicationCommand
             TypeChecker::check($values, $types[$filter]);
         }
         $this->filters = $filters;
+        $this->channel = $channel;
     }
 
     /**
@@ -49,11 +53,16 @@ class ChangeReplicationFilterCommand implements ReplicationCommand
         return $this->filters;
     }
 
+    public function getChannel(): ?string
+    {
+        return $this->channel;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $types = ReplicationFilter::getTypes();
 
-        return "CHANGE REPLICATION FILTER\n  " . implode(",\n  ", Arr::mapPairs(
+        $result = "CHANGE REPLICATION FILTER\n  " . implode(",\n  ", Arr::mapPairs(
             $this->filters,
             static function (string $filter, array $values) use ($formatter, $types): string {
                 if ($values === []) {
@@ -80,6 +89,12 @@ class ChangeReplicationFilterCommand implements ReplicationCommand
                 }
             }
         ));
+
+        if ($this->channel !== null) {
+            $result .= "\n  FOR CHANNEL " . $formatter->formatName($this->channel);
+        }
+
+        return $result;
     }
 
 }

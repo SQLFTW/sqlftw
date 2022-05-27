@@ -28,6 +28,16 @@ class ResetReplicaCommand implements ReplicationCommand
         $this->channel = $channel;
     }
 
+    public function all(): bool
+    {
+        return $this->all;
+    }
+
+    public function getChannel(): ?string
+    {
+        return $this->channel;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'RESET REPLICA';
