@@ -238,6 +238,9 @@ class ReplicationCommandsParser
                 case BaseType::UNSIGNED:
                     $value = (int) $tokenList->expectUnsignedInt();
                     break;
+                case BaseType::NUMERIC:
+                    $value = (float) $tokenList->expect(TokenType::NUMBER)->value;
+                    break;
                 case BaseType::BOOL:
                     $value = $tokenList->expectBool();
                     break;

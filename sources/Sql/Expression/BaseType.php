@@ -24,6 +24,7 @@ use function in_array;
  * Types to use as argument type names (@see TypeChecker):
  * - CHAR for strings
  * - BOOL for booleans
+ * - NUMERIC for integers and floats
  * - SIGNED for signed integers
  * - UNSIGNED for unsigned integers
  * - FLOAT for floating point numbers

@@ -72,7 +72,7 @@ class ReplicaOption extends SqlEnum
         self::SOURCE_AUTO_POSITION => BaseType::BOOL,
         self::RELAY_LOG_FILE => BaseType::CHAR,
         self::RELAY_LOG_POS => BaseType::UNSIGNED,
-        self::SOURCE_HEARTBEAT_PERIOD => BaseType::UNSIGNED,
+        self::SOURCE_HEARTBEAT_PERIOD => BaseType::NUMERIC,
         self::SOURCE_CONNECT_RETRY => BaseType::UNSIGNED,
         self::SOURCE_RETRY_COUNT => BaseType::UNSIGNED,
         self::SOURCE_CONNECTION_AUTO_FAILOVER => BaseType::BOOL,

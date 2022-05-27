@@ -33,6 +33,7 @@ use function substr;
  * SQL types:
  * - CHAR for strings
  * - BOOL for booleans
+ * - NUMERIC for integers and floats
  * - SIGNED for signed integers
  * - UNSIGNED for unsigned integers
  * - FLOAT for floating point numbers
@@ -113,6 +114,8 @@ class TypeChecker
                 return (is_int($value) && $value >= 0) || (is_string($value) && ctype_digit($value));
             case BaseType::FLOAT:
                 return is_float($value);
+            case BaseType::NUMERIC:
+                return is_int($value) || is_float($value) || (is_string($value) && preg_match('~[0-9]+(\\.[0-9]+)~', $value) === 0);
             case BaseType::DECIMAL:
                 return is_string($value) && preg_match('~[0-9]+(\\.[0-9]+)~', $value) === 0;
             case BaseType::BOOL:
