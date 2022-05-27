@@ -592,9 +592,12 @@ class ExpressionParser
      */
     public function parseAtVariable(TokenList $tokenList, string $atVariable): Identifier
     {
-        if (in_array(strtoupper($atVariable), ['@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
+        if (in_array(strtoupper($atVariable), ['@@LOCAL', '@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
             // @@global.foo
             $tokenList->expectSymbol('.');
+            if (strtoupper($atVariable) === '@@LOCAL') {
+                $atVariable = '@@SESSION';
+            }
             $scope = Scope::get(substr($atVariable, 2));
 
             $name = $tokenList->expectName();

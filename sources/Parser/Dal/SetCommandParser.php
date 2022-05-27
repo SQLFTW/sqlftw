@@ -45,7 +45,7 @@ class SetCommandParser
      *   | {GLOBAL | @@GLOBAL.} system_var_name = expr
      *   | {PERSIST | @@PERSIST.} system_var_name = expr
      *   | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name = expr
-     *   | [LOCAL | SESSION | @@SESSION. | @@] system_var_name = expr
+     *   | [LOCAL | SESSION | @@LOCAL | @@SESSION. | @@] system_var_name = expr
      */
     public function parseSet(TokenList $tokenList): SetCommand
     {
