@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\XaTransaction;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\SqlSerializable;
 
 class Xid implements SqlSerializable
@@ -20,13 +21,13 @@ class Xid implements SqlSerializable
     /** @var string */
     private $transactionId;
 
-    /** @var string|null */
+    /** @var StringValue|null */
     private $branchQualifier;
 
     /** @var int|null */
     private $formatId;
 
-    public function __construct(string $transactionId, ?string $branchQualifier, ?int $formatId)
+    public function __construct(string $transactionId, ?StringValue $branchQualifier, ?int $formatId)
     {
         $this->transactionId = $transactionId;
         $this->branchQualifier = $branchQualifier;
@@ -38,7 +39,7 @@ class Xid implements SqlSerializable
         return $this->transactionId;
     }
 
-    public function getBranchQualifier(): ?string
+    public function getBranchQualifier(): ?StringValue
     {
         return $this->branchQualifier;
     }
@@ -52,7 +53,7 @@ class Xid implements SqlSerializable
     {
         $result = $formatter->formatString($this->transactionId);
         if ($this->branchQualifier !== null) {
-            $result .= ', ' . $formatter->formatString($this->branchQualifier);
+            $result .= ', ' . $this->branchQualifier->serialize($formatter);
             if ($this->formatId !== null) {
                 $result .= ', ' . $this->formatId;
             }
