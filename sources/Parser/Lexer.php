@@ -789,7 +789,7 @@ class Lexer
                         $del = '';
                         while ($position < $length) {
                             $next = $string[$position];
-                            if ($next === "\n") {
+                            if ($next === "\n" || $next === "\r" || $next === "\t" || $next === ' ') {
                                 break;
                             } else {
                                 $del .= $next;
