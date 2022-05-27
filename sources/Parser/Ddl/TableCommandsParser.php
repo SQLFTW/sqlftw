@@ -846,15 +846,21 @@ class TableCommandsParser
                         // [DEFAULT (expr)]
                         $default = $this->expressionParser->parseExpression($tokenList);
                         $tokenList->expectSymbol(')');
-                    } elseif ($tokenList->hasKeyword(Keyword::CURRENT_TIMESTAMP)) {
+                    } elseif (($function = $tokenList->getAnyKeyword(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW)) !== null) {
                         // [DEFAULT CURRENT_TIMESTAMP[(...)]]
+                        $function = BuiltInFunction::get($function);
                         if ($tokenList->hasSymbol('(')) {
                             $param = $tokenList->getUnsignedInt();
                             $params = $param !== null ? [new UintLiteral($param)] : [];
                             $tokenList->expectSymbol(')');
-                            $default = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP), $params);
+                            $default = new FunctionCall($function, $params);
+                        } elseif (!$function->isBare()) {
+                            // throws
+                            $tokenList->expectSymbol('(');
+                            $tokenList->expectSymbol(')');
+                            $default = new FunctionCall($function);
                         } else {
-                            $default = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP));
+                            $default = new FunctionCall($function);
                         }
                     } else {
                         // [DEFAULT default_value]
@@ -878,7 +884,7 @@ class TableCommandsParser
                 case Keyword::ON:
                     // [ON UPDATE CURRENT_TIMESTAMP[(...)]]
                     $tokenList->expectKeyword(Keyword::UPDATE);
-                    $tokenList->expectKeyword(Keyword::CURRENT_TIMESTAMP);
+                    $tokenList->expectAnyKeyword(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW);
                     if ($tokenList->hasSymbol('(')) {
                         $param = $tokenList->getUnsignedInt();
                         $params = $param !== null ? [new UintLiteral($param)] : [];

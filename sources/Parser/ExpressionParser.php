@@ -567,7 +567,13 @@ class ExpressionParser
                 return new QualifiedName($name2, $name1);
             } elseif (BuiltInFunction::isValid($name1) && $platformFeatures->isReserved($name1)) {
                 // function without parentheses
-                return new FunctionCall(BuiltInFunction::get($name1));
+                $function = BuiltInFunction::get($name1);
+                if (!$function->isBare()) {
+                    $tokenList->expectSymbol('(');
+                    $tokenList->expectSymbol(')');
+                }
+
+                return new FunctionCall($function);
             } else {
                 // identifier
                 return new SimpleName($name1);
@@ -791,7 +797,7 @@ class ExpressionParser
 
         $tokenList->expectSymbol(')');
 
-        return new FunctionCall(new BuiltInFunction(BuiltInFunction::JSON_TABLE), [$expression, $path, Keyword::COLUMNS => $columns]);
+        return new FunctionCall(BuiltInFunction::get(BuiltInFunction::JSON_TABLE), [$expression, $path, Keyword::COLUMNS => $columns]);
     }
 
     private function parseJsonTableColumns(TokenList $tokenList): Parentheses
@@ -1162,12 +1168,17 @@ class ExpressionParser
      */
     public function parseDateTime(TokenList $tokenList)
     {
-        if (($function = $tokenList->getAnyName(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW)) !== null) {
-            if ($tokenList->hasSymbol('(')) {
+        if (($function = $tokenList->getAnyName(...BuiltInFunction::getTimeProviders())) !== null) {
+            $function = BuiltInFunction::get($function);
+            if (!$function->isBare()) {
+                // throws
+                $tokenList->expectSymbol('(');
+                $tokenList->expectSymbol(')');
+            } elseif ($tokenList->hasSymbol('(')) {
                 $tokenList->expectSymbol(')');
             }
 
-            return new BuiltInFunction($function);
+            return $function;
         }
 
         $string = (string) $tokenList->getUnsignedInt();

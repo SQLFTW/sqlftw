@@ -506,6 +506,76 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const RANK = 'RANK';
     public const ROW_NUMBER = 'ROW_NUMBER';
 
+    /** @var string[] */
+    private static $aggregate = [
+        self::ANY_VALUE,
+        self::AVG,
+        self::BIT_AND,
+        self::BIT_OR,
+        self::BIT_XOR,
+        self::COUNT,
+        self::COUNT_DISTINCT,
+        self::GROUP_CONCAT,
+        self::JSON_ARRAYAGG,
+        self::JSON_OBJECTAGG,
+        self::MAX,
+        self::MIN,
+        self::ST_Collect,
+        self::STD,
+        self::STDDEV,
+        self::STDDEV_POP,
+        self::STDDEV_SAMP,
+        self::SUM,
+        self::VAR_POP,
+        self::VAR_SAMP,
+        self::VARIANCE,
+    ];
+
+    /** @var string[] */
+    private static $window = [
+        self::CUME_DIST,
+        self::DENSE_RANK,
+        self::FIRST_VALUE,
+        self::LAG,
+        self::LAST_VALUE,
+        self::LEAD,
+        self::NTH_VALUE,
+        self::NTILE,
+        self::PERCENT_RANK,
+        self::RANK,
+        self::ROW_NUMBER,
+    ];
+
+    /** @var string[] */
+    private static $bare = [
+        self::CURRENT_TIME,
+        self::CURRENT_DATE,
+        self::CURRENT_TIMESTAMP,
+        self::CURRENT_USER,
+        self::LOCALTIME,
+        self::LOCALTIMESTAMP,
+        self::UTC_DATE,
+        self::UTC_TIME,
+        self::UTC_TIMESTAMP,
+    ];
+
+    /** @var string[] */
+    private static $timeProviders = [
+        self::CURDATE,
+        self::CURRENT_TIME,
+        self::CURRENT_DATE,
+        self::CURRENT_TIMESTAMP,
+        self::CURTIME,
+        self::LOCALTIME,
+        self::LOCALTIMESTAMP,
+        self::NOW,
+        self::SYSDATE,
+        self::UNIX_TIMESTAMP,
+        self::UTC_DATE,
+        self::UTC_TIME,
+        self::UTC_TIMESTAMP,
+    ];
+
     /**
      * In most cases name is parsed as array key of the following argument - e.g. AVG(DISTINCT col1) -> ['DISTINCT' => 'col1']
      * Special cases:
@@ -585,72 +655,6 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
         self::WEIGHT_STRING => [Keyword::AS => ColumnType::class],
     ];
 
-    /** @var string[] */
-    private static $aggregate = [
-        self::ANY_VALUE,
-        self::AVG,
-        self::BIT_AND,
-        self::BIT_OR,
-        self::BIT_XOR,
-        self::COUNT,
-        self::COUNT_DISTINCT,
-        self::GROUP_CONCAT,
-        self::JSON_ARRAYAGG,
-        self::JSON_OBJECTAGG,
-        self::MAX,
-        self::MIN,
-        self::ST_Collect,
-        self::STD,
-        self::STDDEV,
-        self::STDDEV_POP,
-        self::STDDEV_SAMP,
-        self::SUM,
-        self::VAR_POP,
-        self::VAR_SAMP,
-        self::VARIANCE,
-    ];
-
-    /** @var string[] */
-    private static $window = [
-        self::CUME_DIST,
-        self::DENSE_RANK,
-        self::FIRST_VALUE,
-        self::LAG,
-        self::LAST_VALUE,
-        self::LEAD,
-        self::NTH_VALUE,
-        self::NTILE,
-        self::PERCENT_RANK,
-        self::RANK,
-        self::ROW_NUMBER,
-    ];
-
-    /** @var string[] */
-    private static $bare = [
-        self::CURRENT_TIME,
-        self::CURRENT_DATE,
-        self::CURRENT_TIMESTAMP,
-        self::CURRENT_USER,
-        self::LOCALTIME,
-        self::LOCALTIMESTAMP,
-        self::UTC_DATE,
-        self::UTC_TIME,
-        self::UTC_TIMESTAMP,
-    ];
-
-    /**
-     * @return array<string, class-string|false|null>
-     */
-    public function getNamedParams(): array
-    {
-        return self::$namedParams[$this->getValue()] ?? [];
-    }
-
-    public function hasNamedParams(): bool
-    {
-        return isset(self::$namedParams[$this->getValue()]);
-    }
-
     public function isAggregate(): bool
     {
         return in_array($this->getValue(), self::$aggregate, true);
@@ -664,6 +668,27 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public function isBare(): bool
     {
         return in_array($this->getValue(), self::$bare, true);
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getTimeProviders(): array
+    {
+        return self::$timeProviders;
+    }
+
+    /**
+     * @return array<string, class-string|false|null>
+     */
+    public function getNamedParams(): array
+    {
+        return self::$namedParams[$this->getValue()] ?? [];
+    }
+
+    public function hasNamedParams(): bool
+    {
+        return isset(self::$namedParams[$this->getValue()]);
     }
 
     public function getFullName(): string
