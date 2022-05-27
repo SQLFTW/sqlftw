@@ -215,6 +215,10 @@ class Lexer
                     $value = $char;
                     while ($position < $length) {
                         $next = $string[$position];
+                        if (!isset($this->operatorsKey[$value . $next])) {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $value, null, $condition);
+                            break 2;
+                        }
                         if (isset(self::$operatorSymbolsKey[$next])) {
                             $value .= $next;
                             $position++;
