@@ -11,6 +11,8 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Sql\Expression\ArgumentNode;
 use function array_search;
+use function explode;
+use function strpos;
 
 class Charset extends SqlEnum implements ArgumentNode
 {
@@ -103,6 +105,19 @@ class Charset extends SqlEnum implements ArgumentNode
         self::GB18030 => 248,
         self::UTF_8 => 255,
     ];
+
+    public static function validateValue(string &$value): bool
+    {
+        if (strpos($value, '_') !== false) {
+            // things like 'cp1250_latin2' are valid
+            // todo: ignoring the second part
+            [$value, $value2] = explode('_', $value);
+
+            return parent::validateValue($value) && parent::validateValue($value2);
+        } else {
+            return parent::validateValue($value);
+        }
+    }
 
     public function getId(): int
     {
