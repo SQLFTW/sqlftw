@@ -10,12 +10,17 @@
 namespace SqlFtw\Sql;
 
 use Dogma\Enum\StringSet;
+use Dogma\InvalidValueException;
+use Dogma\InvalidValueException as InvalidEnumValueException;
+use Dogma\Math\IntCalc;
+use Dogma\Math\PowersOfTwo;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformMode;
 use function array_filter;
 use function array_merge;
 use function array_unique;
 use function explode;
+use function implode;
 use function strtoupper;
 
 class SqlMode extends StringSet
@@ -54,6 +59,39 @@ class SqlMode extends StringSet
     public const MSSQL = 'MSSQL';
     public const ORACLE = 'ORACLE';
     public const POSTGRESQL = 'POSTGRESQL';
+
+    /** @var array<int, string> */
+    private static $numeric = [
+        PowersOfTwo::_1 => self::REAL_AS_FLOAT,
+        PowersOfTwo::_2 => self::PIPES_AS_CONCAT,
+        PowersOfTwo::_4 => self::ANSI_QUOTES,
+        PowersOfTwo::_8 => self::IGNORE_SPACE,
+        // not used
+        PowersOfTwo::_32 => self::ONLY_FULL_GROUP_BY,
+        PowersOfTwo::_64 => self::NO_UNSIGNED_SUBTRACTION,
+        PowersOfTwo::_128 => self::NO_DIR_IN_CREATE,
+        // not supported ...
+        PowersOfTwo::_256K => self::ANSI,
+        PowersOfTwo::_512K => self::NO_AUTO_VALUE_ON_ZERO,
+        PowersOfTwo::_1M => self::NO_BACKSLASH_ESCAPES,
+        PowersOfTwo::_2M => self::STRICT_TRANS_TABLES,
+        PowersOfTwo::_4M => self::STRICT_ALL_TABLES,
+        PowersOfTwo::_8M => self::NO_ZERO_IN_DATE,
+        PowersOfTwo::_16M => self::NO_ZERO_DATE,
+        PowersOfTwo::_32M => self::ALLOW_INVALID_DATES,
+        PowersOfTwo::_64M => self::ERROR_FOR_DIVISION_BY_ZERO,
+        PowersOfTwo::_128M => self::TRADITIONAL,
+        // not supported ...
+        PowersOfTwo::_512M => self::HIGH_NOT_PRECEDENCE,
+        PowersOfTwo::_1G => self::NO_ENGINE_SUBSTITUTION,
+        PowersOfTwo::_2G => self::PAD_CHAR_TO_FULL_LENGTH,
+        PowersOfTwo::_4G => self::TIME_TRUNCATE_FRACTIONAL,
+        // cannot be set ...
+        // self::NO_AUTO_CREATE_USER ?
+        // self::NO_FIELD_OPTIONS ?
+        // self::NO_KEY_OPTIONS ?
+        // self::NO_TABLE_OPTIONS ?
+    ];
 
     /** @var string[][] */
     private static $groups = [
@@ -117,12 +155,28 @@ class SqlMode extends StringSet
         ],
     ];
 
+    public static function getFromInt(int $int, Platform $platform): self
+    {
+        $parts = [];
+        foreach (IntCalc::binaryComponents($int) as $i) {
+            if (isset(self::$numeric[$i])) {
+                $parts[] = self::$numeric[$i];
+            }
+        }
+
+        return self::getFromString(implode(',', $parts), $platform);
+    }
+
     public static function getFromString(string $string, Platform $platform): self
     {
         /** @var string[] $parts */
         $parts = explode(',', strtoupper($string));
         $parts = array_filter($parts);
-        self::checkValues($parts);
+        try {
+            self::checkValues($parts);
+        } catch (InvalidEnumValueException $e) {
+            throw new InvalidValueException("Invalid value for system variable @@sql_mode: " . $string, $e);
+        }
         $items = [];
         foreach ($parts as $part) {
             if ($part === self::DEFAULT) {

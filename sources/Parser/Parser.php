@@ -20,6 +20,7 @@ use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\SystemVariable;
+use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MultiStatement;
@@ -84,7 +85,17 @@ class Parser
                     continue 2;
                 }
 
-                $this->detectModeChanges($command, $tokenList);
+                try {
+                    $this->detectModeChanges($command, $tokenList);
+                } catch (ParserException $e) {
+                    yield new InvalidCommand($tokenList, $e);
+
+                    continue 2;
+                } catch (Throwable $e) {
+                    yield new InvalidCommand($tokenList, $e);
+
+                    continue 2;
+                }
 
                 if ($tokenList->isFinished()) {
                     if (count($commands) === 1) {
@@ -727,6 +738,10 @@ class Parser
                         $value = $value->getName();
                     } elseif ($value instanceof DefaultLiteral) {
                         $value = Keyword::DEFAULT;
+                    } elseif ($value instanceof UintLiteral) {
+                        $sqlMode = SqlMode::getFromInt($value->asInteger(), $this->settings->getPlatform());
+                        $this->settings->setSqlMode($sqlMode);
+                        continue;
                     } elseif ($value instanceof UserVariable) {
                         // todo: no way to detect this
                         continue;
