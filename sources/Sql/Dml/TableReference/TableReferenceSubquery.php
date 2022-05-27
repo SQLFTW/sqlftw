@@ -28,9 +28,6 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
     private $columnList;
 
     /** @var bool */
-    private $parentheses;
-
-    /** @var bool */
     private $lateral;
 
     /**
@@ -40,13 +37,11 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
         Query $query,
         ?string $alias,
         ?array $columnList,
-        bool $parentheses = false,
         bool $lateral = false
     ) {
         $this->query = $query;
         $this->alias = $alias;
         $this->columnList = $columnList;
-        $this->parentheses = $parentheses;
         $this->lateral = $lateral;
     }
 
@@ -80,13 +75,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
             $result .= 'LATERAL ';
         }
 
-        if ($this->parentheses) {
-            $result .= '(';
-        }
         $result .= $this->query->serialize($formatter);
-        if ($this->parentheses) {
-            $result .= ')';
-        }
 
         if ($this->alias !== null) {
             $result .= ' AS ' . $formatter->formatName($this->alias);

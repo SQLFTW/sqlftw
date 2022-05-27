@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\Arr;
 use Dogma\ExceptionValueFormatter;
 use Dogma\Str;
 use Throwable;
@@ -40,14 +39,15 @@ class ParserException extends ParsingException
     }
 
     /**
-     * @param int[] $expectedTokens
      * @param mixed $expectedValue
      */
-    public static function tokens(array $expectedTokens, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null): self
+    public static function tokens(int $expectedToken, int $tokenMask, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null): self
     {
-        $expectedToken = implode(', ', Arr::map($expectedTokens, static function (int $type) {
-            return implode('|', TokenType::getByValue($type)->getConstantNames());
-        }));
+        $expectedToken = implode('|', TokenType::getByValue($expectedToken)->getConstantNames());
+        if ($tokenMask !== 0) {
+            $expectedToken .= ' ~' . implode('|', TokenType::getByValue($tokenMask)->getConstantNames());
+        }
+
         if ($expectedValue !== null) {
             if (is_array($expectedValue)) {
                 $expectedValue = Str::join($expectedValue, ', ', ' or ', 120, '...');

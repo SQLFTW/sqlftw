@@ -90,7 +90,7 @@ class CompoundStatementParser
 
         $label = $tokenList->getNonKeywordName();
         if ($label !== null) {
-            $tokenList->expect(TokenType::DOUBLE_COLON);
+            $tokenList->expectSymbol(':');
             $tokenList->expectKeyword(Keyword::BEGIN);
 
             return $this->parseBlock($tokenList, $label);
@@ -137,7 +137,7 @@ class CompoundStatementParser
 
         $label = $tokenList->getNonKeywordName();
         if ($label !== null) {
-            $tokenList->expect(TokenType::DOUBLE_COLON);
+            $tokenList->expectSymbol(':');
             $keyword = $tokenList->expectAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE);
         } else {
             $keyword = $tokenList->getAnyKeyword(

@@ -5,3 +5,4 @@ Random doc:
 - [SQL model hierarchy](sql-model.md)
 - [SQL commands](sql-commands.md)
 - [SQL expression nodes](sql-expression-nodes.md)
+- [Lexer token types](token-types.md)

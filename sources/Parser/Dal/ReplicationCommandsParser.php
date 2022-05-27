@@ -632,7 +632,7 @@ class ReplicationCommandsParser
         do {
             $uuid = $tokenList->expect(TokenType::UUID)->value;
             $intervals = [];
-            $tokenList->expect(TokenType::DOUBLE_COLON);
+            $tokenList->expectSymbol(':');
             do {
                 $start = (int) $tokenList->expectUnsignedInt();
                 $end = null;
@@ -640,7 +640,7 @@ class ReplicationCommandsParser
                     $end = (int) $tokenList->expectUnsignedInt();
                 }
                 $intervals[] = [$start, $end];
-                if (!$tokenList->has(TokenType::DOUBLE_COLON)) {
+                if (!$tokenList->hasSymbol(':')) {
                     break;
                 }
             } while (true);

@@ -20,9 +20,17 @@ class TableReferenceParentheses implements TableReferenceNode, Countable
     /** @var TableReferenceNode */
     private $content;
 
-    public function __construct(TableReferenceNode $content)
+    /** @var string|null */
+    private $alias;
+
+    /** @var non-empty-array<string>|null */
+    private $columnList;
+
+    public function __construct(TableReferenceNode $content, ?string $alias = null, ?array $columnList = null)
     {
         $this->content = $content;
+        $this->alias = $alias;
+        $this->columnList = $columnList;
     }
 
     public function count(): int
@@ -35,9 +43,31 @@ class TableReferenceParentheses implements TableReferenceNode, Countable
         return $this->content;
     }
 
+    public function getAlias(): ?string
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return non-empty-array<string>|null
+     */
+    public function getColumnList(): ?array
+    {
+        return $this->columnList;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return '(' . $this->content->serialize($formatter) . ')';
+        $result = $this->content->serialize($formatter);
+
+        if ($this->alias !== null) {
+            $result .= ' AS ' . $formatter->formatName($this->alias);
+        }
+        if ($this->columnList !== null) {
+            $result .= ' (' . $formatter->formatNamesList($this->columnList) . ')';
+        }
+
+        return $result;
     }
 
 }

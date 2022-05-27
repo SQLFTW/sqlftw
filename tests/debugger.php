@@ -24,7 +24,7 @@ Dumper::$hiddenFields[] = 'sql';
 
 // TokenType value
 Dumper::$intFormatters = [
-    '~tokenType|autoSkip~' => static function (int $int): string {
+    '~tokenType|tokenMask|autoSkip~' => static function (int $int): string {
         $types = implode('|', TokenType::getByValue($int)->getConstantNames());
 
         return Dumper::int((string) $int) . ' ' . Dumper::info('// TokenType::' . $types);

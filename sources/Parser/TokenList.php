@@ -263,13 +263,12 @@ class TokenList
         throw new InvalidTokenException($description, $this);
     }
 
-    public function expect(int $tokenType, int $mask = 0): Token
+    public function expect(int $tokenType, int $tokenMask = 0): Token
     {
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
-        if ($token === null || ($token->type & $tokenType) === 0 || ($token->type & $mask) !== 0) {
-            // todo: mask in message
-            throw InvalidTokenException::tokens([$tokenType], null, $token, $this);
+        if ($token === null || ($token->type & $tokenType) === 0 || ($token->type & $tokenMask) !== 0) {
+            throw InvalidTokenException::tokens($tokenType, $tokenMask, null, $token, $this);
         }
         $this->position++;
 
@@ -280,14 +279,14 @@ class TokenList
      * @phpstan-impure
      * @param mixed $value
      */
-    public function get(?int $tokenType = null, $value = null): ?Token
+    public function get(?int $tokenType = null, int $tokenMask = 0, $value = null): ?Token
     {
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null) {
             return null;
         }
-        if ($tokenType !== null && ($token->type & $tokenType) === 0) {
+        if ($tokenType !== null && ($token->type & $tokenType) === 0 || ($token->type & $tokenMask) !== 0) {
             return null;
         }
         if ($value !== null && $token->value !== $value) {
@@ -305,7 +304,7 @@ class TokenList
      */
     public function has(int $tokenType, $value = null): bool
     {
-        return (bool) $this->get($tokenType, $value);
+        return (bool) $this->get($tokenType, 0, $value);
     }
 
     /**
@@ -313,7 +312,7 @@ class TokenList
      */
     public function pass(int $tokenType, $value = null): void
     {
-        $this->has($tokenType, $value);
+        $this->get($tokenType, $value);
     }
 
     // symbols ---------------------------------------------------------------------------------------------------------
@@ -323,10 +322,10 @@ class TokenList
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::SYMBOL) === 0) {
-            throw InvalidTokenException::tokens([T::SYMBOL], $symbol, $token, $this);
+            throw InvalidTokenException::tokens(T::SYMBOL, 0, $symbol, $token, $this);
         }
         if ($token->value !== $symbol) {
-            throw InvalidTokenException::tokens([T::SYMBOL], $symbol, $token, $this);
+            throw InvalidTokenException::tokens(T::SYMBOL, 0, $symbol, $token, $this);
         }
         $this->position++;
 
@@ -368,7 +367,9 @@ class TokenList
         $token = $this->expect(T::OPERATOR);
         $upper = strtoupper($token->value);
         if ($upper !== $operator) {
-            throw InvalidTokenException::tokens([T::OPERATOR], $operator, $token, $this);
+            $this->position--;
+
+            throw InvalidTokenException::tokens(T::OPERATOR, 0, $operator, $token, $this);
         }
 
         return $upper;
@@ -398,7 +399,9 @@ class TokenList
         $token = $this->expect(T::OPERATOR);
         $upper = strtoupper($token->value);
         if (!in_array($upper, $operators, true)) {
-            throw InvalidTokenException::tokens([T::OPERATOR], $operators, $token, $this);
+            $this->position--;
+
+            throw InvalidTokenException::tokens(T::OPERATOR, 0, $operators, $token, $this);
         }
 
         return $token->value;
@@ -591,9 +594,10 @@ class TokenList
         try {
             return call_user_func([$className, 'get'], $value);
         } catch (InvalidEnumValueException $e) {
+            $this->position--;
             $values = call_user_func([$className, 'getAllowedValues']);
 
-            throw InvalidTokenException::tokens([T::NAME], $values, $this->tokens[$this->position - 1], $this);
+            throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
         }
     }
 
@@ -603,7 +607,9 @@ class TokenList
     {
         $token = $this->expect(T::NAME);
         if ($name !== null && $token->value !== $name) {
-            throw InvalidTokenException::tokens([T::NAME], $name, $token, $this);
+            $this->position--;
+
+            throw InvalidTokenException::tokens(T::NAME, 0, $name, $token, $this);
         }
 
         return $token->value;
@@ -623,7 +629,7 @@ class TokenList
     public function getName(?string $name = null): ?string
     {
         $position = $this->position;
-        $token = $this->get(T::NAME, $name);
+        $token = $this->get(T::NAME, 0, $name);
         if ($token !== null) {
             return $token->value;
         }
@@ -655,27 +661,34 @@ class TokenList
 
     public function expectNonKeywordName(?string $name = null): string
     {
-        $token = $this->expect(T::NAME);
-        if (($token->type & T::KEYWORD) !== 0) {
-            throw InvalidTokenException::tokens([T::NAME], null, $token, $this);
-        }
-        if ($token->value !== $name) {
-            throw InvalidTokenException::tokens([T::NAME], $name, $token, $this);
+        $token = $this->expect(T::NAME, T::KEYWORD);
+        if ($name !== null && $token->value !== $name) {
+            $this->position--;
+
+            throw InvalidTokenException::tokens(T::NAME, T::KEYWORD, $name, $token, $this);
         }
 
         return $token->value;
     }
 
+    // todo: probably all calls to this should call expectNonReservedName() instead
     public function getNonKeywordName(?string $name = null): ?string
     {
-        $position = $this->position;
-        $token = $this->get(T::NAME, $name);
+        $token = $this->get(T::NAME, T::KEYWORD, $name);
         if ($token === null) {
             return null;
-        } elseif (($token->type & T::KEYWORD) !== 0) {
-            $this->position = $position;
+        }
 
-            return null;
+        return $token->value;
+    }
+
+    public function expectNonReservedName(?string $name = null): string
+    {
+        $token = $this->expect(T::NAME, T::RESERVED);
+        if ($name !== null && $token->value !== $name) {
+            $this->position--;
+
+            throw InvalidTokenException::tokens(T::NAME, T::RESERVED, $name, $token, $this);
         }
 
         return $token->value;
@@ -683,13 +696,8 @@ class TokenList
 
     public function getNonReservedName(?string $name = null): ?string
     {
-        $position = $this->position;
-        $token = $this->get(T::NAME, $name);
+        $token = $this->get(T::NAME, T::RESERVED, $name);
         if ($token === null) {
-            return null;
-        } elseif (($token->type & T::RESERVED) !== 0) {
-            $this->position = $position;
-
             return null;
         }
 
@@ -704,10 +712,9 @@ class TokenList
      */
     public function missingAnyKeyword(string ...$keywords): void
     {
-        $this->position--;
         $token = $this->get(T::KEYWORD);
 
-        throw InvalidTokenException::tokens([T::KEYWORD], $keywords, $token, $this);
+        throw InvalidTokenException::tokens(T::KEYWORD, 0, $keywords, $token, $this);
     }
 
     public function expectKeyword(?string $keyword = null): string
@@ -715,11 +722,11 @@ class TokenList
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
-            throw InvalidTokenException::tokens([T::KEYWORD], $keyword, $token, $this);
+            throw InvalidTokenException::tokens(T::KEYWORD, 0, $keyword, $token, $this);
         }
         $value = strtoupper($token->value);
         if ($keyword !== null && $value !== $keyword) {
-            throw InvalidTokenException::tokens([T::KEYWORD], $keyword, $token, $this);
+            throw InvalidTokenException::tokens(T::KEYWORD, 0, $keyword, $token, $this);
         }
         $this->position++;
 
@@ -861,8 +868,9 @@ class TokenList
 
             return call_user_func([$className, 'get'], $value);
         }
+        $this->position = $start;
 
-        throw InvalidTokenException::tokens([T::KEYWORD], $values, $this->tokens[$this->position], $this);
+        throw InvalidTokenException::tokens(T::KEYWORD, 0, $values, $this->tokens[$this->position], $this);
     }
 
     /**
@@ -974,7 +982,7 @@ class TokenList
         }
 
         if ($this->position < count($this->tokens)) {
-            throw InvalidTokenException::tokens([T::END], null, $this->tokens[$this->position], $this);
+            throw InvalidTokenException::tokens(T::END, 0, null, $this->tokens[$this->position], $this);
         }
     }
 

@@ -226,7 +226,7 @@ class Lexer
                     if ($value !== ':') {
                         yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $value, null, $condition);
                     } else {
-                        yield $previous = new Token(T::SYMBOL | T::DOUBLE_COLON, $start, $char, null, $condition);
+                        yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
                     }
                     break;
                 case '*':

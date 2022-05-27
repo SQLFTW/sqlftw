@@ -28,7 +28,6 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
 use function count;
 
@@ -215,52 +214,29 @@ class JoinParser
             return new TableReferenceJsonTable($table, $alias);
         }
 
-        // todo: QueryParser should be able to detect this better and resolve with ParenthesizedQueryExpression
-        $selectInParentheses = false;
-        if ($tokenList->hasSymbol('(')) {
-            $selectInParentheses = $tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
-            if (!$selectInParentheses) {
+        $lateral = $tokenList->hasKeyword(Keyword::LATERAL);
+        if ($lateral) {
+            $query = ($this->queryParserProxy)()->parseQuery($tokenList);
+            [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
+
+            return new TableReferenceSubquery($query, $alias, $columns, true);
+        } elseif ($tokenList->hasSymbol('(')) {
+            $isQuery = $tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
+            if ($isQuery) {
+                $query = ($this->queryParserProxy)()->parseQuery($tokenList->resetPosition($position));
+                [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
+
+                return new TableReferenceSubquery($query, $alias, $columns, false);
+            } else {
                 $references = $this->parseTableReferences($tokenList);
                 $tokenList->expectSymbol(')');
+                [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
-                return new TableReferenceParentheses($references);
+                return new TableReferenceParentheses($references, $alias, $columns);
             }
-        }
-
-        $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH, Keyword::LATERAL);
-        if ($selectInParentheses || $keyword !== null) {
-            if ($keyword === Keyword::LATERAL) {
-                if ($tokenList->hasSymbol('(')) {
-                    $selectInParentheses = true;
-                }
-                $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
-            }
-
-            $query = ($this->queryParserProxy)()->parseQuery($tokenList->resetPosition(-1));
-
-            if ($selectInParentheses) {
-                $tokenList->expectSymbol(')');
-            }
-
-            $tokenList->passKeyword(Keyword::AS);
-            $alias = $tokenList->expectName();
-            $columns = null;
-            if ($tokenList->hasSymbol('(')) {
-                $columns = [];
-                do {
-                    $columns[] = $tokenList->expectName();
-                } while ($tokenList->hasSymbol(','));
-                $tokenList->expectSymbol(')');
-            }
-
-            return new TableReferenceSubquery($query, $alias, $columns, $selectInParentheses, $keyword === Keyword::LATERAL);
         } else {
             // tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
-            if ($tokenList->hasKeyword(Keyword::DUAL)) {
-                $table = new QualifiedName(Keyword::DUAL);
-            } else {
-                $table = $tokenList->expectQualifiedName();
-            }
+            $table = $tokenList->expectQualifiedName();
             $partitions = null;
             if ($tokenList->hasKeyword(Keyword::PARTITION)) {
                 $tokenList->expectSymbol('(');
@@ -284,6 +260,29 @@ class JoinParser
 
             return new TableReferenceTable($table, $alias, $partitions, $indexHints);
         }
+    }
+
+    /**
+     * @return array{string|null, non-empty-array<string>|null}
+     */
+    private function parseAliasAndColumns(TokenList $tokenList): array
+    {
+        if ($tokenList->hasKeyword(Keyword::AS)) {
+            $alias = $tokenList->expectName();
+        } else {
+            $alias = $tokenList->getNonReservedName();
+        }
+
+        $columns = null;
+        if ($tokenList->hasSymbol('(')) {
+            $columns = [];
+            do {
+                $columns[] = $tokenList->expectNonReservedName();
+            } while ($tokenList->hasSymbol(','));
+            $tokenList->expectSymbol(')');
+        }
+
+        return [$alias, $columns];
     }
 
     /**
