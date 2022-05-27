@@ -20,6 +20,7 @@ use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\SystemVariable;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MultiStatement;
 use SqlFtw\Sql\MysqlVariable;
@@ -726,6 +727,9 @@ class Parser
                         $value = $value->getName();
                     } elseif ($value instanceof DefaultLiteral) {
                         $value = Keyword::DEFAULT;
+                    } elseif ($value instanceof UserVariable) {
+                        // todo: no way to detect this
+                        continue;
                     } else {
                         throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                     }
