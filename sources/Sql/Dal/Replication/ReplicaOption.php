@@ -89,7 +89,7 @@ class ReplicaOption extends SqlEnum
         self::SOURCE_SSL_CIPHER => BaseType::CHAR,
         self::SOURCE_SSL_VERIFY_SERVER_CERT => BaseType::BOOL,
         self::SOURCE_TLS_VERSION => BaseType::CHAR,
-        self::SOURCE_TLS_CIPHERSUITES => BaseType::CHAR,
+        self::SOURCE_TLS_CIPHERSUITES => BaseType::CHAR . '|' . NullLiteral::class,
         self::SOURCE_PUBLIC_KEY_PATH => BaseType::CHAR,
         self::GET_SOURCE_PUBLIC_KEY => BaseType::BOOL,
         self::NETWORK_NAMESPACE => BaseType::CHAR,
