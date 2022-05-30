@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\UserName;
@@ -19,7 +20,7 @@ class IdentifiedUser implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var UserName */
+    /** @var UserName|FunctionCall */
     private $user;
 
     /** @var IdentifiedUserAction|null */
@@ -37,8 +38,11 @@ class IdentifiedUser implements SqlSerializable
     /** @var bool */
     private $retainCurrent;
 
+    /**
+     * @param UserName|FunctionCall $user
+     */
     public function __construct(
-        UserName $user,
+        $user,
         ?IdentifiedUserAction $action = null,
         ?Literal $password = null,
         ?string $plugin = null,
@@ -53,7 +57,10 @@ class IdentifiedUser implements SqlSerializable
         $this->retainCurrent = $retainCurrent;
     }
 
-    public function getUser(): UserName
+    /**
+     * @return UserName|FunctionCall
+     */
+    public function getUser()
     {
         return $this->user;
     }

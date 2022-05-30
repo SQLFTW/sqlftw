@@ -45,6 +45,8 @@ use SqlFtw\Sql\Dal\User\UserResourceOption;
 use SqlFtw\Sql\Dal\User\UserResourceOptionType;
 use SqlFtw\Sql\Dal\User\UserTlsOption;
 use SqlFtw\Sql\Dal\User\UserTlsOptionType;
+use SqlFtw\Sql\Expression\BuiltInFunction;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
@@ -161,7 +163,7 @@ class UserCommandsParser
     {
         $users = [];
         do {
-            $user = $tokenList->expectUserName();
+            $user = $this->parseUser($tokenList);
             if ($tokenList->hasKeywords(Keyword::DISCARD, Keyword::OLD, Keyword::PASSWORD)) {
                 $action = IdentifiedUserAction::DISCARD_OLD_PASSWORD;
                 $users[] = new IdentifiedUser($user, IdentifiedUserAction::get($action));
@@ -358,7 +360,7 @@ class UserCommandsParser
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::USER);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
-        $users = $this->parseUserList($tokenList);
+        $users = $this->parseUsersList($tokenList);
 
         return new DropUserCommand($users, $ifExists);
     }
@@ -398,16 +400,16 @@ class UserCommandsParser
         $tokenList->expectKeyword(Keyword::GRANT);
 
         if ($tokenList->hasKeywords(Keyword::PROXY, Keyword::ON)) {
-            $proxy = $tokenList->expectUserName();
+            $proxy = $this->parseUser($tokenList);
             $tokenList->expectKeyword(Keyword::TO);
-            $users = $this->parseUserList($tokenList);
+            $users = $this->parseUsersList($tokenList);
             $withGrantOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
 
             return new GrantProxyCommand($proxy, $users, $withGrantOption);
         } elseif (!$tokenList->seekKeyword(Keyword::ON, 1000)) {
             $roles = $this->parseRolesList($tokenList);
             $tokenList->expectKeyword(Keyword::TO);
-            $users = $this->parseUserList($tokenList);
+            $users = $this->parseUsersList($tokenList);
             $withAdminOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::ADMIN, Keyword::OPTION);
 
             return new GrantRoleCommand($roles, $users, $withAdminOption);
@@ -423,7 +425,7 @@ class UserCommandsParser
             $resourceOptions = $this->parseResourceOptions($tokenList);
             $as = $role = null;
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $as = $tokenList->expectUserName();
+                $as = $this->parseUser($tokenList);
                 if ($tokenList->hasKeywords(Keyword::WITH, Keyword::ROLE)) {
                     $role = $this->parseRoleSpecification($tokenList);
                 }
@@ -551,7 +553,7 @@ class UserCommandsParser
         $users = [];
         $newUsers = [];
         do {
-            $users[] = $tokenList->expectUserName();
+            $users[] = $this->parseUser($tokenList);
             $tokenList->expectKeyword(Keyword::TO);
             $newUsers[] = $tokenList->expectUserName();
         } while ($tokenList->hasSymbol(','));
@@ -584,7 +586,7 @@ class UserCommandsParser
                 $tokenList->passKeyword(Keyword::PRIVILEGES);
                 $tokenList->expectSymbol(',');
                 $tokenList->expectKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
-                $users = $this->parseUserList($tokenList);
+                $users = $this->parseUsersList($tokenList);
 
                 return new RevokeAllCommand($users);
             } else {
@@ -593,22 +595,22 @@ class UserCommandsParser
         }
         if ($tokenList->hasKeywords(Keyword::PROXY)) {
             $tokenList->expectKeyword(Keyword::ON);
-            $proxy = $tokenList->expectUserName();
+            $proxy = $this->parseUser($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
-            $users = $this->parseUserList($tokenList);
+            $users = $this->parseUsersList($tokenList);
 
             return new RevokeProxyCommand($proxy, $users);
         } elseif ($tokenList->seekKeyword(Keyword::ON, 1000)) {
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
-            $users = $this->parseUserList($tokenList);
+            $users = $this->parseUsersList($tokenList);
 
             return new RevokeCommand($privileges, $resource, $users);
         } else {
             $roles = $this->parseRolesList($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
-            $users = $this->parseUserList($tokenList);
+            $users = $this->parseUsersList($tokenList);
 
             return new RevokeRoleCommand($roles, $users);
         }
@@ -630,7 +632,7 @@ class UserCommandsParser
         }
 
         $tokenList->expectKeyword(Keyword::TO);
-        $users = $this->parseUserList($tokenList);
+        $users = $this->parseUsersList($tokenList);
 
         return new SetDefaultRoleCommand($users, $roles, $rolesList);
     }
@@ -659,7 +661,7 @@ class UserCommandsParser
         $tokenList->expectKeywords(Keyword::SET, Keyword::PASSWORD);
         $user = null;
         if ($tokenList->hasKeyword(Keyword::FOR)) {
-            $user = $tokenList->expectUserName();
+            $user = $this->parseUser($tokenList);
         }
 
         $passwordFunction = $password = $replace = null;
@@ -728,13 +730,28 @@ class UserCommandsParser
     }
 
     /**
+     * @return UserName|FunctionCall
+     */
+    private function parseUser(TokenList $tokenList)
+    {
+        if ($tokenList->hasKeyword(Keyword::CURRENT_USER)) {
+            if ($tokenList->hasSymbol('(')) {
+                $tokenList->passSymbol(')');
+            }
+            return new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_USER));
+        } else {
+            return $tokenList->expectUserName();
+        }
+    }
+
+    /**
      * @return non-empty-array<UserName>
      */
-    private function parseUserList(TokenList $tokenList): array
+    private function parseUsersList(TokenList $tokenList): array
     {
         $users = [];
         do {
-            $users[] = $tokenList->expectUserName();
+            $users[] = $this->parseUser($tokenList);
         } while ($tokenList->hasSymbol(','));
 
         return $users;
