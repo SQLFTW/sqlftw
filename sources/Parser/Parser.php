@@ -16,6 +16,7 @@ use Generator;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
+use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -738,9 +739,11 @@ class Parser
                         // todo: tracking both session and global?
                         $this->settings->setMode($this->settings->getPlatform()->getDefaultMode());
                     } elseif ($value instanceof StringValue) {
-                        $this->settings->setMode(SqlMode::getFromString($value->asString(), $this->settings->getPlatform()));
+                        $this->settings->setMode(SqlMode::getFromString(trim($value->asString()), $this->settings->getPlatform()));
                     } elseif ($value instanceof SimpleName) {
-                        $this->settings->setMode(SqlMode::getFromString($value->getName(), $this->settings->getPlatform()));
+                        if ($value->getName() !== Keyword::TRUE && $value->getName() !== Keyword::FALSE) {
+                            $this->settings->setMode(SqlMode::getFromString($value->getName(), $this->settings->getPlatform()));
+                        }
                     } elseif ($value instanceof DefaultLiteral) {
                         $this->settings->setMode(SqlMode::getFromString(Keyword::DEFAULT, $this->settings->getPlatform()));
                     } elseif ($value instanceof UintLiteral) {
@@ -764,6 +767,8 @@ class Parser
                             } else {
                                 throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                             }
+                        } elseif ($function instanceof BuiltInFunction && $function->getValue() === BuiltInFunction::CAST) {
+                            // todo: skipped for now, needs evaluating expressions
                         } else {
                             throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                         }
@@ -771,7 +776,6 @@ class Parser
                         // todo: no way to detect this
                         continue;
                     } else {
-                        rd($value);
                         throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                     }
                 }
