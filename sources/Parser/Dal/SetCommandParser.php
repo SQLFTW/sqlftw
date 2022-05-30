@@ -42,10 +42,11 @@ class SetCommandParser
      *     user_var_name = expr
      *   | param_name = expr
      *   | local_var_name = expr
-     *   | {GLOBAL | @@GLOBAL.} system_var_name = expr
-     *   | {PERSIST | @@PERSIST.} system_var_name = expr
-     *   | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name = expr
-     *   | [LOCAL | SESSION | @@LOCAL | @@SESSION. | @@] system_var_name = expr
+     *   | {GLOBAL | @@GLOBAL. | global.} system_var_name = expr
+     *   | {PERSIST | @@PERSIST. | persist.} system_var_name = expr
+     *   | {PERSIST_ONLY | @@PERSIST_ONLY. | persist_only.} system_var_name = expr
+     *   | [SESSION | @@SESSION. | session. | @@] system_var_name = expr
+     *   | [LOCAL | @@LOCAL | local. | @@] system_var_name = expr -- alias for SESSION
      */
     public function parseSet(TokenList $tokenList): SetCommand
     {
@@ -58,6 +59,8 @@ class SetCommandParser
             } else {
                 $scope = $tokenList->getKeywordEnum(Scope::class);
             }
+            $tokenList->passSymbol('.');
+
             if ($scope !== null) {
                 // GLOBAL foo
                 $name = $tokenList->expectNonReservedNameOrString();
