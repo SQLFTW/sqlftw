@@ -11,7 +11,7 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Dal\Shutdown\RestartCommand;
+use SqlFtw\Sql\Dal\Restart\RestartCommand;
 use SqlFtw\Sql\Keyword;
 
 class RestartCommandParser
