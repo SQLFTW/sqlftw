@@ -517,8 +517,7 @@ class TokenList
     public function expectStringValue(): StringValue
     {
         $position = $this->position;
-        // todo: BINARY_LITERAL ???
-        $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::UNQUOTED_NAME);
+        $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL | T::UNQUOTED_NAME);
 
         // charset introducer
         $charset = null;
@@ -526,17 +525,19 @@ class TokenList
             $charset = substr(strtolower($token->value), 1);
             if ($token->value[0] === '_' && Charset::isValid($charset)) {
                 $charset = Charset::get($charset);
-                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL);
+                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
             } else {
                 $charset = null;
                 $this->position = $position;
 
-                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL);
+                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
             }
         }
 
         if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
             return new HexadecimalLiteral($token->value, $charset);
+        } elseif (($token->type & T::BINARY_LITERAL) !== 0) {
+            return new BinaryLiteral($token->value, $charset);
         } else {
             /** @var non-empty-array<string> $values */
             $values = [$token->value];
@@ -551,8 +552,7 @@ class TokenList
     public function getStringValue(): ?StringValue
     {
         $position = $this->position;
-        // todo: BINARY_LITERAL ???
-        $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::UNQUOTED_NAME);
+        $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL | T::UNQUOTED_NAME);
         if ($token === null) {
             return null;
         }
@@ -563,7 +563,7 @@ class TokenList
             $lower = substr(strtolower($token->value), 1);
             if ($token->value[0] === '_' && Charset::isValid($lower)) {
                 $charset = Charset::get($lower);
-                $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL);
+                $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
             } else {
                 $this->position = $position;
 
@@ -578,6 +578,8 @@ class TokenList
 
         if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
             return new HexadecimalLiteral($token->value, $charset);
+        } elseif (($token->type & T::BINARY_LITERAL) !== 0) {
+            return new BinaryLiteral($token->value, $charset);
         } else {
             /** @var non-empty-array<string> $values */
             $values = [$token->value];

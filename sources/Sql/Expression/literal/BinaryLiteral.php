@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Charset;
 use function bindec;
 use function chr;
 use function str_repeat;
@@ -20,21 +21,30 @@ use function substr;
 /**
  * e.g. 0b01101110
  */
-class BinaryLiteral implements UintValue
+class BinaryLiteral implements UintValue, StringValue
 {
     use StrictBehaviorMixin;
 
     /** @var string */
     private $value;
 
-    public function __construct(string $value)
+    /** @var Charset|null */
+    private $charset;
+
+    public function __construct(string $value, ?Charset $charset = null)
     {
         $this->value = $value;
+        $this->charset = $charset;
     }
 
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getCharset(): ?Charset
+    {
+        return $this->charset;
     }
 
     public function asString(): string
@@ -56,7 +66,12 @@ class BinaryLiteral implements UintValue
 
     public function serialize(Formatter $formatter): string
     {
-        return '0b' . $this->value;
+        $result = '';
+        if ($this->charset !== null) {
+            $result .= '_' . $this->charset->serialize($formatter) . ' ';
+        }
+
+        return $result . '0b' . $this->value;
     }
 
 }
