@@ -22,6 +22,7 @@ use function implode;
 use function preg_replace;
 use function sprintf;
 use function str_replace;
+use function strtolower;
 
 /**
  * @phpstan-import-type PhpBacktraceItem from Callstack
@@ -134,7 +135,7 @@ class Assert extends DogmaAssert
         try {
             foreach ($parser->parse($sql, $tokenListFilter) as $command) {
                 if ($command instanceof InvalidCommand) {
-                    $source = $command->getTokenList()->serialize();
+                    $source = strtolower($command->getTokenList()->serialize());
                     // filtering "false" negatives
                     // todo: also should filter false positives
                     if (Str::contains($source, "--error ") || Str::contains($source, "-- error")) {
