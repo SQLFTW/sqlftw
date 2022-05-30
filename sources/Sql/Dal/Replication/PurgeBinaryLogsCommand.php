@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BuiltInFunction;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 
 class PurgeBinaryLogsCommand implements ReplicationCommand
@@ -23,13 +24,10 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
     /** @var string|null */
     private $toLog;
 
-    /** @var DateTime|BuiltInFunction|null */
+    /** @var RootNode|null */
     private $before;
 
-    /**
-     * @param DateTime|BuiltInFunction|null $before
-     */
-    public function __construct(?string $toLog, $before)
+    public function __construct(?string $toLog, ?RootNode $before)
     {
         if (!($toLog !== null ^ $before !== null)) { // @phpstan-ignore-line XOR needed
             throw new InvalidDefinitionException('Either TO or BEFORE must be set.');
@@ -44,10 +42,7 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
         return $this->toLog;
     }
 
-    /**
-     * @return DateTime|BuiltInFunction|null
-     */
-    public function getBefore()
+    public function getBefore(): ?RootNode
     {
         return $this->before;
     }

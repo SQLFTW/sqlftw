@@ -397,7 +397,7 @@ class ReplicationCommandsParser
         if ($tokenList->hasKeyword(Keyword::TO)) {
             $log = $tokenList->expectString();
         } elseif ($tokenList->hasKeyword(Keyword::BEFORE)) {
-            $before = $this->expressionParser->parseDateTime($tokenList);
+            $before = $this->expressionParser->parseExpression($tokenList);
         } else {
             $tokenList->missingAnyKeyword(Keyword::TO, Keyword::BEFORE);
         }
