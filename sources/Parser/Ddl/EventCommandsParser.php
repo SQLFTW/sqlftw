@@ -53,6 +53,7 @@ class EventCommandsParser
         $definer = $schedule = $preserve = $newName = $comment = $body = null;
 
         if ($tokenList->hasKeyword(Keyword::DEFINER)) {
+            $tokenList->expectOperator('=');
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::EVENT);
