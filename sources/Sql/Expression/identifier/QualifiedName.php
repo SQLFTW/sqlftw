@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use function explode;
 
 class QualifiedName implements ColumnIdentifier, FunctionIdentifier, TableIdentifier
 {
@@ -71,6 +72,13 @@ class QualifiedName implements ColumnIdentifier, FunctionIdentifier, TableIdenti
         return $this->schema !== null
             ? $this->schema . '.' . $this->name
             : $this->name;
+    }
+
+    public function equals(string $fullName): bool
+    {
+        [$schema, $name] = explode('.', $fullName);
+
+        return $this->schema === $schema && $this->name === $name;
     }
 
     public function serialize(Formatter $formatter): string

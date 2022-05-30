@@ -15,7 +15,6 @@ use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Math\IntCalc;
 use Dogma\Math\PowersOfTwo;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\PlatformMode;
 use function array_filter;
 use function array_merge;
 use function array_unique;
@@ -180,7 +179,7 @@ class SqlMode extends StringSet
         $items = [];
         foreach ($parts as $part) {
             if ($part === self::DEFAULT) {
-                $items = $platform->getDefaultSqlModes();
+                $items = $platform->getDefaultModes();
             } elseif (isset(self::$groups[$part])) {
                 $items = array_merge($items, self::$groups[$part]);
             } else {
@@ -189,27 +188,6 @@ class SqlMode extends StringSet
         }
 
         return self::get(...array_unique($items));
-    }
-
-    public function getPlatformMode(): PlatformMode
-    {
-        static $translate = [
-            self::ANSI_QUOTES => PlatformMode::ANSI_QUOTES,
-            self::IGNORE_SPACE => PlatformMode::IGNORE_SPACE,
-            self::NO_BACKSLASH_ESCAPES => PlatformMode::NO_BACKSLASH_ESCAPES,
-            self::PIPES_AS_CONCAT => PlatformMode::PIPES_AS_CONCAT,
-            self::REAL_AS_FLOAT => PlatformMode::REAL_AS_FLOAT,
-            self::HIGH_NOT_PRECEDENCE => PlatformMode::HIGH_NOT_PRECEDENCE,
-        ];
-
-        $mode = 0;
-        foreach ($this->getValues() as $value) {
-            if (isset($translate[$value])) {
-                $mode |= $translate[$value];
-            }
-        }
-
-        return PlatformMode::getByValue($mode);
     }
 
 }

@@ -197,19 +197,19 @@ class Platform
         return $this->name === self::MYSQL || $this->name === self::MARIA;
     }
 
-    public function getDefaultMode(): PlatformMode
+    public function getDefaultMode(): SqlMode
     {
         if ($this->name === self::MYSQL || $this->name === self::MARIA) {
-            return SqlMode::getFromString(SqlMode::DEFAULT, $this)->getPlatformMode();
+            return SqlMode::getFromString(SqlMode::DEFAULT, $this);
         } else {
-            return PlatformMode::getAnsi();
+            return SqlMode::getFromString(SqlMode::ANSI, $this);
         }
     }
 
     /**
      * @return string[]
      */
-    public function getDefaultSqlModes(): array
+    public function getDefaultModes(): array
     {
         $family = $this->getFamilyId();
         if (isset(self::$defaultSqlModes[$family])) {

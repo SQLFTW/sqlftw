@@ -17,6 +17,8 @@ use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\SystemVariable;
@@ -732,24 +734,46 @@ class Parser
                 $variable = $assignment->getVariable();
                 if ($variable instanceof SystemVariable && $variable->getName() === MysqlVariable::SQL_MODE) {
                     $value = $assignment->getExpression();
-                    if ($value instanceof StringValue) {
-                        $value = $value->asString();
+                    if ($value instanceof SystemVariable && $value->getName() === MysqlVariable::SQL_MODE) {
+                        // todo: tracking both session and global?
+                        $this->settings->setMode($this->settings->getPlatform()->getDefaultMode());
+                    } elseif ($value instanceof StringValue) {
+                        $this->settings->setMode(SqlMode::getFromString($value->asString(), $this->settings->getPlatform()));
                     } elseif ($value instanceof SimpleName) {
-                        $value = $value->getName();
+                        $this->settings->setMode(SqlMode::getFromString($value->getName(), $this->settings->getPlatform()));
                     } elseif ($value instanceof DefaultLiteral) {
-                        $value = Keyword::DEFAULT;
+                        $this->settings->setMode(SqlMode::getFromString(Keyword::DEFAULT, $this->settings->getPlatform()));
                     } elseif ($value instanceof UintLiteral) {
-                        $sqlMode = SqlMode::getFromInt($value->asInteger(), $this->settings->getPlatform());
-                        $this->settings->setSqlMode($sqlMode);
-                        continue;
+                        $this->settings->setMode(SqlMode::getFromInt($value->asInteger(), $this->settings->getPlatform()));
+                    } elseif ($value instanceof FunctionCall) {
+                        $function = $value->getFunction();
+                        if ($function instanceof QualifiedName && $function->equals('sys.list_add')) {
+                            [$first, $second] = $value->getArguments();
+                            if ($first instanceof SystemVariable && $first->getName() === MysqlVariable::SQL_MODE && $second instanceof StringValue) {
+                                $value = $this->settings->getMode()->getValue() . ',' . $second->asString();
+                                // needed to expand groups
+                                $mode = SqlMode::getFromString($value, $this->settings->getPlatform());
+                                $this->settings->setMode($mode);
+                            } else {
+                                throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
+                            }
+                        } elseif ($function instanceof QualifiedName && $function->equals('sys.list_drop')) {
+                            [$first, $second] = $value->getArguments();
+                            if ($first instanceof SystemVariable && $first->getName() === MysqlVariable::SQL_MODE && $second instanceof StringValue) {
+                                $this->settings->setMode($this->settings->getMode()->remove($second->asString()));
+                            } else {
+                                throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
+                            }
+                        } else {
+                            throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
+                        }
                     } elseif ($value instanceof UserVariable) {
                         // todo: no way to detect this
                         continue;
                     } else {
+                        rd($value);
                         throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                     }
-                    $sqlMode = SqlMode::getFromString($value, $this->settings->getPlatform());
-                    $this->settings->setSqlMode($sqlMode);
                 }
             }
         }

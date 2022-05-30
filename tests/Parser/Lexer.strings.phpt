@@ -3,9 +3,9 @@
 namespace SqlFtw\Parser;
 
 use SqlFtw\Parser\TokenType as T;
-use SqlFtw\Platform\PlatformMode;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Sql\SqlMode;
 use SqlFtw\Tests\Assert;
 
 require '../bootstrap.php';
@@ -77,13 +77,13 @@ Assert::exception(static function () use ($lexer): void {
 }, LexerException::class, '~^End of string not found~');
 
 // with ANSI_QUOTES mode enabled
-$settings->setMode($settings->getMode()->add(PlatformMode::ANSI_QUOTES));
+$settings->setMode($settings->getMode()->add(SqlMode::ANSI_QUOTES));
 $tokens = $lexer->tokenizeAll(' "string1" ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::NAME | T::DOUBLE_QUOTED_STRING, 'string1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 10);
-$settings->setMode($settings->getMode()->remove(PlatformMode::ANSI_QUOTES));
+$settings->setMode($settings->getMode()->remove(SqlMode::ANSI_QUOTES));
 
 // SINGLE_QUOTED_STRING
 $tokens = $lexer->tokenizeAll(" 'string1' ");
@@ -123,13 +123,13 @@ Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, "str\\
 Assert::token($tokens[2], T::WHITESPACE, ' ', 14);
 
 // with escaping disabled
-$settings->setMode($settings->getMode()->add(PlatformMode::NO_BACKSLASH_ESCAPES));
+$settings->setMode($settings->getMode()->add(SqlMode::NO_BACKSLASH_ESCAPES));
 $tokens = $lexer->tokenizeAll(" 'string1\\' ");
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, 'string1\\', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 11);
-$settings->setMode($settings->getMode()->remove(PlatformMode::NO_BACKSLASH_ESCAPES));
+$settings->setMode($settings->getMode()->remove(SqlMode::NO_BACKSLASH_ESCAPES));
 
 // BACKTICK_QUOTED_STRING
 $tokens = $lexer->tokenizeAll(' `name1` ');

@@ -16,7 +16,6 @@ use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Parser\Dml\QueryParser;
-use SqlFtw\Platform\PlatformMode;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\UserExpression;
@@ -84,6 +83,7 @@ use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
+use SqlFtw\Sql\SqlMode;
 use function explode;
 use function in_array;
 use function is_int;
@@ -148,7 +148,7 @@ class ExpressionParser
     public function parseExpression(TokenList $tokenList): RootNode
     {
         $operators = [Operator::OR, Operator::XOR, Operator::AND, Operator::AMPERSANDS];
-        if (!$tokenList->getSettings()->getMode()->containsAny(PlatformMode::PIPES_AS_CONCAT)) {
+        if (!$tokenList->getSettings()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT)) {
             $operators[] = Operator::PIPES;
         }
 
@@ -445,7 +445,7 @@ class ExpressionParser
             return new CollateExpression($left, $collation);
         }
 
-        if ($tokenList->getSettings()->getMode()->containsAny(PlatformMode::PIPES_AS_CONCAT) && $tokenList->hasOperator(Operator::PIPES)) {
+        if ($tokenList->getSettings()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT) && $tokenList->hasOperator(Operator::PIPES)) {
             // simple_expr || simple_expr
             $right = $this->parseSimpleExpression($tokenList);
 
