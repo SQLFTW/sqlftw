@@ -464,7 +464,11 @@ class ExpressionParser
             // ~ simple_expr
             // ! simple_expr
             // BINARY simple_expr
-            return new UnaryOperator($operator, $this->parseSimpleExpression($tokenList));
+            if ($operator === Operator::BINARY && $tokenList->isFinished() || $tokenList->hasSymbol(';') || $tokenList->hasSymbol(',')) {
+                return new SimpleName(Charset::BINARY);
+            } else {
+                return new UnaryOperator($operator, $this->parseSimpleExpression($tokenList));
+            }
         } elseif ($tokenList->hasKeyword(Keyword::EXISTS)) {
             // EXISTS (subquery)
             $tokenList->expectSymbol('(');
