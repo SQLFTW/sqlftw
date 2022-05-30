@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Reset\ResetCommand;
 use SqlFtw\Sql\Dal\Reset\ResetOption;
 use SqlFtw\Sql\Keyword;
@@ -29,7 +28,7 @@ class ResetCommandParser
      *   | QUERY CACHE (<= 5.7)
      *   | SLAVE
      */
-    public function parseReset(TokenList $tokenList): Command
+    public function parseReset(TokenList $tokenList): ResetCommand
     {
         $tokenList->expectKeyword(Keyword::RESET);
         $options = [];

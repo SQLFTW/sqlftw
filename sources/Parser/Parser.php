@@ -217,6 +217,9 @@ class Parser
                     case Keyword::PROCEDURE:
                         // ALTER PROCEDURE
                         return $this->factory->getRoutineCommandsParser()->parseAlterProcedure($tokenList->resetPosition($start));
+                    case Keyword::RESOURCE:
+                        // ALTER RESOURCE GROUP
+                        return $this->factory->getResourceCommandsParser()->parseAlterResourceGroup($tokenList->resetPosition($start));
                     case Keyword::SERVER:
                         // ALTER SERVER
                         return $this->factory->getServerCommandsParser()->parseAlterServer($tokenList->resetPosition($start));
@@ -309,6 +312,9 @@ class Parser
                     case Keyword::LOGFILE:
                         // CREATE LOGFILE GROUP
                         return $this->factory->getLogfileGroupCommandsParser()->parseCreateLogfileGroup($tokenList->resetPosition($start));
+                    case Keyword::RESOURCE:
+                        // CREATE RESOURCE GROUP
+                        return $this->factory->getResourceCommandsParser()->parseCreateResourceGroup($tokenList->resetPosition($start));
                     case Keyword::ROLE:
                         // CREATE ROLE
                         return $this->factory->getUserCommandsParser()->parseCreateRole($tokenList->resetPosition($start));
@@ -417,6 +423,9 @@ class Parser
                     case Keyword::PROCEDURE:
                         // DROP {PROCEDURE | FUNCTION}
                         return $this->factory->getRoutineCommandsParser()->parseDropProcedure($tokenList->resetPosition($start));
+                    case Keyword::RESOURCE:
+                        // DROP RESOURCE GROUP
+                        return $this->factory->getResourceCommandsParser()->parseDropResourceGroup($tokenList->resetPosition($start));
                     case Keyword::ROLE:
                         // DROP ROLE
                         return $this->factory->getUserCommandsParser()->parseDropRole($tokenList->resetPosition($start));
@@ -619,6 +628,9 @@ class Parser
                     case Keyword::PASSWORD:
                         // SET PASSWORD
                         return $this->factory->getUserCommandsParser()->parseSetPassword($tokenList->resetPosition($start));
+                    case Keyword::RESOURCE:
+                        // SET RESOURCE GROUP
+                        return $this->factory->getResourceCommandsParser()->parseSetResourceGroup($tokenList->resetPosition($start));
                     case Keyword::ROLE:
                         // SET ROLE
                         return $this->factory->getUserCommandsParser()->parseSetRole($tokenList->resetPosition($start));
@@ -769,6 +781,7 @@ class Parser
                             }
                         } elseif ($function instanceof BuiltInFunction && $function->getValue() === BuiltInFunction::CAST) {
                             // todo: skipped for now, needs evaluating expressions
+                            continue;
                         } else {
                             throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                         }
