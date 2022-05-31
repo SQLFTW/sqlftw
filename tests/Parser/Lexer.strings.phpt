@@ -13,6 +13,7 @@ require '../bootstrap.php';
 $settings = new PlatformSettings(Platform::get(Platform::MYSQL, '5.7'));
 $lexer = new Lexer($settings, true, true);
 
+
 // OPERATOR
 $tokens = $lexer->tokenizeAll(' AND ');
 Assert::count($tokens, 3);
@@ -25,6 +26,7 @@ Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, 'and', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 4);
+
 
 // RESERVED
 $tokens = $lexer->tokenizeAll(' SELECT ');
@@ -39,6 +41,7 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, 'select', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
+
 // KEYWORD
 $tokens = $lexer->tokenizeAll(' JOIN ');
 Assert::count($tokens, 3);
@@ -51,6 +54,7 @@ Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, 'join', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
+
 
 // UNQUOTED_NAME
 $tokens = $lexer->tokenizeAll(' NAME1 ');
@@ -65,6 +69,7 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::NAME | T::UNQUOTED_NAME, 'name1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 6);
 
+
 // DOUBLE_QUOTED_STRING
 $tokens = $lexer->tokenizeAll(' "string1" ');
 Assert::count($tokens, 3);
@@ -72,9 +77,11 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING, 'string1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 10);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' "string1');
-}, LexerException::class, '~^End of string not found~');
+// invalid
+$tokens = $lexer->tokenizeAll(' "string1');
+Assert::count($tokens, 2);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING | T::INVALID, '"string1', 1);
 
 // with ANSI_QUOTES mode enabled
 $settings->setMode($settings->getMode()->add(SqlMode::ANSI_QUOTES));
@@ -85,6 +92,7 @@ Assert::token($tokens[1], T::NAME | T::DOUBLE_QUOTED_STRING, 'string1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 10);
 $settings->setMode($settings->getMode()->remove(SqlMode::ANSI_QUOTES));
 
+
 // SINGLE_QUOTED_STRING
 $tokens = $lexer->tokenizeAll(" 'string1' ");
 Assert::count($tokens, 3);
@@ -92,9 +100,11 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, 'string1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 10);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(" 'string1");
-}, LexerException::class, '~^End of string not found~');
+// invalid
+$tokens = $lexer->tokenizeAll(" 'string1");
+Assert::count($tokens, 2);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING | T::INVALID, "'string1", 1);
 
 // doubling quotes
 $tokens = $lexer->tokenizeAll(" 'str''ing1' ");
@@ -109,6 +119,13 @@ Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, "str'ing1", 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 12);
+
+
+$tokens = $lexer->tokenizeAll(" '\\\\' ");
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, "\\", 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = $lexer->tokenizeAll(" 'string1\\\\' ");
 Assert::count($tokens, 3);
@@ -131,6 +148,7 @@ Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, 'strin
 Assert::token($tokens[2], T::WHITESPACE, ' ', 11);
 $settings->setMode($settings->getMode()->remove(SqlMode::NO_BACKSLASH_ESCAPES));
 
+
 // BACKTICK_QUOTED_STRING
 $tokens = $lexer->tokenizeAll(' `name1` ');
 Assert::count($tokens, 3);
@@ -138,9 +156,19 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::NAME | T::BACKTICK_QUOTED_STRING, 'name1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' `name1');
-}, LexerException::class, '~^End of string not found~');
+// invalid
+$tokens = $lexer->tokenizeAll(' `name1');
+Assert::count($tokens, 2);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::NAME | T::BACKTICK_QUOTED_STRING | T::INVALID, '`name1', 1);
+
+
+// N strings
+$tokens = $lexer->tokenizeAll(" N'\\\\' ");
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, "\\", 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 6);
 
 
 // AT_VARIABLE

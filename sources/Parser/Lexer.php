@@ -309,18 +309,10 @@ class Lexer
                             }
                         }
                         yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
-                    } elseif ($second === '`') {
+                    } elseif ($second === '`' || $second === "'" || $second === '"') {
                         $position++;
                         $column++;
-                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition);
-                    } elseif ($second === "'") {
-                        $position++;
-                        $column++;
-                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition);
-                    } elseif ($second === '"') {
-                        $position++;
-                        $column++;
-                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition);
+                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition, '@');
                     } elseif (isset(self::$userVariableNameCharsKey[$second]) || ord($second) > 127) {
                         // @variable
                         $value .= $second;
@@ -445,13 +437,13 @@ class Lexer
                         ? T::NAME | T::DOUBLE_QUOTED_STRING
                         : T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING;
 
-                    yield $previous = $this->parseString($type, $string, $position, $column, $row, $char, $condition);
+                    yield $previous = $this->parseString($type, $string, $position, $column, $row, '"', $condition);
                     break;
                 case "'":
-                    yield $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, $char, $condition);
+                    yield $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, "'", $condition);
                     break;
                 case '`':
-                    yield $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, $char, $condition);
+                    yield $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, '`', $condition);
                     break;
                 case '.':
                     $next = $position < $length ? $string[$position] : '';
@@ -764,6 +756,29 @@ class Lexer
                         break;
                     }
                     // continue
+                case 'N':
+                    $next = $position < $length ? $string[$position] : null;
+                    if ($char === 'N' && $next === '"') {
+                        $position++;
+                        $column++;
+                        $type = $this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)
+                            ? T::NAME | T::DOUBLE_QUOTED_STRING
+                            : T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING;
+
+                        yield $previous = $this->parseString($type, $string, $position, $column, $row, '"', $condition, 'N');
+                        break;
+                    } elseif ($char === 'N' && $next === "'") {
+                        $position++;
+                        $column++;
+                        yield $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, "'", $condition, 'N');
+                        break;
+                    } elseif ($char === 'N' && $next === '`') {
+                        $position++;
+                        $column++;
+                        yield $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, "`", $condition, 'N');
+                        break;
+                    }
+                case 'n':
                 case 'G':
                 case 'g':
                 case 'H':
@@ -778,9 +793,6 @@ class Lexer
                 case 'l':
                 case 'M':
                 case 'm':
-                case 'N':
-                    // todo: charset declaration
-                case 'n':
                 case 'O':
                 case 'o':
                 case 'P':
@@ -967,9 +979,9 @@ class Lexer
         return $whitespace;
     }
 
-    private function parseString(int $type, string &$string, int &$position, int &$column, int &$row, string $quote, ?string $condition): Token
+    private function parseString(int $type, string &$string, int &$position, int &$column, int &$row, string $quote, ?string $condition, string $prefix = ''): Token
     {
-        $startAt = $position;
+        $startAt = $position - 1 - strlen($prefix);
         $length = strlen($string);
         $backslashes = !$this->settings->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
 
@@ -1012,7 +1024,6 @@ class Lexer
             }
         }
 
-        $prefix = ($type & T::AT_VARIABLE) !== 0 ? '@' : '';
         $orig = implode('', $orig);
 
         if (!$finished) {
@@ -1023,7 +1034,7 @@ class Lexer
 
         $value = $this->unescapeString($orig, $quote);
 
-        return new Token($type, $startAt, $prefix . $value, $prefix . $orig, $condition);
+        return new Token($type, $startAt, ($prefix === '@' ? $prefix : '') . $value, $prefix . $orig, $condition);
     }
 
     /**
