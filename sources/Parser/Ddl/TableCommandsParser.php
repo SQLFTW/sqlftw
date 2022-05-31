@@ -212,7 +212,7 @@ class TableCommandsParser
 
         do {
             $position = $tokenList->getPosition();
-            $keyword = $tokenList->expectKeyword();
+            $keyword = $tokenList->getKeyword();
             switch ($keyword) {
                 case Keyword::ADD:
                     $second = $tokenList->get(TokenType::KEYWORD);
@@ -620,6 +620,8 @@ class TableCommandsParser
                     break;
                 case Keyword::PARTITION:
                     $tokenList->resetPosition(-1);
+                    break;
+                case null:
                     break;
                 default:
                     [$option, $value] = $this->parseTableOption($tokenList->resetPosition($position));
