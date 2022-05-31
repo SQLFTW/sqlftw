@@ -69,7 +69,7 @@ class IndexPart implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = is_string($this->name)
+        $result = is_string($this->expression)
             ? $formatter->formatName($this->expression)
             : $this->expression->serialize($formatter);
 
