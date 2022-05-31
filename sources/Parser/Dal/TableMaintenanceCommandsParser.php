@@ -79,7 +79,7 @@ class TableMaintenanceCommandsParser
     }
 
     /**
-     * CHECK TABLE tbl_name [, tbl_name] ... [option] ...
+     * CHECK [TABLE | TABLES] tbl_name [, tbl_name] ... [option] ...
      *
      * option = {
      *     FOR UPGRADE
@@ -92,7 +92,8 @@ class TableMaintenanceCommandsParser
      */
     public function parseCheckTable(TokenList $tokenList): CheckTableCommand
     {
-        $tokenList->expectKeywords(Keyword::CHECK, Keyword::TABLE);
+        $tokenList->expectKeyword(Keyword::CHECK);
+        $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
             $tables[] = $tokenList->expectQualifiedName();
