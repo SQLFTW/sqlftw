@@ -611,8 +611,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
          *   ASCII
          *   UNICODE
          */
-        // todo: CHARACTER SET ...
-        self::CONVERT => [Keyword::USING => Charset::class],
+        self::CONVERT => [Keyword::USING => Charset::class, 1 => CastType::class],
         // COUNT(DISTINCT expr,[expr...])
         self::COUNT => [Keyword::DISTINCT => ExpressionNode::class],
         // EXTRACT(unit FROM date)

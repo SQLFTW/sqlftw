@@ -637,7 +637,9 @@ class ExpressionParser
 
         if ($function instanceof BuiltInFunction) {
             $name = $function->getValue();
-            if ($name === BuiltInFunction::COUNT) {
+            if ($name === BuiltInFunction::CONVERT) {
+                return $this->parseConvert($tokenList, $function);
+            } elseif ($name === BuiltInFunction::COUNT) {
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     $tokenList->expectSymbol(')');
 
@@ -705,6 +707,43 @@ class ExpressionParser
         }
 
         return new FunctionCall($function, $arguments, $over);
+    }
+
+    /**
+     * CONVERT(string, type), CONVERT(expr USING charset_name)
+     *
+     * type:
+     *   BINARY[(N)]
+     *   CHAR[(N)] [charset_info]
+     *   DATE
+     *   DATETIME
+     *   DECIMAL[(M[,D])]
+     *   JSON
+     *   NCHAR[(N)]
+     *   SIGNED [INTEGER]
+     *   TIME
+     *   UNSIGNED [INTEGER]
+     *
+     * charset_info:
+     *   CHARACTER SET charset_name
+     *   ASCII
+     *   UNICODE
+     */
+    private function parseConvert(TokenList $tokenList, BuiltInFunction $function): FunctionCall
+    {
+        $arguments = [$this->parseExpression($tokenList)];
+        if ($tokenList->hasSymbol(',')) {
+            $type = $this->parseCastType($tokenList);
+            // todo: charset ???
+            $arguments[] = $type;
+        } else {
+            $tokenList->expectKeyword(Keyword::USING);
+            $arguments[] = $tokenList->expectCharsetName();
+        }
+
+        $tokenList->expectSymbol(')');
+
+        return new FunctionCall($function, $arguments);
     }
 
     /**
