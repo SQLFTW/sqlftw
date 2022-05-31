@@ -100,11 +100,12 @@ class ShowCommandsParser
         $second = $tokenList->expectAnyKeyword(
             Keyword::BINARY, Keyword::BINLOG, Keyword::CHARACTER, Keyword::COLLATION, Keyword::COLUMNS,
             Keyword::CREATE, Keyword::DATABASES, Keyword::ENGINE, Keyword::STORAGE, Keyword::ENGINES, Keyword::ERRORS,
-            Keyword::EVENTS, Keyword::FIELDS, Keyword::FULL, Keyword::FUNCTION, Keyword::GLOBAL, Keyword::GRANTS,
-            Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS, Keyword::MASTER, Keyword::OPEN, Keyword::PLUGINS,
-            Keyword::PRIVILEGES, Keyword::PROCEDURE, Keyword::PROFILE, Keyword::PROCESSLIST, Keyword::PROFILES,
-            Keyword::RELAYLOG, Keyword::REPLICA, Keyword::REPLICAS, Keyword::SCHEMAS, Keyword::SESSION, Keyword::SLAVE,
-            Keyword::STATUS, Keyword::TABLE, Keyword::TABLES, Keyword::TRIGGERS, Keyword::VARIABLES, Keyword::WARNINGS
+            Keyword::EVENTS, Keyword::EXTENDED, Keyword::FIELDS, Keyword::FULL, Keyword::FUNCTION, Keyword::GLOBAL,
+            Keyword::GRANTS, Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS, Keyword::MASTER, Keyword::OPEN,
+            Keyword::PLUGINS, Keyword::PRIVILEGES, Keyword::PROCEDURE, Keyword::PROFILE, Keyword::PROCESSLIST,
+            Keyword::PROFILES, Keyword::RELAYLOG, Keyword::REPLICA, Keyword::REPLICAS, Keyword::SCHEMAS,
+            Keyword::SESSION, Keyword::SLAVE, Keyword::STATUS, Keyword::TABLE, Keyword::TABLES, Keyword::TRIGGERS,
+            Keyword::VARIABLES, Keyword::WARNINGS
         );
         switch ($second) {
             case Keyword::BINARY:
@@ -123,7 +124,6 @@ class ShowCommandsParser
                 return $this->parseShowCollation($tokenList);
             case Keyword::COLUMNS:
             case Keyword::FIELDS:
-            case Keyword::EXTENDED:
                 // SHOW [EXTENDED] [FULL] {COLUMNS | FIELDS}
                 return $this->parseShowColumns($tokenList->resetPosition($position));
             case Keyword::CREATE:
@@ -136,13 +136,21 @@ class ShowCommandsParser
             case Keyword::ENGINE:
                 // SHOW ENGINE engine_name {STATUS | MUTEX}
                 return $this->parseShowEngine($tokenList);
+            case Keyword::EXTENDED:
+                if ($tokenList->hasKeyword(Keyword::TABLES) || $tokenList->hasKeywords(Keyword::FULL, Keyword::TABLES)) {
+                    // SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
+                    return $this->parseShowTables($tokenList->resetPosition($position));
+                } else {
+                    // SHOW [EXTENDED] [FULL] {COLUMNS | FIELDS}
+                    return $this->parseShowColumns($tokenList->resetPosition($position));
+                }
             case Keyword::FULL:
                 $third = $tokenList->expectAnyKeyword(Keyword::COLUMNS, Keyword::FIELDS, Keyword::PROCESSLIST, Keyword::TABLES);
                 if ($third === Keyword::PROCESSLIST) {
                     // SHOW [FULL] PROCESSLIST
                     return $this->parseShowProcessList($tokenList->resetPosition($position));
                 } elseif ($third === Keyword::TABLES) {
-                    // SHOW [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
+                    // SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                     return $this->parseShowTables($tokenList->resetPosition($position));
                 } else {
                     return $this->parseShowColumns($tokenList->resetPosition($position));
@@ -248,7 +256,7 @@ class ShowCommandsParser
                 // SHOW TABLE STATUS [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                 return $this->parseShowTableStatus($tokenList);
             case Keyword::TABLES:
-                // SHOW [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
+                // SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                 return $this->parseShowTables($tokenList->resetPosition($position));
             case Keyword::TRIGGERS:
                 // SHOW TRIGGERS [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
@@ -671,10 +679,11 @@ class ShowCommandsParser
     }
 
     /**
-     * SHOW [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
+     * SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
      */
     private function parseShowTables(TokenList $tokenList): ShowTablesCommand
     {
+        $extended = $tokenList->hasKeyword(Keyword::EXTENDED);
         $full = $tokenList->hasKeyword(Keyword::FULL);
         $tokenList->expectKeyword(Keyword::TABLES);
         $schema = null;
@@ -688,7 +697,7 @@ class ShowCommandsParser
             $where = $this->expressionParser->parseExpression($tokenList);
         }
 
-        return new ShowTablesCommand($schema, $full, $like, $where);
+        return new ShowTablesCommand($schema, $like, $where, $full, $extended);
     }
 
     /**

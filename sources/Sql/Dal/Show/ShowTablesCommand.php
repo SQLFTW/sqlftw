@@ -20,35 +20,35 @@ class ShowTablesCommand implements ShowCommand
     /** @var string|null */
     private $schema;
 
-    /** @var bool */
-    private $full;
-
     /** @var string|null */
     private $like;
 
     /** @var ExpressionNode|null */
     private $where;
 
+    /** @var bool */
+    private $full;
+
+    /** @var bool */
+    private $extended;
+
     public function __construct(
         ?string $schema = null,
-        bool $full = false,
         ?string $like = null,
-        ?ExpressionNode $where = null
+        ?ExpressionNode $where = null,
+        bool $full = false,
+        bool $extended = false
     ) {
         $this->schema = $schema;
-        $this->full = $full;
         $this->like = $like;
         $this->where = $where;
+        $this->full = $full;
+        $this->extended = $extended;
     }
 
     public function getSchema(): ?string
     {
         return $this->schema;
-    }
-
-    public function isFull(): bool
-    {
-        return $this->full;
     }
 
     public function getLike(): ?string
@@ -61,9 +61,22 @@ class ShowTablesCommand implements ShowCommand
         return $this->where;
     }
 
+    public function full(): bool
+    {
+        return $this->full;
+    }
+
+    public function extended(): bool
+    {
+        return $this->full;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW';
+        if ($this->extended) {
+            $result .= ' EXTENDED';
+        }
         if ($this->full) {
             $result .= ' FULL';
         }
