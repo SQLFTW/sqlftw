@@ -312,18 +312,15 @@ class Lexer
                     } elseif ($second === '`') {
                         $position++;
                         $column++;
-                        [$name, $orig] = $this->parseString($string, $position, $column, $row, $second);
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, '@' . $name, '@' . $orig, $condition);
+                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition);
                     } elseif ($second === "'") {
                         $position++;
                         $column++;
-                        [$name, $orig] = $this->parseString($string, $position, $column, $row, $second);
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, '@' . $name, '@' . $orig, $condition);
+                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition);
                     } elseif ($second === '"') {
                         $position++;
                         $column++;
-                        [$name, $orig] = $this->parseString($string, $position, $column, $row, $second);
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, '@' . $name, '@' . $orig, $condition);
+                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition);
                     } elseif (isset(self::$userVariableNameCharsKey[$second]) || ord($second) > 127) {
                         // @variable
                         $value .= $second;
@@ -444,20 +441,17 @@ class Lexer
                     }
                     break;
                 case '"':
-                    [$value, $orig] = $this->parseString($string, $position, $column, $row, $char);
-                    if ($this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)) {
-                        yield $previous = new Token(T::NAME | T::DOUBLE_QUOTED_STRING, $start, $value, $orig, $condition);
-                    } else {
-                        yield $previous = new Token(T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING, $start, $value, $orig, $condition);
-                    }
+                    $type = $this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)
+                        ? T::NAME | T::DOUBLE_QUOTED_STRING
+                        : T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING;
+
+                    yield $previous = $this->parseString($type, $string, $position, $column, $row, $char, $condition);
                     break;
                 case "'":
-                    [$value, $orig] = $this->parseString($string, $position, $column, $row, $char);
-                    yield $previous = new Token(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $start, $value, $orig, $condition);
+                    yield $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, $char, $condition);
                     break;
                 case '`':
-                    [$value, $orig] = $this->parseString($string, $position, $column, $row, $char);
-                    yield $previous = new Token(T::NAME | T::BACKTICK_QUOTED_STRING, $start, $value, $orig, $condition);
+                    yield $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, $char, $condition);
                     break;
                 case '.':
                     $next = $position < $length ? $string[$position] : '';
@@ -973,10 +967,7 @@ class Lexer
         return $whitespace;
     }
 
-    /**
-     * @return string[] ($value, $orig)
-     */
-    private function parseString(string &$string, int &$position, int &$column, int &$row, string $quote): array
+    private function parseString(int $type, string &$string, int &$position, int &$column, int &$row, string $quote, ?string $condition): Token
     {
         $startAt = $position;
         $length = strlen($string);
@@ -1020,13 +1011,19 @@ class Lexer
                 $column++;
             }
         }
-        if (!$finished) {
-            throw new LexerException("End of string not found. Starts with " . substr($string, $startAt - 1, 100), $position, $string);
-        }
+
+        $prefix = ($type & T::AT_VARIABLE) !== 0 ? '@' : '';
         $orig = implode('', $orig);
+
+        if (!$finished) {
+            $exception = new LexerException("End of string not found. Starts with " . substr($string, $startAt - 1, 100), $position, $string);
+
+            return new Token($type | T::INVALID, $startAt, $prefix . $orig, $prefix . $orig, $condition, $exception);
+        }
+
         $value = $this->unescapeString($orig, $quote);
 
-        return [$value, $orig];
+        return new Token($type, $startAt, $prefix . $value, $prefix . $orig, $condition);
     }
 
     /**
