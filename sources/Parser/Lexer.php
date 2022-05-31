@@ -901,15 +901,15 @@ class Lexer
                     } elseif ($value === 'EOF' && $this->settings->mysqlTestMode && $string[$position - 4] === "\n" && $string[$position] === "\n") {
                         yield new Token(T::TEST_CODE, $start, 'EOF');
                         yield new Token(T::DELIMITER, $start, $delimiter);
-                    } elseif ($value === 'perl' && $this->settings->mysqlTestMode && $string[$position - 5] === "\n" && $string[$position] === ';') {
+                    } elseif (($value === 'perl' || $value === 'write_file') && $this->settings->mysqlTestMode /*&& $string[$position - 5] === "\n" && $string[$position] === ';'*/) {
                         // Perl code blocks from MySQL tests
                         $end = strpos($string, "\nEOF\n", $position);
                         if ($end === false) {
                             throw new LexerException('End of test code block not found.', $position, $string);
                         } else {
-                            $block = substr($string, $position - 4, $end - $position + 8);
+                            $block = substr($string, $position - strlen($value), $end - $position + strlen($value) + 4);
                         }
-                        $position += strlen($block) - 4;
+                        $position += strlen($block) - strlen($value);
                         $row += Str::count($block, "\n");
 
                         yield new Token(T::TEST_CODE, $start, $block);
