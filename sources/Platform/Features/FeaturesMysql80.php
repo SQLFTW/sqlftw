@@ -531,6 +531,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::NULLS,
         Keyword::NUMBER,
         Keyword::NVARCHAR,
+        Keyword::OFF,
         Keyword::OFFSET,
         Keyword::OJ,
         Keyword::OLD,
