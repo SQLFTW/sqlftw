@@ -444,39 +444,43 @@ class UserCommandsParser
     {
         $privileges = [];
         do {
-            $type = $tokenList->getNonKeywordName();
-            if ($type !== null) {
-                // dynamic (names)
-                if (!UserPrivilegeType::isValid(strtoupper($type))) {
-                    $tokenList->expectKeywordEnum(UserPrivilegeType::class);
-                }
-            } else {
-                // static (keywords)
-                $types = UserPrivilegeType::getFistAndSecondKeywords();
-                $type = $tokenList->expectAnyKeyword(...array_keys($types));
-                if ($type === Keyword::ALL) {
-                    $tokenList->passKeyword(Keyword::PRIVILEGES);
-                    $next = null;
-                } elseif ($type === Keyword::CREATE) {
-                    /** @var string[] $next */
-                    $next = $types[$type];
-                    $next = $tokenList->getAnyKeyword(...$next);
-                    if ($next === Keyword::TEMPORARY) {
-                        $tokenList->expectKeyword(Keyword::TABLES);
-                        $next .= ' ' . Keyword::TABLES;
+            $type = $tokenList->getString();
+            if ($type === null) {
+                $type = $tokenList->getNonKeywordName();
+
+                if ($type !== null) {
+                    // dynamic (names)
+                    if (!UserPrivilegeType::isValid(strtoupper($type))) {
+                        $tokenList->expectKeywordEnum(UserPrivilegeType::class);
                     }
-                } elseif ($type === Keyword::ALTER) {
-                    /** @var string[] $next */
-                    $next = $types[$type];
-                    $next = $tokenList->getAnyKeyword(...$next);
                 } else {
-                    $next = $types[$type];
-                    if ($next !== null) {
-                        $next = $tokenList->expectAnyKeyword(...$next);
+                    // static (keywords)
+                    $types = UserPrivilegeType::getFistAndSecondKeywords();
+                    $type = $tokenList->expectAnyKeyword(...array_keys($types));
+                    if ($type === Keyword::ALL) {
+                        $tokenList->passKeyword(Keyword::PRIVILEGES);
+                        $next = null;
+                    } elseif ($type === Keyword::CREATE) {
+                        /** @var string[] $next */
+                        $next = $types[$type];
+                        $next = $tokenList->getAnyKeyword(...$next);
+                        if ($next === Keyword::TEMPORARY) {
+                            $tokenList->expectKeyword(Keyword::TABLES);
+                            $next .= ' ' . Keyword::TABLES;
+                        }
+                    } elseif ($type === Keyword::ALTER) {
+                        /** @var string[] $next */
+                        $next = $types[$type];
+                        $next = $tokenList->getAnyKeyword(...$next);
+                    } else {
+                        $next = $types[$type];
+                        if ($next !== null) {
+                            $next = $tokenList->expectAnyKeyword(...$next);
+                        }
                     }
-                }
-                if ($next !== null) {
-                    $type .= ' ' . $next;
+                    if ($next !== null) {
+                        $type .= ' ' . $next;
+                    }
                 }
             }
 
