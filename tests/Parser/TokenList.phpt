@@ -17,7 +17,7 @@ $name = new Token(TokenType::NAME, 2, 'name');
 
 $tokenList = new TokenList([$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $settings);
 $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT);
-rd($tokenList);
+
 getLast:
 Assert::same($tokenList->getLast()->value, $ws->value);
 

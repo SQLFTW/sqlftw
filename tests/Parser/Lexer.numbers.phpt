@@ -120,3 +120,21 @@ Assert::invalidToken($tokens[1], T::VALUE | T::NUMBER | T::INVALID, '~^Invalid n
 
 $tokens = $lexer->tokenizeAll(' 1.23e-f');
 Assert::invalidToken($tokens[1], T::VALUE | T::NUMBER | T::INVALID, '~^Invalid number exponent~', 1);
+
+$tokens = $lexer->tokenizeAll(' -(1) ');
+Assert::count($tokens, 6);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::SYMBOL | T::OPERATOR, '-', 1);
+Assert::token($tokens[2], T::SYMBOL, '(', 2);
+Assert::token($tokens[3], T::VALUE | T::NUMBER | T::INT | T::UINT, '1', 3);
+Assert::token($tokens[4], T::SYMBOL, ')', 4);
+Assert::token($tokens[5], T::WHITESPACE, ' ', 5);
+
+$tokens = $lexer->tokenizeAll(' -(-1) ');
+Assert::count($tokens, 6);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::SYMBOL | T::OPERATOR, '-', 1);
+Assert::token($tokens[2], T::SYMBOL, '(', 2);
+Assert::token($tokens[3], T::VALUE | T::NUMBER | T::INT, '-1', 3);
+Assert::token($tokens[4], T::SYMBOL, ')', 5);
+Assert::token($tokens[5], T::WHITESPACE, ' ', 6);

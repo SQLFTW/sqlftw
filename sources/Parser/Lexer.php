@@ -66,6 +66,20 @@ class Lexer
     public const UUID_REGEXP = '~^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$~i';
     public const IP_V4_REGEXP = '~^((?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]))~';
 
+    // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
+    public const MYSQL_TEST_SUITE_COMMANDS = [
+        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'chmod', 'close', 'closehandle', 'connect',
+        'connection', 'copy_file', 'dec', 'die', 'diff_files', 'dirty_close', 'disable_abort_on_error', 'disable_async_client', 'disable_connect_log', 'disable_info',
+        'disable_metadata', 'disable_ps_protocol', 'disable_query_log', 'disable_result_log', 'disable_testcase', 'disable_warnings',
+        'disconnect', 'echo', 'enable_abort_on_error', 'enable_async_client', 'enable_connect_log', 'enable_info', 'enable_metadata', 'enable_ps_protocol', 'enable_query_log', 'enable_reconnect',
+        'enable_result_log', 'enable_testcase', 'enable_warnings', 'end', 'end_of_procedure', 'eof', 'error',
+        'error_log', 'eval', 'exec', 'execute_step', 'exit', 'expr', 'file_exists', 'force', 'ibdata2', 'if', 'inc', 'let', 'list_files',
+        'mkdir', 'move_file', 'my', 'mysqlx', 'open', 'perl', 'print', 'query_vertical', 'read', 'reap', 'remove_file',
+        'replace_column', 'replace_regex', 'replace_result', 'reset_connection', 'result_format', 'rmdir',
+        'save_master_pos', 'secret', 'send', 'send_eval', 'shutdown_server', 'skip_if_hypergraph', 'sleep', 'source', 'sorted_result', 'sync_slave_with_master',
+        'sync_with_master', 'test', 'unlink', 'usexxx', 'wait', 'wait_for_slave_to_stop', 'while', 'write_file',
+    ];
+
     /** @var array<string, int> (this is in fact array<int, int>, but PHPStan is unable to cope with the auto-casting of numeric string keys) */
     private static $numbersKey;
 
@@ -105,6 +119,9 @@ class Lexer
     /** @var array<string, int> */
     private $operatorKeywordsKey;
 
+    /** @var string */
+    private static $mysqlTestSuiteCommandsString;
+
     public function __construct(
         PlatformSettings $settings,
         bool $withComments = true,
@@ -116,6 +133,7 @@ class Lexer
             self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
             self::$userVariableNameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_', '.']));
             self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
+            self::$mysqlTestSuiteCommandsString = implode('|', self::MYSQL_TEST_SUITE_COMMANDS);
         }
 
         $this->settings = $settings;
@@ -453,7 +471,7 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL, $start, $char, null, $condition);
                     break;
                 case '-':
-                    $next = $position < $length ? $string[$position] : '';
+                    $second = $position < $length ? $string[$position] : '';
                     $numberCanFollow = ($previous->type & T::END) !== 0
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && strtoupper($previous->value) === Keyword::DEFAULT);
@@ -465,58 +483,95 @@ class Lexer
                         }
                     }
 
-                    if ($next === '-') {
-                        $position++;
-                        $column++;
-                        $value = $char . $next;
-                        while ($position < $length) {
-                            $next = $string[$position];
-                            if ($next === "\n") {
-                                break;
-                            } else {
-                                $value .= $next;
-                                $position++;
-                                $column++;
-                            }
+                    if ($second === '-') {
+                        $third = $position + 1 < $length ? $string[$position + 1] : '';
+                        if ($third === '>') {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, '-->', null, $condition);
+                            $position += 2;
+                            $column += 2;
+                            break;
                         }
-                        if ($this->settings->mysqlTestMode && preg_match('~^-- ?(perl|write_file|append_file)~i', strtolower($value)) !== 0) {
-                            // Perl code or file blocks from MySQL tests
-                            $parts = explode(' ', str_replace('-- ', '--', $value));
-                            $index = preg_match('~-- ?perl~i', $value) !== 0 ? 1 : 2;
-                            if (count($parts) === $index + 1 && preg_match('~^[A-Z_]+$~', $parts[$index]) !== false) {
-                                $end = strpos($string, "\n$parts[$index]\n", $position);
-                                $endLen = strlen($parts[$index]) + 1;
-                            } else {
-                                $end = strpos($string, "\nEOF\n", $position);
-                                $endLen = 4;
-                            }
-                            if ($end === false) {
-                                throw new LexerException('End of code block not found. Starts with: ' . substr($string, $position - strlen($value), 100), $position, $string);
-                            } else {
-                                $block = substr($string, $position - strlen($value), $end - $position + strlen($value) + $endLen);
-                            }
-                            $position += strlen($block) - strlen($value);
-                            $row += Str::count($block, "\n");
 
-                            yield new Token(T::TEST_CODE, $start, $block, null, $condition);
-                        } elseif ($this->settings->mysqlTestMode && Str::startsWith(strtolower($value), '--delimiter')) {
-                            // change delimiter outside SQL
-                            [, $del] = explode(' ', $value);
-                            $delimiter = $del;
-                            yield new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
-                            yield new Token(T::KEYWORD, $start, Keyword::DELIMITER, $value, $condition);
-                            if ($this->withWhitespace) {
-                                yield new Token(T::WHITESPACE, $start, ' ', null, $condition);
+                        if ($this->settings->mysqlTestMode) {
+                            $endOfLine = strpos($string, "\n", $position);
+                            if ($endOfLine === false) {
+                                $endOfLine = strlen($string);
                             }
-                            yield $previous = new Token(T::DELIMITER_DEFINITION, $start, $del, null, $condition);
-                        } else {
-                            yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $value, null, $condition);
+                            $line = substr($string, $position - 1, $endOfLine - $position + 1);
+                            if (preg_match('~^-- ?(perl|write_file|append_file)~i', $line) !== 0) {
+                                // Perl code or file blocks from MySQL tests
+                                $parts = explode(' ', str_replace('-- ', '--', $line));
+                                $index = preg_match('~-- ?perl~i', $line) !== 0 ? 1 : 2;
+                                if (count($parts) === $index + 1 && preg_match('~^[A-Z_]+$~', $parts[$index]) !== false) {
+                                    $end = strpos($string, "\n$parts[$index]\n", $position);
+                                    $endLen = strlen($parts[$index]) + 1;
+                                } else {
+                                    $end = strpos($string, "\nEOF\n", $position);
+                                    $endLen = 4;
+                                }
+                                if ($end === false) {
+                                    throw new LexerException('End of code block not found. Starts with: ' . $line, $position, $string);
+                                } else {
+                                    $block = substr($string, $position - strlen($line), $end - $position + strlen($line) + $endLen);
+                                }
+                                $position += strlen($block) - strlen($line);
+                                $row += Str::count($block, "\n");
+
+                                yield new Token(T::TEST_CODE, $start, $block, null, $condition);
+                                break;
+                            } elseif (preg_match('~^--delimiter~i', $line) !== 0) {
+                                // change delimiter outside SQL
+                                [, $del] = explode(' ', $line);
+                                $delimiter = $del;
+                                $position += strlen($line);
+                                $column += strlen($line);
+
+                                yield new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $line, null, $condition);
+                                yield new Token(T::KEYWORD, $start, Keyword::DELIMITER, null, $condition);
+                                if ($this->withWhitespace) {
+                                    yield new Token(T::WHITESPACE, $start, ' ', null, $condition);
+                                }
+                                yield $previous = new Token(T::DELIMITER_DEFINITION, $start, $del, null, $condition);
+                                break;
+                            } elseif (preg_match('~-- ?(' . self::$mysqlTestSuiteCommandsString . ')~i', $line)) {
+                                $position += strlen($line);
+                                $column += strlen($line);
+
+                                yield new Token(T::TEST_CODE, $start, $line, null, $condition);
+                                break;
+                            }
                         }
-                        break;
+
+                        if ($third === ' ') {
+                            // -- comment
+                            $endOfLine = strpos($string, "\n", $position);
+                            if ($endOfLine === false) {
+                                $endOfLine = strlen($string);
+                            }
+                            $line = substr($string, $position, $endOfLine - $position);
+                            $position += strlen($line);
+                            $column += strlen($line);
+
+                            yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $line, null, $condition);
+                            break;
+                        }
+
+                        yield new Token(T::SYMBOL | T::OPERATOR, $start, '-', null, $condition);
+
+                        $token = $this->parseNumber($string, $position, $column, $row, '-', $condition);
+                        if ($token !== null) {
+                            yield $previous = $token;
+                            break;
+                        }
                     }
+
                     $value = $char;
                     while ($position < $length) {
                         $next = $string[$position];
+                        if (!isset($this->operatorsKey[$value . $next])) {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $value, null, $condition);
+                            break 2;
+                        }
                         if (isset(self::$operatorSymbolsKey[$next])) {
                             $value .= $next;
                             $position++;
@@ -539,9 +594,14 @@ class Lexer
                             break;
                         }
                     }
+
                     $value = $char;
                     while ($position < $length) {
                         $next = $string[$position];
+                        if (!isset($this->operatorsKey[$value . $next])) {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $value, null, $condition);
+                            break 2;
+                        }
                         if (isset(self::$operatorSymbolsKey[$next])) {
                             $value .= $next;
                             $position++;
