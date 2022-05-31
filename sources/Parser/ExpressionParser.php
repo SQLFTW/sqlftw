@@ -143,7 +143,7 @@ class ExpressionParser
      *   | expr && expr
      *   | NOT expr
      *   | ! expr
-     *   | boolean_primary IS [NOT] {TRUE | FALSE | UNKNOWN}
+     *   | boolean_primary IS [NOT] {NULL | TRUE | FALSE | UNKNOWN}
      *   | boolean_primary
      */
     public function parseExpression(TokenList $tokenList): RootNode
@@ -171,10 +171,21 @@ class ExpressionParser
             return new BinaryOperator($left, [$operator], $right);
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
-            $keyword = strtoupper($tokenList->expectAnyKeyword(Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN));
-            $right = $keyword === Keyword::UNKNOWN
-                ? new UnknownLiteral()
-                : new BoolLiteral($keyword === Keyword::TRUE);
+            $keyword = strtoupper($tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN));
+            switch ($keyword) {
+                case Keyword::TRUE:
+                    $right = new BoolLiteral(true);
+                    break;
+                case Keyword::FALSE:
+                    $right = new BoolLiteral(false);
+                    break;
+                case Keyword::NULL:
+                    $right = new NullLiteral();
+                    break;
+                default:
+                    $right = new UnknownLiteral();
+                    break;
+            }
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         } elseif ($this->assignAllowed && $left instanceof UserVariable && $tokenList->hasOperator(Operator::ASSIGN)) {
@@ -201,7 +212,7 @@ class ExpressionParser
 
     /**
      * boolean_primary:
-     *     boolean_primary IS [NOT] [NULL|TRUE|FALSE]
+     *     boolean_primary IS [NOT] {NULL | TRUE | FALSE | UNKNOWN}
      *   | boolean_primary <=> predicate
      *   | boolean_primary comparison_operator predicate
      *   | boolean_primary comparison_operator {ALL | ANY | SOME} (subquery)
