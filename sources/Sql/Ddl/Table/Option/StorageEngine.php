@@ -27,6 +27,8 @@ class StorageEngine extends SqlEnum
     public const NDBINFO = 'ndbinfo';
     public const MERGE = 'Merge';
     public const FEDERATED = 'Federated';
+    public const FALCON = 'Falcon';
+    public const MARIA = 'Maria';
     public const EXAMPLE = 'Example';
     public const HEAP = 'HEAP'; // old alias for Memory
 
