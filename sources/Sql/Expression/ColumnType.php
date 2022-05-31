@@ -31,7 +31,7 @@ class ColumnType implements SqlSerializable
     /** @var non-empty-array<int>|null */
     private $size;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-array<StringValue>|null */
     private $values;
 
     /** @var bool */
@@ -51,7 +51,7 @@ class ColumnType implements SqlSerializable
 
     /**
      * @param non-empty-array<int>|null $size
-     * @param non-empty-array<string>|null $values
+     * @param non-empty-array<StringValue>|null $values
      */
     public function __construct(
         BaseType $type,
@@ -153,7 +153,7 @@ class ColumnType implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-array<StringValue>|null
      */
     public function getValues(): ?array
     {
@@ -231,7 +231,7 @@ class ColumnType implements SqlSerializable
         if ($this->size !== null) {
             $result .= '(' . implode(', ', $this->size) . ')';
         } elseif ($this->values !== null) {
-            $result .= '(' . $formatter->formatStringList($this->values) . ')';
+            $result .= '(' . $formatter->formatSerializablesList($this->values) . ')';
         }
 
         if ($this->unsigned === true) {

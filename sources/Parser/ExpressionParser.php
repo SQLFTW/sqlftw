@@ -68,6 +68,7 @@ use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\RowExpression;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Expression\TernaryOperator;
@@ -1347,7 +1348,7 @@ class ExpressionParser
     }
 
     /**
-     * @return array{non-empty-array<int>|null, non-empty-array<string>|null, bool, bool, Charset|null, Collation|null, int|null}
+     * @return array{non-empty-array<int>|null, non-empty-array<StringValue>|null, bool, bool, Charset|null, Collation|null, int|null}
      */
     private function parseOptions(BaseType $type, TokenList $tokenList): array
     {
@@ -1380,7 +1381,7 @@ class ExpressionParser
             $tokenList->expectSymbol('(');
             $values = [];
             do {
-                $values[] = $tokenList->expectString();
+                $values[] = $tokenList->expectStringValue();
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         } elseif ($type->hasFsp() && $tokenList->hasSymbol('(')) {
