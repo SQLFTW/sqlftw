@@ -534,9 +534,9 @@ class Lexer
                             if ($endOfLine === false) {
                                 $endOfLine = strlen($string);
                             }
-                            $line = substr($string, $position, $endOfLine - $position);
-                            $position += strlen($line);
-                            $column += strlen($line);
+                            $line = substr($string, $position - 1, $endOfLine - $position + 1);
+                            $position += strlen($line) - 1;
+                            $column += strlen($line) - 1;
 
                             yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $line, null, $condition);
                             break;
