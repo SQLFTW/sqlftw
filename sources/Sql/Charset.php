@@ -51,8 +51,10 @@ class Charset extends SqlEnum implements ArgumentNode
     public const SJIS = 'sjis';
     public const SWE_7 = 'swe7';
     public const TIS_620 = 'tis620';
-    public const UCS_2 = 'ucs2';
     public const UJIS = 'ujis';
+
+    public const UNICODE = 'unicode'; // old alias for ucs2
+    public const UCS_2 = 'ucs2';
     public const UTF_16 = 'utf16';
     public const UTF_16LE = 'utf16le';
     public const UTF_32 = 'utf32';

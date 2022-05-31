@@ -1455,6 +1455,8 @@ class ExpressionParser
                 $charset = $tokenList->expectCharsetName();
             } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
                 $charset = $tokenList->expectCharsetName();
+            } elseif ($tokenList->hasKeyword(Keyword::UNICODE)) {
+                $charset = Charset::get(Charset::UNICODE);
             } elseif ($tokenList->hasKeyword(Keyword::BINARY)) {
                 $charset = Charset::get(Charset::BINARY);
             } elseif ($tokenList->hasKeyword(Keyword::BYTE)) {
