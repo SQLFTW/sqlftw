@@ -13,7 +13,6 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
 use SqlFtw\Sql\Ddl\Table\TableItem;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\QualifiedName;
 use function count;
 
@@ -29,7 +28,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     /** @var IndexType */
     private $type;
 
-    /** @var non-empty-array<IndexColumn|ExpressionNode> */
+    /** @var non-empty-array<IndexPart> */
     private $parts;
 
     /** @var IndexAlgorithm|null */
@@ -42,7 +41,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     private $table;
 
     /**
-     * @param non-empty-array<IndexColumn|ExpressionNode> $parts
+     * @param non-empty-array<IndexPart> $parts
      */
     public function __construct(
         ?string $name,
@@ -115,7 +114,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @return non-empty-array<IndexColumn|ExpressionNode>
+     * @return non-empty-array<IndexPart>
      */
     public function getParts(): array
     {

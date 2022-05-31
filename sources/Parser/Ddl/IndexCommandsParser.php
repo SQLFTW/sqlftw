@@ -18,9 +18,9 @@ use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Index\IndexAlgorithm;
-use SqlFtw\Sql\Ddl\Table\Index\IndexColumn;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexOptions;
+use SqlFtw\Sql\Ddl\Table\Index\IndexPart;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Keyword;
@@ -179,7 +179,7 @@ class IndexCommandsParser
     }
 
     /**
-     * @return non-empty-array<IndexColumn|ExpressionNode>
+     * @return non-empty-array<IndexPart>
      */
     private function parseIndexParts(TokenList $tokenList): array
     {
@@ -188,8 +188,13 @@ class IndexCommandsParser
         do {
             if ($tokenList->hasSymbol('(')) {
                 $tokenList->check('functional indexes', 80013);
-                $parts[] = $this->expressionParser->parseExpression($tokenList);
+                $expression = $this->expressionParser->parseExpression($tokenList);
                 $tokenList->expectSymbol(')');
+
+                /** @var Order $order */
+                $order = $tokenList->getKeywordEnum(Order::class);
+
+                $parts[] = new IndexPart($expression, null, $order);
             } else {
                 $part = $tokenList->expectName();
                 $length = null;
@@ -199,7 +204,7 @@ class IndexCommandsParser
                 }
                 /** @var Order $order */
                 $order = $tokenList->getKeywordEnum(Order::class);
-                $parts[] = new IndexColumn($part, $length, $order);
+                $parts[] = new IndexPart($part, $length, $order);
             }
         } while ($tokenList->hasSymbol(','));
         $tokenList->expectSymbol(')');

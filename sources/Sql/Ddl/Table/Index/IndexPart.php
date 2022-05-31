@@ -11,15 +11,18 @@ namespace SqlFtw\Sql\Ddl\Table\Index;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlSerializable;
+use function is_string;
 
-class IndexColumn implements SqlSerializable
+class IndexPart implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
-    private $name;
+    /** @var string|RootNode */
+    private $expression;
 
     /** @var int|null */
     private $length;
@@ -27,9 +30,16 @@ class IndexColumn implements SqlSerializable
     /** @var Order|null */
     private $order;
 
-    public function __construct(string $name, ?int $length = null, ?Order $order = null)
+    /**
+     * @param string|RootNode $expression
+     */
+    public function __construct($expression, ?int $length = null, ?Order $order = null)
     {
-        $this->name = $name;
+        if (!is_string($expression) && $length !== null) {
+            throw new InvalidDefinitionException('Only column names can have length.');
+        }
+
+        $this->expression = $expression;
         $this->length = $length;
         $this->order = $order;
     }
@@ -39,9 +49,12 @@ class IndexColumn implements SqlSerializable
         return Order::get(Order::ASC);
     }
 
-    public function getName(): string
+    /**
+     * @return string|RootNode
+     */
+    public function getExpression()
     {
-        return $this->name;
+        return $this->expression;
     }
 
     public function getLength(): ?int
@@ -56,7 +69,10 @@ class IndexColumn implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $formatter->formatName($this->name);
+        $result = is_string($this->name)
+            ? $formatter->formatName($this->expression)
+            : $this->expression->serialize($formatter);
+
         if ($this->length !== null) {
             $result .= '(' . $this->length . ')';
         }
