@@ -669,7 +669,6 @@ class ExpressionParser
         }
 
         $arguments = [];
-        $first = true;
         do {
             if ($tokenList->hasSymbol(')')) {
                 break;
@@ -704,11 +703,10 @@ class ExpressionParser
                 }
             }
 
-            if (!$first) {
+            if ($arguments !== []) {
                 $tokenList->expectSymbol(',');
             }
             $arguments[] = $this->parseExpression($tokenList);
-            $first = false;
         } while (true);
 
         $over = null;
