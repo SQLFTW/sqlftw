@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
+use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Ddl\Table\TableItem;
@@ -82,12 +83,13 @@ class ColumnDefinition implements TableItem
     /** @var ReferenceDefinition|null */
     private $reference;
 
-    /** @var CheckDefinition|null */
+    /** @var CheckDefinition|ConstraintDefinition|null */
     private $check;
 
     /**
      * @param string|int|float|bool|ExpressionNode|null $defaultValue
      * @param Identifier|FunctionCall|null $onUpdate
+     * @param CheckDefinition|ConstraintDefinition|null $check
      */
     public function __construct(
         string $name,
@@ -104,7 +106,7 @@ class ColumnDefinition implements TableItem
         ?string $secondaryEngineAttribute = null,
         ?StorageType $storage = null,
         ?ReferenceDefinition $reference = null,
-        ?CheckDefinition $check = null
+        $check = null
     )
     {
         $this->name = $name;
@@ -255,7 +257,10 @@ class ColumnDefinition implements TableItem
         return $this->reference;
     }
 
-    public function getCheck(): ?CheckDefinition
+    /**
+     * @return CheckDefinition|ConstraintDefinition|null
+     */
+    public function getCheck()
     {
         return $this->check;
     }

@@ -826,8 +826,8 @@ class TableCommandsParser
         // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [
             Keyword::AUTO_INCREMENT, Keyword::CHARACTER, Keyword::CHARSET, Keyword::CHECK, Keyword::COLLATE,
-            Keyword::COLUMN_FORMAT, Keyword::COMMENT, Keyword::DEFAULT, Keyword::ENGINE_ATTRIBUTE, Keyword::INVISIBLE,
-            Keyword::KEY, Keyword::NOT, Keyword::NULL, Keyword::ON, Keyword::PRIMARY, Keyword::REFERENCES,
+            Keyword::COLUMN_FORMAT, Keyword::COMMENT, Keyword::CONSTRAINT, Keyword::DEFAULT, Keyword::ENGINE_ATTRIBUTE,
+            Keyword::INVISIBLE, Keyword::KEY, Keyword::NOT, Keyword::NULL, Keyword::ON, Keyword::PRIMARY, Keyword::REFERENCES,
             Keyword::SECONDARY_ENGINE_ATTRIBUTE, Keyword::SRID, Keyword::STORAGE, Keyword::UNIQUE, Keyword::VISIBLE,
         ];
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
@@ -929,6 +929,10 @@ class TableCommandsParser
                 case Keyword::REFERENCES:
                     // [reference_definition]
                     $reference = $this->parseReference($tokenList->resetPosition(-1));
+                    break;
+                case Keyword::CONSTRAINT:
+                    // [check_constraint_definition]
+                    $check = $this->parseConstraint($tokenList->resetPosition(-1));
                     break;
                 case Keyword::CHECK:
                     // [check_constraint_definition]
