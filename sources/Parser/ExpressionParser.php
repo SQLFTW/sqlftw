@@ -1457,6 +1457,9 @@ class ExpressionParser
                 $charset = $tokenList->expectCharsetName();
             } elseif ($tokenList->hasKeyword(Keyword::BINARY)) {
                 $charset = Charset::get(Charset::BINARY);
+            } elseif ($tokenList->hasKeyword(Keyword::BYTE)) {
+                // alias for BINARY
+                $charset = Charset::get(Charset::BINARY);
             } elseif ($tokenList->hasKeyword(Keyword::ASCII)) {
                 $charset = Charset::get(Charset::ASCII);
             }
