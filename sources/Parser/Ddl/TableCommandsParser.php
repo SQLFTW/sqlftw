@@ -1097,7 +1097,7 @@ class TableCommandsParser
     {
         $name = null;
         if ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
-            $name = $tokenList->getNonKeywordName();
+            $name = $tokenList->getNonReservedName();
         }
 
         $keyword = $tokenList->expectAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN, Keyword::CHECK);
