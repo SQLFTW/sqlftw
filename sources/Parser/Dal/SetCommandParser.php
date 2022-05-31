@@ -83,7 +83,7 @@ class SetCommandParser
             }
 
             $operator = $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
-            $expression = $this->expressionParser->parseExpression($tokenList);
+            $expression = $this->expressionParser->parseAssignExpression($tokenList);
 
             $assignments[] = new SetAssignment($variable, $expression, $operator);
         } while ($tokenList->hasSymbol(','));

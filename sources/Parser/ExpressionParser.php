@@ -124,7 +124,7 @@ class ExpressionParser
      * assign_expr:
      *    [user_variable :=] expr
      */
-    public function parseAssignExpression(TokenList $tokenList): ExpressionNode
+    public function parseAssignExpression(TokenList $tokenList): RootNode
     {
         $this->assignAllowed = true;
         try {
