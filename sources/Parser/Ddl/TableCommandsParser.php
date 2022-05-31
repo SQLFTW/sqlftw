@@ -723,6 +723,8 @@ class TableCommandsParser
         /** @var DuplicateOption|null $duplicateOption */
         $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
 
+        $startTransaction = $tokenList->hasKeywords(Keyword::START, Keyword::TRANSACTION);
+
         $query = null;
         if ($tokenList->hasKeyword(Keyword::AS) || $items === null || $duplicateOption !== null) {
             $query = $this->queryParser->parseQuery($tokenList);
@@ -735,7 +737,7 @@ class TableCommandsParser
             }
         }
 
-        return new CreateTableCommand($table, $items, $options, $partitioning, $temporary, $ifNotExists, $duplicateOption, $query);
+        return new CreateTableCommand($table, $items, $options, $partitioning, $temporary, $ifNotExists, $duplicateOption, $query, $startTransaction);
     }
 
     /**

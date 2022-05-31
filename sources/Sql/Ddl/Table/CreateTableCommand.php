@@ -50,6 +50,9 @@ class CreateTableCommand implements AnyCreateTableCommand
     /** @var Query|null */
     private $query;
 
+    /** @var false */
+    private $startTransaction;
+
     /**
      * @param non-empty-array<TableItem>|null $items
      * @param TableOptionsList|array<TableOptionValue>|null $options
@@ -62,7 +65,8 @@ class CreateTableCommand implements AnyCreateTableCommand
         bool $temporary = false,
         bool $ifNotExists = false,
         ?DuplicateOption $duplicateOption = null,
-        ?Query $query = null
+        ?Query $query = null,
+        bool $startTransaction = false
     ) {
         if ($duplicateOption !== null && $query === null) {
             throw new InvalidDefinitionException('IGNORE/REPLACE can be uses only with CREATE TABLE AS ... command.');
@@ -76,6 +80,7 @@ class CreateTableCommand implements AnyCreateTableCommand
         $this->ifNotExists = $ifNotExists;
         $this->duplicateOption = $duplicateOption;
         $this->query = $query;
+        $this->startTransaction = $startTransaction;
     }
 
     public function getName(): QualifiedName
@@ -151,6 +156,10 @@ class CreateTableCommand implements AnyCreateTableCommand
 
         if ($this->query !== null) {
             $result .= "\nAS " . $this->query->serialize($formatter);
+        }
+
+        if ($this->startTransaction) {
+            $result .= "\nSTART TRANSACTION";
         }
 
         return $result;
