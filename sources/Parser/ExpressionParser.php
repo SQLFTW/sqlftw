@@ -1396,7 +1396,12 @@ class ExpressionParser
 
         if ($type->hasLength()) {
             if ($tokenList->hasSymbol('(')) {
-                $length = (int) $tokenList->expectUnsignedInt();
+                if ($type->equalsValue(BaseType::FLOAT)) {
+                    // FLOAT(10.3) is valid :E
+                    $length = (int) $tokenList->expect(TokenType::NUMBER)->value;
+                } else {
+                    $length = (int) $tokenList->expectUnsignedInt();
+                }
                 $decimals = null;
                 if ($type->hasDecimals()) {
                     if ($type->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
