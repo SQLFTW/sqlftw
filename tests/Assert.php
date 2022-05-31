@@ -138,7 +138,7 @@ class Assert extends DogmaAssert
                     $source = strtolower($command->getTokenList()->serialize());
                     // filtering "false" negatives
                     // todo: also should filter false positives
-                    if (Str::contains($source, "--error ") || Str::contains($source, "-- error")) {
+                    if (Str::contains($source, "--error ") || Str::contains($source, "-- error") || Str::contains($source, "--disable_testcase")) {
                         self::true(true);
                     } else {
                         if (class_exists(Debugger::class)) {
