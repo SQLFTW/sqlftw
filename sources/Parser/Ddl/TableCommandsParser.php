@@ -536,10 +536,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::BY);
                     $columns = [];
                     do {
-                        $column = $tokenList->expectName();
-                        /** @var 'ASC'|'DESC'|null $order */
-                        $order = $tokenList->getAnyKeyword(Keyword::ASC, Keyword::DESC);
-                        $columns[$column] = $order;
+                        $columns[] = $this->expressionParser->parseOrderBy($tokenList);
                     } while ($tokenList->hasSymbol(','));
                     $actions[] = new OrderByAction($columns);
                     break;
