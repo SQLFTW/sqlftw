@@ -216,11 +216,7 @@ class InsertCommandParser
         do {
             $column = $tokenList->expectQualifiedName();
             $tokenList->expectOperator(Operator::EQUAL);
-            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $assignments[] = new Assignment($column, new DefaultLiteral());
-            } else {
-                $assignments[] = new Assignment($column, $this->expressionParser->parseExpression($tokenList));
-            }
+            $assignments[] = new Assignment($column, $this->expressionParser->parseExpression($tokenList));
         } while ($tokenList->hasSymbol(','));
 
         return $assignments;
