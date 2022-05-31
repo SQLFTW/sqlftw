@@ -885,7 +885,7 @@ class TableCommandsParser
                 case Keyword::ON:
                     // [ON UPDATE CURRENT_TIMESTAMP[(...)]]
                     $tokenList->expectKeyword(Keyword::UPDATE);
-                    $tokenList->expectAnyKeyword(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW);
+                    $tokenList->expectAnyName(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW);
                     if ($tokenList->hasSymbol('(')) {
                         $param = $tokenList->getUnsignedInt();
                         $params = $param !== null ? [new UintLiteral($param)] : [];
