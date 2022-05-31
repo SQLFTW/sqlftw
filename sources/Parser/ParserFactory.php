@@ -12,7 +12,6 @@ namespace SqlFtw\Parser;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dal\BinlogCommandParser;
 use SqlFtw\Parser\Dal\CacheCommandsParser;
-use SqlFtw\Parser\Dal\CharsetCommandsParser;
 use SqlFtw\Parser\Dal\ComponentCommandsParser;
 use SqlFtw\Parser\Dal\CreateFunctionCommandParser;
 use SqlFtw\Parser\Dal\FlushCommandParser;
@@ -23,7 +22,7 @@ use SqlFtw\Parser\Dal\ResetCommandParser;
 use SqlFtw\Parser\Dal\ResetPersistCommandParser;
 use SqlFtw\Parser\Dal\ResourceCommandParser;
 use SqlFtw\Parser\Dal\RestartCommandParser;
-use SqlFtw\Parser\Dal\SetCommandParser;
+use SqlFtw\Parser\Dal\SetCommandsParser;
 use SqlFtw\Parser\Dal\ShowCommandsParser;
 use SqlFtw\Parser\Dal\ShutdownCommandParser;
 use SqlFtw\Parser\Dal\TableMaintenanceCommandsParser;
@@ -140,11 +139,6 @@ class ParserFactory
     public function getCallCommandParser(): CallCommandParser
     {
         return new CallCommandParser($this->expressionParser);
-    }
-
-    public function getCharsetCommandsParser(): CharsetCommandsParser
-    {
-        return new CharsetCommandsParser();
     }
 
     public function getComponentCommandsParser(): ComponentCommandsParser
@@ -287,9 +281,9 @@ class ParserFactory
         return new ServerCommandsParser();
     }
 
-    public function getSetCommandParser(): SetCommandParser
+    public function getSetCommandsParser(): SetCommandsParser
     {
-        return new SetCommandParser($this->expressionParser);
+        return new SetCommandsParser($this->expressionParser);
     }
 
     public function getShowCommandsParser(): ShowCommandsParser

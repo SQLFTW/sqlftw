@@ -618,13 +618,13 @@ class Parser
                     case Keyword::CHARACTER:
                     case Keyword::CHARSET:
                         // SET {CHARACTER SET | CHARSET}
-                        return $this->factory->getCharsetCommandsParser()->parseSetCharacterSet($tokenList->resetPosition($start));
+                        return $this->factory->getSetCommandsParser()->parseSetCharacterSet($tokenList->resetPosition($start));
                     case Keyword::DEFAULT:
                         // SET DEFAULT ROLE
                         return $this->factory->getUserCommandsParser()->parseSetDefaultRole($tokenList->resetPosition($start));
                     case Keyword::NAMES:
                         // SET NAMES
-                        return $this->factory->getCharsetCommandsParser()->parseSetNames($tokenList->resetPosition($start));
+                        return $this->factory->getSetCommandsParser()->parseSetNames($tokenList->resetPosition($start));
                     case Keyword::PASSWORD:
                         // SET PASSWORD
                         return $this->factory->getUserCommandsParser()->parseSetPassword($tokenList->resetPosition($start));
@@ -642,11 +642,11 @@ class Parser
                             return $this->factory->getTransactionCommandsParser()->parseSetTransaction($tokenList->resetPosition($start));
                         } else {
                             // SET
-                            return $this->factory->getSetCommandParser()->parseSet($tokenList->resetPosition($start));
+                            return $this->factory->getSetCommandsParser()->parseSet($tokenList->resetPosition($start));
                         }
                     default:
                         // SET
-                        return $this->factory->getSetCommandParser()->parseSet($tokenList->resetPosition($start));
+                        return $this->factory->getSetCommandsParser()->parseSet($tokenList->resetPosition($start));
                 }
             case Keyword::SHOW:
                 // SHOW

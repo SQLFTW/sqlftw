@@ -16,14 +16,16 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Set\SetAssignment;
+use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetCommand;
+use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Keyword;
 
-class SetCommandParser
+class SetCommandsParser
 {
     use StrictBehaviorMixin;
 
@@ -52,6 +54,56 @@ class SetCommandParser
     {
         $tokenList->expectKeyword(Keyword::SET);
 
+        $assignments = $this->parseAssignments($tokenList);
+
+        return new SetCommand($assignments);
+    }
+
+    /**
+     * SET {CHARACTER SET | CHARSET}
+     *     {'charset_name' | DEFAULT}
+     */
+    public function parseSetCharacterSet(TokenList $tokenList): SetCharacterSetCommand
+    {
+        $tokenList->expectKeyword(Keyword::SET);
+        $keyword = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET);
+        if ($keyword === Keyword::CHARACTER) {
+            $tokenList->expectKeyword(Keyword::SET);
+        }
+        if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+            $charset = null;
+        } else {
+            $charset = $tokenList->expectCharsetName();
+        }
+
+        return new SetCharacterSetCommand($charset);
+    }
+
+    /**
+     * SET NAMES {'charset_name'
+     *     [COLLATE 'collation_name'] | DEFAULT}
+     *     [, variable_name [=] value]
+     */
+    public function parseSetNames(TokenList $tokenList): SetNamesCommand
+    {
+        $tokenList->expectKeywords(Keyword::SET, Keyword::NAMES);
+        $charset = $collation = null;
+        if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
+            $charset = $tokenList->expectCharsetName();
+            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+                $collation = $tokenList->expectCollationName();
+            }
+        }
+        $assignments = null;
+        if ($tokenList->hasSymbol(',')) {
+            $assignments = $this->parseAssignments($tokenList);
+        }
+
+        return new SetNamesCommand($charset, $collation, $assignments);
+    }
+
+    private function parseAssignments(TokenList $tokenList): array
+    {
         $assignments = [];
         do {
             if ($tokenList->hasKeyword(Keyword::LOCAL)) {
@@ -88,7 +140,7 @@ class SetCommandParser
             $assignments[] = new SetAssignment($variable, $expression, $operator);
         } while ($tokenList->hasSymbol(','));
 
-        return new SetCommand($assignments);
+        return $assignments;
     }
 
 }

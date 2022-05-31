@@ -25,13 +25,20 @@ class SetNamesCommand implements CharsetCommand
     /** @var Collation|null */
     private $collation;
 
-    public function __construct(?Charset $charset, ?Collation $collation)
+    /** @var non-empty-array<SetAssignment>|null */
+    private $assignments;
+
+    /**
+     * @param non-empty-array<SetAssignment>|null $assignments
+     */
+    public function __construct(?Charset $charset, ?Collation $collation, ?array $assignments = null)
     {
         if ($charset === null && $collation !== null) {
             throw new InvalidDefinitionException('Cannot set collation, when charset is not set.');
         }
         $this->charset = $charset;
         $this->collation = $collation;
+        $this->assignments = $assignments;
     }
 
     public function getCharset(): ?Charset
@@ -44,11 +51,25 @@ class SetNamesCommand implements CharsetCommand
         return $this->collation;
     }
 
+    /**
+     * @return non-empty-array<SetAssignment>
+     */
+    public function getAssignments(): ?array
+    {
+        return $this->assignments;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'SET NAMES '
+        $result = 'SET NAMES '
             . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT')
             . ($this->collation !== null ? ' COLLATE ' . $this->collation->serialize($formatter) : '');
+
+        if ($this->assignments !== null) {
+            $result .= ', ' . $formatter->formatSerializablesList($this->assignments);
+        }
+
+        return $result;
     }
 
 }
