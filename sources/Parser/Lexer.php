@@ -462,7 +462,7 @@ class Lexer
                 case '.':
                     $next = $position < $length ? $string[$position] : '';
                     if (isset(self::$numbersKey[$next])) {
-                        $token = $this->parseNumber($string, $position, $column, $row, '.', $condition);
+                        $token = $this->parseNumber($string, $position, $column, '.', $condition);
                         if ($token !== null) {
                             yield $previous = $token;
                             break;
@@ -476,7 +476,7 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && strtoupper($previous->value) === Keyword::DEFAULT);
                     if ($numberCanFollow) {
-                        $token = $this->parseNumber($string, $position, $column, $row, '-', $condition);
+                        $token = $this->parseNumber($string, $position, $column, '-', $condition);
                         if ($token !== null) {
                             yield $previous = $token;
                             break;
@@ -558,7 +558,7 @@ class Lexer
 
                         yield new Token(T::SYMBOL | T::OPERATOR, $start, '-', null, $condition);
 
-                        $token = $this->parseNumber($string, $position, $column, $row, '-', $condition);
+                        $token = $this->parseNumber($string, $position, $column, '-', $condition);
                         if ($token !== null) {
                             yield $previous = $token;
                             break;
@@ -588,7 +588,7 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($numberCanFollow && isset(self::$numbersKey[$next])) {
-                        $token = $this->parseNumber($string, $position, $column, $row, '+', $condition);
+                        $token = $this->parseNumber($string, $position, $column, '+', $condition);
                         if ($token !== null) {
                             yield $previous = $token;
                             break;
@@ -676,7 +676,7 @@ class Lexer
                         yield $previous = new Token(T::VALUE | T::STRING, $start, $ip, null, $condition);
                         break;
                     }
-                    $token = $this->parseNumber($string, $position, $column, $row, $char, $condition);
+                    $token = $this->parseNumber($string, $position, $column, $char, $condition);
                     if ($token !== null) {
                         yield $previous = $token;
                         break;
@@ -1077,7 +1077,7 @@ class Lexer
         return $string;
     }
 
-    private function parseNumber(string &$string, int &$position, int &$column, int &$row, string $start, ?string $condition): ?Token
+    private function parseNumber(string &$string, int &$position, int &$column, string $start, ?string $condition): ?Token
     {
         $startAt = $position - 1;
         $type = T::VALUE | T::NUMBER;
@@ -1092,10 +1092,10 @@ class Lexer
             $next = '';
             while ($position + $offset < $length) {
                 $next = $string[$position + $offset];
-                if (isset(self::$numbersKey[$next]) || ($minusAllowed && $next === '-')) {
+                if (isset(self::$numbersKey[$next]) || ($minusAllowed && ($next === '-' || $next === ' '))) {
                     $base .= $next;
                     $offset++;
-                    if ($next !== '-') {
+                    if ($next !== '-' && $next !== ' ') {
                         $isNumeric = true;
                         $minusAllowed = false;
                     }
@@ -1178,7 +1178,7 @@ class Lexer
         }
 
         $orig = $base . $exp;
-        $value = $base . str_replace('e+', 'e', strtolower($exp));
+        $value = $base . str_replace(['e+', ' '], ['e', ''], strtolower($exp));
 
         $len = strlen($orig) - 1;
         $position += $len;
