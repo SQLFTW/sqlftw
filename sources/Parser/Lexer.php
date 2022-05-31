@@ -1164,9 +1164,7 @@ class Lexer
                         }
                     }
                     if (!$expComplete) {
-                        $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
-
-                        return new Token($type | T::INVALID, $startAt, $base . $exp, $base . $exp, $condition, $exception);
+                        return null;
                     }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
                     $isNumeric = false;
