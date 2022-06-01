@@ -596,6 +596,13 @@ class TokenList
         return $this->expect(T::NAME | T::STRING, T::RESERVED)->value;
     }
 
+    public function getNonReservedNameOrString(): ?string
+    {
+        $token = $this->get(T::NAME | T::STRING, T::RESERVED);
+
+        return $token !== null ? $token->value : null;
+    }
+
     /**
      * @template T of SqlEnum
      * @param class-string<T> $className
@@ -971,6 +978,8 @@ class TokenList
     {
         if ($this->hasKeyword(Keyword::BINARY)) {
             return Charset::get(Charset::BINARY);
+        } elseif ($this->hasKeyword(Keyword::ASCII)) {
+            return Charset::get(Charset::ASCII);
         } else {
             return $this->expectNameOrStringEnum(Charset::class);
         }
@@ -982,6 +991,27 @@ class TokenList
             return Collation::get(Collation::BINARY);
         } else {
             return $this->expectNameOrStringEnum(Collation::class);
+        }
+    }
+
+    public function getCollationName(): ?Collation
+    {
+        if ($this->hasKeyword(Keyword::BINARY)) {
+            return Collation::get(Collation::BINARY);
+        } else {
+            $position = $this->position;
+            $value = $this->getNonReservedNameOrString();
+            if ($value === null) {
+                return null;
+            }
+
+            if (!Collation::validateValue($value)) {
+                $this->position = $position;
+
+                return null;
+            }
+
+            return Collation::get($value);
         }
     }
 

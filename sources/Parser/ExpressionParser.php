@@ -1451,6 +1451,12 @@ class ExpressionParser
         }
 
         if ($type->hasCharset()) {
+            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+                $collation = $tokenList->expectCollationName();
+            } else {
+                $collation = $tokenList->getCollationName();
+            }
+
             if ($tokenList->hasKeywords(Keyword::CHARSET)) {
                 $charset = $tokenList->expectCharsetName();
             } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
@@ -1465,8 +1471,11 @@ class ExpressionParser
             } elseif ($tokenList->hasKeyword(Keyword::ASCII)) {
                 $charset = Charset::get(Charset::ASCII);
             }
+
             if ($tokenList->hasKeyword(Keyword::COLLATE)) {
                 $collation = $tokenList->expectCollationName();
+            } elseif ($collation === null) {
+                $collation = $tokenList->getCollationName();
             }
         }
 
