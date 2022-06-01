@@ -608,9 +608,13 @@ class TokenList
         $value = $this->expectNonReservedNameOrString();
 
         try {
-            return call_user_func([$className, 'get'], $value);
+            /** @var T $enum */
+            $enum = call_user_func([$className, 'get'], $value);
+
+            return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
+            /** @var string[] $values */
             $values = call_user_func([$className, 'getAllowedValues']);
 
             throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
@@ -845,7 +849,13 @@ class TokenList
      */
     public function expectKeywordEnum(string $className): SqlEnum
     {
-        return call_user_func([$className, 'get'], $this->expectAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues']))));
+        /** @var string[] $values */
+        $values = call_user_func([$className, 'getAllowedValues']);
+
+        /** @var T $enum */
+        $enum = call_user_func([$className, 'get'], $this->expectAnyKeyword(...array_values($values)));
+
+        return $enum;
     }
 
     /**
@@ -855,12 +865,17 @@ class TokenList
      */
     public function getKeywordEnum(string $className): ?SqlEnum
     {
-        $token = $this->getAnyKeyword(...array_values(call_user_func([$className, 'getAllowedValues'])));
+        /** @var string[] $values */
+        $values = call_user_func([$className, 'getAllowedValues']);
+        $token = $this->getAnyKeyword(...array_values($values));
         if ($token === null) {
             return null;
-        } else {
-            return call_user_func([$className, 'get'], $token);
         }
+
+        /** @var T $enum */
+        $enum = call_user_func([$className, 'get'], $token);
+
+        return $enum;
     }
 
     /**
@@ -872,6 +887,7 @@ class TokenList
     {
         $this->doAutoSkip();
         $start = $this->position;
+        /** @var string[] $values */
         $values = call_user_func([$className, 'getAllowedValues']);
         foreach ($values as $value) {
             $this->position = $start;
@@ -882,7 +898,10 @@ class TokenList
                 }
             }
 
-            return call_user_func([$className, 'get'], $value);
+            /** @var T $enum */
+            $enum = call_user_func([$className, 'get'], $value);
+
+            return $enum;
         }
         $this->position = $start;
 
@@ -897,6 +916,7 @@ class TokenList
     public function getMultiKeywordsEnum(string $className): ?SqlEnum
     {
         $start = $this->position;
+        /** @var string[] $values */
         $values = call_user_func([$className, 'getAllowedValues']);
         foreach ($values as $value) {
             $this->position = $start;
@@ -907,7 +927,10 @@ class TokenList
                 }
             }
 
-            return call_user_func([$className, 'get'], $value);
+            /** @var T $enum */
+            $enum = call_user_func([$className, 'get'], $value);
+
+            return $enum;
         }
 
         return null;

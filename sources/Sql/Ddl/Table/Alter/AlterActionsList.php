@@ -9,11 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
-use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterTableAction;
 use SqlFtw\Sql\SqlSerializable;
+use function array_filter;
 use function rtrim;
 
 class AlterActionsList implements SqlSerializable
@@ -44,7 +44,7 @@ class AlterActionsList implements SqlSerializable
      */
     public function filter(string $class): array
     {
-        return Arr::filter($this->actions, static function (AlterTableAction $action) use ($class) {
+        return array_filter($this->actions, static function (AlterTableAction $action) use ($class) {
             return $action instanceof $class;
         });
     }

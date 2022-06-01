@@ -19,6 +19,7 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Util\TypeChecker;
+use function array_filter;
 use function implode;
 use function is_int;
 
@@ -136,7 +137,7 @@ class TableOptionsList
             return '';
         }
 
-        return implode($itemSeparator, Arr::filter(Arr::mapPairs(
+        return implode($itemSeparator, array_filter(Arr::mapPairs(
             $this->options,
             static function (string $option, $value) use ($formatter, $valueSeparator): ?string {
                 if ($value === null) {

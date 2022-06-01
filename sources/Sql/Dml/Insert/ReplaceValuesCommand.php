@@ -9,11 +9,11 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\QualifiedName;
+use function array_map;
 use function implode;
 
 class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceCommand
@@ -53,11 +53,11 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
     {
         $result = 'REPLACE' . $this->serializeBody($formatter);
 
-        $result .= ' VALUES ' . implode(', ', Arr::map($this->rows, static function (array $values) use ($formatter): string {
-            return '(' . implode(', ', Arr::map($values, static function (ExpressionNode $value) use ($formatter): string {
+        $result .= ' VALUES ' . implode(', ', array_map(static function (array $values) use ($formatter): string {
+            return '(' . implode(', ', array_map(static function (ExpressionNode $value) use ($formatter): string {
                 return $value->serialize($formatter);
-            })) . ')';
-        }));
+            }, $values)) . ')';
+        }, $this->rows));
 
         return $result;
     }

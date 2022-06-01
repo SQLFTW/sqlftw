@@ -23,6 +23,7 @@ use function is_bool;
 use function is_float;
 use function is_int;
 use function is_object;
+use function is_scalar;
 use function is_string;
 use function preg_match;
 use function substr;
@@ -80,7 +81,7 @@ class TypeChecker
         }
 
         if (!$ok) {
-            $realValue = is_array($value) ? 'array<...>' : (is_object($value) ? null : (string) $value);
+            $realValue = is_array($value) ? 'array<...>' : (is_scalar($value) ? (string) $value : null);
             $realType = is_object($value) ? get_class($value) : gettype($value);
             if ($field !== null) {
                 if ($realValue !== null) {

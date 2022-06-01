@@ -17,7 +17,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * e.g. INTERVAL 6 DAYS
  */
-class IntervalLiteral implements Literal
+class IntervalExpression implements RootNode
 {
     use StrictBehaviorMixin;
 
@@ -36,10 +36,7 @@ class IntervalLiteral implements Literal
         $this->value = $value;
     }
 
-    /**
-     * @return TimeInterval
-     */
-    public function getValue()
+    public function getInterval(): TimeInterval
     {
         return $this->value;
     }

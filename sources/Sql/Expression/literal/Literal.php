@@ -15,9 +15,6 @@ namespace SqlFtw\Sql\Expression;
 interface Literal extends RootNode
 {
 
-    /**
-     * @return mixed
-     */
-    public function getValue();
+    public function getValue(): string;
 
 }

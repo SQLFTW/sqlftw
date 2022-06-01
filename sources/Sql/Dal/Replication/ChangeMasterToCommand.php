@@ -15,6 +15,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Util\TypeChecker;
+use function array_filter;
 use function implode;
 
 /**
@@ -84,7 +85,7 @@ class ChangeMasterToCommand implements ReplicationCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = "CHANGE MASTER TO \n  " . implode(",\n  ", Arr::filter(Arr::mapPairs(
+        $result = "CHANGE MASTER TO \n  " . implode(",\n  ", array_filter(Arr::mapPairs(
             $this->options,
             static function (string $option, $value) use ($formatter): ?string {
                 if ($value === null) {

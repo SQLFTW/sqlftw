@@ -43,7 +43,7 @@ use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
-use SqlFtw\Sql\Expression\IntervalLiteral;
+use SqlFtw\Sql\Expression\IntervalExpression;
 use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\JsonErrorCondition;
 use SqlFtw\Sql\Expression\JsonTableExistsPathColumn;
@@ -402,13 +402,13 @@ class ExpressionParser
         }
 
         if (($operator === Operator::PLUS || $operator === Operator::MINUS) && $tokenList->hasKeyword(Keyword::INTERVAL)) {
-            $right = new IntervalLiteral($this->parseInterval($tokenList));
+            $right = new IntervalExpression($this->parseInterval($tokenList));
 
             // right recursion of interval_expr
             $left = new BinaryOperator($left, [$operator], $right);
             while ($operator = $tokenList->getAnyOperator(Operator::PLUS, Operator::MINUS)) {
                 $tokenList->expectKeyword(Keyword::INTERVAL);
-                $right = new IntervalLiteral($this->parseInterval($tokenList));
+                $right = new IntervalExpression($this->parseInterval($tokenList));
                 $left = new BinaryOperator($left, [$operator], $right);
             }
 
@@ -516,7 +516,7 @@ class ExpressionParser
             }
         } elseif ($tokenList->hasKeyword(Keyword::INTERVAL)) {
             // interval_expr
-            return new IntervalLiteral($this->parseInterval($tokenList));
+            return new IntervalExpression($this->parseInterval($tokenList));
         } elseif ($tokenList->hasKeyword(Keyword::CASE)) {
             // case_expr
             return $this->parseCase($tokenList);
@@ -1164,7 +1164,7 @@ class ExpressionParser
             // extract column name or position
             if ($expression instanceof Literal) {
                 $value = $expression->getValue();
-                if (is_int($value) || $value === (string) (int) $value) {
+                if ($value === (string) (int) $value) {
                     $position = (int) $value;
                     $expression = null;
                 }

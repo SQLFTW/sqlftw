@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
+use function array_map;
 use function implode;
 use function preg_match;
 use function strtolower;
@@ -57,9 +57,9 @@ class UuidSet implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->uuid . ':' . implode(':', Arr::map($this->intervals, static function (array $interval) {
+        return $this->uuid . ':' . implode(':', array_map(static function (array $interval) {
             return $interval[0] . ($interval[1] !== null ? '-' . $interval[1] : '');
-        }));
+        }, $this->intervals));
     }
 
 }

@@ -15,16 +15,13 @@ use SqlFtw\Formatter\Formatter;
 /**
  * ?
  */
-class Placeholder implements Literal
+class Placeholder implements Identifier
 {
     use StrictBehaviorMixin;
 
-    /**
-     * @return null
-     */
-    public function getValue()
+    public function getFullName(): string
     {
-        return null;
+        return '?';
     }
 
     public function serialize(Formatter $formatter): string

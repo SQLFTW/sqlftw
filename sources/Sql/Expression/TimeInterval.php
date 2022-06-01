@@ -23,14 +23,14 @@ class TimeInterval implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var int|string|ExpressionNode */
+    /** @var int|string|RootNode */
     private $value;
 
     /** @var TimeIntervalUnit */
     private $unit;
 
     /**
-     * @param int|string|ExpressionNode $value
+     * @param int|string|RootNode $value
      */
     public function __construct($value, TimeIntervalUnit $unit)
     {
@@ -148,7 +148,7 @@ class TimeInterval implements SqlSerializable
     }
 
     /**
-     * @return int|string|ExpressionNode
+     * @return int|string|RootNode
      */
     public function getValue()
     {

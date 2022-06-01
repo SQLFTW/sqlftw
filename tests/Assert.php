@@ -30,10 +30,7 @@ use function strtolower;
 class Assert extends DogmaAssert
 {
 
-    /**
-     * @param mixed|null $value
-     */
-    public static function token(Token $token, int $type, $value = null, ?int $position = null): void
+    public static function token(Token $token, int $type, ?string $value = null, ?int $position = null): void
     {
         if ($type !== $token->type) {
             $actualDesc = implode('|', TokenType::getByValue($token->type)->getConstantNames());
@@ -115,6 +112,7 @@ class Assert extends DogmaAssert
             $parser->parseSingleCommand($query);
         } catch (ParsingException $e) {
             if (class_exists(Dumper::class) && $e->backtrace !== null) {
+                // @phpstan-ignore-next-line PhpBacktraceItem[]
                 Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
             }
             self::fail($e->getMessage());
