@@ -348,26 +348,51 @@ class Parser
                             return $this->factory->getSpatialCommandsParser()->parseCreateSpatialReferenceSystem($tokenList->resetPosition($start));
                         }
                 }
+
                 $tokenList->resetPosition(-1);
+
                 if ($tokenList->hasKeywords(Keyword::OR, Keyword::REPLACE, Keyword::SPATIAL)) {
                     // CREATE OR REPLACE SPATIAL REFERENCE SYSTEM
                     return $this->factory->getSpatialCommandsParser()->parseCreateSpatialReferenceSystem($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::EVENT, 8)) {
-                    // CREATE [DEFINER = { user | CURRENT_USER }] EVENT
-                    return $this->factory->getEventCommandsParser()->parseCreateEvent($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::SONAME, 8)) {
+                }
+
+                if ($tokenList->seekKeyword(Keyword::SONAME, 8)) {
                     // CREATE [AGGREGATE] FUNCTION function_name RETURNS {STRING|INTEGER|REAL|DECIMAL} SONAME
                     return $this->factory->getCreateFunctionCommandParser()->parseCreateFunction($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::FUNCTION, 8)) {
+                }
+
+                if ($tokenList->hasKeywords(Keyword::OR, Keyword::REPLACE)) {
+                    // CREATE [OR REPLACE] [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
+                    return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
+                } elseif ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
+                    // CREATE [OR REPLACE] [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
+                    return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
+                }
+
+                // just to get it out of the way
+                if ($tokenList->hasKeyword(Keyword::DEFINER)) {
+                    $tokenList->passSymbol('=');
+                    if ($tokenList->hasKeyword(Keyword::CURRENT_USER)) {
+                        if ($tokenList->hasSymbol('(')) {
+                            $tokenList->passSymbol(')');
+                        }
+                    } else {
+                        $tokenList->expectUserName();
+                    }
+                }
+                if ($tokenList->hasKeyword(Keyword::EVENT)) {
+                    // CREATE [DEFINER = { user | CURRENT_USER }] EVENT
+                    return $this->factory->getEventCommandsParser()->parseCreateEvent($tokenList->resetPosition($start));
+                } elseif ($tokenList->hasKeyword(Keyword::FUNCTION)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] FUNCTION
                     return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::PROCEDURE, 8)) {
+                } elseif ($tokenList->hasKeyword(Keyword::PROCEDURE)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] PROCEDURE
                     return $this->factory->getRoutineCommandsParser()->parseCreateProcedure($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::TRIGGER, 8)) {
+                } elseif ($tokenList->hasKeyword(Keyword::TRIGGER)) {
                     // CREATE [DEFINER = { user | CURRENT_USER }] TRIGGER
                     return $this->factory->getTriggerCommandsParser()->parseCreateTrigger($tokenList->resetPosition($start));
-                } elseif ($tokenList->seekKeyword(Keyword::VIEW, 15)) {
+                } elseif ($tokenList->seekKeyword(Keyword::VIEW, 5)) {
                     // CREATE [OR REPLACE] [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
                     return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
                 }
