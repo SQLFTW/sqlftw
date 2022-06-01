@@ -168,7 +168,7 @@ class DeleteCommand implements DmlCommand
             $result .= 'IGNORE ';
         }
 
-        $result .= 'FROM ' . implode(',', array_map(function (array $table) use ($formatter): string {
+        $result .= 'FROM ' . implode(', ', array_map(function (array $table) use ($formatter): string {
             return $table[0]->serialize($formatter) . ($table[1] !== null ? ' AS ' . $table[1] : '');
         }, $this->tables));
         if ($this->references !== null) {
