@@ -141,7 +141,7 @@ class EventCommandsParser
         $at = $every = $startTime = $endTime = null;
 
         if ($tokenList->hasKeyword(Keyword::AT)) {
-            $at = $this->expressionParser->parseTimeExpression($tokenList);
+            $at = $this->expressionParser->parseExpression($tokenList);
         } elseif ($tokenList->hasKeyword(Keyword::EVERY)) {
             $every = $this->expressionParser->parseInterval($tokenList);
         } else {
@@ -149,10 +149,10 @@ class EventCommandsParser
         }
 
         if ($tokenList->hasKeyword(Keyword::STARTS)) {
-            $startTime = $this->expressionParser->parseTimeExpression($tokenList);
+            $startTime = $this->expressionParser->parseExpression($tokenList);
         }
         if ($tokenList->hasKeyword(Keyword::ENDS)) {
-            $endTime = $this->expressionParser->parseTimeExpression($tokenList);
+            $endTime = $this->expressionParser->parseExpression($tokenList);
         }
 
         return new EventSchedule($at, $every, $startTime, $endTime);

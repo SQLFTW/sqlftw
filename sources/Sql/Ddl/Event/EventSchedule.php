@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
-use DateInterval;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\TimeExpression;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
@@ -23,33 +21,26 @@ class EventSchedule implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var TimeExpression|null */
+    /** @var RootNode|null */
     private $time;
 
     /** @var TimeInterval|null */
     private $interval;
 
-    /** @var TimeExpression|null */
+    /** @var RootNode|null */
     private $startTime;
 
-    /** @var TimeExpression|null */
+    /** @var RootNode|null */
     private $endTime;
 
-    /**
-     * @param TimeInterval|DateInterval|DateTimeSpan|null $interval
-     */
     public function __construct(
-        ?TimeExpression $time,
-        $interval = null,
-        ?TimeExpression $startTime = null,
-        ?TimeExpression $endTime = null
+        ?RootNode $time,
+        ?TimeInterval $interval = null,
+        ?RootNode $startTime = null,
+        ?RootNode $endTime = null
     ) {
         if (!(($time === null) ^ ($interval === null))) { // @phpstan-ignore-line XOR needed
             throw new InvalidDefinitionException('Either time or interval must be set.');
-        }
-
-        if ($interval !== null && !$interval instanceof TimeInterval) {
-            $interval = TimeInterval::create($interval);
         }
 
         $this->interval = $interval;
