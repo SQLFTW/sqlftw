@@ -244,7 +244,7 @@ class ExpressionParser
 
                 return new BinaryOperator($left, [$operator, $quantifier], $subquery);
             } else {
-                $right = $this->parsePredicate($tokenList);
+                $right = $this->parseBooleanPrimary($tokenList);
 
                 return new BinaryOperator($left, [$operator], $right);
             }
