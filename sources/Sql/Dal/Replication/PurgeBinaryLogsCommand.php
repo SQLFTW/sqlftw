@@ -9,11 +9,8 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
-use Dogma\Time\DateTime;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 

@@ -55,7 +55,6 @@ class TableMaintenanceCommandsParser
         if (count($tables) === 1) {
             if ($tokenList->hasKeywords(Keyword::UPDATE, Keyword::HISTOGRAM, Keyword::ON)) {
                 do {
-                    /** @var non-empty-array<string> $columns */
                     $columns[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
 
@@ -67,7 +66,6 @@ class TableMaintenanceCommandsParser
                 return new AnalyzeTableUpdateHistogramCommand($tables[0], $columns, $buckets, $local);
             } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::HISTOGRAM, Keyword::ON)) {
                 do {
-                    /** @var non-empty-array<string> $columns */
                     $columns[] = $tokenList->expectName();
                 } while ($tokenList->hasSymbol(','));
 

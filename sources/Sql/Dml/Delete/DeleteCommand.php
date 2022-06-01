@@ -18,6 +18,7 @@ use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use function array_map;
 use function implode;
 
 class DeleteCommand implements DmlCommand
@@ -168,7 +169,7 @@ class DeleteCommand implements DmlCommand
             $result .= 'IGNORE ';
         }
 
-        $result .= 'FROM ' . implode(', ', array_map(function (array $table) use ($formatter): string {
+        $result .= 'FROM ' . implode(', ', array_map(static function (array $table) use ($formatter): string {
             return $table[0]->serialize($formatter) . ($table[1] !== null ? ' AS ' . $table[1] : '');
         }, $this->tables));
         if ($this->references !== null) {

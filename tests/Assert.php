@@ -95,9 +95,8 @@ class Assert extends DogmaAssert
             if (class_exists(Debugger::class)) {
                 Debugger::dump($e->getTokenList());
             }
+
             throw $e;
-            //self::fail($e->getMessage());
-            //return;
         }
         /** @var string $actual */
         $actual = preg_replace('/\\s+/', ' ', $actual);

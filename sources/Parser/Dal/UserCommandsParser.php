@@ -755,7 +755,6 @@ class UserCommandsParser
     {
         $users = [];
         do {
-            /** @var non-empty-array<UserName|FunctionCall> $users */
             $users[] = $this->parseUser($tokenList);
         } while ($tokenList->hasSymbol(','));
 

@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
-use http\Client\Curl\User;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\UserName;
