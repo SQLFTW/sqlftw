@@ -572,8 +572,8 @@ class Parser
                 // RELEASE SAVEPOINT
                 return $this->factory->getTransactionCommandsParser()->parseReleaseSavepoint($tokenList->resetPosition($start));
             case Keyword::RENAME:
-                $second = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::USER);
-                if ($second === Keyword::TABLE) {
+                $second = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES, Keyword::USER);
+                if ($second === Keyword::TABLE || $second === Keyword::TABLES) {
                     // RENAME TABLE
                     return $this->factory->getTableCommandsParser()->parseRenameTable($tokenList->resetPosition($start));
                 } else {

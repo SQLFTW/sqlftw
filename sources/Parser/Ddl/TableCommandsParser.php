@@ -1715,7 +1715,8 @@ class TableCommandsParser
      */
     public function parseRenameTable(TokenList $tokenList): RenameTableCommand
     {
-        $tokenList->expectKeywords(Keyword::RENAME, Keyword::TABLE);
+        $tokenList->expectKeyword(Keyword::RENAME);
+        $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
 
         $tables = [];
         $newTables = [];
