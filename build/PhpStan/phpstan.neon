@@ -4,6 +4,8 @@ includes:
 parameters:
     level: 8
 
+    treatPhpDocTypesAsCertain: false
+
     paths:
         - ../../sources
         - ../../tests

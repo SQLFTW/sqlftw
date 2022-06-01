@@ -17,18 +17,21 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Util\TypeChecker;
 use function implode;
 
+/**
+ * @phpstan-import-type SlaveOptionValue from SlaveOption
+ */
 class ChangeMasterToCommand implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<mixed> */
+    /** @var non-empty-array<string, SlaveOptionValue|null> */
     private $options;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param non-empty-array<mixed> $options
+     * @param non-empty-array<string, SlaveOptionValue> $options
      */
     public function __construct(array $options, ?string $channel = null)
     {
@@ -38,7 +41,7 @@ class ChangeMasterToCommand implements ReplicationCommand
             }
             TypeChecker::check($value, SlaveOption::getTypes()[$option], $option);
 
-            $options[$option] = $value;
+            $options[(string) $option] = $value;
         }
 
         $this->options = $options;
@@ -46,7 +49,7 @@ class ChangeMasterToCommand implements ReplicationCommand
     }
 
     /**
-     * @return non-empty-array<mixed>
+     * @return non-empty-array<string, SlaveOptionValue|null>
      */
     public function getOptions(): array
     {
@@ -54,7 +57,7 @@ class ChangeMasterToCommand implements ReplicationCommand
     }
 
     /**
-     * @return mixed|null $option
+     * @return SlaveOptionValue|null $option
      */
     public function getOption(string $option)
     {
@@ -64,7 +67,7 @@ class ChangeMasterToCommand implements ReplicationCommand
     }
 
     /**
-     * @param mixed|null $value
+     * @param SlaveOptionValue|null $value
      */
     public function setOption(string $option, $value): void
     {

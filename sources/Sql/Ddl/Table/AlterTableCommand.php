@@ -16,6 +16,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterActionsList;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
+use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -26,7 +27,7 @@ use function rtrim;
 use function trim;
 
 /**
- * @phpstan-import-type TableOptionValue from TableOptionsList
+ * @phpstan-import-type TableOptionValue from TableOption
  */
 class AlterTableCommand implements DdlTableCommand
 {

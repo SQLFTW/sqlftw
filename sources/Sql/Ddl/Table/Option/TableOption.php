@@ -19,6 +19,9 @@ use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
+/**
+ * @phpstan-type TableOptionValue int|bool|string|Collation|Charset|DefaultLiteral|SizeLiteral|StorageEngine|StorageType|TableCompression|TableInsertMethod|TableRowFormat|ThreeStateValue|QualifiedName[]
+ */
 class TableOption extends SqlEnum
 {
 

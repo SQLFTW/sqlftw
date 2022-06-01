@@ -80,7 +80,7 @@ class RoutineCommandsParser
     }
 
     /**
-     * @return mixed[]
+     * @return array{string|null, string|null, RoutineSideEffects|null, SqlSecurity|null, bool|null}
      */
     private function parseRoutineCharacteristics(TokenList $tokenList, bool $procedure): array
     {

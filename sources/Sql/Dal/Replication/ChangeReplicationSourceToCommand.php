@@ -17,18 +17,21 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Util\TypeChecker;
 use function implode;
 
+/**
+ * @phpstan-import-type ReplicaOptionValue from ReplicaOption
+ */
 class ChangeReplicationSourceToCommand implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<mixed> */
+    /** @var non-empty-array<string, ReplicaOptionValue|null> */
     private $options;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param non-empty-array<mixed> $options
+     * @param non-empty-array<string, ReplicaOptionValue> $options
      */
     public function __construct(array $options, ?string $channel = null)
     {
@@ -40,7 +43,7 @@ class ChangeReplicationSourceToCommand implements ReplicationCommand
             }
             TypeChecker::check($value, $types[$option], $option);
 
-            $options[$option] = $value;
+            $options[(string) $option] = $value;
         }
 
         $this->options = $options;
@@ -48,7 +51,7 @@ class ChangeReplicationSourceToCommand implements ReplicationCommand
     }
 
     /**
-     * @return non-empty-array<mixed>
+     * @return non-empty-array<string, ReplicaOptionValue|null>
      */
     public function getOptions(): array
     {
@@ -56,7 +59,7 @@ class ChangeReplicationSourceToCommand implements ReplicationCommand
     }
 
     /**
-     * @return mixed|null $option
+     * @return ReplicaOptionValue|null $option
      */
     public function getOption(string $option)
     {
@@ -66,7 +69,7 @@ class ChangeReplicationSourceToCommand implements ReplicationCommand
     }
 
     /**
-     * @param mixed|null $value
+     * @param ReplicaOptionValue|null $value
      */
     public function setOption(string $option, $value): void
     {

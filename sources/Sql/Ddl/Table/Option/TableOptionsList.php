@@ -23,17 +23,17 @@ use function implode;
 use function is_int;
 
 /**
- * @phpstan-type TableOptionValue int|string|bool|Charset|Collation|TableCompression|StorageEngine|StorageType|TableInsertMethod|ThreeStateValue|TableRowFormat|QualifiedName[]
+ * @phpstan-import-type TableOptionValue from TableOption
  */
 class TableOptionsList
 {
     use StrictBehaviorMixin;
 
-    /** @var array<TableOptionValue> */
+    /** @var array<string, TableOptionValue|null> */
     private $options = [];
 
     /**
-     * @param array<TableOptionValue> $options (string $name => mixed $value)
+     * @param array<string, TableOptionValue> $options
      */
     public function __construct(array $options)
     {
@@ -78,7 +78,7 @@ class TableOptionsList
     }
 
     /**
-     * @return array<TableOptionValue>
+     * @return array<string, TableOptionValue|null>
      */
     public function getOptions(): array
     {
@@ -86,7 +86,7 @@ class TableOptionsList
     }
 
     /**
-     * @return mixed|null $option
+     * @return TableOptionValue|null $option
      */
     public function get(string $option)
     {
@@ -98,7 +98,7 @@ class TableOptionsList
     }
 
     /**
-     * @param mixed|null $value
+     * @param TableOptionValue|null $value
      */
     public function set(string $option, $value): void
     {
@@ -111,7 +111,7 @@ class TableOptionsList
     }
 
     /**
-     * @param mixed $value
+     * @param TableOptionValue $value
      */
     public function setDefault(string $option, $value): void
     {

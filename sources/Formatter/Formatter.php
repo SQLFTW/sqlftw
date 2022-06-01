@@ -83,7 +83,7 @@ class Formatter
     }
 
     /**
-     * @param mixed $value
+     * @param int|float|bool|string|Date|Time|DateTimeInterface|SqlSerializable|null $value
      */
     public function formatValue($value): string
     {
@@ -111,7 +111,7 @@ class Formatter
     }
 
     /**
-     * @param non-empty-array<mixed> $values
+     * @param non-empty-array<int|float|bool|string|Date|Time|DateTimeInterface|SqlSerializable|null> $values
      */
     public function formatValuesList(array $values, string $separator = ', '): string
     {

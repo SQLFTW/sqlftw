@@ -22,6 +22,7 @@ use SqlFtw\Sql\Dal\Replication\ReplicaOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\ReplicationFilter;
 use SqlFtw\Sql\Dal\Replication\ReplicationGtidAssignOption;
+use SqlFtw\Sql\Dal\Replication\ReplicationPrimaryKeyCheckOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationThreadType;
 use SqlFtw\Sql\Dal\Replication\ResetMasterCommand;
 use SqlFtw\Sql\Dal\Replication\ResetReplicaCommand;
@@ -115,7 +116,7 @@ class ReplicationCommandsParser
             $option = $tokenList->expectKeywordEnum(SlaveOption::class);
             $tokenList->expectOperator(Operator::EQUAL);
             $type = $types[$option->getValue()];
-            $value = null;
+            $value = '';
             switch ($type) {
                 case BaseType::CHAR:
                     $value = $tokenList->expectString();
@@ -156,13 +157,11 @@ class ReplicationCommandsParser
                     }
                     $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
                     break;
+                case ReplicationPrimaryKeyCheckOption::class:
+                    $value = $tokenList->expectKeywordEnum(ReplicationPrimaryKeyCheckOption::class);
+                    break;
                 default:
-                    if (is_a($type, SqlEnum::class, true)) {
-                        $value = $tokenList->expectKeywordEnum($type);
-                        break;
-                    } else {
-                        throw new ShouldNotHappenException("Unknown type $type.");
-                    }
+                    throw new ShouldNotHappenException("Unknown type $type.");
             }
             $options[$option->getValue()] = $value;
         } while ($tokenList->hasSymbol(','));
@@ -233,7 +232,7 @@ class ReplicationCommandsParser
             $option = $tokenList->expectKeywordEnum(ReplicaOption::class);
             $tokenList->expectOperator(Operator::EQUAL);
             $type = $types[$option->getValue()];
-            $value = null;
+            $value = '';
             switch ($type) {
                 case BaseType::CHAR:
                     $value = $tokenList->expectString();
@@ -283,13 +282,11 @@ class ReplicationCommandsParser
                     }
                     $value = new ReplicationGtidAssignOption($keyword ?? ReplicationGtidAssignOption::UUID, $uuid);
                     break;
+                case ReplicationPrimaryKeyCheckOption::class:
+                    $value = $tokenList->expectKeywordEnum(ReplicationPrimaryKeyCheckOption::class);
+                    break;
                 default:
-                    if (is_a($type, SqlEnum::class, true)) {
-                        $value = $tokenList->expectKeywordEnum($type);
-                        break;
-                    } else {
-                        throw new ShouldNotHappenException("Unknown type $type.");
-                    }
+                    throw new ShouldNotHappenException("Unknown type $type.");
             }
             $options[$option->getValue()] = $value;
         } while ($tokenList->hasSymbol(','));

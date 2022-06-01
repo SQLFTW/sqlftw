@@ -9,10 +9,10 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\InvalidTypeException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\Asterisk;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
 use function is_string;
 
@@ -20,7 +20,7 @@ class SelectExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode */
+    /** @var RootNode|Asterisk */
     private $expression;
 
     /** @var string|null */
@@ -30,22 +30,23 @@ class SelectExpression implements SqlSerializable
     private $window;
 
     /**
-     * @param WindowSpecification|string|mixed|null $window
+     * @param RootNode|Asterisk $expression
+     * @param WindowSpecification|string|null $window
      */
     public function __construct(
-        ExpressionNode $expression,
+        $expression,
         ?string $alias = null,
         $window = null
     ) {
-        if ($window !== null && !is_string($window) && !$window instanceof WindowSpecification) {
-            throw new InvalidTypeException(WindowSpecification::class . '|string', $window);
-        }
         $this->expression = $expression;
         $this->alias = $alias;
         $this->window = $window;
     }
 
-    public function getExpression(): ExpressionNode
+    /**
+     * @return RootNode|Asterisk
+     */
+    public function getExpression()
     {
         return $this->expression;
     }

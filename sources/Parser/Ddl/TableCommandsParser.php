@@ -106,6 +106,9 @@ use SqlFtw\Sql\Keyword;
 use function array_values;
 use function strtoupper;
 
+/**
+ * @phpstan-import-type TableOptionValue from TableOption
+ */
 class TableCommandsParser
 {
     use StrictBehaviorMixin;
@@ -1210,14 +1213,14 @@ class TableCommandsParser
      *   | TABLESPACE tablespace_name
      *   | UNION [=] (tbl_name[,tbl_name]...)
      *
-     * @return mixed[] (string|null $name, mixed $value)
+     * @return array{string|null, TableOptionValue}
      */
     private function parseTableOption(TokenList $tokenList): array
     {
         $position = $tokenList->getPosition();
         $keyword = $tokenList->getKeyword();
         if ($keyword === null) {
-            return [null, null];
+            return [null, 0];
         }
 
         switch ($keyword) {
@@ -1378,7 +1381,7 @@ class TableCommandsParser
             default:
                 $tokenList->resetPosition($position);
 
-                return [null, null];
+                return [null, 0];
         }
     }
 

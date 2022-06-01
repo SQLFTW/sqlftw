@@ -277,9 +277,8 @@ class TokenList
 
     /**
      * @phpstan-impure
-     * @param mixed $value
      */
-    public function get(?int $tokenType = null, int $tokenMask = 0, $value = null): ?Token
+    public function get(?int $tokenType = null, int $tokenMask = 0, ?string $value = null): ?Token
     {
         $this->doAutoSkip();
         $token = $this->tokens[$this->position] ?? null;
@@ -300,19 +299,15 @@ class TokenList
 
     /**
      * @phpstan-impure
-     * @param mixed $value
      */
-    public function has(int $tokenType, $value = null): bool
+    public function has(int $tokenType, ?string $value = null): bool
     {
         return (bool) $this->get($tokenType, 0, $value);
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function pass(int $tokenType, $value = null): void
+    public function pass(int $tokenType, ?string $value = null): void
     {
-        $this->get($tokenType, $value);
+        $this->get($tokenType, 0, $value);
     }
 
     // symbols ---------------------------------------------------------------------------------------------------------

@@ -21,7 +21,7 @@ class IntervalLiteral implements Literal
 {
     use StrictBehaviorMixin;
 
-    /** @var TimeInterval|DateTimeSpan|DateInterval */
+    /** @var TimeInterval */
     private $value;
 
     /**
@@ -29,11 +29,15 @@ class IntervalLiteral implements Literal
      */
     public function __construct($value)
     {
+        if (!$value instanceof TimeInterval) {
+            $value = TimeInterval::create($value);
+        }
+
         $this->value = $value;
     }
 
     /**
-     * @return TimeInterval|DateTimeSpan|DateInterval
+     * @return TimeInterval
      */
     public function getValue()
     {

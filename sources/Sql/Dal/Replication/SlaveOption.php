@@ -15,6 +15,9 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 
+/**
+ * @phpstan-type SlaveOptionValue int|float|bool|string|UserName|NullLiteral|ReplicationPrimaryKeyCheckOption|ReplicationGtidAssignOption|int[]
+ */
 class SlaveOption extends SqlEnum
 {
 

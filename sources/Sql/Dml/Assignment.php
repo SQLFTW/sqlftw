@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Dml;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use function get_class;
@@ -28,15 +28,15 @@ class Assignment implements SqlSerializable
     /** @var QualifiedName */
     private $variable;
 
-    /** @var bool|int|float|string|ExpressionNode */
+    /** @var bool|int|float|string|RootNode */
     private $expression;
 
     /**
-     * @param bool|int|float|string|ExpressionNode|mixed $expression
+     * @param bool|int|float|string|RootNode $expression
      */
     public function __construct(QualifiedName $variable, $expression)
     {
-        if (!$expression instanceof ExpressionNode && !is_scalar($expression)) {
+        if (!$expression instanceof RootNode && !is_scalar($expression)) {
             $given = is_object($expression) ? get_class($expression) : ucfirst(gettype($expression));
             throw new InvalidDefinitionException("ExpressionNode assigned to variable must be a scalar value or an ExpressionNode. $given given.");
         }
@@ -50,7 +50,7 @@ class Assignment implements SqlSerializable
     }
 
     /**
-     * @return bool|int|float|string|ExpressionNode
+     * @return bool|int|float|string|RootNode
      */
     public function getExpression()
     {
@@ -59,7 +59,7 @@ class Assignment implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $value = $this->expression instanceof ExpressionNode
+        $value = $this->expression instanceof RootNode
             ? $this->expression->serialize($formatter)
             : $formatter->formatValue($this->expression);
 

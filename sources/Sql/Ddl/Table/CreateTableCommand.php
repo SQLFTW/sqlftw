@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Dml\DuplicateOption;
@@ -20,7 +21,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use function is_array;
 
 /**
- * @phpstan-import-type TableOptionValue from TableOptionsList
+ * @phpstan-import-type TableOptionValue from TableOption
  */
 class CreateTableCommand implements AnyCreateTableCommand
 {

@@ -15,6 +15,9 @@ use SqlFtw\Sql\Keyword;
 use function assert;
 use function is_bool;
 
+/**
+ * @phpstan-import-type TablespaceOptionValue from TablespaceOption
+ */
 class CreateTablespaceCommand implements TablespaceCommand
 {
     use StrictBehaviorMixin;
@@ -22,14 +25,14 @@ class CreateTablespaceCommand implements TablespaceCommand
     /** @var string */
     private $name;
 
-    /** @var mixed[] */
+    /** @var array<string, TablespaceOptionValue> */
     private $options;
 
     /** @var bool */
     private $undo;
 
     /**
-     * @param mixed[] $options
+     * @param array<string, TablespaceOptionValue> $options
      */
     public function __construct(string $name, array $options, bool $undo = false)
     {
@@ -46,7 +49,7 @@ class CreateTablespaceCommand implements TablespaceCommand
     }
 
     /**
-     * @return mixed[]
+     * @return array<string, TablespaceOptionValue>
      */
     public function getOptions(): array
     {
@@ -71,6 +74,7 @@ class CreateTablespaceCommand implements TablespaceCommand
                 assert(is_bool($value));
                 $result .= $value ? ' WAIT' : ' NO_WAIT';
             } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::USE_LOGFILE_GROUP) {
+                assert(is_string($value));
                 $result .= ' ' . $name . ' ' . $formatter->formatName($value);
             } elseif ($name === TablespaceOption::FILE_BLOCK_SIZE) {
                 $result .= ' ' . $name . ' = ' . $formatter->formatValue($value);

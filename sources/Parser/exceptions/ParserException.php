@@ -39,7 +39,7 @@ class ParserException extends ParsingException
     }
 
     /**
-     * @param mixed $expectedValue
+     * @param string|string[]|null $expectedValue
      */
     public static function tokens(int $expectedToken, int $tokenMask, $expectedValue, ?Token $token, TokenList $tokenList, ?Throwable $previous = null): self
     {
@@ -51,10 +51,8 @@ class ParserException extends ParsingException
         if ($expectedValue !== null) {
             if (is_array($expectedValue)) {
                 $expectedValue = Str::join($expectedValue, ', ', ' or ', 120, '...');
-                $expectedValue = " with value " . $expectedValue;
-            } else {
-                $expectedValue = " with value " . ExceptionValueFormatter::format($expectedValue);
             }
+            $expectedValue = " with value " . $expectedValue;
         }
 
         $context = self::formatContext($tokenList);
