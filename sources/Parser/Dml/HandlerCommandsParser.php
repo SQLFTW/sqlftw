@@ -59,27 +59,25 @@ class HandlerCommandsParser
         $table = $tokenList->expectQualifiedName();
         $tokenList->expectKeyword(Keyword::READ);
 
-        $values = null;
-        $index = $tokenList->getName();
-        if ($index === Keyword::FIRST || $index === Keyword::NEXT) {
-            $index = null;
-            $tokenList->resetPosition(-1);
-        }
-        if ($index !== null) {
+        $values = $index = null;
+        $what = $tokenList->getAnyKeyword(Keyword::FIRST, Keyword::NEXT);
+        if ($what === null) {
+            $index = $tokenList->getNonReservedName();
             $what = $tokenList->getAnyKeyword(...HandlerReadTarget::getKeywords());
-            if ($what === null) {
-                $what = $tokenList->expectAnyOperator(...HandlerReadTarget::getOperators());
-                $values = [];
-                $tokenList->expectSymbol('(');
-                do {
-                    $values[] = $this->expressionParser->parseLiteral($tokenList);
-                } while ($tokenList->hasSymbol(','));
-                $tokenList->expectSymbol(')');
-            }
+        }
+        if ($what !== null) {
             $what = HandlerReadTarget::get($what);
-        } else {
-            /** @var HandlerReadTarget $what */
-            $what = $tokenList->expectKeywordEnum(HandlerReadTarget::class);
+        }
+        if ($what === null) {
+            $what = $tokenList->expectAnyOperator(...HandlerReadTarget::getOperators());
+            $what = HandlerReadTarget::get($what);
+
+            $values = [];
+            $tokenList->expectSymbol('(');
+            do {
+                $values[] = $this->expressionParser->parseLiteral($tokenList);
+            } while ($tokenList->hasSymbol(','));
+            $tokenList->expectSymbol(')');
         }
 
         $where = $limit = $offset = null;
