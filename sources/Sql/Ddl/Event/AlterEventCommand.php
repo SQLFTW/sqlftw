@@ -107,7 +107,7 @@ class AlterEventCommand implements EventCommand
     {
         $result = 'ALTER';
         if ($this->definer !== null) {
-            $result .= ' DEFINER ' . $this->definer->serialize($formatter);
+            $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
         $result .= ' EVENT ' . $this->name->serialize($formatter);
 

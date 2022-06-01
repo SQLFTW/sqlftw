@@ -580,7 +580,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
      * In most cases name is parsed as array key of the following argument - e.g. AVG(DISTINCT col1) -> ['DISTINCT' => 'col1']
      * Special cases:
      * - when no value follows the keyword (indicated by null), the keyword is parsed as a Literal - e.g. GET_FORMAT(DATE ISO) -> [new Literal('DATE'), 'ISO']
-     * - parameters of some functions need special parsing (indicated by false) - e.g. TRIM() and JSON_TABLE()
+     * - parameters of some functions need special parsing (indicated by false) - CONVERT(), JSON_TABLE(), TRIM()
      *
      * @var array<string, array<string, class-string|null|false>>
      */
@@ -591,44 +591,19 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
         self::CHAR => [Keyword::USING => Charset::class],
         // CAST(expr AS type)
         self::CAST => [Keyword::AS => CastType::class],
-        /*
-         * CONVERT(string, type), CONVERT(expr USING charset_name)
-         *
-         * type:
-         *   BINARY[(N)]
-         *   CHAR[(N)] [charset_info]
-         *   DATE
-         *   DATETIME
-         *   DECIMAL[(M[,D])]
-         *   JSON
-         *   NCHAR[(N)]
-         *   SIGNED [INTEGER]
-         *   TIME
-         *   UNSIGNED [INTEGER]
-         *
-         * charset_info:
-         *   CHARACTER SET charset_name
-         *   ASCII
-         *   UNICODE
-         */
-        self::CONVERT => [Keyword::USING => Charset::class, 1 => CastType::class],
+        // CONVERT(string, type), CONVERT(expr USING charset_name)
+        // has special handling because of irregular syntax
+        self::CONVERT => [Keyword::USING => Charset::class/*, 1 => CastType::class*/],
         // COUNT(DISTINCT expr,[expr...])
         self::COUNT => [Keyword::DISTINCT => ExpressionNode::class],
         // EXTRACT(unit FROM date)
         self::EXTRACT => [Keyword::FROM => ExpressionNode::class],
         // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
         self::GET_FORMAT => [Keyword::DATE => null, Keyword::TIME => null, Keyword::DATETIME => null],
-        /*
-         * GROUP_CONCAT([DISTINCT] expr [,expr ...]
-         *   [ORDER BY {unsigned_integer | col_name | expr} [ASC | DESC] [,col_name ...]]
-         *   [SEPARATOR str_val])
-         */
-        self::GROUP_CONCAT => [
-            Keyword::DISTINCT => ExpressionNode::class,
-            Keyword::ORDER . ' ' . Keyword::BY => OrderByExpression::class,
-            Keyword::SEPARATOR => Literal::class,
-        ],
+        // GROUP_CONCAT([DISTINCT] expr [,expr ...] [ORDER BY {unsigned_integer | col_name | expr} [ASC | DESC] [,col_name ...]] [SEPARATOR str_val])
+        self::GROUP_CONCAT => [Keyword::DISTINCT => ExpressionNode::class, Keyword::ORDER . ' ' . Keyword::BY => OrderByExpression::class, Keyword::SEPARATOR => Literal::class,],
         // JSON_TABLE(expr, path COLUMNS (column_list) [AS] alias)
+        // has special handling because of irregular syntax
         self::JSON_TABLE => [Keyword::COLUMNS => false, Keyword::AS => false],
         // JSON_VALUE(json_doc, path [RETURNING type] [on_empty] [on_error])
         self::JSON_VALUE => [Keyword::RETURNING => CastType::class, Keyword::ON . ' ' . Keyword::EMPTY => false, Keyword::ON . ' ' . Keyword::ERROR => false],
@@ -649,8 +624,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
         // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
         // has special handling because of the suffix FROM
         self::TRIM => [Keyword::BOTH => false, Keyword::LEADING => false, Keyword::TRAILING => false, Keyword::FROM => false],
-        // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags])
-        // "The flags clause currently is unused."
+        // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags]) -- "The flags clause currently is unused."
         self::WEIGHT_STRING => [Keyword::AS => CastType::class],
     ];
 

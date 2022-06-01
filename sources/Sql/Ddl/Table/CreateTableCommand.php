@@ -50,7 +50,7 @@ class CreateTableCommand implements AnyCreateTableCommand
     /** @var Query|null */
     private $query;
 
-    /** @var false */
+    /** @var bool */
     private $startTransaction;
 
     /**

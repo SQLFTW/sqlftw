@@ -11,38 +11,43 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\UserName;
 
 class GrantProxyCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserName */
+    /** @var UserName|FunctionCall */
     private $proxy;
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-array<UserName|FunctionCall> */
     private $users;
 
     /** @var bool */
     private $withGrantOption;
 
     /**
-     * @param non-empty-array<UserName> $users
+     * @param UserName|FunctionCall $proxy
+     * @param non-empty-array<UserName|FunctionCall> $users
      */
-    public function __construct(UserName $proxy, array $users, bool $withGrantOption = false)
+    public function __construct($proxy, array $users, bool $withGrantOption = false)
     {
         $this->proxy = $proxy;
         $this->users = $users;
         $this->withGrantOption = $withGrantOption;
     }
 
-    public function getProxy(): UserName
+    /**
+     * @return UserName|FunctionCall
+     */
+    public function getProxy()
     {
         return $this->proxy;
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-array<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

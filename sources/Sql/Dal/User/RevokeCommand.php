@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\UserName;
 
 class RevokeCommand implements UserCommand
@@ -23,12 +24,12 @@ class RevokeCommand implements UserCommand
     /** @var UserPrivilegeResource */
     private $resource;
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-array<UserName|FunctionCall> */
     private $users;
 
     /**
      * @param non-empty-array<UserPrivilege> $privileges
-     * @param non-empty-array<UserName> $users
+     * @param non-empty-array<UserName|FunctionCall> $users
      */
     public function __construct(array $privileges, UserPrivilegeResource $resource, array $users)
     {
@@ -51,7 +52,7 @@ class RevokeCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-array<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

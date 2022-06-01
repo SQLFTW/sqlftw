@@ -25,10 +25,9 @@ class ResignalStatement implements CompoundStatementItem
     private $items;
 
     /**
-     * @param int|string $condition
      * @param array<string, RootNode> $items
      */
-    public function __construct($condition, array $items)
+    public function __construct(?string $condition, array $items)
     {
         foreach ($items as $key => $value) {
             ConditionInformationItem::get($key);

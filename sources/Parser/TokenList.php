@@ -492,7 +492,7 @@ class TokenList
     {
         $token = $this->expect(T::UUID | T::STRING);
         if (($token->type & T::STRING) !== 0) {
-            if (!preg_match(Lexer::UUID_REGEXP, $token->value)) {
+            if (preg_match(Lexer::UUID_REGEXP, $token->value) === 0) {
                 throw new InvalidValueException('uuid', $this);
             }
         }

@@ -13,14 +13,8 @@ require __DIR__ . '/../../bootstrap.php';
 Assert::parse("PURGE BINARY LOGS TO 'file.log'");
 Assert::parse("PURGE BINARY LOGS BEFORE '2001-01-01 01:01:01.000000'");
 
-Assert::parse(
-    "PURGE MASTER LOGS TO 'file.log'",
-    "PURGE BINARY LOGS TO 'file.log'"
-);
-Assert::parse(
-    "PURGE MASTER LOGS BEFORE '2001-01-01 01:01:01.000000'",
-    "PURGE BINARY LOGS BEFORE '2001-01-01 01:01:01.000000'"
-);
+Assert::parse("PURGE MASTER LOGS TO 'file.log'", "PURGE BINARY LOGS TO 'file.log'"); // MASTER -> BINARY
+Assert::parse("PURGE MASTER LOGS BEFORE '2001-01-01 01:01:01.000000'", "PURGE BINARY LOGS BEFORE '2001-01-01 01:01:01.000000'"); // MASTER -> BINARY
 
 
 // RESET MASTER

@@ -33,6 +33,7 @@ use Throwable;
 use function count;
 use function iterator_to_array;
 use function strtoupper;
+use function trim;
 
 class Parser
 {

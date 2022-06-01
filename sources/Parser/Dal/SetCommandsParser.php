@@ -102,6 +102,9 @@ class SetCommandsParser
         return new SetNamesCommand($charset, $collation, $assignments);
     }
 
+    /**
+     * @return non-empty-array<SetAssignment>
+     */
     private function parseAssignments(TokenList $tokenList): array
     {
         $assignments = [];

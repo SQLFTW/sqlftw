@@ -10,6 +10,7 @@ use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Sql\Expression\SimpleName;
 use Tracy\Debugger;
 use function get_class;
 use function implode;
@@ -77,5 +78,12 @@ Dumper::$objectFormatters[Platform::class] = static function (Platform $platform
 
     return Dumper::name(get_class($platform)) . Dumper::bracket('(')
         . Dumper::value($platform->getName()) . ' ' . Dumper::value2($version->format())
+        . Dumper::bracket(')');
+};
+
+// SimpleName
+Dumper::$objectFormatters[SimpleName::class] = static function (SimpleName $simpleName): string {
+    return Dumper::name(get_class($simpleName)) . Dumper::bracket('(')
+        . Dumper::value($simpleName->getName())
         . Dumper::bracket(')');
 };

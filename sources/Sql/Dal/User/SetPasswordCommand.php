@@ -11,13 +11,14 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\UserName;
 
 class SetPasswordCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserName|null */
+    /** @var UserName|FunctionCall|null */
     private $user;
 
     /** @var string|null */
@@ -32,8 +33,11 @@ class SetPasswordCommand implements UserCommand
     /** @var bool */
     private $retainCurrent;
 
+    /**
+     * @param UserName|FunctionCall|null $user
+     */
     public function __construct(
-        ?UserName $user,
+        $user,
         ?string $passwordFunction,
         ?string $password,
         ?string $replace,
@@ -47,7 +51,10 @@ class SetPasswordCommand implements UserCommand
         $this->retainCurrent = $retainCurrent;
     }
 
-    public function getUser(): ?UserName
+    /**
+     * @return UserName|FunctionCall|null
+     */
+    public function getUser()
     {
         return $this->user;
     }

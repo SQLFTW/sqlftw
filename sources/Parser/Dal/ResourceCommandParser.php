@@ -64,7 +64,7 @@ class ResourceCommandParser
     }
 
     /**
-     * @return array{non-empty-array<int|array{int, int}>|null, int|null, bool|null, bool}
+     * @return array{non-empty-array<array{0: int, 1?: int}>|null, int|null, bool|null, bool}
      */
     private function parseResourceGroupOptions(TokenList $tokenList): array
     {
@@ -75,8 +75,10 @@ class ResourceCommandParser
                 $start = (int) $tokenList->expectUnsignedInt();
                 if ($tokenList->hasSymbol('-')) {
                     $end = (int) $tokenList->expectUnsignedInt();
+                    /** @var non-empty-array<array{int, int}> $vcpus */
                     $vcpus[] = [$start, $end];
                 } else {
+                    /** @var non-empty-array<array{int}> $vcpus */
                     $vcpus[] = [$start];
                 }
             } while ($tokenList->hasSymbol(','));
@@ -125,6 +127,7 @@ class ResourceCommandParser
         $threadIds = null;
         if ($tokenList->hasKeywords(Keyword::FOR)) {
             do {
+                /** @var non-empty-array<int> $threadIds */
                 $threadIds[] = (int) $tokenList->expectUuid();
             } while ($tokenList->hasSymbol(','));
         }

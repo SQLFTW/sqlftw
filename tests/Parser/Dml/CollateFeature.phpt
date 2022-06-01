@@ -23,12 +23,9 @@ Assert::parse("SELECT MAX(k COLLATE latin1_german2_ci) FROM t1");
 // With DISTINCT
 Assert::parse("SELECT DISTINCT k COLLATE latin1_german2_ci FROM t1");
 
-// todo: _ charset declaration is not implemented yet
-/*
 // With WHERE
 Assert::parse("SELECT * FROM t1 WHERE _latin1 'Müller' COLLATE latin1_german2_ci = k");
 Assert::parse("SELECT * FROM t1 WHERE k LIKE _latin1 'Müller' COLLATE latin1_german2_ci");
 
 // With HAVING
 Assert::parse("SELECT k FROM t1 GROUP BY k HAVING k = _latin1 'Müller' COLLATE latin1_german2_ci");
-*/

@@ -11,13 +11,14 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\UserName;
 
 class SetDefaultRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-array<UserName|FunctionCall> */
     private $users;
 
     /** @var UserDefaultRolesSpecification|null */
@@ -27,7 +28,7 @@ class SetDefaultRoleCommand implements UserCommand
     private $rolesList;
 
     /**
-     * @param non-empty-array<UserName> $users
+     * @param non-empty-array<UserName|FunctionCall> $users
      * @param non-empty-array<string>|null $rolesList
      */
     public function __construct(array $users, ?UserDefaultRolesSpecification $roles, ?array $rolesList = null)
@@ -38,7 +39,7 @@ class SetDefaultRoleCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-array<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

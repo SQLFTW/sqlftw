@@ -123,6 +123,9 @@ class ReplicationCommandsParser
                 case BaseType::UNSIGNED:
                     $value = (int) $tokenList->expectUnsignedInt();
                     break;
+                case BaseType::NUMERIC:
+                    $value = (float) $tokenList->expect(TokenType::NUMBER)->value;
+                    break;
                 case BaseType::BOOL:
                     $value = $tokenList->expectBool();
                     break;
@@ -263,7 +266,7 @@ class ReplicationCommandsParser
                     $value = [];
                     if (!$tokenList->hasSymbol(')')) {
                         do {
-                            $value[] = (int)$tokenList->expectUnsignedInt();
+                            $value[] = (int) $tokenList->expectUnsignedInt();
                             if ($tokenList->hasSymbol(')')) {
                                 break;
                             } else {

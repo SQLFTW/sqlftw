@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dal\User;
 use Dogma\CombineIterator;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\UserName;
 use function array_values;
@@ -22,14 +23,14 @@ class RenameUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-array<UserName|FunctionCall> */
     protected $users;
 
     /** @var non-empty-array<UserName> */
     private $newUsers;
 
     /**
-     * @param non-empty-array<UserName> $users
+     * @param non-empty-array<UserName|FunctionCall> $users
      * @param non-empty-array<UserName> $newUsers
      */
     public function __construct(array $users, array $newUsers)
@@ -43,7 +44,7 @@ class RenameUserCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-array<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

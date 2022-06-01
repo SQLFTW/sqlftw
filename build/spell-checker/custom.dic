@@ -1,7 +1,8 @@
 
-args
 ansi
+args
 armscii
+async
 booleans
 buf
 crm
@@ -27,6 +28,7 @@ nul
 num
 parens
 perl
+plaintext
 postgresql
 refman
 remstr
@@ -42,6 +44,7 @@ tls
 ucs
 uint
 unary
+ucpus
 xyz
 
 hhhh
@@ -50,6 +53,7 @@ hhhhhhhhhhhh
 
 # en
 acceptor
+analytics
 backtick
 backtrace
 bitwise
@@ -62,6 +66,7 @@ designators
 destructor
 failover
 formatters
+hypergraph
 instantiable
 introducer
 keyring
@@ -77,6 +82,7 @@ preorder
 preparable
 pushdown
 reindex
+rewriter
 serializables
 startup
 submatch
@@ -139,29 +145,37 @@ doublewrite
 eq
 eventbuffer
 expr
+fdatasync
 filesystem
 fips
 frac
 frm
+fsync
 gcol
 geomcollection
 graphml
 gtids
 gtrid
+ibdata2
 ilike
 inet
 innobase
 innochecksum
 inplace
 isnull
+longlong
 lru
 lwm
+maxval
 mem
+memcached
 minvalue
 mmap
 mts
 multiset
+myfunc
 mysqlbinlog
+mysqltest
 mysqlx
 nclob
 ndbinfo
@@ -171,6 +185,7 @@ nowait
 ntile
 ntoa
 nullif
+numa
 objectagg
 oids
 passwordless
@@ -196,6 +211,7 @@ sqlcode
 sqlerror
 sqlmode
 stmt
+stmts
 stopword
 str
 sublist
@@ -206,15 +222,21 @@ sysid
 syy
 tablesample
 temporals
+testcase
 tmp
 trx
 tsi
+udf
 uescape
+ulong
+ulonglong
 unixtime
 unlisten
 unnest
+unreg
 variadic
 vcpu
+vcpus
 whitelist
 wlock
 xmlattributes

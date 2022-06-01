@@ -8,8 +8,8 @@ require __DIR__ . '/../../bootstrap.php';
 
 // ALTER [DEFINER = { user | CURRENT_USER }] EVENT event_name
 Assert::parse("ALTER EVENT evt1");
-Assert::parse("ALTER DEFINER usr1@host1 EVENT evt1");
-Assert::parse("ALTER DEFINER CURRENT_USER EVENT evt1");
+Assert::parse("ALTER DEFINER = usr1@host1 EVENT evt1");
+Assert::parse("ALTER DEFINER = CURRENT_USER EVENT evt1");
 
 // [ON SCHEDULE schedule:]
 //   {AT timestamp [+ INTERVAL interval] ... | EVERY interval}

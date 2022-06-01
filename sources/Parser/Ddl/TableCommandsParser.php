@@ -534,10 +534,7 @@ class TableCommandsParser
                 case Keyword::ORDER:
                     // ORDER BY col_name [, col_name] ...
                     $tokenList->expectKeyword(Keyword::BY);
-                    $columns = [];
-                    do {
-                        $columns[] = $this->expressionParser->parseOrderBy($tokenList);
-                    } while ($tokenList->hasSymbol(','));
+                    $columns = $this->expressionParser->parseOrderBy($tokenList);
                     $actions[] = new OrderByAction($columns);
                     break;
                 case Keyword::REBUILD:
@@ -847,25 +844,28 @@ class TableCommandsParser
                         // [DEFAULT (expr)]
                         $default = $this->expressionParser->parseExpression($tokenList);
                         $tokenList->expectSymbol(')');
-                    } elseif (($function = $tokenList->getAnyKeyword(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW)) !== null) {
-                        // [DEFAULT CURRENT_TIMESTAMP[(...)]]
-                        $function = BuiltInFunction::get($function);
-                        if ($tokenList->hasSymbol('(')) {
-                            $param = $tokenList->getUnsignedInt();
-                            $params = $param !== null ? [new UintLiteral($param)] : [];
-                            $tokenList->expectSymbol(')');
-                            $default = new FunctionCall($function, $params);
-                        } elseif (!$function->isBare()) {
-                            // throws
-                            $tokenList->expectSymbol('(');
-                            $tokenList->expectSymbol(')');
-                            $default = new FunctionCall($function);
-                        } else {
-                            $default = new FunctionCall($function);
-                        }
-                    } else {
+                        break;
+                    }
+                    $function = $tokenList->getAnyKeyword(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW);
+                    if ($function === null) {
                         // [DEFAULT default_value]
                         $default = $this->expressionParser->parseLiteral($tokenList);
+                        break;
+                    }
+                    // [DEFAULT CURRENT_TIMESTAMP[(...)]]
+                    $function = BuiltInFunction::get($function);
+                    if ($tokenList->hasSymbol('(')) {
+                        $param = $tokenList->getUnsignedInt();
+                        $params = $param !== null ? [new UintLiteral($param)] : [];
+                        $tokenList->expectSymbol(')');
+                        $default = new FunctionCall($function, $params);
+                    } elseif (!$function->isBare()) {
+                        // throws
+                        $tokenList->expectSymbol('(');
+                        $tokenList->expectSymbol(')');
+                        $default = new FunctionCall($function);
+                    } else {
+                        $default = new FunctionCall($function);
                     }
                     break;
                 case Keyword::VISIBLE:

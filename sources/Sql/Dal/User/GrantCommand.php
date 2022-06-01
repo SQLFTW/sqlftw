@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\UserName;
 
 class GrantCommand implements UserCommand
@@ -26,7 +27,7 @@ class GrantCommand implements UserCommand
     /** @var non-empty-array<IdentifiedUser> */
     private $users;
 
-    /** @var UserName|null */
+    /** @var UserName|FunctionCall|null */
     private $asUser;
 
     /** @var RolesSpecification|null */
@@ -44,6 +45,7 @@ class GrantCommand implements UserCommand
     /**
      * @param non-empty-array<UserPrivilege> $privileges
      * @param non-empty-array<IdentifiedUser> $users
+     * @param UserName|FunctionCall|null $asUser
      * @param array<UserTlsOption>|null $tlsOptions
      * @param non-empty-array<UserResourceOption>|null $resourceOptions
      */
@@ -51,7 +53,7 @@ class GrantCommand implements UserCommand
         array $privileges,
         UserPrivilegeResource $resource,
         array $users,
-        ?UserName $asUser = null,
+        $asUser = null,
         ?RolesSpecification $withRole = null,
         ?array $tlsOptions = null,
         ?array $resourceOptions = null,
@@ -88,7 +90,10 @@ class GrantCommand implements UserCommand
         return $this->users;
     }
 
-    public function getAsUser(): ?UserName
+    /**
+     * @return UserName|FunctionCall|null
+     */
+    public function getAsUser()
     {
         return $this->asUser;
     }

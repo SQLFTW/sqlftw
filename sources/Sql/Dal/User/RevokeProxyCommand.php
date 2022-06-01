@@ -10,35 +10,41 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
+use http\Client\Curl\User;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\UserName;
 
 class RevokeProxyCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var UserName */
+    /** @var UserName|FunctionCall */
     private $proxy;
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-array<UserName|FunctionCall> */
     private $users;
 
     /**
-     * @param non-empty-array<UserName> $users
+     * @param UserName|FunctionCall $proxy
+     * @param non-empty-array<UserName|FunctionCall> $users
      */
-    public function __construct(UserName $proxy, array $users)
+    public function __construct($proxy, array $users)
     {
         $this->proxy = $proxy;
         $this->users = $users;
     }
 
-    public function getProxy(): UserName
+    /**
+     * @return UserName|FunctionCall
+     */
+    public function getProxy()
     {
         return $this->proxy;
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-array<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

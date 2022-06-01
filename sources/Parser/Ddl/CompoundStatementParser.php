@@ -16,7 +16,6 @@ use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Compound\CaseStatement;
 use SqlFtw\Sql\Ddl\Compound\CloseCursorStatement;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;

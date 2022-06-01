@@ -14,13 +14,13 @@ use SqlFtw\Formatter\Formatter;
 class JsonTableExistsPathColumn implements JsonTableColumn
 {
 
-    /** @var StringValue */
+    /** @var string */
     private $name;
 
     /** @var ColumnType */
     private $type;
 
-    /** @var string */
+    /** @var StringValue */
     private $path;
 
     public function __construct(string $name, ColumnType $type, StringValue $path)

@@ -26,6 +26,9 @@ class TableReferenceParentheses implements TableReferenceNode, Countable
     /** @var non-empty-array<string>|null */
     private $columnList;
 
+    /**
+     * @param non-empty-array<string>|null $columnList
+     */
     public function __construct(TableReferenceNode $content, ?string $alias = null, ?array $columnList = null)
     {
         $this->content = $content;

@@ -22,7 +22,6 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexOptions;
 use SqlFtw\Sql\Ddl\Table\Index\IndexPart;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 

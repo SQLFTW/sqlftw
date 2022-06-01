@@ -29,7 +29,7 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
 
     public function __construct(?string $toLog, ?RootNode $before)
     {
-        if (!($toLog !== null ^ $before !== null)) { // @phpstan-ignore-line XOR needed
+        if (($toLog !== null) + ($before !== null) !== 1) { // @phpstan-ignore-line XOR needed
             throw new InvalidDefinitionException('Either TO or BEFORE must be set.');
         }
 
@@ -52,12 +52,8 @@ class PurgeBinaryLogsCommand implements ReplicationCommand
         $result = 'PURGE BINARY LOGS';
         if ($this->toLog !== null) {
             $result .= ' TO ' . $formatter->formatString($this->toLog);
-        } elseif ($this->before instanceof BuiltInFunction) {
+        } elseif ($this->before !== null) {
             $result .= ' BEFORE ' . $this->before->serialize($formatter);
-        } elseif ($this->before instanceof DateTime) {
-            $result .= ' BEFORE ' . $formatter->formatDateTime($this->before);
-        } else {
-            throw new ShouldNotHappenException('Either toLog or before should be set.');
         }
 
         return $result;

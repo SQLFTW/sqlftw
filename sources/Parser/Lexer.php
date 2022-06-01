@@ -10,7 +10,7 @@
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 // phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
 // phpcs:disable SlevomatCodingStandard.ControlStructures.AssignmentInCondition
-// spell-check-ignore: recvresult
+// spell-check-ignore: recvresult closehandle usexxx
 
 namespace SqlFtw\Parser;
 
@@ -68,7 +68,7 @@ class Lexer
 
     // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
     public const MYSQL_TEST_SUITE_COMMANDS = [
-        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'chmod', 'close', 'closehandle', 'connect',
+        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'character_set', 'chmod', 'close', 'closehandle', 'connect',
         'connection', 'copy_file', 'dec', 'die', 'diff_files', 'dirty_close', 'disable_abort_on_error', 'disable_async_client', 'disable_connect_log', 'disable_info',
         'disable_metadata', 'disable_ps_protocol', 'disable_query_log', 'disable_result_log', 'disable_testcase', 'disable_warnings',
         'disconnect', 'echo', 'enable_abort_on_error', 'enable_async_client', 'enable_connect_log', 'enable_info', 'enable_metadata', 'enable_ps_protocol', 'enable_query_log', 'enable_reconnect',
@@ -519,7 +519,7 @@ class Lexer
                                 }
                                 yield $previous = new Token(T::DELIMITER_DEFINITION, $start, $del, null, $condition);
                                 break;
-                            } elseif (preg_match('~-- ?(' . self::$mysqlTestSuiteCommandsString . ')~i', $line)) {
+                            } elseif (preg_match('~-- ?(' . self::$mysqlTestSuiteCommandsString . ')~i', $line) !== 0) {
                                 $position += strlen($line);
                                 $column += strlen($line);
 

@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\UserName;
 
 class GrantRoleCommand implements UserCommand
@@ -20,7 +21,7 @@ class GrantRoleCommand implements UserCommand
     /** @var non-empty-array<string> */
     private $roles;
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-array<UserName|FunctionCall> */
     private $users;
 
     /** @var bool */
@@ -28,7 +29,7 @@ class GrantRoleCommand implements UserCommand
 
     /**
      * @param non-empty-array<string> $roles
-     * @param non-empty-array<UserName> $users
+     * @param non-empty-array<UserName|FunctionCall> $users
      */
     public function __construct(array $roles, array $users, bool $withAdminOption = false)
     {
@@ -46,7 +47,7 @@ class GrantRoleCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-array<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

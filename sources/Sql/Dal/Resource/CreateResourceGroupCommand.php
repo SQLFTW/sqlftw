@@ -13,8 +13,8 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use function array_map;
+use function count;
 use function implode;
-use function is_array;
 
 class CreateResourceGroupCommand implements DalCommand
 {
@@ -26,7 +26,7 @@ class CreateResourceGroupCommand implements DalCommand
     /** @var ResourceGroupType */
     private $type;
 
-    /** @var non-empty-array<int|array{int, int}>|null */
+    /** @var non-empty-array<array{0: int, 1?: int}>|null */
     private $vcpus;
 
     /** @var int|null */
@@ -39,7 +39,7 @@ class CreateResourceGroupCommand implements DalCommand
     private $force;
 
     /**
-     * @param non-empty-array<int|array{int, int}>|null $vcpus
+     * @param non-empty-array<array{0: int, 1?: int}>|null $vcpus
      */
     public function __construct(string $name, ResourceGroupType $type, ?array $vcpus, ?int $threadPriority, ?bool $enable, bool $force = false)
     {
@@ -57,8 +57,8 @@ class CreateResourceGroupCommand implements DalCommand
 
         if ($this->vcpus !== null) {
             $result .= ' VCPU ' . implode(', ', array_map(static function ($vcpu): string {
-                    return is_array($vcpu) ? $vcpu[0] . '-' . $vcpu[1] : (string) $vcpu;
-                }, $this->vcpus));
+                return count($vcpu) === 1 ? (string) $vcpu[0] : $vcpu[0] . '-' . $vcpu[1]; // @phpstan-ignore-line
+            }, $this->vcpus));
         }
 
         if ($this->threadPriority !== null) {

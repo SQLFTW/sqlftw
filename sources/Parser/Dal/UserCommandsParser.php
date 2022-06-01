@@ -749,12 +749,13 @@ class UserCommandsParser
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-array<UserName|FunctionCall>
      */
     private function parseUsersList(TokenList $tokenList): array
     {
         $users = [];
         do {
+            /** @var non-empty-array<UserName|FunctionCall> $users */
             $users[] = $this->parseUser($tokenList);
         } while ($tokenList->hasSymbol(','));
 

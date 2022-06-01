@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use function array_map;
+use function count;
 use function implode;
 
 class AlterResourceGroupCommand implements DalCommand
@@ -22,7 +23,7 @@ class AlterResourceGroupCommand implements DalCommand
     /** @var string */
     private $name;
 
-    /** @var non-empty-array<int|array{int, int}>|null */
+    /** @var non-empty-array<array{0: int, 1?: int}>|null */
     private $vcpus;
 
     /** @var int|null */
@@ -34,6 +35,9 @@ class AlterResourceGroupCommand implements DalCommand
     /** @var bool */
     private $force;
 
+    /**
+     * @param non-empty-array<array{0: int, 1?: int}>|null $vcpus
+     */
     public function __construct(string $name, ?array $vcpus, ?int $threadPriority, ?bool $enable, bool $force = false)
     {
         $this->name = $name;
@@ -49,7 +53,7 @@ class AlterResourceGroupCommand implements DalCommand
 
         if ($this->vcpus !== null) {
             $result .= ' VCPU ' . implode(', ', array_map(static function ($vcpu): string {
-                return is_array($vcpu) ? $vcpu[0] . '-' . $vcpu[1] : (string) $vcpu;
+                return count($vcpu) === 1 ? (string) $vcpu[0] : $vcpu[0] . '-' . $vcpu[1]; // @phpstan-ignore-line
             }, $this->vcpus));
         }
 
