@@ -1153,7 +1153,7 @@ class ExpressionParser
         $orderBy = [];
         do {
             $column = $position = $collation = null;
-            $expression = $this->parseExpression($tokenList);
+            $expression = $this->parseAssignExpression($tokenList);
 
             // transform to more detailed shape
             if ($expression instanceof CollateExpression) {
