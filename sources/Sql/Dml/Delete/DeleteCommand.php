@@ -18,12 +18,13 @@ use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use function implode;
 
 class DeleteCommand implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<QualifiedName> */
+    /** @var non-empty-array<array{QualifiedName, string|null}> */
     private $tables;
 
     /** @var TableReferenceNode|null */
@@ -54,7 +55,7 @@ class DeleteCommand implements DmlCommand
     private $ignore;
 
     /**
-     * @param non-empty-array<QualifiedName> $tables
+     * @param non-empty-array<array{QualifiedName, string|null}> $tables
      * @param non-empty-array<OrderByExpression>|null $orderBy
      * @param non-empty-array<string>|null $partitions
      */
@@ -91,7 +92,7 @@ class DeleteCommand implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<QualifiedName>
+     * @return non-empty-array<array{QualifiedName, string|null}>
      */
     public function getTables(): array
     {
@@ -167,7 +168,9 @@ class DeleteCommand implements DmlCommand
             $result .= 'IGNORE ';
         }
 
-        $result .= 'FROM ' . $formatter->formatSerializablesList($this->tables);
+        $result .= 'FROM ' . implode(',', array_map(function (array $table) use ($formatter): string {
+            return $table[0]->serialize($formatter) . ($table[1] !== null ? ' AS ' . $table[1] : '');
+        }, $this->tables));
         if ($this->references !== null) {
             $result .= ' USING ' . $this->references->serialize($formatter);
         } elseif ($this->partitions !== null) {

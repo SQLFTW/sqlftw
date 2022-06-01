@@ -117,16 +117,22 @@ class DeleteCommandParser
     }
 
     /**
-     * @return non-empty-array<QualifiedName>
+     * @return non-empty-array<array{QualifiedName, string|null}>
      */
     private function parseTablesList(TokenList $tokenList): array
     {
         $tables = [];
         do {
-            $tables[] = $tokenList->expectQualifiedName();
+            $table = $tokenList->expectQualifiedName();
             if ($tokenList->hasSymbol('.')) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
             }
+            if ($tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectName();
+            } else {
+                $alias = $tokenList->getNonReservedName();
+            }
+            $tables[] = [$table, $alias];
         } while ($tokenList->hasSymbol(','));
 
         return $tables;
