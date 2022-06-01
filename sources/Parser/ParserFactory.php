@@ -180,6 +180,7 @@ class ParserFactory
     {
         return new ExplainCommandParser(
             $this->queryParser,
+            $this->withParser,
             $this->getInsertCommandParser(),
             $this->getUpdateCommandParser(),
             $this->getDeleteCommandParser()

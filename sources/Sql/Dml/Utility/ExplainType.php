@@ -20,5 +20,6 @@ class ExplainType extends SqlEnum
     public const FORMAT_TRADITIONAL = Keyword::FORMAT . '=' . Keyword::TRADITIONAL;
     public const FORMAT_JSON = Keyword::FORMAT . '=' . Keyword::JSON;
     public const FORMAT_TREE = Keyword::FORMAT . '=TREE';
+    public const ANALYZE = Keyword::ANALYZE;
 
 }

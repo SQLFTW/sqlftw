@@ -26,6 +26,9 @@ class ExplainCommandParser
     /** @var QueryParser */
     private $queryParser;
 
+    /** @var WithParser */
+    private $withParser;
+
     /** @var InsertCommandParser */
     private $insertCommandParser;
 
@@ -37,12 +40,14 @@ class ExplainCommandParser
 
     public function __construct(
         QueryParser $queryParser,
+        WithParser $withParser,
         InsertCommandParser $insertCommandParser,
         UpdateCommandParser $updateCommandParser,
         DeleteCommandParser $deleteCommandParser
     )
     {
         $this->queryParser = $queryParser;
+        $this->withParser = $withParser;
         $this->insertCommandParser = $insertCommandParser;
         $this->updateCommandParser = $updateCommandParser;
         $this->deleteCommandParser = $deleteCommandParser;
@@ -55,6 +60,8 @@ class ExplainCommandParser
      * {EXPLAIN | DESCRIBE | DESC}
      *     [explain_type]
      *     {explainable_stmt | FOR CONNECTION connection_id}
+     *
+     * {EXPLAIN | DESCRIBE | DESC} ANALYZE [FORMAT = TREE] explainable_statement
      *
      * explain_type: {
      *     EXTENDED
@@ -82,9 +89,15 @@ class ExplainCommandParser
     {
         $tokenList->expectAnyKeyword(Keyword::EXPLAIN, Keyword::DESCRIBE, Keyword::DESC);
 
-        $type = $tokenList->getAnyKeyword(Keyword::EXTENDED, Keyword::PARTITIONS, Keyword::FORMAT);
+        $type = $tokenList->getAnyKeyword(Keyword::EXTENDED, Keyword::PARTITIONS, Keyword::FORMAT, Keyword::ANALYZE);
         if ($type !== null) {
-            if ($type === Keyword::FORMAT) {
+            if ($type === Keyword::ANALYZE) {
+                if ($tokenList->hasKeyword(Keyword::FORMAT)) {
+                    $tokenList->expectSymbol('=');
+                    $tokenList->expectName('TREE');
+                }
+                $type = ExplainType::get(ExplainType::ANALYZE);
+            } elseif ($type === Keyword::FORMAT) {
                 $tokenList->expectOperator(Operator::EQUAL);
                 $format = strtoupper($tokenList->expectAnyName(Keyword::TRADITIONAL, Keyword::JSON, 'TREE'));
                 $type = ExplainType::get($type . '=' . $format);
@@ -94,15 +107,25 @@ class ExplainCommandParser
         }
 
         $position = $tokenList->getPosition();
-        $keyword = $tokenList->getAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR);
+        $keywords = [Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::INSERT, Keyword::UPDATE, Keyword::DELETE, Keyword::REPLACE, Keyword::FOR];
+        if ($type === null || $type->equalsValue(ExplainType::ANALYZE)) {
+            $keywords[] = Keyword::FOR;
+        }
+        $what = $tokenList->getAnyKeyword(...$keywords);
+        if ($what === null) {
+            $what = $tokenList->hasSymbol('(') ? '(' : null;
+        }
         $statement = $connectionId = null;
-        switch ($keyword) {
+        switch ($what) {
             case Keyword::FOR:
                 $tokenList->expectKeyword(Keyword::CONNECTION);
                 $connectionId = (int) $tokenList->expectUnsignedInt();
                 break;
-            case Keyword::SELECT:
             case Keyword::WITH:
+                $statement = $this->withParser->parseWith($tokenList->resetPosition($position));
+                break;
+            case Keyword::SELECT:
+            case '(':
                 $statement = $this->queryParser->parseQuery($tokenList->resetPosition($position));
                 break;
             case Keyword::TABLE:
