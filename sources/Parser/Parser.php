@@ -16,6 +16,7 @@ use Generator;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
+use SqlFtw\Sql\Expression\BinaryOperator;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
@@ -811,6 +812,9 @@ class Parser
                         } else {
                             throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                         }
+                    } elseif ($value instanceof BinaryOperator) {
+                        // todo: skipped for now, needs evaluating expressions
+                        continue;
                     } elseif ($value instanceof UserVariable) {
                         // todo: no way to detect this
                         continue;
