@@ -100,7 +100,7 @@ class DeleteCommandParser
 
         $where = null;
         if ($tokenList->hasKeyword(Keyword::WHERE)) {
-            $where = $this->expressionParser->parseExpression($tokenList);
+            $where = $this->expressionParser->parseAssignExpression($tokenList);
         }
 
         $orderBy = $limit = null;
