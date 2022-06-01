@@ -113,7 +113,7 @@ class JoinParser
         do {
             if ($tokenList->hasKeyword(Keyword::STRAIGHT_JOIN)) {
                 // STRAIGHT_JOIN
-                $right = $this->parseTableFactor($tokenList);
+                $right = $this->parseTableReference($tokenList);
                 $condition = null;
                 if ($tokenList->hasKeyword(Keyword::ON)) {
                     $condition = $this->expressionParser->parseExpression($tokenList);
@@ -133,7 +133,7 @@ class JoinParser
                     }
                 }
                 $tokenList->expectKeyword(Keyword::JOIN);
-                $right = $this->parseTableFactor($tokenList);
+                $right = $this->parseTableReference($tokenList);
 
                 $left = new NaturalJoin($left, $right, $side);
                 continue;
@@ -152,7 +152,7 @@ class JoinParser
             }
             $keyword = $tokenList->getAnyKeyword(Keyword::INNER, Keyword::CROSS, Keyword::JOIN);
             if ($keyword !== null) {
-                // INNER JOIN
+                // [INNER | CROSS] JOIN
                 $cross = false;
                 if ($keyword === Keyword::INNER) {
                     $tokenList->expectKeyword(Keyword::JOIN);
@@ -160,7 +160,7 @@ class JoinParser
                     $tokenList->expectKeyword(Keyword::JOIN);
                     $cross = true;
                 }
-                $right = $this->parseTableFactor($tokenList);
+                $right = $this->parseTableReference($tokenList);
                 [$on, $using] = $this->parseJoinCondition($tokenList);
 
                 $left = new InnerJoin($left, $right, $cross, $on, $using);
@@ -169,26 +169,6 @@ class JoinParser
 
             return $left;
         } while (true);
-    }
-
-    /**
-     * @return array{RootNode|null, non-empty-array<string>|null}
-     */
-    private function parseJoinCondition(TokenList $tokenList): array
-    {
-        $on = $using = null;
-        if ($tokenList->hasKeyword(Keyword::ON)) {
-            $on = $this->expressionParser->parseExpression($tokenList);
-        } elseif ($tokenList->hasKeyword(Keyword::USING)) {
-            $tokenList->expectSymbol('(');
-            $using = [];
-            do {
-                $using[] = $tokenList->expectName();
-            } while ($tokenList->hasSymbol(','));
-            $tokenList->expectSymbol(')');
-        }
-
-        return [$on, $using];
     }
 
     /**
@@ -283,6 +263,26 @@ class JoinParser
         }
 
         return [$alias, $columns];
+    }
+
+    /**
+     * @return array{RootNode|null, non-empty-array<string>|null}
+     */
+    private function parseJoinCondition(TokenList $tokenList): array
+    {
+        $on = $using = null;
+        if ($tokenList->hasKeyword(Keyword::ON)) {
+            $on = $this->expressionParser->parseExpression($tokenList);
+        } elseif ($tokenList->hasKeyword(Keyword::USING)) {
+            $tokenList->expectSymbol('(');
+            $using = [];
+            do {
+                $using[] = $tokenList->expectName();
+            } while ($tokenList->hasSymbol(','));
+            $tokenList->expectSymbol(')');
+        }
+
+        return [$on, $using];
     }
 
     /**
