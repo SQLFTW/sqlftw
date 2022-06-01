@@ -22,13 +22,11 @@ class AssignOperator implements OperatorExpression
     /** @var Identifier */
     private $variable;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $expression;
 
-    public function __construct(
-        Identifier $variable,
-        ExpressionNode $expression
-    ) {
+    public function __construct(Identifier $variable, RootNode $expression)
+    {
         $this->variable = $variable;
         $this->expression = $expression;
     }
@@ -38,7 +36,7 @@ class AssignOperator implements OperatorExpression
         return $this->variable;
     }
 
-    public function getExpression(): ExpressionNode
+    public function getExpression(): RootNode
     {
         return $this->expression;
     }

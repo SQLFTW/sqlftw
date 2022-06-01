@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
 use function array_map;
 use function implode;
@@ -24,7 +24,7 @@ class WindowSpecification implements SqlSerializable
     /** @var string|null */
     private $name;
 
-    /** @var ExpressionNode[]|null */
+    /** @var RootNode[]|null */
     private $partitionBy;
 
     /** @var OrderByExpression[]|null */
@@ -34,7 +34,7 @@ class WindowSpecification implements SqlSerializable
     private $frame;
 
     /**
-     * @param ExpressionNode[]|null $partitionBy
+     * @param RootNode[]|null $partitionBy
      * @param OrderByExpression[]|null $orderBy
      */
     public function __construct(?string $name, ?array $partitionBy, ?array $orderBy, ?WindowFrame $frame)
@@ -51,7 +51,7 @@ class WindowSpecification implements SqlSerializable
     }
 
     /**
-     * @return ExpressionNode[]|null
+     * @return RootNode[]|null
      */
     public function getPartitionBy(): ?array
     {
@@ -78,7 +78,7 @@ class WindowSpecification implements SqlSerializable
             $parts[] = $formatter->formatName($this->name);
         }
         if ($this->partitionBy !== null) {
-            $parts[] = 'PARTITION BY ' . implode(', ', array_map(static function (ExpressionNode $expression) use ($formatter): string {
+            $parts[] = 'PARTITION BY ' . implode(', ', array_map(static function (RootNode $expression) use ($formatter): string {
                 return $expression->serialize($formatter);
             }, $this->partitionBy));
         }

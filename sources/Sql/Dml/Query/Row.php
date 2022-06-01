@@ -10,18 +10,18 @@
 namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
 use function array_values;
 
 class Row implements SqlSerializable
 {
 
-    /** @var non-empty-array<ExpressionNode> */
+    /** @var non-empty-array<RootNode> */
     private $values;
 
     /**
-     * @param non-empty-array<ExpressionNode> $values
+     * @param non-empty-array<RootNode> $values
      */
     public function __construct(array $values)
     {
@@ -29,7 +29,7 @@ class Row implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-array<RootNode>
      */
     public function getValues(): array
     {

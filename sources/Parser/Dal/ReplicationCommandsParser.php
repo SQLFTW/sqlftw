@@ -40,11 +40,9 @@ use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 use function array_shift;
 use function explode;
-use function is_a;
 use function trim;
 
 class ReplicationCommandsParser

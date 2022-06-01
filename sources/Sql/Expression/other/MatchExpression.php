@@ -22,7 +22,7 @@ class MatchExpression implements RootNode
     /** @var non-empty-array<ColumnName> */
     private $columns;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $query;
 
     /** @var MatchMode|null */
@@ -34,7 +34,7 @@ class MatchExpression implements RootNode
     /**
      * @param non-empty-array<ColumnName> $columns
      */
-    public function __construct(array $columns, ExpressionNode $query, ?MatchMode $mode, bool $queryExpansion = false)
+    public function __construct(array $columns, RootNode $query, ?MatchMode $mode, bool $queryExpansion = false)
     {
         $this->columns = $columns;
         $this->query = $query;
@@ -50,7 +50,7 @@ class MatchExpression implements RootNode
         return $this->columns;
     }
 
-    public function getQuery(): ExpressionNode
+    public function getQuery(): RootNode
     {
         return $this->query;
     }

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 
 class ShowTablesCommand implements ShowCommand
 {
@@ -23,7 +23,7 @@ class ShowTablesCommand implements ShowCommand
     /** @var string|null */
     private $like;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $where;
 
     /** @var bool */
@@ -35,7 +35,7 @@ class ShowTablesCommand implements ShowCommand
     public function __construct(
         ?string $schema = null,
         ?string $like = null,
-        ?ExpressionNode $where = null,
+        ?RootNode $where = null,
         bool $full = false,
         bool $extended = false
     ) {
@@ -56,7 +56,7 @@ class ShowTablesCommand implements ShowCommand
         return $this->like;
     }
 
-    public function getWhere(): ?ExpressionNode
+    public function getWhere(): ?RootNode
     {
         return $this->where;
     }

@@ -54,23 +54,20 @@ class BinaryOperator implements OperatorExpression
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $left;
 
     /** @var string|string[] */
     private $operator;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $right;
 
     /**
      * @param string|string[] $operator
      */
-    public function __construct(
-        ExpressionNode $left,
-        $operator,
-        ExpressionNode $right
-    ) {
+    public function __construct(RootNode $left, $operator, RootNode $right)
+    {
         if (is_array($operator)) {
             foreach ($operator as $op) {
                 Operator::get($op)->checkBinary();
@@ -84,7 +81,7 @@ class BinaryOperator implements OperatorExpression
         $this->right = $right;
     }
 
-    public function getLeft(): ExpressionNode
+    public function getLeft(): RootNode
     {
         return $this->left;
     }
@@ -97,7 +94,7 @@ class BinaryOperator implements OperatorExpression
         return $this->operator;
     }
 
-    public function getRight(): ExpressionNode
+    public function getRight(): RootNode
     {
         return $this->right;
     }

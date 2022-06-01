@@ -12,8 +12,8 @@ namespace SqlFtw\Sql\Ddl\Table\Partition;
 use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
 use function implode;
 use function is_array;
@@ -28,10 +28,10 @@ class PartitionDefinition implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var non-empty-array<string|int|float|bool|Literal>|ExpressionNode|bool|null */
+    /** @var non-empty-array<string|int|float|bool|Literal>|RootNode|bool|null */
     private $lessThan;
 
-    /** @var non-empty-array<ExpressionNode>|null */
+    /** @var non-empty-array<RootNode>|null */
     private $values;
 
     /** @var non-empty-array<string, int|string>|null */
@@ -41,8 +41,8 @@ class PartitionDefinition implements SqlSerializable
     private $subpartitions;
 
     /**
-     * @param non-empty-array<string|int|float|bool|Literal>|ExpressionNode|bool|null $lessThan
-     * @param non-empty-array<ExpressionNode>|null $values
+     * @param non-empty-array<string|int|float|bool|Literal>|RootNode|bool|null $lessThan
+     * @param non-empty-array<RootNode>|null $values
      * @param non-empty-array<string, int|string>|null $options
      * @param non-empty-array<string, non-empty-array<int|string>|null>|null $subpartitions
      */
@@ -76,7 +76,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string|int|float|bool|Literal>|ExpressionNode|bool|null
+     * @return non-empty-array<string|int|float|bool|Literal>|RootNode|bool|null
      */
     public function getLessThan()
     {
@@ -84,7 +84,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>|null
+     * @return non-empty-array<RootNode>|null
      */
     public function getValues(): ?array
     {
@@ -113,7 +113,7 @@ class PartitionDefinition implements SqlSerializable
 
         if ($this->lessThan !== null) {
             $result .= ' VALUES LESS THAN ';
-            if ($this->lessThan instanceof ExpressionNode) {
+            if ($this->lessThan instanceof RootNode) {
                 $result .= '(' . $this->lessThan->serialize($formatter) . ')';
             } elseif (is_array($this->lessThan)) {
                 $result .= '(' . $formatter->formatValuesList($this->lessThan) . ')';

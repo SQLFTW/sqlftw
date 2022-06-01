@@ -18,10 +18,10 @@ use SqlFtw\Sql\Ddl\Table\Constraint\ReferenceDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Expression\ColumnType;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\RootNode;
 
 class ColumnDefinition implements TableItem
 {
@@ -47,7 +47,7 @@ class ColumnDefinition implements TableItem
     /** @var bool|null */
     private $visible;
 
-    /** @var string|int|float|bool|ExpressionNode|null */
+    /** @var string|int|float|bool|RootNode|null */
     private $defaultValue;
 
     /** @var bool */
@@ -59,7 +59,7 @@ class ColumnDefinition implements TableItem
     /** @var GeneratedColumnType|null */
     private $generatedColumnType;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $expression;
 
     /** @var string|null */
@@ -87,7 +87,7 @@ class ColumnDefinition implements TableItem
     private $check;
 
     /**
-     * @param string|int|float|bool|ExpressionNode|null $defaultValue
+     * @param string|int|float|bool|RootNode|null $defaultValue
      * @param Identifier|FunctionCall|null $onUpdate
      * @param CheckDefinition|ConstraintDefinition|null $check
      */
@@ -98,7 +98,7 @@ class ColumnDefinition implements TableItem
         ?bool $nullable = null,
         ?bool $visible = null,
         bool $autoincrement = false,
-        ?ExpressionNode $onUpdate = null,
+        ?RootNode $onUpdate = null,
         ?string $comment = null,
         ?IndexType $indexType = null,
         ?ColumnFormat $columnFormat = null,
@@ -129,7 +129,7 @@ class ColumnDefinition implements TableItem
     public static function createGenerated(
         string $name,
         ColumnType $type,
-        ExpressionNode $expression,
+        RootNode $expression,
         ?GeneratedColumnType $generatedColumnType,
         ?bool $nullable = null,
         ?bool $visible = null,
@@ -148,7 +148,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @param string|int|float|bool|ExpressionNode|null $defaultValue
+     * @param string|int|float|bool|RootNode|null $defaultValue
      */
     public function duplicateWithDefaultValue($defaultValue): self
     {
@@ -194,13 +194,13 @@ class ColumnDefinition implements TableItem
     /**
      * @return Identifier|FunctionCall|null
      */
-    public function getOnUpdate(): ?ExpressionNode
+    public function getOnUpdate(): ?RootNode
     {
         return $this->onUpdate;
     }
 
     /**
-     * @return string|int|float|bool|ExpressionNode|null
+     * @return string|int|float|bool|RootNode|null
      */
     public function getDefaultValue()
     {
@@ -217,7 +217,7 @@ class ColumnDefinition implements TableItem
         return $this->generatedColumnType;
     }
 
-    public function getExpression(): ?ExpressionNode
+    public function getExpression(): ?RootNode
     {
         return $this->expression;
     }
@@ -277,7 +277,7 @@ class ColumnDefinition implements TableItem
             }
             if ($this->defaultValue instanceof FunctionCall) {
                 $result .= ' DEFAULT ' . $this->defaultValue->serialize($formatter);
-            } elseif ($this->defaultValue instanceof ExpressionNode && !$this->defaultValue instanceof Literal) { // todo: better categorization of expressions nodes
+            } elseif ($this->defaultValue instanceof RootNode && !$this->defaultValue instanceof Literal) { // todo: better categorization of expressions nodes
                 $result .= ' DEFAULT (' . $this->defaultValue->serialize($formatter) . ')';
             } elseif ($this->defaultValue !== null) {
                 $result .= ' DEFAULT ' . $formatter->formatValue($this->defaultValue);

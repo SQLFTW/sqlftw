@@ -11,23 +11,23 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 
 class StraightJoin extends Join
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $condition;
 
-    public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?ExpressionNode $condition)
+    public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?RootNode $condition)
     {
         parent::__construct($left, $right);
 
         $this->condition = $condition;
     }
 
-    public function getCondition(): ?ExpressionNode
+    public function getCondition(): ?RootNode
     {
         return $this->condition;
     }

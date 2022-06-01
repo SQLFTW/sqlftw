@@ -15,8 +15,8 @@ use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function count;
 
@@ -30,7 +30,7 @@ class UpdateCommand implements DmlCommand
     /** @var non-empty-array<SetColumnExpression> */
     private $values;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $where;
 
     /** @var WithClause|null */
@@ -55,7 +55,7 @@ class UpdateCommand implements DmlCommand
     public function __construct(
         TableReferenceNode $tableReferences,
         array $values,
-        ?ExpressionNode $where = null,
+        ?RootNode $where = null,
         ?WithClause $with = null,
         ?array $orderBy = null,
         ?int $limit = null,
@@ -89,7 +89,7 @@ class UpdateCommand implements DmlCommand
         return $this->values;
     }
 
-    public function getWhere(): ?ExpressionNode
+    public function getWhere(): ?RootNode
     {
         return $this->where;
     }

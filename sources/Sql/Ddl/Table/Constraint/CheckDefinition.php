@@ -12,19 +12,19 @@ namespace SqlFtw\Sql\Ddl\Table\Constraint;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\TableItem;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 
 class CheckDefinition implements TableItem, ConstraintBody
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $expression;
 
     /** @var bool|null */
     private $enforced;
 
-    public function __construct(ExpressionNode $expression, ?bool $enforced = null)
+    public function __construct(RootNode $expression, ?bool $enforced = null)
     {
         $this->expression = $expression;
         $this->enforced = $enforced;
@@ -38,7 +38,7 @@ class CheckDefinition implements TableItem, ConstraintBody
         return $that;
     }
 
-    public function getExpression(): ExpressionNode
+    public function getExpression(): RootNode
     {
         return $this->expression;
     }

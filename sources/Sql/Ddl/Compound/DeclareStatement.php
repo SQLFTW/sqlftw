@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnType;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 
 class DeclareStatement implements CompoundStatementItem
 {
@@ -24,13 +24,13 @@ class DeclareStatement implements CompoundStatementItem
     /** @var ColumnType */
     private $type;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $default;
 
     /**
      * @param non-empty-array<string> $names
      */
-    public function __construct(array $names, ColumnType $type, ?ExpressionNode $default = null)
+    public function __construct(array $names, ColumnType $type, ?RootNode $default = null)
     {
         $this->names = $names;
         $this->type = $type;
@@ -50,7 +50,7 @@ class DeclareStatement implements CompoundStatementItem
         return $this->type;
     }
 
-    public function getDefault(): ?ExpressionNode
+    public function getDefault(): ?RootNode
     {
         return $this->default;
     }

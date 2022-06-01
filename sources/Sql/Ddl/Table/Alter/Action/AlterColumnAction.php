@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\RootNode;
 
 class AlterColumnAction implements ColumnAction
 {
@@ -21,10 +21,10 @@ class AlterColumnAction implements ColumnAction
     /** @var string */
     private $name;
 
-    /** @var ?ExpressionNode */
+    /** @var RootNode|null */
     private $default;
 
-    public function __construct(string $name, ?ExpressionNode $default)
+    public function __construct(string $name, ?RootNode $default)
     {
         $this->name = $name;
         $this->default = $default;
@@ -35,7 +35,7 @@ class AlterColumnAction implements ColumnAction
         return $this->name;
     }
 
-    public function getDefault(): ?ExpressionNode
+    public function getDefault(): ?RootNode
     {
         return $this->default;
     }

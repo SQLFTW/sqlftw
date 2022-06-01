@@ -12,21 +12,21 @@ namespace SqlFtw\Sql\Dal\Kill;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 
 class KillCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $processId;
 
-    public function __construct(ExpressionNode $processId)
+    public function __construct(RootNode $processId)
     {
         $this->processId = $processId;
     }
 
-    public function getProcessId(): ExpressionNode
+    public function getProcessId(): RootNode
     {
         return $this->processId;
     }

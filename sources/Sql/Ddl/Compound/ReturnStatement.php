@@ -11,21 +11,21 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 
 class ReturnStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $expression;
 
-    public function __construct(ExpressionNode $expression)
+    public function __construct(RootNode $expression)
     {
         $this->expression = $expression;
     }
 
-    public function getExpression(): ExpressionNode
+    public function getExpression(): RootNode
     {
         return $this->expression;
     }

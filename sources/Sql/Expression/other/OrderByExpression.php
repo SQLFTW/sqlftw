@@ -29,7 +29,7 @@ class OrderByExpression implements ArgumentNode
     /** @var string|ColumnIdentifier|null */
     private $column;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $expression;
 
     /** @var int|null */
@@ -44,7 +44,7 @@ class OrderByExpression implements ArgumentNode
     public function __construct(
         ?Order $order,
         $column,
-        ?ExpressionNode $expression = null,
+        ?RootNode $expression = null,
         ?int $position = null,
         ?Collation $collation = null
     )
@@ -73,7 +73,7 @@ class OrderByExpression implements ArgumentNode
         return $this->column;
     }
 
-    public function getExpression(): ?ExpressionNode
+    public function getExpression(): ?RootNode
     {
         return $this->expression;
     }

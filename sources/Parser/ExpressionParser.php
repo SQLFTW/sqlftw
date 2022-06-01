@@ -87,7 +87,6 @@ use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use function explode;
 use function in_array;
-use function is_int;
 use function sprintf;
 use function strlen;
 use function strtoupper;

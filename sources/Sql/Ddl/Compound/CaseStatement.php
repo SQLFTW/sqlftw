@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function count;
@@ -20,20 +20,20 @@ class CaseStatement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $condition;
 
-    /** @var non-empty-array<ExpressionNode> */
+    /** @var non-empty-array<RootNode> */
     private $values;
 
     /** @var non-empty-array<array<Statement>> */
     private $statementLists;
 
     /**
-     * @param non-empty-array<ExpressionNode> $values
+     * @param non-empty-array<RootNode> $values
      * @param non-empty-array<array<Statement>> $statementLists
      */
-    public function __construct(?ExpressionNode $condition, array $values, array $statementLists)
+    public function __construct(?RootNode $condition, array $values, array $statementLists)
     {
         if (count($statementLists) < count($values) || count($statementLists) > count($values) + 1) {
             throw new InvalidDefinitionException('Count of statement lists should be same or one higher then count of values.');
@@ -44,13 +44,13 @@ class CaseStatement implements CompoundStatementItem
         $this->statementLists = $statementLists;
     }
 
-    public function getCondition(): ?ExpressionNode
+    public function getCondition(): ?RootNode
     {
         return $this->condition;
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-array<RootNode>
      */
     public function getValues(): array
     {

@@ -17,9 +17,9 @@ use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadPriority;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;
 
 class LoadCommandsParser
@@ -123,7 +123,7 @@ class LoadCommandsParser
     }
 
     /**
-     * @return array{int|null, non-empty-array<string>|null, non-empty-array<string, ExpressionNode>|null}
+     * @return array{int|null, non-empty-array<string>|null, non-empty-array<string, RootNode>|null}
      */
     private function parseRowsAndFields(TokenList $tokenList): array
     {

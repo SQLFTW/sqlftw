@@ -26,7 +26,6 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;

@@ -4,7 +4,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
 class WhileStatement implements CompoundStatementItem
@@ -14,7 +14,7 @@ class WhileStatement implements CompoundStatementItem
     /** @var Statement[] */
     private $statements;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $condition;
 
     /** @var string|null */
@@ -23,7 +23,7 @@ class WhileStatement implements CompoundStatementItem
     /**
      * @param Statement[] $statements
      */
-    public function __construct(array $statements, ExpressionNode $condition, ?string $label)
+    public function __construct(array $statements, RootNode $condition, ?string $label)
     {
         $this->statements = $statements;
         $this->condition = $condition;
@@ -38,7 +38,7 @@ class WhileStatement implements CompoundStatementItem
         return $this->statements;
     }
 
-    public function getCondition(): ExpressionNode
+    public function getCondition(): RootNode
     {
         return $this->condition;
     }

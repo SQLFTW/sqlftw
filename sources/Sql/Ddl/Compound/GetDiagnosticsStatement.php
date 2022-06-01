@@ -13,7 +13,7 @@ use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Util\TypeChecker;
 
@@ -27,7 +27,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem, Command
     /** @var non-empty-array<DiagnosticsItem>|null */
     private $statementItems;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $conditionNumber;
 
     /** @var non-empty-array<DiagnosticsItem>|null */
@@ -40,7 +40,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem, Command
     public function __construct(
         ?DiagnosticsArea $area,
         ?array $statementItems,
-        ?ExpressionNode $conditionNumber,
+        ?RootNode $conditionNumber,
         ?array $conditionItems
     ) {
         if ((($statementItems !== null) ^ ($conditionItems === null))) { // @phpstan-ignore-line XOR needed
@@ -81,7 +81,7 @@ class GetDiagnosticsStatement implements CompoundStatementItem, Command
         return $this->conditionItems;
     }
 
-    public function getConditionNumber(): ?ExpressionNode
+    public function getConditionNumber(): ?RootNode
     {
         return $this->conditionNumber;
     }

@@ -20,19 +20,19 @@ class CollateExpression implements RootNode
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $expression;
 
     /** @var Collation */
     private $collation;
 
-    public function __construct(ExpressionNode $expression, Collation $collation)
+    public function __construct(RootNode $expression, Collation $collation)
     {
         $this->expression = $expression;
         $this->collation = $collation;
     }
 
-    public function getExpression(): ExpressionNode
+    public function getExpression(): RootNode
     {
         return $this->expression;
     }

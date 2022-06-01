@@ -38,9 +38,9 @@ use SqlFtw\Sql\Dml\Query\WindowFrameUnits;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Asterisk;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use function array_pop;
@@ -569,7 +569,7 @@ class QueryParser
      *   | expr FOLLOWING
      * }
      */
-    private function parseFrameBorder(TokenList $tokenList, ?WindowFrameType &$type, ?ExpressionNode &$expression): void
+    private function parseFrameBorder(TokenList $tokenList, ?WindowFrameType &$type, ?RootNode &$expression): void
     {
         if ($tokenList->hasKeywords(Keyword::CURRENT, Keyword::ROW)) {
             $type = WindowFrameType::get(WindowFrameType::CURRENT_ROW);

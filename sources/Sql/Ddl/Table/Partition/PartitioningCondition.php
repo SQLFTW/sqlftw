@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
 
 class PartitioningCondition implements SqlSerializable
@@ -21,7 +21,7 @@ class PartitioningCondition implements SqlSerializable
     /** @var PartitioningConditionType */
     private $type;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $expression;
 
     /** @var array<string>|null */
@@ -35,7 +35,7 @@ class PartitioningCondition implements SqlSerializable
      */
     public function __construct(
         PartitioningConditionType $type,
-        ?ExpressionNode $expression,
+        ?RootNode $expression,
         ?array $columns = null,
         ?int $algorithm = null
     ) {
@@ -50,7 +50,7 @@ class PartitioningCondition implements SqlSerializable
         return $this->type;
     }
 
-    public function getExpression(): ?ExpressionNode
+    public function getExpression(): ?RootNode
     {
         return $this->expression;
     }

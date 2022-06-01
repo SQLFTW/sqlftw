@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -28,18 +28,18 @@ class WindowFrame implements SqlSerializable
     /** @var WindowFrameType|null */
     public $endType;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     public $startExpression;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     public $endExpression;
 
     public function __construct(
         WindowFrameUnits $units,
         WindowFrameType $startType,
         ?WindowFrameType $endType,
-        ?ExpressionNode $startExpression,
-        ?ExpressionNode $endExpression
+        ?RootNode $startExpression,
+        ?RootNode $endExpression
     )
     {
         if ($startType->equalsAny(WindowFrameType::PRECEDING, WindowFrameType::FOLLOWING) xor $startExpression !== null) {
@@ -72,12 +72,12 @@ class WindowFrame implements SqlSerializable
         return $this->endType;
     }
 
-    public function getStartExpression(): ?ExpressionNode
+    public function getStartExpression(): ?RootNode
     {
         return $this->startExpression;
     }
 
-    public function getEndExpression(): ?ExpressionNode
+    public function getEndExpression(): ?RootNode
     {
         return $this->endExpression;
     }

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function count;
@@ -20,14 +20,14 @@ class IfStatement implements Statement
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<ExpressionNode> */
+    /** @var non-empty-array<RootNode> */
     private $conditions;
 
     /** @var non-empty-array<array<Statement>> */
     private $statementLists;
 
     /**
-     * @param non-empty-array<ExpressionNode> $conditions
+     * @param non-empty-array<RootNode> $conditions
      * @param non-empty-array<array<Statement>> $statementLists
      */
     public function __construct(array $conditions, array $statementLists)
@@ -41,7 +41,7 @@ class IfStatement implements Statement
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-array<RootNode>
      */
     public function getConditions(): array
     {

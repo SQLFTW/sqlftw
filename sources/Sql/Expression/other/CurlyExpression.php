@@ -22,10 +22,10 @@ class CurlyExpression implements RootNode
     /** @var string */
     private $type;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $expression;
 
-    public function __construct(string $type, ExpressionNode $expression)
+    public function __construct(string $type, RootNode $expression)
     {
         $this->type = $type;
         $this->expression = $expression;
@@ -36,7 +36,7 @@ class CurlyExpression implements RootNode
         return $this->type;
     }
 
-    public function getExpression(): ExpressionNode
+    public function getExpression(): RootNode
     {
         return $this->expression;
     }

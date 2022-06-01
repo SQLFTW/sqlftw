@@ -14,8 +14,8 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\FileFormat;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\RootNode;
 
 class LoadDataCommand extends LoadCommand
 {
@@ -26,7 +26,7 @@ class LoadDataCommand extends LoadCommand
 
     /**
      * @param non-empty-array<string>|null $fields
-     * @param non-empty-array<ExpressionNode>|null $setters
+     * @param non-empty-array<RootNode>|null $setters
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(

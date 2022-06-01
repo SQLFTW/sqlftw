@@ -22,20 +22,20 @@ class CaseExpression implements Statement, RootNode
 {
     use StrictBehaviorMixin;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $condition;
 
-    /** @var non-empty-array<ExpressionNode> */
+    /** @var non-empty-array<RootNode> */
     private $values;
 
-    /** @var non-empty-array<ExpressionNode> */
+    /** @var non-empty-array<RootNode> */
     private $results;
 
     /**
-     * @param non-empty-array<ExpressionNode> $values
-     * @param non-empty-array<ExpressionNode> $results
+     * @param non-empty-array<RootNode> $values
+     * @param non-empty-array<RootNode> $results
      */
-    public function __construct(?ExpressionNode $condition, array $values, array $results)
+    public function __construct(?RootNode $condition, array $values, array $results)
     {
         if (count($results) < count($values) || count($results) > count($values) + 1) {
             throw new InvalidDefinitionException('Count of results should be same or one higher then count of values.');
@@ -46,13 +46,13 @@ class CaseExpression implements Statement, RootNode
         $this->results = $results;
     }
 
-    public function getCondition(): ?ExpressionNode
+    public function getCondition(): ?RootNode
     {
         return $this->condition;
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-array<RootNode>
      */
     public function getValues(): array
     {
@@ -60,7 +60,7 @@ class CaseExpression implements Statement, RootNode
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-array<RootNode>
      */
     public function getResults(): array
     {

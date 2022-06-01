@@ -42,7 +42,6 @@ use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
 use SqlFtw\Sql\Ddl\Compound\SignalStatement;
 use SqlFtw\Sql\Ddl\Compound\StatementInformationItem;
 use SqlFtw\Sql\Ddl\Compound\WhileStatement;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
@@ -282,7 +281,6 @@ class CompoundStatementParser
             $condition = $this->expressionParser->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::WHEN);
         }
-        /** @var non-empty-array<ExpressionNode> $values */
         $values = [];
         /** @var non-empty-array<array<Statement>> $statementLists */
         $statementLists = [];
@@ -308,7 +306,6 @@ class CompoundStatementParser
      */
     private function parseIf(TokenList $tokenList): IfStatement
     {
-        /** @var non-empty-array<ExpressionNode> $conditions */
         $conditions = [];
         /** @var non-empty-array<array<Statement>> $statementLists */
         $statementLists = [];

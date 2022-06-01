@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Dml\Handler;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\RootNode;
 
 class HandlerReadCommand implements HandlerCommand
 {
@@ -31,7 +31,7 @@ class HandlerReadCommand implements HandlerCommand
     /** @var non-empty-array<string|int|float|bool|Literal>|null */
     private $values;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $where;
 
     /** @var int|null */
@@ -48,7 +48,7 @@ class HandlerReadCommand implements HandlerCommand
         HandlerReadTarget $what,
         ?string $index = null,
         ?array $values = null,
-        ?ExpressionNode $where = null,
+        ?RootNode $where = null,
         ?int $limit = null,
         ?int $offset = null
     ) {
@@ -84,7 +84,7 @@ class HandlerReadCommand implements HandlerCommand
         return $this->values;
     }
 
-    public function getWhere(): ?ExpressionNode
+    public function getWhere(): ?RootNode
     {
         return $this->where;
     }

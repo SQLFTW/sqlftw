@@ -26,10 +26,10 @@ class UnaryOperator implements OperatorExpression
     /** @var string */
     private $operator;
 
-    /** @var ExpressionNode */
+    /** @var RootNode */
     private $right;
 
-    public function __construct(string $operator, ExpressionNode $right)
+    public function __construct(string $operator, RootNode $right)
     {
         Operator::get($operator)->checkUnary();
 
@@ -42,7 +42,7 @@ class UnaryOperator implements OperatorExpression
         return $this->operator;
     }
 
-    public function getRight(): ExpressionNode
+    public function getRight(): RootNode
     {
         return $this->right;
     }

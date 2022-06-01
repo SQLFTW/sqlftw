@@ -15,8 +15,8 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\RootNode;
 use function implode;
 
 abstract class LoadCommand implements DmlCommand
@@ -35,7 +35,7 @@ abstract class LoadCommand implements DmlCommand
     /** @var non-empty-array<string>|null */
     private $fields;
 
-    /** @var non-empty-array<ExpressionNode>|null */
+    /** @var non-empty-array<RootNode>|null */
     private $setters;
 
     /** @var int|null */
@@ -55,7 +55,7 @@ abstract class LoadCommand implements DmlCommand
 
     /**
      * @param non-empty-array<string>|null $fields
-     * @param non-empty-array<ExpressionNode>|null $setters
+     * @param non-empty-array<RootNode>|null $setters
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
@@ -117,7 +117,7 @@ abstract class LoadCommand implements DmlCommand
             $result .= ' (' . $formatter->formatNamesList($this->fields) . ')';
         }
         if ($this->setters !== null) {
-            $result .= ' SET ' . implode(', ', Arr::mapPairs($this->setters, static function (string $field, ExpressionNode $expression) use ($formatter): string {
+            $result .= ' SET ' . implode(', ', Arr::mapPairs($this->setters, static function (string $field, RootNode $expression) use ($formatter): string {
                 return $formatter->formatName($field) . ' = ' . $expression->serialize($formatter);
             }));
         }
