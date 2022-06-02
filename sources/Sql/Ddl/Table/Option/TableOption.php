@@ -46,6 +46,7 @@ class TableOption extends SqlEnum
     public const PACK_KEYS = Keyword::PACK_KEYS;
     public const PASSWORD = Keyword::PASSWORD;
     public const ROW_FORMAT = Keyword::ROW_FORMAT;
+    public const SECONDARY_ENGINE = Keyword::SECONDARY_ENGINE;
     public const STORAGE = Keyword::STORAGE;
     public const STATS_AUTO_RECALC = Keyword::STATS_AUTO_RECALC;
     public const STATS_PERSISTENT = Keyword::STATS_PERSISTENT;
@@ -76,6 +77,7 @@ class TableOption extends SqlEnum
         self::PACK_KEYS => ThreeStateValue::class,
         self::PASSWORD => BaseType::CHAR,
         self::ROW_FORMAT => TableRowFormat::class,
+        self::SECONDARY_ENGINE => StorageEngine::class,
         self::STORAGE => StorageType::class,
         self::STATS_AUTO_RECALC => ThreeStateValue::class,
         self::STATS_PERSISTENT => ThreeStateValue::class,
