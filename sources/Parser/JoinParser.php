@@ -302,9 +302,8 @@ class JoinParser
     private function parseIndexHints(TokenList $tokenList): array
     {
         $hints = [];
+        $action = $tokenList->expectKeywordEnum(IndexHintAction::class);
         do {
-            /** @var IndexHintAction $action */
-            $action = $tokenList->getKeywordEnum(IndexHintAction::class);
             $tokenList->getAnyKeyword(Keyword::INDEX, Keyword::KEY);
             $target = null;
             if ($tokenList->hasKeyword(Keyword::FOR)) {
@@ -323,7 +322,11 @@ class JoinParser
             $tokenList->expectSymbol(')');
 
             $hints[] = new IndexHint($action, $target, $indexes);
-        } while ($tokenList->hasSymbol(','));
+        } while (($trailingComma = $tokenList->hasSymbol(',')) && ($action = $tokenList->getKeywordEnum(IndexHintAction::class)) !== null);
+
+        if ($trailingComma) {
+            $tokenList->resetPosition(-1);
+        }
 
         return $hints;
     }
