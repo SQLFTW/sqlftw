@@ -68,16 +68,20 @@ class Lexer
 
     // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
     public const MYSQL_TEST_SUITE_COMMANDS = [
-        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'character_set', 'chmod', 'close', 'closehandle', 'connect',
-        'connection', 'copy_file', 'dec', 'die', 'diff_files', 'dirty_close', 'disable_abort_on_error', 'disable_async_client', 'disable_connect_log', 'disable_info',
-        'disable_metadata', 'disable_ps_protocol', 'disable_query_log', 'disable_result_log', 'disable_testcase', 'disable_warnings',
-        'disconnect', 'echo', 'enable_abort_on_error', 'enable_async_client', 'enable_connect_log', 'enable_info', 'enable_metadata', 'enable_ps_protocol', 'enable_query_log', 'enable_reconnect',
-        'enable_result_log', 'enable_testcase', 'enable_warnings', 'end', 'end_of_procedure', 'eof', 'error',
-        'error_log', 'eval', 'exec', 'execute_step', 'exit', 'expr', 'file_exists', 'force', 'ibdata2', 'if', 'inc', 'let', 'list_files',
-        'mkdir', 'move_file', 'my', 'mysqlx', 'open', 'perl', 'print', 'query_vertical', 'read', 'reap', 'remove_file',
-        'replace_column', 'replace_regex', 'replace_result', 'reset_connection', 'result_format', 'rmdir',
-        'save_master_pos', 'secret', 'send', 'send_eval', 'shutdown_server', 'skip_if_hypergraph', 'sleep', 'source', 'sorted_result', 'sync_slave_with_master',
-        'sync_with_master', 'test', 'unlink', 'usexxx', 'wait', 'wait_for_slave_to_stop', 'while', 'write_file',
+        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'character_set', 'chmod', 'close', 'closehandle',
+        'connect', 'connection', 'copy_file', 'dec', 'die', 'diff_files', 'dirty_close', 'disable_abort_on_error',
+        'disable_async_client', 'disable_connect_log', 'disable_info', 'disable_metadata', 'disable_ps_protocol',
+        'disable_query_log', 'disable_reconnect', 'disable_result_log', 'disable_session_track_info', 'disable_testcase',
+        'disable_warnings', 'disconnect', 'echo', 'enable_abort_on_error', 'enable_async_client', 'enable_connect_log',
+        'enable_info', 'enable_metadata', 'enable_ps_protocol', 'enable_query_log', 'enable_reconnect', 'enable_result_log',
+        'enable_session_track_info', 'enable_testcase', 'enable_warnings', 'end', 'end_of_procedure', 'eof', 'error',
+        'error_log', 'eval', 'exec', 'execute_step', 'exit', 'expecterror', 'expr', 'file_exists', 'force', 'horizontal_results',
+        'ibdata2', 'if', 'inc', 'let', 'list_files', 'mkdir', 'move_file', 'my', 'mysqlx', 'open', 'output', 'partially_sorted_result',
+        'perl', 'print', 'query_vertical', 'read', 'reap', 'recvresult', 'remove_file', 'replace_column', 'replace_numeric_round',
+        'replace_regex', 'replace_result', 'reset_connection', 'result_format', 'rmdir', 'save_master_pos', 'secret',
+        'send', 'send_eval', 'shutdown_server', 'skip', 'skip_if_hypergraph', 'sleep', 'source', 'sorted_result', 'sql',
+        'stmtadmin', 'stmtsql', 'sync_slave_with_master', 'sync_with_master', 'test', 'unlink', 'usexxx', 'vertical_results',
+        'wait', 'wait_for_slave_to_stop', 'while', 'write_file',
     ];
 
     /** @var array<string, int> (this is in fact array<int, int>, but PHPStan is unable to cope with the auto-casting of numeric string keys) */
@@ -471,13 +475,6 @@ class Lexer
 
                     if ($second === '-') {
                         $third = $position + 1 < $length ? $string[$position + 1] : '';
-                        if ($third === '>') {
-                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, '-->', null, $condition);
-                            $position += 2;
-                            $column += 2;
-                            break;
-                        }
-
                         if ($this->settings->mysqlTestMode) {
                             $endOfLine = strpos($string, "\n", $position);
                             if ($endOfLine === false) {
@@ -519,13 +516,20 @@ class Lexer
                                 }
                                 yield $previous = new Token(T::DELIMITER_DEFINITION, $start, $del, null, $condition);
                                 break;
-                            } elseif (preg_match('~-- ?(' . self::$mysqlTestSuiteCommandsString . ')~i', $line) !== 0) {
+                            } elseif (preg_match('~--[ >]?(' . self::$mysqlTestSuiteCommandsString . ')~i', $line) !== 0) {
                                 $position += strlen($line);
                                 $column += strlen($line);
 
                                 yield new Token(T::TEST_CODE, $start, $line, null, $condition);
                                 break;
                             }
+                        }
+
+                        if ($third === '>') {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, '-->', null, $condition);
+                            $position += 2;
+                            $column += 2;
+                            break;
                         }
 
                         if ($third === ' ') {
