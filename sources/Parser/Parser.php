@@ -423,9 +423,9 @@ class Parser
             case Keyword::DROP:
                 $second = $tokenList->expectAnyKeyword(
                     Keyword::DATABASE, Keyword::SCHEMA, Keyword::EVENT, Keyword::FUNCTION, Keyword::INDEX,
-                    Keyword::LOGFILE, Keyword::PREPARE, Keyword::PROCEDURE, Keyword::ROLE, Keyword::SERVER,
-                    Keyword::SPATIAL, Keyword::TABLE, Keyword::TABLES, Keyword::TEMPORARY, Keyword::TABLESPACE,
-                    Keyword::TRIGGER, Keyword::UNDO, Keyword::USER, Keyword::VIEW
+                    Keyword::LOGFILE, Keyword::PREPARE, Keyword::PROCEDURE, Keyword::ROLE, Keyword::RESOURCE,
+                    Keyword::SERVER, Keyword::SPATIAL, Keyword::TABLE, Keyword::TABLES, Keyword::TEMPORARY,
+                    Keyword::TABLESPACE, Keyword::TRIGGER, Keyword::UNDO, Keyword::USER, Keyword::VIEW
                 );
                 switch ($second) {
                     case Keyword::DATABASE:
