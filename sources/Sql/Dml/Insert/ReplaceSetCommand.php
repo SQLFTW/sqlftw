@@ -29,8 +29,8 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
     public function __construct(
         QualifiedName $table,
         array $assignments,
-        ?array $columns,
-        ?array $partitions,
+        ?array $columns = null,
+        ?array $partitions = null,
         ?InsertPriority $priority = null,
         bool $ignore = false
     ) {

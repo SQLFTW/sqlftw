@@ -48,14 +48,14 @@ class InsertCommandParser
      *     [INTO] tbl_name
      *     [PARTITION (partition_name, ...)]
      *     [(col_name, ...)]
-     *     {VALUES | VALUE} ({expr | DEFAULT}, ...), (...), ...
+     *     {VALUES | VALUE} ({expr | DEFAULT}, ...), (...), ...  [AS alias[(column_alias, ...)]]
      *     [ ON DUPLICATE KEY UPDATE
      *       col_name=expr [, col_name=expr] ... ]
      *
      * INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
      *     [INTO] tbl_name
      *     [PARTITION (partition_name, ...)]
-     *     SET col_name={expr | DEFAULT}, ...
+     *     SET col_name={expr | DEFAULT}, ...  [AS alias]
      *     [ ON DUPLICATE KEY UPDATE
      *       col_name=expr [, col_name=expr] ... ]
      *
@@ -81,16 +81,35 @@ class InsertCommandParser
 
         if ($tokenList->hasAnyKeyword(Keyword::VALUE, Keyword::VALUES)) {
             $rows = $this->parseRows($tokenList);
+
+            $alias = $columnAliases = null;
+            if ($alias === null && $tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectName();
+                if ($tokenList->hasSymbol('(')) {
+                    do {
+                        $columnAliases[] = $tokenList->expectName();
+                    } while ($tokenList->hasSymbol(','));
+                    $tokenList->expectSymbol(')');
+                }
+            }
+
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertValuesCommand($table, $rows, $columns, $partitions, $priority, $ignore, $update);
+            return new InsertValuesCommand($table, $rows, $columns, $alias, $columnAliases, $partitions, $priority, $ignore, $update);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $assignments = $this->parseAssignments($tokenList);
+
+            $alias = null;
+            if ($tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectName();
+            }
+
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertSetCommand($table, $assignments, $columns, $partitions, $priority, $ignore, $update);
+            return new InsertSetCommand($table, $assignments, $columns, $alias, $partitions, $priority, $ignore, $update);
         } else {
             $query = $this->queryParser->parseQuery($tokenList);
+
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
             return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);

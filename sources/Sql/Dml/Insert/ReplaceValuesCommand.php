@@ -31,8 +31,8 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
     public function __construct(
         QualifiedName $table,
         array $rows,
-        ?array $columns,
-        ?array $partitions,
+        ?array $columns = null,
+        ?array $partitions = null,
         ?InsertPriority $priority = null,
         bool $ignore = false
     ) {

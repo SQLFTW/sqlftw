@@ -23,19 +23,28 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
     /** @var non-empty-array<array<ExpressionNode>> */
     private $rows;
 
+    /** @var string|null */
+    private $alias;
+
+    /** @var non-empty-array<string>|null */
+    private $columnAliases;
+
     /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
 
     /**
      * @param non-empty-array<array<ExpressionNode>> $rows
      * @param array<string>|null $columns
+     * @param non-empty-array<string>|null $columnAliases
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
         QualifiedName $table,
         array $rows,
-        ?array $columns,
-        ?array $partitions,
+        ?array $columns = null,
+        ?string $alias = null,
+        ?array $columnAliases = null,
+        ?array $partitions = null,
         ?InsertPriority $priority = null,
         bool $ignore = false,
         ?OnDuplicateKeyActions $onDuplicateKeyActions = null
@@ -43,6 +52,8 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
         parent::__construct($table, $columns, $partitions, $priority, $ignore);
 
         $this->rows = $rows;
+        $this->alias = $alias;
+        $this->columnAliases = $columnAliases;
         $this->onDuplicateKeyActions = $onDuplicateKeyActions;
     }
 
@@ -52,6 +63,19 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
     public function getRows(): array
     {
         return $this->rows;
+    }
+
+    public function getAlias(): ?string
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @return non-empty-array<string>|null
+     */
+    public function getColumnAliases(): ?array
+    {
+        return $this->columnAliases;
     }
 
     public function getOnDuplicateKeyAction(): ?OnDuplicateKeyActions
@@ -68,6 +92,15 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
                 return $value->serialize($formatter);
             }, $values)) . ')';
         }, $this->rows));
+
+        if ($this->alias !== null) {
+            $result .= ' AS ' . $formatter->formatName($this->alias);
+            if ($this->columnAliases !== null) {
+                $result .= '(' . implode(', ', array_map(static function (string $columnAlias) use ($formatter): string {
+                    return $formatter->formatName($columnAlias);
+                }, $this->columnAliases)) . ')';
+            }
+        }
 
         if ($this->onDuplicateKeyActions !== null) {
             $result .= ' ' . $this->onDuplicateKeyActions->serialize($formatter);

@@ -21,6 +21,9 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     /** @var non-empty-array<Assignment> */
     private $assignments;
 
+    /** @var string|null */
+    private $alias;
+
     /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
 
@@ -32,8 +35,9 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     public function __construct(
         QualifiedName $table,
         array $assignments,
-        ?array $columns,
-        ?array $partitions,
+        ?array $columns = null,
+        ?string $alias = null,
+        ?array $partitions = null,
         ?InsertPriority $priority = null,
         bool $ignore = false,
         ?OnDuplicateKeyActions $onDuplicateKeyActions = null
@@ -41,6 +45,7 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
         parent::__construct($table, $columns, $partitions, $priority, $ignore);
 
         $this->assignments = $assignments;
+        $this->alias = $alias;
         $this->onDuplicateKeyActions = $onDuplicateKeyActions;
     }
 
@@ -50,6 +55,11 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     public function getAssignments(): array
     {
         return $this->assignments;
+    }
+
+    public function getAlias(): ?string
+    {
+        return $this->alias;
     }
 
     public function getOnDuplicateKeyAction(): ?OnDuplicateKeyActions
@@ -62,6 +72,10 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
         $result = 'INSERT' . $this->serializeBody($formatter);
 
         $result .= ' SET ' . $formatter->formatSerializablesList($this->assignments);
+
+        if ($this->alias !== null) {
+            $result .= ' AS ' . $formatter->formatName($this->alias);
+        }
 
         if ($this->onDuplicateKeyActions !== null) {
             $result .= ' ' . $this->onDuplicateKeyActions->serialize($formatter);

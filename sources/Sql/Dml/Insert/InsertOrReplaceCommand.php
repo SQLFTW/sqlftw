@@ -39,8 +39,8 @@ abstract class InsertOrReplaceCommand implements DmlCommand
      */
     public function __construct(
         QualifiedName $table,
-        ?array $columns,
-        ?array $partitions,
+        ?array $columns = null,
+        ?array $partitions = null,
         ?InsertPriority $priority = null,
         bool $ignore = false
     )

@@ -28,8 +28,8 @@ class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceComm
     public function __construct(
         QualifiedName $table,
         Query $query,
-        ?array $columns,
-        ?array $partitions,
+        ?array $columns = null,
+        ?array $partitions = null,
         ?InsertPriority $priority = null,
         bool $ignore = false
     ) {
