@@ -429,7 +429,7 @@ class QueryParser
      */
     public function parseValues(TokenList $tokenList): ValuesCommand
     {
-        $tokenList->expectKeyword(Keyword::TABLE);
+        $tokenList->expectKeyword(Keyword::VALUES);
         $rows = [];
         do {
             $tokenList->expectKeyword(Keyword::ROW);
