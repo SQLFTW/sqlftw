@@ -24,7 +24,7 @@ class HelpCommandParser
     public function parseHelp(TokenList $tokenList): HelpCommand
     {
         $tokenList->expectKeyword(Keyword::HELP);
-        $term = $tokenList->expectString();
+        $term = $tokenList->expectNonReservedNameOrString();
 
         return new HelpCommand($term);
     }
