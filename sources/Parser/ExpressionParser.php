@@ -322,7 +322,7 @@ class ExpressionParser
         if ($tokenList->hasKeyword(Keyword::BETWEEN)) {
             $middle = $this->parseBitExpression($tokenList);
             $tokenList->expectKeyword(Keyword::AND);
-            $right = $this->parseBitExpression($tokenList);
+            $right = $this->parsePredicate($tokenList);
 
             return new TernaryOperator($left, $not ? [Operator::NOT, Operator::BETWEEN] : [Operator::BETWEEN], $middle, Operator::AND, $right);
         }
