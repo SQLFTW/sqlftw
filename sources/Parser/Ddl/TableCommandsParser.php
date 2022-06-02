@@ -694,9 +694,13 @@ class TableCommandsParser
             return new CreateTableLikeCommand($table, $oldTable, $temporary, $ifNotExists);
         }
 
-        $items = null;
+        $query = $items = null;
         if ($bodyOpen) {
-            $items = $this->parseCreateTableBody($tokenList->resetPosition($position));
+            if ($tokenList->hasAnyKeyword(Keyword::WITH, Keyword::SELECT)) {
+                $query = $this->queryParser->parseQuery($tokenList->resetPosition($position));
+            } else {
+                $items = $this->parseCreateTableBody($tokenList->resetPosition($position));
+            }
         }
 
         $options = [];
@@ -725,15 +729,16 @@ class TableCommandsParser
 
         $startTransaction = $tokenList->hasKeywords(Keyword::START, Keyword::TRANSACTION);
 
-        $query = null;
-        if ($tokenList->hasKeyword(Keyword::AS) || $items === null || $duplicateOption !== null) {
-            $query = $this->queryParser->parseQuery($tokenList);
-        } elseif (!$tokenList->isFinished()) {
-            $position = $tokenList->getPosition();
-            if (!$tokenList->hasSymbol(';')) {
+        if ($query === null) {
+            if ($tokenList->hasKeyword(Keyword::AS) || $items === null || $duplicateOption !== null) {
                 $query = $this->queryParser->parseQuery($tokenList);
-            } else {
-                $tokenList->resetPosition($position);
+            } elseif (!$tokenList->isFinished()) {
+                $position = $tokenList->getPosition();
+                if (!$tokenList->hasSymbol(';')) {
+                    $query = $this->queryParser->parseQuery($tokenList);
+                } else {
+                    $tokenList->resetPosition($position);
+                }
             }
         }
 
