@@ -56,8 +56,11 @@ class LoadCommandsParser
     public function parseLoadData(TokenList $tokenList): LoadDataCommand
     {
         $tokenList->expectKeywords(Keyword::LOAD, Keyword::DATA);
+
         [$priority, $local, $file, $duplicateOption, $table, $partitions, $charset] = $this->parseOptions($tokenList, true);
+
         $format = $this->expressionParser->parseFileFormat($tokenList);
+
         [$ignoreRows, $fields, $setters] = $this->parseRowsAndFields($tokenList);
 
         return new LoadDataCommand($file, $table, $format, $charset, $fields, $setters, $ignoreRows, $priority, $local, $duplicateOption, $partitions);
@@ -76,6 +79,7 @@ class LoadCommandsParser
     public function parseLoadXml(TokenList $tokenList): LoadXmlCommand
     {
         $tokenList->expectKeywords(Keyword::LOAD, Keyword::XML);
+
         [$priority, $local, $file, $duplicateOption, $table, , $charset] = $this->parseOptions($tokenList, false);
 
         $rowsTag = null;

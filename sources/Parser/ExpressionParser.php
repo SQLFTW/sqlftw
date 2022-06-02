@@ -1531,24 +1531,40 @@ class ExpressionParser
         $fieldsTerminatedBy = $fieldsEnclosedBy = $fieldsEscapedBy = null;
         $optionallyEnclosed = false;
         if ($tokenList->hasAnyKeyword(Keyword::FIELDS, Keyword::COLUMNS)) {
-            if ($tokenList->hasKeywords(Keyword::TERMINATED, Keyword::BY)) {
-                $fieldsTerminatedBy = $tokenList->expectString();
-            }
-            $optionallyEnclosed = $tokenList->hasKeyword(Keyword::OPTIONALLY);
-            if ($tokenList->hasKeywords(Keyword::ENCLOSED, Keyword::BY)) {
-                $fieldsEnclosedBy = $tokenList->expectString();
-            }
-            if ($tokenList->hasKeywords(Keyword::ESCAPED, Keyword::BY)) {
-                $fieldsEscapedBy = $tokenList->expectString();
+            while (($keyword = $tokenList->getAnyKeyword(Keyword::TERMINATED, Keyword::OPTIONALLY, Keyword::ENCLOSED, Keyword::ESCAPED)) !== null) {
+                switch ($keyword) {
+                    case Keyword::TERMINATED:
+                        $tokenList->expectKeyword(Keyword::BY);
+                        $fieldsTerminatedBy = $tokenList->expectString();
+                        break;
+                    case Keyword::OPTIONALLY:
+                        $optionallyEnclosed = true;
+                        $tokenList->expectKeyword(Keyword::ENCLOSED);
+                    case Keyword::ENCLOSED:
+                        $tokenList->expectKeyword(Keyword::BY);
+                        $fieldsEnclosedBy = $tokenList->expectString();
+                        break;
+                    case Keyword::ESCAPED:
+                        $tokenList->expectKeyword(Keyword::BY);
+                        $fieldsEscapedBy = $tokenList->expectString();
+                        break;
+                }
             }
         }
+
         $linesStaringBy = $linesTerminatedBy = null;
         if ($tokenList->hasKeyword(Keyword::LINES)) {
-            if ($tokenList->hasKeywords(Keyword::STARTING, Keyword::BY)) {
-                $linesStaringBy = $tokenList->expectString();
-            }
-            if ($tokenList->hasKeywords(Keyword::TERMINATED, Keyword::BY)) {
-                $linesTerminatedBy = $tokenList->expectString();
+            while (($keyword = $tokenList->getAnyKeyword(Keyword::STARTING, Keyword::TERMINATED)) !== null) {
+                switch ($keyword) {
+                    case Keyword::STARTING:
+                        $tokenList->expectKeyword(Keyword::BY);
+                        $linesStaringBy = $tokenList->expectString();
+                        break;
+                    case Keyword::TERMINATED:
+                        $tokenList->expectKeyword(Keyword::BY);
+                        $linesTerminatedBy = $tokenList->expectString();
+                        break;
+                }
             }
         }
 
