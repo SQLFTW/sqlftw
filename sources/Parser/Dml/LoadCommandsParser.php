@@ -140,10 +140,12 @@ class LoadCommandsParser
         $fields = null;
         if ($tokenList->hasSymbol('(')) {
             $fields = [];
-            do {
-                $fields[] = $tokenList->expectName();
-            } while ($tokenList->hasSymbol(','));
-            $tokenList->expectSymbol(')');
+            if (!$tokenList->hasSymbol(')')) {
+                do {
+                    $fields[] = $tokenList->expectName();
+                } while ($tokenList->hasSymbol(','));
+                $tokenList->expectSymbol(')');
+            }
         }
 
         $setters = null;
