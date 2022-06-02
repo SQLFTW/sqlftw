@@ -92,9 +92,9 @@ class QueryParser
      *   | TABLE ...
      *   | VALUES ...
      */
-    public function parseQuery(TokenList $tokenList): Query
+    public function parseQuery(TokenList $tokenList, ?WithClause $with = null): Query
     {
-        $queries = [$this->parseQueryBlock($tokenList)];
+        $queries = [$this->parseQueryBlock($tokenList, $with)];
         $types = [];
         while ($tokenList->hasKeyword(Keyword::UNION)) {
             if ($tokenList->hasKeyword(Keyword::ALL)) {
@@ -151,22 +151,30 @@ class QueryParser
         return new UnionExpression($queries, $types, $orderBy, $limit, $into);
     }
 
-    public function parseQueryBlock(TokenList $tokenList): Query
+    public function parseQueryBlock(TokenList $tokenList, ?WithClause $with = null): Query
     {
         if ($tokenList->hasSymbol('(')) {
-            return $this->parseParenthesizedQueryExpression($tokenList->resetPosition(-1));
+            return $this->parseParenthesizedQueryExpression($tokenList->resetPosition(-1), $with);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH)) {
-            return $this->parseSelect($tokenList->resetPosition(-1));
+            return $this->parseSelect($tokenList->resetPosition(-1), $with);
         } elseif ($tokenList->hasKeyword(Keyword::TABLE)) {
+            if ($with !== null) {
+                throw new ParserException("WITH is not allowed in TABLE query.", $tokenList);
+            }
+
             return $this->parseTable($tokenList->resetPosition(-1));
         } elseif ($tokenList->hasKeyword(Keyword::VALUES)) {
+            if ($with !== null) {
+                throw new ParserException("WITH is not allowed in VALUES query.", $tokenList);
+            }
+
             return $this->parseValues($tokenList->resetPosition(-1));
         } else {
             $tokenList->missingAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
         }
     }
 
-    private function parseParenthesizedQueryExpression(TokenList $tokenList): ParenthesizedQueryExpression
+    private function parseParenthesizedQueryExpression(TokenList $tokenList, ?WithClause $with = null): ParenthesizedQueryExpression
     {
         $tokenList->expectSymbol('(');
         $query = $this->parseQuery($tokenList);
@@ -174,7 +182,7 @@ class QueryParser
 
         [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);
 
-        return new ParenthesizedQueryExpression($query, $orderBy, $limit, $offset, $into);
+        return new ParenthesizedQueryExpression($query, $with, $orderBy, $limit, $offset, $into);
     }
 
     /**

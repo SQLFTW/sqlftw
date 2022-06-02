@@ -67,10 +67,15 @@ class WithParser
 
         $with = new WithClause($expressions, $recursive);
 
-        $next = $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::UPDATE, Keyword::DELETE);
+        if ($tokenList->hasSymbol('(')) {
+            $next = '(';
+        } else {
+            $next = $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::UPDATE, Keyword::DELETE);
+        }
         switch ($next) {
+            case '(':
             case Keyword::SELECT:
-                return $this->parserFactory->getQueryParser()->parseSelect($tokenList->resetPosition(-1), $with);
+                return $this->parserFactory->getQueryParser()->parseQuery($tokenList->resetPosition(-1), $with);
             case Keyword::UPDATE:
                 return $this->parserFactory->getUpdateCommandParser()->parseUpdate($tokenList->resetPosition(-1), $with);
             case Keyword::DELETE:

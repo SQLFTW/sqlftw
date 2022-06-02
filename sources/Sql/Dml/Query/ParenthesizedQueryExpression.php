@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\OrderByExpression;
 
 class ParenthesizedQueryExpression implements Query
@@ -17,6 +18,9 @@ class ParenthesizedQueryExpression implements Query
 
     /** @var Query */
     private $query;
+
+    /** @var WithClause|null */
+    private $with;
 
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
@@ -35,6 +39,7 @@ class ParenthesizedQueryExpression implements Query
      */
     public function __construct(
         Query $query,
+        ?WithClause $with = null,
         ?array $orderBy = null,
         ?int $limit = null,
         ?int $offset = null,
@@ -42,6 +47,7 @@ class ParenthesizedQueryExpression implements Query
     )
     {
         $this->query = $query;
+        $this->with = $with;
         $this->orderBy = $orderBy;
         $this->limit = $limit;
         $this->offset = $offset;
@@ -73,7 +79,12 @@ class ParenthesizedQueryExpression implements Query
 
     public function serialize(Formatter $formatter): string
     {
-        $result = '(' . $this->query->serialize($formatter) . ')';
+        $result = '';
+        if ($this->with !== null) {
+            $result .= $this->with->serialize($formatter);
+        }
+
+        $result .= '(' . $this->query->serialize($formatter) . ')';
 
         if ($this->orderBy !== null) {
             $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
