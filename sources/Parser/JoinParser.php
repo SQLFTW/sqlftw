@@ -312,14 +312,16 @@ class JoinParser
 
             $tokenList->expectSymbol('(');
             $indexes = [];
-            do {
-                if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
-                    $indexes[] = new PrimaryLiteral();
-                } else {
-                    $indexes[] = $tokenList->expectName();
-                }
-            } while ($tokenList->hasSymbol(','));
-            $tokenList->expectSymbol(')');
+            if (!$tokenList->hasSymbol(')')) {
+                do {
+                    if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
+                        $indexes[] = new PrimaryLiteral();
+                    } else {
+                        $indexes[] = $tokenList->expectName();
+                    }
+                } while ($tokenList->hasSymbol(','));
+                $tokenList->expectSymbol(')');
+            }
 
             $hints[] = new IndexHint($action, $target, $indexes);
         } while (
