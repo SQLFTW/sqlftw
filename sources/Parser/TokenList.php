@@ -792,7 +792,7 @@ class TokenList
     {
         $position = $this->position;
         foreach ($keywords as $keyword) {
-            if (!$this->hasAnyKeyword($keyword)) {
+            if (!$this->hasKeyword($keyword)) {
                 $this->position = $position;
 
                 return false;

@@ -78,6 +78,7 @@ use SqlFtw\Sql\Expression\TimeIntervalUnit;
 use SqlFtw\Sql\Expression\TimeLiteral;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
 use SqlFtw\Sql\Expression\TimeValue;
+use SqlFtw\Sql\Expression\TimeZone;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UnaryOperator;
 use SqlFtw\Sql\Expression\UnknownLiteral;
@@ -691,6 +692,15 @@ class ExpressionParser
                         continue 3;
                     case Literal::class:
                         $arguments[$keyword] = $this->parseLiteral($tokenList);
+                        continue 3;
+                    case TimeZone::class:
+                        $interval = $tokenList->hasKeyword(Keyword::INTERVAL);
+                        $zone = strtoupper($tokenList->expectString());
+                        if (($interval === false && $zone === 'UTC') || $zone === '+00:00') {
+                            $arguments[$keyword] = TimeZone::get(TimeZone::UTC);
+                        } else {
+                            throw new ParserException("Invalid time zone specification. Only 'UTC' or [INTERVAL] '+00:00' is supported.", $tokenList);
+                        }
                         continue 3;
                     case null:
                         if (in_array($keyword, [Keyword::DATE, Keyword::TIME, Keyword::DATETIME], true)) {

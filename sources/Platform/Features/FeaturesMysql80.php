@@ -771,6 +771,7 @@ class FeaturesMysql80 extends PlatformFeatures
         Keyword::XID,
         Keyword::XML,
         Keyword::YEAR,
+        Keyword::ZONE,
     ];
 
     public const OPERATOR_KEYWORDS = FeaturesMysql57::OPERATOR_KEYWORDS;

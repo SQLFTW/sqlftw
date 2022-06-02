@@ -590,7 +590,8 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
         // CHAR(N, ... [USING charset_name])
         self::CHAR => [Keyword::USING => Charset::class],
         // CAST(expr AS type)
-        self::CAST => [Keyword::AS => CastType::class],
+        // CAST(timestamp_value AT TIME ZONE timezone_specifier AS DATETIME[(precision)])
+        self::CAST => [Keyword::AT . ' ' . Keyword::TIME . ' ' . Keyword::ZONE => TimeZone::class, Keyword::AS => CastType::class],
         // CONVERT(string, type), CONVERT(expr USING charset_name)
         // has special handling because of irregular syntax
         self::CONVERT => [Keyword::USING => Charset::class/*, 1 => CastType::class*/],
