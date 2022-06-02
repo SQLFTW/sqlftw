@@ -40,7 +40,6 @@ use SqlFtw\Sql\Expression\DateLiteral;
 use SqlFtw\Sql\Expression\DatetimeLiteral;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
-use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntervalExpression;
@@ -722,13 +721,28 @@ class ExpressionParser
             $arguments[] = $this->parseExpression($tokenList);
         } while (true);
 
-        $over = null;
-        if ($function instanceof BuiltInFunction && $function->isWindow() && $tokenList->hasKeyword(Keyword::OVER)) {
-            // AGG_FUNC(...) [over_clause]
+        $respectNulls = $over = null;
+        if ($function instanceof BuiltInFunction
+            && $function->isWindow()
+            && ($keyword = $tokenList->getAnyKeyword(Keyword::OVER, Keyword::RESPECT, Keyword::IGNORE)) !== null
+        ) {
+            if ($keyword === Keyword::RESPECT) {
+                $tokenList->expectKeyword(Keyword::NULLS);
+                if (!$function->hasNullTreatment()) {
+                    throw new ParserException("Function {$function->getValue()} does not support null treatment.", $tokenList);
+                }
+                $respectNulls = true;
+
+                $tokenList->expectKeyword(Keyword::OVER);
+            } elseif ($keyword === Keyword::IGNORE) {
+                throw new ParserException('IGNORE NULLS is not yet supported by MySQL.', $tokenList);
+            }
+
+            // AGG_FUNC(...) [null_treatment] [over_clause]
             $over = $this->parseOver($tokenList);
         }
 
-        return new FunctionCall($function, $arguments, $over);
+        return new FunctionCall($function, $arguments, $over, $respectNulls);
     }
 
     /**

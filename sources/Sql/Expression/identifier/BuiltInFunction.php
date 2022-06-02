@@ -547,6 +547,15 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     ];
 
     /** @var string[] */
+    private static $nullTreatment = [
+        self::FIRST_VALUE,
+        self::LAG,
+        self::LAST_VALUE,
+        self::LEAD,
+        self::NTH_VALUE,
+    ];
+
+    /** @var string[] */
     private static $bare = [
         self::CURRENT_TIME,
         self::CURRENT_DATE,
@@ -645,6 +654,11 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public function isWindow(): bool
     {
         return in_array($this->getValue(), self::$window, true) || $this->isAggregate();
+    }
+
+    public function hasNullTreatment(): bool
+    {
+        return in_array($this->getValue(), self::$nullTreatment, true);
     }
 
     public function isBare(): bool

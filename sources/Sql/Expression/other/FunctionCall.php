@@ -32,19 +32,26 @@ class FunctionCall implements RootNode
     /** @var WindowSpecification|string|null */
     private $over;
 
+    /** @var bool|null */
+    private $respectNulls;
+
     /**
      * @param ArgumentNode[] $arguments
      * @param WindowSpecification|string $over
      */
-    public function __construct(FunctionIdentifier $function, array $arguments = [], $over = null)
+    public function __construct(FunctionIdentifier $function, array $arguments = [], $over = null, ?bool $respectNulls = null)
     {
         if ($over !== null && (!$function instanceof BuiltInFunction || !$function->isWindow())) {
             throw new InvalidDefinitionException('OVER clause is supported only on window functions.');
+        }
+        if ($respectNulls !== null && (!$function instanceof BuiltInFunction || !$function->hasNullTreatment())) {
+            throw new InvalidDefinitionException('RESPECT NULLS clause is not supported by this function.');
         }
 
         $this->function = $function;
         $this->arguments = $arguments;
         $this->over = $over;
+        $this->respectNulls = $respectNulls;
     }
 
     public function getFunction(): FunctionIdentifier
@@ -66,6 +73,11 @@ class FunctionCall implements RootNode
     public function getOver()
     {
         return $this->over;
+    }
+
+    public function respectNulls(): ?bool
+    {
+        return $this->respectNulls;
     }
 
     public function serialize(Formatter $formatter): string
@@ -106,6 +118,12 @@ class FunctionCall implements RootNode
         }
 
         $result = $this->function->serialize($formatter) . '(' . $arguments . ')';
+
+        if ($this->respectNulls === true) {
+            $result .= ' ' . Keyword::RESPECT . ' ' . Keyword::NULLS;
+        } elseif ($this->respectNulls === false) {
+            $result .= ' ' . Keyword::IGNORE . ' ' . Keyword::NULLS;
+        }
 
         if ($this->over !== null) {
             if ($this->over instanceof WindowSpecification) {
