@@ -1197,6 +1197,9 @@ class Lexer
 
         $orig = $base . $exp;
         $value = $base . str_replace(['e+', ' '], ['e', ''], strtolower($exp));
+        if (substr($orig, 0, 3) === '-- ') {
+            return null;
+        }
 
         $len = strlen($orig) - 1;
         $position += $len;
