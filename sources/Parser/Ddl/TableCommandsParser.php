@@ -1377,10 +1377,12 @@ class TableCommandsParser
                 $tokenList->passSymbol('=');
                 $tokenList->expectSymbol('(');
                 $tables = [];
-                do {
-                    $tables[] = $tokenList->expectQualifiedName();
-                } while ($tokenList->hasSymbol(','));
-                $tokenList->expectSymbol(')');
+                if (!$tokenList->hasSymbol(')')) {
+                    do {
+                        $tables[] = $tokenList->expectQualifiedName();
+                    } while ($tokenList->hasSymbol(','));
+                    $tokenList->expectSymbol(')');
+                }
 
                 return [TableOption::UNION, $tables];
             default:
