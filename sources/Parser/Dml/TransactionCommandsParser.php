@@ -148,7 +148,7 @@ class TransactionCommandsParser
     }
 
     /**
-     * SET [GLOBAL | SESSION] TRANSACTION
+     * SET [GLOBAL | SESSION | LOCAL] TRANSACTION
      *     transaction_characteristic [, transaction_characteristic] ...
      *
      * transaction_characteristic:
@@ -166,8 +166,11 @@ class TransactionCommandsParser
     {
         $tokenList->expectKeyword(Keyword::SET);
 
-        /** @var Scope $scope */
-        $scope = $tokenList->getKeywordEnum(Scope::class);
+        if ($tokenList->hasKeyword(Keyword::LOCAL)) {
+            $scope = Scope::get(Scope::SESSION);
+        } else {
+            $scope = $tokenList->getKeywordEnum(Scope::class);
+        }
 
         $tokenList->expectKeyword(Keyword::TRANSACTION);
 

@@ -663,9 +663,10 @@ class Parser
                         return $this->factory->getUserCommandsParser()->parseSetRole($tokenList->resetPosition($start));
                     case Keyword::GLOBAL:
                     case Keyword::SESSION:
+                    case Keyword::LOCAL:
                     case Keyword::TRANSACTION:
                         if ($second === Keyword::TRANSACTION || $tokenList->hasKeyword(Keyword::TRANSACTION)) {
-                            // SET [GLOBAL | SESSION] TRANSACTION
+                            // SET [GLOBAL | SESSION | LOCAL] TRANSACTION
                             return $this->factory->getTransactionCommandsParser()->parseSetTransaction($tokenList->resetPosition($start));
                         } else {
                             // SET
