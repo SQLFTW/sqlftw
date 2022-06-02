@@ -306,6 +306,10 @@ class Lexer
                         $value .= $second;
                         $position++;
                         $column++;
+                        if ($string[$position] === '`') {
+                            yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition, '@@');
+                            break;
+                        }
                         while ($position < $length) {
                             $next = $string[$position];
                             if ($next === '@' || isset(self::$nameCharsKey[$next]) || ord($next) > 127) {

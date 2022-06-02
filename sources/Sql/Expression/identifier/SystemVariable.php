@@ -13,6 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\MysqlVariable;
+use function array_map;
+use function explode;
+use function implode;
 
 class SystemVariable implements Identifier
 {
@@ -51,7 +54,11 @@ class SystemVariable implements Identifier
 
     public function serialize(Formatter $formatter): string
     {
-        return ($this->scope !== null ? '@@' . $this->scope->getValue() . '.' : '@@') . $this->name;
+        $parts = array_map(static function (string $part) use ($formatter): string {
+            return $formatter->getSettings()->getPlatform()->getFeatures()->isReserved($part) ? '`' . $part . '`' : $part;
+        }, explode('.', $this->name));
+
+        return ($this->scope !== null ? '@@' . $this->scope->getValue() . '.' : '@@') . implode('.', $parts);
     }
 
 }
