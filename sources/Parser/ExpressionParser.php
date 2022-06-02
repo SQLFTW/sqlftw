@@ -515,8 +515,12 @@ class ExpressionParser
                 return new SimpleName(Keyword::ROW);
             }
         } elseif ($tokenList->hasKeyword(Keyword::INTERVAL)) {
-            // interval_expr
-            return new IntervalExpression($this->parseInterval($tokenList));
+            if ($tokenList->hasSymbol('(')) {
+                return $this->parseFunctionCall($tokenList, BuiltInFunction::INTERVAL);
+            } else {
+                // interval_expr
+                return new IntervalExpression($this->parseInterval($tokenList));
+            }
         } elseif ($tokenList->hasKeyword(Keyword::CASE)) {
             // case_expr
             return $this->parseCase($tokenList);
