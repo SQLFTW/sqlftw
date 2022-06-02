@@ -678,7 +678,7 @@ class ExpressionParser
                     continue;
                 }
                 switch ($type) {
-                    case ExpressionNode::class:
+                    case RootNode::class:
                         $arguments[$keyword] = $this->parseExpression($tokenList);
                         continue 3;
                     case Charset::class:

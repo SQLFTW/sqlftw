@@ -585,8 +585,12 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
      * @var array<string, array<string, class-string|null|false>>
      */
     private static $namedParams = [
-        // AVG([DISTINCT] expr)
-        self::AVG => [Keyword::DISTINCT => ExpressionNode::class],
+        // AVG([DISTINCT | ALL] expr)
+        self::AVG => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
+        // BIT_OR([ALL] expr)
+        self::BIT_OR => [Keyword::ALL => RootNode::class],
+        // BIT_AND([ALL] expr)
+        self::BIT_AND => [Keyword::ALL => RootNode::class],
         // CHAR(N, ... [USING charset_name])
         self::CHAR => [Keyword::USING => Charset::class],
         // CAST(expr AS type)
@@ -595,36 +599,40 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
         // CONVERT(string, type), CONVERT(expr USING charset_name)
         // has special handling because of irregular syntax
         self::CONVERT => [Keyword::USING => Charset::class/*, 1 => CastType::class*/],
-        // COUNT(DISTINCT expr,[expr...])
-        self::COUNT => [Keyword::DISTINCT => ExpressionNode::class],
+        // COUNT([DISTINCT | ALL] expr,[expr...])
+        self::COUNT => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
         // EXTRACT(unit FROM date)
-        self::EXTRACT => [Keyword::FROM => ExpressionNode::class],
+        self::EXTRACT => [Keyword::FROM => RootNode::class],
         // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
         self::GET_FORMAT => [Keyword::DATE => null, Keyword::TIME => null, Keyword::DATETIME => null],
         // GROUP_CONCAT([DISTINCT] expr [,expr ...] [ORDER BY {unsigned_integer | col_name | expr} [ASC | DESC] [,col_name ...]] [SEPARATOR str_val])
-        self::GROUP_CONCAT => [Keyword::DISTINCT => ExpressionNode::class, Keyword::ORDER . ' ' . Keyword::BY => OrderByExpression::class, Keyword::SEPARATOR => Literal::class,],
+        self::GROUP_CONCAT => [Keyword::DISTINCT => RootNode::class, Keyword::ORDER . ' ' . Keyword::BY => OrderByExpression::class, Keyword::SEPARATOR => Literal::class,],
         // JSON_TABLE(expr, path COLUMNS (column_list) [AS] alias)
         // has special handling because of irregular syntax
         self::JSON_TABLE => [Keyword::COLUMNS => false, Keyword::AS => false],
         // JSON_VALUE(json_doc, path [RETURNING type] [on_empty] [on_error])
         self::JSON_VALUE => [Keyword::RETURNING => CastType::class, Keyword::ON . ' ' . Keyword::EMPTY => false, Keyword::ON . ' ' . Keyword::ERROR => false],
-        // MAX([DISTINCT] expr)
-        self::MAX => [Keyword::DISTINCT => ExpressionNode::class],
-        // MIN([DISTINCT] expr)
-        self::MIN => [Keyword::DISTINCT => ExpressionNode::class],
+        // MAX([DISTINCT | ALL] expr)
+        self::MAX => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
+        // MIN([DISTINCT | ALL] expr)
+        self::MIN => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
         // POSITION(substr IN str)
-        self::POSITION => [Keyword::IN => ExpressionNode::class],
+        self::POSITION => [Keyword::IN => RootNode::class],
         // ST_COLLECT(DISTINCT location)
-        self::ST_Collect => [Keyword::DISTINCT => ExpressionNode::class],
+        self::ST_Collect => [Keyword::DISTINCT => RootNode::class],
         // SUBSTR(str,pos), SUBSTR(str FROM pos), SUBSTR(str,pos,len), SUBSTR(str FROM pos FOR len)
-        self::SUBSTR => [Keyword::FROM => ExpressionNode::class, Keyword::FOR => ExpressionNode::class],
+        self::SUBSTR => [Keyword::FROM => RootNode::class, Keyword::FOR => RootNode::class],
         // SUBSTRING(str,pos), SUBSTRING(str FROM pos), SUBSTRING(str,pos,len), SUBSTRING(str FROM pos FOR len)
-        self::SUBSTRING => [Keyword::FROM => ExpressionNode::class, Keyword::FOR => ExpressionNode::class],
-        // SUM([DISTINCT] expr)
-        self::SUM => [Keyword::DISTINCT => ExpressionNode::class],
+        self::SUBSTRING => [Keyword::FROM => RootNode::class, Keyword::FOR => RootNode::class],
+        // SUM([DISTINCT | ALL] expr)
+        self::SUM => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
+        // STD([ALL] expr)
+        self::STD => [Keyword::ALL => RootNode::class],
         // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
         // has special handling because of the suffix FROM
         self::TRIM => [Keyword::BOTH => false, Keyword::LEADING => false, Keyword::TRAILING => false, Keyword::FROM => false],
+        // VARIANCE([ALL] expr)
+        self::VARIANCE => [Keyword::ALL => RootNode::class],
         // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags]) -- "The flags clause currently is unused."
         self::WEIGHT_STRING => [Keyword::AS => CastType::class],
     ];
