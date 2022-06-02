@@ -132,10 +132,15 @@ class CompoundStatementParser
     private function parseStatement(TokenList $tokenList): Statement
     {
         $position = $tokenList->getPosition();
+        $label = $tokenList->getNonReservedName();
+        if (!$tokenList->hasSymbol(':')) {
+            $label = null;
+            $tokenList->resetPosition($position);
+        }
 
-        $label = $tokenList->getNonKeywordName();
+        $position = $tokenList->getPosition();
+
         if ($label !== null) {
-            $tokenList->expectSymbol(':');
             $keyword = $tokenList->expectAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE);
         } else {
             $keyword = $tokenList->getAnyKeyword(
