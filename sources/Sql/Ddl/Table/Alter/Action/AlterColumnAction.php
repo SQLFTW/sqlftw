@@ -21,13 +21,20 @@ class AlterColumnAction implements ColumnAction
     /** @var string */
     private $name;
 
-    /** @var RootNode|null */
-    private $default;
+    /** @var RootNode|false|null */
+    private $setDefault;
 
-    public function __construct(string $name, ?RootNode $default)
+    /** @var bool|null */
+    private $setVisible;
+
+    /**
+     * @param RootNode|false|null $setDefault
+     */
+    public function __construct(string $name, $setDefault, ?bool $setVisible = null)
     {
         $this->name = $name;
-        $this->default = $default;
+        $this->setDefault = $setDefault;
+        $this->setVisible = $setVisible;
     }
 
     public function getName(): string
@@ -35,20 +42,34 @@ class AlterColumnAction implements ColumnAction
         return $this->name;
     }
 
-    public function getDefault(): ?RootNode
+    /**
+     * @return RootNode|false|null
+     */
+    public function getSetDefault()
     {
-        return $this->default;
+        return $this->setDefault;
+    }
+
+    public function getSetVisible(): ?bool
+    {
+        return $this->setVisible;
     }
 
     public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER COLUMN ' . $formatter->formatName($this->name);
-        if ($this->default === null) {
+
+        if ($this->setDefault === false) {
             $result .= ' DROP DEFAULT';
-        } elseif ($this->default instanceof Literal) {
-            $result .= ' SET DEFAULT ' . $this->default->serialize($formatter);
-        } else {
-            $result .= ' SET DEFAULT (' . $this->default->serialize($formatter) . ')';
+        } elseif ($this->setDefault instanceof Literal) {
+            $result .= ' SET DEFAULT ' . $this->setDefault->serialize($formatter);
+        } elseif ($this->setDefault !== null) {
+            $result .= ' SET DEFAULT (' . $this->setDefault->serialize($formatter) . ')';
+        }
+        if ($this->setVisible === true) {
+            $result .= ' SET VISIBLE';
+        } elseif ($this->setVisible === false) {
+            $result .= ' SET INVISIBLE';
         }
 
         return $result;

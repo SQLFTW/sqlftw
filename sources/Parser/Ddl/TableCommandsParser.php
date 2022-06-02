@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidValueException;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Charset;
@@ -157,7 +158,7 @@ class TableCommandsParser
      *         FOREIGN KEY [index_name] (index_col_name, ...)
      *         reference_definition
      *   | ALGORITHM [=] {DEFAULT|INPLACE|COPY}
-     *   | ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT}
+     *   | ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT | SET INVISIBLE | SET VISIBLE}
      *   | CHANGE [COLUMN] old_col_name new_col_name column_definition
      *     [FIRST|AFTER col_name]
      *   | LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
@@ -343,21 +344,27 @@ class TableCommandsParser
                         $tokenList->expectKeyword(Keyword::ENFORCED);
                         $actions[] = new AlterCheckAction($check, $enforced);
                     } else {
-                        // ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT}
+                        // ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT | SET INVISIBLE | SET VISIBLE}
                         $tokenList->passKeyword(Keyword::COLUMN);
                         $column = $tokenList->expectName();
+                        $default = $visible = null;
                         if ($tokenList->hasKeywords(Keyword::SET, Keyword::DEFAULT)) {
                             if ($tokenList->hasSymbol('(')) {
-                                $value = $this->expressionParser->parseExpression($tokenList);
+                                $default = $this->expressionParser->parseExpression($tokenList);
                                 $tokenList->expectSymbol(')');
                             } else {
-                                $value = $this->expressionParser->parseLiteral($tokenList);
+                                $default = $this->expressionParser->parseLiteral($tokenList);
                             }
-                            $actions[] = new AlterColumnAction($column, $value);
+                        } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::DEFAULT)) {
+                            $default = false;
+                        } elseif ($tokenList->hasKeywords(Keyword::SET, Keyword::INVISIBLE)) {
+                            $visible = false;
+                        } elseif ($tokenList->hasKeywords(Keyword::SET, Keyword::VISIBLE)) {
+                            $visible = true;
                         } else {
-                            $tokenList->expectKeywords(Keyword::DROP, Keyword::DEFAULT);
-                            $actions[] = new AlterColumnAction($column, null);
+                            throw new ParserException('Expected SET DEFAULT, DROP DEFAULT, SET INVISIBLE or SET VISIBLE', $tokenList);
                         }
+                        $actions[] = new AlterColumnAction($column, $default, $visible);
                     }
                     break;
                 case Keyword::ANALYZE:
