@@ -626,7 +626,7 @@ class TokenList
     public function expectName(?string $name = null): string
     {
         $token = $this->expect(T::NAME);
-        if ($name !== null && $token->value !== $name) {
+        if ($name !== null && strtoupper($token->value) !== $name) {
             $this->position--;
 
             throw InvalidTokenException::tokens(T::NAME, 0, $name, $token, $this);
