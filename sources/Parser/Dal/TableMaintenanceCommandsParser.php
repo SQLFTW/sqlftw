@@ -52,25 +52,23 @@ class TableMaintenanceCommandsParser
         } while ($tokenList->hasSymbol(','));
 
         $columns = $buckets = null;
-        if (count($tables) === 1) {
-            if ($tokenList->hasKeywords(Keyword::UPDATE, Keyword::HISTOGRAM, Keyword::ON)) {
-                do {
-                    $columns[] = $tokenList->expectName();
-                } while ($tokenList->hasSymbol(','));
+        if ($tokenList->hasKeywords(Keyword::UPDATE, Keyword::HISTOGRAM, Keyword::ON)) {
+            do {
+                $columns[] = $tokenList->expectName();
+            } while ($tokenList->hasSymbol(','));
 
-                if ($tokenList->hasKeyword(Keyword::WITH)) {
-                    $buckets = (int) $tokenList->expectUnsignedInt();
-                    $tokenList->expectKeyword(Keyword::BUCKETS);
-                }
-
-                return new AnalyzeTableUpdateHistogramCommand($tables[0], $columns, $buckets, $local);
-            } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::HISTOGRAM, Keyword::ON)) {
-                do {
-                    $columns[] = $tokenList->expectName();
-                } while ($tokenList->hasSymbol(','));
-
-                return new AnalyzeTableDropHistogramCommand($tables[0], $columns, $local);
+            if ($tokenList->hasKeyword(Keyword::WITH)) {
+                $buckets = (int) $tokenList->expectUnsignedInt();
+                $tokenList->expectKeyword(Keyword::BUCKETS);
             }
+
+            return new AnalyzeTableUpdateHistogramCommand($tables[0], $columns, $buckets, $local);
+        } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::HISTOGRAM, Keyword::ON)) {
+            do {
+                $columns[] = $tokenList->expectName();
+            } while ($tokenList->hasSymbol(','));
+
+            return new AnalyzeTableDropHistogramCommand($tables[0], $columns, $local);
         }
 
         return new AnalyzeTablesCommand($tables, $local);
