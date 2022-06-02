@@ -287,7 +287,7 @@ class JoinParser
 
     /**
      * index_hint_list:
-     *     index_hint [, index_hint] ...
+     *     index_hint [[,] index_hint] ...
      *
      * index_hint:
      *     USE {INDEX|KEY} [FOR {JOIN|ORDER BY|GROUP BY}] ([index_list])
@@ -322,7 +322,10 @@ class JoinParser
             $tokenList->expectSymbol(')');
 
             $hints[] = new IndexHint($action, $target, $indexes);
-        } while (($trailingComma = $tokenList->hasSymbol(',')) && ($action = $tokenList->getKeywordEnum(IndexHintAction::class)) !== null);
+        } while (
+            (($trailingComma = $tokenList->hasSymbol(',')) && ($action = $tokenList->getKeywordEnum(IndexHintAction::class)) !== null)
+            || ($action = $tokenList->getKeywordEnum(IndexHintAction::class)) !== null
+        );
 
         if ($trailingComma) {
             $tokenList->resetPosition(-1);
