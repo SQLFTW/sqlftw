@@ -24,6 +24,9 @@ class ParenthesizedQueryExpression implements Query
     /** @var int|null */
     private $limit;
 
+    /** @var int|null */
+    private $offset;
+
     /** @var SelectInto|null */
     private $into;
 
@@ -34,12 +37,14 @@ class ParenthesizedQueryExpression implements Query
         Query $query,
         ?array $orderBy = null,
         ?int $limit = null,
+        ?int $offset = null,
         ?SelectInto $into = null
     )
     {
         $this->query = $query;
         $this->orderBy = $orderBy;
         $this->limit = $limit;
+        $this->offset = $offset;
         $this->into = $into;
     }
 
@@ -75,6 +80,9 @@ class ParenthesizedQueryExpression implements Query
         }
         if ($this->limit !== null) {
             $result .= "\nLIMIT " . $this->limit;
+            if ($this->offset !== null) {
+                $result .= " OFFSET " . $this->offset;
+            }
         }
         if ($this->into !== null) {
             $result .= ' ' . $this->into->serialize($formatter);

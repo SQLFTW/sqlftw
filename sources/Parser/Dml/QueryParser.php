@@ -172,9 +172,9 @@ class QueryParser
         $query = $this->parseQuery($tokenList);
         $tokenList->expectSymbol(')');
 
-        [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
+        [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);
 
-        return new ParenthesizedQueryExpression($query, $orderBy, $limit, $into);
+        return new ParenthesizedQueryExpression($query, $orderBy, $limit, $offset, $into);
     }
 
     /**
