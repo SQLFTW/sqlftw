@@ -1035,12 +1035,12 @@ class ExpressionParser
         $columns = [];
         if ($tokenList->hasSymbol('(')) {
             do {
-                $columns[] = $this->parseColumnName($tokenList);
+                $columns[] = $this->parseColumnIdentifier($tokenList);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         } else {
             do {
-                $columns[] = $this->parseColumnName($tokenList);
+                $columns[] = $this->parseColumnIdentifier($tokenList);
             } while ($tokenList->hasSymbol(','));
         }
 
@@ -1057,7 +1057,7 @@ class ExpressionParser
         return new MatchExpression($columns, $query, $mode, $expansion);
     }
 
-    public function parseColumnName(TokenList $tokenList): ColumnName
+    public function parseColumnIdentifier(TokenList $tokenList): ColumnIdentifier
     {
         $first = $tokenList->expectName();
         if ($tokenList->hasSymbol('.')) {
@@ -1068,10 +1068,10 @@ class ExpressionParser
                 return new ColumnName($third, $second, $first);
             }
 
-            return new ColumnName($second, $first, null);
+            return new QualifiedName($second, $first);
         }
 
-        return new ColumnName($first, null, null);
+        return new SimpleName($first);
     }
 
     private function parseSubquery(TokenList $tokenList): Subquery

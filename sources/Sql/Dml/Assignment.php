@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
@@ -25,7 +25,7 @@ class Assignment implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var QualifiedName */
+    /** @var ColumnIdentifier */
     private $variable;
 
     /** @var bool|int|float|string|RootNode */
@@ -34,7 +34,7 @@ class Assignment implements SqlSerializable
     /**
      * @param bool|int|float|string|RootNode $expression
      */
-    public function __construct(QualifiedName $variable, $expression)
+    public function __construct(ColumnIdentifier $variable, $expression)
     {
         if (!$expression instanceof RootNode && !is_scalar($expression)) {
             $given = is_object($expression) ? get_class($expression) : ucfirst(gettype($expression));
@@ -44,7 +44,7 @@ class Assignment implements SqlSerializable
         $this->expression = $expression;
     }
 
-    public function getVariable(): QualifiedName
+    public function getVariable(): ColumnIdentifier
     {
         return $this->variable;
     }

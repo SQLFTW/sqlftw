@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Update;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ColumnName;
+use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
@@ -20,7 +20,7 @@ class SetColumnExpression implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var ColumnName */
+    /** @var ColumnIdentifier */
     private $column;
 
     /** @var ExpressionNode|null */
@@ -29,7 +29,7 @@ class SetColumnExpression implements SqlSerializable
     /** @var bool */
     private $default;
 
-    public function __construct(ColumnName $column, ?ExpressionNode $value = null, bool $default = false)
+    public function __construct(ColumnIdentifier $column, ?ExpressionNode $value = null, bool $default = false)
     {
         if (($value === null && $default === false) || ($value !== null && $default === true)) {
             throw new InvalidDefinitionException('Either a value expression or default must be set, but not both at once.');
@@ -39,7 +39,7 @@ class SetColumnExpression implements SqlSerializable
         $this->default = $default;
     }
 
-    public function getColumn(): ColumnName
+    public function getColumn(): ColumnIdentifier
     {
         return $this->column;
     }

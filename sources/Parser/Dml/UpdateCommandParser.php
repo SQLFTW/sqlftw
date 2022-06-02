@@ -77,7 +77,7 @@ class UpdateCommandParser
         $tokenList->expectKeyword(Keyword::SET);
         $values = [];
         do {
-            $column = $this->expressionParser->parseColumnName($tokenList);
+            $column = $this->expressionParser->parseColumnIdentifier($tokenList);
 
             $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
 

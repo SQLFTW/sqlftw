@@ -19,7 +19,7 @@ class MatchExpression implements RootNode
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<ColumnName> */
+    /** @var non-empty-array<ColumnIdentifier> */
     private $columns;
 
     /** @var RootNode */
@@ -32,7 +32,7 @@ class MatchExpression implements RootNode
     private $queryExpansion;
 
     /**
-     * @param non-empty-array<ColumnName> $columns
+     * @param non-empty-array<ColumnIdentifier> $columns
      */
     public function __construct(array $columns, RootNode $query, ?MatchMode $mode, bool $queryExpansion = false)
     {
@@ -43,7 +43,7 @@ class MatchExpression implements RootNode
     }
 
     /**
-     * @return non-empty-array<ColumnName>
+     * @return non-empty-array<ColumnIdentifier>
      */
     public function getColumns(): array
     {

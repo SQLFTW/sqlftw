@@ -38,10 +38,7 @@ class InsertCommandParser
     /** @var QueryParser */
     private $queryParser;
 
-    public function __construct(
-        ExpressionParser $expressionParser,
-        QueryParser $queryParser
-    ) {
+    public function __construct(ExpressionParser $expressionParser, QueryParser $queryParser) {
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
     }
@@ -214,7 +211,7 @@ class InsertCommandParser
     {
         $assignments = [];
         do {
-            $column = $tokenList->expectQualifiedName();
+            $column = $this->expressionParser->parseColumnIdentifier($tokenList);
             $tokenList->expectOperator(Operator::EQUAL);
             $assignments[] = new Assignment($column, $this->expressionParser->parseExpression($tokenList));
         } while ($tokenList->hasSymbol(','));
