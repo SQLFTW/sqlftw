@@ -849,7 +849,7 @@ class TableCommandsParser
                         $tokenList->expectSymbol(')');
                         break;
                     }
-                    $function = $tokenList->getAnyKeyword(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW);
+                    $function = $tokenList->getAnyName(BuiltInFunction::CURRENT_TIMESTAMP, BuiltInFunction::NOW);
                     if ($function === null) {
                         // [DEFAULT default_value]
                         $default = $this->expressionParser->parseLiteral($tokenList);
