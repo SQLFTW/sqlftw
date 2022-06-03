@@ -384,6 +384,7 @@ class CompoundStatementParser
                     $type = ConditionType::get(ConditionType::SQL_WARNING);
                 } elseif ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
                     $type = ConditionType::get(ConditionType::SQL_STATE);
+                    $tokenList->passKeyword(Keyword::VALUE);
                     $value = $tokenList->getUnsignedInt();
                     if ($value === null) {
                         $value = $tokenList->expectNonReservedNameOrString();
