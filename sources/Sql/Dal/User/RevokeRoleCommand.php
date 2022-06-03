@@ -18,14 +18,14 @@ class RevokeRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-array<UserName> */
     private $roles;
 
     /** @var non-empty-array<UserName|FunctionCall> */
     private $users;
 
     /**
-     * @param non-empty-array<string> $roles
+     * @param non-empty-array<UserName> $roles
      * @param non-empty-array<UserName|FunctionCall> $users
      */
     public function __construct(array $roles, array $users)
@@ -35,7 +35,7 @@ class RevokeRoleCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-array<UserName>
      */
     public function getRoles(): array
     {
@@ -52,7 +52,7 @@ class RevokeRoleCommand implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'REVOKE ' . $formatter->formatNamesList($this->roles)
+        return 'REVOKE ' . $formatter->formatSerializablesList($this->roles)
             . ' FROM ' . $formatter->formatSerializablesList($this->users);
     }
 

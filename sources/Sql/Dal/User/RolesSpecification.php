@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\UserName;
 
 class RolesSpecification implements SqlSerializable
 {
@@ -18,11 +19,11 @@ class RolesSpecification implements SqlSerializable
     /** @var RolesSpecificationType */
     private $type;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-array<UserName>|null */
     private $roles;
 
     /**
-     * @param non-empty-array<string>|null $roles
+     * @param non-empty-array<UserName>|null $roles
      */
     public function __construct(RolesSpecificationType $type, ?array $roles = null)
     {
@@ -36,7 +37,7 @@ class RolesSpecification implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-array<UserName>|null
      */
     public function getRoles(): ?array
     {
@@ -50,7 +51,7 @@ class RolesSpecification implements SqlSerializable
             $result .= ' ';
         }
         if ($this->roles !== null) {
-            $result .= $formatter->formatNamesList($this->roles);
+            $result .= $formatter->formatSerializablesList($this->roles);
         }
 
         return $result;

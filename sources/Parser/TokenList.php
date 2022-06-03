@@ -258,6 +258,33 @@ class TokenList
         return false;
     }
 
+    public function seekKeywordBefore(string $keyword, string $beforeKeyword, int $maxOffset = 1000): bool
+    {
+        $position = $this->position;
+        for ($n = 0; $n < $maxOffset; $n++) {
+            $this->doAutoSkip();
+            $token = $this->tokens[$this->position] ?? null;
+            if ($token === null) {
+                break;
+            }
+            $this->position++;
+            if (($token->type & T::KEYWORD) !== 0) {
+                if (strtoupper($token->value) === $keyword) {
+                    $this->position = $position;
+
+                    return true;
+                } elseif (strtoupper($token->value) === $beforeKeyword) {
+                    $this->position = $position;
+
+                    return false;
+                }
+            }
+        }
+        $this->position = $position;
+
+        return false;
+    }
+
     // general ---------------------------------------------------------------------------------------------------------
 
     /**

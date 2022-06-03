@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dal\User;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\UserName;
 
 class CreateUserCommand implements UserCommand
 {
@@ -20,7 +21,7 @@ class CreateUserCommand implements UserCommand
     /** @var non-empty-array<IdentifiedUser> */
     private $users;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-array<UserName>|null */
     private $defaultRoles;
 
     /** @var array<UserTlsOption>|null */
@@ -43,7 +44,7 @@ class CreateUserCommand implements UserCommand
 
     /**
      * @param non-empty-array<IdentifiedUser> $users
-     * @param non-empty-array<string>|null $defaultRoles
+     * @param non-empty-array<UserName>|null $defaultRoles
      * @param array<UserTlsOption>|null $tlsOptions
      * @param non-empty-array<UserResourceOption>|null $resourceOptions
      * @param non-empty-array<UserPasswordLockOption>|null $passwordLockOptions
@@ -82,7 +83,7 @@ class CreateUserCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-array<UserName>|null
      */
     public function getDefaultRoles(): ?array
     {
@@ -137,7 +138,7 @@ class CreateUserCommand implements UserCommand
         $result .= $formatter->formatSerializablesList($this->users);
 
         if ($this->defaultRoles !== null) {
-            $result .= ' DEFAULT ROLE ' . $formatter->formatNamesList($this->defaultRoles);
+            $result .= ' DEFAULT ROLE ' . $formatter->formatSerializablesList($this->defaultRoles);
         }
 
         if ($this->tlsOptions !== null) {

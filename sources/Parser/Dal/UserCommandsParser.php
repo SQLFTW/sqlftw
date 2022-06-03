@@ -368,16 +368,6 @@ class UserCommandsParser
     /**
      * Crom! Grant me revenge! And if you do not listen, then to hell with you!
      *
-     * GRANT
-     *     priv_type [(column_list)]
-     *       [, priv_type [(column_list)]] ...
-     *     ON [object_type] priv_level
-     *     TO user_or_role [, user_or_role] ...
-     *     [WITH GRANT OPTION]
-     *     [AS user
-     *       [WITH ROLE {DEFAULT | NONE | ALL | ALL EXCEPT role [, role ] ... | role [, role ] ...}]
-     *     ]
-     *
      * GRANT PROXY ON user
      *     TO user [, user] ...
      *     [WITH GRANT OPTION]
@@ -386,10 +376,18 @@ class UserCommandsParser
      *     TO user [, user] ...
      *     [WITH ADMIN OPTION]
      *
+     * GRANT
+     *     priv_type [(column_list)] [, priv_type [(column_list)]] ...
+     *     ON [object_type] priv_level
+     *     TO user_or_role [, user_or_role] ...
+     *     [WITH GRANT OPTION]
+     *     [AS user
+     *       [WITH ROLE {DEFAULT | NONE | ALL | ALL EXCEPT role [, role ] ... | role [, role ] ...}]
+     *     ]
+     *
      * MySQL 5.x:
      * GRANT
-     *     priv_type [(column_list)]
-     *       [, priv_type [(column_list)]] ...
+     *     priv_type [(column_list)] [, priv_type [(column_list)]] ...
      *     ON [object_type] priv_level
      *     TO user [auth_option] [, user [auth_option]] ...
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
@@ -400,13 +398,15 @@ class UserCommandsParser
         $tokenList->expectKeyword(Keyword::GRANT);
 
         if ($tokenList->hasKeywords(Keyword::PROXY, Keyword::ON)) {
+            // GRANT PROXY ON
             $proxy = $this->parseUser($tokenList);
             $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseUsersList($tokenList);
             $withGrantOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
 
             return new GrantProxyCommand($proxy, $users, $withGrantOption);
-        } elseif (!$tokenList->seekKeyword(Keyword::ON, 1000)) {
+        } elseif (!$tokenList->seekKeywordBefore(Keyword::ON, Keyword::TO)) {
+            // GRANT ... TO
             $roles = $this->parseRolesList($tokenList);
             $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseUsersList($tokenList);
@@ -414,15 +414,18 @@ class UserCommandsParser
 
             return new GrantRoleCommand($roles, $users, $withAdminOption);
         } else {
+            // GRANT ... ON ... TO
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
             $tokenList->expectKeyword(Keyword::TO);
             $users = $this->parseIdentifiedUsers($tokenList);
+
             // 5.x only
             $tlsOptions = $this->parseTlsOptions($tokenList);
             $withGrantOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
             // 5.x only
             $resourceOptions = $this->parseResourceOptions($tokenList);
+
             $as = $role = null;
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $as = $this->parseUser($tokenList);
@@ -566,16 +569,16 @@ class UserCommandsParser
     }
 
     /**
-     * REVOKE
-     *     priv_type [(column_list)]
-     *       [, priv_type [(column_list)]] ...
-     *     ON [object_type] priv_level
-     *     FROM user [, user] ...
-     *
      * REVOKE ALL [PRIVILEGES], GRANT OPTION
      *     FROM user [, user] ...
      *
      * REVOKE PROXY ON user
+     *     FROM user [, user] ...
+     *
+     * REVOKE
+     *     priv_type [(column_list)]
+     *       [, priv_type [(column_list)]] ...
+     *     ON [object_type] priv_level
      *     FROM user [, user] ...
      *
      * REVOKE role [, role ] ...
@@ -586,6 +589,7 @@ class UserCommandsParser
         $tokenList->expectKeyword(Keyword::REVOKE);
 
         if ($tokenList->hasKeyword(Keyword::ALL)) {
+            // REVOKE ALL
             if (!$tokenList->seekKeyword(Keyword::ON, 15)) {
                 $tokenList->passKeyword(Keyword::PRIVILEGES);
                 $tokenList->expectSymbol(',');
@@ -598,13 +602,15 @@ class UserCommandsParser
             }
         }
         if ($tokenList->hasKeywords(Keyword::PROXY)) {
+            // REVOKE PROXY ON
             $tokenList->expectKeyword(Keyword::ON);
             $proxy = $this->parseUser($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUsersList($tokenList);
 
             return new RevokeProxyCommand($proxy, $users);
-        } elseif ($tokenList->seekKeyword(Keyword::ON, 1000)) {
+        } elseif ($tokenList->seekKeywordBefore(Keyword::ON, Keyword::FROM)) {
+            // REVOKE ... ON ... FROM
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
@@ -612,6 +618,7 @@ class UserCommandsParser
 
             return new RevokeCommand($privileges, $resource, $users);
         } else {
+            // REVOKE ... FROM
             $roles = $this->parseRolesList($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUsersList($tokenList);
@@ -762,13 +769,13 @@ class UserCommandsParser
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-array<UserName>
      */
     private function parseRolesList(TokenList $tokenList): array
     {
         $roles = [];
         do {
-            $roles[] = $tokenList->expectNonReservedNameOrString();
+            $roles[] = $tokenList->expectUserName();
         } while ($tokenList->hasSymbol(','));
 
         return $roles;

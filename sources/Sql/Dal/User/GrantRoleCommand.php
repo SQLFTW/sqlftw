@@ -18,7 +18,7 @@ class GrantRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-array<UserName> */
     private $roles;
 
     /** @var non-empty-array<UserName|FunctionCall> */
@@ -28,7 +28,7 @@ class GrantRoleCommand implements UserCommand
     private $withAdminOption;
 
     /**
-     * @param non-empty-array<string> $roles
+     * @param non-empty-array<UserName> $roles
      * @param non-empty-array<UserName|FunctionCall> $users
      */
     public function __construct(array $roles, array $users, bool $withAdminOption = false)
@@ -39,7 +39,7 @@ class GrantRoleCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-array<UserName>
      */
     public function getRoles(): array
     {
@@ -61,7 +61,7 @@ class GrantRoleCommand implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'GRANT ' . $formatter->formatNamesList($this->roles)
+        $result = 'GRANT ' . $formatter->formatSerializablesList($this->roles)
             . ' TO ' . $formatter->formatSerializablesList($this->users);
 
         if ($this->withAdminOption) {

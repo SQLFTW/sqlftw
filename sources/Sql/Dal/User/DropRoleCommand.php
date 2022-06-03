@@ -11,19 +11,20 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class DropRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-array<UserName> */
     private $roles;
 
     /** @var bool */
     private $ifExists;
 
     /**
-     * @param non-empty-array<string> $roles
+     * @param non-empty-array<UserName> $roles
      */
     public function __construct(array $roles, bool $ifExists = false)
     {
@@ -32,7 +33,7 @@ class DropRoleCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-array<UserName>
      */
     public function getRoles(): array
     {
@@ -51,7 +52,7 @@ class DropRoleCommand implements UserCommand
             $result .= 'IF EXISTS ';
         }
 
-        return $result . $formatter->formatNamesList($this->roles);
+        return $result . $formatter->formatSerializablesList($this->roles);
     }
 
 }

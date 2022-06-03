@@ -246,8 +246,10 @@ class Parser
                         return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->resetPosition($start));
                     default:
                         if ($tokenList->seekKeyword(Keyword::EVENT, 8)) {
+                            // ALTER [DEFINER = { user | CURRENT_USER }] EVENT event_name
                             return $this->factory->getEventCommandsParser()->parseAlterEvent($tokenList->resetPosition($start));
                         } elseif ($tokenList->seekKeyword(Keyword::VIEW, 15)) {
+                            // ALTER [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW ...
                             return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->resetPosition($start));
                         }
                         $tokenList->missingAnyKeyword(

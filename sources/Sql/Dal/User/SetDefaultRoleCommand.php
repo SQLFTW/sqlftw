@@ -24,12 +24,12 @@ class SetDefaultRoleCommand implements UserCommand
     /** @var UserDefaultRolesSpecification|null */
     private $roles;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-array<UserName>|null */
     private $rolesList;
 
     /**
      * @param non-empty-array<UserName|FunctionCall> $users
-     * @param non-empty-array<string>|null $rolesList
+     * @param non-empty-array<UserName>|null $rolesList
      */
     public function __construct(array $users, ?UserDefaultRolesSpecification $roles, ?array $rolesList = null)
     {
@@ -52,7 +52,7 @@ class SetDefaultRoleCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-array<UserName>|null
      */
     public function getRolesList(): ?array
     {
@@ -66,7 +66,7 @@ class SetDefaultRoleCommand implements UserCommand
             $result .= $this->roles->serialize($formatter);
         }
         if ($this->rolesList !== null) {
-            $result .= $formatter->formatNamesList($this->rolesList);
+            $result .= $formatter->formatSerializablesList($this->rolesList);
         }
         $result .= ' TO ' . $formatter->formatSerializablesList($this->users);
 

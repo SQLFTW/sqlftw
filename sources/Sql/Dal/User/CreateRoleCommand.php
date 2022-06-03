@@ -11,19 +11,20 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\UserName;
 
 class CreateRoleCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-array<UserName> */
     private $roles;
 
     /** @var bool */
     private $ifNotExists;
 
     /**
-     * @param non-empty-array<string> $roles
+     * @param non-empty-array<UserName> $roles
      */
     public function __construct(array $roles, bool $ifNotExists = false)
     {
@@ -32,7 +33,7 @@ class CreateRoleCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-array<UserName>
      */
     public function getRoles(): array
     {
@@ -46,7 +47,7 @@ class CreateRoleCommand implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'CREATE ROLE ' . ($this->ifNotExists ? 'IF NOT EXISTS ' : '') . $formatter->formatNamesList($this->roles);
+        return 'CREATE ROLE ' . ($this->ifNotExists ? 'IF NOT EXISTS ' : '') . $formatter->formatSerializablesList($this->roles);
     }
 
 }
