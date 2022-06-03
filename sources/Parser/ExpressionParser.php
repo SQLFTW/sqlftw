@@ -391,7 +391,21 @@ class ExpressionParser
             Operator::JSON_EXTRACT_UNQUOTE,
         ];
 
-        $left = $this->parseSimpleExpression($tokenList);
+        if ($tokenList->hasKeyword(Keyword::INTERVAL)) {
+            // `INTERVAL(n+1) YEAR` (interval expression) is indistinguishable from `INTERVAL(n, 1)` (function call)
+            // until we try to parse the contents of "(...)" and the following unit.
+            $position = $tokenList->getPosition();
+            $interval = $this->tryParseInterval($tokenList);
+            if ($interval !== null) {
+                $left = new IntervalExpression($interval);
+            } else {
+                $tokenList->resetPosition($position);
+                $left = $this->parseSimpleExpression($tokenList);
+            }
+        } else {
+            $left = $this->parseSimpleExpression($tokenList);
+        }
+
         $operator = $tokenList->getAnyOperator(...$operators);
         if ($operator === null) {
             $operator = $tokenList->getAnyKeyword(Keyword::DIV, Keyword::MOD);
@@ -400,20 +414,6 @@ class ExpressionParser
             return $left;
         }
 
-        if (($operator === Operator::PLUS || $operator === Operator::MINUS) && $tokenList->hasKeyword(Keyword::INTERVAL)) {
-            $right = new IntervalExpression($this->parseInterval($tokenList));
-
-            // right recursion of interval_expr
-            $left = new BinaryOperator($left, [$operator], $right);
-            while ($operator = $tokenList->getAnyOperator(Operator::PLUS, Operator::MINUS)) {
-                $tokenList->expectKeyword(Keyword::INTERVAL);
-                $right = new IntervalExpression($this->parseInterval($tokenList));
-                $left = new BinaryOperator($left, [$operator], $right);
-            }
-
-            return $left;
-        }
-        // full recursion of bit_expr
         $right = $this->parseBitExpression($tokenList);
 
         return new BinaryOperator($left, [$operator], $right);
@@ -1323,6 +1323,24 @@ class ExpressionParser
 
         /** @var TimeIntervalUnit $unit */
         $unit = $tokenList->expectKeywordEnum(TimeIntervalUnit::class);
+
+        return new TimeInterval($value, $unit);
+    }
+
+    /**
+     * interval:
+     *     quantity {YEAR | QUARTER | MONTH | DAY | HOUR | MINUTE |
+     *          WEEK | SECOND | YEAR_MONTH | DAY_HOUR | DAY_MINUTE |
+     *          DAY_SECOND | HOUR_MINUTE | HOUR_SECOND | MINUTE_SECOND}
+     */
+    public function tryParseInterval(TokenList $tokenList): ?TimeInterval
+    {
+        $value = $this->parseExpression($tokenList);
+
+        $unit = $tokenList->getKeywordEnum(TimeIntervalUnit::class);
+        if ($unit === null) {
+            return null;
+        }
 
         return new TimeInterval($value, $unit);
     }
