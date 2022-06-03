@@ -1003,6 +1003,10 @@ class TableCommandsParser
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
             switch ($keyword) {
                 case Keyword::NOT:
+                    // todo: ignoring HeatWave secondary engine feature
+                    if ($tokenList->hasKeyword(Keyword::SECONDARY)) {
+                        break;
+                    }
                     // [NOT NULL | NULL]
                     $tokenList->expectKeyword(Keyword::NULL);
                     $null = false;
