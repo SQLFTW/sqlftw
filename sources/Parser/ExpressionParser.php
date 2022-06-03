@@ -247,7 +247,9 @@ class ExpressionParser
 
                 return new BinaryOperator($left, [$operator], $right);
             }
-        } elseif ($tokenList->hasKeyword(Keyword::IS)) {
+        }
+
+        while ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
             $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
             switch ($keyword) {
@@ -265,10 +267,10 @@ class ExpressionParser
                     break;
             }
 
-            return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
-        } else {
-            return $left;
+            $left = new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
         }
+
+        return $left;
     }
 
     /**
