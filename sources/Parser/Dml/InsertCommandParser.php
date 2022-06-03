@@ -23,6 +23,7 @@ use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
+use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
@@ -187,7 +188,7 @@ class InsertCommandParser
     }
 
     /**
-     * @return string[]|null
+     * @return ColumnIdentifier[]|null
      */
     private function parseColumnList(TokenList $tokenList): ?array
     {
@@ -204,7 +205,7 @@ class InsertCommandParser
             }
             $columns = [];
             do {
-                $columns[] = $tokenList->expectName();
+                $columns[] = $this->expressionParser->parseColumnIdentifier($tokenList);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }

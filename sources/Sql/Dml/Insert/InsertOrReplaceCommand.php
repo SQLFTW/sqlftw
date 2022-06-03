@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
+use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 
 abstract class InsertOrReplaceCommand implements DmlCommand
@@ -21,7 +22,7 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     /** @var QualifiedName */
     protected $table;
 
-    /** @var array<string>|null */
+    /** @var array<ColumnIdentifier>|null */
     protected $columns;
 
     /** @var non-empty-array<string>|null */
@@ -34,7 +35,7 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     protected $ignore;
 
     /**
-     * @param array<string>|null $columns
+     * @param array<ColumnIdentifier>|null $columns
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
@@ -58,7 +59,7 @@ abstract class InsertOrReplaceCommand implements DmlCommand
     }
 
     /**
-     * @return array<string>|null
+     * @return array<ColumnIdentifier>|null
      */
     public function getColumns(): ?array
     {
@@ -101,7 +102,7 @@ abstract class InsertOrReplaceCommand implements DmlCommand
         if ($this->columns !== null) {
             $result .= ' (';
             if ($this->columns !== []) {
-                $result .= $formatter->formatNamesList($this->columns);
+                $result .= $formatter->formatSerializablesList($this->columns);
             }
             $result .= ')';
         }

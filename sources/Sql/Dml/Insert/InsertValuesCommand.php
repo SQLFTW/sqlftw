@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\QualifiedName;
 use function array_map;
@@ -34,7 +35,7 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
 
     /**
      * @param non-empty-array<array<ExpressionNode>> $rows
-     * @param array<string>|null $columns
+     * @param array<ColumnIdentifier>|null $columns
      * @param non-empty-array<string>|null $columnAliases
      * @param non-empty-array<string>|null $partitions
      */

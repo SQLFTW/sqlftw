@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
+use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 
 class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
@@ -23,7 +24,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
 
     /**
      * @param non-empty-array<Assignment> $assignments
-     * @param array<string>|null $columns
+     * @param array<ColumnIdentifier>|null $columns
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(

@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
+use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 
 class InsertSelectCommand extends InsertOrReplaceCommand implements InsertCommand
@@ -25,7 +26,7 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
     private $onDuplicateKeyActions;
 
     /**
-     * @param array<string>|null $columns
+     * @param array<ColumnIdentifier>|null $columns
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
