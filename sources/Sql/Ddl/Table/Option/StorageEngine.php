@@ -9,45 +9,76 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
-use SqlFtw\Sql\SqlEnum;
-use function in_array;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 use function strtolower;
 
-class StorageEngine extends SqlEnum
+class StorageEngine implements SqlSerializable
 {
 
+    /** @var string */
+    private $value;
+
+    public function __construct(string $value)
+    {
+        $this->value = self::$map[strtolower($value)] ?? $value;
+    }
+
+    // standard
     public const INNODB = 'InnoDB';
     public const MYISAM = 'MyISAM';
     public const MEMORY = 'Memory';
     public const CSV = 'CSV';
     public const ARCHIVE = 'Archive';
     public const BLACKHOLE = 'Blackhole';
+
+    // NDB
     public const NDB = 'NDB';
     public const NDBCLUSTER = 'ndbcluster';
     public const NDBINFO = 'ndbinfo';
+
+    // other (deprecated etc.)
     public const MERGE = 'Merge';
+    public const MRG_MYISAM = 'MRG_MyISAM';
     public const FEDERATED = 'Federated';
     public const FALCON = 'Falcon';
     public const MARIA = 'Maria';
-    public const EXAMPLE = 'Example';
     public const HEAP = 'HEAP'; // old alias for Memory
 
-    public static function validateValue(string &$value): bool
+    /** @var array<string, string> */
+    private static $map = [
+        'innodb' => self::INNODB,
+        'myisam' => self::MYISAM,
+        'memory' => self::MEMORY,
+        'csv' => self::CSV,
+        'archive' => self::ARCHIVE,
+        'blackhole' => self::BLACKHOLE,
+        'ndb' => self::NDB,
+        'ndbcluster' => self::NDBCLUSTER,
+        'ndbinfo' => self::NDBINFO,
+        'merge' => self::MERGE,
+        'mrg_myisam' => self::MRG_MYISAM,
+        'federated' => self::FEDERATED,
+        'falcon' => self::FALCON,
+        'maria' => self::MARIA,
+        'heap' => self::HEAP,
+    ];
+
+    public function getValue(): string
     {
-        if (in_array($value, self::getAllowedValues(), true)) {
-            return true;
-        } else {
-            $lower = strtolower($value);
-            foreach (self::getAllowedValues() as $allowedValue) {
-                if ($lower === strtolower($allowedValue)) {
-                    $value = $allowedValue;
+        return $this->value;
+    }
 
-                    return true;
-                }
-            }
+    public function equalsValue(string $value): bool
+    {
+        $normalized = self::$map[strtolower($value)] ?? $value;
 
-            return false;
-        }
+        return $this->value === $normalized;
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        return $this->value;
     }
 
 }

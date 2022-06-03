@@ -16,6 +16,7 @@ use SqlFtw\Platform\Platform;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
@@ -1063,6 +1064,13 @@ class TokenList
 
             return Collation::get($value);
         }
+    }
+
+    public function expectStorageEngineName(): StorageEngine
+    {
+        $value = $this->expectNonReservedNameOrString();
+
+        return new StorageEngine($value);
     }
 
     // end -------------------------------------------------------------------------------------------------------------

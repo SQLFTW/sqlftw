@@ -1322,7 +1322,7 @@ class TableCommandsParser
             case Keyword::SECONDARY_ENGINE:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::ENGINE, $tokenList->expectNameOrStringEnum(StorageEngine::class)];
+                return [TableOption::ENGINE, $tokenList->expectStorageEngineName()];
             case Keyword::INDEX:
                 $tokenList->expectKeyword(Keyword::DIRECTORY);
                 $tokenList->passSymbol('=');

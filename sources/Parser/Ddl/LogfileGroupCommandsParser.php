@@ -49,7 +49,7 @@ class LogfileGroupCommandsParser
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
             $tokenList->passSymbol('=');
-            $engine = $tokenList->expectNameOrStringEnum(StorageEngine::class);
+            $engine = $tokenList->expectStorageEngineName();
         }
 
         return new AlterLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $wait);
@@ -98,7 +98,7 @@ class LogfileGroupCommandsParser
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
             $tokenList->passSymbol('=');
-            $engine = $tokenList->expectNameOrStringEnum(StorageEngine::class);
+            $engine = $tokenList->expectStorageEngineName();
         }
 
         return new CreateLogfileGroupCommand($name, $engine, $undoFile, $initialSize, $undoBufferSize, $redoBufferSize, $nodeGroup, $wait, $comment);
@@ -116,7 +116,7 @@ class LogfileGroupCommandsParser
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
             $tokenList->passSymbol('=');
-            $engine = $tokenList->expectNameOrStringEnum(StorageEngine::class);
+            $engine = $tokenList->expectStorageEngineName();
         }
 
         return new DropLogfileGroupCommand($name, $engine);
