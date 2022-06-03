@@ -20,7 +20,6 @@ use SqlFtw\Sql\Dal\Table\CheckTableOption;
 use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
 use SqlFtw\Sql\Dal\Table\RepairTableCommand;
 use SqlFtw\Sql\Keyword;
-use function count;
 
 class TableMaintenanceCommandsParser
 {
@@ -45,7 +44,7 @@ class TableMaintenanceCommandsParser
     {
         $tokenList->expectKeyword(Keyword::ANALYZE);
         $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
-        $tokenList->expectKeyword(Keyword::TABLE);
+        $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
             $tables[] = $tokenList->expectQualifiedName();
@@ -105,7 +104,8 @@ class TableMaintenanceCommandsParser
      */
     public function parseChecksumTable(TokenList $tokenList): ChecksumTableCommand
     {
-        $tokenList->expectKeywords(Keyword::CHECKSUM, Keyword::TABLE);
+        $tokenList->expectKeyword(Keyword::CHECKSUM);
+        $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
             $tables[] = $tokenList->expectQualifiedName();
@@ -125,7 +125,7 @@ class TableMaintenanceCommandsParser
     {
         $tokenList->expectKeyword(Keyword::OPTIMIZE);
         $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
-        $tokenList->expectKeyword(Keyword::TABLE);
+        $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
             $tables[] = $tokenList->expectQualifiedName();
@@ -143,7 +143,7 @@ class TableMaintenanceCommandsParser
     {
         $tokenList->expectKeyword(Keyword::REPAIR);
         $local = $tokenList->hasAnyKeyword(Keyword::NO_WRITE_TO_BINLOG, Keyword::LOCAL);
-        $tokenList->expectKeyword(Keyword::TABLE);
+        $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
             $tables[] = $tokenList->expectQualifiedName();

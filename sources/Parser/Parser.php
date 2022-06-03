@@ -560,7 +560,7 @@ class Parser
                     return $this->factory->getLoadCommandsParser()->parseLoadXml($tokenList->resetPosition($start));
                 }
             case Keyword::OPTIMIZE:
-                // OPTIMIZE
+                // OPTIMIZE TABLE
                 return $this->factory->getTableMaintenanceCommandsParser()->parseOptimizeTable($tokenList->resetPosition($start));
             case Keyword::PREPARE:
                 // PREPARE
@@ -581,7 +581,7 @@ class Parser
                     return $this->factory->getUserCommandsParser()->parseRenameUser($tokenList->resetPosition($start));
                 }
             case Keyword::REPAIR:
-                // REPAIR
+                // REPAIR TABLE
                 return $this->factory->getTableMaintenanceCommandsParser()->parseRepairTable($tokenList->resetPosition($start));
             case Keyword::REPLACE:
                 // REPLACE
