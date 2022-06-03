@@ -15,26 +15,12 @@ use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Dal\Set\SetCommand;
-use SqlFtw\Sql\Expression\BinaryOperator;
-use SqlFtw\Sql\Expression\BuiltInFunction;
-use SqlFtw\Sql\Expression\DefaultLiteral;
-use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\Expression\QualifiedName;
-use SqlFtw\Sql\Expression\SimpleName;
-use SqlFtw\Sql\Expression\StringValue;
-use SqlFtw\Sql\Expression\SystemVariable;
-use SqlFtw\Sql\Expression\UintLiteral;
-use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MultiStatement;
-use SqlFtw\Sql\MysqlVariable;
-use SqlFtw\Sql\SqlMode;
 use Throwable;
 use function count;
 use function iterator_to_array;
 use function strtoupper;
-use function trim;
 
 class Parser
 {
@@ -43,15 +29,22 @@ class Parser
     /** @var PlatformSettings */
     private $settings;
 
+    /** @var SettingsUpdater */
+    private $settingsUpdater;
+
     /** @var Lexer */
     private $lexer;
 
     /** @var ParserFactory */
     private $factory;
 
-    public function __construct(PlatformSettings $settings, ?Lexer $lexer = null)
-    {
+    public function __construct(
+        PlatformSettings $settings,
+        ?Lexer $lexer = null,
+        ?SettingsUpdater $settingsUpdater = null
+    ) {
         $this->settings = $settings;
+        $this->settingsUpdater = $settingsUpdater ?? new SettingsUpdater();
         $this->lexer = $lexer ?? new Lexer($settings);
         $this->factory = new ParserFactory($settings, $this);
     }
@@ -91,7 +84,7 @@ class Parser
                 }
 
                 try {
-                    $this->detectModeChanges($command, $tokenList);
+                    $this->settingsUpdater->updateSettings($command, $this->settings, $tokenList);
                 } catch (ParserException $e) {
                     yield new InvalidCommand($tokenList, $e);
 
@@ -781,67 +774,6 @@ class Parser
                     Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN, Keyword::START, Keyword::STOP,
                     Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
                 );
-        }
-    }
-
-    private function detectModeChanges(Command $command, TokenList $tokenList): void
-    {
-        // todo: sniff for SET NAMES, SET CHARSET, multi-statement mode ...
-
-        if ($command instanceof SetCommand) {
-            foreach ($command->getAssignments() as $assignment) {
-                $variable = $assignment->getVariable();
-                if ($variable instanceof SystemVariable && $variable->getName() === MysqlVariable::SQL_MODE) {
-                    $value = $assignment->getExpression();
-                    if ($value instanceof SystemVariable && $value->getName() === MysqlVariable::SQL_MODE) {
-                        // todo: tracking both session and global?
-                        $this->settings->setMode($this->settings->getPlatform()->getDefaultMode());
-                    } elseif ($value instanceof StringValue) {
-                        $this->settings->setMode(SqlMode::getFromString(trim($value->asString()), $this->settings->getPlatform()));
-                    } elseif ($value instanceof SimpleName) {
-                        if ($value->getName() !== Keyword::TRUE && $value->getName() !== Keyword::FALSE) {
-                            $this->settings->setMode(SqlMode::getFromString($value->getName(), $this->settings->getPlatform()));
-                        }
-                    } elseif ($value instanceof DefaultLiteral) {
-                        $this->settings->setMode(SqlMode::getFromString(Keyword::DEFAULT, $this->settings->getPlatform()));
-                    } elseif ($value instanceof UintLiteral) {
-                        $this->settings->setMode(SqlMode::getFromInt($value->asInteger(), $this->settings->getPlatform()));
-                    } elseif ($value instanceof FunctionCall) {
-                        $function = $value->getFunction();
-                        if ($function instanceof QualifiedName && $function->equals('sys.list_add')) {
-                            [$first, $second] = $value->getArguments();
-                            if ($first instanceof SystemVariable && $first->getName() === MysqlVariable::SQL_MODE && $second instanceof StringValue) {
-                                $value = $this->settings->getMode()->getValue() . ',' . $second->asString();
-                                // needed to expand groups
-                                $mode = SqlMode::getFromString($value, $this->settings->getPlatform());
-                                $this->settings->setMode($mode);
-                            } else {
-                                throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
-                            }
-                        } elseif ($function instanceof QualifiedName && $function->equals('sys.list_drop')) {
-                            [$first, $second] = $value->getArguments();
-                            if ($first instanceof SystemVariable && $first->getName() === MysqlVariable::SQL_MODE && $second instanceof StringValue) {
-                                $this->settings->setMode($this->settings->getMode()->remove($second->asString()));
-                            } else {
-                                throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
-                            }
-                        } elseif ($function instanceof BuiltInFunction && $function->getValue() === BuiltInFunction::CAST) {
-                            // todo: skipped for now, needs evaluating expressions
-                            continue;
-                        } else {
-                            throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
-                        }
-                    } elseif ($value instanceof BinaryOperator) {
-                        // todo: skipped for now, needs evaluating expressions
-                        continue;
-                    } elseif ($value instanceof UserVariable) {
-                        // todo: no way to detect this
-                        continue;
-                    } else {
-                        throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
-                    }
-                }
-            }
         }
     }
 
