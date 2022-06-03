@@ -500,7 +500,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const LAG = 'LAG';
     public const LAST_VALUE = 'LAST_VALUE';
     public const LEAD = 'LEAD';
-    public const NTH_VALUE = 'NTH_VALUwE';
+    public const NTH_VALUE = 'NTH_VALUE';
     public const NTILE = 'NTILE';
     public const PERCENT_RANK = 'PERCENT_RANK';
     public const RANK = 'RANK';
@@ -659,6 +659,11 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public function hasNullTreatment(): bool
     {
         return in_array($this->getValue(), self::$nullTreatment, true);
+    }
+
+    public function hasFromFirstLast(): bool
+    {
+        return $this->getValue() === self::NTH_VALUE;
     }
 
     public function isBare(): bool

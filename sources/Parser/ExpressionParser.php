@@ -721,28 +721,31 @@ class ExpressionParser
             $arguments[] = $this->parseExpression($tokenList);
         } while (true);
 
-        $respectNulls = $over = null;
-        if ($function instanceof BuiltInFunction
-            && $function->isWindow()
-            && ($keyword = $tokenList->getAnyKeyword(Keyword::OVER, Keyword::RESPECT, Keyword::IGNORE)) !== null
-        ) {
-            if ($keyword === Keyword::RESPECT) {
-                $tokenList->expectKeyword(Keyword::NULLS);
-                if (!$function->hasNullTreatment()) {
-                    throw new ParserException("Function {$function->getValue()} does not support null treatment.", $tokenList);
-                }
-                $respectNulls = true;
+        // AGG_FUNC(...) [from_first_last] [null_treatment] [over_clause]
+        $fromFirst = null;
+        if ($function instanceof BuiltInFunction && $function->hasFromFirstLast()) {
+            if ($tokenList->hasKeywords(Keyword::FROM, Keyword::FIRST)) {
+                $fromFirst = true;
+            } elseif ($tokenList->hasKeywords(Keyword::FROM, Keyword::LAST)) {
+                throw new ParserException('FROM LAST is not yet supported by MySQL.', $tokenList);
+            }
+        }
 
-                $tokenList->expectKeyword(Keyword::OVER);
-            } elseif ($keyword === Keyword::IGNORE) {
+        $respectNulls = null;
+        if ($function instanceof BuiltInFunction && $function->hasNullTreatment()) {
+            if ($tokenList->hasKeywords(Keyword::RESPECT, Keyword::NULLS)) {
+                $respectNulls = true;
+            } elseif ($tokenList->hasKeywords(Keyword::IGNORE, Keyword::NULLS)) {
                 throw new ParserException('IGNORE NULLS is not yet supported by MySQL.', $tokenList);
             }
+        }
 
-            // AGG_FUNC(...) [null_treatment] [over_clause]
+        $over = null;
+        if ($function instanceof BuiltInFunction && $function->isWindow() && $tokenList->getKeyword(Keyword::OVER)) {
             $over = $this->parseOver($tokenList);
         }
 
-        return new FunctionCall($function, $arguments, $over, $respectNulls);
+        return new FunctionCall($function, $arguments, $over, $respectNulls, $fromFirst);
     }
 
     /**

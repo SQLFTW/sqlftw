@@ -35,11 +35,20 @@ class FunctionCall implements RootNode
     /** @var bool|null */
     private $respectNulls;
 
+    /** @var bool|null */
+    private $fromFirst;
+
     /**
      * @param ArgumentNode[] $arguments
      * @param WindowSpecification|string $over
      */
-    public function __construct(FunctionIdentifier $function, array $arguments = [], $over = null, ?bool $respectNulls = null)
+    public function __construct(
+        FunctionIdentifier $function,
+        array $arguments = [],
+        $over = null,
+        ?bool $respectNulls = null,
+        ?bool $fromFirst = null
+    )
     {
         if ($over !== null && (!$function instanceof BuiltInFunction || !$function->isWindow())) {
             throw new InvalidDefinitionException('OVER clause is supported only on window functions.');
@@ -47,11 +56,15 @@ class FunctionCall implements RootNode
         if ($respectNulls !== null && (!$function instanceof BuiltInFunction || !$function->hasNullTreatment())) {
             throw new InvalidDefinitionException('RESPECT NULLS clause is not supported by this function.');
         }
+        if ($fromFirst !== null && (!$function instanceof BuiltInFunction || !$function->hasFromFirstLast())) {
+            throw new InvalidDefinitionException('FROM FIRST/LAST clause is not supported by this function.');
+        }
 
         $this->function = $function;
         $this->arguments = $arguments;
         $this->over = $over;
         $this->respectNulls = $respectNulls;
+        $this->fromFirst = $fromFirst;
     }
 
     public function getFunction(): FunctionIdentifier
@@ -78,6 +91,11 @@ class FunctionCall implements RootNode
     public function respectNulls(): ?bool
     {
         return $this->respectNulls;
+    }
+
+    public function fromFirst(): ?bool
+    {
+        return $this->fromFirst;
     }
 
     public function serialize(Formatter $formatter): string
@@ -123,6 +141,11 @@ class FunctionCall implements RootNode
             $result .= ' ' . Keyword::RESPECT . ' ' . Keyword::NULLS;
         } elseif ($this->respectNulls === false) {
             $result .= ' ' . Keyword::IGNORE . ' ' . Keyword::NULLS;
+        }
+        if ($this->fromFirst === true) {
+            $result .= ' ' . Keyword::FROM . ' ' . Keyword::FIRST;
+        } elseif ($this->fromFirst === false) {
+            $result .= ' ' . Keyword::FROM . ' ' . Keyword::LAST;
         }
 
         if ($this->over !== null) {
