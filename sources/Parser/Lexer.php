@@ -497,8 +497,8 @@ class Lexer
                                     $end = strpos($string, "\n$parts[$index]\n", $position);
                                     $endLen = strlen($parts[$index]) + 1;
                                 } else {
-                                    $end = strpos($string, "\nEOF\n", $position);
-                                    $endLen = 4;
+                                    $end = strpos($string, "EOF\n", $position);
+                                    $endLen = 3;
                                 }
                                 if ($end === false) {
                                     throw new LexerException('End of code block not found. Starts with: ' . $line, $position, $string);

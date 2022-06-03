@@ -166,6 +166,11 @@ class TokenList
         }
     }
 
+    public function getStartOffset(): int
+    {
+        return $this->tokens[0]->position;
+    }
+
     /**
      * @return Token[]
      */

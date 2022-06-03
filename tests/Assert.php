@@ -139,7 +139,9 @@ class Assert extends DogmaAssert
                         self::true(true);
                     } else {
                         if (class_exists(Debugger::class)) {
-                            Debugger::dump($command->getTokenList());
+                            $tokenList = $command->getTokenList();
+                            Debugger::dump($tokenList);
+                            //rd(substr($sql, $tokenList->getStartOffset(), 200));
                         }
                         //Debugger::callstack(100, 1, 5, 100, $command->getException()->getTrace());
                         //self::fail('Invalid command');
