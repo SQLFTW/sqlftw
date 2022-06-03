@@ -11,10 +11,11 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
 use function is_numeric;
 
-class SignalStatement implements CompoundStatementItem
+class SignalStatement implements Command, CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

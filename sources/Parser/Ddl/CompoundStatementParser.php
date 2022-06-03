@@ -174,7 +174,7 @@ class CompoundStatementParser
                 return $this->parseGetDiagnostics($tokenList->resetPosition($position));
             case Keyword::SIGNAL:
             case Keyword::RESIGNAL:
-                return $this->parseSignalResignal($tokenList, $keyword); // @phpstan-ignore-line non-null
+                return $this->parseSignalResignal($tokenList->resetPosition(-1));
             case Keyword::RETURN:
                 return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
             case Keyword::LEAVE:
@@ -569,8 +569,10 @@ class CompoundStatementParser
      *
      * @return SignalStatement|ResignalStatement
      */
-    private function parseSignalResignal(TokenList $tokenList, string $keyword)
+    public function parseSignalResignal(TokenList $tokenList)
     {
+        $which = $tokenList->expectAnyKeyword(Keyword::SIGNAL, Keyword::RESIGNAL);
+
         if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
             $tokenList->passKeyword(Keyword::VALUE);
             $condition = $tokenList->expectString();
@@ -587,7 +589,7 @@ class CompoundStatementParser
             } while ($tokenList->hasSymbol(','));
         }
 
-        if ($keyword === Keyword::SIGNAL) {
+        if ($which === Keyword::SIGNAL) {
             return new SignalStatement($condition, $items);
         } else {
             return new ResignalStatement($condition, $items);

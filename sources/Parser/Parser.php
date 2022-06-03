@@ -631,6 +631,9 @@ class Parser
                     // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
                     return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
                 }
+            case Keyword::RESIGNAL:
+                // RESIGNAL
+                return $this->factory->getCompoundStatementParser()->parseSignalResignal($tokenList->resetPosition($start));
             case Keyword::RESTART:
                 // RESTART
                 return $this->factory->getRestartCommandParser()->parseRestart($tokenList->resetPosition($start));
@@ -693,6 +696,9 @@ class Parser
             case Keyword::SHUTDOWN:
                 // SHUTDOWN
                 return $this->factory->getShutdownCommandParser()->parseShutdown($tokenList->resetPosition($start));
+            case Keyword::SIGNAL:
+                // SIGNAL
+                return $this->factory->getCompoundStatementParser()->parseSignalResignal($tokenList->resetPosition($start));
             case Keyword::START:
                 $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA, Keyword::TRANSACTION);
                 if ($second === Keyword::GROUP_REPLICATION) {
@@ -770,9 +776,10 @@ class Parser
                     Keyword::DO, Keyword::DROP, Keyword::EXECUTE, Keyword::EXPLAIN, Keyword::FLUSH, Keyword::GRANT,
                     Keyword::HANDLER, Keyword::HELP, Keyword::INSERT, Keyword::INSTALL, Keyword::KILL, Keyword::LOCK,
                     Keyword::LOAD, Keyword::OPTIMIZE, Keyword::PREPARE, Keyword::PURGE, Keyword::RELEASE, Keyword::RENAME,
-                    Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::RESTART, Keyword::REVOKE, Keyword::ROLLBACK,
-                    Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN, Keyword::START, Keyword::STOP,
-                    Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
+                    Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::RESIGNAL, Keyword::RESTART,
+                    Keyword::REVOKE, Keyword::ROLLBACK, Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW,
+                    Keyword::SHUTDOWN, Keyword::SIGNAL, Keyword::START, Keyword::STOP, Keyword::TRUNCATE,
+                    Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
                 );
         }
     }
