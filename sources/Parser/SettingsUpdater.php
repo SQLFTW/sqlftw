@@ -12,9 +12,7 @@ namespace SqlFtw\Parser;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\PlatformSettings;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCommand;
-use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Expression\BinaryOperator;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\DefaultLiteral;
@@ -42,7 +40,7 @@ class SettingsUpdater
             foreach ($command->getAssignments() as $assignment) {
                 $variable = $assignment->getVariable();
                 if ($variable instanceof SystemVariable && $variable->getName() === MysqlVariable::SQL_MODE) {
-                    self::detectSqlModeChange($assignment->getExpression(), $settings, $tokenList);
+                    $this->detectSqlModeChange($assignment->getExpression(), $settings, $tokenList);
                 }
             }
         }

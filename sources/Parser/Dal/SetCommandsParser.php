@@ -17,7 +17,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
-use SqlFtw\Sql\Dal\Set\SetCommand;
+use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -51,13 +51,13 @@ class SetCommandsParser
      *   | [SESSION | @@SESSION. | session. | @@] system_var_name = expr
      *   | [LOCAL | @@LOCAL | local. | @@] system_var_name = expr -- alias for SESSION
      */
-    public function parseSet(TokenList $tokenList): SetCommand
+    public function parseSet(TokenList $tokenList): SetVariablesCommand
     {
         $tokenList->expectKeyword(Keyword::SET);
 
         $assignments = $this->parseAssignments($tokenList);
 
-        return new SetCommand($assignments);
+        return new SetVariablesCommand($assignments);
     }
 
     /**
@@ -71,13 +71,19 @@ class SetCommandsParser
         if ($keyword === Keyword::CHARACTER) {
             $tokenList->expectKeyword(Keyword::SET);
         }
+
         if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
             $charset = null;
         } else {
             $charset = $tokenList->expectCharsetName();
         }
 
-        return new SetCharacterSetCommand($charset);
+        $assignments = [];
+        if ($tokenList->hasSymbol(',')) {
+            $assignments = $this->parseAssignments($tokenList);
+        }
+
+        return new SetCharacterSetCommand($charset, $assignments);
     }
 
     /**
@@ -88,6 +94,7 @@ class SetCommandsParser
     public function parseSetNames(TokenList $tokenList): SetNamesCommand
     {
         $tokenList->expectKeywords(Keyword::SET, Keyword::NAMES);
+
         $charset = $collation = null;
         if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
             $charset = $tokenList->expectCharsetName();
@@ -95,7 +102,8 @@ class SetCommandsParser
                 $collation = $tokenList->expectCollationName();
             }
         }
-        $assignments = null;
+
+        $assignments = [];
         if ($tokenList->hasSymbol(',')) {
             $assignments = $this->parseAssignments($tokenList);
         }

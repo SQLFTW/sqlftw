@@ -2,7 +2,7 @@
 
 namespace AlterExecutor\Parser;
 
-use SqlFtw\Sql\Dal\Set\SetCommand;
+use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
 use SqlFtw\Sql\Expression\Scope;
 use Tester\Assert;
 
@@ -29,10 +29,10 @@ $commands = $parser->parse('
     @@global.var_6 = \'ggg\''
 );
 Assert::count(1, $commands);
-Assert::type(SetCommand::class, $commands[0]);
-/** @var \SqlFtw\Sql\Dal\Set\SetCommand $command */
+Assert::type(SetVariablesCommand::class, $commands[0]);
+/** @var \SqlFtw\Sql\Dal\Set\SetVariablesCommand $command */
 $command = $commands[0];
-Assert::type(SetCommand::class, $command);
+Assert::type(SetVariablesCommand::class, $command);
 $assignments = $command->getAssignments();
 Assert::count(7, $assignments);
 Assert::same('var_0', $assignments[0]->getVariable());
@@ -65,10 +65,10 @@ $commands = $parser->parse('
     // var_expr2 = (SELECT SUM(foo) FROM bar)  -- parser detects another statement
 );
 Assert::count(1, $commands);
-Assert::type(SetCommand::class, $commands[0]);
-/** @var \SqlFtw\Sql\Dal\Set\SetCommand $command */
+Assert::type(SetVariablesCommand::class, $commands[0]);
+/** @var \SqlFtw\Sql\Dal\Set\SetVariablesCommand $command */
 $command = $commands[0];
-Assert::type(SetCommand::class, $command);
+Assert::type(SetVariablesCommand::class, $command);
 $assignments = $command->getAssignments();
 Assert::count(9, $assignments);
 Assert::same('string', $assignments[0]->getExpression());

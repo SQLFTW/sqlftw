@@ -9,36 +9,14 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
-use Dogma\StrictBehaviorMixin;
-use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 
-class SetCommand implements DalCommand
+interface SetCommand extends DalCommand
 {
-    use StrictBehaviorMixin;
-
-    /** @var non-empty-array<SetAssignment> */
-    private $assignments;
 
     /**
-     * @param non-empty-array<SetAssignment> $assignments
+     * @return array<SetAssignment>
      */
-    public function __construct(array $assignments)
-    {
-        $this->assignments = $assignments;
-    }
-
-    /**
-     * @return non-empty-array<SetAssignment>
-     */
-    public function getAssignments(): array
-    {
-        return $this->assignments;
-    }
-
-    public function serialize(Formatter $formatter): string
-    {
-        return 'SET ' . $formatter->formatSerializablesList($this->assignments);
-    }
+    public function getAssignments(): array;
 
 }

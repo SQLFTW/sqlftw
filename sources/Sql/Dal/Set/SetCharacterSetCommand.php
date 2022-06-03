@@ -13,16 +13,23 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 
-class SetCharacterSetCommand implements CharsetCommand
+class SetCharacterSetCommand implements SetCommand
 {
     use StrictBehaviorMixin;
 
     /** @var Charset|null */
     private $charset;
 
-    public function __construct(?Charset $charset)
+    /** @var array<SetAssignment> */
+    private $assignments;
+
+    /**
+     * @param array<SetAssignment> $assignments
+     */
+    public function __construct(?Charset $charset, array $assignments = [])
     {
         $this->charset = $charset;
+        $this->assignments = $assignments;
     }
 
     public function getCharset(): ?Charset
@@ -30,9 +37,23 @@ class SetCharacterSetCommand implements CharsetCommand
         return $this->charset;
     }
 
+    /**
+     * @return array<SetAssignment>
+     */
+    public function getAssignments(): array
+    {
+        return $this->assignments;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'SET CHARACTER SET ' . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT');
+        $result = 'SET CHARACTER SET ' . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT');
+
+        if ($this->assignments !== []) {
+            $result .= ', ' . $formatter->formatSerializablesList($this->assignments);
+        }
+
+        return $result;
     }
 
 }

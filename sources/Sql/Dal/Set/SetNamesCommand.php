@@ -15,7 +15,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\InvalidDefinitionException;
 
-class SetNamesCommand implements CharsetCommand
+class SetNamesCommand implements SetCommand
 {
     use StrictBehaviorMixin;
 
@@ -25,13 +25,13 @@ class SetNamesCommand implements CharsetCommand
     /** @var Collation|null */
     private $collation;
 
-    /** @var non-empty-array<SetAssignment>|null */
+    /** @var array<SetAssignment> */
     private $assignments;
 
     /**
-     * @param non-empty-array<SetAssignment>|null $assignments
+     * @param array<SetAssignment> $assignments
      */
-    public function __construct(?Charset $charset, ?Collation $collation, ?array $assignments = null)
+    public function __construct(?Charset $charset, ?Collation $collation, array $assignments = [])
     {
         if ($charset === null && $collation !== null) {
             throw new InvalidDefinitionException('Cannot set collation, when charset is not set.');
@@ -52,9 +52,9 @@ class SetNamesCommand implements CharsetCommand
     }
 
     /**
-     * @return non-empty-array<SetAssignment>
+     * @return array<SetAssignment>
      */
-    public function getAssignments(): ?array
+    public function getAssignments(): array
     {
         return $this->assignments;
     }
@@ -65,7 +65,7 @@ class SetNamesCommand implements CharsetCommand
             . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT')
             . ($this->collation !== null ? ' COLLATE ' . $this->collation->serialize($formatter) : '');
 
-        if ($this->assignments !== null) {
+        if ($this->assignments !== []) {
             $result .= ', ' . $formatter->formatSerializablesList($this->assignments);
         }
 
