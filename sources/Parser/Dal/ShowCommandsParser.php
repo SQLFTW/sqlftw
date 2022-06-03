@@ -98,14 +98,14 @@ class ShowCommandsParser
         }
 
         $second = $tokenList->expectAnyKeyword(
-            Keyword::BINARY, Keyword::BINLOG, Keyword::CHARACTER, Keyword::COLLATION, Keyword::COLUMNS,
-            Keyword::CREATE, Keyword::DATABASES, Keyword::ENGINE, Keyword::STORAGE, Keyword::ENGINES, Keyword::ERRORS,
-            Keyword::EVENTS, Keyword::EXTENDED, Keyword::FIELDS, Keyword::FULL, Keyword::FUNCTION, Keyword::GLOBAL,
-            Keyword::GRANTS, Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS, Keyword::MASTER, Keyword::OPEN,
-            Keyword::PLUGINS, Keyword::PRIVILEGES, Keyword::PROCEDURE, Keyword::PROFILE, Keyword::PROCESSLIST,
-            Keyword::PROFILES, Keyword::RELAYLOG, Keyword::REPLICA, Keyword::REPLICAS, Keyword::SCHEMAS,
-            Keyword::SESSION, Keyword::SLAVE, Keyword::STATUS, Keyword::TABLE, Keyword::TABLES, Keyword::TRIGGERS,
-            Keyword::VARIABLES, Keyword::WARNINGS
+            Keyword::BINARY, Keyword::BINLOG, Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATION,
+            Keyword::COLUMNS, Keyword::CREATE, Keyword::DATABASES, Keyword::ENGINE, Keyword::STORAGE, Keyword::ENGINES,
+            Keyword::ERRORS, Keyword::EVENTS, Keyword::EXTENDED, Keyword::FIELDS, Keyword::FULL, Keyword::FUNCTION,
+            Keyword::GLOBAL, Keyword::GRANTS, Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS, Keyword::MASTER,
+            Keyword::OPEN, Keyword::PLUGINS, Keyword::PRIVILEGES, Keyword::PROCEDURE, Keyword::PROFILE,
+            Keyword::PROCESSLIST, Keyword::PROFILES, Keyword::RELAYLOG, Keyword::REPLICA, Keyword::REPLICAS,
+            Keyword::SCHEMAS, Keyword::SESSION, Keyword::SLAVE, Keyword::STATUS, Keyword::TABLE, Keyword::TABLES,
+            Keyword::TRIGGERS, Keyword::VARIABLES, Keyword::WARNINGS
         );
         switch ($second) {
             case Keyword::BINARY:
@@ -116,9 +116,10 @@ class ShowCommandsParser
             case Keyword::BINLOG:
                 // SHOW BINLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count]
                 return $this->parseShowBinlogEvents($tokenList);
+            case Keyword::CHARSET:
             case Keyword::CHARACTER:
                 // SHOW CHARACTER SET [LIKE 'pattern' | WHERE expr]
-                return $this->parseShowCharacterSet($tokenList);
+                return $this->parseShowCharacterSet($tokenList->resetPosition(-1));
             case Keyword::COLLATION:
                 // SHOW COLLATION [LIKE 'pattern' | WHERE expr]
                 return $this->parseShowCollation($tokenList);
@@ -297,11 +298,16 @@ class ShowCommandsParser
     }
 
     /**
-     * SHOW CHARACTER SET [LIKE 'pattern' | WHERE expr]
+     * SHOW {CHARACTER SET | CHARSET} [LIKE 'pattern' | WHERE expr]
      */
     private function parseShowCharacterSet(TokenList $tokenList): ShowCharacterSetCommand
     {
-        $tokenList->expectKeyword(Keyword::SET);
+        if ($tokenList->hasKeyword(Keyword::CHARACTER)) {
+            $tokenList->expectKeyword(Keyword::SET);
+        } else {
+            $tokenList->expectKeyword(Keyword::CHARSET);
+        }
+
         $like = $where = null;
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();
