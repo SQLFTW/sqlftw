@@ -86,19 +86,17 @@ class CompoundStatementParser
             return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
         }
 
+        $position = $tokenList->getPosition();
         $label = $tokenList->getNonKeywordName();
         if ($label !== null) {
             $tokenList->expectSymbol(':');
-            $tokenList->expectKeyword(Keyword::BEGIN);
+        }
 
-            return $this->parseBlock($tokenList, $label);
-        } elseif ($tokenList->hasKeyword(Keyword::BEGIN)) {
-            return $this->parseBlock($tokenList, $label);
-        } elseif ($tokenList->hasAnyKeyword(Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
+        if ($tokenList->hasAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
             // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
-            return $this->parseStatement($tokenList->resetPosition(-1));
+            return $this->parseStatement($tokenList->resetPosition($position));
         } else {
-            return $this->parser->parseTokenList($tokenList);
+            return $this->parser->parseTokenList($tokenList->resetPosition($position));
         }
     }
 
