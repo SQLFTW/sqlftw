@@ -24,6 +24,7 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\MysqlVariable;
 
 class SetCommandsParser
 {
@@ -127,12 +128,16 @@ class SetCommandsParser
                 // @foo, @@foo...
                 $variable = $this->expressionParser->parseAtVariable($tokenList, $token->value);
             } else {
-                // foo
                 $name = $tokenList->expectName();
                 if ($tokenList->hasSymbol('.')) {
+                    // NEW.foo etc.
                     $name2 = $tokenList->expectName();
                     $variable = new QualifiedName($name2, $name);
+                } elseif (MysqlVariable::validateValue($name)) {
+                    // system variable without scope
+                    $variable = new SystemVariable($name, Scope::get(Scope::SESSION));
                 } else {
+                    // local variable
                     $variable = new QualifiedName($name);
                 }
             }
