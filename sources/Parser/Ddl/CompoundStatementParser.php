@@ -94,6 +94,9 @@ class CompoundStatementParser
             return $this->parseBlock($tokenList, $label);
         } elseif ($tokenList->hasKeyword(Keyword::BEGIN)) {
             return $this->parseBlock($tokenList, $label);
+        } elseif ($tokenList->hasAnyKeyword(Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
+            // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
+            return $this->parseStatement($tokenList->resetPosition(-1));
         } else {
             return $this->parser->parseTokenList($tokenList);
         }
