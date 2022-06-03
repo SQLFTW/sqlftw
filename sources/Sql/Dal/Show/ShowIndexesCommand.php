@@ -24,10 +24,14 @@ class ShowIndexesCommand implements ShowCommand
     /** @var RootNode|null */
     private $where;
 
-    public function __construct(QualifiedName $table, ?RootNode $where = null)
+    /** @var bool */
+    private $extended;
+
+    public function __construct(QualifiedName $table, ?RootNode $where = null, bool $extended = false)
     {
         $this->table = $table;
         $this->where = $where;
+        $this->extended = $extended;
     }
 
     public function getTable(): QualifiedName
@@ -40,9 +44,19 @@ class ShowIndexesCommand implements ShowCommand
         return $this->where;
     }
 
+    public function extended(): bool
+    {
+        return $this->extended;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        $result = 'SHOW INDEXES FROM ' . $this->table->serialize($formatter);
+        $result = 'SHOW ';
+        if ($this->extended) {
+            $result .= 'EXTENDED ';
+        }
+
+        $result .= 'INDEXES FROM ' . $this->table->serialize($formatter);
         if ($this->where !== null) {
             $result .= ' WHERE ' . $this->where->serialize($formatter);
         }

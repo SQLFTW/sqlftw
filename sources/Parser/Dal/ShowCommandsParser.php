@@ -138,7 +138,10 @@ class ShowCommandsParser
                 // SHOW ENGINE engine_name {STATUS | MUTEX}
                 return $this->parseShowEngine($tokenList);
             case Keyword::EXTENDED:
-                if ($tokenList->hasKeyword(Keyword::TABLES) || $tokenList->hasKeywords(Keyword::FULL, Keyword::TABLES)) {
+                if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS)) {
+                    // SHOW [EXTENDED] {INDEX | INDEXES | KEYS}
+                    return $this->parseShowIndexes($tokenList->resetPosition(-1));
+                } elseif ($tokenList->hasKeyword(Keyword::TABLES) || $tokenList->hasKeywords(Keyword::FULL, Keyword::TABLES)) {
                     // SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                     return $this->parseShowTables($tokenList->resetPosition($position));
                 } else {
@@ -194,8 +197,8 @@ class ShowCommandsParser
             case Keyword::INDEX:
             case Keyword::INDEXES:
             case Keyword::KEYS:
-                // SHOW {INDEX | INDEXES | KEYS} {FROM | IN} tbl_name [{FROM | IN} db_name] [WHERE expr]
-                return $this->parseShowIndexes($tokenList);
+                // SHOW [EXTENDED] {INDEX | INDEXES | KEYS}
+                return $this->parseShowIndexes($tokenList->resetPosition(-1));
             case Keyword::MASTER:
                 $third = $tokenList->expectAnyKeyword(Keyword::STATUS, Keyword::LOGS);
                 if ($third === Keyword::STATUS) {
@@ -502,10 +505,16 @@ class ShowCommandsParser
     }
 
     /**
-     * SHOW {INDEX | INDEXES | KEYS} {FROM | IN} tbl_name [{FROM | IN} db_name] [WHERE expr]
+     * SHOW [EXTENDED] {INDEX | INDEXES | KEYS}
+     *     {FROM | IN} tbl_name
+     *     [{FROM | IN} db_name]
+     *     [WHERE expr]
      */
     private function parseShowIndexes(TokenList $tokenList): ShowIndexesCommand
     {
+        $extended = $tokenList->hasKeyword(Keyword::EXTENDED);
+        $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS);
+
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
         $table = $tokenList->expectQualifiedName();
         if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
@@ -517,7 +526,7 @@ class ShowCommandsParser
             $where = $this->expressionParser->parseExpression($tokenList);
         }
 
-        return new ShowIndexesCommand($table, $where);
+        return new ShowIndexesCommand($table, $where, $extended);
     }
 
     /**
