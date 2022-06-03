@@ -731,7 +731,6 @@ class TableCommandsParser
             $partitioning = $this->parsePartitioning($tokenList->resetPosition(-1));
         }
 
-        /** @var DuplicateOption|null $duplicateOption */
         $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
 
         $startTransaction = $tokenList->hasKeywords(Keyword::START, Keyword::TRANSACTION);
@@ -1184,7 +1183,6 @@ class TableCommandsParser
 
         $matchType = null;
         if ($tokenList->hasKeyword(Keyword::MATCH)) {
-            /** @var ForeignKeyMatchType $matchType */
             $matchType = $tokenList->expectKeywordEnum(ForeignKeyMatchType::class);
         }
 

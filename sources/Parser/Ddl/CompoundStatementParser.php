@@ -366,7 +366,6 @@ class CompoundStatementParser
      */
     private function parseDeclare(TokenList $tokenList)
     {
-        /** @var HandlerAction|null $action */
         $action = $tokenList->getKeywordEnum(HandlerAction::class);
         if ($action !== null) {
             $tokenList->expectKeywords(Keyword::HANDLER, Keyword::FOR);
@@ -501,7 +500,6 @@ class CompoundStatementParser
     {
         $tokenList->expectKeyword(Keyword::GET);
 
-        /** @var DiagnosticsArea|null $area */
         $area = $tokenList->getKeywordEnum(DiagnosticsArea::class);
         $tokenList->expectKeyword(Keyword::DIAGNOSTICS);
 
@@ -513,7 +511,6 @@ class CompoundStatementParser
             do {
                 $target = $tokenList->expectName();
                 $tokenList->expectOperator(Operator::EQUAL);
-                /** @var ConditionInformationItem $item */
                 $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class);
                 $conditionItems[] = new DiagnosticsItem($target, $item);
             } while ($tokenList->hasSymbol(','));
@@ -522,7 +519,6 @@ class CompoundStatementParser
             do {
                 $target = $tokenList->expectName();
                 $tokenList->expectOperator(Operator::EQUAL);
-                /** @var StatementInformationItem $item */
                 $item = $tokenList->expectKeywordEnum(StatementInformationItem::class);
                 $statementItems[] = new DiagnosticsItem($target, $item);
             } while ($tokenList->hasSymbol(','));

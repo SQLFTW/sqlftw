@@ -90,7 +90,6 @@ class ViewCommandsParser
         $algorithm = $definer = $sqlSecurity = $checkOption = null;
         if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
             $tokenList->expectOperator(Operator::EQUAL);
-            /** @var ViewAlgorithm $algorithm */
             $algorithm = $tokenList->expectKeywordEnum(ViewAlgorithm::class);
         }
         if ($tokenList->hasKeyword(Keyword::DEFINER)) {
@@ -99,7 +98,6 @@ class ViewCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::SQL)) {
             $tokenList->expectKeyword(Keyword::SECURITY);
-            /** @var SqlSecurity $sqlSecurity */
             $sqlSecurity = $tokenList->expectKeywordEnum(SqlSecurity::class);
         }
 

@@ -122,7 +122,6 @@ class JoinParser
                 // NATURAL JOIN
                 $side = null;
                 if (!$tokenList->hasKeyword(Keyword::INNER)) {
-                    /** @var JoinSide|null $side */
                     $side = $tokenList->getKeywordEnum(JoinSide::class);
                     if ($side !== null) {
                         $tokenList->passKeyword(Keyword::OUTER);
@@ -134,7 +133,6 @@ class JoinParser
                 $left = new NaturalJoin($left, $right, $side);
                 continue;
             }
-            /** @var JoinSide|null $side */
             $side = $tokenList->getKeywordEnum(JoinSide::class);
             if ($side !== null) {
                 // {LEFT|RIGHT} [OUTER] JOIN

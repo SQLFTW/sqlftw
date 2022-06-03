@@ -421,7 +421,6 @@ class ShowCommandsParser
     private function parseShowEngine(TokenList $tokenList): ShowEngineCommand
     {
         $engine = $tokenList->expectName();
-        /** @var ShowEngineOption $what */
         $what = $tokenList->expectKeywordEnum(ShowEngineOption::class);
 
         return new ShowEngineCommand($engine, $what);

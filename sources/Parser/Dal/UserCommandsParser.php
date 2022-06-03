@@ -228,7 +228,6 @@ class UserCommandsParser
             } else {
                 $tlsOptions = [];
                 do {
-                    /** @var UserTlsOptionType $type */
                     $type = $tokenList->expectKeywordEnum(UserTlsOptionType::class);
                     $value = $tokenList->getString();
                     $tlsOptions[] = new UserTlsOption($type, $value);
@@ -522,7 +521,6 @@ class UserCommandsParser
     private function parseResource(TokenList $tokenList): UserPrivilegeResource
     {
         $tokenList->expectKeyword(Keyword::ON);
-        /** @var UserPrivilegeResourceType|null $resourceType */
         $resourceType = $tokenList->getKeywordEnum(UserPrivilegeResourceType::class);
         if ($tokenList->hasOperator(Operator::MULTIPLY)) {
             $object = false;
@@ -635,7 +633,6 @@ class UserCommandsParser
     public function parseSetDefaultRole(TokenList $tokenList): SetDefaultRoleCommand
     {
         $tokenList->expectKeywords(Keyword::SET, Keyword::DEFAULT, Keyword::ROLE);
-        /** @var UserDefaultRolesSpecification|null $roles */
         $roles = $tokenList->getKeywordEnum(UserDefaultRolesSpecification::class);
         $rolesList = null;
         if ($roles === null) {

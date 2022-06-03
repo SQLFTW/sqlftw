@@ -78,11 +78,9 @@ class IndexCommandsParser
         while ($keyword = $tokenList->getAnyKeyword(Keyword::ALGORITHM, Keyword::LOCK)) {
             if ($keyword === Keyword::ALGORITHM) {
                 $tokenList->passSymbol('=');
-                /** @var AlterTableAlgorithm $alterAlgorithm */
                 $alterAlgorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
             } elseif ($keyword === Keyword::LOCK) {
                 $tokenList->passSymbol('=');
-                /** @var AlterTableLock $alterLock */
                 $alterLock = $tokenList->expectKeywordEnum(AlterTableLock::class);
             }
         }
@@ -130,7 +128,6 @@ class IndexCommandsParser
         ];
         while ($keyword = $tokenList->getAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::USING) {
-                /** @var IndexAlgorithm $algorithm */
                 $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
             } elseif ($keyword === Keyword::KEY_BLOCK_SIZE) {
                 $tokenList->passSymbol('=');
@@ -190,7 +187,6 @@ class IndexCommandsParser
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 $tokenList->expectSymbol(')');
 
-                /** @var Order $order */
                 $order = $tokenList->getKeywordEnum(Order::class);
 
                 $parts[] = new IndexPart($expression, null, $order);
@@ -201,7 +197,7 @@ class IndexCommandsParser
                     $length = (int) $tokenList->expectUnsignedInt();
                     $tokenList->expectSymbol(')');
                 }
-                /** @var Order $order */
+
                 $order = $tokenList->getKeywordEnum(Order::class);
                 $parts[] = new IndexPart($part, $length, $order);
             }
@@ -230,13 +226,11 @@ class IndexCommandsParser
         $algorithm = null;
         if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
             $tokenList->passSymbol('=');
-            /** @var AlterTableAlgorithm $algorithm */
             $algorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
         }
         $lock = null;
         if ($tokenList->hasKeyword(Keyword::LOCK)) {
             $tokenList->passSymbol('=');
-            /** @var AlterTableLock $lock */
             $lock = $tokenList->expectKeywordEnum(AlterTableLock::class);
         }
 

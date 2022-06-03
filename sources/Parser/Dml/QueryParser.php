@@ -339,7 +339,6 @@ class QueryParser
             $groupBy = [];
             do {
                 $expression = $this->expressionParser->parseAssignExpression($tokenList);
-                /** @var Order $order */
                 $order = $tokenList->getKeywordEnum(Order::class);
                 $groupBy[] = new GroupByExpression($expression, $order);
             } while ($tokenList->hasSymbol(','));

@@ -112,7 +112,6 @@ class RoutineCommandsParser
                 $sideEffects = RoutineSideEffects::get(RoutineSideEffects::MODIFIES_SQL_DATA);
             } elseif ($keyword === Keyword::SQL) {
                 $tokenList->expectKeyword(Keyword::SECURITY);
-                /** @var SqlSecurity $sqlSecurity */
                 $sqlSecurity = $tokenList->expectKeywordEnum(SqlSecurity::class);
             } elseif ($keyword === Keyword::NOT) {
                 $tokenList->expectKeyword(Keyword::DETERMINISTIC);
@@ -223,7 +222,6 @@ class RoutineCommandsParser
         $tokenList->expectSymbol('(');
         if (!$tokenList->hasSymbol(')')) {
             do {
-                /** @var InOutParamFlag $inOut */
                 $inOut = $tokenList->getKeywordEnum(InOutParamFlag::class);
                 $param = $tokenList->expectName();
                 $type = $this->expressionParser->parseColumnType($tokenList);

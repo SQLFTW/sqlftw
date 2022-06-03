@@ -70,7 +70,7 @@ class InsertCommandParser
     public function parseInsert(TokenList $tokenList): InsertCommand
     {
         $tokenList->expectKeyword(Keyword::INSERT);
-        /** @var InsertPriority|null $priority */
+
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
         $tokenList->passKeyword(Keyword::INTO);
@@ -137,7 +137,7 @@ class InsertCommandParser
     public function parseReplace(TokenList $tokenList): ReplaceCommand
     {
         $tokenList->expectKeyword(Keyword::REPLACE);
-        /** @var InsertPriority|null $priority */
+
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
         $tokenList->passKeyword(Keyword::INTO);

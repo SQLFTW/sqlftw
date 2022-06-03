@@ -47,7 +47,6 @@ class XaTransactionCommandsParser
             case Keyword::START:
             case Keyword::BEGIN:
                 $xid = $this->parseXid($tokenList);
-                /** @var XaStartOption $option */
                 $option = $tokenList->getKeywordEnum(XaStartOption::class);
 
                 return new XaStartCommand($xid, $option);

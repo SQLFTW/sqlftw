@@ -1205,7 +1205,6 @@ class ExpressionParser
                 $expression = null;
             }
 
-            /** @var Order $order */
             $order = $tokenList->getKeywordEnum(Order::class);
 
             if ($collation === null && $tokenList->hasKeyword(Keyword::COLLATE)) {
@@ -1323,7 +1322,6 @@ class ExpressionParser
     {
         $value = $this->parseExpression($tokenList);
 
-        /** @var TimeIntervalUnit $unit */
         $unit = $tokenList->expectKeywordEnum(TimeIntervalUnit::class);
 
         return new TimeInterval($value, $unit);
