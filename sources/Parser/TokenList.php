@@ -321,7 +321,7 @@ class TokenList
         if ($tokenType !== null && ($token->type & $tokenType) === 0 || ($token->type & $tokenMask) !== 0) {
             return null;
         }
-        if ($value !== null && $token->value !== $value) {
+        if ($value !== null && strtolower($token->value) !== strtolower($value)) {
             return null;
         }
 
