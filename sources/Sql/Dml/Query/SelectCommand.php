@@ -60,7 +60,7 @@ class SelectCommand implements SimpleQuery
     /** @var SelectInto|null */
     private $into;
 
-    /** @var SelectLocking|null */
+    /** @var non-empty-array<SelectLocking>|null */
     private $locking;
 
     /** @var bool */
@@ -72,6 +72,7 @@ class SelectCommand implements SimpleQuery
      * @param non-empty-array<WindowSpecification>|null $windows ($name => $spec)
      * @param non-empty-array<OrderByExpression>|null $orderBy
      * @param array<string, bool> $options
+     * @param non-empty-array<SelectLocking>|null $locking
      */
     public function __construct(
         array $columns,
@@ -87,7 +88,7 @@ class SelectCommand implements SimpleQuery
         ?SelectDistinctOption $distinct = null,
         array $options = [],
         ?SelectInto $into = null,
-        ?SelectLocking $locking = null,
+        ?array $locking = null,
         bool $withRollup = false
     ) {
         if ($groupBy === null && $withRollup === true) {
@@ -223,7 +224,10 @@ class SelectCommand implements SimpleQuery
         return $that;
     }
 
-    public function getLocking(): ?SelectLocking
+    /**
+     * @return non-empty-array<SelectLocking>|null
+     */
+    public function getLocking(): ?array
     {
         return $this->locking;
     }
@@ -286,7 +290,9 @@ class SelectCommand implements SimpleQuery
             $result .= "\n" . $this->into->serialize($formatter);
         }
         if ($this->locking !== null) {
-            $result .= "\n" . $this->locking->serialize($formatter);
+            foreach ($this->locking as $locking) {
+                $result .= "\n" . $locking->serialize($formatter);
+            }
         }
 
         return $result;

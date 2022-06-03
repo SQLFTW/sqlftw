@@ -381,25 +381,34 @@ class QueryParser
             $into = $this->parseInto($tokenList);
         }
 
-        $locking = $lockTables = null;
-        if ($tokenList->hasKeywords(Keyword::LOCK, Keyword::IN, Keyword::SHARE, Keyword::MODE)) {
-            $lockOption = SelectLockOption::get(SelectLockOption::LOCK_IN_SHARE_MODE);
-            $locking = new SelectLocking($lockOption);
-        } elseif ($tokenList->hasKeyword(Keyword::FOR)) {
-            if ($tokenList->hasKeyword(Keyword::UPDATE)) {
-                $lockOption = SelectLockOption::get(SelectLockOption::FOR_UPDATE);
-            } else {
-                $tokenList->expectKeyword(Keyword::SHARE);
-                $lockOption = SelectLockOption::get(SelectLockOption::FOR_SHARE);
+        $locking = [];
+        do {
+            $updated = false;
+            if ($tokenList->hasKeywords(Keyword::LOCK, Keyword::IN, Keyword::SHARE, Keyword::MODE)) {
+                $lockOption = SelectLockOption::get(SelectLockOption::LOCK_IN_SHARE_MODE);
+                $locking[] = new SelectLocking($lockOption);
+                $updated = true;
+            } elseif ($tokenList->hasKeyword(Keyword::FOR)) {
+                if ($tokenList->hasKeyword(Keyword::UPDATE)) {
+                    $lockOption = SelectLockOption::get(SelectLockOption::FOR_UPDATE);
+                } else {
+                    $tokenList->expectKeyword(Keyword::SHARE);
+                    $lockOption = SelectLockOption::get(SelectLockOption::FOR_SHARE);
+                }
+                $lockTables = null;
+                if ($tokenList->hasKeyword(Keyword::OF)) {
+                    $lockTables = [];
+                    do {
+                        $lockTables[] = $tokenList->expectQualifiedName();
+                    } while ($tokenList->hasSymbol(','));
+                }
+                $lockWaitOption = $tokenList->getMultiKeywordsEnum(SelectLockWaitOption::class);
+                $locking[] = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
+                $updated = true;
             }
-            if ($tokenList->hasKeyword(Keyword::OF)) {
-                $lockTables = [];
-                do {
-                    $lockTables[] = $tokenList->expectQualifiedName();
-                } while ($tokenList->hasSymbol(','));
-            }
-            $lockWaitOption = $tokenList->getMultiKeywordsEnum(SelectLockWaitOption::class);
-            $locking = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
+        } while ($updated);
+        if ($locking === []) {
+            $locking = null;
         }
 
         if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
