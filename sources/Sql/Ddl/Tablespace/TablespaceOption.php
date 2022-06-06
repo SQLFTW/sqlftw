@@ -26,6 +26,7 @@ class TablespaceOption extends SqlEnum
 {
 
     public const ENGINE = Keyword::ENGINE;
+    public const ENGINE_ATTRIBUTE = Keyword::ENGINE_ATTRIBUTE;
     public const ENCRYPTION = Keyword::ENCRYPTION;
     public const COMMENT = Keyword::COMMENT;
     public const ADD_DATAFILE = Keyword::ADD . ' ' . Keyword::DATAFILE;
@@ -44,6 +45,7 @@ class TablespaceOption extends SqlEnum
     /** @var string[]|string[][] */
     private static $values = [
         self::ENGINE => [Keyword::INNODB, Keyword::NDB, Keyword::NDBCLUSTER],
+        self::ENGINE_ATTRIBUTE => BaseType::CHAR,
         self::ENCRYPTION => BaseType::BOOL,
         self::COMMENT => BaseType::CHAR,
         self::ADD_DATAFILE => BaseType::CHAR,
@@ -75,6 +77,7 @@ class TablespaceOption extends SqlEnum
             self::WAIT,
             self::COMMENT,
             self::ENGINE,
+            self::ENGINE_ATTRIBUTE,
         ],
         Keyword::ALTER => [
             self::ADD_DATAFILE,
@@ -86,6 +89,7 @@ class TablespaceOption extends SqlEnum
             self::SET,
             self::ENCRYPTION,
             self::ENGINE,
+            self::ENGINE_ATTRIBUTE,
         ],
     ];
 

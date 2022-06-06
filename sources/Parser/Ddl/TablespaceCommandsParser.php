@@ -31,6 +31,7 @@ class TablespaceCommandsParser
      *     [SET {ACTIVE|INACTIVE}]      -- InnoDB only
      *     [ENCRYPTION [=] {'Y' | 'N'}] -- InnoDB only
      *     [ENGINE [=] engine_name]
+     *     [ENGINE_ATTRIBUTE [=] 'string']
      */
     public function parseAlterTablespace(TokenList $tokenList): AlterTablespaceCommand
     {
@@ -71,6 +72,10 @@ class TablespaceCommandsParser
             $tokenList->passSymbol('=');
             $options[TablespaceOption::ENGINE] = $tokenList->expectName();
         }
+        if ($tokenList->hasKeyword(Keyword::ENGINE_ATTRIBUTE)) {
+            $tokenList->passSymbol('=');
+            $options[TablespaceOption::ENGINE_ATTRIBUTE] = $tokenList->expectString();
+        }
 
         return new AlterTablespaceCommand($name, $options, $undo);
     }
@@ -89,6 +94,7 @@ class TablespaceCommandsParser
      *     [WAIT | NO_WAIT]                 -- NDB only (NO_WAIT not documented)
      *     [COMMENT [=] 'string']           -- NDB only
      *     [ENGINE [=] engine_name]
+     *     [ENGINE_ATTRIBUTE [=] 'string']
      */
     public function parseCreateTablespace(TokenList $tokenList): CreateTablespaceCommand
     {
@@ -102,7 +108,7 @@ class TablespaceCommandsParser
         $keywords = [
             Keyword::ADD, Keyword::FILE_BLOCK_SIZE, Keyword::ENCRYPTION, Keyword::USE, Keyword::EXTENT_SIZE,
             Keyword::INITIAL_SIZE, Keyword::AUTOEXTEND_SIZE, Keyword::MAX_SIZE, Keyword::NODEGROUP, Keyword::WAIT,
-            Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE,
+            Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE, Keyword::ENGINE_ATTRIBUTE,
         ];
         $options = [];
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
@@ -156,6 +162,10 @@ class TablespaceCommandsParser
                 case Keyword::ENGINE:
                     $tokenList->passSymbol('=');
                     $options[TablespaceOption::ENGINE] = $tokenList->expectName();
+                    break;
+                case Keyword::ENGINE_ATTRIBUTE:
+                    $tokenList->passSymbol('=');
+                    $options[TablespaceOption::ENGINE_ATTRIBUTE] = $tokenList->expectString();
                     break;
             }
         }
