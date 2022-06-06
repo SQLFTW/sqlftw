@@ -943,7 +943,7 @@ class TableCommandsParser
                     $secondaryEngineAttribute = $tokenList->expectString();
                     break;
                 case Keyword::STORAGE:
-                    // [STORAGE {DISK | MEMORY}]
+                    // [STORAGE {DISK | MEMORY | DEFAULT}]
                     $storage = $tokenList->expectKeywordEnum(StorageType::class);
                     break;
                 case Keyword::REFERENCES:

@@ -17,5 +17,6 @@ class StorageType extends SqlEnum
 
     public const DISK = Keyword::DISK;
     public const MEMORY = Keyword::MEMORY;
+    public const DEFAULT = Keyword::DEFAULT;
 
 }
