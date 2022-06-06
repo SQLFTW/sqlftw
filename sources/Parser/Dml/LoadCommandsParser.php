@@ -153,7 +153,7 @@ class LoadCommandsParser
             $setters = [];
             do {
                 $field = $tokenList->expectName();
-                $tokenList->expectOperator(Operator::EQUAL);
+                $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 $setters[$field] = $expression;
             } while ($tokenList->hasSymbol(','));
