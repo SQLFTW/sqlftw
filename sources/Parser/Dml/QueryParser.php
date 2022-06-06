@@ -41,6 +41,8 @@ use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use function array_pop;
@@ -512,7 +514,13 @@ class QueryParser
         } else {
             $variables = [];
             do {
-                $variable = $tokenList->expect(TokenType::AT_VARIABLE | TokenType::UNQUOTED_NAME)->value;
+                $token = $tokenList->get(TokenType::AT_VARIABLE);
+                if ($token !== null) {
+                    $variable = new UserVariable($token->value);
+                } else {
+                    $name = $tokenList->expectName();
+                    $variable = new SimpleName($name);
+                }
                 $variables[] = $variable;
             } while ($tokenList->hasSymbol(','));
 

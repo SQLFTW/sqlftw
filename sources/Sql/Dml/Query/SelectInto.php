@@ -14,6 +14,8 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\FileFormat;
+use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -21,7 +23,7 @@ class SelectInto implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-array<UserVariable|SimpleName>|null */
     private $variables;
 
     /** @var string|null */
@@ -37,7 +39,7 @@ class SelectInto implements SqlSerializable
     private $format;
 
     /**
-     * @param non-empty-array<string>|null $variables
+     * @param non-empty-array<UserVariable|SimpleName>|null $variables
      */
     public function __construct(
         ?array $variables,
@@ -58,7 +60,7 @@ class SelectInto implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-array<UserVariable|SimpleName>|null
      */
     public function getVariables(): ?array
     {
@@ -88,7 +90,7 @@ class SelectInto implements SqlSerializable
     public function serialize(Formatter $formatter): string
     {
         if ($this->variables !== null) {
-            return 'INTO ' . $formatter->formatNamesList($this->variables);
+            return 'INTO ' . $formatter->formatSerializablesList($this->variables);
         } elseif ($this->dumpFile !== null) {
             return 'INTO DUMPFILE ' . $formatter->formatString($this->dumpFile);
         } elseif ($this->outFile !== null) {
