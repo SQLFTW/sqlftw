@@ -1431,7 +1431,7 @@ class ExpressionParser
                 }
                 $decimals = null;
                 if ($type->hasDecimals()) {
-                    if ($type->equalsAny(BaseType::NUMERIC, BaseType::DECIMAL, BaseType::FLOAT)) {
+                    if ($type->isDecimal() || $type->equalsValue(BaseType::FLOAT)) {
                         if ($tokenList->hasSymbol(',')) {
                             $decimals = (int) $tokenList->expectUnsignedInt();
                         }

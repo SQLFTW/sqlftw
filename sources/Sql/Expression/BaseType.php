@@ -158,15 +158,11 @@ class BaseType extends SqlEnum implements Feature
 
     public function isInteger(): bool
     {
-        return in_array(
-            $this->getValue(),
-            [
-                self::TINYINT, self::SMALLINT, self::MEDIUMINT, self::INT, self::BIGINT, self::YEAR,
-                self::SIGNED, self::UNSIGNED, self::SERIAL, self::MIDDLEINT, self::INTEGER,
-                self::INT1, self::INT2, self::INT3, self::INT4, self::INT8, self::BOOL, self::BOOLEAN,
-            ],
-            true
-        );
+        return in_array($this->getValue(), [
+            self::TINYINT, self::SMALLINT, self::MEDIUMINT, self::INT, self::BIGINT, self::YEAR,
+            self::SIGNED, self::UNSIGNED, self::SERIAL, self::MIDDLEINT, self::INTEGER,
+            self::INT1, self::INT2, self::INT3, self::INT4, self::INT8, self::BOOL, self::BOOLEAN,
+        ], true);
     }
 
     public function isFloatingPointNumber(): bool
@@ -186,27 +182,19 @@ class BaseType extends SqlEnum implements Feature
 
     public function isText(): bool
     {
-        return in_array(
-            $this->getValue(),
-            [
-                self::CHAR, self::VARCHAR, self::TINYTEXT, self::TEXT, self::MEDIUMTEXT, self::LONGTEXT,
-                self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR, self::CHARACTER_VARYING, self::NVARCHAR,
-                self::NATIONAL_VARCHAR, self::LONG, self::LONG_VARCHAR, self::ENUM, self::SET,
-            ],
-            true
-        );
+        return in_array($this->getValue(), [
+            self::CHAR, self::VARCHAR, self::TINYTEXT, self::TEXT, self::MEDIUMTEXT, self::LONGTEXT,
+            self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR, self::CHARACTER_VARYING, self::NVARCHAR,
+            self::NATIONAL_VARCHAR, self::LONG, self::LONG_VARCHAR, self::ENUM, self::SET,
+        ], true);
     }
 
     public function isBinary(): bool
     {
-        return in_array(
-            $this->getValue(),
-            [
-                self::BINARY, self::VARBINARY, self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB,
-                self::CHAR_BYTE, self::LONG_VARBINARY,
-            ],
-            true
-        );
+        return in_array($this->getValue(), [
+            self::BINARY, self::VARBINARY, self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB,
+            self::CHAR_BYTE, self::LONG_VARBINARY,
+        ], true);
     }
 
     public function isString(): bool
@@ -216,42 +204,30 @@ class BaseType extends SqlEnum implements Feature
 
     public function isSpatial(): bool
     {
-        return in_array(
-            $this->getValue(),
-            [
-                self::GEOMETRY, self::POINT, self::LINESTRING, self::POLYGON,
-                self::GEOMETRYCOLLECTION, self::GEOMCOLLECTION, self::MULTIPOINT, self::MULTILINESTRING, self::MULTIPOLYGON,
-            ],
-            true
-        );
+        return in_array($this->getValue(), [
+            self::GEOMETRY, self::POINT, self::LINESTRING, self::POLYGON,
+            self::GEOMETRYCOLLECTION, self::GEOMCOLLECTION, self::MULTIPOINT, self::MULTILINESTRING, self::MULTIPOLYGON,
+        ], true);
     }
 
     public function isTime(): bool
     {
-        return in_array(
-            $this->getValue(),
-            [self::DATE, self::TIME, self::DATETIME, self::TIMESTAMP],
-            true
-        );
+        return in_array($this->getValue(), [self::DATE, self::TIME, self::DATETIME, self::TIMESTAMP], true);
     }
 
     public function hasLength(): bool
     {
-        return $this->isNumber() || $this->needsLength() || in_array($this->getValue(), [
-            self::BINARY, self::BLOB, self::CHAR, self::TEXT,
-        ], true);
+        return $this->isNumber()
+            || $this->needsLength()
+            || in_array($this->getValue(), [self::BINARY, self::BLOB, self::CHAR, self::NCHAR, self::NATIONAL_CHAR, self::TEXT], true);
     }
 
     public function needsLength(): bool
     {
-        return in_array(
-            $this->getValue(),
-            [
-                self::VARCHAR, self::VARBINARY, self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR,
-                self::CHARACTER_VARYING, self::NVARCHAR, self::NATIONAL_VARCHAR, self::CHAR_BYTE,
-            ],
-            true
-        );
+        return in_array($this->getValue(), [
+            self::VARCHAR, self::VARBINARY, self::CHARACTER,
+            self::CHARACTER_VARYING, self::NVARCHAR, self::NATIONAL_VARCHAR, self::CHAR_BYTE,
+        ], true);
     }
 
     public function hasDecimals(): bool
