@@ -459,10 +459,12 @@ class QueryParser
             $tokenList->expectKeyword(Keyword::ROW);
             $tokenList->expectSymbol('(');
             $values = [];
-            do {
-                $values[] = $this->expressionParser->parseExpression($tokenList);
-            } while ($tokenList->hasSymbol(','));
-            $tokenList->expectSymbol(')');
+            if (!$tokenList->hasSymbol(')')) {
+                do {
+                    $values[] = $this->expressionParser->parseExpression($tokenList);
+                } while ($tokenList->hasSymbol(','));
+                $tokenList->expectSymbol(')');
+            }
             $rows[] = new Row($values);
         } while ($tokenList->hasSymbol(','));
 

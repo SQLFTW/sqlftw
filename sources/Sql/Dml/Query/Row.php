@@ -17,11 +17,11 @@ use function array_values;
 class Row implements SqlSerializable
 {
 
-    /** @var non-empty-array<RootNode> */
+    /** @var array<RootNode> */
     private $values;
 
     /**
-     * @param non-empty-array<RootNode> $values
+     * @param array<RootNode> $values
      */
     public function __construct(array $values)
     {
@@ -29,7 +29,7 @@ class Row implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<RootNode>
+     * @return array<RootNode>
      */
     public function getValues(): array
     {
@@ -38,15 +38,7 @@ class Row implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ROW(';
-        foreach ($this->values as $i => $value) {
-            if ($i !== 0) {
-                $result .= ', ';
-            }
-            $result .= $value->serialize($formatter);
-        }
-
-        return $result . ')';
+        return 'ROW(' . $formatter->formatSerializablesList($this->values) . ')';
     }
 
 }
