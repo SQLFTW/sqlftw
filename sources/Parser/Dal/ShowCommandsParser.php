@@ -101,8 +101,8 @@ class ShowCommandsParser
             Keyword::BINARY, Keyword::BINLOG, Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATION,
             Keyword::COLUMNS, Keyword::CREATE, Keyword::DATABASES, Keyword::ENGINE, Keyword::STORAGE, Keyword::ENGINES,
             Keyword::ERRORS, Keyword::EVENTS, Keyword::EXTENDED, Keyword::FIELDS, Keyword::FULL, Keyword::FUNCTION,
-            Keyword::GLOBAL, Keyword::GRANTS, Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS, Keyword::MASTER,
-            Keyword::OPEN, Keyword::PLUGINS, Keyword::PRIVILEGES, Keyword::PROCEDURE, Keyword::PROFILE,
+            Keyword::GLOBAL, Keyword::GRANTS, Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS, Keyword::LOCAL,
+            Keyword::MASTER, Keyword::OPEN, Keyword::PLUGINS, Keyword::PRIVILEGES, Keyword::PROCEDURE, Keyword::PROFILE,
             Keyword::PROCESSLIST, Keyword::PROFILES, Keyword::RELAYLOG, Keyword::REPLICA, Keyword::REPLICAS,
             Keyword::SCHEMAS, Keyword::SESSION, Keyword::SLAVE, Keyword::STATUS, Keyword::TABLE, Keyword::TABLES,
             Keyword::TRIGGERS, Keyword::VARIABLES, Keyword::WARNINGS
@@ -184,9 +184,10 @@ class ShowCommandsParser
                 }
             case Keyword::GLOBAL:
             case Keyword::SESSION:
+            case Keyword::LOCAL:
                 $third = $tokenList->expectAnyKeyword(Keyword::STATUS, Keyword::VARIABLES);
                 if ($third === Keyword::STATUS) {
-                    // SHOW [GLOBAL | SESSION] STATUS [LIKE 'pattern' | WHERE expr]
+                    // SHOW [GLOBAL | SESSION | LOCAL] STATUS [LIKE 'pattern' | WHERE expr]
                     return $this->parseShowStatus($tokenList->resetPosition($position));
                 } else {
                     return $this->parseShowVariables($tokenList->resetPosition($position));
@@ -657,11 +658,15 @@ class ShowCommandsParser
     }
 
     /**
-     * SHOW [GLOBAL | SESSION] STATUS [LIKE 'pattern' | WHERE expr]
+     * SHOW [GLOBAL | SESSION | LOCAL] STATUS [LIKE 'pattern' | WHERE expr]
      */
     private function parseShowStatus(TokenList $tokenList): ShowStatusCommand
     {
-        $scope = $tokenList->getAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
+        if ($tokenList->hasKeyword(Keyword::LOCAL)) {
+            $scope = Scope::SESSION;
+        } else {
+            $scope = $tokenList->getAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
+        }
         $tokenList->expectKeyword(Keyword::STATUS);
         $like = $where = null;
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
@@ -750,11 +755,15 @@ class ShowCommandsParser
     }
 
     /**
-     * SHOW [GLOBAL | SESSION] VARIABLES [LIKE 'pattern' | WHERE expr]
+     * SHOW [GLOBAL | SESSION | LOCAL] VARIABLES [LIKE 'pattern' | WHERE expr]
      */
     private function parseShowVariables(TokenList $tokenList): ShowVariablesCommand
     {
-        $scope = $tokenList->getAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
+        if ($tokenList->hasKeyword(Keyword::LOCAL)) {
+            $scope = Scope::SESSION;
+        } else {
+            $scope = $tokenList->getAnyKeyword(Keyword::GLOBAL, Keyword::SESSION);
+        }
         $tokenList->expectKeyword(Keyword::VARIABLES);
         $like = $where = null;
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
