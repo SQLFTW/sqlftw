@@ -726,7 +726,7 @@ class Parser
                 }
             case Keyword::TABLE:
                 // TABLE
-                return $this->factory->getQueryParser()->parseTable($tokenList->resetPosition($start));
+                return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
             case Keyword::TRUNCATE:
                 // TRUNCATE [TABLE]
                 return $this->factory->getTableCommandsParser()->parseTruncateTable($tokenList->resetPosition($start));
@@ -756,7 +756,7 @@ class Parser
                 return $this->factory->getUseCommandParser()->parseUse($tokenList->resetPosition($start));
             case Keyword::VALUES:
                 // VALUES
-                return $this->factory->getQueryParser()->parseValues($tokenList->resetPosition($start));
+                return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
             case Keyword::WITH:
                 // WITH ... SELECT|UPDATE|DELETE
                 return $this->factory->getWithParser()->parseWith($tokenList->resetPosition($start));
