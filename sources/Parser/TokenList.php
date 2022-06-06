@@ -13,7 +13,7 @@ use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
@@ -68,7 +68,7 @@ class TokenList
     /** @var non-empty-array<Token> */
     private $tokens;
 
-    /** @var PlatformSettings */
+    /** @var ParserSettings */
     private $settings;
 
     /** @var Platform */
@@ -86,7 +86,7 @@ class TokenList
     /**
      * @param non-empty-array<Token> $tokens
      */
-    public function __construct(array $tokens, PlatformSettings $settings, bool $whitespace = true)
+    public function __construct(array $tokens, ParserSettings $settings, bool $whitespace = true)
     {
         $this->tokens = $tokens;
         $this->settings = $settings;
@@ -94,7 +94,7 @@ class TokenList
         $this->whitespace = $whitespace;
     }
 
-    public function getSettings(): PlatformSettings
+    public function getSettings(): ParserSettings
     {
         return $this->settings;
     }

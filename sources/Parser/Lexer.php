@@ -20,7 +20,7 @@ use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use function array_flip;
@@ -99,7 +99,7 @@ class Lexer
     /** @var array<string, int> */
     private static $operatorSymbolsKey;
 
-    /** @var PlatformSettings */
+    /** @var ParserSettings */
     private $settings;
 
     /** @var Platform */
@@ -127,7 +127,7 @@ class Lexer
     private static $mysqlTestSuiteCommandsString;
 
     public function __construct(
-        PlatformSettings $settings,
+        ParserSettings $settings,
         bool $withComments = true,
         bool $withWhitespace = false
     ) {

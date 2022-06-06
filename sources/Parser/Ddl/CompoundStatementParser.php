@@ -92,11 +92,16 @@ class CompoundStatementParser
             $tokenList->expectSymbol(':');
         }
 
-        if ($tokenList->hasAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
-            // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
-            return $this->parseStatement($tokenList->resetPosition($position));
-        } else {
-            return $this->parser->parseTokenList($tokenList->resetPosition($position));
+        $tokenList->getSettings()->setInRoutine(true);
+        try {
+            if ($tokenList->hasAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
+                // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
+                return $this->parseStatement($tokenList->resetPosition($position));
+            } else {
+                return $this->parser->parseTokenList($tokenList->resetPosition($position));
+            }
+        } finally {
+            $tokenList->getSettings()->setInRoutine(false);
         }
     }
 
@@ -408,7 +413,7 @@ class CompoundStatementParser
 
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
-            $query = $this->queryParser->parseQuery($tokenList);
+            $query = $this->queryParser->parseQuery($tokenList, null, true);
 
             return new DeclareCursorStatement($name, $query);
         } elseif ($tokenList->hasKeyword(Keyword::CONDITION)) {

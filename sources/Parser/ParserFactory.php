@@ -57,13 +57,13 @@ use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
 use SqlFtw\Parser\Dml\WithParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 
 class ParserFactory
 {
     use StrictBehaviorMixin;
 
-    /** @var PlatformSettings */
+    /** @var ParserSettings */
     private $settings;
 
     /** @var Parser */
@@ -84,7 +84,7 @@ class ParserFactory
     /** @var CompoundStatementParser */
     private $compoundStatementParser;
 
-    public function __construct(PlatformSettings $settings, Parser $parser)
+    public function __construct(ParserSettings $settings, Parser $parser)
     {
         $this->settings = $settings;
         $this->parser = $parser;
@@ -104,7 +104,7 @@ class ParserFactory
         return $this->parser;
     }
 
-    public function getSettings(): PlatformSettings
+    public function getSettings(): ParserSettings
     {
         return $this->settings;
     }

@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\SimpleName;
 use function array_values;
 
 class ValuesCommand implements SimpleQuery
@@ -22,7 +23,7 @@ class ValuesCommand implements SimpleQuery
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $limit;
 
     /** @var SelectInto|null */
@@ -31,11 +32,12 @@ class ValuesCommand implements SimpleQuery
     /**
      * @param non-empty-array<Row> $rows
      * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param int|SimpleName|null $limit
      */
     public function __construct(
         array $rows,
         ?array $orderBy = null,
-        ?int $limit = null,
+        $limit = null,
         ?SelectInto $into = null
     )
     {
@@ -69,7 +71,10 @@ class ValuesCommand implements SimpleQuery
         return $that;
     }
 
-    public function getLimit(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getLimit()
     {
         return $this->limit;
     }
@@ -108,9 +113,11 @@ class ValuesCommand implements SimpleQuery
         if ($this->orderBy !== null) {
             $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
+
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . $this->limit;
+            $result .= "\nLIMIT " . $this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit;
         }
+
         if ($this->into !== null) {
             $result .= "\n" . $this->into->serialize($formatter);
         }

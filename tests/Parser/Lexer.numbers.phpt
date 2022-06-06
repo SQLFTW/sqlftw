@@ -4,12 +4,12 @@ namespace SqlFtw\Parser;
 
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Tests\Assert;
 
 require '../bootstrap.php';
 
-$settings = new PlatformSettings(Platform::get(Platform::MYSQL, '5.7'));
+$settings = new ParserSettings(Platform::get(Platform::MYSQL, '5.7'));
 $lexer = new Lexer($settings, true, true);
 
 // NUMBER

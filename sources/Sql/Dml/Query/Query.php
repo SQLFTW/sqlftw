@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\SimpleName;
 
 /**
  * Interface for SELECT, TABLE and VALUES commands, UnionExpression and ParenthesizedQueryExpression
@@ -23,7 +24,10 @@ interface Query extends DmlCommand
      */
     public function getOrderBy(): ?array;
 
-    public function getLimit(): ?int;
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getLimit();
 
     public function getInto(): ?SelectInto;
 

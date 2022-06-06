@@ -16,7 +16,7 @@ use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
@@ -32,7 +32,7 @@ class Formatter
 {
     use StrictBehaviorMixin;
 
-    /** @var PlatformSettings */
+    /** @var ParserSettings */
     private $settings;
 
     /** @var string */
@@ -41,18 +41,28 @@ class Formatter
     /** @var bool */
     public $comments;
 
+    /** @var bool */
+    public $quoteAllNames;
+
+    /** @var bool */
+    public $canonicalizeTypes;
+
     public function __construct(
-        PlatformSettings $settings,
+        ParserSettings $settings,
         string $indent = '  ',
-        bool $comments = false
+        bool $comments = false,
+        bool $quoteAllNames = false,
+        bool $canonicalizeTypes = true
     )
     {
         $this->settings = $settings;
         $this->indent = $indent;
         $this->comments = $comments;
+        $this->quoteAllNames = $quoteAllNames;
+        $this->canonicalizeTypes = $canonicalizeTypes;
     }
 
-    public function getSettings(): PlatformSettings
+    public function getSettings(): ParserSettings
     {
         return $this->settings;
     }
@@ -64,8 +74,8 @@ class Formatter
 
     public function formatName(string $name): string
     {
-        // todo: sqlmode ansi uses "
-        return $this->settings->quoteAllNames()
+        // todo: sql_mode ansi uses "
+        return $this->quoteAllNames
             ? '`' . $name . '`'
             : ($this->settings->getPlatform()->getFeatures()->isReserved($name)
                 ? '`' . $name . '`'

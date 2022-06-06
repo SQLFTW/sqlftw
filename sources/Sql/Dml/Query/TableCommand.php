@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\SimpleName;
 
 class TableCommand implements SimpleQuery
 {
@@ -22,10 +23,10 @@ class TableCommand implements SimpleQuery
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $limit;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $offset;
 
     /** @var SelectInto|null */
@@ -33,12 +34,14 @@ class TableCommand implements SimpleQuery
 
     /**
      * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param int|SimpleName|null $limit
+     * @param int|SimpleName|null $offset
      */
     public function __construct(
         QualifiedName $table,
         ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
+        $limit = null,
+        $offset = null,
         ?SelectInto $into = null
     )
     {
@@ -70,7 +73,10 @@ class TableCommand implements SimpleQuery
         return $that;
     }
 
-    public function getLimit(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getLimit()
     {
         return $this->limit;
     }
@@ -83,7 +89,10 @@ class TableCommand implements SimpleQuery
         return $that;
     }
 
-    public function getOffset(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getOffset()
     {
         return $this->offset;
     }
@@ -108,12 +117,14 @@ class TableCommand implements SimpleQuery
         if ($this->orderBy !== null) {
             $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
+
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . $this->limit;
+            $result .= "\nLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= "\nOFFSET " . $this->offset;
+                $result .= "\nOFFSET " . ($this->offset instanceof SimpleName ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
+
         if ($this->into !== null) {
             $result .= "\n" . $this->into->serialize($formatter);
         }

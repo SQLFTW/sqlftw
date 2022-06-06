@@ -10,7 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Expression\BinaryOperator;
@@ -34,7 +34,7 @@ class SettingsUpdater
 {
     use StrictBehaviorMixin;
 
-    public function updateSettings(Command $command, PlatformSettings $settings, TokenList $tokenList): void
+    public function updateSettings(Command $command, ParserSettings $settings, TokenList $tokenList): void
     {
         if ($command instanceof SetCommand) {
             foreach ($command->getAssignments() as $assignment) {
@@ -48,7 +48,7 @@ class SettingsUpdater
         // todo: sniff for SET NAMES, SET CHARSET, multi-statement mode ...
     }
 
-    private function detectSqlModeChange(RootNode $expression, PlatformSettings $settings, TokenList $tokenList): void
+    private function detectSqlModeChange(RootNode $expression, ParserSettings $settings, TokenList $tokenList): void
     {
         if ($expression instanceof SystemVariable && $expression->getName() === MysqlVariable::SQL_MODE) {
             // todo: tracking both session and global?

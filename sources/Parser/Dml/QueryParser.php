@@ -375,7 +375,13 @@ class QueryParser
 
         $limit = $offset = null;
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            [$limit, $offset] = $this->expressionParser->parseLimitAndOffset($tokenList);
+            $limit = $this->parseLimitOrOffsetValue($tokenList);
+            if ($tokenList->hasKeyword(Keyword::OFFSET)) {
+                $offset = $this->parseLimitOrOffsetValue($tokenList);
+            } elseif ($tokenList->hasSymbol(',')) {
+                $offset = $limit;
+                $limit = $this->parseLimitOrOffsetValue($tokenList);
+            }
         }
 
         if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
@@ -466,7 +472,7 @@ class QueryParser
     }
 
     /**
-     * @return array{non-empty-array<OrderByExpression>|null, int|null, int|null, SelectInto|null}
+     * @return array{non-empty-array<OrderByExpression>|null, int|SimpleName|null, int|SimpleName|null, SelectInto|null}
      */
     private function parseOrderLimitOffsetInto(TokenList $tokenList, bool $parseOffset = true): array
     {
@@ -475,9 +481,9 @@ class QueryParser
             $orderBy = $this->expressionParser->parseOrderBy($tokenList);
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = (int) $tokenList->expectUnsignedInt();
+            $limit = $this->parseLimitOrOffsetValue($tokenList);
             if ($parseOffset && $tokenList->hasKeyword(Keyword::OFFSET)) {
-                $offset = (int) $tokenList->expectUnsignedInt();
+                $offset = $this->parseLimitOrOffsetValue($tokenList);
             }
         }
         if ($tokenList->hasKeyword(Keyword::INTO)) {
@@ -485,6 +491,21 @@ class QueryParser
         }
 
         return [$orderBy, $limit, $offset, $into];
+    }
+
+    /**
+     * @return int|SimpleName
+     */
+    private function parseLimitOrOffsetValue(TokenList $tokenList)
+    {
+        if ($tokenList->getSettings()->inRoutine()) {
+            $token = $tokenList->get(TokenType::NAME, TokenType::AT_VARIABLE);
+            if ($token !== null) {
+                return new SimpleName($token->value);
+            }
+        }
+
+        return (int) $tokenList->expectUnsignedInt();
     }
 
     /**

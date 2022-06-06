@@ -85,10 +85,30 @@ class HandlerCommandsParser
             $where = $this->expressionParser->parseExpression($tokenList);
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            [$limit, $offset] = $this->expressionParser->parseLimitAndOffset($tokenList);
+            [$limit, $offset] = $this->parseLimitAndOffset($tokenList);
         }
 
         return new HandlerReadCommand($table, $what, $index, $values, $where, $limit, $offset);
+    }
+
+    /**
+     * limit:
+     *     [LIMIT {[offset,] row_count | row_count OFFSET offset}]
+     *
+     * @return int[]|null[]|array{int, int|null} ($limit, $offset)
+     */
+    private function parseLimitAndOffset(TokenList $tokenList): array
+    {
+        $limit = (int) $tokenList->expectUnsignedInt();
+        $offset = null;
+        if ($tokenList->hasKeyword(Keyword::OFFSET)) {
+            $offset = (int) $tokenList->expectUnsignedInt();
+        } elseif ($tokenList->hasSymbol(',')) {
+            $offset = $limit;
+            $limit = (int) $tokenList->expectUnsignedInt();
+        }
+
+        return [$limit, $offset];
     }
 
     /**

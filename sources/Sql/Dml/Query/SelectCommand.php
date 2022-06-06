@@ -15,6 +15,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 
 class SelectCommand implements SimpleQuery
@@ -45,10 +46,10 @@ class SelectCommand implements SimpleQuery
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $limit;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $offset;
 
     /** @var SelectDistinctOption|null */
@@ -71,6 +72,8 @@ class SelectCommand implements SimpleQuery
      * @param non-empty-array<GroupByExpression>|null $groupBy
      * @param non-empty-array<WindowSpecification>|null $windows ($name => $spec)
      * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param int|SimpleName|null $limit
+     * @param int|SimpleName|null $offset
      * @param array<string, bool> $options
      * @param non-empty-array<SelectLocking>|null $locking
      */
@@ -83,8 +86,8 @@ class SelectCommand implements SimpleQuery
         ?WithClause $with = null,
         ?array $windows = null,
         ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
+        $limit = null,
+        $offset = null,
         ?SelectDistinctOption $distinct = null,
         array $options = [],
         ?SelectInto $into = null,
@@ -180,7 +183,10 @@ class SelectCommand implements SimpleQuery
         return $that;
     }
 
-    public function getLimit(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getLimit()
     {
         return $this->limit;
     }
@@ -193,7 +199,10 @@ class SelectCommand implements SimpleQuery
         return $that;
     }
 
-    public function getOffset(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getOffset()
     {
         return $this->offset;
     }
@@ -281,9 +290,9 @@ class SelectCommand implements SimpleQuery
             $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . $this->limit;
+            $result .= "\nLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= "\nOFFSET " . $this->offset;
+                $result .= "\nOFFSET " . ($this->offset instanceof SimpleName ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
         if ($this->into !== null) {

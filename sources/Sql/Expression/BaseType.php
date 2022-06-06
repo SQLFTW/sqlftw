@@ -13,7 +13,7 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
@@ -120,7 +120,7 @@ class BaseType extends SqlEnum implements Feature
     public const MULTILINESTRING = Keyword::MULTILINESTRING;
     public const MULTIPOLYGON = Keyword::MULTIPOLYGON;
 
-    public function canonicalize(PlatformSettings $settings): self
+    public function canonicalize(ParserSettings $settings): self
     {
         $platform = $settings->getPlatform()->getName();
         if ($platform === Platform::MARIA) {
@@ -130,6 +130,7 @@ class BaseType extends SqlEnum implements Feature
 
         $value = $this->getValue();
         if ($platform === Platform::MYSQL && $value === self::REAL) {
+            // todo: parser state changes over time, so this is not reliable
             if ($settings->getMode()->containsAny(SqlMode::REAL_AS_FLOAT)) {
                 return self::get(self::FLOAT);
             } else {
@@ -144,11 +145,10 @@ class BaseType extends SqlEnum implements Feature
 
     public function serialize(Formatter $formatter): string
     {
-        $settings = $formatter->getSettings();
-        if ($settings->canonicalizeTypes()) {
-            $settings->setCanonicalizeTypes(false); // prevent recursion
-            $result = $this->canonicalize($settings)->serialize($formatter);
-            $settings->setCanonicalizeTypes(true);
+        if ($formatter->canonicalizeTypes) {
+            $formatter->canonicalizeTypes = false; // prevent recursion
+            $result = $this->canonicalize($formatter->getSettings())->serialize($formatter);
+            $formatter->canonicalizeTypes = true;
 
             return $result;
         }

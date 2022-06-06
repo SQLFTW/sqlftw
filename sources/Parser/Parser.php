@@ -13,7 +13,7 @@ namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
 use Generator;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MultiStatement;
@@ -26,7 +26,7 @@ class Parser
 {
     use StrictBehaviorMixin;
 
-    /** @var PlatformSettings */
+    /** @var ParserSettings */
     private $settings;
 
     /** @var SettingsUpdater */
@@ -39,7 +39,7 @@ class Parser
     private $factory;
 
     public function __construct(
-        PlatformSettings $settings,
+        ParserSettings $settings,
         ?Lexer $lexer = null,
         ?SettingsUpdater $settingsUpdater = null
     ) {
@@ -49,7 +49,7 @@ class Parser
         $this->factory = new ParserFactory($settings, $this);
     }
 
-    public function getSettings(): PlatformSettings
+    public function getSettings(): ParserSettings
     {
         return $this->settings;
     }

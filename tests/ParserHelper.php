@@ -14,7 +14,7 @@ use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 
 class ParserHelper
 {
@@ -27,8 +27,7 @@ class ParserHelper
     {
         $platform = Platform::get($platform ?? Platform::MYSQL, $version);
 
-        $settings = new PlatformSettings($platform, $delimiter);
-        $settings->setQuoteAllNames(false);
+        $settings = new ParserSettings($platform, $delimiter);
 
         $lexer = new Lexer($settings, true, true);
         $parser = new Parser($settings, $lexer);

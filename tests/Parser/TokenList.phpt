@@ -3,12 +3,12 @@
 namespace SqlFtw\Parser;
 
 use SqlFtw\Platform\Platform;
-use SqlFtw\Platform\PlatformSettings;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Tests\Assert;
 
 require '../bootstrap.php';
 
-$settings = new PlatformSettings(Platform::get(Platform::MYSQL, '5.7'));
+$settings = new ParserSettings(Platform::get(Platform::MYSQL, '5.7'));
 
 $ws = new Token(TokenType::WHITESPACE, 0, 'ws');
 $comment = new Token(TokenType::COMMENT, 1, 'comment');

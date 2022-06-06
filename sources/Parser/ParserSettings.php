@@ -7,18 +7,32 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Platform;
+namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\SqlMode;
 
-class PlatformSettings
+class ParserSettings
 {
     use StrictBehaviorMixin;
 
+    // configuration ---------------------------------------------------------------------------------------------------
+
     /** @var Platform */
     private $platform;
+
+    /** @var bool */
+    private $multiStatements;
+
+    /**
+     * @var bool - true when parsing mysql .test files containing non-SQL syntax
+     * @internal
+     */
+    public $mysqlTestMode = false;
+
+    // state -----------------------------------------------------------------------------------------------------------
 
     /** @var string */
     private $delimiter;
@@ -30,36 +44,14 @@ class PlatformSettings
     private $mode;
 
     /** @var bool */
-    private $multiStatements;
-
-    /** @var bool */
-    private $quoteAllNames;
-
-    /** @var bool */
-    private $canonicalizeTypes;
-
-    /** @var bool */
-    private $verboseOutput;
-
-    /** @var bool */
-    private $optionalEquals;
-
-    /**
-     * @var bool - true when parsing mysql .test files containing special non-SQL syntax
-     * @internal
-     */
-    public $mysqlTestMode = false;
+    private $inRoutine = false;
 
     public function __construct(
         Platform $platform,
         ?string $delimiter = null,
         ?Charset $charset = null,
         ?SqlMode $mode = null,
-        bool $multiStatements = false,
-        bool $quoteAllNames = true,
-        bool $canonicalizeTypes = true,
-        bool $verboseOutput = true,
-        bool $optionalEquals = true
+        bool $multiStatements = false
     ) {
         if ($delimiter === null) {
             $delimiter = ';';
@@ -69,10 +61,6 @@ class PlatformSettings
         $this->charset = $charset;
         $this->mode = $mode ?? $platform->getDefaultMode();
         $this->multiStatements = $multiStatements;
-        $this->quoteAllNames = $quoteAllNames;
-        $this->canonicalizeTypes = $canonicalizeTypes;
-        $this->verboseOutput = $verboseOutput;
-        $this->optionalEquals = $optionalEquals;
     }
 
     public function getPlatform(): Platform
@@ -120,34 +108,14 @@ class PlatformSettings
         $this->multiStatements = $value;
     }
 
-    public function setQuoteAllNames(bool $quote): void
+    public function inRoutine(): bool
     {
-        $this->quoteAllNames = $quote;
+        return $this->inRoutine;
     }
 
-    public function quoteAllNames(): bool
+    public function setInRoutine(bool $value): void
     {
-        return $this->quoteAllNames;
-    }
-
-    public function setCanonicalizeTypes(bool $canonicalize): void
-    {
-        $this->canonicalizeTypes = $canonicalize;
-    }
-
-    public function canonicalizeTypes(): bool
-    {
-        return $this->canonicalizeTypes;
-    }
-
-    public function verboseOutput(): bool
-    {
-        return $this->verboseOutput;
-    }
-
-    public function optionalEquals(): bool
-    {
-        return $this->optionalEquals;
+        $this->inRoutine = $value;
     }
 
 }

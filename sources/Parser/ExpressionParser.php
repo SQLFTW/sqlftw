@@ -1218,26 +1218,6 @@ class ExpressionParser
     }
 
     /**
-     * limit:
-     *     [LIMIT {[offset,] row_count | row_count OFFSET offset}]
-     *
-     * @return int[]|null[]|array{int, int|null} ($limit, $offset)
-     */
-    public function parseLimitAndOffset(TokenList $tokenList): array
-    {
-        $limit = (int) $tokenList->expectUnsignedInt();
-        $offset = null;
-        if ($tokenList->hasKeyword(Keyword::OFFSET)) {
-            $offset = (int) $tokenList->expectUnsignedInt();
-        } elseif ($tokenList->hasSymbol(',')) {
-            $offset = $limit;
-            $limit = (int) $tokenList->expectUnsignedInt();
-        }
-
-        return [$limit, $offset];
-    }
-
-    /**
      * expression:
      *     timestamp [+ INTERVAL interval] ...
      */
@@ -1402,11 +1382,6 @@ class ExpressionParser
     {
         $type = $tokenList->expectMultiKeywordsEnum(BaseType::class);
 
-        $settings = $tokenList->getSettings();
-        if ($settings->canonicalizeTypes()) {
-            $type = $type->canonicalize($settings);
-        }
-
         [$size, $values, $unsigned, $zerofill, $charset, $collation, $srid] = $this->parseOptions($type, $tokenList);
 
         return new ColumnType($type, $size, $values, $unsigned, $charset, $collation, $srid, $zerofill);
@@ -1428,11 +1403,6 @@ class ExpressionParser
         }
 
         if ($type !== null) {
-            $settings = $tokenList->getSettings();
-            if ($settings->canonicalizeTypes()) {
-                $type = $type->canonicalize($settings);
-            }
-
             [$size, , , , $charset, $collation, $srid] = $this->parseOptions($type, $tokenList);
         } else {
             $size = $charset = $collation = $srid = null;
