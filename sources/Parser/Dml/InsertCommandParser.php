@@ -49,24 +49,45 @@ class InsertCommandParser
      *     [INTO] tbl_name
      *     [PARTITION (partition_name, ...)]
      *     [(col_name, ...)]
-     *     {VALUES | VALUE} ({expr | DEFAULT}, ...), (...), ...  [AS alias[(column_alias, ...)]]
-     *     [ ON DUPLICATE KEY UPDATE
-     *       col_name=expr [, col_name=expr] ... ]
+     *     { {VALUES | VALUE} (value_list) [, (value_list)] ... }
+     *     [AS row_alias[(col_alias [, col_alias] ...)]]
+     *     [ON DUPLICATE KEY UPDATE assignment_list]
      *
      * INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
      *     [INTO] tbl_name
      *     [PARTITION (partition_name, ...)]
-     *     SET col_name={expr | DEFAULT}, ...  [AS alias]
-     *     [ ON DUPLICATE KEY UPDATE
-     *       col_name=expr [, col_name=expr] ... ]
+     *     SET assignment_list
+     *     [AS row_alias[(col_alias [, col_alias] ...)]]
+     *     [ON DUPLICATE KEY UPDATE assignment_list]
      *
      * INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
      *     [INTO] tbl_name
      *     [PARTITION (partition_name, ...)]
      *     [(col_name, ...)]
-     *     SELECT ...
-     *     [ ON DUPLICATE KEY UPDATE
-     *       col_name=expr [, col_name=expr] ... ]
+     *     { SELECT ...
+     *       | TABLE table_name
+     *       | VALUES row_constructor_list
+     *     }
+     *     [ON DUPLICATE KEY UPDATE assignment_list]
+     *
+     * value_list:
+     *     value [, value] ...
+     *
+     * value:
+     *     {expr | DEFAULT}
+     *
+     * row_constructor_list:
+     *     ROW(value_list)[, ROW(value_list)][, ...]
+     *
+     * assignment_list:
+     *     assignment [, assignment] ...
+     *
+     * assignment:
+     *     col_name =
+     *         value
+     *       | [row_alias.]col_name
+     *       | [tbl_name.]col_name
+     *       | [row_alias.]col_alias
      */
     public function parseInsert(TokenList $tokenList): InsertCommand
     {
@@ -80,7 +101,10 @@ class InsertCommandParser
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
 
-        if ($tokenList->hasAnyKeyword(Keyword::VALUE, Keyword::VALUES)) {
+        $position = $tokenList->getPosition();
+        if ($tokenList->hasKeyword(Keyword::VALUE)
+            || ($tokenList->hasKeyword(Keyword::VALUES) && !$tokenList->hasKeyword(Keyword::ROW))
+        ) {
             $rows = $this->parseRows($tokenList);
 
             $alias = $columnAliases = null;
@@ -97,7 +121,10 @@ class InsertCommandParser
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
             return new InsertValuesCommand($table, $rows, $columns, $alias, $columnAliases, $partitions, $priority, $ignore, $update);
-        } elseif ($tokenList->hasKeyword(Keyword::SET)) {
+        }
+        $tokenList->resetPosition($position);
+
+        if ($tokenList->hasKeyword(Keyword::SET)) {
             $assignments = $this->parseAssignments($tokenList);
 
             $alias = null;
@@ -108,13 +135,12 @@ class InsertCommandParser
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
             return new InsertSetCommand($table, $assignments, $columns, $alias, $partitions, $priority, $ignore, $update);
-        } else {
-            $query = $this->queryParser->parseQuery($tokenList);
-
-            $update = $this->parseOnDuplicateKeyUpdate($tokenList);
-
-            return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
         }
+
+        $query = $this->queryParser->parseQuery($tokenList);
+        $update = $this->parseOnDuplicateKeyUpdate($tokenList);
+
+        return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
     }
 
     /**
