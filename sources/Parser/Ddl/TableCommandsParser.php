@@ -97,6 +97,7 @@ use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
@@ -803,6 +804,11 @@ class TableCommandsParser
     {
         $name = $tokenList->expectName();
         $type = $this->expressionParser->parseColumnType($tokenList);
+        if ($tokenList->getKeywordEnum(BaseType::class)) {
+            // column type may appear more than once time. last one wins.
+            // todo: this is not represented and can not be analyzed by rules later. add parser warnings?
+            $type = $this->expressionParser->parseColumnType($tokenList->resetPosition(-1));
+        }
 
         $keyword = $tokenList->getAnyKeyword(Keyword::GENERATED, Keyword::AS);
         if ($keyword === null) {
