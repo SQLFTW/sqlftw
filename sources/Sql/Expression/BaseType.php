@@ -95,10 +95,12 @@ class BaseType extends SqlEnum implements Feature
     public const LONGTEXT = Keyword::LONGTEXT;
     public const CHARACTER_VARYING = Keyword::CHARACTER . ' ' . Keyword::VARYING; // VARCHAR
     public const CHARACTER = Keyword::CHARACTER; // CHAR
+    public const NCHAR_VARYING = Keyword::NCHAR . ' ' . Keyword::VARYING; // VARCHAR
     public const NCHAR = Keyword::NCHAR; // CHAR
-    public const NATIONAL_CHAR = Keyword::NATIONAL . ' ' . Keyword::CHAR; // CHAR
     public const NVARCHAR = Keyword::NVARCHAR; // VARCHAR
+    public const NATIONAL_CHARACTER_VARYING = Keyword::NATIONAL . ' ' . Keyword::CHARACTER . ' ' . Keyword::VARYING; // VARCHAR
     public const NATIONAL_VARCHAR = Keyword::NATIONAL . ' ' . Keyword::VARCHAR; // VARCHAR
+    public const NATIONAL_CHAR = Keyword::NATIONAL . ' ' . Keyword::CHAR; // CHAR
     public const LONG_VARCHAR = Keyword::LONG . ' ' . Keyword::VARCHAR; // MEDIUMTEXT
     public const LONG = Keyword::LONG; // MEDIUMTEXT
 
@@ -183,17 +185,17 @@ class BaseType extends SqlEnum implements Feature
     public function isText(): bool
     {
         return in_array($this->getValue(), [
-            self::CHAR, self::VARCHAR, self::TINYTEXT, self::TEXT, self::MEDIUMTEXT, self::LONGTEXT,
-            self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR, self::CHARACTER_VARYING, self::NVARCHAR,
-            self::NATIONAL_VARCHAR, self::LONG, self::LONG_VARCHAR, self::ENUM, self::SET,
+            self::CHAR, self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR,
+            self::VARCHAR, self::CHARACTER_VARYING, self::NVARCHAR, self::NCHAR_VARYING, self::NATIONAL_VARCHAR, self::NATIONAL_CHARACTER_VARYING,
+            self::TINYTEXT, self::TEXT, self::MEDIUMTEXT, self::LONGTEXT, self::LONG, self::LONG_VARCHAR,
+            self::ENUM, self::SET,
         ], true);
     }
 
     public function isBinary(): bool
     {
         return in_array($this->getValue(), [
-            self::BINARY, self::VARBINARY, self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB,
-            self::CHAR_BYTE, self::LONG_VARBINARY,
+            self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB, self::BINARY, self::VARBINARY, self::LONG_VARBINARY, self::CHAR_BYTE
         ], true);
     }
 
@@ -225,8 +227,8 @@ class BaseType extends SqlEnum implements Feature
     public function needsLength(): bool
     {
         return in_array($this->getValue(), [
-            self::VARCHAR, self::VARBINARY, self::CHARACTER,
-            self::CHARACTER_VARYING, self::NVARCHAR, self::NATIONAL_VARCHAR, self::CHAR_BYTE,
+            self::VARCHAR, self::VARBINARY, self::CHARACTER, self::CHARACTER_VARYING, self::NVARCHAR,
+            self::NATIONAL_VARCHAR, self::NCHAR_VARYING, self::NATIONAL_CHARACTER_VARYING, self::CHAR_BYTE,
         ], true);
     }
 
