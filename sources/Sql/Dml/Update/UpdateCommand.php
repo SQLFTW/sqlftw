@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Update;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
@@ -27,7 +28,7 @@ class UpdateCommand implements DmlCommand
     /** @var TableReferenceNode */
     private $tableReferences;
 
-    /** @var non-empty-array<SetColumnExpression> */
+    /** @var non-empty-array<Assignment> */
     private $values;
 
     /** @var RootNode|null */
@@ -49,7 +50,7 @@ class UpdateCommand implements DmlCommand
     private $lowPriority;
 
     /**
-     * @param non-empty-array<SetColumnExpression> $values
+     * @param non-empty-array<Assignment> $values
      * @param non-empty-array<OrderByExpression>|null $orderBy
      */
     public function __construct(
@@ -82,7 +83,7 @@ class UpdateCommand implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<SetColumnExpression>
+     * @return non-empty-array<Assignment>
      */
     public function getValues(): array
     {

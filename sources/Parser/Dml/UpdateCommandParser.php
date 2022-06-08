@@ -15,7 +15,7 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Dml\Update\SetColumnExpression;
+use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Operator;
@@ -81,12 +81,8 @@ class UpdateCommandParser
 
             $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
 
-            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $values[$column->getFullName()] = new SetColumnExpression($column, null, true);
-            } else {
-                $value = $this->expressionParser->parseAssignExpression($tokenList);
-                $values[$column->getFullName()] = new SetColumnExpression($column, $value);
-            }
+            $value = $this->expressionParser->parseAssignExpression($tokenList);
+            $values[$column->getFullName()] = new Assignment($column, $value);
         } while ($tokenList->hasSymbol(','));
 
         $where = null;

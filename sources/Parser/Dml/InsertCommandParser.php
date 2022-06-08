@@ -277,11 +277,7 @@ class InsertCommandParser
             $values = [];
             if (!$tokenList->hasSymbol(')')) {
                 do {
-                    if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                        $values[] = new DefaultLiteral();
-                    } else {
-                        $values[] = $this->expressionParser->parseAssignExpression($tokenList);
-                    }
+                    $values[] = $this->expressionParser->parseAssignExpression($tokenList);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
