@@ -21,6 +21,7 @@ use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\FileFormat;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
+use SqlFtw\Sql\Expression\AliasExpression;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\AssignOperator;
 use SqlFtw\Sql\Expression\Asterisk;
@@ -720,7 +721,17 @@ class ExpressionParser
             if ($arguments !== []) {
                 $tokenList->expectSymbol(',');
             }
-            $arguments[] = $this->parseExpression($tokenList);
+
+            $expression = $this->parseExpression($tokenList);
+            // todo: not sure where alias is allowed. can built-in functions have aliased params or UDF only?
+            if (!isset($namedParams[Keyword::AS]) && $tokenList->hasKeyword(Keyword::AS)) {
+                $alias = $tokenList->expectName();
+                $expression = new AliasExpression($expression, $alias);
+            } elseif (($alias = $tokenList->getNonKeywordName()) !== null) {
+                // non-reserved is not enough here
+                $expression = new AliasExpression($expression, $alias);
+            }
+            $arguments[] = $expression;
         } while (true);
 
         // AGG_FUNC(...) [from_first_last] [null_treatment] [over_clause]
