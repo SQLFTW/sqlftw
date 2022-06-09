@@ -214,7 +214,7 @@ class QueryParser
      *       | LOCK IN SHARE MODE]]
      *     [into_option]
      */
-    public function parseSelect(TokenList $tokenList, ?WithClause $with = null): SelectCommand
+    public function parseSelect(TokenList $tokenList, ?WithClause $with = null): Query
     {
         if ($tokenList->hasKeyword(Keyword::WITH)) {
             if ($with !== null) {
