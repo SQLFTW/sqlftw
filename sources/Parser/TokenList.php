@@ -1027,7 +1027,9 @@ class TokenList
 
     public function expectCharsetName(): Charset
     {
-        if ($this->hasKeyword(Keyword::BINARY)) {
+        if ($this->hasKeyword(Keyword::DEFAULT)) {
+            return Charset::get(Charset::DEFAULT);
+        } elseif ($this->hasKeyword(Keyword::BINARY)) {
             return Charset::get(Charset::BINARY);
         } elseif ($this->hasKeyword(Keyword::ASCII)) {
             return Charset::get(Charset::ASCII);
