@@ -18,6 +18,12 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::VALUE | T::BINARY_LITERAL, '0101', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
+$tokens = $lexer->tokenizeAll(' 0b0102 ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::NAME | T::UNQUOTED_NAME, '0b0102', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
+
 $tokens = $lexer->tokenizeAll(' b\'0101\' ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
@@ -41,6 +47,12 @@ $tokens = $lexer->tokenizeAll(' 0x12AB ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::VALUE | T::HEXADECIMAL_LITERAL, '12ab', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
+
+$tokens = $lexer->tokenizeAll(' 0x12AG ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::NAME | T::UNQUOTED_NAME, '0x12AG', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
 $tokens = $lexer->tokenizeAll(' x\'12AB\' ');

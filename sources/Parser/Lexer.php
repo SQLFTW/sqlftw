@@ -622,6 +622,11 @@ class Lexer
                                 $bits .= $next;
                                 $position++;
                                 $column++;
+                            } elseif (isset(self::$nameCharsKey[$next])) {
+                                // name pretending to be a binary literal :E
+                                $position -= strlen($bits) + 1;
+                                $column -= strlen($bits) + 1;
+                                break;
                             } else {
                                 $orig = $char . 'b' . $bits;
                                 yield $previous = new Token(T::VALUE | T::BINARY_LITERAL, $start, $bits, $orig, $condition);
@@ -639,6 +644,11 @@ class Lexer
                                 $bits .= $next;
                                 $position++;
                                 $column++;
+                            } elseif (isset(self::$nameCharsKey[$next])) {
+                                // name pretending to be a hexadecimal literal :E
+                                $position -= strlen($bits) + 1;
+                                $column -= strlen($bits) + 1;
+                                break;
                             } else {
                                 $orig = $char . 'x' . $bits;
                                 yield $previous = new Token(T::VALUE | T::HEXADECIMAL_LITERAL, $start, strtolower($bits), $orig, $condition);
