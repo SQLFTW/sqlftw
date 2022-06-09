@@ -57,7 +57,6 @@ use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
 use SqlFtw\Parser\Dml\WithParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
-use SqlFtw\Parser\ParserSettings;
 
 class ParserFactory
 {

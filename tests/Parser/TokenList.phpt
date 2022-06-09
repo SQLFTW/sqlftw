@@ -3,7 +3,6 @@
 namespace SqlFtw\Parser;
 
 use SqlFtw\Platform\Platform;
-use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Tests\Assert;
 
 require '../bootstrap.php';

@@ -13,7 +13,6 @@ namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
 use Generator;
-use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MultiStatement;

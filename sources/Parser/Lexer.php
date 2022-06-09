@@ -20,7 +20,6 @@ use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use function array_flip;

@@ -4,7 +4,6 @@ namespace SqlFtw\Parser;
 
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Tests\Assert;
 

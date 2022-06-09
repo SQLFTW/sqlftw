@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Expression\BinaryOperator;

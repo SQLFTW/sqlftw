@@ -13,7 +13,6 @@ use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
