@@ -18,7 +18,7 @@ class Xid implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var StringValue */
     private $transactionId;
 
     /** @var StringValue|null */
@@ -27,14 +27,14 @@ class Xid implements SqlSerializable
     /** @var int|null */
     private $formatId;
 
-    public function __construct(string $transactionId, ?StringValue $branchQualifier, ?int $formatId)
+    public function __construct(StringValue $transactionId, ?StringValue $branchQualifier, ?int $formatId)
     {
         $this->transactionId = $transactionId;
         $this->branchQualifier = $branchQualifier;
         $this->formatId = $formatId;
     }
 
-    public function getTransactionId(): string
+    public function getTransactionId(): StringValue
     {
         return $this->transactionId;
     }
@@ -51,7 +51,7 @@ class Xid implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $formatter->formatString($this->transactionId);
+        $result = $this->transactionId->serialize($formatter);
         if ($this->branchQualifier !== null) {
             $result .= ', ' . $this->branchQualifier->serialize($formatter);
             if ($this->formatId !== null) {

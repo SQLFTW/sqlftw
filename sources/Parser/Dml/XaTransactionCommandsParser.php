@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Dml;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\XaTransaction\XaCommitCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaEndCommand;
@@ -21,6 +22,9 @@ use SqlFtw\Sql\Dml\XaTransaction\XaStartCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaStartOption;
 use SqlFtw\Sql\Dml\XaTransaction\Xid;
 use SqlFtw\Sql\Keyword;
+use function hex2bin;
+use function str_pad;
+use const STR_PAD_LEFT;
 
 class XaTransactionCommandsParser
 {
@@ -91,12 +95,18 @@ class XaTransactionCommandsParser
      */
     private function parseXid(TokenList $tokenList): Xid
     {
-        $transactionId = $tokenList->expectString();
+        $transactionId = $tokenList->expectStringValue();
         $branch = $format = null;
         if ($tokenList->hasSymbol(',')) {
             $branch = $tokenList->expectStringValue();
             if ($tokenList->hasSymbol(',')) {
-                $format = (int) $tokenList->expectUnsignedInt();
+                $format = $tokenList->get(TokenType::HEXADECIMAL_LITERAL);
+                if ($format !== null) {
+                    // see no reason to keep the literal here. binary literal is not supported
+                    $format = (int) hex2bin(str_pad($format->value, 16, '0', STR_PAD_LEFT));
+                } else {
+                    $format = (int) $tokenList->expectUnsignedInt();
+                }
             }
         }
 
