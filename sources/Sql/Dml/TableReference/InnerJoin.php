@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 
 class InnerJoin extends Join
@@ -21,7 +21,7 @@ class InnerJoin extends Join
     /** @var bool */
     private $crossJoin;
 
-    /** @var ExpressionNode|null */
+    /** @var RootNode|null */
     private $condition;
 
     /** @var non-empty-array<string>|null */
@@ -34,7 +34,7 @@ class InnerJoin extends Join
         TableReferenceNode $left,
         TableReferenceNode $right,
         bool $crossJoin,
-        ?ExpressionNode $condition,
+        ?RootNode $condition,
         ?array $using
     ) {
         parent::__construct($left, $right);
@@ -53,7 +53,7 @@ class InnerJoin extends Join
         return $this->crossJoin;
     }
 
-    public function getCondition(): ?ExpressionNode
+    public function getCondition(): ?RootNode
     {
         return $this->condition;
     }

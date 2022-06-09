@@ -89,14 +89,13 @@ class JoinParser
     /**
      * table_reference:
      *     table_factor
-     *   | join_table
+     *   | joined_table
      *
-     * join_table:
-     *     table_reference [INNER | CROSS] JOIN table_factor [join_condition]
-     *   | table_reference STRAIGHT_JOIN table_factor
-     *   | table_reference STRAIGHT_JOIN table_factor ON conditional_expr
-     *   | table_reference {LEFT|RIGHT} [OUTER] JOIN table_reference join_condition
+     * joined_table: {
+     *     table_reference {[INNER | CROSS] JOIN | STRAIGHT_JOIN} table_factor [join_specification]
+     *   | table_reference {LEFT|RIGHT} [OUTER] JOIN table_reference join_specification
      *   | table_reference NATURAL [INNER | {LEFT|RIGHT} [OUTER]] JOIN table_factor
+     * }
      *
      * join_condition:
      *     ON conditional_expr
@@ -107,17 +106,6 @@ class JoinParser
         $left = $this->parseTableFactor($tokenList);
 
         do {
-            if ($tokenList->hasKeyword(Keyword::STRAIGHT_JOIN)) {
-                // STRAIGHT_JOIN
-                $right = $this->parseTableReference($tokenList);
-                $condition = null;
-                if ($tokenList->hasKeyword(Keyword::ON)) {
-                    $condition = $this->expressionParser->parseExpression($tokenList);
-                }
-
-                $left = new StraightJoin($left, $right, $condition);
-                continue;
-            }
             if ($tokenList->hasKeyword(Keyword::NATURAL)) {
                 // NATURAL JOIN
                 $side = null;
@@ -133,6 +121,7 @@ class JoinParser
                 $left = new NaturalJoin($left, $right, $side);
                 continue;
             }
+
             $side = $tokenList->getKeywordEnum(JoinSide::class);
             if ($side !== null) {
                 // {LEFT|RIGHT} [OUTER] JOIN
@@ -144,6 +133,16 @@ class JoinParser
                 $left = new OuterJoin($left, $right, $side, $on, $using);
                 continue;
             }
+
+            if ($tokenList->hasKeyword(Keyword::STRAIGHT_JOIN)) {
+                // STRAIGHT_JOIN
+                $right = $this->parseTableReference($tokenList);
+                [$on, $using] = $this->parseJoinCondition($tokenList);
+
+                $left = new StraightJoin($left, $right, $on, $using);
+                continue;
+            }
+
             $keyword = $tokenList->getAnyKeyword(Keyword::INNER, Keyword::CROSS, Keyword::JOIN);
             if ($keyword !== null) {
                 // [INNER | CROSS] JOIN

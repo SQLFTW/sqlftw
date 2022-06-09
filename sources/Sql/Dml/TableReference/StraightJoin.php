@@ -20,11 +20,19 @@ class StraightJoin extends Join
     /** @var RootNode|null */
     private $condition;
 
-    public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?RootNode $condition)
-    {
+    /** @var non-empty-array<string>|null */
+    private $using;
+
+    public function __construct(
+        TableReferenceNode $left,
+        TableReferenceNode $right,
+        ?RootNode $condition,
+        ?array $using
+    ) {
         parent::__construct($left, $right);
 
         $this->condition = $condition;
+        $this->using = $using;
     }
 
     public function getCondition(): ?RootNode
@@ -32,11 +40,22 @@ class StraightJoin extends Join
         return $this->condition;
     }
 
+    /**
+     * @return non-empty-array<string>|null
+     */
+    public function getUsing(): ?array
+    {
+        return $this->using;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = $this->left->serialize($formatter) . ' STRAIGHT_JOIN ' . $this->right->serialize($formatter);
+
         if ($this->condition !== null) {
             $result .= ' ON ' . $this->condition->serialize($formatter);
+        } elseif ($this->using !== null) {
+            $result .= ' USING (' . $formatter->formatNamesList($this->using) . ')';
         }
 
         return $result;
