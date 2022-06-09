@@ -188,10 +188,6 @@ class ExpressionParser
             }
 
             return new BinaryOperator($left, $not ? [Operator::IS, Operator::NOT] : [Operator::IS], $right);
-        } elseif ($this->assignAllowed && $left instanceof UserVariable && $tokenList->hasOperator(Operator::ASSIGN)) {
-            $right = $this->parseExpression($tokenList);
-
-            return new AssignOperator($left, $right);
         } else {
             return $left;
         }
@@ -409,6 +405,13 @@ class ExpressionParser
             $left = $this->parseSimpleExpression($tokenList);
         }
 
+        // todo: not sure it this is the right level
+        if ($this->assignAllowed && $left instanceof UserVariable && $tokenList->hasOperator(Operator::ASSIGN)) {
+            $right = $this->parseBitExpression($tokenList);
+
+            $left = new AssignOperator($left, $right);
+        }
+
         $operator = $tokenList->getAnyOperator(...$operators);
         if ($operator === null) {
             $operator = $tokenList->getAnyKeyword(Keyword::DIV, Keyword::MOD);
@@ -418,6 +421,13 @@ class ExpressionParser
         }
 
         $right = $this->parseBitExpression($tokenList);
+
+        // todo: not sure it this is the right level
+        if ($this->assignAllowed && $right instanceof UserVariable && $tokenList->hasOperator(Operator::ASSIGN)) {
+            $next = $this->parseBitExpression($tokenList);
+
+            $right = new AssignOperator($right, $next);
+        }
 
         return new BinaryOperator($left, [$operator], $right);
     }
