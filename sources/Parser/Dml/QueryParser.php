@@ -101,9 +101,10 @@ class QueryParser
         while ($tokenList->hasKeyword(Keyword::UNION)) {
             if ($tokenList->hasKeyword(Keyword::ALL)) {
                 $types[] = UnionType::get(UnionType::ALL);
-            } else {
-                $tokenList->passKeyword(Keyword::DISTINCT);
+            } elseif ($tokenList->hasKeyword(Keyword::DISTINCT)) {
                 $types[] = UnionType::get(UnionType::DISTINCT);
+            } else {
+                $types[] = UnionType::get(UnionType::DEFAULT);
             }
             $queries[] = $this->parseQueryBlock($tokenList);
         }
