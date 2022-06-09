@@ -60,7 +60,7 @@ class IndexCommandsParser
      *   | SECONDARY_ENGINE_ATTRIBUTE [=] 'string' -- 8.0.21
      *
      * index_type:
-     *     USING {BTREE | HASH}
+     *     {USING | TYPE} {BTREE | RTREE | HASH}
      *
      * algorithm_option:
      *     ALGORITHM [=] {DEFAULT|INPLACE|COPY}
@@ -108,7 +108,7 @@ class IndexCommandsParser
         }
 
         $algorithm = null;
-        if ($tokenList->hasKeyword(Keyword::USING)) {
+        if ($tokenList->hasAnyKeyword(Keyword::USING, Keyword::TYPE)) {
             $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
         }
 
@@ -119,6 +119,10 @@ class IndexCommandsParser
         }
 
         $parts = $this->parseIndexParts($tokenList);
+
+        if ($tokenList->hasAnyKeyword(Keyword::USING, Keyword::TYPE)) {
+            $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
+        }
 
         $keyBlockSize = $withParser = $mergeThreshold = $comment = $visible = $engineAttribute = $secondaryEngineAttribute = null;
         // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
