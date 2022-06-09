@@ -112,10 +112,16 @@ class Charset extends SqlEnum implements ArgumentNode
 
     public static function validateValue(string &$value): bool
     {
+        $value = strtolower($value);
+
         if (strpos($value, '_') !== false) {
             // things like 'cp1250_latin2' are valid
             // todo: ignoring the second part
             [$value, $value2] = explode('_', $value);
+            // some compatibility shit. koi8 is not valid by itself
+            if ($value2 === 'koi8') {
+                $value2 = 'koi8r';
+            }
 
             return parent::validateValue($value) && parent::validateValue($value2);
         } else {

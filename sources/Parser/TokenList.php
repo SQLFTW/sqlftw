@@ -1033,7 +1033,17 @@ class TokenList
         } elseif ($this->hasKeyword(Keyword::ASCII)) {
             return Charset::get(Charset::ASCII);
         } else {
-            return $this->expectNameOrStringEnum(Charset::class);
+            $charset = $this->getString();
+            if ($charset === null) {
+                $charset = $this->expectName();
+            }
+            if (!Charset::validateValue($charset)) {
+                $values = Charset::getAllowedValues();
+
+                throw InvalidTokenException::tokens(T::STRING | T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
+            }
+
+            return Charset::get($charset);
         }
     }
 
