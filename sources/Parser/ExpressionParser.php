@@ -658,19 +658,14 @@ class ExpressionParser
             ? BuiltInFunction::get($name1)
             : new QualifiedName($name2 ?? $name1, $name2 !== null ? $name1 : null);
 
-        if ($tokenList->hasSymbol(')')) {
-            return new FunctionCall($function, []);
-        }
-
+        $arguments = [];
         if ($function instanceof BuiltInFunction) {
             $name = $function->getValue();
             if ($name === BuiltInFunction::CONVERT) {
                 return $this->parseConvert($tokenList, $function);
             } elseif ($name === BuiltInFunction::COUNT) {
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                    $tokenList->expectSymbol(')');
-
-                    return new FunctionCall($function, [new Asterisk()]);
+                    $arguments[] = new Asterisk();
                 }
             } elseif ($name === BuiltInFunction::TRIM) {
                 return $this->parseTrim($tokenList, $function);
@@ -684,7 +679,6 @@ class ExpressionParser
             $namedParams = [];
         }
 
-        $arguments = [];
         do {
             if ($tokenList->hasSymbol(')')) {
                 break;
