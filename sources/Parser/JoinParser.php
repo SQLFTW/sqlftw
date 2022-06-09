@@ -194,19 +194,54 @@ class JoinParser
             [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
             return new TableReferenceSubquery($query, $alias, $columns, true);
+        } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
+            $query = ($this->queryParserProxy)()->parseQuery($tokenList->resetPosition($position));
+            [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
+
+            return new TableReferenceSubquery($query, $alias, $columns, false);
         } elseif ($tokenList->hasSymbol('(')) {
-            $isQuery = $tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
+            // any number of open parens
+            $openParens = 0;
+            $mayBeQuery = $isQuery = false;
+            do {
+                if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
+                    $mayBeQuery = true;
+                }
+                $openParens++;
+            } while ($tokenList->hasSymbol('('));
+            // seek forward to find out if an alias follows
+            if ($mayBeQuery) {
+                do {
+                    $token = $tokenList->get();
+                    if ($token === null) {
+                        break;
+                    } elseif ($token->value === '(' && ($token->type & TokenType::SYMBOL) !== 0) {
+                        $openParens++;
+                    } elseif ($token->value === ')' && ($token->type & TokenType::SYMBOL) !== 0) {
+                        $openParens--;
+                        if ($openParens === 0) {
+                            if ($tokenList->hasKeyword(Keyword::AS)) {
+                                $isQuery = true;
+                            } elseif ($tokenList->getNonKeywordName() !== null) {
+                                $isQuery = true;
+                            }
+                        }
+                    }
+                } while (true);
+            }
+
             if ($isQuery) {
                 $query = ($this->queryParserProxy)()->parseQuery($tokenList->resetPosition($position));
                 [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
                 return new TableReferenceSubquery($query, $alias, $columns, false);
             } else {
+                $tokenList->resetPosition($position);
+                $tokenList->expectSymbol('(');
                 $references = $this->parseTableReferences($tokenList);
                 $tokenList->expectSymbol(')');
-                [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
-                return new TableReferenceParentheses($references, $alias, $columns);
+                return new TableReferenceParentheses($references);
             }
         } else {
             // tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
