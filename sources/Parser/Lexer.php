@@ -319,7 +319,16 @@ class Lexer
                                 break;
                             }
                         }
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+
+                        if (Str::endsWith($value, $delimiter)) {
+                            // fucking name-like delimiter after name without whitespace
+                            $value = substr($value, 0, -strlen($delimiter));
+
+                            yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+                            yield new Token(T::DELIMITER, $start, $delimiter, null, $condition);
+                        } else {
+                            yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+                        }
                     } elseif ($second === '`' || $second === "'" || $second === '"') {
                         $position++;
                         $column++;
@@ -339,7 +348,16 @@ class Lexer
                                 break;
                             }
                         }
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+
+                        if (Str::endsWith($value, $delimiter)) {
+                            // fucking name-like delimiter after name without whitespace
+                            $value = substr($value, 0, -strlen($delimiter));
+
+                            yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+                            yield new Token(T::DELIMITER, $start, $delimiter, null, $condition);
+                        } else {
+                            yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
+                        }
                     } else {
                         $exception = new LexerException('Invalid @ variable name', $position, $string);
 
