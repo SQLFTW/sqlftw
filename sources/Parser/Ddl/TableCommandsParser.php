@@ -82,7 +82,6 @@ use SqlFtw\Sql\Ddl\Table\CreateTableLikeCommand;
 use SqlFtw\Sql\Ddl\Table\DropTableCommand;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
-use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Ddl\Table\Option\TableCompression;
 use SqlFtw\Sql\Ddl\Table\Option\TableInsertMethod;
 use SqlFtw\Sql\Ddl\Table\Option\TableOption;
@@ -804,7 +803,7 @@ class TableCommandsParser
     {
         $name = $tokenList->expectName();
         $type = $this->expressionParser->parseColumnType($tokenList);
-        if ($tokenList->getKeywordEnum(BaseType::class)) {
+        if ($tokenList->getKeywordEnum(BaseType::class) !== null) {
             // column type may appear more than once time. last one wins.
             // todo: this is not represented and can not be analyzed by rules later. add parser warnings?
             $type = $this->expressionParser->parseColumnType($tokenList->resetPosition(-1));

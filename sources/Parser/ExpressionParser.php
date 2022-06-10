@@ -758,7 +758,7 @@ class ExpressionParser
         }
 
         $over = null;
-        if ($function instanceof BuiltInFunction && $function->isWindow() && $tokenList->getKeyword(Keyword::OVER)) {
+        if ($function instanceof BuiltInFunction && $function->isWindow() && $tokenList->getKeyword(Keyword::OVER) !== null) {
             $over = $this->parseOver($tokenList);
         }
 

@@ -413,7 +413,7 @@ class CompoundStatementParser
 
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
-            $query = $this->queryParser->parseQuery($tokenList, null, true);
+            $query = $this->queryParser->parseQuery($tokenList);
 
             return new DeclareCursorStatement($name, $query);
         } elseif ($tokenList->hasKeyword(Keyword::CONDITION)) {

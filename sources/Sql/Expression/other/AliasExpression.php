@@ -15,7 +15,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * expression AS name
  */
-class AliasExpression implements ExpressionNode
+class AliasExpression implements ArgumentNode
 {
     use StrictBehaviorMixin;
 

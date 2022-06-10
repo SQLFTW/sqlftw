@@ -38,7 +38,7 @@ class Row implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ROW(' . $formatter->formatSerializablesList($this->values) . ')';
+        return $this->values !== [] ? 'ROW(' . $formatter->formatSerializablesList($this->values) . ')' : 'ROW()';
     }
 
 }

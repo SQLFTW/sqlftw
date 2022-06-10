@@ -12,8 +12,8 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Platform\Platform;
 use SqlFtw\Parser\ParserSettings;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
@@ -195,7 +195,7 @@ class BaseType extends SqlEnum implements Feature
     public function isBinary(): bool
     {
         return in_array($this->getValue(), [
-            self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB, self::BINARY, self::VARBINARY, self::LONG_VARBINARY, self::CHAR_BYTE
+            self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB, self::BINARY, self::VARBINARY, self::LONG_VARBINARY, self::CHAR_BYTE,
         ], true);
     }
 

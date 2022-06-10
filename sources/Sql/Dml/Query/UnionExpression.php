@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Query;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function array_values;
 use function count;
@@ -29,7 +30,7 @@ class UnionExpression implements Query
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $limit;
 
     /** @var SelectInto|null */
@@ -39,12 +40,13 @@ class UnionExpression implements Query
      * @param non-empty-array<Query> $queries
      * @param non-empty-array<UnionType> $types
      * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param int|SimpleName|null $limit
      */
     public function __construct(
         array $queries,
         array $types,
         ?array $orderBy = null,
-        ?int $limit = null,
+        $limit = null,
         ?SelectInto $into = null
     )
     {
@@ -82,7 +84,10 @@ class UnionExpression implements Query
         return $this->orderBy;
     }
 
-    public function getLimit(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getLimit()
     {
         return $this->limit;
     }
@@ -104,7 +109,7 @@ class UnionExpression implements Query
             $result .= "\n\tORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\n\tLIMIT " . $this->limit;
+            $result .= "\n\tLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
         }
         if ($this->into !== null) {
             $result .= "\n\t" . $formatter->indent($this->into->serialize($formatter));

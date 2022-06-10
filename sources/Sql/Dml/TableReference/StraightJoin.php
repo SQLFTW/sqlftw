@@ -23,6 +23,9 @@ class StraightJoin extends Join
     /** @var non-empty-array<string>|null */
     private $using;
 
+    /**
+     * @param non-empty-array<string>|null $using
+     */
     public function __construct(
         TableReferenceNode $left,
         TableReferenceNode $right,

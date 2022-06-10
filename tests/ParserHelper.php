@@ -13,8 +13,8 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
-use SqlFtw\Platform\Platform;
 use SqlFtw\Parser\ParserSettings;
+use SqlFtw\Platform\Platform;
 
 class ParserHelper
 {

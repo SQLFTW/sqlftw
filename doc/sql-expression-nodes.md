@@ -20,6 +20,8 @@ note: classes in **bold**, interfaces in *italic*
         - **SimpleName** (*ColumnIdentifier*, *FunctionIdentifier*) - e.g. `foo`
       - **SystemVariable** - e.g. `@@name`, `@@global.name`
       - **UserVariable** - e.g. `@name`
+      - **Placeholder** - ?
+    - **IntervalExpression** - e.g. `INTERVAL 6 DAYS`
     - *Literal* - value, placeholder or value promise (e.g. `DEFAULT`)
       - *KeywordLiteral* - e.g. `DEFAULT`, `UNKNOWN`, `ON`, `OFF`...
         - **AllLiteral** - `ALL`
@@ -28,12 +30,10 @@ note: classes in **bold**, interfaces in *italic*
         - **NoneLiteral** - `NONE`
         - **PrimaryLiteral** - `PRIMARY`
         - **UnknownLiteral** - `UNKNOWN`
-      - **Placeholder** - ?
       - *Value* - concrete value
         - *UintValue* - types that can represent an unsigned integer
           - **BinaryLiteral** - e.g. `0b001101110`
           - **HexadecimalLiteral** (*StringValueLiteral*) - e.g. `0x001F`
-        - **IntervalLiteral** - e.g. `INTERVAL 6 DAYS`
         - **NumberLiteral** - e.g. `-1.23e-4`
           - **IntLiteral** - e.g. `-123`
             - **UintLiteral** (*UintValueLiteral*) - e.g. `123`
@@ -55,19 +55,20 @@ note: classes in **bold**, interfaces in *italic*
     - **Parentheses** - `(...)`
     - **RowExpression** - `ROW (...[, ...])`  - used as operator parameter
   - *ArgumentNode* - can be used as argument of some functions
+    - **AliasExpression** - `expr AS alias` - used on highest level in queries
     - **Asterisk** - in `SELECT * FORM ...` and `COUNT(*)`
     - **CastType** - in `CAST(expr AS type)`
     - **Charset** - in `CONVERT(expr USING charset_name)`
     - **JsonErrorCondition** - in `JSON_TABLE(...)` and `JSON_VALUE(...)`
     - **ListExpression** - `..., ..., ...` - as argument in `GROUP_CONCAT(... ORDER BY ...)`
     - **OrderByExpression** - `{col_name | expr | position} [ASC | DESC]`
+    - **TimeZone** - in `CAST(.. AT TIME ZONE tz AS ...)`
   - *JsonTableColumn* - in `JSON_TABLE(...)`
     - **JsonTableExistPathColumn**
     - **JsonTableOrdinalityColumn**
     - **JsonTablePathColumn**
     - **JsonTableNestedColumn**
-  - **AliasExpression** - `expr AS alias` - used on highest level in queries
-  - **Subquery** - `(SELECT ...)`  - used as operator argument
+  - **Subquery** - `(SELECT ...)` - used as argument for some operators
 
 maybes:
 - *KeywordLiteral* probably should not be a *Literal* under *RootNode* -> *KeywordNode*

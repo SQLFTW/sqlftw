@@ -115,7 +115,7 @@ class ValuesCommand implements SimpleQuery
         }
 
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . $this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit;
+            $result .= "\nLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
         }
 
         if ($this->into !== null) {

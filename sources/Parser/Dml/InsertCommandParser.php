@@ -24,7 +24,6 @@ use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
-use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
@@ -39,7 +38,8 @@ class InsertCommandParser
     /** @var QueryParser */
     private $queryParser;
 
-    public function __construct(ExpressionParser $expressionParser, QueryParser $queryParser) {
+    public function __construct(ExpressionParser $expressionParser, QueryParser $queryParser)
+    {
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
     }
@@ -108,7 +108,7 @@ class InsertCommandParser
             $rows = $this->parseRows($tokenList);
 
             $alias = $columnAliases = null;
-            if ($alias === null && $tokenList->hasKeyword(Keyword::AS)) {
+            if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectName();
                 if ($tokenList->hasSymbol('(')) {
                     do {

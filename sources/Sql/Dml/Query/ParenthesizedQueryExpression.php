@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\SimpleName;
 
 class ParenthesizedQueryExpression implements Query
 {
@@ -25,10 +26,10 @@ class ParenthesizedQueryExpression implements Query
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $limit;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $offset;
 
     /** @var SelectInto|null */
@@ -36,13 +37,15 @@ class ParenthesizedQueryExpression implements Query
 
     /**
      * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param int|SimpleName|null $limit
+     * @param int|SimpleName|null $offset
      */
     public function __construct(
         Query $query,
         ?WithClause $with = null,
         ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
+        $limit = null,
+        $offset = null,
         ?SelectInto $into = null
     )
     {
@@ -67,9 +70,20 @@ class ParenthesizedQueryExpression implements Query
         return $this->orderBy;
     }
 
-    public function getLimit(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getLimit()
     {
         return $this->limit;
+    }
+
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getOffset()
+    {
+        return $this->offset;
     }
 
     public function getInto(): ?SelectInto
@@ -90,9 +104,9 @@ class ParenthesizedQueryExpression implements Query
             $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . $this->limit;
+            $result .= "\nLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= " OFFSET " . $this->offset;
+                $result .= " OFFSET " . ($this->offset instanceof SimpleName ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
         if ($this->into !== null) {

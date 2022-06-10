@@ -24,11 +24,11 @@ class IndexHint implements SqlSerializable
     /** @var IndexHintTarget|null */
     private $target;
 
-    /** @var non-empty-array<string|PrimaryLiteral> */
+    /** @var array<string|PrimaryLiteral> */
     private $indexes;
 
     /**
-     * @param non-empty-array<string|PrimaryLiteral> $indexes
+     * @param array<string|PrimaryLiteral> $indexes
      */
     public function __construct(IndexHintAction $action, ?IndexHintTarget $target, array $indexes)
     {
@@ -48,7 +48,7 @@ class IndexHint implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string|PrimaryLiteral>
+     * @return array<string|PrimaryLiteral>
      */
     public function getIndexes(): array
     {
@@ -61,7 +61,7 @@ class IndexHint implements SqlSerializable
         if ($this->target !== null) {
             $result .= ' FOR ' . $this->target->serialize($formatter);
         }
-        $result .= ' (' . $formatter->formatNamesList($this->indexes) . ')';
+        $result .= ' (' . ($this->indexes !== [] ? $formatter->formatNamesList($this->indexes) : '') . ')';
 
         return $result;
     }

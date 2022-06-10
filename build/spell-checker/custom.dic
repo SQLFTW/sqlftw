@@ -163,6 +163,10 @@ innobase
 innochecksum
 inplace
 isnull
+keycache
+keycache1
+keycache2
+keycache3
 longlong
 lru
 lwm
@@ -171,6 +175,7 @@ mem
 memcached
 minvalue
 mmap
+mrg
 mts
 multiset
 myfunc
@@ -202,6 +207,7 @@ recalc
 regr
 rnd
 rpl
+rsa
 rseg
 rwlock
 setof
@@ -218,11 +224,13 @@ sublist
 submultiset
 sxx
 sxy
+syseventlog
 sysid
 syy
 tablesample
 temporals
 testcase
+thdvar
 tmp
 trx
 tsi

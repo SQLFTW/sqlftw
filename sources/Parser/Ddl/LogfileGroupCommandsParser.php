@@ -14,7 +14,6 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\LogfileGroup\AlterLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\CreateLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\DropLogfileGroupCommand;
-use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Keyword;
 
 /**

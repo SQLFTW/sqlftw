@@ -353,6 +353,7 @@ class JoinParser
 
             $hints[] = new IndexHint($action, $target, $indexes);
         } while (
+            // phpcs:ignore SlevomatCodingStandard.ControlStructures.AssignmentInCondition
             (($trailingComma = $tokenList->hasSymbol(',')) && ($action = $tokenList->getKeywordEnum(IndexHintAction::class)) !== null)
             || ($action = $tokenList->getKeywordEnum(IndexHintAction::class)) !== null
         );

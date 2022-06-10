@@ -15,7 +15,7 @@ use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
-use SqlFtw\Sql\Dml\Query\SelectCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Dml\WithExpression;
@@ -39,7 +39,7 @@ class WithParser
      *     cte_name [(col_name [, col_name] ...)] AS (subquery)
      *     [, cte_name [(col_name [, col_name] ...)] AS (subquery)] ...
      *
-     * @return SelectCommand|UpdateCommand|DeleteCommand
+     * @return Query|UpdateCommand|DeleteCommand
      */
     public function parseWith(TokenList $tokenList): Command
     {

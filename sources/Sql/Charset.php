@@ -13,6 +13,7 @@ use SqlFtw\Sql\Expression\ArgumentNode;
 use function array_search;
 use function explode;
 use function strpos;
+use function strtolower;
 
 class Charset extends SqlEnum implements ArgumentNode
 {

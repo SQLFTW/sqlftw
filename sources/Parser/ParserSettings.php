@@ -18,8 +18,6 @@ class ParserSettings
 {
     use StrictBehaviorMixin;
 
-    // configuration ---------------------------------------------------------------------------------------------------
-
     /** @var Platform */
     private $platform;
 

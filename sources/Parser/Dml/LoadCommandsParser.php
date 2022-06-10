@@ -139,6 +139,7 @@ class LoadCommandsParser
 
         $fields = null;
         if ($tokenList->hasSymbol('(')) {
+            /** @var non-empty-array<string> $fields */
             $fields = [];
             if (!$tokenList->hasSymbol(')')) {
                 do {
