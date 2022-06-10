@@ -87,6 +87,9 @@ class SettingsUpdater
             } elseif ($function instanceof BuiltInFunction && $function->getValue() === BuiltInFunction::CONCAT) {
                 // todo: skipped for now, needs evaluating expressions
                 return;
+            } elseif ($function instanceof BuiltInFunction && $function->getValue() === BuiltInFunction::REGEXP_REPLACE) {
+                // todo: skipped for now, needs evaluating expressions
+                return;
             } else {
                 throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
             }

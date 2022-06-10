@@ -5,6 +5,7 @@ namespace Test;
 use Dogma\Debug\Ansi;
 use Dogma\Debug\Dumper;
 use Dogma\Debug\FormattersDogma;
+use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParsingException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
@@ -22,6 +23,7 @@ Debugger::$strictMode = true;
 FormattersDogma::register();
 
 Dumper::$hiddenFields[] = 'sql';
+Dumper::$doNotTraverse[] = Parser::class;
 
 // TokenType value
 Dumper::$intFormatters = [
