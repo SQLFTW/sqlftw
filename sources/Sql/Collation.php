@@ -249,6 +249,8 @@ class Collation extends SqlEnum
     public const UTF8_OLD_UNICODE_CI = 'utf8_unicode_ci';
     public const UTF8_OLD_VIETNAMESE_CI = 'utf8_vietnamese_ci';
 
+    public const UTF8MB3_BIN = 'utf8mb3_bin';
+
     public const UTF8_BIN = 'utf8mb4_bin';
     public const UTF8_CROATIAN_CI = 'utf8mb4_croatian_ci';
     public const UTF8_CZECH_CI = 'utf8mb4_czech_ci';
@@ -329,5 +331,32 @@ class Collation extends SqlEnum
 
     public const UTF8_GENERAL_0900_AS_CI = 'utf8mb4_0900_as_ci';
     public const UTF8_GENERAL_0900_BIN = 'utf8mb4_0900_bin';
+
+    public const UTF8_PHONE_CI = 'utf8_phone_ci';
+    public const UTF8_TOLOWER_CI = 'utf8_tolower_ci';
+    public const UTF8_BENGALI_STANDARD_CI = 'utf8_bengali_standard_ci';
+    public const UTF8_BENGALI_TRADITIONAL_CI = 'utf8_bengali_traditional_ci';
+
+    /** @internal */
+    public const UTF8_MAXUSERID_CI = 'utf8_maxuserid_ci';
+    /** @internal */
+    public const UTF8_TEST_CI = 'utf8_test_ci';
+    /** @internal */
+    public const UCS2_TEST_CI = 'ucs2_test_ci';
+    /** @internal */
+    public const UTF8MB4_TEST_CI = 'utf8mb4_test_ci';
+    /** @internal */
+    public const UTF8MB4_TEST_400_CI = 'utf8mb4_test_400_ci';
+    /** @internal */
+    public const UTF16_TEST_CI = 'utf16_test_ci';
+    /** @internal */
+    public const UTF32_TEST_CI = 'utf32_test_ci';
+    /** @internal */
+    public const LATIN1_TEST = 'latin1_test';
+
+    public const UCS2_5624_1 = 'ucs2_5624_1';
+    public const UTF8_5624_1 = 'utf8_5624_1';
+    public const UTF8_5624_4 = 'utf8_5624_4';
+    public const UTF8_5624_5 = 'utf8_5624_5';
 
 }
