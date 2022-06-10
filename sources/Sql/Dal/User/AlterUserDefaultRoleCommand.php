@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\UserName;
 
@@ -22,7 +23,7 @@ class AlterUserDefaultRoleCommand implements UserCommand
     public const ALL_ROLES = true;
     public const LIST_ROLES = null;
 
-    /** @var UserName */
+    /** @var UserName|FunctionCall */
     private $user;
 
     /** @var RolesSpecification */
@@ -31,7 +32,10 @@ class AlterUserDefaultRoleCommand implements UserCommand
     /** @var bool */
     private $ifExists;
 
-    public function __construct(UserName $user, RolesSpecification $role, bool $ifExists = false)
+    /**
+     * @param UserName|FunctionCall $user
+     */
+    public function __construct($user, RolesSpecification $role, bool $ifExists = false)
     {
         if ($role->getType()->equalsAny(RolesSpecificationType::DEFAULT, RolesSpecificationType::ALL_EXCEPT)) {
             throw new InvalidDefinitionException('Role specification for ALTER USER DEFAULT ROLE cannot be DEFAULT or ALL EXCEPT.');
@@ -42,7 +46,10 @@ class AlterUserDefaultRoleCommand implements UserCommand
         $this->ifExists = $ifExists;
     }
 
-    public function getUser(): UserName
+    /**
+     * @return UserName|FunctionCall
+     */
+    public function getUser()
     {
         return $this->user;
     }

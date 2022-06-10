@@ -30,6 +30,7 @@ use SqlFtw\Sql\Dal\User\DiscardOldPasswordAction;
 use SqlFtw\Sql\Dal\User\DropAuthFactor;
 use SqlFtw\Sql\Dal\User\DropRoleCommand;
 use SqlFtw\Sql\Dal\User\DropUserCommand;
+use SqlFtw\Sql\Dal\User\DynamicUserPrivilege;
 use SqlFtw\Sql\Dal\User\GrantCommand;
 use SqlFtw\Sql\Dal\User\GrantProxyCommand;
 use SqlFtw\Sql\Dal\User\GrantRoleCommand;
@@ -51,7 +52,7 @@ use SqlFtw\Sql\Dal\User\UserPasswordLockOptionType;
 use SqlFtw\Sql\Dal\User\UserPrivilege;
 use SqlFtw\Sql\Dal\User\UserPrivilegeResource;
 use SqlFtw\Sql\Dal\User\UserPrivilegeResourceType;
-use SqlFtw\Sql\Dal\User\UserPrivilegeType;
+use SqlFtw\Sql\Dal\User\StaticUserPrivilege;
 use SqlFtw\Sql\Dal\User\UserResourceOption;
 use SqlFtw\Sql\Dal\User\UserResourceOptionType;
 use SqlFtw\Sql\Dal\User\UserTlsOption;
@@ -129,7 +130,7 @@ class UserCommandsParser
         }
 
         $position = $tokenList->getPosition();
-        $user = $tokenList->expectUserName();
+        $user = $this->parseUser($tokenList);
         $factor = $tokenList->getUnsignedInt();
         if ($factor !== null) {
             return $this->parseRegistration($tokenList, $user, (int) $factor, $ifExists);
@@ -664,43 +665,16 @@ class UserCommandsParser
     {
         $privileges = [];
         do {
-            $type = $tokenList->getString();
+            // static (keywords)
+            $type = $tokenList->getMultiKeywordsEnum(StaticUserPrivilege::class);
             if ($type === null) {
-                $type = $tokenList->getNonKeywordName();
-
-                if ($type !== null) {
+                $name = $tokenList->getNonReservedNameOrString();
+                if ($name !== null) {
                     // dynamic (names)
-                    if (!UserPrivilegeType::isValid(strtoupper($type))) {
-                        $tokenList->expectKeywordEnum(UserPrivilegeType::class);
+                    if (!DynamicUserPrivilege::validateValue($name)) {
+                        $tokenList->expectAnyKeyword(...StaticUserPrivilege::getAllowedValues(), ...DynamicUserPrivilege::getAllowedValues());
                     }
-                } else {
-                    // static (keywords)
-                    $types = UserPrivilegeType::getFistAndSecondKeywords();
-                    $type = $tokenList->expectAnyKeyword(...array_keys($types));
-                    if ($type === Keyword::ALL) {
-                        $tokenList->passKeyword(Keyword::PRIVILEGES);
-                        $next = null;
-                    } elseif ($type === Keyword::CREATE) {
-                        /** @var string[] $next */
-                        $next = $types[$type];
-                        $next = $tokenList->getAnyKeyword(...$next);
-                        if ($next === Keyword::TEMPORARY) {
-                            $tokenList->expectKeyword(Keyword::TABLES);
-                            $next .= ' ' . Keyword::TABLES;
-                        }
-                    } elseif ($type === Keyword::ALTER) {
-                        /** @var string[] $next */
-                        $next = $types[$type];
-                        $next = $tokenList->getAnyKeyword(...$next);
-                    } else {
-                        $next = $types[$type];
-                        if ($next !== null) {
-                            $next = $tokenList->expectAnyKeyword(...$next);
-                        }
-                    }
-                    if ($next !== null) {
-                        $type .= ' ' . $next;
-                    }
+                    $type = DynamicUserPrivilege::get($name);
                 }
             }
 
@@ -712,7 +686,7 @@ class UserCommandsParser
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
-            $privileges[] = new UserPrivilege(UserPrivilegeType::get(strtoupper($type)), $columns);
+            $privileges[] = new UserPrivilege($type, $columns);
         } while ($tokenList->hasSymbol(','));
 
         return $privileges;
