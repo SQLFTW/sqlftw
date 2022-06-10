@@ -17,7 +17,7 @@ class AlterUserCommand implements UserCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var non-empty-array<IdentifiedUser> */
+    /** @var non-empty-array<AlteredUser> */
     private $users;
 
     /** @var array<UserTlsOption>|null */
@@ -39,7 +39,7 @@ class AlterUserCommand implements UserCommand
     private $ifExists;
 
     /**
-     * @param non-empty-array<IdentifiedUser> $users
+     * @param non-empty-array<AlteredUser> $users
      * @param array<UserTlsOption>|null $tlsOptions
      * @param non-empty-array<UserResourceOption>|null $resourceOptions
      * @param non-empty-array<UserPasswordLockOption>|null $passwordLockOptions
@@ -68,7 +68,7 @@ class AlterUserCommand implements UserCommand
     }
 
     /**
-     * @return non-empty-array<IdentifiedUser>
+     * @return non-empty-array<AlteredUser>
      */
     public function getUsers(): array
     {

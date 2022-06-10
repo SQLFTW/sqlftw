@@ -12,18 +12,29 @@ namespace SqlFtw\Parser\Dal;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Dal\User\AddAuthFactor;
+use SqlFtw\Sql\Dal\User\AlterAuthOption;
 use SqlFtw\Sql\Dal\User\AlterCurrentUserCommand;
+use SqlFtw\Sql\Dal\User\AlteredUser;
+use SqlFtw\Sql\Dal\User\AlterUserAction;
 use SqlFtw\Sql\Dal\User\AlterUserCommand;
 use SqlFtw\Sql\Dal\User\AlterUserDefaultRoleCommand;
+use SqlFtw\Sql\Dal\User\AlterUserFinishRegistrationCommand;
+use SqlFtw\Sql\Dal\User\AlterUserInitiateRegistrationCommand;
+use SqlFtw\Sql\Dal\User\AlterUserRegistrationCommand;
+use SqlFtw\Sql\Dal\User\AlterUserUnregisterCommand;
+use SqlFtw\Sql\Dal\User\AuthOption;
 use SqlFtw\Sql\Dal\User\CreateRoleCommand;
 use SqlFtw\Sql\Dal\User\CreateUserCommand;
+use SqlFtw\Sql\Dal\User\DiscardOldPasswordAction;
+use SqlFtw\Sql\Dal\User\DropAuthFactor;
 use SqlFtw\Sql\Dal\User\DropRoleCommand;
 use SqlFtw\Sql\Dal\User\DropUserCommand;
 use SqlFtw\Sql\Dal\User\GrantCommand;
 use SqlFtw\Sql\Dal\User\GrantProxyCommand;
 use SqlFtw\Sql\Dal\User\GrantRoleCommand;
 use SqlFtw\Sql\Dal\User\IdentifiedUser;
-use SqlFtw\Sql\Dal\User\IdentifiedUserAction;
+use SqlFtw\Sql\Dal\User\ModifyAuthFactor;
 use SqlFtw\Sql\Dal\User\RenameUserCommand;
 use SqlFtw\Sql\Dal\User\RevokeAllCommand;
 use SqlFtw\Sql\Dal\User\RevokeCommand;
@@ -48,9 +59,11 @@ use SqlFtw\Sql\Dal\User\UserTlsOptionType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
 use function array_keys;
+use function count;
 use function strtoupper;
 
 class UserCommandsParser
@@ -67,10 +80,25 @@ class UserCommandsParser
      *
      * ALTER USER [IF EXISTS]
      *     USER() IDENTIFIED BY 'auth_string'
+     *     [REPLACE 'current_auth_string']
+     *     [RETAIN CURRENT PASSWORD]
+     *     [DISCARD OLD PASSWORD]
      *
      * ALTER USER [IF EXISTS]
      *     user DEFAULT ROLE
      *     {NONE | ALL | role [, role ] ...}
+     *
+     * ALTER USER [IF EXISTS]
+     *     user [registration_option]
+     *
+     * ALTER USER [IF EXISTS]
+     *     USER() [registration_option]
+     *
+     * registration_option: {
+     *     factor INITIATE REGISTRATION
+     *   | factor FINISH REGISTRATION SET CHALLENGE_RESPONSE AS 'auth_string'
+     *   | factor UNREGISTER
+     * }
      */
     public function parseAlterUser(TokenList $tokenList): Command
     {
@@ -80,19 +108,49 @@ class UserCommandsParser
         if ($tokenList->hasKeyword(Keyword::USER)) {
             $tokenList->expectSymbol('(');
             $tokenList->expectSymbol(')');
-            $tokenList->expectKeywords(Keyword::IDENTIFIED, Keyword::BY);
-            $password = $tokenList->expectString();
+            $factor = $tokenList->getUnsignedInt();
+            if ($factor !== null) {
+                return $this->parseRegistration($tokenList, new FunctionCall(BuiltInFunction::get(BuiltInFunction::USER)), (int) $factor, $ifExists);
+            } else {
+                $option = $replace = null;
+                if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
+                    [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+                    $option = new AuthOption($authPlugin, $password, $as);
+                }
 
-            return new AlterCurrentUserCommand($password, $ifExists);
-        } elseif ($tokenList->seekKeyword(Keyword::DEFAULT, 4)) {
-            $user = $tokenList->expectUserName();
-            $tokenList->expectKeywords(Keyword::DEFAULT, Keyword::ROLE);
+                if ($tokenList->hasKeyword(Keyword::REPLACE)) {
+                    $replace = $tokenList->expectString();
+                }
+                $retainCurrentPassword = $tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD);
+                $discardOldPassword = $tokenList->hasKeywords(Keyword::DISCARD, Keyword::OLD, Keyword::PASSWORD);
+
+                return new AlterCurrentUserCommand($option, $replace, $retainCurrentPassword, $discardOldPassword, $ifExists);
+            }
+        }
+
+        $position = $tokenList->getPosition();
+        $user = $tokenList->expectUserName();
+        $factor = $tokenList->getUnsignedInt();
+        if ($factor !== null) {
+            return $this->parseRegistration($tokenList, $user, (int) $factor, $ifExists);
+        } elseif ($tokenList->hasKeywords(Keyword::DEFAULT, Keyword::ROLE)) {
             $role = $this->parseRoleSpecification($tokenList);
 
             return new AlterUserDefaultRoleCommand($user, $role, $ifExists);
         }
 
-        $users = $this->parseIdentifiedUsers($tokenList);
+        $tokenList->resetPosition($position);
+
+        $users = [];
+        do {
+            $user = $this->parseUser($tokenList);
+            $action = null;
+            if ($tokenList->hasAnyKeyword(Keyword::IDENTIFIED, Keyword::DISCARD, Keyword::ADD, Keyword::MODIFY, Keyword::DROP)) {
+                $action = $this->parseAlterAuthOptions($tokenList->resetPosition(-1));
+            }
+            $users[] = new AlteredUser($user, $action);
+        } while ($tokenList->hasSymbol(','));
+
         $tlsOptions = $this->parseTlsOptions($tokenList);
         $resourceOptions = $this->parseResourceOptions($tokenList);
         $passwordLockOptions = $this->parsePasswordLockOptions($tokenList);
@@ -121,7 +179,15 @@ class UserCommandsParser
         $tokenList->expectKeywords(Keyword::CREATE, Keyword::USER);
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
 
-        $users = $this->parseIdentifiedUsers($tokenList);
+        $users = [];
+        do {
+            $user = $this->parseUser($tokenList);
+            $option1 = $option2 = $option3 = null;
+            if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
+                [$option1, $option2, $option3] = $this->parseCreateAuthOptions($tokenList);
+            }
+            $users[] = new IdentifiedUser($user, $option1, $option2, $option3);
+        } while ($tokenList->hasSymbol(','));
 
         $defaultRoles = null;
         if ($tokenList->hasKeywords(Keyword::DEFAULT, Keyword::ROLE)) {
@@ -143,67 +209,191 @@ class UserCommandsParser
     }
 
     /**
-     * user [auth_option] [, user [auth_option]] ...
+     * ALTER USER [IF EXISTS]
+     *     user [registration_option]
      *
+     * ALTER USER [IF EXISTS]
+     *     USER() [registration_option]
+     *
+     * registration_option: {
+     *     factor INITIATE REGISTRATION
+     *   | factor FINISH REGISTRATION SET CHALLENGE_RESPONSE AS 'auth_string'
+     *   | factor UNREGISTER
+     * }
+     *
+     * @param UserName|FunctionCall $user
+     */
+    private function parseRegistration(TokenList $tokenList, $user, int $factor, bool $ifExists): AlterUserRegistrationCommand
+    {
+        if ($tokenList->hasKeywords(Keyword::INITIATE, Keyword::REGISTRATION)) {
+            return new AlterUserInitiateRegistrationCommand($user, $factor, $ifExists);
+        } elseif ($tokenList->hasKeywords(Keyword::FINISH, Keyword::REGISTRATION, Keyword::SET, Keyword::CHALLENGE_RESPONSE, Keyword::AS)) {
+            $authString = $tokenList->expectString();
+
+            return new AlterUserFinishRegistrationCommand($user, $factor, $authString, $ifExists);
+        } elseif ($tokenList->hasKeywords(Keyword::UNREGISTER)) {
+            return new AlterUserUnregisterCommand($user, $factor, $ifExists);
+        } else {
+            $tokenList->missingAnyKeyword(Keyword::INITIATE, Keyword::FINISH, Keyword::UNREGISTER);
+        }
+    }
+
+    /**
      * auth_option: {
+     *     IDENTIFIED [WITH auth_plugin BY] {RANDOM PASSWORD | 'auth_string'} [REPLACE 'current_auth_string'] [RETAIN CURRENT PASSWORD]
+     *   | IDENTIFIED WITH auth_plugin [AS 'auth_string']
+     *   | DISCARD OLD PASSWORD
+     *   | ADD factor factor_auth_option [ADD factor factor_auth_option]
+     *   | MODIFY factor factor_auth_option [MODIFY factor factor_auth_option]
+     *   | DROP factor [DROP factor]
+     * }
+     *
+     * user_func_auth_option: {
      *     IDENTIFIED BY 'auth_string'
      *         [REPLACE 'current_auth_string']
      *         [RETAIN CURRENT PASSWORD]
-     *   | IDENTIFIED WITH auth_plugin
-     *   | IDENTIFIED WITH auth_plugin BY 'auth_string'
-     *         [REPLACE 'current_auth_string']
-     *         [RETAIN CURRENT PASSWORD]
-     *   | IDENTIFIED WITH auth_plugin AS 'hash_string'
      *   | DISCARD OLD PASSWORD
      * }
      *
-     * @return non-empty-array<IdentifiedUser>
+     * factor_auth_option: {
+     *     IDENTIFIED [WITH auth_plugin] BY {RANDOM PASSWORD | 'auth_string'}
+     *   | IDENTIFIED WITH auth_plugin AS 'auth_string'
+     * }
+     *
+     * factor: {2 | 3} FACTOR
      */
-    private function parseIdentifiedUsers(TokenList $tokenList): array
+    private function parseAlterAuthOptions(TokenList $tokenList): AlterUserAction
     {
-        $users = [];
+        if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
+            [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+
+            $replace = null;
+            if ($tokenList->hasKeyword(Keyword::REPLACE)) {
+                $replace = $tokenList->expectString();
+            }
+            $retainCurrentPassword = $tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD);
+
+            return new AlterAuthOption($authPlugin, $password, $as, $replace, $retainCurrentPassword);
+        } elseif ($tokenList->hasKeyword(Keyword::ADD)) {
+            $factor1 = (int) $tokenList->expectUnsignedInt();
+            [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+            $option1 = new AuthOption($authPlugin, $password, $as);
+            $factor2 = $option2 = null;
+            if ($tokenList->hasKeyword(Keyword::ADD)) {
+                $factor2 = (int) $tokenList->expectUnsignedInt();
+                [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+                $option2 = new AuthOption($authPlugin, $password, $as);
+            }
+
+            return new AddAuthFactor($factor1, $option1, $factor2, $option2);
+        } elseif ($tokenList->hasKeyword(Keyword::MODIFY)) {
+            $factor1 = (int) $tokenList->expectUnsignedInt();
+            [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+            $option1 = new AuthOption($authPlugin, $password, $as);
+            $factor2 = $option2 = null;
+            if ($tokenList->hasKeyword(Keyword::MODIFY)) {
+                $factor2 = (int) $tokenList->expectUnsignedInt();
+                [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+                $option2 = new AuthOption($authPlugin, $password, $as);
+            }
+
+            return new ModifyAuthFactor($factor1, $option1, $factor2, $option2);
+        } elseif ($tokenList->hasKeyword(Keyword::DROP)) {
+            $factor1 = (int) $tokenList->expectUnsignedInt();
+            $factor2 = null;
+            if ($tokenList->hasKeyword(Keyword::DROP)) {
+                $factor2 = (int) $tokenList->expectUnsignedInt();
+            }
+
+            return new DropAuthFactor($factor1, $factor2);
+        } elseif ($tokenList->hasKeywords(Keyword::DISCARD, Keyword::OLD, Keyword::PASSWORD)) {
+            return new DiscardOldPasswordAction();
+        } else {
+            $tokenList->missingAnyKeyword(Keyword::IDENTIFIED, Keyword::DISCARD, Keyword::ADD, Keyword::MODIFY, Keyword::DROP);
+        }
+    }
+
+    /**
+     * @return array{string|null, StringValue|false|null, StringValue|null}
+     */
+    private function parseAuthOptionParts(TokenList $tokenList): array
+    {
+        $authPlugin = $password = $as = null;
+        if ($tokenList->hasKeyword(Keyword::WITH)) {
+            $authPlugin = $tokenList->expectNonReservedNameOrString();
+        }
+        if ($authPlugin !== null && $tokenList->hasKeyword(Keyword::AS)) {
+            $as = $tokenList->expectStringValue();
+        } elseif ($tokenList->hasKeyword(Keyword::BY)) {
+            if ($tokenList->hasKeywords(Keyword::RANDOM, Keyword::PASSWORD)) {
+                $password = false;
+            } else {
+                $password = $tokenList->expectStringValue();
+            }
+        }
+
+        return [$authPlugin, $password, $as];
+    }
+
+    /**
+     * auth_option: {
+     *     IDENTIFIED [WITH auth_plugin] BY {RANDOM PASSWORD | 'auth_string'} [AND 2fa_auth_option]
+     *   | IDENTIFIED WITH auth_plugin [AS 'auth_string'] [AND 2fa_auth_option]
+     *   | IDENTIFIED WITH auth_plugin [initial_auth_option]
+     * }
+     *
+     * 2fa_auth_option: {
+     *     IDENTIFIED [WITH auth_plugin] BY {RANDOM PASSWORD | 'auth_string'} [AND 3fa_auth_option]
+     *   | IDENTIFIED WITH auth_plugin [AS 'auth_string'] [AND 3fa_auth_option]
+     * }
+     *
+     * 3fa_auth_option: {
+     *     IDENTIFIED [WITH auth_plugin BY] {RANDOM PASSWORD | 'auth_string'}
+     *   | IDENTIFIED WITH auth_plugin [AS 'auth_string']
+     * }
+     *
+     * initial_auth_option: {
+     *     INITIAL AUTHENTICATION IDENTIFIED BY {RANDOM PASSWORD | 'auth_string'}
+     *   | INITIAL AUTHENTICATION IDENTIFIED WITH auth_plugin AS 'auth_string'
+     * }
+     *
+     * @return array{AuthOption, AuthOption|null, AuthOption|null}
+     */
+    private function parseCreateAuthOptions(TokenList $tokenList): array
+    {
+        $options = [];
         do {
-            $user = $this->parseUser($tokenList);
-            if ($tokenList->hasKeywords(Keyword::DISCARD, Keyword::OLD, Keyword::PASSWORD)) {
-                $action = IdentifiedUserAction::DISCARD_OLD_PASSWORD;
-                $users[] = new IdentifiedUser($user, IdentifiedUserAction::get($action));
-                continue;
-            }
-
-            if (!$tokenList->hasKeyword(Keyword::IDENTIFIED)) {
-                $users[] = new IdentifiedUser($user);
-                continue;
-            }
-
-            $action = $plugin = $password = $replace = null;
-            $retainCurrent = false;
+            $authPlugin = $password = $as = $initial = null;
             if ($tokenList->hasKeyword(Keyword::WITH)) {
-                $action = IdentifiedUserAction::SET_PLUGIN;
-                $plugin = $tokenList->expectNonReservedNameOrString();
-                if ($tokenList->hasKeyword(Keyword::AS)) {
-                    $action = IdentifiedUserAction::SET_HASH;
+                $authPlugin = $tokenList->expectNonReservedNameOrString();
+            }
+            if ($authPlugin !== null && $tokenList->hasKeywords(Keyword::INITIAL, Keyword::AUTHENTICATION)) {
+                if ($tokenList->hasKeywords(Keyword::BY, Keyword::RANDOM, Keyword::PASSWORD)) {
+                    $initial = new AuthOption(null, false);
+                } elseif ($tokenList->hasKeyword(Keyword::BY)) {
+                    $initial = new AuthOption(null, $tokenList->expectStringValue());
+                } else {
+                    $tokenList->expectKeyword(Keyword::WITH);
+                    $plugin = $tokenList->expectString();
+                    $tokenList->expectKeyword(Keyword::AS);
+                    $initial = new AuthOption($plugin, null, $tokenList->expectStringValue());
+                }
+            } elseif ($authPlugin !== null && $tokenList->hasKeyword(Keyword::AS)) {
+                $as = $tokenList->expectStringValue();
+            } elseif ($tokenList->hasKeyword(Keyword::BY)) {
+                if ($tokenList->hasKeywords(Keyword::RANDOM, Keyword::PASSWORD)) {
+                    $password = false;
+                } else {
                     $password = $tokenList->expectStringValue();
                 }
             }
-            if ($action !== IdentifiedUserAction::SET_HASH && $tokenList->hasKeyword(Keyword::BY)) {
-                $action = IdentifiedUserAction::SET_PASSWORD;
-                $password = $tokenList->expectStringValue();
-                if ($tokenList->hasKeyword(Keyword::REPLACE)) {
-                    $replace = $tokenList->expectStringValue();
-                }
-                if ($tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD)) {
-                    $retainCurrent = true;
-                }
+            $options[] = new AuthOption($authPlugin, $password, $as, $initial);
+            if (count($options) === 3) {
+                break;
             }
+        } while ($tokenList->hasKeywords(Keyword::AND, Keyword::IDENTIFIED));
 
-            if ($action !== null) {
-                $action = IdentifiedUserAction::get($action);
-            }
-
-            $users[] = new IdentifiedUser($user, $action, $password, $plugin, $replace, $retainCurrent);
-        } while ($tokenList->hasSymbol(','));
-
-        return $users;
+        return [$options[0], $options[1] ?? null, $options[2] ?? null];
     }
 
     /**
@@ -227,15 +417,19 @@ class UserCommandsParser
                 $tlsOptions = [];
             } else {
                 $tlsOptions = [];
+                $type = $tokenList->expectKeywordEnum(UserTlsOptionType::class);
                 do {
-                    $type = $tokenList->expectKeywordEnum(UserTlsOptionType::class);
                     $value = $tokenList->getString();
                     $tlsOptions[] = new UserTlsOption($type, $value);
 
-                    if (!$tokenList->hasKeyword(Keyword::AND)) {
-                        break;
-                    }
-                } while (true);
+                    $trailingAnd = $tokenList->hasKeyword(Keyword::AND);
+                    // phpcs:ignore SlevomatCodingStandard.ControlStructures.AssignmentInCondition
+                } while (($type = $tokenList->getKeywordEnum(UserTlsOptionType::class)) !== null);
+
+                if ($trailingAnd) {
+                    // throws
+                    $tokenList->expectKeywordEnum(UserTlsOptionType::class);
+                }
             }
         }
 
@@ -277,6 +471,8 @@ class UserCommandsParser
      *   | PASSWORD HISTORY {DEFAULT | N}
      *   | PASSWORD REUSE INTERVAL {DEFAULT | N DAY}
      *   | PASSWORD REQUIRE CURRENT [DEFAULT | OPTIONAL]
+     *   | FAILED_LOGIN_ATTEMPTS N
+     *   | PASSWORD_LOCK_TIME {N | UNBOUNDED}
      * }
      *
      * lock_option: {
@@ -289,10 +485,22 @@ class UserCommandsParser
     private function parsePasswordLockOptions(TokenList $tokenList): ?array
     {
         $passwordLockOptions = [];
-        while ($keyword = $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT)) {
+        while ($keyword = $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT, Keyword::FAILED_LOGIN_ATTEMPTS, Keyword::PASSWORD_LOCK_TIME)) {
             if ($keyword === Keyword::ACCOUNT) {
                 $keyword = $tokenList->expectAnyKeyword(Keyword::LOCK, Keyword::UNLOCK);
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT), $keyword);
+                continue;
+            } elseif ($keyword === Keyword::FAILED_LOGIN_ATTEMPTS) {
+                $value = (int) $tokenList->expectUnsignedInt();
+                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::FAILED_LOGIN_ATTEMPTS), $value);
+                continue;
+            } elseif ($keyword === Keyword::PASSWORD_LOCK_TIME) {
+                if ($tokenList->hasKeyword(Keyword::UNBOUNDED)) {
+                    $value = Keyword::UNBOUNDED;
+                } else {
+                    $value = (int) $tokenList->expectUnsignedInt();
+                }
+                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_LOCK_TIME), $value);
                 continue;
             }
 
@@ -417,7 +625,17 @@ class UserCommandsParser
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
             $tokenList->expectKeyword(Keyword::TO);
-            $users = $this->parseIdentifiedUsers($tokenList);
+
+            $users = [];
+            do {
+                $user = $this->parseUser($tokenList);
+                $option = null;
+                if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
+                    [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+                    $option = new AuthOption($authPlugin, $password, $as);
+                }
+                $users[] = new IdentifiedUser($user, $option);
+            } while ($tokenList->hasSymbol(','));
 
             // 5.x only
             $tlsOptions = $this->parseTlsOptions($tokenList);

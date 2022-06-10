@@ -706,6 +706,9 @@ class TokenList
         return null;
     }
 
+    /**
+     * @phpstan-impure
+     */
     public function hasName(string $name): bool
     {
         return (bool) $this->getName($name);
@@ -801,6 +804,9 @@ class TokenList
         return $value;
     }
 
+    /**
+     * @phpstan-impure
+     */
     public function hasKeyword(string $keyword): bool
     {
         return (bool) $this->getKeyword($keyword);
@@ -820,6 +826,9 @@ class TokenList
         return implode(' ', $keywords);
     }
 
+    /**
+     * @phpstan-impure
+     */
     public function hasKeywords(string ...$keywords): bool
     {
         $position = $this->position;
@@ -858,6 +867,9 @@ class TokenList
         return null;
     }
 
+    /**
+     * @phpstan-impure
+     */
     public function hasAnyKeyword(string ...$keywords): bool
     {
         $position = $this->position;

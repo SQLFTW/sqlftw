@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Dal\User;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\UserName;
 
@@ -23,38 +22,28 @@ class IdentifiedUser implements SqlSerializable
     /** @var UserName|FunctionCall */
     private $user;
 
-    /** @var IdentifiedUserAction|null */
-    private $action;
+    /** @var AuthOption|null */
+    private $option1;
 
-    /** @var string|null */
-    private $plugin;
+    /** @var AuthOption|null */
+    private $option2;
 
-    /** @var Literal|null */
-    private $password;
-
-    /** @var Literal|null */
-    private $replace;
-
-    /** @var bool */
-    private $retainCurrent;
+    /** @var AuthOption|null */
+    private $option3;
 
     /**
      * @param UserName|FunctionCall $user
      */
     public function __construct(
         $user,
-        ?IdentifiedUserAction $action = null,
-        ?Literal $password = null,
-        ?string $plugin = null,
-        ?Literal $replace = null,
-        bool $retainCurrent = false
+        ?AuthOption $option1 = null,
+        ?AuthOption $option2 = null,
+        ?AuthOption $option3 = null
     ) {
         $this->user = $user;
-        $this->action = $action;
-        $this->plugin = $plugin;
-        $this->password = $password;
-        $this->replace = $replace;
-        $this->retainCurrent = $retainCurrent;
+        $this->option1 = $option1;
+        $this->option2 = $option2;
+        $this->option3 = $option3;
     }
 
     /**
@@ -65,61 +54,32 @@ class IdentifiedUser implements SqlSerializable
         return $this->user;
     }
 
-    public function getAction(): ?IdentifiedUserAction
+    public function getOption1(): ?AuthOption
     {
-        return $this->action;
+        return $this->option1;
     }
 
-    public function getPlugin(): ?string
+    public function getOption2(): ?AuthOption
     {
-        return $this->plugin;
+        return $this->option2;
     }
 
-    public function getPassword(): ?Literal
+    public function getOption3(): ?AuthOption
     {
-        return $this->password;
-    }
-
-    public function getReplace(): ?Literal
-    {
-        return $this->replace;
-    }
-
-    public function retainCurrent(): bool
-    {
-        return $this->retainCurrent;
+        return $this->option3;
     }
 
     public function serialize(Formatter $formatter): string
     {
         $result = $this->user->serialize($formatter);
 
-        if ($this->action === null) {
-            return $result;
-        }
-
-        if ($this->action->equalsAny(IdentifiedUserAction::DISCARD_OLD_PASSWORD)) {
-            return $result . ' DISCARD OLD PASSWORD';
-        }
-
-        $result .= ' IDENTIFIED';
-        if ($this->action->equalsAny(IdentifiedUserAction::SET_PLUGIN)) {
-            $result .= ' WITH ' . $formatter->formatName($this->plugin); // @phpstan-ignore-line non-null
-        } elseif ($this->action->equalsAny(IdentifiedUserAction::SET_HASH)) {
-            if ($this->plugin !== null) {
-                $result .= ' WITH ' . $formatter->formatName($this->plugin);
-            }
-            $result .= ' AS ' . $this->password->serialize($formatter); // @phpstan-ignore-line non-null
-        } else {
-            if ($this->plugin !== null) {
-                $result .= ' WITH ' . $formatter->formatName($this->plugin);
-            }
-            $result .= ' BY ' . $this->password->serialize($formatter); // @phpstan-ignore-line non-null
-            if ($this->replace !== null) {
-                $result .= ' REPLACE ' . $this->replace->serialize($formatter);
-            }
-            if ($this->retainCurrent) {
-                $result .= ' RETAIN CURRENT PASSWORD';
+        if ($this->option1 !== null) {
+            $result .= ' ' . $this->option1->serialize($formatter);
+            if ($this->option2 !== null) {
+                $result .= ' AND ' . $this->option2->serialize($formatter);
+                if ($this->option3 !== null) {
+                    $result .= ' AND ' . $this->option3->serialize($formatter);
+                }
             }
         }
 

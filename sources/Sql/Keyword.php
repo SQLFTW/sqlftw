@@ -55,6 +55,7 @@ class Keyword extends SqlEnum implements Feature
     public const ATTACH = 'ATTACH';
     public const ATTRIBUTE = 'ATTRIBUTE';
     public const ATTRIBUTES = 'ATTRIBUTES';
+    public const AUTHENTICATION = 'AUTHENTICATION';
     public const AUTHORIZATION = 'AUTHORIZATION';
     public const AUTHORS = 'AUTHORS';
     public const AUTO_INCREMENT = 'AUTO_INCREMENT';
@@ -100,6 +101,7 @@ class Keyword extends SqlEnum implements Feature
     public const CEIL = 'CEIL';
     public const CEILING = 'CEILING';
     public const CHAIN = 'CHAIN';
+    public const CHALLENGE_RESPONSE = 'CHALLENGE_RESPONSE';
     public const CHANGE = 'CHANGE';
     public const CHANGED = 'CHANGED';
     public const CHANNEL = 'CHANNEL';
@@ -318,6 +320,7 @@ class Keyword extends SqlEnum implements Feature
     public const EXTERNAL = 'EXTERNAL';
     public const EXTRACT = 'EXTRACT';
     public const FAIL = 'FAIL';
+    public const FAILED_LOGIN_ATTEMPTS = 'FAILED_LOGIN_ATTEMPTS';
     public const FALSE = 'FALSE';
     public const FAMILY = 'FAMILY';
     public const FAST = 'FAST';
@@ -328,6 +331,7 @@ class Keyword extends SqlEnum implements Feature
     public const FILE_BLOCK_SIZE = 'FILE_BLOCK_SIZE';
     public const FILTER = 'FILTER';
     public const FINAL = 'FINAL';
+    public const FINISH = 'FINISH';
     public const FIRST = 'FIRST';
     public const FIRST_VALUE = 'FIRST_VALUE';
     public const FIXED = 'FIXED';
@@ -421,7 +425,9 @@ class Keyword extends SqlEnum implements Feature
     public const INHERITS = 'INHERITS';
     public const INITIAL_SIZE = 'INITIAL_SIZE';
     public const INITIALIZE = 'INITIALIZE';
+    public const INITIAL = 'INITIAL';
     public const INITIALLY = 'INITIALLY';
+    public const INITIATE = 'INITIATE';
     public const INLINE = 'INLINE';
     public const INNER = 'INNER';
     public const INNOBASE = 'INNOBASE';
@@ -696,6 +702,7 @@ class Keyword extends SqlEnum implements Feature
     public const PASCAL = 'PASCAL';
     public const PASSING = 'PASSING';
     public const PASSWORD = 'PASSWORD';
+    public const PASSWORD_LOCK_TIME = 'PASSWORD_LOCK_TIME';
     public const PATH = 'PATH';
     public const PERCENT = 'PERCENT';
     public const PERCENT_RANK = 'PERCENT_RANK';
@@ -770,6 +777,7 @@ class Keyword extends SqlEnum implements Feature
     public const REFERENCING = 'REFERENCING';
     public const REFRESH = 'REFRESH';
     public const REGEXP = 'REGEXP';
+    public const REGISTRATION = 'REGISTRATION';
     public const REGR_AVGX = 'REGR_AVGX';
     public const REGR_AVGY = 'REGR_AVGY';
     public const REGR_COUNT = 'REGR_COUNT';
@@ -1081,6 +1089,7 @@ class Keyword extends SqlEnum implements Feature
     public const UNLOGGED = 'UNLOGGED';
     public const UNNAMED = 'UNNAMED';
     public const UNNEST = 'UNNEST';
+    public const UNREGISTER = 'UNREGISTER';
     public const UNSIGNED = 'UNSIGNED';
     public const UNTIL = 'UNTIL';
     public const UPDATE = 'UPDATE';

@@ -9,15 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\StringValue;
 
-class AlterCurrentUserCommand implements UserCommand
+class AlterAuthOption extends AuthOption implements AlterUserAction
 {
-    use StrictBehaviorMixin;
-
-    /** @var AuthOption|null */
-    private $option;
 
     /** @var string|null */
     private $replace;
@@ -25,29 +21,20 @@ class AlterCurrentUserCommand implements UserCommand
     /** @var bool */
     private $retainCurrentPassword;
 
-    /** @var bool */
-    private $discardOldPassword;
-
-    /** @var bool */
-    private $ifExists;
-
+    /**
+     * @param StringValue|false|null $password
+     */
     public function __construct(
-        ?AuthOption $option,
+        ?string $authPlugin,
+        $password = null,
+        ?StringValue $as = null,
         ?string $replace = null,
-        bool $retainCurrentPassword = false,
-        bool $discardOldPassword = false,
-        bool $ifExists = false
+        bool $retainCurrentPassword = false
     ) {
-        $this->option = $option;
+        parent::__construct($authPlugin, $password, $as);
+
         $this->replace = $replace;
         $this->retainCurrentPassword = $retainCurrentPassword;
-        $this->discardOldPassword = $discardOldPassword;
-        $this->ifExists = $ifExists;
-    }
-
-    public function getOption(): ?AuthOption
-    {
-        return $this->option;
     }
 
     public function getReplace(): ?string
@@ -60,31 +47,15 @@ class AlterCurrentUserCommand implements UserCommand
         return $this->retainCurrentPassword;
     }
 
-    public function discardOldPassword(): bool
-    {
-        return $this->discardOldPassword;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
-    }
-
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER USER ' . ($this->ifExists ? 'IF EXISTS ' : '') . 'USER()';
+        $result = parent::serialize($formatter);
 
-        if ($this->option !== null) {
-            $result .= ' ' . $this->option->serialize($formatter);
-        }
         if ($this->replace !== null) {
             $result .= ' REPLACE ' . $formatter->formatString($this->replace);
         }
         if ($this->retainCurrentPassword) {
             $result .= ' RETAIN CURRENT PASSWORD';
-        }
-        if ($this->discardOldPassword) {
-            $result .= ' DISCARD OLD PASSWORD';
         }
 
         return $result;

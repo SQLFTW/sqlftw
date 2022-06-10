@@ -27,6 +27,10 @@ class UserPasswordLockOptionType extends SqlEnum
 
     public const ACCOUNT = Keyword::ACCOUNT;
 
+    public const FAILED_LOGIN_ATTEMPTS = Keyword::FAILED_LOGIN_ATTEMPTS;
+
+    public const PASSWORD_LOCK_TIME = Keyword::PASSWORD_LOCK_TIME;
+
     /** @var string[][]|int[][]|null[][] */
     private static $values = [
         self::PASSWORD_EXPIRE => [Keyword::DEFAULT, Keyword::NEVER, 1, null],
@@ -34,6 +38,8 @@ class UserPasswordLockOptionType extends SqlEnum
         self::PASSWORD_REUSE_INTERVAL => [Keyword::DEFAULT, 1],
         self::PASSWORD_REQUIRE_CURRENT => [Keyword::DEFAULT, Keyword::OPTIONAL, null],
         self::ACCOUNT => [Keyword::LOCK, Keyword::UNLOCK],
+        self::FAILED_LOGIN_ATTEMPTS => [1],
+        self::PASSWORD_LOCK_TIME => [Keyword::UNBOUNDED, 1],
     ];
 
     /**

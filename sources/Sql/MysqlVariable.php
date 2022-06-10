@@ -133,15 +133,21 @@ class MysqlVariable extends SqlEnum implements Feature
     public const FLUSH = 'flush';
     public const FLUSH_TIME = 'flush_time';
     public const FOREIGN_KEY_CHECKS = 'foreign_key_checks';
+
     public const FT_BOOLEAN_SYNTAX = 'ft_boolean_syntax';
     public const FT_MAX_WORD_LEN = 'ft_max_word_len';
     public const FT_MIN_WORD_LEN = 'ft_min_word_len';
     public const FT_QUERY_EXPANSION_LIMIT = 'ft_query_expansion_limit';
     public const FT_STOPWORD_FILE = 'ft_stopword_file';
+
     public const GENERAL_LOG = 'general_log';
     public const GENERAL_LOG_FILE = 'general_log_file';
+
+    public const GENERATED_RANDOM_PASSWORD_LENGTH = 'generated_random_password_length';
+
     public const GLOBAL_CONNECTION_MEMORY_LIMIT = 'global_connection_memory_limit';
     public const GLOBAL_CONNECTION_MEMORY_TRACKING = 'global_connection_memory_tracking';
+
     public const GROUP_CONCAT_MAX_LEN = 'group_concat_max_len';
 
     public const GROUP_REPLICATION_ADVERTISE_RECOVERY_ENDPOINTS = 'group_replication_advertise_recovery_endpoints';
