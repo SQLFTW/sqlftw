@@ -380,12 +380,12 @@ class QueryParser
 
         $limit = $offset = null;
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $this->parseLimitOrOffsetValue($tokenList);
+            $limit = $this->expressionParser->parseLimitOrOffsetValue($tokenList);
             if ($tokenList->hasKeyword(Keyword::OFFSET)) {
-                $offset = $this->parseLimitOrOffsetValue($tokenList);
+                $offset = $this->expressionParser->parseLimitOrOffsetValue($tokenList);
             } elseif ($tokenList->hasSymbol(',')) {
                 $offset = $limit;
-                $limit = $this->parseLimitOrOffsetValue($tokenList);
+                $limit = $this->expressionParser->parseLimitOrOffsetValue($tokenList);
             }
         }
 
@@ -488,9 +488,9 @@ class QueryParser
             $orderBy = $this->expressionParser->parseOrderBy($tokenList);
         }
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
-            $limit = $this->parseLimitOrOffsetValue($tokenList);
+            $limit = $this->expressionParser->parseLimitOrOffsetValue($tokenList);
             if ($parseOffset && $tokenList->hasKeyword(Keyword::OFFSET)) {
-                $offset = $this->parseLimitOrOffsetValue($tokenList);
+                $offset = $this->expressionParser->parseLimitOrOffsetValue($tokenList);
             }
         }
         if ($tokenList->hasKeyword(Keyword::INTO)) {
@@ -498,21 +498,6 @@ class QueryParser
         }
 
         return [$orderBy, $limit, $offset, $into];
-    }
-
-    /**
-     * @return int|SimpleName
-     */
-    private function parseLimitOrOffsetValue(TokenList $tokenList)
-    {
-        if ($tokenList->getSettings()->inRoutine()) {
-            $token = $tokenList->get(TokenType::NAME, TokenType::AT_VARIABLE);
-            if ($token !== null) {
-                return new SimpleName($token->value);
-            }
-        }
-
-        return (int) $tokenList->expectUnsignedInt();
     }
 
     /**

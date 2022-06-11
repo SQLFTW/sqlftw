@@ -17,6 +17,7 @@ use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function array_map;
 use function implode;
@@ -43,7 +44,7 @@ class DeleteCommand implements DmlCommand
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $limit;
 
     /** @var bool */
@@ -58,6 +59,7 @@ class DeleteCommand implements DmlCommand
     /**
      * @param non-empty-array<array{QualifiedName, string|null}> $tables
      * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param int|SimpleName|null $limit
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
@@ -65,7 +67,7 @@ class DeleteCommand implements DmlCommand
         ?ExpressionNode $where = null,
         ?WithClause $with = null,
         ?array $orderBy = null,
-        ?int $limit = null,
+        $limit = null,
         ?TableReferenceNode $references = null,
         ?array $partitions = null,
         bool $lowPriority = false,
@@ -131,7 +133,10 @@ class DeleteCommand implements DmlCommand
         return $this->orderBy;
     }
 
-    public function getLimit(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getLimit()
     {
         return $this->limit;
     }
@@ -185,7 +190,7 @@ class DeleteCommand implements DmlCommand
             $result .= ' ORDER BY ' . $formatter->formatSerializablesList($this->orderBy);
         }
         if ($this->limit !== null) {
-            $result .= ' LIMIT ' . $this->limit;
+            $result .= ' LIMIT ' . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
         }
 
         return $result;

@@ -18,6 +18,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function count;
 
@@ -40,7 +41,7 @@ class UpdateCommand implements DmlCommand
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|null */
+    /** @var int|SimpleName|null */
     private $limit;
 
     /** @var bool */
@@ -52,6 +53,7 @@ class UpdateCommand implements DmlCommand
     /**
      * @param non-empty-array<Assignment> $values
      * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param int|SimpleName|null $limit
      */
     public function __construct(
         TableReferenceNode $tableReferences,
@@ -59,7 +61,7 @@ class UpdateCommand implements DmlCommand
         ?RootNode $where = null,
         ?WithClause $with = null,
         ?array $orderBy = null,
-        ?int $limit = null,
+        $limit = null,
         bool $ignore = false,
         bool $lowPriority = false
     ) {
@@ -108,7 +110,10 @@ class UpdateCommand implements DmlCommand
         return $this->orderBy;
     }
 
-    public function getLimit(): ?int
+    /**
+     * @return int|SimpleName|null
+     */
+    public function getLimit()
     {
         return $this->limit;
     }
@@ -148,7 +153,7 @@ class UpdateCommand implements DmlCommand
             $result .= ' ORDER BY ' . $formatter->formatSerializablesList($this->orderBy);
         }
         if ($this->limit !== null) {
-            $result .= ' LIMIT ' . $this->limit;
+            $result .= ' LIMIT ' . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
         }
 
         return $result;

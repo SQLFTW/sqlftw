@@ -1233,6 +1233,21 @@ class ExpressionParser
     }
 
     /**
+     * @return int|SimpleName
+     */
+    public function parseLimitOrOffsetValue(TokenList $tokenList)
+    {
+        if ($tokenList->getSettings()->inRoutine()) {
+            $token = $tokenList->get(TokenType::NAME, TokenType::AT_VARIABLE);
+            if ($token !== null) {
+                return new SimpleName($token->value);
+            }
+        }
+
+        return (int) $tokenList->expectUnsignedInt();
+    }
+
+    /**
      * expression:
      *     timestamp [+ INTERVAL interval] ...
      */
@@ -1397,7 +1412,7 @@ class ExpressionParser
     {
         $type = $tokenList->expectMultiKeywordsEnum(BaseType::class);
 
-        [$size, $values, $unsigned, $zerofill, $charset, $collation, $srid] = $this->parseOptions($type, $tokenList);
+        [$size, $values, $unsigned, $zerofill, $charset, $collation, $srid] = $this->parseTypeOptions($type, $tokenList);
 
         return new ColumnType($type, $size, $values, $unsigned, $charset, $collation, $srid, $zerofill);
     }
@@ -1418,7 +1433,7 @@ class ExpressionParser
         }
 
         if ($type !== null) {
-            [$size, , , , $charset, $collation, $srid] = $this->parseOptions($type, $tokenList);
+            [$size, , , , $charset, $collation, $srid] = $this->parseTypeOptions($type, $tokenList);
         } else {
             $size = $charset = $collation = $srid = null;
         }
@@ -1431,7 +1446,7 @@ class ExpressionParser
     /**
      * @return array{non-empty-array<int>|null, non-empty-array<StringValue>|null, bool, bool, Charset|null, Collation|null, int|null}
      */
-    private function parseOptions(BaseType $type, TokenList $tokenList): array
+    private function parseTypeOptions(BaseType $type, TokenList $tokenList): array
     {
         $size = $values = $charset = $collation = $srid = null;
         $unsigned = $zerofill = false;
