@@ -255,11 +255,11 @@ class TableCommandsParser
                             // ADD [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
                             // ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
                             // ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
-                            $actions[] = new AddConstraintAction($this->parseConstraint($tokenList->resetPosition(-1)));
+                            $actions[] = new AddConstraintAction($this->parseConstraint($tokenList->rewind(-1)));
                             break;
                         case Keyword::FOREIGN:
                             // ADD [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
-                            $actions[] = new AddForeignKeyAction($this->parseForeignKey($tokenList->resetPosition(-1)));
+                            $actions[] = new AddForeignKeyAction($this->parseForeignKey($tokenList->rewind(-1)));
                             break;
                         case Keyword::PRIMARY:
                             // ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name, ...) [index_option] ...
@@ -275,7 +275,7 @@ class TableCommandsParser
                             // ADD {INDEX|KEY} [index_name] [index_type] (index_col_name, ...) [index_option] ...
                             // ADD SPATIAL [INDEX|KEY] [index_name] (index_col_name, ...) [index_option] ...
                             // ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
-                            $index = $this->parseIndex($tokenList->resetPosition(-1));
+                            $index = $this->parseIndex($tokenList->rewind(-1));
                             $actions[] = new AddIndexAction($index);
                             break;
                         case Keyword::PARTITION:
@@ -297,7 +297,7 @@ class TableCommandsParser
                             // keyword used as a column name
                             if ($second !== null && ($second->type & TokenType::RESERVED) === 0) {
                                 // ADD [COLUMN] col_name column_definition [FIRST | AFTER col_name ]
-                                $column = $this->parseColumn($tokenList->resetPosition(-1));
+                                $column = $this->parseColumn($tokenList->rewind(-1));
                                 $after = null;
                                 if ($tokenList->hasKeyword(Keyword::FIRST)) {
                                     $after = ModifyColumnAction::FIRST;
@@ -584,7 +584,7 @@ class TableCommandsParser
                     $position = $tokenList->getPosition();
                     $oldPartitions = $newPartitions = null;
                     if ($tokenList->has(TokenType::NAME)) {
-                        $oldPartitions = $this->parsePartitionNames($tokenList->resetPosition($position));
+                        $oldPartitions = $this->parsePartitionNames($tokenList->rewind($position));
                         if ($oldPartitions === null) {
                             $tokenList->missing('Expected specific partition names, found "ALL".');
                         }
@@ -626,12 +626,12 @@ class TableCommandsParser
                     $alterOptions[Keyword::VALIDATION] = false;
                     break;
                 case Keyword::PARTITION:
-                    $tokenList->resetPosition(-1);
+                    $tokenList->rewind(-1);
                     break;
                 case null:
                     break;
                 default:
-                    [$option, $value] = $this->parseTableOption($tokenList->resetPosition($position));
+                    [$option, $value] = $this->parseTableOption($tokenList->rewind($position));
                     if ($option === null) {
                         $keywords = AlterTableActionType::getAllowedValues() + AlterTableOption::getAllowedValues()
                             + [Keyword::ALGORITHM, Keyword::LOCK, Keyword::WITH, Keyword::WITHOUT];
@@ -641,7 +641,7 @@ class TableCommandsParser
                     $position = $tokenList->getPosition();
                     $trailingComma = $tokenList->hasSymbol(',');
                     do {
-                        [$option, $value] = $this->parseTableOption($tokenList->resetPosition($position));
+                        [$option, $value] = $this->parseTableOption($tokenList->rewind($position));
                         if ($option === null) {
                             break;
                         }
@@ -650,14 +650,14 @@ class TableCommandsParser
                         $trailingComma = $tokenList->hasSymbol(',');
                     } while (true);
                     if ($trailingComma) {
-                        $tokenList->resetPosition($position);
+                        $tokenList->rewind($position);
                     }
             }
         } while ($tokenList->hasSymbol(',') || $tokenList->seekKeyword(Keyword::REMOVE, 10));
 
         $partitioning = null;
         if ($tokenList->hasKeyword(Keyword::PARTITION)) {
-            $partitioning = $this->parsePartitioning($tokenList->resetPosition(-1));
+            $partitioning = $this->parsePartitioning($tokenList->rewind(-1));
         }
 
         return new AlterTableCommand($name, $actions, $alterOptions, $tableOptions, $partitioning);
@@ -704,9 +704,9 @@ class TableCommandsParser
         $query = $items = null;
         if ($bodyOpen) {
             if ($tokenList->hasAnyKeyword(Keyword::WITH, Keyword::SELECT)) {
-                $query = $this->queryParser->parseQuery($tokenList->resetPosition($position));
+                $query = $this->queryParser->parseQuery($tokenList->rewind($position));
             } else {
-                $items = $this->parseCreateTableBody($tokenList->resetPosition($position));
+                $items = $this->parseCreateTableBody($tokenList->rewind($position));
             }
         }
 
@@ -723,12 +723,12 @@ class TableCommandsParser
             $trailingComma = $tokenList->hasSymbol(',');
         } while (true);
         if ($trailingComma) {
-            $tokenList->resetPosition($position);
+            $tokenList->rewind($position);
         }
 
         $partitioning = null;
         if ($tokenList->hasKeyword(Keyword::PARTITION)) {
-            $partitioning = $this->parsePartitioning($tokenList->resetPosition(-1));
+            $partitioning = $this->parsePartitioning($tokenList->rewind(-1));
         }
 
         $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
@@ -743,7 +743,7 @@ class TableCommandsParser
                 if (!$tokenList->hasSymbol(';')) {
                     $query = $this->queryParser->parseQuery($tokenList);
                 } else {
-                    $tokenList->resetPosition($position);
+                    $tokenList->rewind($position);
                 }
             }
         }
@@ -774,13 +774,13 @@ class TableCommandsParser
             if ($tokenList->hasKeyword(Keyword::CHECK)) {
                 $items[] = $this->parseCheck($tokenList);
             } elseif ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY, Keyword::FULLTEXT, Keyword::SPATIAL, Keyword::UNIQUE)) {
-                $items[] = $this->parseIndex($tokenList->resetPosition(-1));
+                $items[] = $this->parseIndex($tokenList->rewind(-1));
             } elseif ($tokenList->hasKeyword(Keyword::PRIMARY)) {
                 $items[] = $this->parseIndex($tokenList, true);
             } elseif ($tokenList->hasKeyword(Keyword::FOREIGN)) {
-                $items[] = $this->parseForeignKey($tokenList->resetPosition(-1));
+                $items[] = $this->parseForeignKey($tokenList->rewind(-1));
             } elseif ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
-                $items[] = $this->parseConstraint($tokenList->resetPosition(-1));
+                $items[] = $this->parseConstraint($tokenList->rewind(-1));
             } else {
                 $items[] = $this->parseColumn($tokenList);
             }
@@ -806,7 +806,7 @@ class TableCommandsParser
         if ($tokenList->getKeywordEnum(BaseType::class) !== null) {
             // column type may appear more than once time. last one wins.
             // todo: this is not represented and can not be analyzed by rules later. add parser warnings?
-            $type = $this->expressionParser->parseColumnType($tokenList->resetPosition(-1));
+            $type = $this->expressionParser->parseColumnType($tokenList->rewind(-1));
         }
 
         $keyword = $tokenList->getAnyKeyword(Keyword::GENERATED, Keyword::AS);
@@ -953,11 +953,11 @@ class TableCommandsParser
                     break;
                 case Keyword::REFERENCES:
                     // [reference_definition]
-                    $reference = $this->parseReference($tokenList->resetPosition(-1));
+                    $reference = $this->parseReference($tokenList->rewind(-1));
                     break;
                 case Keyword::CONSTRAINT:
                     // [check_constraint_definition]
-                    $check = $this->parseConstraint($tokenList->resetPosition(-1));
+                    $check = $this->parseConstraint($tokenList->rewind(-1));
                     break;
                 case Keyword::CHECK:
                     // [check_constraint_definition]
@@ -1054,7 +1054,7 @@ class TableCommandsParser
                     break;
                 case Keyword::REFERENCES:
                     // [reference_definition]
-                    $reference = $this->parseReference($tokenList->resetPosition(-1));
+                    $reference = $this->parseReference($tokenList->rewind(-1));
                     break;
                 case Keyword::CHECK:
                     // [check_constraint_definition]
@@ -1137,12 +1137,12 @@ class TableCommandsParser
             return new ConstraintDefinition($type, $name, $body);
         } elseif ($keyword === Keyword::UNIQUE) {
             $type = ConstraintType::get(ConstraintType::UNIQUE_KEY);
-            $body = $this->parseIndex($tokenList->resetPosition(-1));
+            $body = $this->parseIndex($tokenList->rewind(-1));
 
             return new ConstraintDefinition($type, $name, $body);
         } elseif ($keyword === Keyword::FOREIGN) {
             $type = ConstraintType::get(ConstraintType::FOREIGN_KEY);
-            $body = $this->parseForeignKey($tokenList->resetPosition(-1));
+            $body = $this->parseForeignKey($tokenList->rewind(-1));
 
             return new ConstraintDefinition($type, $name, $body);
         } else {
@@ -1405,7 +1405,7 @@ class TableCommandsParser
 
                 return [TableOption::UNION, $tables];
             default:
-                $tokenList->resetPosition($position);
+                $tokenList->rewind($position);
 
                 return [null, 0];
         }

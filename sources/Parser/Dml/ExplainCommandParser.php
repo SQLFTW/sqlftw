@@ -122,26 +122,26 @@ class ExplainCommandParser
                 $connectionId = (int) $tokenList->expectUnsignedInt();
                 break;
             case Keyword::WITH:
-                $statement = $this->withParser->parseWith($tokenList->resetPosition($position));
+                $statement = $this->withParser->parseWith($tokenList->rewind($position));
                 break;
             case Keyword::SELECT:
             case '(':
-                $statement = $this->queryParser->parseQuery($tokenList->resetPosition($position));
+                $statement = $this->queryParser->parseQuery($tokenList->rewind($position));
                 break;
             case Keyword::TABLE:
-                $statement = $this->queryParser->parseTable($tokenList->resetPosition($position));
+                $statement = $this->queryParser->parseTable($tokenList->rewind($position));
                 break;
             case Keyword::INSERT:
-                $statement = $this->insertCommandParser->parseInsert($tokenList->resetPosition($position));
+                $statement = $this->insertCommandParser->parseInsert($tokenList->rewind($position));
                 break;
             case Keyword::UPDATE:
-                $statement = $this->updateCommandParser->parseUpdate($tokenList->resetPosition($position));
+                $statement = $this->updateCommandParser->parseUpdate($tokenList->rewind($position));
                 break;
             case Keyword::DELETE:
-                $statement = $this->deleteCommandParser->parseDelete($tokenList->resetPosition($position));
+                $statement = $this->deleteCommandParser->parseDelete($tokenList->rewind($position));
                 break;
             case Keyword::REPLACE:
-                $statement = $this->insertCommandParser->parseReplace($tokenList->resetPosition($position));
+                $statement = $this->insertCommandParser->parseReplace($tokenList->rewind($position));
                 break;
             case null:
                 // DESCRIBE

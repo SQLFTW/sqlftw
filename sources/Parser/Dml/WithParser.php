@@ -75,11 +75,11 @@ class WithParser
         switch ($next) {
             case '(':
             case Keyword::SELECT:
-                return $this->parserFactory->getQueryParser()->parseQuery($tokenList->resetPosition(-1), $with);
+                return $this->parserFactory->getQueryParser()->parseQuery($tokenList->rewind(-1), $with);
             case Keyword::UPDATE:
-                return $this->parserFactory->getUpdateCommandParser()->parseUpdate($tokenList->resetPosition(-1), $with);
+                return $this->parserFactory->getUpdateCommandParser()->parseUpdate($tokenList->rewind(-1), $with);
             case Keyword::DELETE:
-                return $this->parserFactory->getDeleteCommandParser()->parseDelete($tokenList->resetPosition(-1), $with);
+                return $this->parserFactory->getDeleteCommandParser()->parseDelete($tokenList->rewind(-1), $with);
             default:
                 throw new ShouldNotHappenException('');
         }

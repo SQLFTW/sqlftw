@@ -20,29 +20,29 @@ $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT);
 getLast:
 Assert::same($tokenList->getLast()->value, $ws->value);
 
-$tokenList->resetPosition(1);
+$tokenList->rewind(1);
 Assert::same($tokenList->getLast()->value, $ws->value);
 
-$tokenList->resetPosition(2);
+$tokenList->rewind(2);
 Assert::same($tokenList->getLast()->value, $ws->value);
 
-$tokenList->resetPosition(3);
+$tokenList->rewind(3);
 Assert::same($tokenList->getLast()->value, $value->value);
 
-$tokenList->resetPosition(4);
+$tokenList->rewind(4);
 Assert::same($tokenList->getLast()->value, $value->value);
 
-$tokenList->resetPosition(5);
+$tokenList->rewind(5);
 Assert::same($tokenList->getLast()->value, $value->value);
 
-$tokenList->resetPosition(6);
+$tokenList->rewind(6);
 Assert::same($tokenList->getLast()->value, $name->value);
 
-$tokenList->resetPosition(7);
+$tokenList->rewind(7);
 Assert::same($tokenList->getLast()->value, $name->value);
 
-$tokenList->resetPosition(8);
+$tokenList->rewind(8);
 Assert::same($tokenList->getLast()->value, $name->value);
 
-$tokenList->resetPosition(9);
+$tokenList->rewind(9);
 Assert::same($tokenList->getLast()->value, $name->value);

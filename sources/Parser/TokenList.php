@@ -139,7 +139,7 @@ class TokenList
         return $this->position;
     }
 
-    public function resetPosition(int $position = 0): self
+    public function rewind(int $position = 0): self
     {
         if ($position < 0) {
             $this->position += $position;

@@ -119,14 +119,14 @@ class ShowCommandsParser
             case Keyword::CHARSET:
             case Keyword::CHARACTER:
                 // SHOW CHARACTER SET [LIKE 'pattern' | WHERE expr]
-                return $this->parseShowCharacterSet($tokenList->resetPosition(-1));
+                return $this->parseShowCharacterSet($tokenList->rewind(-1));
             case Keyword::COLLATION:
                 // SHOW COLLATION [LIKE 'pattern' | WHERE expr]
                 return $this->parseShowCollation($tokenList);
             case Keyword::COLUMNS:
             case Keyword::FIELDS:
                 // SHOW [EXTENDED] [FULL] {COLUMNS | FIELDS}
-                return $this->parseShowColumns($tokenList->resetPosition($position));
+                return $this->parseShowColumns($tokenList->rewind($position));
             case Keyword::CREATE:
                 // SHOW CREATE ...
                 return $this->parseShowCreate($tokenList);
@@ -140,24 +140,24 @@ class ShowCommandsParser
             case Keyword::EXTENDED:
                 if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS)) {
                     // SHOW [EXTENDED] {INDEX | INDEXES | KEYS}
-                    return $this->parseShowIndexes($tokenList->resetPosition(-1));
+                    return $this->parseShowIndexes($tokenList->rewind(-1));
                 } elseif ($tokenList->hasKeyword(Keyword::TABLES) || $tokenList->hasKeywords(Keyword::FULL, Keyword::TABLES)) {
                     // SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
-                    return $this->parseShowTables($tokenList->resetPosition($position));
+                    return $this->parseShowTables($tokenList->rewind($position));
                 } else {
                     // SHOW [EXTENDED] [FULL] {COLUMNS | FIELDS}
-                    return $this->parseShowColumns($tokenList->resetPosition($position));
+                    return $this->parseShowColumns($tokenList->rewind($position));
                 }
             case Keyword::FULL:
                 $third = $tokenList->expectAnyKeyword(Keyword::COLUMNS, Keyword::FIELDS, Keyword::PROCESSLIST, Keyword::TABLES);
                 if ($third === Keyword::PROCESSLIST) {
                     // SHOW [FULL] PROCESSLIST
-                    return $this->parseShowProcessList($tokenList->resetPosition($position));
+                    return $this->parseShowProcessList($tokenList->rewind($position));
                 } elseif ($third === Keyword::TABLES) {
                     // SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
-                    return $this->parseShowTables($tokenList->resetPosition($position));
+                    return $this->parseShowTables($tokenList->rewind($position));
                 } else {
-                    return $this->parseShowColumns($tokenList->resetPosition($position));
+                    return $this->parseShowColumns($tokenList->rewind($position));
                 }
             case Keyword::STORAGE:
             case Keyword::ENGINES:
@@ -188,9 +188,9 @@ class ShowCommandsParser
                 $third = $tokenList->expectAnyKeyword(Keyword::STATUS, Keyword::VARIABLES);
                 if ($third === Keyword::STATUS) {
                     // SHOW [GLOBAL | SESSION | LOCAL] STATUS [LIKE 'pattern' | WHERE expr]
-                    return $this->parseShowStatus($tokenList->resetPosition($position));
+                    return $this->parseShowStatus($tokenList->rewind($position));
                 } else {
-                    return $this->parseShowVariables($tokenList->resetPosition($position));
+                    return $this->parseShowVariables($tokenList->rewind($position));
                 }
             case Keyword::GRANTS:
                 // SHOW GRANTS [FOR user_or_role [USING role [, role] ...]]
@@ -199,7 +199,7 @@ class ShowCommandsParser
             case Keyword::INDEXES:
             case Keyword::KEYS:
                 // SHOW [EXTENDED] {INDEX | INDEXES | KEYS}
-                return $this->parseShowIndexes($tokenList->resetPosition(-1));
+                return $this->parseShowIndexes($tokenList->rewind(-1));
             case Keyword::MASTER:
                 $third = $tokenList->expectAnyKeyword(Keyword::STATUS, Keyword::LOGS);
                 if ($third === Keyword::STATUS) {
@@ -229,7 +229,7 @@ class ShowCommandsParser
                 }
             case Keyword::PROCESSLIST:
                 // SHOW [FULL] PROCESSLIST
-                return $this->parseShowProcessList($tokenList->resetPosition($position));
+                return $this->parseShowProcessList($tokenList->rewind($position));
             case Keyword::PROFILE:
                 // SHOW PROFILE [type [, type] ... ] [FOR QUERY n] [LIMIT row_count [OFFSET offset]]
                 return $this->parseShowProfile($tokenList);
@@ -256,19 +256,19 @@ class ShowCommandsParser
                 }
             case Keyword::STATUS:
                 // SHOW [GLOBAL | SESSION] STATUS [LIKE 'pattern' | WHERE expr]
-                return $this->parseShowStatus($tokenList->resetPosition($position));
+                return $this->parseShowStatus($tokenList->rewind($position));
             case Keyword::TABLE:
                 // SHOW TABLE STATUS [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                 return $this->parseShowTableStatus($tokenList);
             case Keyword::TABLES:
                 // SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
-                return $this->parseShowTables($tokenList->resetPosition($position));
+                return $this->parseShowTables($tokenList->rewind($position));
             case Keyword::TRIGGERS:
                 // SHOW TRIGGERS [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                 return $this->parseShowTriggers($tokenList);
             case Keyword::VARIABLES:
                 // SHOW [GLOBAL | SESSION] VARIABLES [LIKE 'pattern' | WHERE expr]
-                return $this->parseShowVariables($tokenList->resetPosition($position));
+                return $this->parseShowVariables($tokenList->rewind($position));
             case Keyword::WARNINGS:
                 // SHOW WARNINGS [LIMIT [offset,] row_count]
                 return $this->parseShowWarnings($tokenList);

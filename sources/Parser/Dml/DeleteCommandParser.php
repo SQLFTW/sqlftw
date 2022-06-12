@@ -69,7 +69,7 @@ class DeleteCommandParser
             }
 
             /** @var DeleteCommand $command */
-            $command = $this->withParser->parseWith($tokenList->resetPosition(-1));
+            $command = $this->withParser->parseWith($tokenList->rewind(-1));
 
             return $command;
         }

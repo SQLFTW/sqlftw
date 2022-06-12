@@ -176,7 +176,7 @@ class JoinParser
 
         if ($tokenList->hasKeyword(Keyword::JSON_TABLE)) {
             $tokenList->expectSymbol('(');
-            $table = $this->expressionParser->parseJsonTable($tokenList->resetPosition($position));
+            $table = $this->expressionParser->parseJsonTable($tokenList->rewind($position));
 
             if ($tokenList->hasKeyword(Keyword::AS)) {
                 $alias = $tokenList->expectName();
@@ -194,7 +194,7 @@ class JoinParser
 
             return new TableReferenceSubquery($query, $alias, $columns, true);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
-            $query = ($this->queryParserProxy)()->parseQuery($tokenList->resetPosition($position));
+            $query = ($this->queryParserProxy)()->parseQuery($tokenList->rewind($position));
             [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
             return new TableReferenceSubquery($query, $alias, $columns, false);
@@ -230,12 +230,12 @@ class JoinParser
             }
 
             if ($isQuery) {
-                $query = ($this->queryParserProxy)()->parseQuery($tokenList->resetPosition($position));
+                $query = ($this->queryParserProxy)()->parseQuery($tokenList->rewind($position));
                 [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
                 return new TableReferenceSubquery($query, $alias, $columns, false);
             } else {
-                $tokenList->resetPosition($position);
+                $tokenList->rewind($position);
                 $tokenList->expectSymbol('(');
                 $references = $this->parseTableReferences($tokenList);
                 $tokenList->expectSymbol(')');
@@ -263,7 +263,7 @@ class JoinParser
             }
             $indexHints = null;
             if ($tokenList->hasAnyKeyword(Keyword::USE, Keyword::IGNORE, Keyword::FORCE)) {
-                $indexHints = $this->parseIndexHints($tokenList->resetPosition(-1));
+                $indexHints = $this->parseIndexHints($tokenList->rewind(-1));
             }
 
             return new TableReferenceTable($table, $alias, $partitions, $indexHints);
@@ -359,7 +359,7 @@ class JoinParser
         );
 
         if ($trailingComma) {
-            $tokenList->resetPosition(-1);
+            $tokenList->rewind(-1);
         }
 
         return $hints;

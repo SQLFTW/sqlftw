@@ -296,16 +296,16 @@ class ExpressionParser
         if ($tokenList->hasKeyword(Keyword::IN)) {
             // lonely IN can be a named parameter "POSITION(substr IN str)"
             if (!$not && !$tokenList->hasSymbol('(')) {
-                $tokenList->resetPosition($position);
+                $tokenList->rewind($position);
 
                 return $left;
             }
 
-            $tokenList->resetPosition($position);
+            $tokenList->rewind($position);
             $tokenList->expectKeyword(Keyword::IN);
             $tokenList->expectSymbol('(');
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
-                $subquery = new Parentheses($this->parseSubquery($tokenList->resetPosition(-1)));
+                $subquery = new Parentheses($this->parseSubquery($tokenList->rewind(-1)));
                 $tokenList->expectSymbol(')');
 
                 return new BinaryOperator($left, $not ? [Operator::NOT, Operator::IN] : [Operator::IN], $subquery);
@@ -398,7 +398,7 @@ class ExpressionParser
             if ($interval !== null) {
                 $left = new IntervalExpression($interval);
             } else {
-                $tokenList->resetPosition($position);
+                $tokenList->rewind($position);
                 $left = $this->parseSimpleExpression($tokenList);
             }
         } else {
@@ -503,7 +503,7 @@ class ExpressionParser
         } elseif ($tokenList->hasSymbol('(')) {
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // (subquery)
-                $subquery = $this->parseSubquery($tokenList->resetPosition(-1));
+                $subquery = $this->parseSubquery($tokenList->rewind(-1));
                 $tokenList->expectSymbol(')');
 
                 return new Parentheses($subquery);
@@ -1183,7 +1183,7 @@ class ExpressionParser
                     return new DatetimeLiteral($string);
                 }
             } else {
-                $tokenList->resetPosition($position);
+                $tokenList->rewind($position);
             }
         }
 

@@ -63,7 +63,7 @@ class UpdateCommandParser
             }
 
             /** @var UpdateCommand $update */
-            $update = $this->withParser->parseWith($tokenList->resetPosition(-1));
+            $update = $this->withParser->parseWith($tokenList->rewind(-1));
 
             return $update;
         }

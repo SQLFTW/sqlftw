@@ -157,21 +157,21 @@ class QueryParser
     public function parseQueryBlock(TokenList $tokenList, ?WithClause $with = null): Query
     {
         if ($tokenList->hasSymbol('(')) {
-            return $this->parseParenthesizedQueryExpression($tokenList->resetPosition(-1), $with);
+            return $this->parseParenthesizedQueryExpression($tokenList->rewind(-1), $with);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH)) {
-            return $this->parseSelect($tokenList->resetPosition(-1), $with);
+            return $this->parseSelect($tokenList->rewind(-1), $with);
         } elseif ($tokenList->hasKeyword(Keyword::TABLE)) {
             if ($with !== null) {
                 throw new ParserException("WITH is not allowed in TABLE query.", $tokenList);
             }
 
-            return $this->parseTable($tokenList->resetPosition(-1));
+            return $this->parseTable($tokenList->rewind(-1));
         } elseif ($tokenList->hasKeyword(Keyword::VALUES)) {
             if ($with !== null) {
                 throw new ParserException("WITH is not allowed in VALUES query.", $tokenList);
             }
 
-            return $this->parseValues($tokenList->resetPosition(-1));
+            return $this->parseValues($tokenList->rewind(-1));
         } else {
             $tokenList->missingAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
         }
@@ -222,7 +222,7 @@ class QueryParser
             }
 
             /** @var SelectCommand $select */
-            $select = $this->withParser->parseWith($tokenList->resetPosition(-1));
+            $select = $this->withParser->parseWith($tokenList->rewind(-1));
 
             return $select;
         }

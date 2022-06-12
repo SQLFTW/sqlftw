@@ -191,58 +191,58 @@ class Parser
         switch (strtoupper($first->value)) {
             case '(':
                 // ({SELECT|TABLE|VALUES} ...) ...
-                return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
+                return $this->factory->getQueryParser()->parseQuery($tokenList->rewind($start));
             case Keyword::ALTER:
                 $second = strtoupper($tokenList->expect(TokenType::KEYWORD)->value);
                 switch ($second) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // ALTER {DATABASE|SCHEMA}
-                        return $this->factory->getSchemaCommandsParser()->parseAlterSchema($tokenList->resetPosition($start));
+                        return $this->factory->getSchemaCommandsParser()->parseAlterSchema($tokenList->rewind($start));
                     case Keyword::FUNCTION:
                         // ALTER FUNCTION
-                        return $this->factory->getRoutineCommandsParser()->parseAlterFunction($tokenList->resetPosition($start));
+                        return $this->factory->getRoutineCommandsParser()->parseAlterFunction($tokenList->rewind($start));
                     case Keyword::INSTANCE:
                         // ALTER INSTANCE
-                        return $this->factory->getInstanceCommandParser()->parseAlterInstance($tokenList->resetPosition($start));
+                        return $this->factory->getInstanceCommandParser()->parseAlterInstance($tokenList->rewind($start));
                     case Keyword::LOGFILE:
                         // ALTER LOGFILE GROUP
-                        return $this->factory->getLogfileGroupCommandsParser()->parseAlterLogfileGroup($tokenList->resetPosition($start));
+                        return $this->factory->getLogfileGroupCommandsParser()->parseAlterLogfileGroup($tokenList->rewind($start));
                     case Keyword::PROCEDURE:
                         // ALTER PROCEDURE
-                        return $this->factory->getRoutineCommandsParser()->parseAlterProcedure($tokenList->resetPosition($start));
+                        return $this->factory->getRoutineCommandsParser()->parseAlterProcedure($tokenList->rewind($start));
                     case Keyword::RESOURCE:
                         // ALTER RESOURCE GROUP
-                        return $this->factory->getResourceCommandsParser()->parseAlterResourceGroup($tokenList->resetPosition($start));
+                        return $this->factory->getResourceCommandsParser()->parseAlterResourceGroup($tokenList->rewind($start));
                     case Keyword::SERVER:
                         // ALTER SERVER
-                        return $this->factory->getServerCommandsParser()->parseAlterServer($tokenList->resetPosition($start));
+                        return $this->factory->getServerCommandsParser()->parseAlterServer($tokenList->rewind($start));
                     case Keyword::TABLE:
                     case Keyword::ONLINE:
                         // ALTER [ONLINE] TABLE
-                        return $this->factory->getTableCommandsParser()->parseAlterTable($tokenList->resetPosition($start));
+                        return $this->factory->getTableCommandsParser()->parseAlterTable($tokenList->rewind($start));
                     case Keyword::TABLESPACE:
                     case Keyword::UNDO:
                         // ALTER [UNDO] TABLESPACE
-                        return $this->factory->getTablespaceCommandsParser()->parseAlterTablespace($tokenList->resetPosition($start));
+                        return $this->factory->getTablespaceCommandsParser()->parseAlterTablespace($tokenList->rewind($start));
                     case Keyword::USER:
                         // ALTER USER
-                        return $this->factory->getUserCommandsParser()->parseAlterUser($tokenList->resetPosition($start));
+                        return $this->factory->getUserCommandsParser()->parseAlterUser($tokenList->rewind($start));
                     case Keyword::EVENT:
                         // ALTER [DEFINER = { user | CURRENT_USER }] EVENT
-                        return $this->factory->getEventCommandsParser()->parseAlterEvent($tokenList->resetPosition($start));
+                        return $this->factory->getEventCommandsParser()->parseAlterEvent($tokenList->rewind($start));
                     case Keyword::VIEW:
                     case Keyword::ALGORITHM:
                     case Keyword::SQL:
                         // ALTER [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
-                        return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->resetPosition($start));
+                        return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->rewind($start));
                     default:
                         if ($tokenList->seekKeyword(Keyword::EVENT, 8)) {
                             // ALTER [DEFINER = { user | CURRENT_USER }] EVENT event_name
-                            return $this->factory->getEventCommandsParser()->parseAlterEvent($tokenList->resetPosition($start));
+                            return $this->factory->getEventCommandsParser()->parseAlterEvent($tokenList->rewind($start));
                         } elseif ($tokenList->seekKeyword(Keyword::VIEW, 15)) {
                             // ALTER [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW ...
-                            return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->resetPosition($start));
+                            return $this->factory->getViewCommandsParser()->parseAlterView($tokenList->rewind($start));
                         }
                         $tokenList->missingAnyKeyword(
                             Keyword::DATABASE, Keyword::SCHEMA, Keyword::FUNCTION, Keyword::INSTANCE, Keyword::LOGFILE,
@@ -252,10 +252,10 @@ class Parser
                 }
             case Keyword::ANALYZE:
                 // ANALYZE
-                return $this->factory->getTableMaintenanceCommandsParser()->parseAnalyzeTable($tokenList->resetPosition($start));
+                return $this->factory->getTableMaintenanceCommandsParser()->parseAnalyzeTable($tokenList->rewind($start));
             case Keyword::BEGIN:
                 // BEGIN
-                return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->resetPosition($start));
+                return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->rewind($start));
             case Keyword::BINLOG:
                 if ($this->settings->mysqlTestMode) {
                     if ($tokenList->has(TokenType::NUMBER)) {
@@ -267,116 +267,116 @@ class Parser
                     }
                 }
                 // BINLOG
-                return $this->factory->getBinlogCommandParser()->parseBinlog($tokenList->resetPosition($start));
+                return $this->factory->getBinlogCommandParser()->parseBinlog($tokenList->rewind($start));
             case Keyword::CACHE:
                 // CACHE INDEX
-                return $this->factory->getCacheCommandsParser()->parseCacheIndex($tokenList->resetPosition($start));
+                return $this->factory->getCacheCommandsParser()->parseCacheIndex($tokenList->rewind($start));
             case Keyword::CALL:
                 // CALL
-                return $this->factory->getCallCommandParser()->parseCall($tokenList->resetPosition($start));
+                return $this->factory->getCallCommandParser()->parseCall($tokenList->rewind($start));
             case Keyword::CHANGE:
                 $second = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::REPLICATION);
                 if ($second === Keyword::MASTER) {
                     // CHANGE MASTER TO
-                    return $this->factory->getReplicationCommandsParser()->parseChangeMasterTo($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseChangeMasterTo($tokenList->rewind($start));
                 } elseif ($second === Keyword::REPLICATION) {
                     $third = $tokenList->expectAnyKeyword(Keyword::SOURCE, Keyword::FILTER);
                     if ($third === Keyword::SOURCE) {
                         // CHANGE REPLICATION SOURCE
-                        return $this->factory->getReplicationCommandsParser()->parseChangeReplicationSourceTo($tokenList->resetPosition($start));
+                        return $this->factory->getReplicationCommandsParser()->parseChangeReplicationSourceTo($tokenList->rewind($start));
                     } elseif ($third === Keyword::FILTER) {
                         // CHANGE REPLICATION FILTER
-                        return $this->factory->getReplicationCommandsParser()->parseChangeReplicationFilter($tokenList->resetPosition($start));
+                        return $this->factory->getReplicationCommandsParser()->parseChangeReplicationFilter($tokenList->rewind($start));
                     }
                 }
             case Keyword::CHECK:
                 // CHECK TABLE
-                return $this->factory->getTableMaintenanceCommandsParser()->parseCheckTable($tokenList->resetPosition($start));
+                return $this->factory->getTableMaintenanceCommandsParser()->parseCheckTable($tokenList->rewind($start));
             case Keyword::CHECKSUM:
                 // CHECKSUM TABLE
-                return $this->factory->getTableMaintenanceCommandsParser()->parseChecksumTable($tokenList->resetPosition($start));
+                return $this->factory->getTableMaintenanceCommandsParser()->parseChecksumTable($tokenList->rewind($start));
             case Keyword::COMMIT:
                 // COMMIT
-                return $this->factory->getTransactionCommandsParser()->parseCommit($tokenList->resetPosition($start));
+                return $this->factory->getTransactionCommandsParser()->parseCommit($tokenList->rewind($start));
             case Keyword::CREATE:
                 $second = $tokenList->expectKeyword();
                 switch ($second) {
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // CREATE {DATABASE | SCHEMA}
-                        return $this->factory->getSchemaCommandsParser()->parseCreateSchema($tokenList->resetPosition($start));
+                        return $this->factory->getSchemaCommandsParser()->parseCreateSchema($tokenList->rewind($start));
                     case Keyword::LOGFILE:
                         // CREATE LOGFILE GROUP
-                        return $this->factory->getLogfileGroupCommandsParser()->parseCreateLogfileGroup($tokenList->resetPosition($start));
+                        return $this->factory->getLogfileGroupCommandsParser()->parseCreateLogfileGroup($tokenList->rewind($start));
                     case Keyword::RESOURCE:
                         // CREATE RESOURCE GROUP
-                        return $this->factory->getResourceCommandsParser()->parseCreateResourceGroup($tokenList->resetPosition($start));
+                        return $this->factory->getResourceCommandsParser()->parseCreateResourceGroup($tokenList->rewind($start));
                     case Keyword::ROLE:
                         // CREATE ROLE
-                        return $this->factory->getUserCommandsParser()->parseCreateRole($tokenList->resetPosition($start));
+                        return $this->factory->getUserCommandsParser()->parseCreateRole($tokenList->rewind($start));
                     case Keyword::SERVER:
                         // CREATE SERVER
-                        return $this->factory->getServerCommandsParser()->parseCreateServer($tokenList->resetPosition($start));
+                        return $this->factory->getServerCommandsParser()->parseCreateServer($tokenList->rewind($start));
                     case Keyword::TABLESPACE:
                     case Keyword::UNDO:
                         // CREATE [UNDO] TABLESPACE
-                        return $this->factory->getTablespaceCommandsParser()->parseCreateTablespace($tokenList->resetPosition($start));
+                        return $this->factory->getTablespaceCommandsParser()->parseCreateTablespace($tokenList->rewind($start));
                     case Keyword::USER:
                         // CREATE USER
-                        return $this->factory->getUserCommandsParser()->parseCreateUser($tokenList->resetPosition($start));
+                        return $this->factory->getUserCommandsParser()->parseCreateUser($tokenList->rewind($start));
                     case Keyword::TEMPORARY:
                     case Keyword::TABLE:
                         // CREATE [TEMPORARY] TABLE
-                        return $this->factory->getTableCommandsParser()->parseCreateTable($tokenList->resetPosition($start));
+                        return $this->factory->getTableCommandsParser()->parseCreateTable($tokenList->rewind($start));
                     case Keyword::UNIQUE:
                     case Keyword::FULLTEXT:
                     case Keyword::INDEX:
                         // CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX
-                        return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->resetPosition($start));
+                        return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->rewind($start));
                     case Keyword::SPATIAL:
                         $third = $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::REFERENCE);
                         if ($third === Keyword::INDEX) {
                             // CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX
-                            return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->resetPosition($start));
+                            return $this->factory->getIndexCommandsParser()->parseCreateIndex($tokenList->rewind($start));
                         } else {
                             // CREATE SPATIAL REFERENCE SYSTEM
-                            return $this->factory->getSpatialCommandsParser()->parseCreateSpatialReferenceSystem($tokenList->resetPosition($start));
+                            return $this->factory->getSpatialCommandsParser()->parseCreateSpatialReferenceSystem($tokenList->rewind($start));
                         }
                 }
 
-                $tokenList->resetPosition(-1);
+                $tokenList->rewind(-1);
 
                 if ($tokenList->hasKeywords(Keyword::OR, Keyword::REPLACE, Keyword::SPATIAL)) {
                     // CREATE OR REPLACE SPATIAL REFERENCE SYSTEM
-                    return $this->factory->getSpatialCommandsParser()->parseCreateSpatialReferenceSystem($tokenList->resetPosition($start));
+                    return $this->factory->getSpatialCommandsParser()->parseCreateSpatialReferenceSystem($tokenList->rewind($start));
                 }
 
                 // deciding between CREATE FUNCTION and CREATE FUNCTION SONAME
                 if ($tokenList->hasKeyword(Keyword::AGGREGATE)) {
                     // CREATE [AGGREGATE] FUNCTION function_name RETURNS {STRING|INTEGER|REAL|DECIMAL} SONAME
-                    return $this->factory->getCreateFunctionCommandParser()->parseCreateFunction($tokenList->resetPosition($start));
+                    return $this->factory->getCreateFunctionCommandParser()->parseCreateFunction($tokenList->rewind($start));
                 }
                 if ($tokenList->hasKeyword(Keyword::FUNCTION)) {
                     if ($tokenList->hasKeyword(Keyword::IF)) {
                         // CREATE ... FUNCTION [IF NOT EXISTS] sp_name ([func_parameter[, ...]]) RETURNS type
-                        return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->resetPosition($start));
+                        return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->rewind($start));
                     }
                     $tokenList->expectQualifiedName();
                     if ($tokenList->hasSymbol('(')) {
                         // CREATE ... FUNCTION ... sp_name ([func_parameter[, ...]]) RETURNS type
-                        return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->resetPosition($start));
+                        return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->rewind($start));
                     }
                     // CREATE ... FUNCTION function_name RETURNS {STRING|INTEGER|REAL|DECIMAL} SONAME
-                    return $this->factory->getCreateFunctionCommandParser()->parseCreateFunction($tokenList->resetPosition($start));
+                    return $this->factory->getCreateFunctionCommandParser()->parseCreateFunction($tokenList->rewind($start));
                 }
 
                 // eliminating unique prefixes for CREATE VIEW
                 if ($tokenList->hasKeywords(Keyword::OR, Keyword::REPLACE)) {
                     // CREATE [OR REPLACE] [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
-                    return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
+                    return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->rewind($start));
                 } elseif ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
                     // CREATE ... [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}] [DEFINER = { user | CURRENT_USER }] [SQL SECURITY { DEFINER | INVOKER }] VIEW
-                    return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
+                    return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->rewind($start));
                 }
 
                 // get DEFINER out of the way
@@ -392,44 +392,44 @@ class Parser
                 }
                 if ($tokenList->hasKeyword(Keyword::EVENT)) {
                     // CREATE ... EVENT
-                    return $this->factory->getEventCommandsParser()->parseCreateEvent($tokenList->resetPosition($start));
+                    return $this->factory->getEventCommandsParser()->parseCreateEvent($tokenList->rewind($start));
                 } elseif ($tokenList->hasKeyword(Keyword::FUNCTION)) {
                     // CREATE ... FUNCTION
-                    return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->resetPosition($start));
+                    return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->rewind($start));
                 } elseif ($tokenList->hasKeyword(Keyword::PROCEDURE)) {
                     // CREATE ... PROCEDURE
-                    return $this->factory->getRoutineCommandsParser()->parseCreateProcedure($tokenList->resetPosition($start));
+                    return $this->factory->getRoutineCommandsParser()->parseCreateProcedure($tokenList->rewind($start));
                 } elseif ($tokenList->hasKeyword(Keyword::TRIGGER)) {
                     // CREATE ... TRIGGER
-                    return $this->factory->getTriggerCommandsParser()->parseCreateTrigger($tokenList->resetPosition($start));
+                    return $this->factory->getTriggerCommandsParser()->parseCreateTrigger($tokenList->rewind($start));
                 } elseif ($tokenList->seekKeyword(Keyword::VIEW, 5)) {
                     // CREATE ... [SQL SECURITY { DEFINER | INVOKER }] VIEW
-                    return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->resetPosition($start));
+                    return $this->factory->getViewCommandsParser()->parseCreateView($tokenList->rewind($start));
                 }
 
-                $tokenList->resetPosition($start)->missingAnyKeyword(
+                $tokenList->rewind($start)->missingAnyKeyword(
                     Keyword::DATABASE, Keyword::SCHEMA, Keyword::LOGFILE, Keyword::ROLE, Keyword::SERVER,
                     Keyword::TABLESPACE, Keyword::TABLE, Keyword::USER, Keyword::EVENT, Keyword::FUNCTION,
                     Keyword::INDEX, Keyword::PROCEDURE, Keyword::TABLE, Keyword::TRIGGER, Keyword::VIEW, Keyword::DEFINER
                 );
             case Keyword::DEALLOCATE:
                 // {DEALLOCATE | DROP} PREPARE
-                return $this->factory->getPreparedCommandsParser()->parseDeallocatePrepare($tokenList->resetPosition($start));
+                return $this->factory->getPreparedCommandsParser()->parseDeallocatePrepare($tokenList->rewind($start));
             case Keyword::DELETE:
                 // DELETE
-                return $this->factory->getDeleteCommandParser()->parseDelete($tokenList->resetPosition($start));
+                return $this->factory->getDeleteCommandParser()->parseDelete($tokenList->rewind($start));
             case Keyword::DELIMITER:
                 // DELIMITER
-                return $this->factory->getDelimiterCommandParser()->parseDelimiter($tokenList->resetPosition($start));
+                return $this->factory->getDelimiterCommandParser()->parseDelimiter($tokenList->rewind($start));
             case Keyword::DESC:
                 // DESC
-                return $this->factory->getExplainCommandParser()->parseExplain($tokenList->resetPosition($start));
+                return $this->factory->getExplainCommandParser()->parseExplain($tokenList->rewind($start));
             case Keyword::DESCRIBE:
                 // DESCRIBE
-                return $this->factory->getExplainCommandParser()->parseExplain($tokenList->resetPosition($start));
+                return $this->factory->getExplainCommandParser()->parseExplain($tokenList->rewind($start));
             case Keyword::DO:
                 // DO
-                return $this->factory->getDoCommandParser()->parseDo($tokenList->resetPosition($start));
+                return $this->factory->getDoCommandParser()->parseDo($tokenList->rewind($start));
             case Keyword::DROP:
                 $second = $tokenList->expectAnyKeyword(
                     Keyword::DATABASE, Keyword::SCHEMA, Keyword::EVENT, Keyword::FUNCTION, Keyword::INDEX,
@@ -441,62 +441,62 @@ class Parser
                     case Keyword::DATABASE:
                     case Keyword::SCHEMA:
                         // DROP {DATABASE | SCHEMA}
-                        return $this->factory->getSchemaCommandsParser()->parseDropSchema($tokenList->resetPosition($start));
+                        return $this->factory->getSchemaCommandsParser()->parseDropSchema($tokenList->rewind($start));
                     case Keyword::EVENT:
                         // DROP EVENT
-                        return $this->factory->getEventCommandsParser()->parseDropEvent($tokenList->resetPosition($start));
+                        return $this->factory->getEventCommandsParser()->parseDropEvent($tokenList->rewind($start));
                     case Keyword::FUNCTION:
                         // DROP {PROCEDURE | FUNCTION}
-                        return $this->factory->getRoutineCommandsParser()->parseDropFunction($tokenList->resetPosition($start));
+                        return $this->factory->getRoutineCommandsParser()->parseDropFunction($tokenList->rewind($start));
                     case Keyword::INDEX:
                         // DROP INDEX
-                        return $this->factory->getIndexCommandsParser()->parseDropIndex($tokenList->resetPosition($start));
+                        return $this->factory->getIndexCommandsParser()->parseDropIndex($tokenList->rewind($start));
                     case Keyword::LOGFILE:
                         // DROP LOGFILE GROUP
-                        return $this->factory->getLogfileGroupCommandsParser()->parseDropLogfileGroup($tokenList->resetPosition($start));
+                        return $this->factory->getLogfileGroupCommandsParser()->parseDropLogfileGroup($tokenList->rewind($start));
                     case Keyword::PREPARE:
                         // {DEALLOCATE | DROP} PREPARE
-                        return $this->factory->getPreparedCommandsParser()->parseDeallocatePrepare($tokenList->resetPosition($start));
+                        return $this->factory->getPreparedCommandsParser()->parseDeallocatePrepare($tokenList->rewind($start));
                     case Keyword::PROCEDURE:
                         // DROP {PROCEDURE | FUNCTION}
-                        return $this->factory->getRoutineCommandsParser()->parseDropProcedure($tokenList->resetPosition($start));
+                        return $this->factory->getRoutineCommandsParser()->parseDropProcedure($tokenList->rewind($start));
                     case Keyword::RESOURCE:
                         // DROP RESOURCE GROUP
-                        return $this->factory->getResourceCommandsParser()->parseDropResourceGroup($tokenList->resetPosition($start));
+                        return $this->factory->getResourceCommandsParser()->parseDropResourceGroup($tokenList->rewind($start));
                     case Keyword::ROLE:
                         // DROP ROLE
-                        return $this->factory->getUserCommandsParser()->parseDropRole($tokenList->resetPosition($start));
+                        return $this->factory->getUserCommandsParser()->parseDropRole($tokenList->rewind($start));
                     case Keyword::SERVER:
                         // DROP SERVER
-                        return $this->factory->getServerCommandsParser()->parseDropServer($tokenList->resetPosition($start));
+                        return $this->factory->getServerCommandsParser()->parseDropServer($tokenList->rewind($start));
                     case Keyword::SPATIAL:
                         // DROP SPATIAL REFERENCE SYSTEM
-                        return $this->factory->getSpatialCommandsParser()->parseDropSpatialReferenceSystem($tokenList->resetPosition($start));
+                        return $this->factory->getSpatialCommandsParser()->parseDropSpatialReferenceSystem($tokenList->rewind($start));
                     case Keyword::TABLE:
                     case Keyword::TABLES:
                     case Keyword::TEMPORARY:
                         // DROP [TEMPORARY] TABLE
-                        return $this->factory->getTableCommandsParser()->parseDropTable($tokenList->resetPosition($start));
+                        return $this->factory->getTableCommandsParser()->parseDropTable($tokenList->rewind($start));
                     case Keyword::TABLESPACE:
                     case Keyword::UNDO:
                         // DROP [UNDO] TABLESPACE
-                        return $this->factory->getTablespaceCommandsParser()->parseDropTablespace($tokenList->resetPosition($start));
+                        return $this->factory->getTablespaceCommandsParser()->parseDropTablespace($tokenList->rewind($start));
                     case Keyword::TRIGGER:
                         // DROP TRIGGER
-                        return $this->factory->getTriggerCommandsParser()->parseDropTrigger($tokenList->resetPosition($start));
+                        return $this->factory->getTriggerCommandsParser()->parseDropTrigger($tokenList->rewind($start));
                     case Keyword::USER:
                         // DROP USER
-                        return $this->factory->getUserCommandsParser()->parseDropUser($tokenList->resetPosition($start));
+                        return $this->factory->getUserCommandsParser()->parseDropUser($tokenList->rewind($start));
                     case Keyword::VIEW:
                         // DROP VIEW
-                        return $this->factory->getViewCommandsParser()->parseDropView($tokenList->resetPosition($start));
+                        return $this->factory->getViewCommandsParser()->parseDropView($tokenList->rewind($start));
                 }
             case Keyword::EXECUTE:
                 // EXECUTE
-                return $this->factory->getPreparedCommandsParser()->parseExecute($tokenList->resetPosition($start));
+                return $this->factory->getPreparedCommandsParser()->parseExecute($tokenList->rewind($start));
             case Keyword::EXPLAIN:
                 // EXPLAIN
-                return $this->factory->getExplainCommandParser()->parseExplain($tokenList->resetPosition($start));
+                return $this->factory->getExplainCommandParser()->parseExplain($tokenList->rewind($start));
             case Keyword::FLUSH:
                 if ($tokenList->hasAnyKeyword(Keyword::TABLES, Keyword::TABLE)
                     || $tokenList->hasKeywords(Keyword::LOCAL, Keyword::TABLES)
@@ -505,260 +505,260 @@ class Parser
                     || $tokenList->hasKeywords(Keyword::NO_WRITE_TO_BINLOG, Keyword::TABLE)
                 ) {
                     // FLUSH TABLES
-                    return $this->factory->getFlushCommandParser()->parseFlushTables($tokenList->resetPosition($start));
+                    return $this->factory->getFlushCommandParser()->parseFlushTables($tokenList->rewind($start));
                 } else {
                     // FLUSH
-                    return $this->factory->getFlushCommandParser()->parseFlush($tokenList->resetPosition($start));
+                    return $this->factory->getFlushCommandParser()->parseFlush($tokenList->rewind($start));
                 }
             case Keyword::GET:
                 // GET DIAGNOSTICS
-                return $this->factory->getCompoundStatementParser()->parseGetDiagnostics($tokenList->resetPosition($start));
+                return $this->factory->getCompoundStatementParser()->parseGetDiagnostics($tokenList->rewind($start));
             case Keyword::GRANT:
                 // GRANT
-                return $this->factory->getUserCommandsParser()->parseGrant($tokenList->resetPosition($start));
+                return $this->factory->getUserCommandsParser()->parseGrant($tokenList->rewind($start));
             case Keyword::HANDLER:
                 // HANDLER
                 $tokenList->expectQualifiedName();
                 $keyword = $tokenList->expectAnyKeyword(Keyword::OPEN, Keyword::READ, Keyword::CLOSE);
                 if ($keyword === Keyword::OPEN) {
-                    return $this->factory->getHandlerCommandParser()->parseHandlerOpen($tokenList->resetPosition($start));
+                    return $this->factory->getHandlerCommandParser()->parseHandlerOpen($tokenList->rewind($start));
                 } elseif ($keyword === Keyword::READ) {
-                    return $this->factory->getHandlerCommandParser()->parseHandlerRead($tokenList->resetPosition($start));
+                    return $this->factory->getHandlerCommandParser()->parseHandlerRead($tokenList->rewind($start));
                 } else {
-                    return $this->factory->getHandlerCommandParser()->parseHandlerClose($tokenList->resetPosition($start));
+                    return $this->factory->getHandlerCommandParser()->parseHandlerClose($tokenList->rewind($start));
                 }
             case Keyword::HELP:
                 // HELP
-                return $this->factory->getHelpCommandParser()->parseHelp($tokenList->resetPosition($start));
+                return $this->factory->getHelpCommandParser()->parseHelp($tokenList->rewind($start));
             case Keyword::IMPORT:
                 // IMPORT
-                return $this->factory->getImportCommandParser()->parseImport($tokenList->resetPosition($start));
+                return $this->factory->getImportCommandParser()->parseImport($tokenList->rewind($start));
             case Keyword::INSERT:
                 // INSERT
-                return $this->factory->getInsertCommandParser()->parseInsert($tokenList->resetPosition($start));
+                return $this->factory->getInsertCommandParser()->parseInsert($tokenList->rewind($start));
             case Keyword::INSTALL:
                 $second = $tokenList->expectAnyKeyword(Keyword::COMPONENT, Keyword::PLUGIN);
                 if ($second === Keyword::COMPONENT) {
                     // INSTALL COMPONENT
-                    return $this->factory->getComponentCommandsParser()->parseInstallComponent($tokenList->resetPosition($start));
+                    return $this->factory->getComponentCommandsParser()->parseInstallComponent($tokenList->rewind($start));
                 } else {
                     // INSTALL PLUGIN
-                    return $this->factory->getPluginCommandsParser()->parseInstallPlugin($tokenList->resetPosition($start));
+                    return $this->factory->getPluginCommandsParser()->parseInstallPlugin($tokenList->rewind($start));
                 }
             case Keyword::KILL:
                 // KILL
-                return $this->factory->getKillCommandParser()->parseKill($tokenList->resetPosition($start));
+                return $this->factory->getKillCommandParser()->parseKill($tokenList->rewind($start));
             case Keyword::LOCK:
                 $second = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES, Keyword::INSTANCE);
                 if ($second === Keyword::INSTANCE) {
                     // LOCK INSTANCE
-                    return $this->factory->getTransactionCommandsParser()->parseLockInstance($tokenList->resetPosition($start));
+                    return $this->factory->getTransactionCommandsParser()->parseLockInstance($tokenList->rewind($start));
                 } else {
                     // LOCK TABLES
-                    return $this->factory->getTransactionCommandsParser()->parseLockTables($tokenList->resetPosition($start));
+                    return $this->factory->getTransactionCommandsParser()->parseLockTables($tokenList->rewind($start));
                 }
             case Keyword::LOAD:
                 $second = $tokenList->expectAnyKeyword(Keyword::DATA, Keyword::INDEX, Keyword::XML);
                 if ($second === Keyword::DATA) {
                     // LOAD DATA
-                    return $this->factory->getLoadCommandsParser()->parseLoadData($tokenList->resetPosition($start));
+                    return $this->factory->getLoadCommandsParser()->parseLoadData($tokenList->rewind($start));
                 } elseif ($second === Keyword::INDEX) {
                     // LOAD INDEX INTO CACHE
-                    return $this->factory->getCacheCommandsParser()->parseLoadIndexIntoCache($tokenList->resetPosition($start));
+                    return $this->factory->getCacheCommandsParser()->parseLoadIndexIntoCache($tokenList->rewind($start));
                 } else {
                     // LOAD XML
-                    return $this->factory->getLoadCommandsParser()->parseLoadXml($tokenList->resetPosition($start));
+                    return $this->factory->getLoadCommandsParser()->parseLoadXml($tokenList->rewind($start));
                 }
             case Keyword::OPTIMIZE:
                 // OPTIMIZE TABLE
-                return $this->factory->getTableMaintenanceCommandsParser()->parseOptimizeTable($tokenList->resetPosition($start));
+                return $this->factory->getTableMaintenanceCommandsParser()->parseOptimizeTable($tokenList->rewind($start));
             case Keyword::PREPARE:
                 // PREPARE
-                return $this->factory->getPreparedCommandsParser()->parsePrepare($tokenList->resetPosition($start));
+                return $this->factory->getPreparedCommandsParser()->parsePrepare($tokenList->rewind($start));
             case Keyword::PURGE:
                 // PURGE { BINARY | MASTER } LOGS
-                return $this->factory->getReplicationCommandsParser()->parsePurgeBinaryLogs($tokenList->resetPosition($start));
+                return $this->factory->getReplicationCommandsParser()->parsePurgeBinaryLogs($tokenList->rewind($start));
             case Keyword::RELEASE:
                 // RELEASE SAVEPOINT
-                return $this->factory->getTransactionCommandsParser()->parseReleaseSavepoint($tokenList->resetPosition($start));
+                return $this->factory->getTransactionCommandsParser()->parseReleaseSavepoint($tokenList->rewind($start));
             case Keyword::RENAME:
                 $second = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES, Keyword::USER);
                 if ($second === Keyword::TABLE || $second === Keyword::TABLES) {
                     // RENAME TABLE
-                    return $this->factory->getTableCommandsParser()->parseRenameTable($tokenList->resetPosition($start));
+                    return $this->factory->getTableCommandsParser()->parseRenameTable($tokenList->rewind($start));
                 } else {
                     // RENAME USER
-                    return $this->factory->getUserCommandsParser()->parseRenameUser($tokenList->resetPosition($start));
+                    return $this->factory->getUserCommandsParser()->parseRenameUser($tokenList->rewind($start));
                 }
             case Keyword::REPAIR:
                 // REPAIR TABLE
-                return $this->factory->getTableMaintenanceCommandsParser()->parseRepairTable($tokenList->resetPosition($start));
+                return $this->factory->getTableMaintenanceCommandsParser()->parseRepairTable($tokenList->rewind($start));
             case Keyword::REPLACE:
                 // REPLACE
-                return $this->factory->getInsertCommandParser()->parseReplace($tokenList->resetPosition($start));
+                return $this->factory->getInsertCommandParser()->parseReplace($tokenList->rewind($start));
             case Keyword::RESET:
                 if ($tokenList->hasKeyword(Keyword::PERSIST)) {
                     // RESET PERSIST
-                    return $this->factory->getResetPersistCommandParser()->parseResetPersist($tokenList->resetPosition($start));
+                    return $this->factory->getResetPersistCommandParser()->parseResetPersist($tokenList->rewind($start));
                 }
                 $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::REPLICA, Keyword::SLAVE, Keyword::QUERY);
                 if ($keyword === Keyword::MASTER) {
                     if ($tokenList->hasSymbol(',')) {
                         // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
-                        return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
+                        return $this->factory->getResetCommandParser()->parseReset($tokenList->rewind($start));
                     }
 
                     // RESET MASTER
-                    return $this->factory->getReplicationCommandsParser()->parseResetMaster($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseResetMaster($tokenList->rewind($start));
                 } elseif ($keyword === Keyword::REPLICA) {
                     if ($tokenList->hasSymbol(',')) {
                         // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
-                        return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
+                        return $this->factory->getResetCommandParser()->parseReset($tokenList->rewind($start));
                     }
 
                     // RESET REPLICA
-                    return $this->factory->getReplicationCommandsParser()->parseResetReplica($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseResetReplica($tokenList->rewind($start));
                 } elseif ($keyword === Keyword::SLAVE) {
                     if ($tokenList->hasSymbol(',')) {
                         // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
-                        return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
+                        return $this->factory->getResetCommandParser()->parseReset($tokenList->rewind($start));
                     }
 
                     // RESET SLAVE
-                    return $this->factory->getReplicationCommandsParser()->parseResetSlave($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseResetSlave($tokenList->rewind($start));
                 } else {
                     // RESET MASTER, REPLICA, SLAVE, QUERY CACHE
-                    return $this->factory->getResetCommandParser()->parseReset($tokenList->resetPosition($start));
+                    return $this->factory->getResetCommandParser()->parseReset($tokenList->rewind($start));
                 }
             case Keyword::RESIGNAL:
                 // RESIGNAL
-                return $this->factory->getCompoundStatementParser()->parseSignalResignal($tokenList->resetPosition($start));
+                return $this->factory->getCompoundStatementParser()->parseSignalResignal($tokenList->rewind($start));
             case Keyword::RESTART:
                 // RESTART
-                return $this->factory->getRestartCommandParser()->parseRestart($tokenList->resetPosition($start));
+                return $this->factory->getRestartCommandParser()->parseRestart($tokenList->rewind($start));
             case Keyword::REVOKE:
                 // REVOKE
-                return $this->factory->getUserCommandsParser()->parseRevoke($tokenList->resetPosition($start));
+                return $this->factory->getUserCommandsParser()->parseRevoke($tokenList->rewind($start));
             case Keyword::ROLLBACK:
                 // ROLLBACK
                 if ($tokenList->seekKeyword(Keyword::TO, 3)) {
-                    return $this->factory->getTransactionCommandsParser()->parseRollbackToSavepoint($tokenList->resetPosition($start));
+                    return $this->factory->getTransactionCommandsParser()->parseRollbackToSavepoint($tokenList->rewind($start));
                 } else {
-                    return $this->factory->getTransactionCommandsParser()->parseRollback($tokenList->resetPosition($start));
+                    return $this->factory->getTransactionCommandsParser()->parseRollback($tokenList->rewind($start));
                 }
             case Keyword::SAVEPOINT:
                 // SAVEPOINT
-                return $this->factory->getTransactionCommandsParser()->parseSavepoint($tokenList->resetPosition($start));
+                return $this->factory->getTransactionCommandsParser()->parseSavepoint($tokenList->rewind($start));
             case Keyword::SELECT:
                 // SELECT
-                return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
+                return $this->factory->getQueryParser()->parseQuery($tokenList->rewind($start));
             case Keyword::SET:
                 $second = $tokenList->getKeyword();
                 switch ($second) {
                     case Keyword::CHARACTER:
                     case Keyword::CHARSET:
                         // SET {CHARACTER SET | CHARSET}
-                        return $this->factory->getSetCommandsParser()->parseSetCharacterSet($tokenList->resetPosition($start));
+                        return $this->factory->getSetCommandsParser()->parseSetCharacterSet($tokenList->rewind($start));
                     case Keyword::DEFAULT:
                         // SET DEFAULT ROLE
-                        return $this->factory->getUserCommandsParser()->parseSetDefaultRole($tokenList->resetPosition($start));
+                        return $this->factory->getUserCommandsParser()->parseSetDefaultRole($tokenList->rewind($start));
                     case Keyword::NAMES:
                         // SET NAMES
-                        return $this->factory->getSetCommandsParser()->parseSetNames($tokenList->resetPosition($start));
+                        return $this->factory->getSetCommandsParser()->parseSetNames($tokenList->rewind($start));
                     case Keyword::PASSWORD:
                         // SET PASSWORD
-                        return $this->factory->getUserCommandsParser()->parseSetPassword($tokenList->resetPosition($start));
+                        return $this->factory->getUserCommandsParser()->parseSetPassword($tokenList->rewind($start));
                     case Keyword::RESOURCE:
                         // SET RESOURCE GROUP
-                        return $this->factory->getResourceCommandsParser()->parseSetResourceGroup($tokenList->resetPosition($start));
+                        return $this->factory->getResourceCommandsParser()->parseSetResourceGroup($tokenList->rewind($start));
                     case Keyword::ROLE:
                         // SET ROLE
-                        return $this->factory->getUserCommandsParser()->parseSetRole($tokenList->resetPosition($start));
+                        return $this->factory->getUserCommandsParser()->parseSetRole($tokenList->rewind($start));
                     case Keyword::GLOBAL:
                     case Keyword::SESSION:
                     case Keyword::LOCAL:
                     case Keyword::TRANSACTION:
                         if ($second === Keyword::TRANSACTION || $tokenList->hasKeyword(Keyword::TRANSACTION)) {
                             // SET [GLOBAL | SESSION | LOCAL] TRANSACTION
-                            return $this->factory->getTransactionCommandsParser()->parseSetTransaction($tokenList->resetPosition($start));
+                            return $this->factory->getTransactionCommandsParser()->parseSetTransaction($tokenList->rewind($start));
                         } else {
                             // SET
-                            return $this->factory->getSetCommandsParser()->parseSet($tokenList->resetPosition($start));
+                            return $this->factory->getSetCommandsParser()->parseSet($tokenList->rewind($start));
                         }
                     default:
                         // SET
-                        return $this->factory->getSetCommandsParser()->parseSet($tokenList->resetPosition($start));
+                        return $this->factory->getSetCommandsParser()->parseSet($tokenList->rewind($start));
                 }
             case Keyword::SHOW:
                 // SHOW
-                return $this->factory->getShowCommandsParser()->parseShow($tokenList->resetPosition($start));
+                return $this->factory->getShowCommandsParser()->parseShow($tokenList->rewind($start));
             case Keyword::SHUTDOWN:
                 // SHUTDOWN
-                return $this->factory->getShutdownCommandParser()->parseShutdown($tokenList->resetPosition($start));
+                return $this->factory->getShutdownCommandParser()->parseShutdown($tokenList->rewind($start));
             case Keyword::SIGNAL:
                 // SIGNAL
-                return $this->factory->getCompoundStatementParser()->parseSignalResignal($tokenList->resetPosition($start));
+                return $this->factory->getCompoundStatementParser()->parseSignalResignal($tokenList->rewind($start));
             case Keyword::START:
                 $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA, Keyword::TRANSACTION);
                 if ($second === Keyword::GROUP_REPLICATION) {
                     // START GROUP_REPLICATION
-                    return $this->factory->getReplicationCommandsParser()->parseStartGroupReplication($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseStartGroupReplication($tokenList->rewind($start));
                 } elseif ($second === Keyword::SLAVE || $second === Keyword::REPLICA) {
                     // START SLAVE
                     // START REPLICA
-                    return $this->factory->getReplicationCommandsParser()->parseStartReplicaOrSlave($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseStartReplicaOrSlave($tokenList->rewind($start));
                 } else {
                     // START TRANSACTION
-                    return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->resetPosition($start));
+                    return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->rewind($start));
                 }
             case Keyword::STOP:
                 $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA);
                 if ($second === Keyword::GROUP_REPLICATION) {
                     // STOP GROUP_REPLICATION
-                    return $this->factory->getReplicationCommandsParser()->parseStopGroupReplication($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseStopGroupReplication($tokenList->rewind($start));
                 } elseif ($second === Keyword::SLAVE) {
                     // STOP SLAVE
-                    return $this->factory->getReplicationCommandsParser()->parseStopSlave($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseStopSlave($tokenList->rewind($start));
                 } else {
                     // STOP REPLICA
-                    return $this->factory->getReplicationCommandsParser()->parseStopReplica($tokenList->resetPosition($start));
+                    return $this->factory->getReplicationCommandsParser()->parseStopReplica($tokenList->rewind($start));
                 }
             case Keyword::TABLE:
                 // TABLE
-                return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
+                return $this->factory->getQueryParser()->parseQuery($tokenList->rewind($start));
             case Keyword::TRUNCATE:
                 // TRUNCATE [TABLE]
-                return $this->factory->getTableCommandsParser()->parseTruncateTable($tokenList->resetPosition($start));
+                return $this->factory->getTableCommandsParser()->parseTruncateTable($tokenList->rewind($start));
             case Keyword::UNINSTALL:
                 $second = $tokenList->expectAnyKeyword(Keyword::COMPONENT, Keyword::PLUGIN);
                 if ($second === Keyword::COMPONENT) {
                     // UNINSTALL COMPONENT
-                    return $this->factory->getComponentCommandsParser()->parseUninstallComponent($tokenList->resetPosition($start));
+                    return $this->factory->getComponentCommandsParser()->parseUninstallComponent($tokenList->rewind($start));
                 } else {
                     // UNINSTALL PLUGIN
-                    return $this->factory->getPluginCommandsParser()->parseUninstallPlugin($tokenList->resetPosition($start));
+                    return $this->factory->getPluginCommandsParser()->parseUninstallPlugin($tokenList->rewind($start));
                 }
             case Keyword::UNLOCK:
                 $second = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES, Keyword::INSTANCE);
                 if ($second === Keyword::INSTANCE) {
                     // UNLOCK INSTANCE
-                    return $this->factory->getTransactionCommandsParser()->parseUnlockInstance($tokenList->resetPosition($start));
+                    return $this->factory->getTransactionCommandsParser()->parseUnlockInstance($tokenList->rewind($start));
                 } else {
                     // UNLOCK TABLES
-                    return $this->factory->getTransactionCommandsParser()->parseUnlockTables($tokenList->resetPosition($start));
+                    return $this->factory->getTransactionCommandsParser()->parseUnlockTables($tokenList->rewind($start));
                 }
             case Keyword::UPDATE:
                 // UPDATE
-                return $this->factory->getUpdateCommandParser()->parseUpdate($tokenList->resetPosition($start));
+                return $this->factory->getUpdateCommandParser()->parseUpdate($tokenList->rewind($start));
             case Keyword::USE:
                 // USE
-                return $this->factory->getUseCommandParser()->parseUse($tokenList->resetPosition($start));
+                return $this->factory->getUseCommandParser()->parseUse($tokenList->rewind($start));
             case Keyword::VALUES:
                 // VALUES
-                return $this->factory->getQueryParser()->parseQuery($tokenList->resetPosition($start));
+                return $this->factory->getQueryParser()->parseQuery($tokenList->rewind($start));
             case Keyword::WITH:
                 // WITH ... SELECT|UPDATE|DELETE
-                return $this->factory->getWithParser()->parseWith($tokenList->resetPosition($start));
+                return $this->factory->getWithParser()->parseWith($tokenList->rewind($start));
             case Keyword::XA:
                 // XA {START|BEGIN}
                 // XA END
@@ -766,9 +766,9 @@ class Parser
                 // XA COMMIT
                 // XA ROLLBACK
                 // XA RECOVER
-                return $this->factory->getXaTransactionCommandsParser()->parseXa($tokenList->resetPosition($start));
+                return $this->factory->getXaTransactionCommandsParser()->parseXa($tokenList->rewind($start));
             default:
-                $tokenList->resetPosition($start + 1)->missingAnyKeyword(
+                $tokenList->rewind($start + 1)->missingAnyKeyword(
                     Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE,
                     Keyword::CALL, Keyword::CHANGE, Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE,
                     Keyword::DEALLOCATE, Keyword::DELETE, Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE,

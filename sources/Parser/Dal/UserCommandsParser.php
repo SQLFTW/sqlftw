@@ -140,14 +140,14 @@ class UserCommandsParser
             return new AlterUserDefaultRoleCommand($user, $role, $ifExists);
         }
 
-        $tokenList->resetPosition($position);
+        $tokenList->rewind($position);
 
         $users = [];
         do {
             $user = $this->parseUser($tokenList);
             $action = null;
             if ($tokenList->hasAnyKeyword(Keyword::IDENTIFIED, Keyword::DISCARD, Keyword::ADD, Keyword::MODIFY, Keyword::DROP)) {
-                $action = $this->parseAlterAuthOptions($tokenList->resetPosition(-1));
+                $action = $this->parseAlterAuthOptions($tokenList->rewind(-1));
             }
             $users[] = new AlteredUser($user, $action);
         } while ($tokenList->hasSymbol(','));
@@ -788,7 +788,7 @@ class UserCommandsParser
 
                 return new RevokeAllCommand($users);
             } else {
-                $tokenList->resetPosition(-1);
+                $tokenList->rewind(-1);
             }
         }
         if ($tokenList->hasKeywords(Keyword::PROXY)) {

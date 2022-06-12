@@ -122,7 +122,7 @@ class InsertCommandParser
 
             return new InsertValuesCommand($table, $rows, $columns, $alias, $columnAliases, $partitions, $priority, $ignore, $update);
         }
-        $tokenList->resetPosition($position);
+        $tokenList->rewind($position);
 
         if ($tokenList->hasKeyword(Keyword::SET)) {
             $assignments = $this->parseAssignments($tokenList);
@@ -175,12 +175,12 @@ class InsertCommandParser
 
         if ($tokenList->hasSymbol('(')) {
             $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::VALUES);
-            $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
+            $query = $this->queryParser->parseQuery($tokenList->rewind(-1));
             $tokenList->expectSymbol(')');
 
             return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE)) { // no Keyword::VALUES!
-            $query = $this->queryParser->parseQuery($tokenList->resetPosition(-1));
+            $query = $this->queryParser->parseQuery($tokenList->rewind(-1));
 
             return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
@@ -226,7 +226,7 @@ class InsertCommandParser
             }
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // this is not a column list
-                $tokenList->resetPosition($position);
+                $tokenList->rewind($position);
                 return null;
             }
             $columns = [];

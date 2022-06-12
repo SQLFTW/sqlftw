@@ -96,9 +96,9 @@ class CompoundStatementParser
         try {
             if ($tokenList->hasAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
                 // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
-                return $this->parseStatement($tokenList->resetPosition($position));
+                return $this->parseStatement($tokenList->rewind($position));
             } else {
-                return $this->parser->parseTokenList($tokenList->resetPosition($position));
+                return $this->parser->parseTokenList($tokenList->rewind($position));
             }
         } finally {
             $tokenList->getSettings()->setInRoutine(false);
@@ -113,7 +113,7 @@ class CompoundStatementParser
         $statements = [];
         do {
             if ($tokenList->hasAnyKeyword(Keyword::END, Keyword::UNTIL, Keyword::WHEN, Keyword::ELSE, Keyword::ELSEIF)) {
-                $tokenList->resetPosition(-1);
+                $tokenList->rewind(-1);
                 break;
             }
             $statements[] = $this->parseStatement($tokenList);
@@ -141,7 +141,7 @@ class CompoundStatementParser
         $label = $tokenList->getNonReservedName();
         if (!$tokenList->hasSymbol(':')) {
             $label = null;
-            $tokenList->resetPosition($position);
+            $tokenList->rewind($position);
         }
 
         $position = $tokenList->getPosition();
@@ -177,10 +177,10 @@ class CompoundStatementParser
             case Keyword::CLOSE:
                 return new CloseCursorStatement($tokenList->expectName());
             case Keyword::GET:
-                return $this->parseGetDiagnostics($tokenList->resetPosition($position));
+                return $this->parseGetDiagnostics($tokenList->rewind($position));
             case Keyword::SIGNAL:
             case Keyword::RESIGNAL:
-                return $this->parseSignalResignal($tokenList->resetPosition(-1));
+                return $this->parseSignalResignal($tokenList->rewind(-1));
             case Keyword::RETURN:
                 return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
             case Keyword::LEAVE:
