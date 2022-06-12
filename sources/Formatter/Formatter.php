@@ -21,6 +21,7 @@ use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SqlSerializable;
 use function array_map;
 use function implode;
@@ -74,11 +75,12 @@ class Formatter
 
     public function formatName(string $name): string
     {
-        // todo: sql_mode ansi uses "
+        $quote = $this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES) ? '"' : '`';
+
         return $this->quoteAllNames
-            ? '`' . $name . '`'
+            ? $quote . $name . $quote
             : ($this->settings->getPlatform()->getFeatures()->isReserved($name)
-                ? '`' . $name . '`'
+                ? $quote . $name . $quote
                 : $name);
     }
 
