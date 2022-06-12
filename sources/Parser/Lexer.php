@@ -43,10 +43,7 @@ use function trim;
 
 /**
  * todo:
- * - prefix casts: timestamp'2001-01-01 00:00:00'
  * - quoted delimiters
- * - Date and Time Literals?
- * - Mysql string charset declaration (_utf* & N)
  * - \N is synonym for NULL (until 8.0)
  */
 class Lexer
