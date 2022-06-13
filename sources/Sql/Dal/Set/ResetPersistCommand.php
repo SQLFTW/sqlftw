@@ -7,29 +7,30 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Dal\Reset;
+namespace SqlFtw\Sql\Dal\Set;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
+use SqlFtw\Sql\MysqlVariable;
 
 class ResetPersistCommand implements DalCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string|null */
+    /** @var MysqlVariable|null */
     private $variable;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(?string $variable, bool $ifExists = false)
+    public function __construct(?MysqlVariable $variable, bool $ifExists = false)
     {
         $this->variable = $variable;
         $this->ifExists = $ifExists;
     }
 
-    public function getVariable(): ?string
+    public function getVariable(): ?MysqlVariable
     {
         return $this->variable;
     }
@@ -46,7 +47,7 @@ class ResetPersistCommand implements DalCommand
             $result .= ' IF EXISTS';
         }
         if ($this->variable !== null) {
-            $result .= ' ' . $formatter->formatName($this->variable);
+            $result .= ' ' . $this->variable->serialize($formatter);
         }
 
         return $result;

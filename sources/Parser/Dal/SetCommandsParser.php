@@ -15,6 +15,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Dal\Set\ResetPersistCommand;
 use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
@@ -109,6 +110,25 @@ class SetCommandsParser
         }
 
         return new SetNamesCommand($charset, $collation, $assignments);
+    }
+
+    /**
+     * RESET PERSIST [[IF EXISTS] system_var_name]
+     */
+    public function parseResetPersist(TokenList $tokenList): ResetPersistCommand
+    {
+        $tokenList->expectKeywords(Keyword::RESET, Keyword::PERSIST);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
+        if ($ifExists) {
+            $variable = $tokenList->expectName();
+        } else {
+            $variable = $tokenList->getName();
+        }
+        if ($variable !== null) {
+            $variable = MysqlVariable::get($variable);
+        }
+
+        return new ResetPersistCommand($variable, $ifExists);
     }
 
     /**

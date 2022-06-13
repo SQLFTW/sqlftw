@@ -599,7 +599,7 @@ class Parser
             case Keyword::RESET:
                 if ($tokenList->hasKeyword(Keyword::PERSIST)) {
                     // RESET PERSIST
-                    return $this->factory->getResetPersistCommandParser()->parseResetPersist($tokenList->rewind($start));
+                    return $this->factory->getSetCommandsParser()->parseResetPersist($tokenList->rewind($start));
                 }
                 $keyword = $tokenList->expectAnyKeyword(Keyword::MASTER, Keyword::REPLICA, Keyword::SLAVE, Keyword::QUERY);
                 if ($keyword === Keyword::MASTER) {
