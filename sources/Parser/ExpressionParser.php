@@ -1267,22 +1267,6 @@ class ExpressionParser
     }
 
     /**
-     * expression:
-     *     timestamp [+ INTERVAL interval] ...
-     */
-    public function parseTimeExpression(TokenList $tokenList): TimeExpression
-    {
-        $initial = $this->parseDateTime($tokenList);
-        $intervals = [];
-        while ($tokenList->hasOperator(Operator::PLUS)) {
-            $tokenList->expectKeyword(Keyword::INTERVAL);
-            $intervals[] = $this->parseInterval($tokenList);
-        }
-
-        return new TimeExpression($initial, $intervals);
-    }
-
-    /**
      * @return DateTime|BuiltInFunction
      */
     public function parseDateTime(TokenList $tokenList)
