@@ -30,6 +30,7 @@ use function count;
 use function ctype_digit;
 use function explode;
 use function implode;
+use function iterator_to_array;
 use function ltrim;
 use function ord;
 use function preg_match;
@@ -150,22 +151,54 @@ class Lexer
     }
 
     /**
-     * Tokenize SQL code. Expects line endings to be converted to "\n" and UTF-8 encoding.
+     * Tokenize SQL code and return an array of Token objects.
      * @return Token[]
      */
     public function tokenizeAll(string $string): array
     {
-        $tokens = [];
-        foreach ($this->tokenize($string) as $token) {
-            $tokens[] = $token;
-        }
-
-        return $tokens;
+        return iterator_to_array($this->tokenize($string));
     }
 
     /**
-     * Tokenize SQL code. Expects line endings to be converted to "\n" and UTF-8 encoding.
-     * @return Token[]|Generator
+     * @return Generator<TokenList>
+     */
+    public function tokenizeLists(string $string): Generator
+    {
+        return $this->slice($this->tokenize($string));
+    }
+
+    /**
+     * @param iterable<Token> $tokens
+     * @return Generator<TokenList>
+     */
+    private function slice(iterable $tokens): Generator
+    {
+        $buffer = [];
+        foreach ($tokens as $token) {
+            if (($token->type & TokenType::DELIMITER) !== 0) {
+                if ($buffer !== []) {
+                    yield new TokenList($buffer, $this->settings);
+                }
+
+                $buffer = [];
+            } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {
+                $buffer[] = $token;
+
+                yield new TokenList($buffer, $this->settings);
+
+                $buffer = [];
+            } else {
+                $buffer[] = $token;
+            }
+        }
+        if ($buffer !== []) {
+            yield new TokenList($buffer, $this->settings);
+        }
+    }
+
+    /**
+     * Tokenize SQL code and return a generator of Token objects.
+     * @return Generator<Token>
      */
     public function tokenize(string $string): Generator
     {

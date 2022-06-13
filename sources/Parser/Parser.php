@@ -58,7 +58,7 @@ class Parser
      */
     public function parse(string $sql, ?callable $tokenListFilter = null): Generator
     {
-        $tokenLists = $this->slice($this->lexer->tokenize($sql));
+        $tokenLists = $this->lexer->tokenizeLists($sql);
 
         foreach ($tokenLists as $tokenList) {
             if ($tokenListFilter !== null) {
@@ -128,7 +128,7 @@ class Parser
     public function parseSingleCommand(string $sql): Command
     {
         /** @var TokenList[] $tokenLists */
-        $tokenLists = iterator_to_array($this->slice($this->lexer->tokenize($sql)));
+        $tokenLists = iterator_to_array($this->lexer->tokenizeLists($sql));
         if (count($tokenLists) > 1) {
             throw new ParsingException('More than one command found in given SQL code.');
         }
@@ -138,35 +138,6 @@ class Parser
         $tokenList->expectEnd();
 
         return $command;
-    }
-
-    /**
-     * @param iterable<Token> $tokens
-     * @return Generator<TokenList>
-     */
-    private function slice(iterable $tokens): Generator
-    {
-        $buffer = [];
-        foreach ($tokens as $token) {
-            if (($token->type & TokenType::DELIMITER) !== 0) {
-                if ($buffer !== []) {
-                    yield new TokenList($buffer, $this->settings);
-                }
-
-                $buffer = [];
-            } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {
-                $buffer[] = $token;
-
-                yield new TokenList($buffer, $this->settings);
-
-                $buffer = [];
-            } else {
-                $buffer[] = $token;
-            }
-        }
-        if ($buffer !== []) {
-            yield new TokenList($buffer, $this->settings);
-        }
     }
 
     /**
