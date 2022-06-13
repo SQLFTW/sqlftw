@@ -873,10 +873,7 @@ class Lexer
                     }
 
                     $upper = strtoupper($value);
-                    if ($upper === Keyword::NULL || $upper === Keyword::TRUE || $upper === Keyword::FALSE) {
-                        // todo: probably not necessary
-                        yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, $start, $value, null, $condition);
-                    } elseif (isset($this->reservedKey[$upper])) {
+                    if (isset($this->reservedKey[$upper])) {
                         if (isset($this->operatorKeywordsKey[$upper])) {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, $start, $value, null, $condition);
                         } else {
