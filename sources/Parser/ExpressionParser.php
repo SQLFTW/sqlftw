@@ -1247,6 +1247,25 @@ class ExpressionParser
         return (int) $tokenList->expectUnsignedInt();
     }
 
+    public function parseAlias(TokenList $tokenList): ?string
+    {
+        if ($tokenList->hasKeyword(Keyword::AS)) {
+            $alias = $tokenList->getString();
+            if ($alias !== null) {
+                return $alias;
+            } else {
+                return $tokenList->expectName();
+            }
+        } else {
+            $alias = $tokenList->getNonReservedName();
+            if ($alias !== null) {
+                return $alias;
+            } else {
+                return $tokenList->getString();
+            }
+        }
+    }
+
     /**
      * expression:
      *     timestamp [+ INTERVAL interval] ...

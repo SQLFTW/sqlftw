@@ -177,12 +177,7 @@ class JoinParser
         if ($tokenList->hasKeyword(Keyword::JSON_TABLE)) {
             $tokenList->expectSymbol('(');
             $table = $this->expressionParser->parseJsonTable($tokenList->rewind($position));
-
-            if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName();
-            } else {
-                $alias = $tokenList->getNonReservedName();
-            }
+            $alias = $this->expressionParser->parseAlias($tokenList);
 
             return new TableReferenceJsonTable($table, $alias);
         }
@@ -256,11 +251,8 @@ class JoinParser
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
-            if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName();
-            } else {
-                $alias = $tokenList->getNonReservedName();
-            }
+            $alias = $this->expressionParser->parseAlias($tokenList);
+
             $indexHints = null;
             if ($tokenList->hasAnyKeyword(Keyword::USE, Keyword::IGNORE, Keyword::FORCE)) {
                 $indexHints = $this->parseIndexHints($tokenList->rewind(-1));
@@ -275,11 +267,7 @@ class JoinParser
      */
     private function parseAliasAndColumns(TokenList $tokenList): array
     {
-        if ($tokenList->hasKeyword(Keyword::AS)) {
-            $alias = $tokenList->expectName();
-        } else {
-            $alias = $tokenList->getNonReservedName();
-        }
+        $alias = $this->expressionParser->parseAlias($tokenList);
 
         $columns = null;
         if ($tokenList->hasSymbol('(')) {

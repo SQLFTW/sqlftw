@@ -127,11 +127,8 @@ class DeleteCommandParser
             if ($tokenList->hasSymbol('.')) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
             }
-            if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName();
-            } else {
-                $alias = $tokenList->getNonReservedName();
-            }
+            $alias = $this->expressionParser->parseAlias($tokenList);
+
             $tables[] = [$table, $alias];
         } while ($tokenList->hasSymbol(','));
 

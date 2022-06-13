@@ -312,7 +312,7 @@ class ParserFactory
 
     public function getTransactionCommandsParser(): TransactionCommandsParser
     {
-        return new TransactionCommandsParser();
+        return new TransactionCommandsParser($this->expressionParser);
     }
 
     public function getTriggerCommandsParser(): TriggerCommandsParser

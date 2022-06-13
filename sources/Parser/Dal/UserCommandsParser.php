@@ -63,9 +63,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
-use function array_keys;
 use function count;
-use function strtoupper;
 
 class UserCommandsParser
 {

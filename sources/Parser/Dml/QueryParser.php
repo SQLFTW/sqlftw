@@ -301,18 +301,8 @@ class QueryParser
                     $window = $tokenList->expectName();
                 }
             }
-            // todo: unified alias parsing everywhere
-            if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->getString();
-                if ($alias === null) {
-                    $alias = $tokenList->expectName();
-                }
-            } else {
-                $alias = $tokenList->getNonReservedName();
-                if ($alias === null) {
-                    $alias = $tokenList->getString();
-                }
-            }
+            $alias = $this->expressionParser->parseAlias($tokenList);
+
             $what[] = new SelectExpression($expression, $alias, $window);
         } while ($tokenList->hasSymbol(','));
 

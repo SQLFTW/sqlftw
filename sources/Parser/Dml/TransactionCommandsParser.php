@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Dml;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Transaction\CommitCommand;
 use SqlFtw\Sql\Dml\Transaction\LockInstanceCommand;
@@ -31,6 +32,14 @@ use SqlFtw\Sql\Keyword;
 class TransactionCommandsParser
 {
     use StrictBehaviorMixin;
+
+    /** @var ExpressionParser */
+    private $expressionParser;
+
+    public function __construct(ExpressionParser $expressionParser)
+    {
+        $this->expressionParser = $expressionParser;
+    }
 
     /**
      * COMMIT [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
@@ -73,12 +82,9 @@ class TransactionCommandsParser
         $items = [];
         do {
             $table = $tokenList->expectQualifiedName();
-            if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName();
-            } else {
-                $alias = $tokenList->getNonReservedName();
-            }
+            $alias = $this->expressionParser->parseAlias($tokenList);
             $lock = $tokenList->expectMultiKeywordsEnum(LockTableType::class);
+
             $items[] = new LockTablesItem($table, $lock, $alias);
         } while ($tokenList->hasSymbol(','));
 
