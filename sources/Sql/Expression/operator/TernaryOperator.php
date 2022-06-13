@@ -11,8 +11,6 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use function implode;
-use function is_array;
 
 /**
  * left BETWEEN middle AND right
@@ -25,39 +23,26 @@ class TernaryOperator implements OperatorExpression
     /** @var ExpressionNode */
     private $left;
 
-    /** @var string[] */
+    /** @var Operator */
     private $leftOperator;
 
     /** @var ExpressionNode */
     private $middle;
 
-    /** @var string */
+    /** @var Operator */
     private $rightOperator;
 
     /** @var ExpressionNode */
     private $right;
 
-    /**
-     * @param string|string[] $leftOperator
-     */
     public function __construct(
         ExpressionNode $left,
-        $leftOperator,
+        Operator $leftOperator,
         ExpressionNode $middle,
-        string $rightOperator,
+        Operator $rightOperator,
         ExpressionNode $right
     ) {
-        if (is_array($leftOperator)) {
-            foreach ($leftOperator as $op) {
-                if ($op !== Operator::NOT) {
-                    Operator::get($op)->checkTernaryLeft();
-                }
-            }
-        } else {
-            Operator::get($leftOperator)->checkTernaryLeft();
-            $leftOperator = [$leftOperator];
-        }
-        Operator::get($rightOperator)->checkTernaryRight();
+        Operator::checkTernary($leftOperator, $rightOperator);
 
         $this->left = $left;
         $this->leftOperator = $leftOperator;
@@ -71,10 +56,7 @@ class TernaryOperator implements OperatorExpression
         return $this->left;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getLeftOperator(): array
+    public function getLeftOperator(): Operator
     {
         return $this->leftOperator;
     }
@@ -84,7 +66,7 @@ class TernaryOperator implements OperatorExpression
         return $this->middle;
     }
 
-    public function getRightOperator(): string
+    public function getRightOperator(): Operator
     {
         return $this->rightOperator;
     }
@@ -96,8 +78,8 @@ class TernaryOperator implements OperatorExpression
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->left->serialize($formatter) . ' TernaryOperator.php' . implode(' ', $this->leftOperator) . ' ' .
-            $this->middle->serialize($formatter) . ' ' . $this->rightOperator . ' ' .
+        return $this->left->serialize($formatter) . ' ' . $this->leftOperator->serialize($formatter) . ' ' .
+            $this->middle->serialize($formatter) . ' ' . $this->rightOperator->serialize($formatter) . ' ' .
             $this->right->serialize($formatter);
     }
 

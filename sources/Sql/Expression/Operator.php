@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\InvalidValueException;
 use SqlFtw\Sql\Feature;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
@@ -40,6 +40,7 @@ class Operator extends SqlEnum implements Feature
     public const GREATER = '>';
     public const GREATER_OR_EQUAL = '>=';
     public const BETWEEN = Keyword::BETWEEN;
+    public const NOT_BETWEEN = Keyword::NOT . ' ' . Keyword::BETWEEN;
 
     // arithmetic
     public const PLUS = '+';
@@ -60,11 +61,15 @@ class Operator extends SqlEnum implements Feature
 
     // test
     public const IS = Keyword::IS;
+    public const IS_NOT = Keyword::IS . ' ' . Keyword::NOT;
     public const LIKE = Keyword::LIKE;
+    public const NOT_LIKE = Keyword::NOT . ' ' . Keyword::LIKE;
     public const ESCAPE = Keyword::ESCAPE;
     public const REGEXP = Keyword::REGEXP;
+    public const NOT_REGEXP = Keyword::NOT . ' ' . Keyword::REGEXP;
     public const RLIKE = Keyword::RLIKE;
-    public const SOUNDS = Keyword::SOUNDS;
+    public const NOT_RLIKE = Keyword::NOT . ' ' . Keyword::RLIKE;
+    public const SOUNDS_LIKE = Keyword::SOUNDS . ' ' . Keyword::LIKE;
 
     // case
     public const CASE = Keyword::CASE;
@@ -73,8 +78,9 @@ class Operator extends SqlEnum implements Feature
     public const ELSE = Keyword::ELSE;
     public const END = Keyword::END;
 
-    // quantifiers
+    // set & quantifiers
     public const IN = Keyword::IN;
+    public const NOT_IN = Keyword::NOT . ' ' . Keyword::IN;
     public const ANY = Keyword::ANY;
     public const SOME = Keyword::SOME;
     public const ALL = Keyword::ALL;
@@ -106,53 +112,29 @@ class Operator extends SqlEnum implements Feature
         );
     }
 
-    public function isTernaryLeft(): bool
-    {
-        return in_array($this->getValue(), [self::BETWEEN, self::LIKE], true);
-    }
-
-    public function isTernaryRight(): bool
-    {
-        return in_array($this->getValue(), [self::AND, self::ESCAPE], true);
-    }
-
-    /**
-     * @throws InvalidValueException
-     */
     public function checkUnary(): void
     {
         if (!$this->isUnary()) {
-            throw new InvalidValueException($this->getValue(), 'unary operator');
+            throw new InvalidDefinitionException('Unary operator expected.');
         }
     }
 
-    /**
-     * @throws InvalidValueException
-     */
     public function checkBinary(): void
     {
         if (!$this->isBinary()) {
-            throw new InvalidValueException($this->getValue(), 'binary operator');
+            throw new InvalidDefinitionException('Binary operator expected.');
         }
     }
 
-    /**
-     * @throws InvalidValueException
-     */
-    public function checkTernaryLeft(): void
+    public static function checkTernary(self $left, self $right): void
     {
-        if (!$this->isTernaryLeft()) {
-            throw new InvalidValueException($this->getValue(), 'ternary operator');
-        }
-    }
-
-    /**
-     * @throws InvalidValueException
-     */
-    public function checkTernaryRight(): void
-    {
-        if (!$this->isTernaryRight()) {
-            throw new InvalidValueException($this->getValue(), 'ternary operator');
+        if (!(
+            ($left->getValue() === self::BETWEEN && $right->getValue() === self::AND)
+            || ($left->getValue() === self::NOT_BETWEEN && $right->getValue() === self::AND)
+            || ($left->getValue() === self::LIKE && $right->getValue() === self::ESCAPE)
+            || ($left->getValue() === self::NOT_LIKE && $right->getValue() === self::ESCAPE)
+        )) {
+            throw new InvalidDefinitionException('Invalid ternary operator: ' . $left->getValue() . ' ' . $right->getValue());
         }
     }
 

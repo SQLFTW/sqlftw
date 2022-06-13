@@ -13,35 +13,15 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
- * left := right
- * left AND right
- * left OR right
- * left XOR right
- * left && right
- * left || right
- * left <=> right
- * left + right
- * left - right
- * left * right
- * left / right
- * left DIV right
- * left MOD right
- * left % right
- * left & right
- * left | right
- * left ^ right
- * left << right
- * left >> right
- * left IS [NOT] right
- * left [NOT] LIKE right
- * left [NOT] REGEXP right
- * left [NOT] RLIKE right
- * left SOUNDS LIKE right
- * left [NOT] IN right
- * left -> right
- * left ->> right
+ * left = [ALL | ANY | SOME] right
+ * left != [ALL | ANY | SOME] right
+ * left <> [ALL | ANY | SOME] right
+ * left < [ALL | ANY | SOME] right
+ * left <= [ALL | ANY | SOME] right
+ * left > [ALL | ANY | SOME] right
+ * left >= [ALL | ANY | SOME] right
  */
-class BinaryOperator implements OperatorExpression
+class ComparisonOperator implements OperatorExpression
 {
     use StrictBehaviorMixin;
 
@@ -51,15 +31,22 @@ class BinaryOperator implements OperatorExpression
     /** @var Operator */
     private $operator;
 
+    /** @var 'ALL'|'ANY'|'SOME'|null */
+    private $quantifier;
+
     /** @var RootNode */
     private $right;
 
-    public function __construct(RootNode $left, Operator $operator, RootNode $right)
+    /**
+     * @param 'ALL'|'ANY'|'SOME'|null $quantifier
+     */
+    public function __construct(RootNode $left, Operator $operator, ?string $quantifier, RootNode $right)
     {
         $operator->checkBinary();
 
         $this->left = $left;
         $this->operator = $operator;
+        $this->quantifier = $quantifier;
         $this->right = $right;
     }
 
@@ -73,6 +60,11 @@ class BinaryOperator implements OperatorExpression
         return $this->operator;
     }
 
+    public function getQuantifier(): ?string
+    {
+        return $this->quantifier;
+    }
+
     public function getRight(): RootNode
     {
         return $this->right;
@@ -81,7 +73,7 @@ class BinaryOperator implements OperatorExpression
     public function serialize(Formatter $formatter): string
     {
         return $this->left->serialize($formatter) . ' '
-            . $this->operator->serialize($formatter) . ' '
+            . $this->operator->serialize($formatter) . ' ' . ($this->quantifier !== null ? $this->quantifier . ' ' : '')
             . $this->right->serialize($formatter);
     }
 

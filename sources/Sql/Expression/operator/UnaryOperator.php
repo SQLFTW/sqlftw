@@ -23,21 +23,21 @@ class UnaryOperator implements OperatorExpression
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var Operator */
     private $operator;
 
     /** @var RootNode */
     private $right;
 
-    public function __construct(string $operator, RootNode $right)
+    public function __construct(Operator $operator, RootNode $right)
     {
-        Operator::get($operator)->checkUnary();
+        $operator->checkUnary();
 
         $this->operator = $operator;
         $this->right = $right;
     }
 
-    public function getOperator(): string
+    public function getOperator(): Operator
     {
         return $this->operator;
     }
@@ -49,7 +49,7 @@ class UnaryOperator implements OperatorExpression
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->operator . ($this->operator === Operator::NOT ? ' ' : '') . $this->right->serialize($formatter);
+        return $this->operator->serialize($formatter) . ($this->operator->getValue() === Operator::NOT ? ' ' : '') . $this->right->serialize($formatter);
     }
 
 }
