@@ -9,5 +9,5 @@ require __DIR__ . '/../../bootstrap.php';
 
 // RESET PERSIST [[IF EXISTS] system_var_name]
 Assert::parse("RESET PERSIST");
-Assert::parse("RESET PERSIST var");
-Assert::parse("RESET PERSIST IF EXISTS var");
+Assert::parse("RESET PERSIST sql_mode");
+Assert::parse("RESET PERSIST IF EXISTS sql_mode");

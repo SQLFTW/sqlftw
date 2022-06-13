@@ -15,6 +15,7 @@ use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\User\AddAuthFactor;
 use SqlFtw\Sql\Dal\User\AlterAuthOption;
 use SqlFtw\Sql\Dal\User\AlterCurrentUserCommand;
+use SqlFtw\Sql\Dal\User\AlteredUser;
 use SqlFtw\Sql\Dal\User\AlterUserAction;
 use SqlFtw\Sql\Dal\User\AlterUserCommand;
 use SqlFtw\Sql\Dal\User\AlterUserDefaultRoleCommand;
@@ -22,7 +23,6 @@ use SqlFtw\Sql\Dal\User\AlterUserFinishRegistrationCommand;
 use SqlFtw\Sql\Dal\User\AlterUserInitiateRegistrationCommand;
 use SqlFtw\Sql\Dal\User\AlterUserRegistrationCommand;
 use SqlFtw\Sql\Dal\User\AlterUserUnregisterCommand;
-use SqlFtw\Sql\Dal\User\AlteredUser;
 use SqlFtw\Sql\Dal\User\AuthOption;
 use SqlFtw\Sql\Dal\User\CreateRoleCommand;
 use SqlFtw\Sql\Dal\User\CreateUserCommand;
@@ -53,6 +53,7 @@ use SqlFtw\Sql\Dal\User\UserPasswordLockOptionType;
 use SqlFtw\Sql\Dal\User\UserPrivilege;
 use SqlFtw\Sql\Dal\User\UserPrivilegeResource;
 use SqlFtw\Sql\Dal\User\UserPrivilegeResourceType;
+use SqlFtw\Sql\Dal\User\UserPrivilegeType;
 use SqlFtw\Sql\Dal\User\UserResourceOption;
 use SqlFtw\Sql\Dal\User\UserResourceOptionType;
 use SqlFtw\Sql\Dal\User\UserTlsOption;
@@ -670,11 +671,13 @@ class UserCommandsParser
                 if ($name !== null) {
                     // dynamic (names)
                     if (!DynamicUserPrivilege::validateValue($name)) {
-                        $tokenList->expectAnyKeyword(...StaticUserPrivilege::getAllowedValues(), ...DynamicUserPrivilege::getAllowedValues());
+                        $tokenList->missingAnyKeyword(...StaticUserPrivilege::getAllowedValues(), ...DynamicUserPrivilege::getAllowedValues());
                     }
                     $type = DynamicUserPrivilege::get($name);
                 }
             }
+            /** @var UserPrivilegeType $type */
+            $type = $type;
 
             $columns = null;
             if ($tokenList->hasSymbol('(')) {

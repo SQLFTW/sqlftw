@@ -69,21 +69,8 @@ Assert::invalidToken($tokens[2], T::DELIMITER_DEFINITION | T::INVALID, '~^Delimi
 $tokens = $lexer->tokenizeAll(' NULL ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, 'NULL', 1);
+Assert::token($tokens[1], T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::RESERVED, 'NULL', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
-
-// BOOL
-$tokens = $lexer->tokenizeAll(' TRUE ');
-Assert::count($tokens, 3);
-Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, 'TRUE', 1);
-Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
-
-$tokens = $lexer->tokenizeAll(' FALSE ');
-Assert::count($tokens, 3);
-Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::VALUE, 'FALSE', 1);
-Assert::token($tokens[2], T::WHITESPACE, ' ', 6);
 
 // uuid
 $tokens = $lexer->tokenizeAll(' 3E11FA47-71CA-11E1-9E33-C80AA9429562 ');
@@ -134,6 +121,12 @@ $tokens = $lexer->tokenizeAll(' := ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::SYMBOL | T::OPERATOR, ':=', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 3);
+
+$tokens = $lexer->tokenizeAll(' OR ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, 'OR', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 3);
 
 /*

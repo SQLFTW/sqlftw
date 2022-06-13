@@ -28,16 +28,16 @@ Assert::parse("ALTER USER usr1@host1 IDENTIFIED BY 'auth1' REPLACE 'auth2' RETAI
 Assert::parse("ALTER USER usr1@host1 IDENTIFIED BY 'auth1' RETAIN CURRENT PASSWORD");
 
 // IDENTIFIED WITH auth_plugin
-Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH plug1");
+Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH 'plug1'");
 
 // IDENTIFIED WITH auth_plugin BY 'auth_string' [REPLACE 'current_auth_string'] [RETAIN CURRENT PASSWORD]
-Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH plug1 BY 'auth1'");
-Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH plug1 BY 'auth1' REPLACE 'auth2'");
-Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH plug1 BY 'auth1' REPLACE 'auth2' RETAIN CURRENT PASSWORD");
-Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH plug1 BY 'auth1' RETAIN CURRENT PASSWORD");
+Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH 'plug1' BY 'auth1'");
+Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH 'plug1' BY 'auth1' REPLACE 'auth2'");
+Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH 'plug1' BY 'auth1' REPLACE 'auth2' RETAIN CURRENT PASSWORD");
+Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH 'plug1' BY 'auth1' RETAIN CURRENT PASSWORD");
 
 // IDENTIFIED WITH auth_plugin AS 'hash_string'
-Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH plug1 AS 'hash1'");
+Assert::parse("ALTER USER usr1@host1 IDENTIFIED WITH 'plug1' AS 'hash1'");
 
 // DISCARD OLD PASSWORD
 Assert::parse("ALTER USER usr1@host1 DISCARD OLD PASSWORD");

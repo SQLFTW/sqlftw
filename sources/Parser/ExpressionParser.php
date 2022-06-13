@@ -72,7 +72,6 @@ use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Expression\TernaryOperator;
-use SqlFtw\Sql\Expression\TimeExpression;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Expression\TimeIntervalUnit;
 use SqlFtw\Sql\Expression\TimeLiteral;
