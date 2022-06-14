@@ -11,7 +11,7 @@ namespace SqlFtw\Platform\Features;
 
 use SqlFtw\Sql\Keyword;
 
-class FeaturesSql2011 extends PlatformFeatures
+class FeaturesSql2011 //extends FeaturesList
 {
 
     public const RESERVED_WORDS = [
@@ -563,29 +563,6 @@ class FeaturesSql2011 extends PlatformFeatures
         Keyword::ZONE,
     ];
 
-    public const OPERATOR_KEYWORDS = [
-        Keyword::AND,
-        Keyword::OR,
-        Keyword::XOR,
-        Keyword::NOT,
-        Keyword::IN,
-        Keyword::IS,
-        Keyword::LIKE,
-        Keyword::RLIKE,
-        Keyword::REGEXP,
-        Keyword::SOUNDS,
-        Keyword::BETWEEN,
-        Keyword::DIV,
-        Keyword::MOD,
-        Keyword::INTERVAL,
-        Keyword::BINARY,
-        Keyword::COLLATE,
-        Keyword::CASE,
-        Keyword::WHEN,
-        Keyword::THAN,
-        Keyword::ELSE,
-    ];
-
     /**
      * @return string[]
      */
@@ -600,14 +577,6 @@ class FeaturesSql2011 extends PlatformFeatures
     public function getNonReservedWords(): array
     {
         return self::NON_RESERVED_WORDS;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getOperatorKeywords(): array
-    {
-        return self::OPERATOR_KEYWORDS;
     }
 
     /**

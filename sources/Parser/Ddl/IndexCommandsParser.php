@@ -78,10 +78,18 @@ class IndexCommandsParser
         while ($keyword = $tokenList->getAnyKeyword(Keyword::ALGORITHM, Keyword::LOCK)) {
             if ($keyword === Keyword::ALGORITHM) {
                 $tokenList->passSymbol('=');
-                $alterAlgorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                    $alterAlgorithm = AlterTableAlgorithm::get(AlterTableAlgorithm::DEFAULT);
+                } else {
+                    $alterAlgorithm = $tokenList->expectNameOrStringEnum(AlterTableAlgorithm::class);
+                }
             } elseif ($keyword === Keyword::LOCK) {
                 $tokenList->passSymbol('=');
-                $alterLock = $tokenList->expectKeywordEnum(AlterTableLock::class);
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                    $alterLock = AlterTableLock::get(AlterTableLock::DEFAULT);
+                } else {
+                    $alterLock = $tokenList->expectNameOrStringEnum(AlterTableLock::class);
+                }
             }
         }
 
@@ -230,12 +238,20 @@ class IndexCommandsParser
         $algorithm = null;
         if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
             $tokenList->passSymbol('=');
-            $algorithm = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
+            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                $algorithm = AlterTableAlgorithm::get(AlterTableAlgorithm::DEFAULT);
+            } else {
+                $algorithm = $tokenList->expectNameOrStringEnum(AlterTableAlgorithm::class);
+            }
         }
         $lock = null;
         if ($tokenList->hasKeyword(Keyword::LOCK)) {
             $tokenList->passSymbol('=');
-            $lock = $tokenList->expectKeywordEnum(AlterTableLock::class);
+            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                $lock = AlterTableLock::get(AlterTableLock::DEFAULT);
+            } else {
+                $lock = $tokenList->expectNameOrStringEnum(AlterTableLock::class);
+            }
         }
 
         return new DropIndexCommand($name, $table, $algorithm, $lock);

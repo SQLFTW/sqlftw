@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-class Keyword extends SqlEnum implements Feature
+class Keyword extends SqlEnum
 {
 
     public const A = 'A';
@@ -65,10 +65,12 @@ class Keyword extends SqlEnum implements Feature
     public const AVG_ROW_LENGTH = 'AVG_ROW_LENGTH';
     public const BACKUP = 'BACKUP';
     public const BACKWARD = 'BACKWARD';
+    public const BDB = 'BDB';
     public const BEFORE = 'BEFORE';
     public const BEGIN = 'BEGIN';
     public const BEGIN_FRAME = 'BEGIN_FRAME';
     public const BEGIN_PARTITION = 'BEGIN_PARTITION';
+    public const BERKELEYDB = 'BERKELEYDB';
     public const BERNOULLI = 'BERNOULLI';
     public const BETWEEN = 'BETWEEN';
     public const BIGINT = 'BIGINT';
@@ -319,6 +321,7 @@ class Keyword extends SqlEnum implements Feature
     public const EXTENT_SIZE = 'EXTENT_SIZE';
     public const EXTERNAL = 'EXTERNAL';
     public const EXTRACT = 'EXTRACT';
+    public const FACTOR = 'FACTOR';
     public const FAIL = 'FAIL';
     public const FAILED_LOGIN_ATTEMPTS = 'FAILED_LOGIN_ATTEMPTS';
     public const FALSE = 'FALSE';
@@ -684,6 +687,7 @@ class Keyword extends SqlEnum implements Feature
     public const PACK_KEYS = 'PACK_KEYS';
     public const PAD = 'PAD';
     public const PAGE = 'PAGE';
+    public const PAGE_CHECKSUM = 'PAGE_CHECKSUM';
     public const PARALLEL = 'PARALLEL';
     public const PARAMETER = 'PARAMETER';
     public const PARAMETER_MODE = 'PARAMETER_MODE';
@@ -755,6 +759,10 @@ class Keyword extends SqlEnum implements Feature
     public const QUERY = 'QUERY';
     public const QUICK = 'QUICK';
     public const QUOTE = 'QUOTE';
+    public const RAID_CHUNKS = 'RAID_CHUNKS';
+    public const RAID_CHUNKSIZE = 'RAID_CHUNKSIZE';
+    public const RAID_TYPE = 'RAID_TYPE';
+    public const RAID0 = 'RAID0';
     public const RAISE = 'RAISE';
     public const RANDOM = 'RANDOM';
     public const RANGE = 'RANGE';
@@ -800,6 +808,7 @@ class Keyword extends SqlEnum implements Feature
     public const REMOTE = 'REMOTE';
     public const REMOVE = 'REMOVE';
     public const RENAME = 'RENAME';
+    public const REORGANISE = 'REORGANISE';
     public const REORGANIZE = 'REORGANIZE';
     public const REPAIR = 'REPAIR';
     public const REPEAT = 'REPEAT';
@@ -891,6 +900,7 @@ class Keyword extends SqlEnum implements Feature
     public const SHOW = 'SHOW';
     public const SHUTDOWN = 'SHUTDOWN';
     public const SCHEDULE = 'SCHEDULE';
+    public const SCHEDULER = 'SCHEDULER';
     public const SCHEMA = 'SCHEMA';
     public const SCHEMA_NAME = 'SCHEMA_NAME';
     public const SCHEMAS = 'SCHEMAS';
@@ -996,6 +1006,7 @@ class Keyword extends SqlEnum implements Feature
     public const STRICT = 'STRICT';
     public const STRING = 'STRING';
     public const STRIP = 'STRIP';
+    public const STRIPED = 'STRIPED';
     public const STRUCTURE = 'STRUCTURE';
     public const STYLE = 'STYLE';
     public const SUBCLASS_ORIGIN = 'SUBCLASS_ORIGIN';
@@ -1050,6 +1061,7 @@ class Keyword extends SqlEnum implements Feature
     public const TRAILING = 'TRAILING';
     public const TRANSACTION = 'TRANSACTION';
     public const TRANSACTION_ACTIVE = 'TRANSACTION_ACTIVE';
+    public const TRANSACTIONAL = 'TRANSACTIONAL';
     public const TRANSACTIONS_COMMITTED = 'TRANSACTIONS_COMMITTED';
     public const TRANSACTIONS_ROLLED_BACK = 'TRANSACTIONS_ROLLED_BACK';
     public const TRANSFORM = 'TRANSFORM';

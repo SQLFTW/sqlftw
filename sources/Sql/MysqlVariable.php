@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-class MysqlVariable extends SqlEnum implements Feature
+class MysqlVariable extends SqlEnum
 {
 
     public const ACTIVATE_ALL_ROLES_ON_LOGIN = 'activate_all_roles_on_login';

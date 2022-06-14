@@ -317,7 +317,11 @@ class TableCommandsParser
                 case Keyword::ALGORITHM:
                     // ALGORITHM [=] {DEFAULT|INPLACE|COPY}
                     $tokenList->passSymbol('=');
-                    $alterOptions[Keyword::ALGORITHM] = $tokenList->expectKeywordEnum(AlterTableAlgorithm::class);
+                    if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                        $alterOptions[Keyword::ALGORITHM] = AlterTableAlgorithm::get(AlterTableAlgorithm::DEFAULT);
+                    } else {
+                        $alterOptions[Keyword::ALGORITHM] = $tokenList->expectNameOrStringEnum(AlterTableAlgorithm::class);
+                    }
                     break;
                 case Keyword::ALTER:
                     if ($tokenList->hasKeyword(Keyword::INDEX)) {
@@ -521,7 +525,11 @@ class TableCommandsParser
                 case Keyword::LOCK:
                     // LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
                     $tokenList->passSymbol('=');
-                    $alterOptions[Keyword::LOCK] = $tokenList->expectKeywordEnum(AlterTableLock::class);
+                    if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                        $alterOptions[Keyword::LOCK] = AlterTableLock::get(AlterTableLock::DEFAULT);
+                    } else {
+                        $alterOptions[Keyword::LOCK] = $tokenList->expectNameOrStringEnum(AlterTableLock::class);
+                    }
                     break;
                 case Keyword::MODIFY:
                     // MODIFY [COLUMN] col_name column_definition [FIRST | AFTER col_name]

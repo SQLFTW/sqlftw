@@ -12,12 +12,8 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Parser\ParserSettings;
-use SqlFtw\Platform\Platform;
-use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
-use SqlFtw\Sql\SqlMode;
 use function in_array;
 
 /**
@@ -30,7 +26,7 @@ use function in_array;
  * - FLOAT for floating point numbers
  * - DECIMAL for decimal numbers
  */
-class BaseType extends SqlEnum implements Feature
+class BaseType extends SqlEnum
 {
 
     // bitwise
@@ -122,39 +118,8 @@ class BaseType extends SqlEnum implements Feature
     public const MULTILINESTRING = Keyword::MULTILINESTRING;
     public const MULTIPOLYGON = Keyword::MULTIPOLYGON;
 
-    public function canonicalize(ParserSettings $settings): self
-    {
-        $platform = $settings->getPlatform()->getName();
-        if ($platform === Platform::MARIA) {
-            $platform = Platform::MYSQL;
-        }
-        $typeAliases = $settings->getPlatform()->getFeatures()->getTypeAliases();
-
-        $value = $this->getValue();
-        if ($platform === Platform::MYSQL && $value === self::REAL) {
-            // todo: parser state changes over time, so this is not reliable
-            if ($settings->getMode()->containsAny(SqlMode::REAL_AS_FLOAT)) {
-                return self::get(self::FLOAT);
-            } else {
-                return self::get(self::DOUBLE);
-            }
-        } elseif (isset($typeAliases[$value])) {
-            return self::get($typeAliases[$value]);
-        } else {
-            return $this;
-        }
-    }
-
     public function serialize(Formatter $formatter): string
     {
-        if ($formatter->canonicalizeTypes) {
-            $formatter->canonicalizeTypes = false; // prevent recursion
-            $result = $this->canonicalize($formatter->getSettings())->serialize($formatter);
-            $formatter->canonicalizeTypes = true;
-
-            return $result;
-        }
-
         return parent::serialize($formatter);
     }
 

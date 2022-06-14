@@ -118,9 +118,6 @@ class Lexer
     /** @var array<string, int> */
     private $operatorsKey;
 
-    /** @var array<string, int> */
-    private $operatorKeywordsKey;
-
     /** @var string */
     private static $mysqlTestSuiteCommandsString;
 
@@ -143,11 +140,9 @@ class Lexer
         $this->withComments = $withComments;
         $this->withWhitespace = $withWhitespace;
 
-        $features = $this->platform->getFeatures();
-        $this->reservedKey = array_flip($features->getReservedWords());
-        $this->keywordsKey = array_flip($features->getNonReservedWords());
-        $this->operatorsKey = array_flip($features->getOperators());
-        $this->operatorKeywordsKey = array_flip($features->getOperatorKeywords());
+        $this->reservedKey = array_flip($this->platform->getReserved());
+        $this->keywordsKey = array_flip($this->platform->getNonReserved());
+        $this->operatorsKey = array_flip($this->platform->getOperators());
     }
 
     /**
@@ -907,7 +902,7 @@ class Lexer
 
                     $upper = strtoupper($value);
                     if (isset($this->reservedKey[$upper])) {
-                        if (isset($this->operatorKeywordsKey[$upper])) {
+                        if (isset($this->operatorsKey[$upper])) {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, $start, $value, null, $condition);
                         } else {
                             yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, $start, $value, null, $condition);
@@ -947,7 +942,7 @@ class Lexer
                                 $del = $trimmed;
                             }
                         }
-                        if ($this->settings->getPlatform()->getFeatures()->isReserved(strtoupper($del))) {
+                        if ($this->settings->getPlatform()->isReserved(strtoupper($del))) {
                             $exception = new LexerException('Delimiter can not be a reserved word', $position, $string);
 
                             yield $previous = new Token(T::DELIMITER_DEFINITION | T::INVALID, $start, $del, $del, $condition, $exception);

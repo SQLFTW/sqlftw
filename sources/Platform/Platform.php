@@ -10,8 +10,10 @@
 namespace SqlFtw\Platform;
 
 use Dogma\InvalidArgumentException;
+use Dogma\NotImplementedException;
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Platform\Features\PlatformFeatures;
+use SqlFtw\Platform\Features\FeaturesList;
+use SqlFtw\Platform\Features\MysqlFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
 use SqlFtw\Sql\SqlMode;
 use function in_array;
@@ -85,10 +87,41 @@ class Platform
     /** @var Version */
     private $version;
 
+    /** @var FeaturesList */
+    private $featuresList;
+
+    /** @var string[] */
+    private $features;
+
+    /** @var string[] */
+    private $reserved;
+
+    /** @var string[] */
+    private $nonReserved;
+
+    /** @var string[] */
+    private $operators;
+
+    /** @var string[] */
+    private $types;
+
+    /** @var string[] */
+    private $functions;
+
+    /** @var string[] */
+    private $variables;
+
     final private function __construct(string $name, Version $version)
     {
         $this->name = $name;
         $this->version = $version;
+        switch ($name) {
+            case self::MYSQL:
+                $this->featuresList = new MysqlFeatures();
+                break;
+            default:
+                throw new NotImplementedException('Only MySQL is supported for now.');
+        }
     }
 
     /**
@@ -221,20 +254,129 @@ class Platform
         }
     }
 
-    public function getFeatures(): PlatformFeatures
-    {
-        /** @var class-string<PlatformFeatures> $class */
-        $class = 'SqlFtw\\Platform\\Features\\Features' . ucfirst($this->name) . str_replace('.', '', $this->version->getMajorMinor());
-
-        return new $class();
-    }
-
     public function getNamingStrategy(): NamingStrategy
     {
         /** @var class-string<NamingStrategy> $class */
         $class = 'SqlFtw\\Platform\\Naming\\NamingStrategy' . ucfirst($this->name);
 
         return new $class();
+    }
+
+    // features --------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return string[]
+     */
+    public function getFeatures(): array
+    {
+        if ($this->features === null) {
+            $this->features = $this->filterForVersion($this->featuresList->features, $this->version->getId());
+        }
+
+        return $this->features;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getReserved(): array
+    {
+        if ($this->reserved === null) {
+            $this->reserved = $this->filterForVersion($this->featuresList->reserved, $this->version->getId());
+        }
+
+        return $this->reserved;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNonReserved(): array
+    {
+        if ($this->nonReserved === null) {
+            $this->nonReserved = $this->filterForVersion($this->featuresList->nonReserved, $this->version->getId());
+        }
+
+        return $this->nonReserved;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOperators(): array
+    {
+        if ($this->operators === null) {
+            $this->operators = $this->filterForVersion($this->featuresList->operators, $this->version->getId());
+        }
+
+        return $this->operators;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTypes(): array
+    {
+        if ($this->types === null) {
+            $this->types = $this->filterForVersion($this->featuresList->types, $this->version->getId());
+        }
+
+        return $this->types;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBuiltInFunctions(): array
+    {
+        if ($this->functions === null) {
+            $this->functions = $this->filterForVersion($this->featuresList->functions, $this->version->getId());
+        }
+
+        return $this->functions;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSystemVariables(): array
+    {
+        if ($this->variables === null) {
+            $this->variables = $this->filterForVersion($this->featuresList->variables, $this->version->getId());
+        }
+
+        return $this->variables;
+    }
+
+    /**
+     * @param array<array{string, int, int}> $values
+     * @return array<string>
+     */
+    private function filterForVersion(array $values, int $version): array
+    {
+        $result = [];
+        foreach ($values as [$value, $since, $until]) {
+            if ($version >= $since && $version <= $until) {
+                $result[] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    public function isKeyword(string $word, int $version): bool
+    {
+        return in_array($word, $this->getReserved(), true) || in_array($word, $this->getNonReserved(), true);
+    }
+
+    public function isReserved(string $word): bool
+    {
+        return in_array($word, $this->getReserved(), true);
+    }
+
+    public function isType(string $word): bool
+    {
+        return in_array($word, $this->getTypes(), true);
     }
 
 }

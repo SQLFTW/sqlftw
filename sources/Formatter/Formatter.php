@@ -79,7 +79,7 @@ class Formatter
 
         return $this->quoteAllNames
             ? $quote . $name . $quote
-            : ($this->settings->getPlatform()->getFeatures()->isReserved($name)
+            : ($this->settings->getPlatform()->isReserved($name)
                 ? $quote . $name . $quote
                 : $name);
     }

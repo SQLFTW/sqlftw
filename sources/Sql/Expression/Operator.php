@@ -9,13 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
 
-class Operator extends SqlEnum implements Feature
+class Operator extends SqlEnum
 {
 
     // assign
@@ -32,13 +31,13 @@ class Operator extends SqlEnum implements Feature
 
     // comparison
     public const EQUAL = '=';
-    public const SAFE_EQUAL = '<=>';
     public const NON_EQUAL = '!=';
     public const LESS_OR_GREATER = '<>';
     public const LESS = '<';
     public const LESS_OR_EQUAL = '<=';
     public const GREATER = '>';
     public const GREATER_OR_EQUAL = '>=';
+    public const SAFE_EQUAL = '<=>';
     public const BETWEEN = Keyword::BETWEEN;
     public const NOT_BETWEEN = Keyword::NOT . ' ' . Keyword::BETWEEN;
 

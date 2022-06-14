@@ -7,9 +7,13 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql;
+namespace SqlFtw\Sql\Platform;
 
-interface Feature
+use Dogma\StaticClassMixin;
+
+class Feature
 {
+    use StaticClassMixin;
+
 
 }

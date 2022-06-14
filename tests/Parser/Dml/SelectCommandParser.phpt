@@ -34,7 +34,7 @@ Assert::parse("SELECT STRAIGHT_JOIN @var1, @var2");
 Assert::parse("SELECT SQL_SMALL_RESULT @var1, @var2");
 Assert::parse("SELECT SQL_BIG_RESULT @var1, @var2");
 Assert::parse("SELECT SQL_BUFFER_RESULT @var1, @var2");
-Assert::parse("SELECT SQL_CACHE @var1, @var2");
+//Assert::parse("SELECT SQL_CACHE @var1, @var2"); // SQL_CACHE removed in 8.0.3
 Assert::parse("SELECT SQL_NO_CACHE @var1, @var2");
 Assert::parse("SELECT SQL_CALC_FOUND_ROWS @var1, @var2");
 

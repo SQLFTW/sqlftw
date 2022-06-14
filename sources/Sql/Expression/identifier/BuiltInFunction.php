@@ -10,12 +10,11 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Feature;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
 
-class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
+class BuiltInFunction extends SqlEnum implements FunctionIdentifier
 {
 
     // comparison
@@ -31,7 +30,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const IFNULL = 'IFNULL';
     public const NULLIF = 'NULLIF';
 
-    // case
+    // type
     public const CAST = 'CAST';
     public const CONVERT = 'CONVERT';
 
@@ -343,6 +342,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const ST_Envelope = 'ST_Envelope';
     public const ST_Equals = 'ST_Equals';
     public const ST_ExteriorRing = 'ST_ExteriorRing';
+    public const ST_FrechetDistance = 'ST_FrechetDistance';
     public const ST_GeoHash = 'ST_GeoHash';
     public const ST_GeomCollFromText = 'ST_GeomCollFromText';
     public const ST_GeometryCollectionFromText = 'ST_GeometryCollectionFromText';
@@ -356,6 +356,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const ST_GeometryFromText = 'ST_GeometryFromText';
     public const ST_GeomFromWKB = 'ST_GeomFromWKB';
     public const ST_GeometryFromWKB = 'ST_GeometryFromWKB';
+    public const ST_HausdorffDistance = 'ST_HausdorffDistance';
     public const ST_InteriorRingN = 'ST_InteriorRingN';
     public const ST_Intersection = 'ST_Intersection';
     public const ST_Intersects = 'ST_Intersects';
@@ -364,12 +365,16 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const ST_IsSimple = 'ST_IsSimple';
     public const ST_IsValid = 'ST_IsValid';
     public const ST_LatFromGeoHash = 'ST_LatFromGeoHash';
+    public const ST_Latitude = 'ST_Latitude';
     public const ST_Length = 'ST_Length';
     public const ST_LineFromText = 'ST_LineFromText';
+    public const ST_LineInterpolatePoint = 'ST_LineInterpolatePoint';
+    public const ST_LineInterpolatePoints = 'ST_LineInterpolatePoints';
     public const ST_LineStringFromText = 'ST_LineStringFromText';
     public const ST_LineFromWKB = 'ST_LineFromWKB';
     public const ST_LineStringFromWKB = 'ST_LineStringFromWKB';
     public const ST_LongFromGeoHash = 'ST_LongFromGeoHash';
+    public const ST_Longitude = 'ST_Longitude';
     public const ST_MakeEnvelope = 'ST_MakeEnvelope';
     public const ST_MLineFromText = 'ST_MLineFromText';
     public const ST_MultiLineStringFromText = 'ST_MultiLineStringFromText';
@@ -388,6 +393,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const ST_NumInteriorRings = 'ST_NumInteriorRings';
     public const ST_NumPoints = 'ST_NumPoints';
     public const ST_Overlaps = 'ST_Overlaps';
+    public const ST_PointAtDistance = 'ST_PointAtDistance';
     public const ST_PointFromGeoHash = 'ST_PointFromGeoHash';
     public const ST_PointFromText = 'ST_PointFromText';
     public const ST_PointFromWKB = 'ST_PointFromWKB';
@@ -402,6 +408,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const ST_SwapXY = 'ST_SwapXY';
     public const ST_SymDifference = 'ST_SymDifference';
     public const ST_Touches = 'ST_Touches';
+    public const ST_Transform = 'ST_Transform';
     public const ST_Union = 'ST_Union';
     public const ST_Validate = 'ST_Validate';
     public const ST_Within = 'ST_Within';
@@ -409,6 +416,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const ST_Y = 'ST_Y';
 
     // JSON
+    public const JSON_APPEND = 'JSON_APPEND';
     public const JSON_ARRAY = 'JSON_ARRAY';
     public const JSON_ARRAY_APPEND = 'JSON_ARRAY_APPEND';
     public const JSON_ARRAY_INSERT = 'JSON_ARRAY_INSERT';
@@ -420,11 +428,16 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const JSON_KEYS = 'JSON_KEYS';
     public const JSON_LENGTH = 'JSON_LENGTH';
     public const JSON_MERGE = 'JSON_MERGE';
+    public const JSON_MERGE_PATCH = 'JSON_MERGE_PATCH';
+    public const JSON_MERGE_PRESERVE = 'JSON_MERGE_PRESERVE';
     public const JSON_OBJECT = 'JSON_OBJECT';
+    public const JSON_OVERLAPS = 'JSON_OVERLAPS';
     public const JSON_PRETTY = 'JSON_PRETTY';
     public const JSON_QUOTE = 'JSON_QUOTE';
     public const JSON_REMOVE = 'JSON_REMOVE';
     public const JSON_REPLACE = 'JSON_REPLACE';
+    public const JSON_SCHEMA_VALID = 'JSON_SCHEMA_VALID';
+    public const JSON_SCHEMA_VALIDATION_REPORT = 'JSON_SCHEMA_VALIDATION_REPORT';
     public const JSON_SEARCH = 'JSON_SEARCH';
     public const JSON_SET = 'JSON_SET';
     public const JSON_STORAGE_FREE = 'JSON_STORAGE_FREE';
@@ -441,8 +454,14 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const WAIT_FOR_EXECUTED_GTID_SET = 'WAIT_FOR_EXECUTED_GTID_SET';
     public const WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS = 'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS';
 
+    // performance_schema
+    public const FORMAT_BYTES = 'FORMAT_BYTES';
+    public const FORMAT_PICO_TIME = 'FORMAT_PICO_TIME';
+    public const PS_CURRENT_THREAD_ID = 'PS_CURRENT_THREAD_ID';
+    public const PS_THREAD_ID = 'PS_THREAD_ID';
+
     // misc
-    public const ANALYSE = 'ANALYSE'; // removed in 8.0
+    //public const PROCEDURE_ANALYSE = 'PROCEDURE ANALYSE'; // removed in 8.0; looks more like a construct than a function
     public const BIN_TO_UUID = 'BIN_TO_UUID';
     public const DEFAULT = 'DEFAULT';
     public const GET_LOCK = 'GET_LOCK';
@@ -464,6 +483,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const RELEASE_ALL_LOCKS = 'RELEASE_ALL_LOCKS';
     public const RELEASE_LOCK = 'RELEASE_LOCK';
     public const SLEEP = 'SLEEP';
+    public const SOURCE_POS_WAIT = 'SOURCE_POS_WAIT';
     public const STATEMENT_DIGEST = 'STATEMENT_DIGEST';
     public const STATEMENT_DIGEST_NEXT = 'STATEMENT_DIGEST_NEXT';
     public const UUID = 'UUID';
@@ -493,7 +513,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier, Feature
     public const VAR_SAMP = 'VAR_SAMP';
     public const VARIANCE = 'VARIANCE';
 
-    // window functions, since 8.0 (+SUM, AVG...)
+    // window functions
     public const CUME_DIST = 'CUME_DIST';
     public const DENSE_RANK = 'DENSE_RANK';
     public const FIRST_VALUE = 'FIRST_VALUE';
