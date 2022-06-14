@@ -87,7 +87,8 @@ class Assert extends DogmaAssert
         $formatter = new Formatter($parser->getSettings());
 
         try {
-            $actual = $parser->parseSingleCommand($query)->serialize($formatter);
+            $command = $parser->parseSingleCommand($query);
+            $actual = $command->serialize($formatter);
         } catch (ParserException $e) {
             if (class_exists(Debugger::class)) {
                 Debugger::dump($e->getTokenList());
@@ -99,7 +100,7 @@ class Assert extends DogmaAssert
         $actual = preg_replace('/\\s+/', ' ', $actual);
         $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);
 
-        self::same($expected, $actual);
+        self::same($actual, $expected);
     }
 
     public static function validCommand(
