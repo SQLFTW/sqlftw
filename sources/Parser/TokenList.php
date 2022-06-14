@@ -655,9 +655,9 @@ class TokenList
 
     // names ---------------------------------------------------------------------------------------------------------
 
-    public function expectName(?string $name = null): string
+    public function expectName(?string $name = null, int $mask = 0): string
     {
-        $token = $this->expect(T::NAME);
+        $token = $this->expect(T::NAME, $mask);
         if ($name !== null && strtoupper($token->value) !== $name) {
             $this->position--;
 
@@ -749,9 +749,9 @@ class TokenList
         return $token->value;
     }
 
-    public function getNonReservedName(?string $name = null): ?string
+    public function getNonReservedName(?string $name = null, int $mask = 0): ?string
     {
-        $token = $this->get(T::NAME, T::RESERVED, $name);
+        $token = $this->get(T::NAME, T::RESERVED | $mask, $name);
         if ($token === null) {
             return null;
         }

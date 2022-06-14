@@ -1274,10 +1274,10 @@ class ExpressionParser
             if ($alias !== null) {
                 return $alias;
             } else {
-                return $tokenList->expectName();
+                return $tokenList->expectName(null, TokenType::AT_VARIABLE);
             }
         } else {
-            $alias = $tokenList->getNonReservedName();
+            $alias = $tokenList->getNonReservedName(null, TokenType::AT_VARIABLE);
             if ($alias !== null) {
                 return $alias;
             } else {
