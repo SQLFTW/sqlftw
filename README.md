@@ -51,7 +51,7 @@ Basic usage:
 use ...
 
 $platform = new Platform(Platform::MYSQL, '8.0');
-$settings = new PlatformSettings($platform);
+$settings = new ParserSettings($platform);
 $parser = new Parser($settings);
 try {
     $commands = $parser->parse('SELECT foo FROM ...');
