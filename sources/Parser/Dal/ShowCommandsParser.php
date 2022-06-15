@@ -584,11 +584,11 @@ class ShowCommandsParser
     private function parseShowProfile(TokenList $tokenList): ShowProfileCommand
     {
         $types = [];
-        $type = $tokenList->getMultiKeywordsEnum(ShowProfileType::class);
+        $type = $tokenList->getMultiNameEnum(ShowProfileType::class);
         if ($type !== null) {
             $types[] = $type;
             while ($tokenList->hasSymbol(',')) {
-                $types[] = $tokenList->expectMultiKeywordsEnum(ShowProfileType::class);
+                $types[] = $tokenList->expectMultiNameEnum(ShowProfileType::class);
             }
         }
         $query = $limit = $offset = null;
