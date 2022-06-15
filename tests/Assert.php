@@ -126,12 +126,13 @@ class Assert extends DogmaAssert
     public static function validCommands(
         string $sql,
         ?Parser $parser = null,
-        ?callable $tokenListFilter = null
+        ?callable $before = null,
+        ?callable $after = null
     ): void {
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
 
         try {
-            foreach ($parser->parse($sql, $tokenListFilter) as $command) {
+            foreach ($parser->parse($sql, $before, $after) as $command) {
                 if ($command instanceof InvalidCommand) {
                     $source = strtolower($command->getTokenList()->serialize());
                     // filtering "false" negatives

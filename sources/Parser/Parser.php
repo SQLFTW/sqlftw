@@ -54,15 +54,17 @@ class Parser
     }
 
     /**
+     * @param null|callable(TokenList): (TokenList|null) $before
+     * @param null|callable(TokenList, array<Command>): void $after
      * @return Generator<Command>
      */
-    public function parse(string $sql, ?callable $tokenListFilter = null): Generator
+    public function parse(string $sql, ?callable $before = null, ?callable $after = null): Generator
     {
         $tokenLists = $this->lexer->tokenizeLists($sql);
 
         foreach ($tokenLists as $tokenList) {
-            if ($tokenListFilter !== null) {
-                $tokenList = $tokenListFilter($tokenList);
+            if ($before !== null) {
+                $tokenList = $before($tokenList);
             }
             if ($tokenList === null) {
                 continue;
@@ -75,11 +77,11 @@ class Parser
                 } catch (ParserException $e) {
                     yield new InvalidCommand($tokenList, $e);
 
-                    continue 2;
+                    break;
                 } catch (Throwable $e) {
                     yield new InvalidCommand($tokenList, $e);
 
-                    continue 2;
+                    break;
                 }
 
                 try {
@@ -87,22 +89,22 @@ class Parser
                 } catch (ParserException $e) {
                     yield new InvalidCommand($tokenList, $e);
 
-                    continue 2;
+                    break;
                 } catch (Throwable $e) {
                     yield new InvalidCommand($tokenList, $e);
 
-                    continue 2;
+                    break;
                 }
 
                 if ($tokenList->isFinished()) {
                     if (count($commands) === 1) {
                         yield $command;
 
-                        continue 2;
+                        break;
                     } else {
                         yield new MultiStatement($commands);
 
-                        continue 2;
+                        break;
                     }
                 } else {
                     try {
@@ -114,14 +116,18 @@ class Parser
                     } catch (ParserException $e) {
                         yield new InvalidCommand($tokenList, $e);
 
-                        continue 2;
+                        break;
                     } catch (Throwable $e) {
                         yield new InvalidCommand($tokenList, $e);
 
-                        continue 2;
+                        break;
                     }
                 }
             } while (true);
+
+            if ($after !== null) {
+                $after($tokenList, $commands);
+            }
         }
     }
 
