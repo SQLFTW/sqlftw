@@ -42,7 +42,7 @@ class InstanceCommandParser
         if ($tokenList->using(null, 80000)) {
             $tokenList->expectKeywords(Keyword::ALTER, Keyword::INSTANCE);
 
-            $action = $tokenList->expectMultiKeywordsEnum(AlterInstanceAction::class);
+            $action = $tokenList->expectMultiNameEnum(AlterInstanceAction::class);
 
             $forChannel = null;
             $noRollbackOnError = false;
