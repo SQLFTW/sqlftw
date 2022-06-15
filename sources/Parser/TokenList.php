@@ -653,6 +653,34 @@ class TokenList
         }
     }
 
+    /**
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T
+     */
+    public function getMultiNameEnum(string $className): ?SqlEnum
+    {
+        $start = $this->position;
+        /** @var string[] $values */
+        $values = call_user_func([$className, 'getAllowedValues']);
+        foreach ($values as $value) {
+            $this->position = $start;
+            $keywords = explode(' ', $value);
+            foreach ($keywords as $keyword) {
+                if (!$this->hasName($keyword)) {
+                    continue 2;
+                }
+            }
+
+            /** @var T $enum */
+            $enum = call_user_func([$className, 'get'], $value);
+
+            return $enum;
+        }
+
+        return null;
+    }
+
     // names ---------------------------------------------------------------------------------------------------------
 
     public function expectName(?string $name = null, int $mask = 0): string

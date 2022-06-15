@@ -64,6 +64,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
+use function array_values;
 use function count;
 
 class UserCommandsParser
@@ -674,13 +675,13 @@ class UserCommandsParser
         $privileges = [];
         do {
             // static (keywords)
-            $type = $tokenList->getMultiKeywordsEnum(StaticUserPrivilege::class);
+            $type = $tokenList->getMultiNameEnum(StaticUserPrivilege::class);
             if ($type === null) {
                 $name = $tokenList->getNonReservedNameOrString();
                 if ($name !== null) {
                     // dynamic (names)
                     if (!DynamicUserPrivilege::validateValue($name)) {
-                        $tokenList->missingAnyKeyword(...StaticUserPrivilege::getAllowedValues(), ...DynamicUserPrivilege::getAllowedValues());
+                        $tokenList->missingAnyKeyword(...array_values(StaticUserPrivilege::getAllowedValues()), ...array_values(DynamicUserPrivilege::getAllowedValues()));
                     }
                     $type = DynamicUserPrivilege::get($name);
                 }
