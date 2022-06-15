@@ -417,6 +417,12 @@ class QueryParser
             $into = $this->parseInto($tokenList);
         }
 
+        if ($tokenList->hasKeywords(Keyword::PROCEDURE, Keyword::ANALYSE)) {
+            $tokenList->expectSymbol('(');
+            // todo: ignored
+            $this->expressionParser->parseFunctionCall($tokenList, 'PROCEDURE ANALYSE');
+        }
+
         return new SelectCommand($what, $from, $where, $groupBy, $having, $with, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);
     }
 

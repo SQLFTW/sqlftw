@@ -672,7 +672,7 @@ class ExpressionParser
         }
     }
 
-    private function parseFunctionCall(TokenList $tokenList, string $name1, ?string $name2 = null): FunctionCall
+    public function parseFunctionCall(TokenList $tokenList, string $name1, ?string $name2 = null): FunctionCall
     {
         $function = $name2 === null && BuiltInFunction::validateValue($name1)
             ? BuiltInFunction::get($name1)
