@@ -75,7 +75,7 @@ class Lexer
         'eof', 'error', 'error_log', 'eval', 'exec', 'execute_step', 'exit', 'expecterror', 'expr', 'file_exists', 'force',
         'horizontal_results', 'ibdata2', 'if', 'inc', 'let', 'list_files', 'lowercase_result', 'mkdir', 'move_file',
         'my', 'mysqlx', 'open', 'output', 'partially_sorted_result', 'perl', 'print', 'query', 'query_attributes',
-        'query_vertical', 'read', 'reap', 'recvresult', 'remove_file', 'remove_files_wildcard', 'replace_column',
+        'query_vertical', 'read', 'real_sleep', 'reap', 'recvresult', 'remove_file', 'remove_files_wildcard', 'replace_column',
         'replace_numeric_round', 'replace_regex', 'replace_result', 'reset_connection', 'result_format', 'rmdir',
         'save_master_pos', 'secret', 'send', 'send_eval', 'send_quit', 'shutdown_server', 'skip', 'skip_if_hypergraph',
         'sleep', 'source', 'sorted_result', 'sql', 'stmtadmin', 'stmtsql', 'sync_slave_with_master', 'sync_with_master',

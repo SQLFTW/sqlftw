@@ -114,8 +114,8 @@ class UserCommandsParser
             } else {
                 $option = $replace = null;
                 if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
-                    [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
-                    $option = new AuthOption($authPlugin, $password, $as);
+                    [$authPlugin, $password, $as, $oldHashedPassword] = $this->parseAuthOptionParts($tokenList);
+                    $option = new AuthOption($authPlugin, $password, $as, null, $oldHashedPassword);
                 }
 
                 if ($tokenList->hasKeyword(Keyword::REPLACE)) {
@@ -265,7 +265,7 @@ class UserCommandsParser
     private function parseAlterAuthOptions(TokenList $tokenList): AlterUserAction
     {
         if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
-            [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+            [$authPlugin, $password, $as, $oldHashedPassword] = $this->parseAuthOptionParts($tokenList);
 
             $replace = null;
             if ($tokenList->hasKeyword(Keyword::REPLACE)) {
@@ -273,7 +273,7 @@ class UserCommandsParser
             }
             $retainCurrentPassword = $tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD);
 
-            return new AlterAuthOption($authPlugin, $password, $as, $replace, $retainCurrentPassword);
+            return new AlterAuthOption($authPlugin, $password, $as, $replace, $retainCurrentPassword, $oldHashedPassword);
         } elseif ($tokenList->hasKeyword(Keyword::ADD)) {
             $factor1 = (int) $tokenList->expectUnsignedInt();
             [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
@@ -314,30 +314,35 @@ class UserCommandsParser
     }
 
     /**
-     * @return array{string|null, StringValue|false|null, StringValue|null}
+     * @return array{string|null, StringValue|false|null, StringValue|null, bool}
      */
     private function parseAuthOptionParts(TokenList $tokenList): array
     {
         $authPlugin = $password = $as = null;
+        $oldHashedPassword = false;
         if ($tokenList->hasKeyword(Keyword::WITH)) {
             $authPlugin = $tokenList->expectNonReservedNameOrString();
         }
         if ($authPlugin !== null && $tokenList->hasKeyword(Keyword::AS)) {
             $as = $tokenList->expectStringValue();
         } elseif ($tokenList->hasKeyword(Keyword::BY)) {
-            if ($tokenList->hasKeywords(Keyword::RANDOM, Keyword::PASSWORD)) {
+            if ($tokenList->hasKeyword(Keyword::PASSWORD)) {
+                $oldHashedPassword = true;
+                $password = $tokenList->expectStringValue();
+            } elseif ($tokenList->hasKeywords(Keyword::RANDOM, Keyword::PASSWORD)) {
                 $password = false;
             } else {
                 $password = $tokenList->expectStringValue();
             }
         }
 
-        return [$authPlugin, $password, $as];
+        return [$authPlugin, $password, $as, $oldHashedPassword];
     }
 
     /**
      * auth_option: {
-     *     IDENTIFIED [WITH auth_plugin] BY {RANDOM PASSWORD | 'auth_string'} [AND 2fa_auth_option]
+     *     IDENTIFIED BY PASSWORD 'auth_string' -- deprecated
+     *   | IDENTIFIED [WITH auth_plugin] BY {RANDOM PASSWORD | 'auth_string'} [AND 2fa_auth_option]
      *   | IDENTIFIED WITH auth_plugin [AS 'auth_string'] [AND 2fa_auth_option]
      *   | IDENTIFIED WITH auth_plugin [initial_auth_option]
      * }
@@ -364,6 +369,7 @@ class UserCommandsParser
         $options = [];
         do {
             $authPlugin = $password = $as = $initial = null;
+            $oldHashedPassword = false;
             if ($tokenList->hasKeyword(Keyword::WITH)) {
                 $authPlugin = $tokenList->expectNonReservedNameOrString();
             }
@@ -381,13 +387,16 @@ class UserCommandsParser
             } elseif ($authPlugin !== null && $tokenList->hasKeyword(Keyword::AS)) {
                 $as = $tokenList->expectStringValue();
             } elseif ($tokenList->hasKeyword(Keyword::BY)) {
-                if ($tokenList->hasKeywords(Keyword::RANDOM, Keyword::PASSWORD)) {
+                if ($tokenList->hasKeyword(Keyword::PASSWORD)) {
+                    $oldHashedPassword = true;
+                    $password = $tokenList->expectStringValue();
+                } elseif ($tokenList->hasKeywords(Keyword::RANDOM, Keyword::PASSWORD)) {
                     $password = false;
                 } else {
                     $password = $tokenList->expectStringValue();
                 }
             }
-            $options[] = new AuthOption($authPlugin, $password, $as, $initial);
+            $options[] = new AuthOption($authPlugin, $password, $as, $initial, $oldHashedPassword);
             if (count($options) === 3) {
                 break;
             }
@@ -866,18 +875,7 @@ class UserCommandsParser
         }
 
         $passwordFunction = $password = $replace = null;
-        if ($tokenList->using(null, 80000)) {
-            if ($tokenList->hasOperator(Operator::EQUAL)) {
-                $password = $tokenList->expectString();
-            } else {
-                $tokenList->expectKeywords(Keyword::TO, Keyword::RANDOM);
-            }
-            if ($tokenList->hasKeyword(Keyword::REPLACE)) {
-                $replace = $tokenList->expectString();
-            }
-            $retain = $tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD);
-        } else {
-            $tokenList->expectOperator(Operator::EQUAL);
+        if ($tokenList->hasOperator(Operator::EQUAL)) {
             $passwordFunction = $tokenList->using(null, 50700)
                 ? $tokenList->getAnyKeyword(Keyword::PASSWORD)
                 : $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::OLD_PASSWORD);
@@ -888,8 +886,14 @@ class UserCommandsParser
             if ($passwordFunction !== null) {
                 $tokenList->expectSymbol(')');
             }
-            $retain = false;
+        } else {
+            $tokenList->expectKeywords(Keyword::TO, Keyword::RANDOM);
         }
+
+        if ($tokenList->hasKeyword(Keyword::REPLACE)) {
+            $replace = $tokenList->expectString();
+        }
+        $retain = $tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD);
 
         return new SetPasswordCommand($user, $passwordFunction, $password, $replace, $retain);
     }

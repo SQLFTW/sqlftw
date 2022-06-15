@@ -29,9 +29,10 @@ class AlterAuthOption extends AuthOption implements AlterUserAction
         $password = null,
         ?StringValue $as = null,
         ?string $replace = null,
-        bool $retainCurrentPassword = false
+        bool $retainCurrentPassword = false,
+        bool $oldHashedPassword = false
     ) {
-        parent::__construct($authPlugin, $password, $as);
+        parent::__construct($authPlugin, $password, $as, null, $oldHashedPassword);
 
         $this->replace = $replace;
         $this->retainCurrentPassword = $retainCurrentPassword;
