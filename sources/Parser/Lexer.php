@@ -439,7 +439,9 @@ class Lexer
                         $position++;
                         $column++;
                         if ($condition !== null) {
-                            throw new LexerException('Comment inside conditional comment starting with: ' . substr($string, $position - 2, 50), $position, $string);
+                            $exception = new LexerException('Comment inside conditional comment.', $position, $string);
+
+                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::INVALID, $start, '', null, $condition, $exception);
                         }
                         if (preg_match('~^[Mm]?!(?:[0-9]{5,6})?~', substr($string, $position, 10), $m) === 1) {
                             $versionId = strtoupper(str_replace('!', '', $m[0]));
@@ -475,7 +477,9 @@ class Lexer
                             }
                         }
                         if (!$ok) {
-                            throw new LexerException('End of comment not found', $position, $string);
+                            $exception = new LexerException('End of comment not found.', $position, $string);
+
+                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::INVALID, $start, $value, null, $condition, $exception);
                         }
 
                         if ($this->withComments) {
