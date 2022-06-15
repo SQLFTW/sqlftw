@@ -82,6 +82,7 @@ preorder
 preparable
 pushdown
 reindex
+reorganise
 rewriter
 serializables
 startup
@@ -94,6 +95,7 @@ unescape
 unescaped
 unlogged
 unparenthesized
+unregister
 updatable
 uppercased
 validator
@@ -118,6 +120,8 @@ autorejoin
 autotune
 avgx
 avgy
+bdb
+berkeleydb
 bernoulli
 bitvar
 bqual
@@ -126,6 +130,7 @@ calc
 capath
 certifier
 chk
+chunksize
 ciphersuite
 ciphersuites
 clob
@@ -149,6 +154,7 @@ fdatasync
 filesystem
 fips
 frac
+frechet
 frm
 fsync
 gcol
@@ -195,6 +201,7 @@ objectagg
 oids
 passwordless
 paxos
+pico
 pli
 pll
 plsql
