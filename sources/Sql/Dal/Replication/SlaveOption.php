@@ -92,7 +92,7 @@ class SlaveOption extends SqlEnum
         self::MASTER_SSL_CIPHER => BaseType::CHAR,
         self::MASTER_SSL_VERIFY_SERVER_CERT => BaseType::BOOL,
         self::MASTER_TLS_VERSION => BaseType::CHAR,
-        self::MASTER_TLS_CIPHERSUITES => BaseType::CHAR,
+        self::MASTER_TLS_CIPHERSUITES => BaseType::CHAR . '|' . NullLiteral::class,
         self::MASTER_PUBLIC_KEY_PATH => BaseType::CHAR,
         self::GET_MASTER_PUBLIC_KEY => BaseType::BOOL,
         self::NETWORK_NAMESPACE => BaseType::CHAR,

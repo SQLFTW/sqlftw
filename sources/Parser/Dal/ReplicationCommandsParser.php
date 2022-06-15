@@ -119,6 +119,13 @@ class ReplicationCommandsParser
                 case BaseType::CHAR:
                     $value = $tokenList->expectString();
                     break;
+                case BaseType::CHAR . '|' . NullLiteral::class:
+                    if ($tokenList->hasKeyword(Keyword::NULL)) {
+                        $value = new NullLiteral();
+                    } else {
+                        $value = $tokenList->expectString();
+                    }
+                    break;
                 case BaseType::UNSIGNED:
                     $value = (int) $tokenList->expectUnsignedInt();
                     break;
