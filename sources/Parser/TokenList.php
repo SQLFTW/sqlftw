@@ -618,6 +618,11 @@ class TokenList
         }
     }
 
+    public function expectNameOrString(): string
+    {
+        return $this->expect(T::NAME | T::STRING)->value;
+    }
+
     public function expectNonReservedNameOrString(): string
     {
         return $this->expect(T::NAME | T::STRING, T::RESERVED)->value;
@@ -1084,7 +1089,7 @@ class TokenList
 
     public function expectUserName(): UserName
     {
-        $name = $this->expectNonReservedNameOrString();
+        $name = $this->expectNameOrString();
         $token = $this->get(T::AT_VARIABLE);
         if ($token !== null) {
             $host = $token->value;
