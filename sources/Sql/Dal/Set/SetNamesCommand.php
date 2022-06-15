@@ -13,40 +13,45 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
-use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Expression\DefaultLiteral;
 
 class SetNamesCommand implements SetCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var Charset|null */
+    /** @var Charset|DefaultLiteral */
     private $charset;
 
-    /** @var Collation|null */
+    /** @var Collation|DefaultLiteral|null */
     private $collation;
 
     /** @var array<SetAssignment> */
     private $assignments;
 
     /**
+     * @param Charset|DefaultLiteral $charset
+     * @param Collation|DefaultLiteral|null $collation
      * @param array<SetAssignment> $assignments
      */
-    public function __construct(?Charset $charset, ?Collation $collation, array $assignments = [])
+    public function __construct($charset, $collation, array $assignments = [])
     {
-        if ($charset === null && $collation !== null) {
-            throw new InvalidDefinitionException('Cannot set collation, when charset is not set.');
-        }
         $this->charset = $charset;
         $this->collation = $collation;
         $this->assignments = $assignments;
     }
 
-    public function getCharset(): ?Charset
+    /**
+     * @return Charset|DefaultLiteral
+     */
+    public function getCharset()
     {
         return $this->charset;
     }
 
-    public function getCollation(): ?Collation
+    /**
+     * @return Collation|DefaultLiteral|null
+     */
+    public function getCollation()
     {
         return $this->collation;
     }
@@ -61,8 +66,7 @@ class SetNamesCommand implements SetCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'SET NAMES '
-            . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT')
+        $result = 'SET NAMES ' . $this->charset->serialize($formatter)
             . ($this->collation !== null ? ' COLLATE ' . $this->collation->serialize($formatter) : '');
 
         if ($this->assignments !== []) {

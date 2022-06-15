@@ -20,6 +20,7 @@ use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
+use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
@@ -96,10 +97,16 @@ class SetCommandsParser
     {
         $tokenList->expectKeywords(Keyword::SET, Keyword::NAMES);
 
-        $charset = $collation = null;
-        if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
+        $collation = null;
+        if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+            $charset = new DefaultLiteral();
+        } else {
             $charset = $tokenList->expectCharsetName();
-            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+        }
+        if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                $collation = new DefaultLiteral();
+            } else {
                 $collation = $tokenList->expectCollationName();
             }
         }
