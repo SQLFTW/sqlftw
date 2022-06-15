@@ -78,19 +78,11 @@ $skips = [
 
     // badly named result file
     'r/server_offline_7.test',
+
+    // no SQL
+    'suite/stress/t/wrapper.test',
 ];
 
-//$only = 'derived_condition_pushdown.test';
-
-$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test';
-//$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test/t';
-
-$it = new RecursiveDirectoryIterator($dir);
-$it = new RecursiveIteratorIterator($it);
-
-$parser = ParserHelper::getParserFactory(Platform::MYSQL, '8.0')->getParser();
-$settings = $parser->getSettings();
-$settings->mysqlTestMode = true;
 $mysqlTestSuiteArtifacts = array_merge(Lexer::MYSQL_TEST_SUITE_COMMANDS, ['$file', '$match', '$val', '.', '[', '}', '<', '1', '111']);
 
 $multiStatementFiles = [
@@ -108,6 +100,10 @@ $replacements = [
 
     // unrecognized error test
     'mysqltest.test' => ["SELECT * FROM nowhere else;" => "SELECT * FROM nowhere;"],
+    'storedproc.test' => [
+        "set @@sql_mode = 'ansi, error_for_division_by_zero';" => "--error ER_\nset @@sql_mode = 'ansi, error_for_division_by_zero';",
+        "DROP PROCEDURE IF EXISTSsp1;" => "DROP PROCEDURE IF EXISTS sp1;",
+    ],
 
     // non-existent compression algorithm
     'table_compress.test' => ['zlibX' => 'zlib', 'abcdefghijklmnopqrstuvwxyz' => 'zlib'],
@@ -158,7 +154,26 @@ $replacements = [
         // needed to switch sql_mode
         "SET sql_mode=(SELECT CONCAT(@@sql_mode, ',PIPES_AS_CONCAT'));" => "SET sql_mode=sys.list_add(@@sql_mode, 'PIPES_AS_CONCAT');",
     ],
+
+    // not valid in later versions
+    'create.test' => [
+        'create table t1 (t1.index int);' => 'create table t1 (t1index int);',
+        'create table t1(t1.name int);' => 'create table t1(t1name int);',
+        'create table t2(test.t2.name int);' => 'create table t2(testt2name int);',
+    ],
 ];
+
+$parser = ParserHelper::getParserFactory(Platform::MYSQL, '8.0.0')->getParser();
+$settings = $parser->getSettings();
+$settings->mysqlTestMode = true;
+
+//$only = 'derived_condition_pushdown.test';
+
+$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test';
+//$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test/t';
+
+$it = new RecursiveDirectoryIterator($dir);
+$it = new RecursiveIteratorIterator($it);
 
 $count = 0;
 $size = 0;

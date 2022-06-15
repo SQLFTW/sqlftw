@@ -539,13 +539,16 @@ class Lexer
                                 $endOfLine = strlen($string);
                             }
                             $line = substr($string, $position - 1, $endOfLine - $position + 1);
-                            if (preg_match('~^-- ?(perl|write_file|append_file)~i', $line) !== 0) {
+                            if (preg_match('~^-- ?(perl|write_file|append_file|disable_parsing)~i', $line) !== 0) {
                                 // Perl code or file blocks from MySQL tests
                                 $parts = explode(' ', str_replace('-- ', '--', $line));
                                 $index = preg_match('~-- ?perl~i', $line) !== 0 ? 1 : 2;
                                 if (count($parts) === $index + 1 && preg_match('~^[A-Z_]+$~', $parts[$index]) !== false) {
                                     $end = strpos($string, "\n$parts[$index]\n", $position);
                                     $endLen = strlen($parts[$index]) + 1;
+                                } elseif (preg_match('~-- ?disable_parsing~i', $line) !== 0) {
+                                    $end = strpos($string, "--enable_parsing\n", $position);
+                                    $endLen = 16;
                                 } else {
                                     $end = strpos($string, "EOF\n", $position);
                                     $endLen = 3;
