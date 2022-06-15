@@ -618,7 +618,18 @@ class UserCommandsParser
             // GRANT PROXY ON
             $proxy = $this->parseUser($tokenList);
             $tokenList->expectKeyword(Keyword::TO);
-            $users = $this->parseUsersList($tokenList);
+
+            $users = [];
+            do {
+                $user = $this->parseUser($tokenList);
+                $option = null;
+                if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
+                    [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
+                    $option = new AuthOption($authPlugin, $password, $as);
+                }
+                $users[] = new IdentifiedUser($user, $option);
+            } while ($tokenList->hasSymbol(','));
+
             $withGrantOption = $tokenList->hasKeywords(Keyword::WITH, Keyword::GRANT, Keyword::OPTION);
 
             return new GrantProxyCommand($proxy, $users, $withGrantOption);
