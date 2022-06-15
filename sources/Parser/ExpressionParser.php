@@ -1180,6 +1180,9 @@ class ExpressionParser
             return new IntLiteral($token->value);
         } elseif (($token->type & TokenType::NUMBER) !== 0) {
             return new NumberLiteral($token->value);
+        } elseif (($token->type & TokenType::SYMBOL) !== 0 && $token->value === '\\N') {
+            // todo: preserving the original form?
+            return new NullLiteral();
         } else {
             throw new ShouldNotHappenException("Unknown token '$token->value' of type $token->type.");
         }

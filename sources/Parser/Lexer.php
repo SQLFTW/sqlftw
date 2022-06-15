@@ -293,13 +293,20 @@ class Lexer
                         break;
                     }
                     // continue
+                case '\\':
+                    if ($char === '\\' && $position < $length && $string[$position] === 'N') {
+                        $position++;
+                        $column++;
+                        yield $previous = new Token(T::SYMBOL | T::VALUE, $start, '\\N', null, $condition);
+                        break;
+                    }
+                    // continue
                 case '!':
                 case '%':
                 case '&':
                 case '<':
                 case '=':
                 case '>':
-                case '\\':
                 case '^':
                 case '|':
                 case '~':
