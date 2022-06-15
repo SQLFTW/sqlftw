@@ -810,6 +810,7 @@ class TableCommandsParser
     private function parseColumn(TokenList $tokenList): ColumnDefinition
     {
         $name = $tokenList->expectName();
+
         $type = $this->expressionParser->parseColumnType($tokenList);
         if ($tokenList->getKeywordEnum(BaseType::class) !== null) {
             // column type may appear more than once time. last one wins.

@@ -732,6 +732,16 @@ class ExpressionParser
                             throw new ParserException("Invalid time zone specification. Only 'UTC' or [INTERVAL] '+00:00' is supported.", $tokenList);
                         }
                         continue 3;
+                    case false:
+                        // skip parsing other arguments
+                        while (!$tokenList->isFinished()) {
+                            $token = $tokenList->get();
+                            if ($token->value === ')' && ($token->type & TokenType::SYMBOL) !== 0) {
+                                break;
+                            }
+                        }
+                        $tokenList->rewind(-1);
+                        continue 3;
                     case null:
                         if (in_array($keyword, [Keyword::DATE, Keyword::TIME, Keyword::DATETIME], true)) {
                             $arguments[] = new TimeTypeLiteral($keyword);

@@ -662,8 +662,8 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::TRIM => [Keyword::BOTH => false, Keyword::LEADING => false, Keyword::TRAILING => false, Keyword::FROM => false],
         // VARIANCE([ALL] expr)
         self::VARIANCE => [Keyword::ALL => RootNode::class],
-        // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [flags]) -- "The flags clause currently is unused."
-        self::WEIGHT_STRING => [Keyword::AS => CastType::class],
+        // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [LEVEL ...] [flags]) -- "The flags clause currently is unused."
+        self::WEIGHT_STRING => [Keyword::AS => CastType::class, Keyword::LEVEL => false],
     ];
 
     public function isAggregate(): bool

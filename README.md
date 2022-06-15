@@ -20,14 +20,18 @@ SQL syntax support:
 supports all SQL commands from MySQL 5.x to MySQL 8.0.29 and almost all language features
 
 not yet supported features:
-- support for multibyte encodings like `shift-jis` or `gb18030`
+- support for ascii-incompatible multibyte encodings like `shift-jis` or `gb18030`
 - resolving operator precedence in expressions
 - regular comments (conditional comments are parsed)
 - optimizer hint comments
 - quoted delimiters
 - implicit string concatenation of double-quoted strings in ANSI mode (`"foo" "bar"`)
-- \N literal for NULL (no longer supported in MySQL 8)
 - nested comments (throws parse error; deprecated in MySQL 8)
+- HeatWave plugin features (SECONDARY_ENGINE)
+
+parsed, but ignored features:
+- `SELECT ... PROCEDURE ANALYSE (...)` - removed
+- `WEIGHT_STRING(... LEVEL ...)` - removed
 
 
 Architecture:
