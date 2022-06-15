@@ -138,14 +138,16 @@ class ReplicationCommandsParser
                 case BaseType::UNSIGNED . '[]':
                     $tokenList->expectSymbol('(');
                     $value = [];
-                    do {
-                        $value[] = (int) $tokenList->expectUnsignedInt();
-                        if ($tokenList->hasSymbol(')')) {
-                            break;
-                        } else {
-                            $tokenList->expectSymbol(',');
-                        }
-                    } while (true);
+                    if (!$tokenList->hasSymbol(')')) {
+                        do {
+                            $value[] = (int)$tokenList->expectUnsignedInt();
+                            if ($tokenList->hasSymbol(')')) {
+                                break;
+                            } else {
+                                $tokenList->expectSymbol(',');
+                            }
+                        } while (true);
+                    }
                     break;
                 case ReplicationGtidAssignOption::class:
                     $uuid = null;
