@@ -667,9 +667,11 @@ class ExpressionParser
             }
 
             return $this->createSystemVariable($tokenList, $name);
-        } else {
+        } elseif ($atVariable !== '@') {
             // @foo
             return new UserVariable($atVariable);
+        } else {
+            throw new ParserException('Invalid user variable name "@".', $tokenList);
         }
     }
 

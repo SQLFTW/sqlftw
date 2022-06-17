@@ -528,7 +528,11 @@ class QueryParser
             do {
                 $token = $tokenList->get(TokenType::AT_VARIABLE);
                 if ($token !== null) {
-                    $variable = new UserVariable($token->value);
+                    if ($token->value !== '@') {
+                        $variable = new UserVariable($token->value);
+                    } else {
+                        throw new ParserException('Invalid user variable name "@".', $tokenList);
+                    }
                 } else {
                     $name = $tokenList->expectName();
                     $variable = new SimpleName($name);

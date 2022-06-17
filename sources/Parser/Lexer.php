@@ -392,9 +392,8 @@ class Lexer
                             yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
                         }
                     } else {
-                        $exception = new LexerException('Invalid @ variable name', $position, $string);
-
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, $value, null, $condition, $exception);
+                        // simple @ (valid as empty host name)
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $value, null, $condition);
                         break;
                     }
                     break;
