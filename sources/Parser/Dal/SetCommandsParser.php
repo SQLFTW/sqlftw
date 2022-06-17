@@ -158,7 +158,7 @@ class SetCommandsParser
                 if ($tokenList->hasSymbol('.')) {
                     $name .= '.' . $tokenList->expectName();
                 }
-                $variable = new SystemVariable($name, $scope);
+                $variable = $this->expressionParser->createSystemVariable($tokenList, $name, $scope);
             } elseif (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
                 // @foo, @@foo...
                 $variable = $this->expressionParser->parseAtVariable($tokenList, $token->value);
@@ -170,7 +170,7 @@ class SetCommandsParser
                     $variable = new QualifiedName($name2, $name);
                 } elseif (MysqlVariable::validateValue($name)) {
                     // system variable without scope
-                    $variable = new SystemVariable($name, Scope::get(Scope::SESSION));
+                    $variable = $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION));
                 } else {
                     // local variable
                     $variable = new QualifiedName($name);

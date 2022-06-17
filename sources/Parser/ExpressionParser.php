@@ -83,6 +83,7 @@ use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UnaryOperator;
 use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
@@ -657,7 +658,7 @@ class ExpressionParser
                 $name .= '.' . $tokenList->expectName();
             }
 
-            return new SystemVariable($name, $scope);
+            return $this->createSystemVariable($tokenList, $name, $scope);
         } elseif (substr($atVariable, 0, 2) === '@@') {
             // @@foo
             $name = substr($atVariable, 2);
@@ -665,10 +666,19 @@ class ExpressionParser
                 $name .= '.' . $tokenList->expectName();
             }
 
-            return new SystemVariable($name);
+            return $this->createSystemVariable($tokenList, $name);
         } else {
             // @foo
             return new UserVariable($atVariable);
+        }
+    }
+
+    public function createSystemVariable(TokenList $tokenList, string $name, ?Scope $scope = null): SystemVariable
+    {
+        try {
+            return new SystemVariable($name, $scope);
+        } catch (InvalidDefinitionException $e) {
+            throw new ParserException('Invalid system variable name: ' . $name, $tokenList, $e);
         }
     }
 
