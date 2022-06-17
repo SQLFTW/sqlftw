@@ -103,6 +103,7 @@ use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\UintLiteral;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use function array_values;
 use function strtoupper;
@@ -1175,7 +1176,11 @@ class TableCommandsParser
         $columns = $this->parseNonEmptyColumnList($tokenList);
         $reference = $this->parseReference($tokenList);
 
-        return new ForeignKeyDefinition($columns, $reference, $indexName);
+        try {
+            return new ForeignKeyDefinition($columns, $reference, $indexName);
+        } catch (InvalidDefinitionException $e) {
+            throw new ParserException($e->getMessage(), $tokenList, $e);
+        }
     }
 
     /**
