@@ -58,6 +58,8 @@ class SqlMode extends StringSet
     public const MSSQL = 'MSSQL';
     public const ORACLE = 'ORACLE';
     public const POSTGRESQL = 'POSTGRESQL';
+    public const MYSQL323 = 'MYSQL323';
+    public const MYSQL40 = 'MYSQL40';
 
     /** @var array<int, string> */
     private static $numeric = [
