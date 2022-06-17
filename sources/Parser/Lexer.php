@@ -612,6 +612,8 @@ class Lexer
                         }
 
                         yield new Token(T::SYMBOL | T::OPERATOR, $start, '-', null, $condition);
+                        $position++;
+                        $column++;
 
                         $token = $this->parseNumber($string, $position, $column, '-', $condition);
                         if ($token !== null) {
