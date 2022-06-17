@@ -70,7 +70,7 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::ENGINE] = $tokenList->expectName();
+            $options[TablespaceOption::ENGINE] = $tokenList->expectStorageEngineName();
         }
         if ($tokenList->hasKeyword(Keyword::ENGINE_ATTRIBUTE)) {
             $tokenList->passSymbol('=');
@@ -161,7 +161,7 @@ class TablespaceCommandsParser
                     break;
                 case Keyword::ENGINE:
                     $tokenList->passSymbol('=');
-                    $options[TablespaceOption::ENGINE] = $tokenList->expectName();
+                    $options[TablespaceOption::ENGINE] = $tokenList->expectStorageEngineName();
                     break;
                 case Keyword::ENGINE_ATTRIBUTE:
                     $tokenList->passSymbol('=');

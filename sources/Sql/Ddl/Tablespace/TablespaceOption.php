@@ -45,7 +45,7 @@ class TablespaceOption extends SqlEnum
 
     /** @var string[]|string[][] */
     private static $values = [
-        self::ENGINE => [Keyword::INNODB, Keyword::NDB, Keyword::NDBCLUSTER],
+        self::ENGINE => StorageEngine::class,
         self::ENGINE_ATTRIBUTE => BaseType::CHAR,
         self::ENCRYPTION => BaseType::BOOL,
         self::COMMENT => BaseType::CHAR,
@@ -120,6 +120,8 @@ class TablespaceOption extends SqlEnum
                 TypeChecker::check($value, BaseType::BOOL);
             } elseif ($allowedValues === SizeLiteral::class) {
                 TypeChecker::check($value, SizeLiteral::class);
+            } elseif ($allowedValues === StorageEngine::class) {
+                TypeChecker::check($value, StorageEngine::class);
             } elseif (is_array($allowedValues)) {
                 if (!in_array(strtoupper($value), $allowedValues, true)) { // @phpstan-ignore-line string!
                     throw new InvalidDefinitionException("Invalid values '$value' for option $key."); // @phpstan-ignore-line string!
