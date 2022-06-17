@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
-use function strlen;
 
 class UserVariable implements Identifier
 {
@@ -23,8 +22,8 @@ class UserVariable implements Identifier
 
     public function __construct(string $name)
     {
-        if ($name[0] !== '@' || strlen($name) < 2) {
-            throw new InvalidDefinitionException('User variable name must start with "@" and be at least 2 characters long.');
+        if ($name[0] !== '@') {
+            throw new InvalidDefinitionException('User variable name must start with "@".');
         }
         $this->name = $name;
     }
