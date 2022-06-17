@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\MysqlVariable;
+use SqlFtw\Sql\Statement;
 
-class ResetPersistCommand implements DalCommand
+class ResetPersistCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

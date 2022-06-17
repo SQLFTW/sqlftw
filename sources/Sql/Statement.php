@@ -9,7 +9,25 @@
 
 namespace SqlFtw\Sql;
 
-interface Statement extends SqlSerializable
+abstract class Statement implements SqlSerializable
 {
+
+    /**
+     * @var string[]
+     */
+    protected $commentsBefore = [];
+
+    public function setCommentsBefore(array $comments): void
+    {
+        $this->commentsBefore = $comments;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCommentsBefore(): array
+    {
+        return $this->commentsBefore;
+    }
 
 }

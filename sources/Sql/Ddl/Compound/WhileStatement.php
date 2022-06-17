@@ -7,7 +7,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
-class WhileStatement implements CompoundStatementItem
+class WhileStatement extends Statement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

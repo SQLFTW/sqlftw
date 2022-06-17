@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class ShowBinaryLogsCommand implements ShowCommand
+class ShowBinaryLogsCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

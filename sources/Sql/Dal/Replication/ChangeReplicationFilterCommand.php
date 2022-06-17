@@ -16,10 +16,11 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
 use function implode;
 
-class ChangeReplicationFilterCommand implements ReplicationCommand
+class ChangeReplicationFilterCommand extends Statement implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 

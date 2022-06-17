@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Statement;
 
-class ShowIndexesCommand implements ShowCommand
+class ShowIndexesCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

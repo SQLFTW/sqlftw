@@ -11,9 +11,10 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 use function strlen;
 
-class DeclareConditionStatement implements CompoundStatementItem
+class DeclareConditionStatement extends Statement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

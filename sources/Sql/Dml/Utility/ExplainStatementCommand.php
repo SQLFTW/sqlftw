@@ -15,8 +15,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 
-class ExplainStatementCommand implements DmlCommand
+class ExplainStatementCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

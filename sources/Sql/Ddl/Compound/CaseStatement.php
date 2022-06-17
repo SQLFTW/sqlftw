@@ -16,7 +16,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function count;
 
-class CaseStatement implements CompoundStatementItem
+class CaseStatement extends Statement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

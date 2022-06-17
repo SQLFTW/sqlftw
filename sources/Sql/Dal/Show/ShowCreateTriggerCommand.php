@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Show;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class ShowCreateTriggerCommand implements ShowCommand
+class ShowCreateTriggerCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

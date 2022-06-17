@@ -15,9 +15,10 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
 
-class GetDiagnosticsStatement implements CompoundStatementItem, Command
+class GetDiagnosticsStatement extends Statement implements CompoundStatementItem, Command
 {
     use StrictBehaviorMixin;
 

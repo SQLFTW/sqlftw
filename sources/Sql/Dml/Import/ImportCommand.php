@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dml\Import;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
+use SqlFtw\Sql\Statement;
 
-class ImportCommand implements DmlCommand
+class ImportCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

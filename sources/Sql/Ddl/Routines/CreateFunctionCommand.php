@@ -19,7 +19,7 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 use function implode;
 
-class CreateFunctionCommand implements StoredFunctionCommand, CreateRoutineCommand
+class CreateFunctionCommand extends Statement implements StoredFunctionCommand, CreateRoutineCommand
 {
     use StrictBehaviorMixin;
 

@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Ddl\Table;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class CreateTableLikeCommand implements AnyCreateTableCommand
+class CreateTableLikeCommand extends Statement implements AnyCreateTableCommand
 {
     use StrictBehaviorMixin;
 

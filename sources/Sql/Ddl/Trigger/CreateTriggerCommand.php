@@ -15,7 +15,7 @@ use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
-class CreateTriggerCommand implements TriggerCommand
+class CreateTriggerCommand extends Statement implements TriggerCommand
 {
     use StrictBehaviorMixin;
 

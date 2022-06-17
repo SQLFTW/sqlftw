@@ -17,8 +17,9 @@ use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 
-class CreateIndexCommand implements IndexCommand, DdlTableCommand
+class CreateIndexCommand extends Statement implements IndexCommand, DdlTableCommand
 {
     use StrictBehaviorMixin;
 

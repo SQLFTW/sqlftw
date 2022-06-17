@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dml\Prepared;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class DeallocatePrepareCommand implements PreparedStatementCommand
+class DeallocatePrepareCommand extends Statement implements PreparedStatementCommand
 {
     use StrictBehaviorMixin;
 

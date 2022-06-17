@@ -15,7 +15,7 @@ use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
-class AlterEventCommand implements EventCommand
+class AlterEventCommand extends Statement implements EventCommand
 {
     use StrictBehaviorMixin;
 

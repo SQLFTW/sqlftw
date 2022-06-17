@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Ddl\Schema;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class DropSchemaCommand implements SchemaCommand
+class DropSchemaCommand extends Statement implements SchemaCommand
 {
     use StrictBehaviorMixin;
 

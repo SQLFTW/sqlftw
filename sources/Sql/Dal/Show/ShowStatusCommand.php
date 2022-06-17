@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\Scope;
+use SqlFtw\Sql\Statement;
 
-class ShowStatusCommand implements ShowCommand
+class ShowStatusCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

@@ -12,9 +12,10 @@ namespace SqlFtw\Parser;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Statement;
 use Throwable;
 
-class TesterCommand implements Command
+class TesterCommand extends Statement implements Command
 {
     use StrictBehaviorMixin;
 

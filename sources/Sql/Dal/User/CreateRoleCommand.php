@@ -11,9 +11,10 @@ namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
-class CreateRoleCommand implements UserCommand
+class CreateRoleCommand extends Statement implements UserCommand
 {
     use StrictBehaviorMixin;
 

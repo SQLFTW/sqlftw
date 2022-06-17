@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class AlterFunctionCommand implements StoredFunctionCommand, AlterRoutineCommand
+class AlterFunctionCommand extends Statement implements StoredFunctionCommand, AlterRoutineCommand
 {
     use StrictBehaviorMixin;
 

@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class ResetReplicaCommand implements ReplicationCommand
+class ResetReplicaCommand extends Statement implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 

@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Restart;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
+use SqlFtw\Sql\Statement;
 
-class RestartCommand implements DalCommand
+class RestartCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

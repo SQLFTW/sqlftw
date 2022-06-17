@@ -17,9 +17,10 @@ use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Statement;
 use function implode;
 
-abstract class LoadCommand implements DmlCommand
+abstract class LoadCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

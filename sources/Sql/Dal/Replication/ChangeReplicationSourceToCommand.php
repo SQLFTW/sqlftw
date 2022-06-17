@@ -14,6 +14,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
 use function array_filter;
 use function implode;
@@ -21,7 +22,7 @@ use function implode;
 /**
  * @phpstan-import-type ReplicaOptionValue from ReplicaOption
  */
-class ChangeReplicationSourceToCommand implements ReplicationCommand
+class ChangeReplicationSourceToCommand extends Statement implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 

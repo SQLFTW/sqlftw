@@ -14,8 +14,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\Statement;
 
-class SetNamesCommand implements SetCommand
+class SetNamesCommand extends Statement implements SetCommand
 {
     use StrictBehaviorMixin;
 

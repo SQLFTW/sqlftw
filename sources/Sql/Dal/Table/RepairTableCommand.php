@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Table;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class RepairTableCommand implements DalTablesCommand
+class RepairTableCommand extends Statement implements DalTablesCommand
 {
     use StrictBehaviorMixin;
 

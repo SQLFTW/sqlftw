@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Statement;
 
-class DoCommand implements DmlCommand
+class DoCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

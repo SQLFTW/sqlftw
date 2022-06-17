@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Statement;
 
-class KillCommand implements DalCommand
+class KillCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

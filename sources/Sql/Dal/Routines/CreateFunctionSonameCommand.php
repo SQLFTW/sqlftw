@@ -14,8 +14,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Ddl\Routines\UdfReturnDataType;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class CreateFunctionSonameCommand implements DalCommand
+class CreateFunctionSonameCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

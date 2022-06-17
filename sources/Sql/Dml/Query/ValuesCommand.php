@@ -12,9 +12,10 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Statement;
 use function array_values;
 
-class ValuesCommand implements SimpleQuery
+class ValuesCommand extends Statement implements SimpleQuery
 {
 
     /** @var non-empty-array<Row> */

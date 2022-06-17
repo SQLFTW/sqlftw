@@ -45,6 +45,7 @@ use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
+use SqlFtw\Sql\Statement;
 use function array_pop;
 use function count;
 
@@ -93,6 +94,8 @@ class QueryParser
      *   | [WITH ...] SELECT ...
      *   | TABLE ...
      *   | VALUES ...
+     *
+     * @return Query&Statement
      */
     public function parseQuery(TokenList $tokenList, ?WithClause $with = null): Query
     {

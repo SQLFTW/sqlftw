@@ -14,8 +14,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-abstract class InsertOrReplaceCommand implements DmlCommand
+abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

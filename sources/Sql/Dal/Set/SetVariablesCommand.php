@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Set;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class SetVariablesCommand implements SetCommand
+class SetVariablesCommand extends Statement implements SetCommand
 {
     use StrictBehaviorMixin;
 

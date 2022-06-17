@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Ddl\Server;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class DropSpatialReferenceSystemCommand implements ServerCommand
+class DropSpatialReferenceSystemCommand extends Statement implements ServerCommand
 {
     use StrictBehaviorMixin;
 

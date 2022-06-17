@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Statement;
 
-class DeclareStatement implements CompoundStatementItem
+class DeclareStatement extends Statement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

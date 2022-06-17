@@ -16,8 +16,9 @@ use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class CreateViewCommand implements ViewCommand, SchemaObjectCommand
+class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCommand
 {
     use StrictBehaviorMixin;
 

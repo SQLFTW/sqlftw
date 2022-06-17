@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dml\Transaction;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Scope;
+use SqlFtw\Sql\Statement;
 
-class SetTransactionCommand implements TransactionCommand
+class SetTransactionCommand extends Statement implements TransactionCommand
 {
     use StrictBehaviorMixin;
 

@@ -14,12 +14,13 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 use function array_values;
 use function count;
 use function rtrim;
 
-class RenameUserCommand implements UserCommand
+class RenameUserCommand extends Statement implements UserCommand
 {
     use StrictBehaviorMixin;
 

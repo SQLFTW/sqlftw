@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class ShowRelaylogEventsCommand implements ShowCommand
+class ShowRelaylogEventsCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

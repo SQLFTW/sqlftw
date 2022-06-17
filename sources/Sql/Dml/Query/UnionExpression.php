@@ -14,10 +14,11 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use function array_values;
 use function count;
 
-class UnionExpression implements Query
+class UnionExpression extends Statement implements Query
 {
     use StrictBehaviorMixin;
 

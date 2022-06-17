@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Reset;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
+use SqlFtw\Sql\Statement;
 
-class ResetCommand implements DalCommand
+class ResetCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

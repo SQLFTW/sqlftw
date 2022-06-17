@@ -12,9 +12,10 @@ namespace SqlFtw\Sql\Dal\User;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
-class RevokeAllCommand implements UserCommand
+class RevokeAllCommand extends Statement implements UserCommand
 {
     use StrictBehaviorMixin;
 

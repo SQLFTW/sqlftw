@@ -19,10 +19,11 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use function array_map;
 use function implode;
 
-class DeleteCommand implements DmlCommand
+class DeleteCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

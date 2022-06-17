@@ -13,9 +13,10 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 use function strtr;
 
-class DescribeTableCommand implements DmlCommand
+class DescribeTableCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

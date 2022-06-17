@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Show;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Statement;
 
-class ShowTablesCommand implements ShowCommand
+class ShowTablesCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Plugin;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class InstallPluginCommand implements PluginCommand
+class InstallPluginCommand extends Statement implements PluginCommand
 {
     use StrictBehaviorMixin;
 

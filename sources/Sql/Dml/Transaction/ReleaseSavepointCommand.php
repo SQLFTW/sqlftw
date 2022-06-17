@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dml\Transaction;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class ReleaseSavepointCommand implements TransactionCommand
+class ReleaseSavepointCommand extends Statement implements TransactionCommand
 {
     use StrictBehaviorMixin;
 

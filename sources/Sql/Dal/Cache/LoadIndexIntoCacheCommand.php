@@ -11,11 +11,12 @@ namespace SqlFtw\Sql\Dal\Cache;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
 /**
  * MySQL MyISAM tables only
  */
-class LoadIndexIntoCacheCommand implements CacheCommand
+class LoadIndexIntoCacheCommand extends Statement implements CacheCommand
 {
     use StrictBehaviorMixin;
 

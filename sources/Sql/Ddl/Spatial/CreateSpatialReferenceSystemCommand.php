@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Ddl\Server;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 
-class CreateSpatialReferenceSystemCommand implements ServerCommand
+class CreateSpatialReferenceSystemCommand extends Statement implements ServerCommand
 {
     use StrictBehaviorMixin;
 

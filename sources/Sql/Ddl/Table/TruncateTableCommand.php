@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Ddl\Table;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class TruncateTableCommand implements DdlTableCommand
+class TruncateTableCommand extends Statement implements DdlTableCommand
 {
     use StrictBehaviorMixin;
 

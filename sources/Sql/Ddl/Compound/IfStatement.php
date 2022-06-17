@@ -16,7 +16,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function count;
 
-class IfStatement implements Statement
+class IfStatement extends Statement
 {
     use StrictBehaviorMixin;
 

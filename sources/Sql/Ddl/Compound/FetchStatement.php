@@ -13,7 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
-class FetchStatement implements Statement
+class FetchStatement extends Statement
 {
     use StrictBehaviorMixin;
 

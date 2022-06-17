@@ -11,12 +11,13 @@ namespace SqlFtw\Sql\Dal\Cache;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 use function is_array;
 
 /**
  * MySQL MyISAM tables only
  */
-class CacheIndexCommand implements CacheCommand
+class CacheIndexCommand extends Statement implements CacheCommand
 {
     use StrictBehaviorMixin;
 

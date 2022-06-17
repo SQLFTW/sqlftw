@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class FlushTablesCommand implements DalCommand
+class FlushTablesCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

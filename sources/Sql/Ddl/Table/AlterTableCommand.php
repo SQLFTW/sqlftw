@@ -20,6 +20,7 @@ use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 use function assert;
 use function is_array;
 use function is_bool;
@@ -29,7 +30,7 @@ use function trim;
 /**
  * @phpstan-import-type TableOptionValue from TableOption
  */
-class AlterTableCommand implements DdlTableCommand
+class AlterTableCommand extends Statement implements DdlTableCommand
 {
 
     /** @var QualifiedName */

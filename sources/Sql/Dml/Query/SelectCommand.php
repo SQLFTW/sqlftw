@@ -17,8 +17,9 @@ use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 
-class SelectCommand implements SimpleQuery
+class SelectCommand extends Statement implements SimpleQuery
 {
     use StrictBehaviorMixin;
 

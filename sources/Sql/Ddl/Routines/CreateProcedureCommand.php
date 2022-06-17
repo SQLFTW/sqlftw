@@ -16,7 +16,7 @@ use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
-class CreateProcedureCommand implements StoredProcedureCommand, CreateRoutineCommand
+class CreateProcedureCommand extends Statement implements StoredProcedureCommand, CreateRoutineCommand
 {
     use StrictBehaviorMixin;
 

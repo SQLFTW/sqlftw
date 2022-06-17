@@ -14,8 +14,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Statement;
 
-class CallCommand implements DmlCommand
+class CallCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

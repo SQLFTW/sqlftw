@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Ddl\Event;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class DropEventCommand implements EventCommand
+class DropEventCommand extends Statement implements EventCommand
 {
     use StrictBehaviorMixin;
 

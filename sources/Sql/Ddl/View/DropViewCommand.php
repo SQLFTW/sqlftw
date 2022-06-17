@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SchemaObjectsCommand;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Statement;
 
-class DropViewCommand implements ViewCommand, SchemaObjectsCommand
+class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCommand
 {
     use StrictBehaviorMixin;
 

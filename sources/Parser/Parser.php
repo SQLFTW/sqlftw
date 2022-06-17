@@ -16,6 +16,7 @@ use Generator;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MultiStatement;
+use SqlFtw\Sql\Statement;
 use Throwable;
 use function count;
 use function iterator_to_array;

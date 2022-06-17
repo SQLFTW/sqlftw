@@ -6,7 +6,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
-class LoopStatement implements CompoundStatementItem
+class LoopStatement extends Statement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

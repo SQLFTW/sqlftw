@@ -18,12 +18,13 @@ use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use function is_array;
 
 /**
  * @phpstan-import-type TableOptionValue from TableOption
  */
-class CreateTableCommand implements AnyCreateTableCommand
+class CreateTableCommand extends Statement implements AnyCreateTableCommand
 {
     use StrictBehaviorMixin;
 

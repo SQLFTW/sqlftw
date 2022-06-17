@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dml\Utility;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
+use SqlFtw\Sql\Statement;
 
-class HelpCommand implements DmlCommand
+class HelpCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

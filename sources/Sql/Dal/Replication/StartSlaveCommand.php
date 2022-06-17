@@ -12,10 +12,11 @@ namespace SqlFtw\Sql\Dal\Replication;
 use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 use function implode;
 use function is_array;
 
-class StartSlaveCommand implements ReplicationCommand
+class StartSlaveCommand extends Statement implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 

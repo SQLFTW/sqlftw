@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;

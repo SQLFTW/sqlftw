@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Compound;
 
-use SqlFtw\Sql\Statement;
+use SqlFtw\Sql\SqlSerializable;
 
-interface CompoundStatementItem extends Statement
+interface CompoundStatementItem extends SqlSerializable
 {
 
 }

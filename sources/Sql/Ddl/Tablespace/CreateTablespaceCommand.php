@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Statement;
 use function assert;
 use function is_bool;
 use function is_string;
@@ -19,7 +20,7 @@ use function is_string;
 /**
  * @phpstan-import-type TablespaceOptionValue from TablespaceOption
  */
-class CreateTablespaceCommand implements TablespaceCommand
+class CreateTablespaceCommand extends Statement implements TablespaceCommand
 {
     use StrictBehaviorMixin;
 

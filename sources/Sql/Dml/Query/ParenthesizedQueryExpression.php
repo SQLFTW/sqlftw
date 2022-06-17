@@ -13,8 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Statement;
 
-class ParenthesizedQueryExpression implements Query
+class ParenthesizedQueryExpression extends Statement implements Query
 {
 
     /** @var Query */

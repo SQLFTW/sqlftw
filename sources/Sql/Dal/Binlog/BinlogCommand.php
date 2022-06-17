@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Binlog;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
+use SqlFtw\Sql\Statement;
 
-class BinlogCommand implements DalCommand
+class BinlogCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

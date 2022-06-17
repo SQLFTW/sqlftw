@@ -11,7 +11,7 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Formatter\Formatter;
 
-class MultiStatement implements Command
+class MultiStatement extends Statement implements Command
 {
 
     /** @var non-empty-array<Command> */

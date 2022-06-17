@@ -6,7 +6,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
-class CompoundStatement implements Statement
+class CompoundStatement extends Statement
 {
     use StrictBehaviorMixin;
 

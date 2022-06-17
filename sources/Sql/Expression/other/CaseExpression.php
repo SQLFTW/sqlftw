@@ -18,7 +18,7 @@ use function count;
 /**
  * CASE x THEN y ELSE z END
  */
-class CaseExpression implements Statement, RootNode
+class CaseExpression extends Statement implements RootNode
 {
     use StrictBehaviorMixin;
 

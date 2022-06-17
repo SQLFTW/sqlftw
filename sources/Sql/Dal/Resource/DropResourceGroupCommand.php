@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Dal\Resource;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
+use SqlFtw\Sql\Statement;
 
-class DropResourceGroupCommand implements DalCommand
+class DropResourceGroupCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

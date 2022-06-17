@@ -14,8 +14,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Statement;
 
-class HandlerReadCommand implements HandlerCommand
+class HandlerReadCommand extends Statement implements HandlerCommand
 {
     use StrictBehaviorMixin;
 

@@ -20,9 +20,10 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use function count;
 
-class UpdateCommand implements DmlCommand
+class UpdateCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 

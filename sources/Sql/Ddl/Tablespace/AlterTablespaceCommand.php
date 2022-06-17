@@ -13,13 +13,14 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Statement;
 use function is_bool;
 use function is_int;
 
 /**
  * @phpstan-import-type TablespaceOptionValue from TablespaceOption
  */
-class AlterTablespaceCommand implements TablespaceCommand
+class AlterTablespaceCommand extends Statement implements TablespaceCommand
 {
     use StrictBehaviorMixin;
 

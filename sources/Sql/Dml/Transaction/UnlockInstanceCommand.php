@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dml\Transaction;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class UnlockInstanceCommand implements TransactionCommand
+class UnlockInstanceCommand extends Statement implements TransactionCommand
 {
     use StrictBehaviorMixin;
 

@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Component;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class UninstallComponentCommand implements ComponentCommand
+class UninstallComponentCommand extends Statement implements ComponentCommand
 {
     use StrictBehaviorMixin;
 

@@ -13,9 +13,10 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Statement;
 use function is_numeric;
 
-class ResignalStatement implements Command, CompoundStatementItem
+class ResignalStatement extends Statement implements Command, CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Ddl\Instance;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\DdlCommand;
+use SqlFtw\Sql\Statement;
 
-class AlterInstanceCommand implements DdlCommand
+class AlterInstanceCommand extends Statement implements DdlCommand
 {
     use StrictBehaviorMixin;
 

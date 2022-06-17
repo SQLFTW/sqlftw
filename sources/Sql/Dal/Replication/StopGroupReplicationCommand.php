@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class StopGroupReplicationCommand implements GroupReplicationCommand
+class StopGroupReplicationCommand extends Statement implements GroupReplicationCommand
 {
     use StrictBehaviorMixin;
 

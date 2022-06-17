@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\SizeLiteral;
+use SqlFtw\Sql\Statement;
 
-class AlterLogfileGroupCommand implements LogfileGroupCommand
+class AlterLogfileGroupCommand extends Statement implements LogfileGroupCommand
 {
     use StrictBehaviorMixin;
 

@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Ddl\Schema;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class AlterSchemaCommand implements SchemaCommand
+class AlterSchemaCommand extends Statement implements SchemaCommand
 {
     use StrictBehaviorMixin;
 

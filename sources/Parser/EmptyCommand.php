@@ -12,17 +12,19 @@ namespace SqlFtw\Parser;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Statement;
 
-class EmptyCommand implements Command
+class EmptyCommand extends Statement implements Command
 {
     use StrictBehaviorMixin;
 
     /** @var TokenList */
     private $tokenList;
 
-    public function __construct(TokenList $tokenList)
+    public function __construct(TokenList $tokenList, array $commentsBefore)
     {
         $this->tokenList = $tokenList;
+        $this->commentsBefore = $commentsBefore;
     }
 
     public function getTokenList(): TokenList

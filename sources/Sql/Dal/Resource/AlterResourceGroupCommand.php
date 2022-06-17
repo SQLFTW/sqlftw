@@ -12,11 +12,12 @@ namespace SqlFtw\Sql\Dal\Resource;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
+use SqlFtw\Sql\Statement;
 use function array_map;
 use function count;
 use function implode;
 
-class AlterResourceGroupCommand implements DalCommand
+class AlterResourceGroupCommand extends Statement implements DalCommand
 {
     use StrictBehaviorMixin;
 

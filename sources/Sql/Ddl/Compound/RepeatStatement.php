@@ -7,7 +7,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
-class RepeatStatement implements CompoundStatementItem
+class RepeatStatement extends Statement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

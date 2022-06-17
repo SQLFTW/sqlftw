@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class ShowProcessListCommand implements ShowCommand
+class ShowProcessListCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

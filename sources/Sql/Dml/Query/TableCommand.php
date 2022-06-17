@@ -13,8 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Statement;
 
-class TableCommand implements SimpleQuery
+class TableCommand extends Statement implements SimpleQuery
 {
 
     /** @var QualifiedName */

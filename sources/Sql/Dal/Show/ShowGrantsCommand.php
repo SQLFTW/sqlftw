@@ -12,9 +12,10 @@ namespace SqlFtw\Sql\Dal\Show;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
-class ShowGrantsCommand implements ShowCommand
+class ShowGrantsCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

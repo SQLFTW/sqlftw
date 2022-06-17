@@ -11,8 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Statement;
 
-class ShowErrorsCommand implements ShowCommand
+class ShowErrorsCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 

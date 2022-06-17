@@ -12,9 +12,10 @@ namespace SqlFtw\Sql\Dal\User;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
-class AlterUserInitiateRegistrationCommand implements AlterUserRegistrationCommand
+class AlterUserInitiateRegistrationCommand extends Statement implements AlterUserRegistrationCommand
 {
     use StrictBehaviorMixin;
 

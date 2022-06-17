@@ -14,11 +14,12 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 use function array_values;
 use function count;
 use function rtrim;
 
-class RenameTableCommand implements DdlTablesCommand
+class RenameTableCommand extends Statement implements DdlTablesCommand
 {
     use StrictBehaviorMixin;
 

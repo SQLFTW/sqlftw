@@ -12,8 +12,9 @@ namespace SqlFtw\Sql\Ddl\Compound;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
+use SqlFtw\Sql\Statement;
 
-class DeclareCursorStatement implements CompoundStatementItem
+class DeclareCursorStatement extends Statement implements CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

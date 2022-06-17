@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-interface Command extends Statement
+interface Command
 {
 
 }

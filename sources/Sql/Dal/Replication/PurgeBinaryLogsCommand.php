@@ -13,8 +13,9 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\Statement;
 
-class PurgeBinaryLogsCommand implements ReplicationCommand
+class PurgeBinaryLogsCommand extends Statement implements ReplicationCommand
 {
     use StrictBehaviorMixin;
 
