@@ -339,7 +339,10 @@ class Lexer
                         $position++;
                         $column++;
                         if ($string[$position] === '`') {
-                            yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, $condition, '@@');
+                            // @@`variable`
+                            $position++;
+                            $column++;
+                            yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, '`', $condition, '@@');
                             break;
                         }
                         while ($position < $length) {
@@ -1111,7 +1114,7 @@ class Lexer
 
         $value = $this->unescapeString($orig, $quote);
 
-        return new Token($type, $startAt, ($prefix === '@' ? $prefix : '') . $value, $prefix . $orig, $condition);
+        return new Token($type, $startAt, ($prefix === '@' || $prefix === '@@' ? $prefix : '') . $value, $prefix . $orig, $condition);
     }
 
     /**
