@@ -912,7 +912,20 @@ class TokenList
      */
     public function hasKeyword(string $keyword): bool
     {
-        return $this->getKeyword($keyword) !== null;
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token === null || ($token->type & T::KEYWORD) === 0) {
+            return false;
+        }
+        $value = strtoupper($token->value);
+        if ($value !== $keyword) {
+            return false;
+        }
+        $this->position++;
+
+        return true;
     }
 
     public function passKeyword(string $keyword): void
