@@ -971,16 +971,20 @@ class TokenList
 
     public function getAnyKeyword(string ...$keywords): ?string
     {
-        $position = $this->position;
-        foreach ($keywords as $keyword) {
-            $value = $this->getKeyword($keyword);
-            if ($value !== null) {
-                return $value;
-            }
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
         }
-        $this->position = $position;
+        $token = $this->tokens[$this->position] ?? null;
+        if ($token === null || ($token->type & T::KEYWORD) === 0) {
+            return null;
+        }
+        $value = strtoupper($token->value);
+        if (!in_array($value, $keywords, true)) {
+            return null;
+        }
+        $this->position++;
 
-        return null;
+        return $value;
     }
 
     /**
