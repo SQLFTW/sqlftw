@@ -111,7 +111,4 @@ class TokenType extends IntSet
     /** Produced on invalid input to allow further parsing, instead of producing exception */
     public const INVALID = PowersOfTwo::_2G;
 
-    /** Block of non-SQL code from MySQL tests */
-    public const TEST_CODE = PowersOfTwo::_4G;
-
 }

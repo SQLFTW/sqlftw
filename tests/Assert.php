@@ -6,7 +6,6 @@ use Dogma\Debug\Callstack;
 use Dogma\Debug\Debugger;
 use Dogma\Debug\Dumper;
 use Dogma\Re;
-use Dogma\Str;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
@@ -22,7 +21,6 @@ use function implode;
 use function preg_replace;
 use function sprintf;
 use function str_replace;
-use function strtolower;
 
 /**
  * @phpstan-import-type PhpBacktraceItem from Callstack
@@ -126,27 +124,15 @@ class Assert extends DogmaAssert
     public static function validCommands(
         string $sql,
         ?Parser $parser = null,
-        ?callable $before = null,
-        ?callable $after = null
+        ?callable $onError = null
     ): void {
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
 
         try {
-            foreach ($parser->parse($sql, $before, $after) as $command) {
+            foreach ($parser->parse($sql) as $command) {
                 if ($command instanceof InvalidCommand) {
-                    $source = strtolower($command->getTokenList()->serialize());
-                    // filtering "false" negatives
-                    // todo: also should filter false positives
-                    if (Str::contains($source, "--error ") || Str::contains($source, "-- error") || Str::contains($source, "--disable_testcase")) {
-                        self::true(true);
-                    } else {
-                        if (class_exists(Debugger::class)) {
-                            $tokenList = $command->getTokenList();
-                            Debugger::dump($tokenList);
-                            //rd(substr($sql, $tokenList->getStartOffset(), 200));
-                        }
-                        //Debugger::callstack(100, 1, 5, 100, $command->getException()->getTrace());
-                        //self::fail('Invalid command');
+                    $fail = $onError !== null ? $onError($command, $sql) : true;
+                    if ($fail) {
                         throw $command->getException();
                     }
                 } else {

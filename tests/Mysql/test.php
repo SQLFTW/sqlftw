@@ -5,18 +5,18 @@
 
 namespace SqlFtw\Tests\Mysql;
 
+use Dogma\Debug\Dumper;
 use Dogma\Debug\Units;
+use Dogma\Re;
 use Dogma\Str;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use SqlFtw\Formatter\Formatter;
+use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Lexer;
-use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Sql\Command;
 use SqlFtw\Tests\Assert;
 use SqlFtw\Tests\ParserHelper;
 use function array_merge;
@@ -26,15 +26,16 @@ use function file_get_contents;
 use function implode;
 use function in_array;
 use function preg_match;
+use function rd;
 use function rl;
-use function rt;
 use function str_replace;
 use function strlen;
 use function strtolower;
+use function substr;
 
 require dirname(__DIR__) . '/bootstrap.php';
 
-ini_set('memory_limit', '256MB');
+ini_set('memory_limit', (string) (256* 1024 * 1024));
 
 $skips = [
     // todo: problems with �\' in shift-jis encoding. need to tokenize strings per-character not per-byte
@@ -79,16 +80,19 @@ $skips = [
     // badly named result file
     'r/server_offline_7.test',
 
-    // no SQL
+    // no significant SQL to test, but problems...
     'suite/stress/t/wrapper.test',
+    'binlog_expire_warnings.test',
+    'binlog_gtid_accessible_table_with_readonly.test',
+    'mysqltest.test',
+    'charset_master.test',
 ];
-
-$mysqlTestSuiteArtifacts = array_merge(Lexer::MYSQL_TEST_SUITE_COMMANDS, ['$file', '$match', '$val', '.', '[', '}', '<', '1', '111']);
 
 $multiStatementFiles = [
     'rpl_multi_query', 'rpl_sp', 'audit_plugin_2', 'innodb_bug48024', 'ndb_sp', 'nesting', 'prepared_stmts_by_stored_programs',
     'rpl_events', 'rpl_bug31076', 'func_time', 'metadata', 'multi_statement', 'parser', 'partition', 'session_tracker_trx_state_myisam',
-    'signal', 'sp-security', 'sp-ucs2', 'sp', 'sp_trans_myisam', 'trigger', 'view',
+    'signal', 'sp-security', 'sp-ucs2', 'sp', 'sp_trans_myisam', 'trigger', 'view', 'query_cache', 'session_tracker_trx_state',
+    'sp_notembedded', 'sp_trans', 'rpl_row_sp007', 'binlog_switch_inside_trans', 'sql_low_priority_updates_func',
 ];
 $multiStatementRegexp = '~(' . implode('|', $multiStatementFiles) . ')\\.test$~';
 
@@ -103,6 +107,9 @@ $replacements = [
     'storedproc.test' => [
         "set @@sql_mode = 'ansi, error_for_division_by_zero';" => "--error ER_\nset @@sql_mode = 'ansi, error_for_division_by_zero';",
         "DROP PROCEDURE IF EXISTSsp1;" => "DROP PROCEDURE IF EXISTS sp1;",
+    ],
+    'events_2.test' => [
+        'end|                                                                                                                                                    --error ER_EVENT_RECURSION_FORBIDDEN' => "end|\n--error ER_EVENT_RECURSION_FORBIDDEN",
     ],
 
     // non-existent compression algorithm
@@ -137,6 +144,16 @@ $replacements = [
     // broken delimiters
     'json_no_table.test' => ['execute s1 using @x # OK - returns ["a", "b"] and ["c", "a"];' => 'execute s1 using @x; # OK - returns ["a", "b"] and ["c", "a"]'],
     'ndb_alter_table_column_online.test' => ["name like '%t1%'#and type like '%UserTable%';" => "name like '%t1%';#and type like '%UserTable%'"],
+    'rpl_temporary.test' => ['insert into t1 select * from `\E4\F6\FC\C4\D6\DC`' => 'insert into t1 select * from `\E4\F6\FC\C4\D6\DC`;'],
+    'rpl_user_variables.test' => ['CREATE FUNCTION f1() RETURNS INT RETURN @a; DELIMITER |; CREATE' => "CREATE FUNCTION f1() RETURNS INT RETURN @a;\nDELIMITER |;\nCREATE"],
+
+    // too much hustle to filter out
+    'func_misc.test' => ["if (!` SELECT (@sleep_time_per_result_row * @row_count - @max_acceptable_delay >\n              @sleep_time_per_result_row) AND (@row_count - 1 >= 3)`)" => 'if (XXX)'],
+    //'multi_plugin_load.test' => ["if (!`select count(*) FROM INFORMATION_SCHEMA.PLUGINS\n      WHERE PLUGIN_NAME='qa_auth_server'\n      and PLUGIN_LIBRARY LIKE 'qa_auth_server%'`)" => 'if (XXX)'],
+    //'audit_plugin.test' => ["if(`SELECT CONVERT(@@version_compile_os USING latin1)\n           IN (\"Win32\",\"Win64\",\"Windows\")`)" => 'if (XXX)'],
+    //'audit_plugin_2.test' => ["if(`SELECT CONVERT(@@version_compile_os USING latin1)\n           IN (\"Win32\",\"Win64\",\"Windows\")`)" => 'if (XXX)'],
+    //'audit_plugin_bugs.test' => ["if(`SELECT CONVERT(@@version_compile_os USING latin1)\n           IN (\"Win32\",\"Win64\",\"Windows\")`)" => 'if (XXX)'],
+    //'ndb_one_fragment.test' => ["if (`select max(used_pages) > 1.15 * @data_memory_pages\n       from ndbinfo.memoryusage where memory_type = 'Data memory'`)" => 'if (XXX)'],
 
     // invalid "," before ENGINE
     'ddl_rewriter.test' => ["PARTITION p1 VALUES IN (1) DATA DIRECTORY = '/tmp' ,ENGINE = InnoDB" => "PARTITION p1 VALUES IN (1) DATA DIRECTORY = '/tmp' ENGINE = InnoDB"],
@@ -155,19 +172,31 @@ $replacements = [
         "SET sql_mode=(SELECT CONCAT(@@sql_mode, ',PIPES_AS_CONCAT'));" => "SET sql_mode=sys.list_add(@@sql_mode, 'PIPES_AS_CONCAT');",
     ],
 
-    // not valid in later versions
-    'create.test' => [
-        'create table t1 (t1.index int);' => 'create table t1 (t1index int);',
-        'create table t1(t1.name int);' => 'create table t1(t1name int);',
-        'create table t2(test.t2.name int);' => 'create table t2(testt2name int);',
-    ],
+    // emulating variables needed for this: SET @@sql_mode= @org_mode;
+    'sql_mode.test' => ["SELECT '\''; # restore Emacs SQL mode font lock sanity" => "SELECT ''; # restore Emacs SQL mode font lock sanity"],
 ];
 
-$parser = ParserHelper::getParserFactory(Platform::MYSQL, '8.0.0')->getParser();
-$settings = $parser->getSettings();
-$settings->mysqlTestMode = true;
+$knownFailures = [
+    'create table t1 (t1.index int)', // qualified column name
+    'create table t1(t1.name int)', // qualified column name
+    'create table t2(test.t2.name int)', // qualified column name
+    'REVOKE system_user_role ON *.* FROM non_sys_user', // "REVOKE <role>" has no "ON"
+    'create index on edges (s)', // index without a name
+    'create index on edges (e)', // index without a name
+    'CREATE INDEX ON t1(a)', // index without a name
+    'CREATE INDEX ON t1 (col1, col2)', // index without a name
+    // "rows" is already a reserved word
+    "--echo the result rows with missed equal to NULL should count all rows (160000)\n--echo the other rows are the failed lookups and there should not be any such\nselect if(isnull(t1.a),t2.a,NULL) missed, count(*) rows from t2 left join t1 on t1.a=t2.a group by if(isnull(t1.a),t2.a,NULL)",
+    "--echo the left join below should result in scanning t2 and do pk lookups in t1\n--replace_column 10 # 11 #\nexplain select if(isnull(t1.a),t2.a,NULL) missed, count(*) rows from t2 left join t1 on t1.a=t2.a group by if(isnull(t1.a),t2.a,NULL)",
+    'else { } DROP TABLE t2', // todo: tests
+    "-- X   --error ER_NO_SYSTEM_TABLE_ACCESS\n  CREATE PROCEDURE ddse_access() DROP TABLE mysql.innodb_index_stats(i INTEGER)", // no idea what the () on end means
+];
 
-//$only = 'derived_condition_pushdown.test';
+$parser = ParserHelper::getParserFactory(Platform::MYSQL, '8.0.29')->getParser();
+$settings = $parser->getSettings();
+$settings->mysqlTestMode = false;
+
+//$only = 'fulltext.test';
 
 $dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test';
 //$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test/t';
@@ -178,7 +207,8 @@ $it = new RecursiveIteratorIterator($it);
 $count = 0;
 $size = 0;
 
-rt();
+echo "\n";
+
 /** @var SplFileInfo $fileInfo */
 foreach ($it as $fileInfo) {
     if (!$fileInfo->isFile() || $fileInfo->getExtension() !== 'test') {
@@ -190,19 +220,24 @@ foreach ($it as $fileInfo) {
     }
     foreach ($skips as $skip) {
         if (Str::contains($path, $skip)) {
-            rl('SKIPPED: ' . $path);
+            //rl('SKIPPED: ' . $path);
             continue 2;
         }
     }
 
-    rl(Str::after($path, 'mysql-test'));
+    rl($path, null, 'g');
+
     $contents = (string) file_get_contents($fileInfo->getPathname());
     $contents = str_replace("\r\n", "\n", $contents);
+
     foreach ($replacements as $file => $repl) {
         if (Str::endsWith($path, $file)) {
             $contents = Str::replaceKeys($contents, $repl);
         }
     }
+
+    $contents = MysqlTestFilter::filter($contents);
+    //continue;
 
     // reset settings
     $settings->setMode($settings->getPlatform()->getDefaultMode());
@@ -210,65 +245,12 @@ foreach ($it as $fileInfo) {
     $settings->setMultiStatements(false);
     if (preg_match($multiStatementRegexp, $path) !== 0) {
         // multi-statements
-        rl('multi-statements on');
         $settings->setMultiStatements(true);
     }
 
     $count++;
     $size += strlen($contents);
 
-    $before = static function (TokenList $tokenList) use ($mysqlTestSuiteArtifacts): ?TokenList {
-        $tokens = $tokenList->getTokens();
-        do {
-            $count = count($tokens);
-            $first = $tokenList->getFirstSignificantToken();
-            if ($first === null) {
-                return null;
-            }
-            $value = strtolower($first->value);
-            if (in_array($value, $mysqlTestSuiteArtifacts, true)) {
-                foreach ($tokens as $i => $token) {
-                    if (($token->type & TokenType::TEST_CODE) !== 0 && $token->value === 'EOF') {
-                        $tokens = array_slice($tokens, $i + 1);
-                        if ($tokens === []) {
-                            return null;
-                        }
-                        break;
-                    }
-                }
-                return null;
-            }
-        } while (count($tokens) !== $count);
-
-        // for testing serialization
-        // remove comments and perl, replace whitespace with single space and \n after delimiter
-        /*$previous = new Token(0, 0, '');
-        foreach ($tokens as $i => $token) {
-            if (($token->type & (TokenType::TEST_CODE | TokenType::COMMENT)) !== 0) {
-                unset($tokens[$i]);
-            } elseif (($token->type & TokenType::WHITESPACE) !== 0) {
-                if (($previous->type & TokenType::SYMBOL) !== 0 && $previous->value === ';') {
-                    $tokens[$i] = $previous = new Token(TokenType::WHITESPACE, -1, "\n");
-                } elseif (($previous->type & (TokenType::DELIMITER || TokenType::DELIMITER_DEFINITION)) !== 0) {
-                    $tokens[$i] = $previous = new Token(TokenType::WHITESPACE, -1, "\n");
-                } elseif (($previous->type & TokenType::WHITESPACE) !== 0) {
-                    unset($tokens[$i]);
-                } else {
-                    $tokens[$i] = $previous = new Token(TokenType::WHITESPACE, -1, ' ');
-                }
-            } else {
-                $previous = $token;
-            }
-        }*/
-
-        if ($tokens === []) {
-            return null;
-        }
-
-        return new TokenList(array_values($tokens), $tokenList->getSettings());
-    };
-
-    $after = null;
     /*$formatter = new Formatter($settings);
     $after = static function (TokenList $tokenList, array $commands) use ($formatter): void {
         Assert::same($tokenList->serialize(), implode("\n", array_map(static function (Command $command) use ($formatter): string {
@@ -276,8 +258,33 @@ foreach ($it as $fileInfo) {
         }, $commands)));
     };*/
 
-    Assert::validCommands($contents, $parser, $before, $after);
-    rt();
+    Assert::validCommands($contents, $parser, static function (InvalidCommand $command, string $sql)
+        use ($count, $path, $knownFailures): bool
+    {
+        $statement = $command->getTokenList()->serialize();
+        $comments = $command->getCommentsBefore();
+        $lastComment = end($comments);
+        if (in_array($statement, $knownFailures, true)) {
+            return false;
+        } elseif ($lastComment !== false && Str::startsWith($lastComment, '-- error')) {
+            return false;
+        } elseif ($statement[0] === '}' || Str::endsWith($statement, '}')) {
+            return false;
+        }
+
+        rl($count . ': ' . Str::after($path, 'mysql-test'));
+        rd($command->getTokenList());
+        rd($statement);
+        rd($comments);
+        $firstToken = $command->getTokenList()->getTokens()[0];
+        rd(substr($sql, $firstToken->position - 100, 200));
+
+        return true;
+    });
+    echo '.';
+    if ($count > 500) {
+        //break;
+    }
 }
 
 rl('Count: ' . $count);

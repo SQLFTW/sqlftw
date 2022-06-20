@@ -26,6 +26,18 @@ class Parser
 {
     use StrictBehaviorMixin;
 
+    private const STARTING_KEYWORDS = [
+        Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE, Keyword::CALL, Keyword::CHANGE,
+        Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE, Keyword::DEALLOCATE, Keyword::DELETE,
+        Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE, Keyword::DO, Keyword::DROP, Keyword::EXECUTE, Keyword::EXPLAIN,
+        Keyword::FLUSH, Keyword::GRANT, Keyword::HANDLER, Keyword::HELP, Keyword::INSERT, Keyword::INSTALL, Keyword::KILL,
+        Keyword::LOCK, Keyword::LOAD, Keyword::OPTIMIZE, Keyword::PREPARE, Keyword::PURGE, Keyword::RELEASE, Keyword::RENAME,
+        Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::RESIGNAL, Keyword::RESTART, Keyword::REVOKE,
+        Keyword::ROLLBACK, Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN,
+        Keyword::SIGNAL, Keyword::START, Keyword::STOP, Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK,
+        Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
+    ];
+
     /** @var ParserSettings */
     private $settings;
 
@@ -55,83 +67,8 @@ class Parser
     }
 
     /**
-     * @param null|callable(TokenList): (TokenList|null) $before
-     * @param null|callable(TokenList, array<Command>): void $after
-     * @return Generator<Command>
+     * @internal mainly for testing. use parse() for real applications.
      */
-    public function parse(string $sql, ?callable $before = null, ?callable $after = null): Generator
-    {
-        $tokenLists = $this->lexer->tokenizeLists($sql);
-
-        foreach ($tokenLists as $tokenList) {
-            if ($before !== null) {
-                $tokenList = $before($tokenList);
-            }
-            if ($tokenList === null) {
-                continue;
-            }
-
-            $commands = [];
-            do {
-                try {
-                    $commands[] = $command = $this->parseTokenList($tokenList);
-                } catch (ParserException $e) {
-                    yield new InvalidCommand($tokenList, $e);
-
-                    break;
-                } catch (Throwable $e) {
-                    yield new InvalidCommand($tokenList, $e);
-
-                    break;
-                }
-
-                try {
-                    $this->settingsUpdater->updateSettings($command, $this->settings, $tokenList);
-                } catch (ParserException $e) {
-                    yield new InvalidCommand($tokenList, $e);
-
-                    break;
-                } catch (Throwable $e) {
-                    yield new InvalidCommand($tokenList, $e);
-
-                    break;
-                }
-
-                if ($tokenList->isFinished()) {
-                    if (count($commands) === 1) {
-                        yield $command;
-
-                        break;
-                    } else {
-                        yield new MultiStatement($commands);
-
-                        break;
-                    }
-                } else {
-                    try {
-                        if (!$this->settings->multiStatements()) {
-                            $tokenList->expectEnd();
-                        }
-
-                        $tokenList->expectSymbol(';');
-                    } catch (ParserException $e) {
-                        yield new InvalidCommand($tokenList, $e);
-
-                        break;
-                    } catch (Throwable $e) {
-                        yield new InvalidCommand($tokenList, $e);
-
-                        break;
-                    }
-                }
-            } while (true);
-
-            if ($after !== null) {
-                $after($tokenList, $commands);
-            }
-        }
-    }
-
     public function parseSingleCommand(string $sql): Command
     {
         /** @var TokenList[] $tokenLists */
@@ -148,23 +85,135 @@ class Parser
     }
 
     /**
+     * @return Generator<Command>
+     */
+    public function parse(string $sql): Generator
+    {
+        $tokenLists = $this->lexer->tokenizeLists($sql);
+
+        foreach ($tokenLists as $tokenList) {
+            if ($tokenList === null) {
+                continue;
+            }
+
+            $commands = [];
+            do {
+                $commands[] = $command = $this->parseTokenList($tokenList);
+
+                try {
+                    $this->settingsUpdater->updateSettings($command, $this->settings, $tokenList);
+                } catch (ParsingException $e) {
+                    $tokenList->finish();
+
+                    yield new InvalidCommand($tokenList, $command->getCommentsBefore(), $e);
+
+                    break;
+                }
+
+                if ($tokenList->isFinished()) {
+                    if (count($commands) === 1) {
+                        yield $command;
+
+                        break;
+                    } else {
+                        yield new MultiStatement($commands);
+
+                        break;
+                    }
+                } else {
+                    try {
+                        //rd($command);
+                        if (!$this->settings->multiStatements()) {
+                            $tokenList->expectEnd();
+                        }
+
+                        $tokenList->expectSymbol(';');
+                    } catch (ParsingException $e) {
+                        $tokenList->finish();
+
+                        yield new InvalidCommand($tokenList, $command->getCommentsBefore(), $e);
+
+                        break;
+                    }
+                }
+            } while (true);
+        }
+    }
+
+    /**
+     * @return Command&Statement
      * @internal
      */
     public function parseTokenList(TokenList $tokenList): Command
     {
-        $start = $tokenList->getPosition();
-        $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT | TokenType::TEST_CODE);
-
+        // collecting comments and checking first applicable token
+        $autoSkip = $tokenList->getAutoSkip();
+        $tokenList->setAutoSkip(TokenType::WHITESPACE);
+        $comments = [];
         $first = $tokenList->get();
-        if ($first === null) {
-            if ($tokenList->getFirstSignificantToken() === null) {
-                return new EmptyCommand($tokenList);
+        do {
+            if ($first === null) {
+                return new EmptyCommand($tokenList, $comments);
+            } elseif (($first->type & TokenType::COMMENT) !== 0) {
+                $comments[] = $first->value;
+            } elseif (($first->type & TokenType::KEYWORD) !== 0) {
+                break;
+            } elseif (($first->type & TokenType::SYMBOL) !== 0) {
+                if ($first->value === '(') {
+                    break;
+                }
+                $exception = InvalidTokenException::tokens(TokenType::KEYWORD, 0, self::STARTING_KEYWORDS, $first, $tokenList);
+                $tokenList->finish();
+
+                return new InvalidCommand($tokenList, $comments, $exception);
             } else {
-                $tokenList->missing('any keyword');
+                $exception = InvalidTokenException::tokens(TokenType::KEYWORD, 0, self::STARTING_KEYWORDS, $first, $tokenList);
+                $tokenList->finish();
+
+                return new InvalidCommand($tokenList, $comments, $exception);
             }
-        } elseif (($first->type & TokenType::INVALID) !== 0) {
-            return new InvalidCommand($tokenList, $first->exception); // @phpstan-ignore-line LexerException!
+            $first = $tokenList->get();
+        } while ($first === null || ($first->type & TokenType::COMMENT) !== 0);
+        $tokenList->setAutoSkip($autoSkip);
+
+        // list with invalid tokens
+        if ($tokenList->invalid()) {
+            $exception = null;
+            foreach ($tokenList->getTokens() as $token) {
+                if (($token->type & TokenType::INVALID) !== 0) {
+                    $exception = $token->exception;
+                    break;
+                }
+            }
+
+            $tokenList->finish();
+
+            return new InvalidCommand($tokenList, $comments, $exception);
         }
+
+        // parse!
+        try {
+            $command = $this->parseCommand($tokenList, $first);
+
+            if ($comments !== []) {
+                $command->setCommentsBefore($comments);
+            }
+
+            return $command;
+        } catch (ParsingException|Throwable $e) { // todo: remove Throwable
+            // Throwable should not be here
+            $tokenList->finish();
+
+            return new InvalidCommand($tokenList, $comments, $e);
+        }
+    }
+
+    /**
+     * @return Command&Statement
+     */
+    private function parseCommand(TokenList $tokenList, Token $first): Command
+    {
+        $start = $tokenList->getPosition() - 1;
 
         switch (strtoupper($first->value)) {
             case '(':
@@ -235,15 +284,6 @@ class Parser
                 // BEGIN
                 return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->rewind($start));
             case Keyword::BINLOG:
-                if ($this->settings->mysqlTestMode) {
-                    if ($tokenList->has(TokenType::NUMBER)) {
-                        // e.g. binlog.2147483646
-                        return new TesterCommand($tokenList);
-                    } elseif ($tokenList->hasOperator('-')) {
-                        // e.g. binlog»-«b34582.000001
-                        return new TesterCommand($tokenList);
-                    }
-                }
                 // BINLOG
                 return $this->factory->getBinlogCommandParser()->parseBinlog($tokenList->rewind($start));
             case Keyword::CACHE:
@@ -746,18 +786,7 @@ class Parser
                 // XA RECOVER
                 return $this->factory->getXaTransactionCommandsParser()->parseXa($tokenList->rewind($start));
             default:
-                $tokenList->rewind($start + 1)->missingAnyKeyword(
-                    Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE,
-                    Keyword::CALL, Keyword::CHANGE, Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE,
-                    Keyword::DEALLOCATE, Keyword::DELETE, Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE,
-                    Keyword::DO, Keyword::DROP, Keyword::EXECUTE, Keyword::EXPLAIN, Keyword::FLUSH, Keyword::GRANT,
-                    Keyword::HANDLER, Keyword::HELP, Keyword::INSERT, Keyword::INSTALL, Keyword::KILL, Keyword::LOCK,
-                    Keyword::LOAD, Keyword::OPTIMIZE, Keyword::PREPARE, Keyword::PURGE, Keyword::RELEASE, Keyword::RENAME,
-                    Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::RESIGNAL, Keyword::RESTART,
-                    Keyword::REVOKE, Keyword::ROLLBACK, Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW,
-                    Keyword::SHUTDOWN, Keyword::SIGNAL, Keyword::START, Keyword::STOP, Keyword::TRUNCATE,
-                    Keyword::UNINSTALL, Keyword::UNLOCK, Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
-                );
+                $tokenList->rewind($start)->missingAnyKeyword(...self::STARTING_KEYWORDS);
         }
     }
 

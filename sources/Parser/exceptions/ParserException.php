@@ -88,13 +88,15 @@ class ParserException extends ParsingException
         $start = max($tokenList->getPosition() - $before, 0);
         $prefix = $before - min(max($before - $tokenList->getPosition(), 0), $before);
         $tokens = array_slice($tokenList->getTokens(), $start, $before + $after + 1);
-        $context = '"…' . implode('', array_map(static function (Token $token) {
+        $separator = ($tokenList->getAutoSkip() & TokenType::WHITESPACE) === 0 ? ' ' : '';
+
+        $context = '"…' . implode($separator, array_map(static function (Token $token) {
             return $token->original ?? $token->value;
         }, array_slice($tokens, 0, $prefix)));
 
         if (isset($tokens[$prefix])) {
             $context .= '»' . ($tokens[$prefix]->original ?? $tokens[$prefix]->value) . '«';
-            $context .= implode('', array_map(static function (Token $token) {
+            $context .= implode($separator, array_map(static function (Token $token) {
                 return $token->original ?? $token->value;
             }, array_slice($tokens, $prefix + 1))) . '…"';
         } else {

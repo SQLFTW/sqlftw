@@ -46,7 +46,7 @@ $tokenFormatter = static function (Token $token, int $depth = 0): string {
     }
     $orig = $token->original !== null && $token->original !== $token->value ? ' / ' . Dumper::value($token->original) : '';
     $res = Dumper::name(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
-        . Dumper::value2($type) . ' ' . Dumper::info('at position') . ' ' . $token->position
+        . Dumper::value2($type) . ' ' . Dumper::info('at row') . ' ' . $token->row
         . Dumper::bracket(')');
 
     Dumper::$showInfo = $info;

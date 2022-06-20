@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql;
 
 use Dogma\Enum\StringSet;
-use Dogma\InvalidValueException;
 use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Math\IntCalc;
 use Dogma\Math\PowersOfTwo;
@@ -163,6 +162,7 @@ class SqlMode extends StringSet
             if (isset(self::$numeric[$i])) {
                 $parts[] = self::$numeric[$i];
             }
+            // todo: non-existing values?
         }
 
         return self::getFromString(implode(',', $parts), $platform);
@@ -176,7 +176,7 @@ class SqlMode extends StringSet
         try {
             self::checkValues($parts);
         } catch (InvalidEnumValueException $e) {
-            throw new InvalidValueException("Invalid value for system variable @@sql_mode: " . $string, $e);
+            throw new InvalidDefinitionException("Invalid value for system variable @@sql_mode: " . $string, $e);
         }
         $items = [];
         foreach ($parts as $part) {

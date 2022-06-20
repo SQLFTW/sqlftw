@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Expression\BinaryOperator;
@@ -24,6 +25,7 @@ use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
@@ -53,15 +55,15 @@ class SettingsUpdater
             // todo: tracking both session and global?
             $settings->setMode($settings->getPlatform()->getDefaultMode());
         } elseif ($expression instanceof StringValue) {
-            $settings->setMode(SqlMode::getFromString(trim($expression->asString()), $settings->getPlatform()));
+            $settings->setMode($this->sqlModeFromString(trim($expression->asString()), $settings->getPlatform(), $tokenList));
         } elseif ($expression instanceof SimpleName) {
             if ($expression->getName() !== Keyword::TRUE && $expression->getName() !== Keyword::FALSE) {
-                $settings->setMode(SqlMode::getFromString($expression->getName(), $settings->getPlatform()));
+                $settings->setMode($this->sqlModeFromString($expression->getName(), $settings->getPlatform(), $tokenList));
             }
         } elseif ($expression instanceof DefaultLiteral) {
-            $settings->setMode(SqlMode::getFromString(Keyword::DEFAULT, $settings->getPlatform()));
+            $settings->setMode($this->sqlModeFromString(Keyword::DEFAULT, $settings->getPlatform(), $tokenList));
         } elseif ($expression instanceof UintLiteral) {
-            $settings->setMode(SqlMode::getFromInt($expression->asInteger(), $settings->getPlatform()));
+            $settings->setMode($this->sqlModeFromInt($expression->asInteger(), $settings->getPlatform(), $tokenList));
         } elseif ($expression instanceof FunctionCall) {
             $function = $expression->getFunction();
             if ($function instanceof QualifiedName && $function->equals('sys.list_add')) {
@@ -69,7 +71,7 @@ class SettingsUpdater
                 if ($first instanceof SystemVariable && $first->getName() === MysqlVariable::SQL_MODE && $second instanceof StringValue) {
                     $expression = $settings->getMode()->getValue() . ',' . $second->asString();
                     // needed to expand groups
-                    $mode = SqlMode::getFromString($expression, $settings->getPlatform());
+                    $mode = $this->sqlModeFromString($expression, $settings->getPlatform(), $tokenList);
                     $settings->setMode($mode);
                 } else {
                     throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
@@ -104,6 +106,24 @@ class SettingsUpdater
             return;
         } else {
             throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
+        }
+    }
+
+    private function sqlModeFromString(string $mode, Platform $platform, TokenList $tokenList): SqlMode
+    {
+        try {
+            return SqlMode::getFromString($mode, $platform);
+        } catch (InvalidDefinitionException $e) {
+            throw new ParserException($e->getMessage(), $tokenList, $e);
+        }
+    }
+
+    private function sqlModeFromInt(int $mode, Platform $platform, TokenList $tokenList): SqlMode
+    {
+        try {
+            return SqlMode::getFromInt($mode, $platform);
+        } catch (InvalidDefinitionException $e) {
+            throw new ParserException($e->getMessage(), $tokenList, $e);
         }
     }
 

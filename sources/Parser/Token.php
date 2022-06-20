@@ -21,6 +21,9 @@ final class Token
     /** @var int */
     public $position;
 
+    /** @var int */
+    public $row;
+
     /** @var string */
     public $value;
 
@@ -36,6 +39,7 @@ final class Token
     public function __construct(
         int $type,
         int $position,
+        int $row,
         string $value,
         ?string $original = null,
         ?string $condition = null,
@@ -43,6 +47,7 @@ final class Token
     ) {
         $this->type = $type;
         $this->position = $position;
+        $this->row = $row;
         $this->value = $value;
         $this->original = $original;
         $this->condition = $condition;

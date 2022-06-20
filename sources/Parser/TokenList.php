@@ -73,29 +73,45 @@ class TokenList
     /** @var Platform */
     private $platform;
 
-    /** @var bool */
-    private $whitespace;
-
     /** @var int */
-    private $autoSkip = 0;
+    private $autoSkip;
 
     /** @var int */
     private $position = 0;
 
+    /** @var bool */
+    private $invalid;
+
     /**
      * @param non-empty-array<Token> $tokens
      */
-    public function __construct(array $tokens, ParserSettings $settings, bool $whitespace = true)
+    public function __construct(array $tokens, ParserSettings $settings, int $autoSkip = 0, bool $invalid = false)
     {
         $this->tokens = $tokens;
         $this->settings = $settings;
         $this->platform = $settings->getPlatform();
-        $this->whitespace = $whitespace;
+        $this->autoSkip = $autoSkip;
+        $this->invalid = $invalid;
     }
 
     public function getSettings(): ParserSettings
     {
         return $this->settings;
+    }
+
+    public function getAutoSkip(): int
+    {
+        return $this->autoSkip;
+    }
+
+    public function setAutoSkip(int $autoSkip): void
+    {
+        $this->autoSkip = $autoSkip;
+    }
+
+    public function invalid(): bool
+    {
+        return $this->invalid;
     }
 
     public function using(?string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool
@@ -110,9 +126,16 @@ class TokenList
         }
     }
 
+    public function finish(): void
+    {
+        $this->position = count($this->tokens);
+    }
+
     public function isFinished(): bool
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
 
         if ($this->position >= count($this->tokens)) {
             return true;
@@ -152,11 +175,6 @@ class TokenList
         return $this;
     }
 
-    public function setAutoSkip(int $tokenType): void
-    {
-        $this->autoSkip = $tokenType;
-    }
-
     private function doAutoSkip(): void
     {
         $token = $this->tokens[$this->position] ?? null;
@@ -193,7 +211,7 @@ class TokenList
     public function getFirstSignificantToken(): ?Token
     {
         foreach ($this->tokens as $token) {
-            if (($token->type & (T::WHITESPACE | T::COMMENT | T::TEST_CODE)) === 0) {
+            if (($token->type & (T::WHITESPACE | T::COMMENT)) === 0) {
                 return $token;
             }
         }
@@ -206,7 +224,7 @@ class TokenList
         $result = '';
         foreach ($this->tokens as $token) {
             $result .= $token->original ?? $token->value;
-            if (!$this->whitespace) {
+            if (($this->autoSkip & T::WHITESPACE) === 0) {
                 $result .= ' ';
             }
         }
@@ -220,7 +238,9 @@ class TokenList
     {
         $position = $this->position;
         for ($n = 0; $n < $maxOffset; $n++) {
-            $this->doAutoSkip();
+            if ($this->autoSkip !== 0) {
+                $this->doAutoSkip();
+            }
             $token = $this->tokens[$this->position] ?? null;
             if ($token === null) {
                 break;
@@ -241,7 +261,9 @@ class TokenList
     {
         $position = $this->position;
         for ($n = 0; $n < $maxOffset; $n++) {
-            $this->doAutoSkip();
+            if ($this->autoSkip !== 0) {
+                $this->doAutoSkip();
+            }
             $token = $this->tokens[$this->position] ?? null;
             if ($token === null) {
                 break;
@@ -262,7 +284,9 @@ class TokenList
     {
         $position = $this->position;
         for ($n = 0; $n < $maxOffset; $n++) {
-            $this->doAutoSkip();
+            if ($this->autoSkip !== 0) {
+                $this->doAutoSkip();
+            }
             $token = $this->tokens[$this->position] ?? null;
             if ($token === null) {
                 break;
@@ -297,7 +321,9 @@ class TokenList
 
     public function expect(int $tokenType, int $tokenMask = 0): Token
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & $tokenType) === 0 || ($token->type & $tokenMask) !== 0) {
             throw InvalidTokenException::tokens($tokenType, $tokenMask, null, $token, $this);
@@ -312,7 +338,9 @@ class TokenList
      */
     public function get(?int $tokenType = null, int $tokenMask = 0, ?string $value = null): ?Token
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null) {
             return null;
@@ -334,7 +362,7 @@ class TokenList
      */
     public function has(int $tokenType, ?string $value = null): bool
     {
-        return (bool) $this->get($tokenType, 0, $value);
+        return $this->get($tokenType, 0, $value) !== null;
     }
 
     public function pass(int $tokenType, ?string $value = null): void
@@ -346,7 +374,9 @@ class TokenList
 
     public function expectSymbol(string $symbol): Token
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::SYMBOL) === 0) {
             throw InvalidTokenException::tokens(T::SYMBOL, 0, $symbol, $token, $this);
@@ -364,7 +394,9 @@ class TokenList
      */
     public function hasSymbol(string $symbol): bool
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $token = $this->tokens[$this->position] ?? null;
         if ($token !== null && ($token->type & T::SYMBOL) !== 0 && $token->value === $symbol) {
             $this->position++;
@@ -380,7 +412,9 @@ class TokenList
      */
     public function passSymbol(string $symbol): void
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $token = $this->tokens[$this->position] ?? null;
         if ($token !== null && ($token->type & T::SYMBOL) !== 0 && $token->value === $symbol) {
             $this->position++;
@@ -665,7 +699,9 @@ class TokenList
      */
     public function expectMultiNameEnum(string $className): SqlEnum
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $start = $this->position;
         /** @var string[] $values */
         $values = call_user_func([$className, 'getAllowedValues']);
@@ -774,7 +810,7 @@ class TokenList
      */
     public function hasName(string $name): bool
     {
-        return (bool) $this->getName($name);
+        return $this->getName($name) !== null;
     }
 
     public function expectNonKeywordName(?string $name = null): string
@@ -837,7 +873,9 @@ class TokenList
 
     public function expectKeyword(?string $keyword = null): string
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
             throw InvalidTokenException::tokens(T::KEYWORD, 0, $keyword, $token, $this);
@@ -853,7 +891,9 @@ class TokenList
 
     public function getKeyword(?string $keyword = null): ?string
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
             return null;
@@ -872,7 +912,7 @@ class TokenList
      */
     public function hasKeyword(string $keyword): bool
     {
-        return (bool) $this->getKeyword($keyword);
+        return $this->getKeyword($keyword) !== null;
     }
 
     public function passKeyword(string $keyword): void
@@ -992,7 +1032,9 @@ class TokenList
      */
     public function expectMultiKeywordsEnum(string $className): SqlEnum
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         $start = $this->position;
         /** @var string[] $values */
         $values = call_user_func([$className, 'getAllowedValues']);
@@ -1163,10 +1205,14 @@ class TokenList
 
     public function expectEnd(): void
     {
-        $this->doAutoSkip();
+        if ($this->autoSkip !== 0) {
+            $this->doAutoSkip();
+        }
         // pass trailing ; when delimiter is something else
         while ($this->hasSymbol(';')) {
-            $this->doAutoSkip();
+            if ($this->autoSkip !== 0) {
+                $this->doAutoSkip();
+            }
         }
 
         if ($this->position < count($this->tokens)) {
