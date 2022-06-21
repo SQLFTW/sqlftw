@@ -520,14 +520,6 @@ class Lexer
                     if ($second === '-') {
                         $third = $position + 1 < $length ? $string[$position + 1] : '';
 
-                        if ($third === '>') {
-                            // -->
-                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, '-->', null, $condition);
-                            $position += 2;
-                            $column += 2;
-                            break;
-                        }
-
                         if ($third === ' ') {
                             // -- comment
                             $endOfLine = strpos($string, "\n", $position);
