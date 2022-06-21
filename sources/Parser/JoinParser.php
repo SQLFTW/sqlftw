@@ -340,6 +340,7 @@ class JoinParser
             }
 
             $hints[] = new IndexHint($action, $target, $indexes);
+            $beforeComma = $tokenList->getPosition();
         } while (
             // phpcs:ignore SlevomatCodingStandard.ControlStructures.AssignmentInCondition
             (($trailingComma = $tokenList->hasSymbol(',')) && ($action = $tokenList->getKeywordEnum(IndexHintAction::class)) !== null)
@@ -347,7 +348,7 @@ class JoinParser
         );
 
         if ($trailingComma) {
-            $tokenList->rewind(-1);
+            $tokenList->rewind($beforeComma);
         }
 
         return $hints;
