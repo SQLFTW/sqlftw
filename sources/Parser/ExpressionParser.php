@@ -139,22 +139,23 @@ class ExpressionParser
      */
     public function parseExpression(TokenList $tokenList): RootNode
     {
-        $operators = [Operator::OR, Operator::XOR, Operator::AND, Operator::AMPERSANDS];
-        if (!$tokenList->getSettings()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT)) {
-            $operators[] = Operator::PIPES;
-        }
-
-        if ($tokenList->hasOperator(Operator::NOT)) {
+        $operator = $tokenList->getAnyOperator(Operator::NOT, Operator::EXCLAMATION);
+        if ($operator === Operator::NOT) {
             $expr = $this->parseExpression($tokenList);
 
             return new UnaryOperator(Operator::get(Operator::NOT), $expr);
-        } elseif ($tokenList->hasOperator(Operator::EXCLAMATION)) {
+        } elseif ($operator === Operator::EXCLAMATION) {
             $expr = $this->parseExpression($tokenList);
 
             return new UnaryOperator(Operator::get(Operator::EXCLAMATION), $expr);
         }
 
         $left = $this->parseBooleanPrimary($tokenList);
+
+        $operators = [Operator::OR, Operator::XOR, Operator::AND, Operator::AMPERSANDS];
+        if (!$tokenList->getSettings()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT)) {
+            $operators[] = Operator::PIPES;
+        }
         $operator = $tokenList->getAnyOperator(...$operators);
         if ($operator !== null) {
             $right = $this->parseExpression($tokenList);
@@ -162,7 +163,7 @@ class ExpressionParser
             return new BinaryOperator($left, Operator::get($operator), $right);
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
-            $keyword = strtoupper($tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN));
+            $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
             switch ($keyword) {
                 case Keyword::TRUE:
                     $right = new BoolLiteral(true);
