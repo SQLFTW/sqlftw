@@ -14,8 +14,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\Re;
-use Dogma\Str;
 use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Parser\TokenType as T;
@@ -191,7 +189,6 @@ class Lexer
         $column = 1;
 
         while ($position < $length) {
-            $uuidCheck = false;
             $char = $string[$position];
             $start = $position;
             $position++;
@@ -339,7 +336,7 @@ class Lexer
                             }
                         }
 
-                        if (Str::endsWith($value, $delimiter)) {
+                        if (substr($value, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                             // fucking name-like delimiter after name without whitespace
                             $value = substr($value, 0, -strlen($delimiter));
 
@@ -368,7 +365,7 @@ class Lexer
                             }
                         }
 
-                        if (Str::endsWith($value, $delimiter)) {
+                        if (substr($value, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                             // fucking name-like delimiter after name without whitespace
                             $value = substr($value, 0, -strlen($delimiter));
 
@@ -662,21 +659,19 @@ class Lexer
                 case '7':
                 case '8':
                 case '9':
-                    $uuidCheck = true;
                     $value = substr($string, $position - 1, 36);
                     // UUID
-                    if (strlen($value) === 36 && Re::match($value, self::UUID_REGEXP) !== null) {
+                    if (strlen($value) === 36 && preg_match(self::UUID_REGEXP, $value) !== 0) {
                         $position += 35;
                         $column += 35;
                         yield $previous = new Token(T::VALUE | T::UUID, $start, $row, $value, null, $condition);
                         break;
                     }
                     // IPv4
-                    $ip = Re::submatch($value, self::IP_V4_REGEXP);
-                    if ($ip !== null) {
-                        $position += strlen($ip) - 1;
-                        $column += strlen($ip) - 1;
-                        yield $previous = new Token(T::VALUE | T::STRING, $start, $row, $ip, null, $condition);
+                    if (preg_match(self::IP_V4_REGEXP, $value, $m) !== 0) {
+                        $position += strlen($m[0]) - 1;
+                        $column += strlen($m[0]) - 1;
+                        yield $previous = new Token(T::VALUE | T::STRING, $start, $row, $m[0], null, $condition);
                         break;
                     }
                     $token = $this->parseNumber($string, $position, $column, $row, $char, $condition);
@@ -729,15 +724,13 @@ class Lexer
                 case 'e':
                 case 'F':
                 case 'f':
-                    if (!$uuidCheck) {
-                        $value = substr($string, $position - 1, 36);
-                        // UUID
-                        if (strlen($value) === 36 && Re::match($value, self::UUID_REGEXP) !== null) {
-                            $position += 35;
-                            $column += 35;
-                            yield $previous = new Token(T::VALUE | T::UUID, $start, $row, $value, null, $condition);
-                            break;
-                        }
+                    $value = substr($string, $position - 1, 36);
+                    // UUID
+                    if (strlen($value) === 36 && preg_match(self::UUID_REGEXP, $value) !== 0) {
+                        $position += 35;
+                        $column += 35;
+                        yield $previous = new Token(T::VALUE | T::UUID, $start, $row, $value, null, $condition);
+                        break;
                     }
                     // continue
                 case 'X':
@@ -846,7 +839,7 @@ class Lexer
                         }
                     }
                     $yieldDelimiter = false;
-                    if (Str::endsWith($value, $delimiter)) {
+                    if (substr($value, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                         // fucking name-like delimiter after name without whitespace
                         $value = substr($value, 0, -strlen($delimiter));
                         $yieldDelimiter = true;
@@ -886,7 +879,7 @@ class Lexer
                             yield $previous = new Token(T::INVALID, $start, $row, $del, $del, $condition, $exception);
                             break;
                         }
-                        if (Str::endsWith($del, $delimiter)) {
+                        if (substr($del, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                             $trimmed = substr($del, 0, -strlen($delimiter));
                             if ($trimmed !== $delimiter) {
                                 // do not trim delimiter when would not change the current one (;; vs ;)
