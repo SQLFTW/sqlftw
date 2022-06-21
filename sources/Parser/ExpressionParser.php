@@ -282,83 +282,80 @@ class ExpressionParser
     private function parsePredicate(TokenList $tokenList): RootNode
     {
         $left = $this->parseBitExpression($tokenList);
-        if ($tokenList->hasKeywords(Keyword::SOUNDS, Keyword::LIKE)) {
-            $right = $this->parseBitExpression($tokenList);
-
-            return new BinaryOperator($left, Operator::get(Operator::SOUNDS_LIKE), $right);
-        }
 
         $not = $tokenList->hasKeyword(Keyword::NOT);
 
+        $keywords = [Keyword::IN, Keyword::BETWEEN, Keyword::LIKE, Keyword::REGEXP, Keyword::RLIKE];
+        if (!$not) {
+            $keywords[] = Keyword::MEMBER;
+            $keywords[] = Keyword::SOUNDS;
+        }
         $position = $tokenList->getPosition();
-        if ($tokenList->hasKeyword(Keyword::IN)) {
-            // lonely IN can be a named parameter "POSITION(substr IN str)"
-            if (!$not && !$tokenList->hasSymbol('(')) {
+        $keyword = $tokenList->getAnyKeyword(...$keywords);
+        switch ($keyword) {
+            case Keyword::IN:
+                // lonely IN can be a named parameter "POSITION(substr IN str)"
+                if (!$not && !$tokenList->hasSymbol('(')) {
+                    $tokenList->rewind($position);
+
+                    return $left;
+                }
+
                 $tokenList->rewind($position);
+                $tokenList->expectKeyword(Keyword::IN);
+                $tokenList->expectSymbol('(');
+                if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
+                    $subquery = new Parentheses($this->parseSubquery($tokenList->rewind(-1)));
+                    $tokenList->expectSymbol(')');
+                    $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
 
-                return $left;
-            }
+                    return new BinaryOperator($left, $operator, $subquery);
+                } else {
+                    $expressions = new Parentheses(new ListExpression($this->parseExpressionList($tokenList)));
+                    $tokenList->expectSymbol(')');
+                    $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
 
-            $tokenList->rewind($position);
-            $tokenList->expectKeyword(Keyword::IN);
-            $tokenList->expectSymbol('(');
-            if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
-                $subquery = new Parentheses($this->parseSubquery($tokenList->rewind(-1)));
-                $tokenList->expectSymbol(')');
-                $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
+                    return new BinaryOperator($left, $operator, $expressions);
+                }
+            case Keyword::BETWEEN:
+                $middle = $this->parseBitExpression($tokenList);
+                $tokenList->expectKeyword(Keyword::AND);
+                $right = $this->parsePredicate($tokenList);
+                $operator = Operator::get($not ? Operator::NOT_BETWEEN : Operator::BETWEEN);
 
-                return new BinaryOperator($left, $operator, $subquery);
-            } else {
-                $expressions = new Parentheses(new ListExpression($this->parseExpressionList($tokenList)));
-                $tokenList->expectSymbol(')');
-                $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
+                return new TernaryOperator($left, $operator, $middle, Operator::get(Operator::AND), $right);
+            case Keyword::LIKE:
+                $second = $this->parseSimpleExpression($tokenList);
+                if ($tokenList->hasKeyword(Keyword::ESCAPE)) {
+                    $third = $this->parseSimpleExpression($tokenList);
+                    $operator = Operator::get($not ? Operator::NOT_LIKE : Operator::LIKE);
 
-                return new BinaryOperator($left, $operator, $expressions);
-            }
-        }
+                    return new TernaryOperator($left, $operator, $second, Operator::get(Operator::ESCAPE), $third);
+                } else {
+                    $operator = Operator::get($not ? Operator::NOT_LIKE : Operator::LIKE);
 
-        if ($tokenList->hasKeyword(Keyword::BETWEEN)) {
-            $middle = $this->parseBitExpression($tokenList);
-            $tokenList->expectKeyword(Keyword::AND);
-            $right = $this->parsePredicate($tokenList);
-            $operator = Operator::get($not ? Operator::NOT_BETWEEN : Operator::BETWEEN);
+                    return new BinaryOperator($left, $operator, $second);
+                }
+            case Keyword::REGEXP:
+                $right = $this->parseBitExpression($tokenList);
+                $operator = Operator::get($not ? Operator::NOT_REGEXP : Operator::REGEXP);
 
-            return new TernaryOperator($left, $operator, $middle, Operator::get(Operator::AND), $right);
-        }
+                return new BinaryOperator($left, $operator, $right);
+            case Keyword::RLIKE:
+                $right = $this->parseBitExpression($tokenList);
+                $operator = Operator::get($not ? Operator::NOT_RLIKE : Operator::RLIKE);
 
-        if ($tokenList->hasKeyword(Keyword::LIKE)) {
-            $second = $this->parseSimpleExpression($tokenList);
-            if ($tokenList->hasKeyword(Keyword::ESCAPE)) {
-                $third = $this->parseSimpleExpression($tokenList);
-                $operator = Operator::get($not ? Operator::NOT_LIKE : Operator::LIKE);
+                return new BinaryOperator($left, $operator, $right);
+            case Keyword::MEMBER:
+                $tokenList->passKeyword(Keyword::OF);
+                $right = $this->parseBitExpression($tokenList);
 
-                return new TernaryOperator($left, $operator, $second, Operator::get(Operator::ESCAPE), $third);
-            } else {
-                $operator = Operator::get($not ? Operator::NOT_LIKE : Operator::LIKE);
+                return new BinaryOperator($left, Operator::get(Operator::MEMBER_OF), $right);
+            case Keyword::SOUNDS:
+                $tokenList->expectKeyword(Keyword::LIKE);
+                $right = $this->parseBitExpression($tokenList);
 
-                return new BinaryOperator($left, $operator, $second);
-            }
-        }
-
-        if ($tokenList->hasKeyword(Keyword::REGEXP)) {
-            $right = $this->parseBitExpression($tokenList);
-            $operator = Operator::get($not ? Operator::NOT_REGEXP : Operator::REGEXP);
-
-            return new BinaryOperator($left, $operator, $right);
-        }
-
-        if ($tokenList->hasKeyword(Keyword::RLIKE)) {
-            $right = $this->parseBitExpression($tokenList);
-            $operator = Operator::get($not ? Operator::NOT_RLIKE : Operator::RLIKE);
-
-            return new BinaryOperator($left, $operator, $right);
-        }
-
-        if (!$not && $tokenList->hasKeyword(Keyword::MEMBER)) {
-            $tokenList->passKeyword(Keyword::OF);
-            $right = $this->parseBitExpression($tokenList);
-
-            return new BinaryOperator($left, Operator::get(Operator::MEMBER_OF), $right);
+                return new BinaryOperator($left, Operator::get(Operator::SOUNDS_LIKE), $right);
         }
 
         return $left;
