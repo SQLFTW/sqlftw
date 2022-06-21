@@ -600,7 +600,7 @@ class ExpressionParser
                     }
                 }
             }
-            $platform = $tokenList->getSettings()->getPlatform();
+
             if ($name3 !== null) {
                 // identifier
                 return new ColumnName($name3, $name2, $name1);
@@ -610,18 +610,9 @@ class ExpressionParser
             } elseif ($name2 !== null) {
                 // identifier
                 return new QualifiedName($name2, $name1);
-            } elseif (BuiltInFunction::isValid($name1) && $platform->isReserved($name1)) {
+            } elseif (BuiltInFunction::isValid($name1) && BuiltInFunction::isBareName($name1)) {
                 // function without parentheses
-                $function = BuiltInFunction::get($name1);
-                if ($name1 === Keyword::DEFAULT) {
-                    return new DefaultLiteral();
-                } elseif (!$function->isBare()) {
-                    // throws
-                    $tokenList->expectSymbol('(');
-                    $tokenList->expectSymbol(')');
-                }
-
-                return new FunctionCall($function);
+                return new FunctionCall(BuiltInFunction::get($name1));
             } else {
                 // identifier
                 return new SimpleName($name1);

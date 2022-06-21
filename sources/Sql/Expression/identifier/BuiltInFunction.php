@@ -691,6 +691,11 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         return in_array($this->getValue(), self::$bare, true);
     }
 
+    public static function isBareName(string $name): bool
+    {
+        return in_array($name, self::$bare, true);
+    }
+
     /**
      * @return string[]
      */
