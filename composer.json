@@ -47,17 +47,17 @@
             "@tests:run",
             "@phpstan:run",
             "@lint:php",
-            "@spell:check",
             "@phpcs:src",
-            "@phpcs:tests"
+            "@phpcs:tests",
+            "@spell:check"
         ],
         "check:all": [
             "@tests:all",
             "@phpstan:all",
             "@lint:php-all",
-            "@spell:check",
             "@phpcs:src",
-            "@phpcs:tests"
+            "@phpcs:tests",
+            "@spell:check"
         ],
 
         "tests:run": "php vendor/nette/tester/src/tester tests -C --colors 1",

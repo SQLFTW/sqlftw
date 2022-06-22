@@ -9,10 +9,10 @@ require '../bootstrap.php';
 
 $settings = new ParserSettings(Platform::get(Platform::MYSQL, '5.7'));
 
-$ws = new Token(TokenType::WHITESPACE, 0, 'ws');
-$comment = new Token(TokenType::COMMENT, 1, 'comment');
-$value = new Token(TokenType::VALUE, 2, 'value');
-$name = new Token(TokenType::NAME, 2, 'name');
+$ws = new Token(TokenType::WHITESPACE, 0, 1, 'ws');
+$comment = new Token(TokenType::COMMENT, 1, 1, 'comment');
+$value = new Token(TokenType::VALUE, 2, 1, 'value');
+$name = new Token(TokenType::NAME, 2, 1, 'name');
 
 $tokenList = new TokenList([$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $settings);
 $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT);

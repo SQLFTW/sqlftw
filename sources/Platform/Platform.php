@@ -18,7 +18,6 @@ use SqlFtw\Platform\Naming\NamingStrategy;
 use SqlFtw\Sql\SqlMode;
 use function in_array;
 use function ltrim;
-use function str_replace;
 use function strtoupper;
 use function ucfirst;
 

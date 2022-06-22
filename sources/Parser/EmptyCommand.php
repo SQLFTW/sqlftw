@@ -21,6 +21,9 @@ class EmptyCommand extends Statement implements Command
     /** @var TokenList */
     private $tokenList;
 
+    /**
+     * @param string[] $commentsBefore
+     */
     public function __construct(TokenList $tokenList, array $commentsBefore)
     {
         $this->tokenList = $tokenList;

@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\User\AddAuthFactor;
 use SqlFtw\Sql\Dal\User\AlterAuthOption;
 use SqlFtw\Sql\Dal\User\AlterCurrentUserCommand;
@@ -47,6 +46,7 @@ use SqlFtw\Sql\Dal\User\SetDefaultRoleCommand;
 use SqlFtw\Sql\Dal\User\SetPasswordCommand;
 use SqlFtw\Sql\Dal\User\SetRoleCommand;
 use SqlFtw\Sql\Dal\User\StaticUserPrivilege;
+use SqlFtw\Sql\Dal\User\UserCommand;
 use SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification;
 use SqlFtw\Sql\Dal\User\UserPasswordLockOption;
 use SqlFtw\Sql\Dal\User\UserPasswordLockOptionType;
@@ -63,6 +63,7 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 use function array_values;
 use function count;
@@ -100,8 +101,10 @@ class UserCommandsParser
      *   | factor FINISH REGISTRATION SET CHALLENGE_RESPONSE AS 'auth_string'
      *   | factor UNREGISTER
      * }
+     *
+     * @return UserCommand&Statement
      */
-    public function parseAlterUser(TokenList $tokenList): Command
+    public function parseAlterUser(TokenList $tokenList): UserCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::USER);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
@@ -223,6 +226,7 @@ class UserCommandsParser
      * }
      *
      * @param UserName|FunctionCall $user
+     * @return AlterUserRegistrationCommand&Statement
      */
     private function parseRegistration(TokenList $tokenList, $user, int $factor, bool $ifExists): AlterUserRegistrationCommand
     {
@@ -609,8 +613,10 @@ class UserCommandsParser
      *     TO user [auth_option] [, user [auth_option]] ...
      *     [REQUIRE {NONE | tls_option [[AND] tls_option] ...}]
      *     [WITH {GRANT OPTION | resource_option} ...]
+     *
+     * @return UserCommand&Statement
      */
-    public function parseGrant(TokenList $tokenList): Command
+    public function parseGrant(TokenList $tokenList): UserCommand
     {
         $tokenList->expectKeyword(Keyword::GRANT);
 
@@ -795,8 +801,10 @@ class UserCommandsParser
      *
      * REVOKE role [, role ] ...
      *     FROM user [, user ] ...
+     *
+     * @return UserCommand&Statement
      */
-    public function parseRevoke(TokenList $tokenList): Command
+    public function parseRevoke(TokenList $tokenList): UserCommand
     {
         $tokenList->expectKeyword(Keyword::REVOKE);
 

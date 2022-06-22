@@ -10,7 +10,6 @@
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 // phpcs:disable SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing
 // phpcs:disable SlevomatCodingStandard.ControlStructures.AssignmentInCondition
-// spell-check-ignore: recvresult closehandle usexxx expecterror stmtadmin stmtsql wildcard
 
 namespace SqlFtw\Parser;
 

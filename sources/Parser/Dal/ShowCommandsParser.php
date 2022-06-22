@@ -64,6 +64,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Statement;
 
 class ShowCommandsParser
 {
@@ -77,6 +78,9 @@ class ShowCommandsParser
         $this->expressionParser = $expressionParser;
     }
 
+    /**
+     * @return ShowCommand&Statement
+     */
     public function parseShow(TokenList $tokenList): ShowCommand
     {
         $tokenList->expectKeyword(Keyword::SHOW);
@@ -366,6 +370,9 @@ class ShowCommandsParser
         return new ShowColumnsCommand($table, $like, $where, $full, $extended);
     }
 
+    /**
+     * @return ShowCommand&Statement
+     */
     private function parseShowCreate(TokenList $tokenList): ShowCommand
     {
         $third = $tokenList->expectAnyKeyword(

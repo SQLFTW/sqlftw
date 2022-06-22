@@ -18,9 +18,10 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT, '/* comment */', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 14);
 
-Assert::exception(static function () use ($lexer): void {
-    $lexer->tokenizeAll(' /* comment ');
-}, LexerException::class, '~^End of comment not found~');
+$tokens = $lexer->tokenizeAll(' /* comment ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::INVALID, '/* comment ', 1);
 
 // HINT_COMMENT
 $tokens = $lexer->tokenizeAll(' /*+ comment */ ');

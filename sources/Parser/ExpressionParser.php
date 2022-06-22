@@ -583,44 +583,77 @@ class ExpressionParser
             return $value;
         }
 
-        $name1 = $tokenList->getName();
-        if ($name1 !== null) {
-            $name2 = $name3 = null;
-            if ($tokenList->hasSymbol('.')) {
-                if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                    $name2 = '*'; // tbl.*
-                } else {
-                    $name2 = $tokenList->expectName();
-                }
-                if ($name2 !== '*' && $tokenList->hasSymbol('.')) {
-                    if ($tokenList->hasOperator(Operator::MULTIPLY)) {
-                        $name3 = '*'; // db.tbl.*
-                    } else {
-                        $name3 = $tokenList->expectName();
-                    }
-                }
-            }
+        $token = $tokenList->expect(TokenType::VALUE | TokenType::NAME);
 
-            if ($name3 !== null) {
-                // identifier
-                return new ColumnName($name3, $name2, $name1);
-            } elseif ($tokenList->hasSymbol('(')) {
-                // function_call
-                return $this->parseFunctionCall($tokenList, $name1, $name2);
-            } elseif ($name2 !== null) {
-                // identifier
-                return new QualifiedName($name2, $name1);
-            } elseif (BuiltInFunction::isValid($name1) && BuiltInFunction::isBareName($name1)) {
-                // function without parentheses
-                return new FunctionCall(BuiltInFunction::get($name1));
-            } else {
-                // identifier
-                return new SimpleName($name1);
+        if (($token->type & TokenType::BINARY_LITERAL) !== 0) {
+            return new BinaryLiteral($token->value);
+        } elseif (($token->type & TokenType::UINT) !== 0) {
+            return new UintLiteral($token->value);
+        } elseif (($token->type & TokenType::INT) !== 0) {
+            return new IntLiteral($token->value);
+        } elseif (($token->type & TokenType::NUMBER) !== 0) {
+            return new NumberLiteral($token->value);
+        } elseif (($token->type & TokenType::SYMBOL) !== 0 && $token->value === '\\N') {
+            return new NullLiteral();
+        } elseif (($token->type & TokenType::KEYWORD) !== 0) {
+            $upper = strtoupper($token->value);
+            if ($upper === Keyword::NULL) {
+                return new NullLiteral();
+            } elseif ($upper === Keyword::TRUE) {
+                return new BoolLiteral(true);
+            } elseif ($upper === Keyword::FALSE) {
+                return new BoolLiteral(false);
+            } elseif ($upper === Keyword::ON || $upper === Keyword::OFF) {
+                return new OnOffLiteral($upper === Keyword::ON);
+            } elseif ($upper === Keyword::MAXVALUE) {
+                return new MaxValueLiteral();
+            } elseif ($upper === Keyword::ALL) {
+                return new AllLiteral();
+            } elseif ($upper === Keyword::NONE) {
+                return new NoneLiteral();
+            } elseif ($upper === Keyword::DEFAULT) {
+                if ($tokenList->hasSymbol('(')) {
+                    // DEFAULT() function
+                    $tokenList->rewind(-1);
+                } else {
+                    return new DefaultLiteral();
+                }
             }
         }
 
-        // literal
-        return $this->parseLiteral($tokenList, true);
+        $name1 = $token->value;
+        $name2 = $name3 = null;
+        if ($tokenList->hasSymbol('.')) {
+            if ($tokenList->hasOperator(Operator::MULTIPLY)) {
+                $name2 = '*'; // tbl.*
+            } else {
+                $name2 = $tokenList->expectName();
+            }
+            if ($name2 !== '*' && $tokenList->hasSymbol('.')) {
+                if ($tokenList->hasOperator(Operator::MULTIPLY)) {
+                    $name3 = '*'; // db.tbl.*
+                } else {
+                    $name3 = $tokenList->expectName();
+                }
+            }
+        }
+
+        if ($name3 !== null) {
+            // identifier
+            return new ColumnName($name3, $name2, $name1);
+        } elseif ($tokenList->hasSymbol('(')) {
+            // function_call
+            return $this->parseFunctionCall($tokenList, $name1, $name2);
+        } elseif ($name2 !== null) {
+            // identifier
+            return new QualifiedName($name2, $name1);
+        } elseif (BuiltInFunction::isValid($name1) && BuiltInFunction::isBareName($name1)) {
+            // function without parentheses
+            return new FunctionCall(BuiltInFunction::get($name1));
+        } else {
+            // identifier
+            return new SimpleName($name1);
+        }
     }
 
     /**
@@ -754,19 +787,17 @@ class ExpressionParser
         return new Subquery($queryParser->parseQuery($tokenList));
     }
 
-    public function parseLiteral(TokenList $tokenList, bool $skipStringsAndTime = false): Literal
+    public function parseLiteral(TokenList $tokenList): Literal
     {
-        if (!$skipStringsAndTime) {
-            // StringLiteral | HexadecimalLiteral
-            $value = $tokenList->getStringValue();
-            if ($value !== null) {
-                return $value;
-            }
+        // StringLiteral | HexadecimalLiteral
+        $value = $tokenList->getStringValue();
+        if ($value !== null) {
+            return $value;
+        }
 
-            $value = $this->parseTimeValue($tokenList);
-            if ($value !== null) {
-                return $value;
-            }
+        $value = $this->parseTimeValue($tokenList);
+        if ($value !== null) {
+            return $value;
         }
 
         $token = $tokenList->expect(TokenType::VALUE | TokenType::KEYWORD);
@@ -801,7 +832,6 @@ class ExpressionParser
         } elseif (($token->type & TokenType::NUMBER) !== 0) {
             return new NumberLiteral($token->value);
         } elseif (($token->type & TokenType::SYMBOL) !== 0 && $token->value === '\\N') {
-            // todo: preserving the original form?
             return new NullLiteral();
         } else {
             throw new ShouldNotHappenException("Unknown token '$token->value' of type $token->type.");

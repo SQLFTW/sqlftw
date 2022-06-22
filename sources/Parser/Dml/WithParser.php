@@ -20,6 +20,7 @@ use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Dml\WithExpression;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Statement;
 
 class WithParser
 {
@@ -39,7 +40,7 @@ class WithParser
      *     cte_name [(col_name [, col_name] ...)] AS (subquery)
      *     [, cte_name [(col_name [, col_name] ...)] AS (subquery)] ...
      *
-     * @return Query|UpdateCommand|DeleteCommand
+     * @return Statement&(Query|UpdateCommand|DeleteCommand)
      */
     public function parseWith(TokenList $tokenList): Command
     {

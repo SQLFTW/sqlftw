@@ -147,7 +147,7 @@ class ReplicationCommandsParser
                     $value = [];
                     if (!$tokenList->hasSymbol(')')) {
                         do {
-                            $value[] = (int)$tokenList->expectUnsignedInt();
+                            $value[] = (int) $tokenList->expectUnsignedInt();
                             if ($tokenList->hasSymbol(')')) {
                                 break;
                             } else {

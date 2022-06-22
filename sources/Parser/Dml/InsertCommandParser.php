@@ -27,6 +27,7 @@ use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Statement;
 
 class InsertCommandParser
 {
@@ -88,6 +89,8 @@ class InsertCommandParser
      *       | [row_alias.]col_name
      *       | [tbl_name.]col_name
      *       | [row_alias.]col_alias
+     *
+     * @return InsertCommand&Statement
      */
     public function parseInsert(TokenList $tokenList): InsertCommand
     {
@@ -160,6 +163,8 @@ class InsertCommandParser
      *     [PARTITION (partition_name, ...)]
      *     [(col_name, ...)]
      *     SELECT ...
+     *
+     * @return ReplaceCommand&Statement
      */
     public function parseReplace(TokenList $tokenList): ReplaceCommand
     {

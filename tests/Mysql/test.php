@@ -1,26 +1,20 @@
 <?php declare(strict_types = 1);
 
 // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
-// spell-check-ignore: DET abcdefghijklmnopqrstuvwxyz charlength crc doesn usexxx barp2 dbug foobarp1 mgm qa abc blabla repl wp xplugin
+// spell-check-ignore: DET abcdefghijklmnopqrstuvwxyz charlength crc doesn usexxx barp2 foobarp1 mgm qa abc blabla
+// spell-check-ignore: repl wp xplugin FC ddse memoryusage notembedded storedproc
 
 namespace SqlFtw\Tests\Mysql;
 
-use Dogma\Debug\Dumper;
 use Dogma\Debug\Units;
-use Dogma\Re;
 use Dogma\Str;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use SqlFtw\Parser\InvalidCommand;
-use SqlFtw\Parser\Lexer;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Tests\Assert;
 use SqlFtw\Tests\ParserHelper;
-use function array_merge;
-use function array_slice;
 use function dirname;
 use function file_get_contents;
 use function implode;
@@ -30,7 +24,6 @@ use function rd;
 use function rl;
 use function str_replace;
 use function strlen;
-use function strtolower;
 use function substr;
 
 require dirname(__DIR__) . '/bootstrap.php';
@@ -258,8 +251,7 @@ foreach ($it as $fileInfo) {
         }, $commands)));
     };*/
 
-    Assert::validCommands($contents, $parser, static function (InvalidCommand $command, string $sql)
-        use ($count, $path, $knownFailures): bool
+    Assert::validCommands($contents, $parser, static function (InvalidCommand $command, string $sql) use ($count, $path, $knownFailures): bool
     {
         $statement = $command->getTokenList()->serialize();
         $comments = $command->getCommentsBefore();

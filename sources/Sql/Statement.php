@@ -12,11 +12,12 @@ namespace SqlFtw\Sql;
 abstract class Statement implements SqlSerializable
 {
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $commentsBefore = [];
 
+    /**
+     * @param string[] $comments
+     */
     public function setCommentsBefore(array $comments): void
     {
         $this->commentsBefore = $comments;

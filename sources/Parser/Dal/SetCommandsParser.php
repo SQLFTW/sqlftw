@@ -24,7 +24,6 @@ use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
-use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
 

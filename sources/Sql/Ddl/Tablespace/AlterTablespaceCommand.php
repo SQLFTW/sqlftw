@@ -11,8 +11,8 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use function is_bool;
 use function is_int;
@@ -74,15 +74,15 @@ class AlterTablespaceCommand extends Statement implements TablespaceCommand
         foreach ($this->options as $name => $value) {
             if (is_bool($value)) {
                 if ($name === TablespaceOption::WAIT) {
-                    $result .= $value ? ' ' . $name : '';
+                    $result .= $value ? ' WAIT' : ' NO_WAIT';
                 } elseif ($name === TablespaceOption::ENCRYPTION) {
                     $result .= ' ' . $name . ' ' . $formatter->formatString($value ? 'Y' : 'N');
                 }
             } elseif (is_int($value)) {
                 $result .= ' ' . $name . ' ' . $value;
-            } elseif ($value instanceof SizeLiteral) {
+            } elseif ($value instanceof SqlSerializable) {
                 $result .= ' ' . $name . ' ' . $value->serialize($formatter);
-            } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::RENAME_TO) {
+            } elseif ($name === TablespaceOption::RENAME_TO) {
                 $result .= ' ' . $name . ' ' . $formatter->formatName($value);
             } elseif ($name === TablespaceOption::SET) {
                 $result .= ' ' . $name . ' ' . $value;

@@ -21,7 +21,7 @@ use function is_array;
 use function strtoupper;
 
 /**
- * @phpstan-type TablespaceOptionValue int|string|bool|SizeLiteral
+ * @phpstan-type TablespaceOptionValue int|string|bool|SizeLiteral|StorageEngine
  */
 class TablespaceOption extends SqlEnum
 {

@@ -12,7 +12,6 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\XaTransaction\XaCommitCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaEndCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaPrepareCommand;
@@ -20,8 +19,10 @@ use SqlFtw\Sql\Dml\XaTransaction\XaRecoverCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaRollbackCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaStartCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaStartOption;
+use SqlFtw\Sql\Dml\XaTransaction\XaTransactionCommand;
 use SqlFtw\Sql\Dml\XaTransaction\Xid;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Statement;
 use function hex2bin;
 use function str_pad;
 use const STR_PAD_LEFT;
@@ -42,8 +43,10 @@ class XaTransactionCommandsParser
      * XA ROLLBACK xid
      *
      * XA RECOVER [CONVERT XID]
+     *
+     * @return XaTransactionCommand&Statement
      */
-    public function parseXa(TokenList $tokenList): Command
+    public function parseXa(TokenList $tokenList): XaTransactionCommand
     {
         $tokenList->expectKeyword(Keyword::XA);
         $second = $tokenList->expectKeyword();

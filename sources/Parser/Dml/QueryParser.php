@@ -157,6 +157,9 @@ class QueryParser
         return new UnionExpression($queries, $types, $orderBy, $limit, $into);
     }
 
+    /**
+     * @return Query&Statement
+     */
     public function parseQueryBlock(TokenList $tokenList, ?WithClause $with = null): Query
     {
         if ($tokenList->hasSymbol('(')) {
@@ -216,6 +219,8 @@ class QueryParser
      *     [FOR {UPDATE | SHARE} [OF tbl_name [, tbl_name] ...] [NOWAIT | SKIP LOCKED]
      *       | LOCK IN SHARE MODE]]
      *     [into_option]
+     *
+     * @return Query&Statement
      */
     public function parseSelect(TokenList $tokenList, ?WithClause $with = null): Query
     {

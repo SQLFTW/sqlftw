@@ -14,6 +14,7 @@ use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
 use SqlFtw\Sql\Expression\BinaryOperator;
+use SqlFtw\Sql\Expression\BoolLiteral;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
@@ -56,10 +57,14 @@ class SettingsUpdater
             $settings->setMode($settings->getPlatform()->getDefaultMode());
         } elseif ($expression instanceof StringValue) {
             $settings->setMode($this->sqlModeFromString(trim($expression->asString()), $settings->getPlatform(), $tokenList));
-        } elseif ($expression instanceof SimpleName) {
-            if ($expression->getName() !== Keyword::TRUE && $expression->getName() !== Keyword::FALSE) {
-                $settings->setMode($this->sqlModeFromString($expression->getName(), $settings->getPlatform(), $tokenList));
+        } elseif ($expression instanceof BoolLiteral) {
+            if ($expression->getValue() === Keyword::TRUE) {
+                $settings->setMode($this->sqlModeFromInt(1, $settings->getPlatform(), $tokenList));
+            } else {
+                $settings->setMode($this->sqlModeFromInt(0, $settings->getPlatform(), $tokenList));
             }
+        } elseif ($expression instanceof SimpleName) {
+            $settings->setMode($this->sqlModeFromString($expression->getName(), $settings->getPlatform(), $tokenList));
         } elseif ($expression instanceof DefaultLiteral) {
             $settings->setMode($this->sqlModeFromString(Keyword::DEFAULT, $settings->getPlatform(), $tokenList));
         } elseif ($expression instanceof UintLiteral) {

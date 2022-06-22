@@ -105,6 +105,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Statement;
 use function array_values;
 use function strtoupper;
 
@@ -690,6 +691,8 @@ class TableCommandsParser
      *
      * query_expression:
      *     SELECT ...   (Some valid select or union statement)
+     *
+     * @return AnyCreateTableCommand&Statement
      */
     public function parseCreateTable(TokenList $tokenList): AnyCreateTableCommand
     {

@@ -8,6 +8,7 @@
  */
 
 // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
+// phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 
 namespace SqlFtw\Parser;
 
@@ -35,7 +36,7 @@ class Parser
         Keyword::REPAIR, Keyword::RELEASE, Keyword::RESET, Keyword::RESIGNAL, Keyword::RESTART, Keyword::REVOKE,
         Keyword::ROLLBACK, Keyword::SAVEPOINT, Keyword::SELECT, Keyword::SET, Keyword::SHOW, Keyword::SHUTDOWN,
         Keyword::SIGNAL, Keyword::START, Keyword::STOP, Keyword::TRUNCATE, Keyword::UNINSTALL, Keyword::UNLOCK,
-        Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA
+        Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA,
     ];
 
     /** @var ParserSettings */
@@ -92,10 +93,6 @@ class Parser
         $tokenLists = $this->lexer->tokenizeLists($sql);
 
         foreach ($tokenLists as $tokenList) {
-            if ($tokenList === null) {
-                continue;
-            }
-
             $commands = [];
             do {
                 $commands[] = $command = $this->parseTokenList($tokenList);
@@ -186,6 +183,8 @@ class Parser
                 }
             }
 
+            /** @var LexerException $exception PHPStan */
+            $exception = $exception;
             $tokenList->finish();
 
             return new InvalidCommand($tokenList, $comments, $exception);
@@ -200,7 +199,7 @@ class Parser
             }
 
             return $command;
-        } catch (ParsingException|Throwable $e) { // todo: remove Throwable
+        } catch (ParsingException | Throwable $e) { // todo: remove Throwable
             // Throwable should not be here
             $tokenList->finish();
 

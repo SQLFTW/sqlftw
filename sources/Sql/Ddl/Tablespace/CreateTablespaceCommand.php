@@ -11,7 +11,9 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use function assert;
 use function is_bool;
@@ -72,17 +74,19 @@ class CreateTablespaceCommand extends Statement implements TablespaceCommand
         $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
 
         foreach ($this->options as $name => $value) {
-            if ($name === TablespaceOption::WAIT) {
-                assert(is_bool($value));
-                $result .= $value ? ' WAIT' : ' NO_WAIT';
-            } elseif ($name === TablespaceOption::ENGINE || $name === TablespaceOption::USE_LOGFILE_GROUP) {
+            if (is_bool($value)) {
+                if ($name === TablespaceOption::WAIT) {
+                    $result .= $value ? ' WAIT' : ' NO_WAIT';
+                } elseif ($name === TablespaceOption::ENCRYPTION) {
+                    $result .= ' ' . $name . ' ' . $formatter->formatString($value ? 'Y' : 'N');
+                }
+            } elseif ($name === TablespaceOption::FILE_BLOCK_SIZE && $value instanceof SizeLiteral) {
+                $result .= ' ' . $name . ' = ' . $value->serialize($formatter);
+            } elseif ($value instanceof SqlSerializable) {
+                $result .= ' ' . $name . ' ' . $value->serialize($formatter);
+            } elseif ($name === TablespaceOption::USE_LOGFILE_GROUP) {
                 assert(is_string($value));
                 $result .= ' ' . $name . ' ' . $formatter->formatName($value);
-            } elseif ($name === TablespaceOption::FILE_BLOCK_SIZE) {
-                $result .= ' ' . $name . ' = ' . $formatter->formatValue($value);
-            } elseif ($name === TablespaceOption::ENCRYPTION) {
-                assert(is_bool($value));
-                $result .= ' ' . $name . ' ' . $formatter->formatString($value ? 'Y' : 'N');
             } else {
                 $result .= ' ' . $name . ' ' . $formatter->formatValue($value);
             }

@@ -15,5 +15,4 @@ class Feature
 {
     use StaticClassMixin;
 
-
 }
