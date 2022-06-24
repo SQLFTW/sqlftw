@@ -18,6 +18,7 @@ use SqlFtw\Parser\TokenType;
 use function class_exists;
 use function gettype;
 use function implode;
+use function iterator_to_array;
 use function preg_replace;
 use function sprintf;
 use function str_replace;
@@ -84,16 +85,21 @@ class Assert extends DogmaAssert
         $parser = ParserHelper::getParserFactory(null, $version, $delimiter)->getParser();
         $formatter = new Formatter($parser->getSettings());
 
-        try {
-            $command = $parser->parseSingleCommand($query);
-            $actual = $command->serialize($formatter);
-        } catch (ParserException $e) {
-            if (class_exists(Debugger::class)) {
-                Debugger::dump($e->getTokenList());
-            }
-
-            throw $e;
+        $results = iterator_to_array($parser->parse($query));
+        if (count($results) > 1) {
+            self::fail('More than one command found in given SQL code.');
         }
+        $command = $results[0];
+
+        if ($command instanceof InvalidCommand) {
+            if (class_exists(Debugger::class)) {
+                Debugger::dump($command->getTokenList());
+            }
+            throw $command->getException();
+        }
+
+        $actual = $command->serialize($formatter);
+
         /** @var string $actual */
         $actual = preg_replace('/\\s+/', ' ', $actual);
         $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);
@@ -107,15 +113,17 @@ class Assert extends DogmaAssert
     ): void {
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
 
-        try {
-            $parser->parseSingleCommand($query);
-        } catch (ParsingException $e) {
-            if (class_exists(Dumper::class) && $e->backtrace !== null) {
-                // @phpstan-ignore-next-line PhpBacktraceItem[]
-                Debugger::send(1, Dumper::formatCallstack(Callstack::fromBacktrace($e->backtrace), 100, 1, 5, 100));
+
+        $results = iterator_to_array($parser->parse($query));
+        if (count($results) > 1) {
+            self::fail('More than one command found in given SQL code.');
+        }
+        $command = $results[0];
+        if ($command instanceof InvalidCommand) {
+            if (class_exists(Debugger::class)) {
+                Debugger::dump($command->getTokenList());
             }
-            self::fail($e->getMessage());
-            return;
+            throw $command->getException();
         }
 
         self::true(true);

@@ -68,24 +68,6 @@ class Parser
     }
 
     /**
-     * @internal mainly for testing. use parse() for real applications.
-     */
-    public function parseSingleCommand(string $sql): Command
-    {
-        /** @var TokenList[] $tokenLists */
-        $tokenLists = iterator_to_array($this->lexer->tokenizeLists($sql));
-        if (count($tokenLists) > 1) {
-            throw new ParsingException('More than one command found in given SQL code.');
-        }
-
-        $tokenList = $tokenLists[0];
-        $command = $this->parseTokenList($tokenList);
-        $tokenList->expectEnd();
-
-        return $command;
-    }
-
-    /**
      * @return Generator<Command>
      */
     public function parse(string $sql): Generator
