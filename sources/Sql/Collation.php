@@ -291,6 +291,7 @@ class Collation extends SqlEnum
     public const UTF8_JAPANESE_0900_AI_CI = 'utf8mb4_ja_0900_ai_ci';
     public const UTF8_LATVIAN_0900_AI_CI = 'utf8mb4_lv_0900_ai_ci';
     public const UTF8_LITHUANIAN_0900_AI_CI = 'utf8mb4_lt_0900_ai_ci';
+    public const UTF8_NORWEGIAN_0900_AI_CI = 'utf8mb4_no_0900_ai_ci';
     public const UTF8_POLISH_0900_AI_CI = 'utf8mb4_pl_0900_ai_ci';
     public const UTF8_CLASSICAL_LATIN_0900_AI_CI = 'utf8mb4_la_0900_ai_ci';
     public const UTF8_ROMANIAN_0900_AI_CI = 'utf8mb4_ro_0900_ai_ci';

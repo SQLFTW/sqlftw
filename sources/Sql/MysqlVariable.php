@@ -26,6 +26,7 @@ class MysqlVariable extends SqlEnum
     public const ADMIN_SSL_KEY = 'admin_ssl_key';
     public const ADMIN_TLS_VERSION = 'admin_tls_version';
 
+    public const AUTO_GENERATE_CERTS = 'auto_generate_certs';
     public const AUTO_INCREMENT_INCREMENT = 'auto_increment_increment';
     public const AUTO_INCREMENT_OFFSET = 'auto_increment_offset';
     public const AUTOCOMMIT = 'autocommit';
@@ -229,6 +230,7 @@ class MysqlVariable extends SqlEnum
     public const HAVE_SSL = 'have_ssl';
     public const HAVE_STATEMENT_TIMEOUT = 'have_statement_timeout';
     public const HAVE_SYMLINK = 'have_symlink';
+
     public const HISTOGRAM_GENERATION_MAX_MEM_SIZE = 'histogram_generation_max_mem_size';
     public const HOST_CACHE_SIZE = 'host_cache_size';
     public const HOSTNAME = 'hostname';
@@ -236,7 +238,10 @@ class MysqlVariable extends SqlEnum
     public const IGNORE_BUILTIN_INNODB = 'ignore_builtin_innodb';
     public const IGNORE_DB_DIRS = 'ignore_db_dirs'; // removed in 8.0
     public const IMMEDIATE_SERVER_VERSION = 'immediate_server_version';
+
+    public const INFORMATION_SCHEMA_STATS = 'information_schema_stats';
     public const INFORMATION_SCHEMA_STATS_EXPIRY = 'information_schema_stats_expiry';
+
     public const INIT_CONNECT = 'init_connect';
     public const INIT_FILE = 'init_file';
     public const INIT_SLAVE = 'init_slave';
@@ -392,6 +397,7 @@ class MysqlVariable extends SqlEnum
     public const INNODB_ROLLBACK_ON_TIMEOUT = 'innodb_rollback_on_timeout';
     public const INNODB_ROLLBACK_SEGMENTS = 'innodb_rollback_segments';
     public const INNODB_SAVED_PAGE_NUMBER_DEBUG = 'innodb_saved_page_number_debug';
+    public const INNODB_SCAN_DIRECTORIES = 'innodb_scan_directories';
     public const INNODB_SEGMENT_RESERVE_FACTOR = 'innodb_segment_reserve_factor';
     public const INNODB_SEMAPHORE_WAIT_TIMEOUT_DEBUG = 'innodb_semaphore_wait_timeout_debug';
     public const INNODB_SORT_BUFFER_SIZE = 'innodb_sort_buffer_size';
@@ -437,18 +443,25 @@ class MysqlVariable extends SqlEnum
     public const INTERNAL_TMP_MEM_STORAGE_ENGINE = 'internal_tmp_mem_storage_engine';
     public const JOIN_BUFFER_SIZE = 'join_buffer_size';
     public const KEEP_FILES_ON_CREATE = 'keep_files_on_create';
+
     public const KEY_BUFFER_SIZE = 'key_buffer_size';
     public const KEY_CACHE_AGE_THRESHOLD = 'key_cache_age_threshold';
     public const KEY_CACHE_BLOCK_SIZE = 'key_cache_block_size';
     public const KEY_CACHE_DIVISION_LIMIT = 'key_cache_division_limit';
+
     public const KEYRING_FILE_DATA = 'keyring_file_data';
+    public const KEYRING_OPERATIONS = 'keyring_operations';
+
     public const LARGE_FILES_SUPPORT = 'large_files_support';
     public const LARGE_PAGE_SIZE = 'large_page_size';
     public const LARGE_PAGES = 'large_pages';
+
     public const LAST_INSERT_ID = 'last_insert_id';
+
     public const LC_MESSAGES = 'lc_messages';
     public const LC_MESSAGES_DIR = 'lc_messages_dir';
     public const LC_TIME_NAMES = 'lc_time_names';
+
     public const LICENSE = 'license';
     public const LOCAL_INFILE = 'local_infile';
 
@@ -490,6 +503,8 @@ class MysqlVariable extends SqlEnum
     public const LOG_SLOW_REPLICA_STATEMENTS = 'log_slow_replica_statements';
     public const LOG_STATEMENTS_UNSAFE_FOR_BINLOG = 'log_statements_unsafe_for_binlog';
     public const LOG_SYSLOG = 'log_syslog';
+    public const LOG_SYSLOG_FACILITY = 'log_syslog_facility';
+    public const LOG_SYSLOG_INCLUDE_PID = 'log_syslog_include_pid';
     public const LOG_SYSLOG_TAG = 'log_syslog_tag';
     public const LOG_THROTTLE_QUERIES_NOT_USING_INDEXES = 'log_throttle_queries_not_using_indexes';
     public const LOG_TIMESTAMPS = 'log_timestamps';
@@ -581,6 +596,7 @@ class MysqlVariable extends SqlEnum
     public const NDB_BATCH_SIZE = 'ndb_batch_size';
     public const NDB_BLOB_READ_BATCH_BYTES = 'ndb_blob_read_batch_bytes';
     public const NDB_BLOB_WRITE_BATCH_BYTES = 'ndb_blob_write_batch_bytes';
+    public const NDB_CACHE_CHECK_TIME = 'ndb_cache_check_time';
     public const NDB_CLEAR_APPLY_STATUS = 'ndb_clear_apply_status';
     public const NDB_DATA_NODE_NEIGHBOUR = 'ndb_data_node_neighbour';
     public const NDB_DBG_CHECK_SHARES = 'ndb_dbg_check_shares';
@@ -646,6 +662,7 @@ class MysqlVariable extends SqlEnum
     public const OPTIMIZER_TRACE_LIMIT = 'optimizer_trace_limit';
     public const OPTIMIZER_TRACE_MAX_MEM_SIZE = 'optimizer_trace_max_mem_size';
     public const OPTIMIZER_TRACE_OFFSET = 'optimizer_trace_offset';
+    public const OPTIMIZER_USE_MRR = 'optimizer_use_mrr';
 
     public const ORIGINAL_COMMIT_TIMESTAMP = 'original_commit_timestamp';
     public const ORIGINAL_SERVER_VERSION = 'original_server_version';
@@ -778,9 +795,15 @@ class MysqlVariable extends SqlEnum
 
     public const RPL_READ_SIZE = 'rpl_read_size';
     public const RPL_SEMI_SYNC_MASTER_ENABLED = 'rpl_semi_sync_master_enabled';
+    public const RPL_SEMI_SYNC_MASTER_TIMEOUT = 'rpl_semi_sync_master_timeout';
+    public const RPL_SEMI_SYNC_MASTER_TRACE_LEVEL = 'rpl_semi_sync_master_trace_level';
+    public const RPL_SEMI_SYNC_MASTER_WAIT_FOR_SLAVE_COUNT = 'rpl_semi_sync_master_wait_for_slave_count';
+    public const RPL_SEMI_SYNC_MASTER_WAIT_NO_SLAVE = 'rpl_semi_sync_master_wait_no_slave';
+    public const RPL_SEMI_SYNC_MASTER_WAIT_POINT = 'rpl_semi_sync_master_wait_point';
     public const RPL_SEMI_SYNC_REPLICA_ENABLED = 'rpl_semi_sync_replica_enabled';
     public const RPL_SEMI_SYNC_REPLICA_TRACE_LEVEL = 'rpl_semi_sync_replica_trace_level';
     public const RPL_SEMI_SYNC_SLAVE_ENABLED = 'rpl_semi_sync_slave_enabled';
+    public const RPL_SEMI_SYNC_SLAVE_TRACE_LEVEL = 'rpl_semi_sync_slave_trace_level';
     public const RPL_SEMI_SYNC_SOURCE_ENABLED = 'rpl_semi_sync_source_enabled';
     public const RPL_SEMI_SYNC_SOURCE_TIMEOUT = 'rpl_semi_sync_source_timeout';
     public const RPL_SEMI_SYNC_SOURCE_TRACE_LEVEL = 'rpl_semi_sync_source_trace_level';
@@ -810,16 +833,20 @@ class MysqlVariable extends SqlEnum
 
     public const SHA256_PASSWORD_AUTO_GENERATE_RSA_KEYS = 'sha256_password_auto_generate_rsa_keys';
     public const SHA256_PASSWORD_PROXY_USERS = 'sha256_password_proxy_users';
+
     public const SHARED_MEMORY = 'shared_memory';
     public const SHARED_MEMORY_BASE_NAME = 'shared_memory_base_name';
+
     public const SHOW_COMPATIBILITY_56 = 'show_compatibility_56'; // removed in 8.0
     public const SHOW_CREATE_TABLE_VERBOSITY = 'show_create_table_verbosity';
     public const SHOW_OLD_TEMPORALS = 'show_old_temporals';
+
     public const SKIP_EXTERNAL_LOCKING = 'skip_external_locking';
     public const SKIP_NAME_RESOLVE = 'skip_name_resolve';
     public const SKIP_NETWORKING = 'skip_networking';
     public const SKIP_REPLICA_START = 'skip_replica_start';
     public const SKIP_SHOW_DATABASE = 'skip_show_database';
+    public const SKIP_SLAVE_START = 'skip_slave_start';
 
     public const SLAVE_ALLOW_BATCHING = 'slave_allow_batching';
     public const SLAVE_CHECKPOINT_GROUP = 'slave_checkpoint_group';

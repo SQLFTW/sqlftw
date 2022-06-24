@@ -20,4 +20,8 @@ class UdfReturnDataType extends SqlEnum
     public const REAL = Keyword::REAL;
     public const DECIMAL = Keyword::DECIMAL;
 
+    // aliases
+    // todo: moar aliases
+    public const INT = Keyword::INT;
+
 }
