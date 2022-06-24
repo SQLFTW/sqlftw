@@ -63,7 +63,7 @@ class Assert extends DogmaAssert
         }
     }
 
-    public static function parse(
+    public static function parseSerialize(
         string $query,
         ?string $expected = null,
         ?int $version = null,

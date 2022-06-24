@@ -8,7 +8,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // CHANGE MASTER TO
-Assert::parse("CHANGE MASTER TO
+Assert::parseSerialize("CHANGE MASTER TO
   MASTER_BIND = 'interface_name',
   MASTER_HOST = 'host_name',
   MASTER_USER = 'user_name',

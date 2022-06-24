@@ -8,4 +8,4 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // USE ...
-Assert::parse("USE db1");
+Assert::parseSerialize("USE db1");

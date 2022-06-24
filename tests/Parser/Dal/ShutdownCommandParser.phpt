@@ -8,4 +8,4 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // SHUTDOWN
-Assert::parse("SHUTDOWN");
+Assert::parseSerialize("SHUTDOWN");

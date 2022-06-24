@@ -8,4 +8,4 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // BINLOG
-Assert::parse("BINLOG 'file'");
+Assert::parseSerialize("BINLOG 'file'");

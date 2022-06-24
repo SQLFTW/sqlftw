@@ -8,7 +8,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // RESET reset_option [, reset_option] ...
-Assert::parse("RESET MASTER");
-Assert::parse("RESET SLAVE");
-Assert::parse("RESET QUERY CACHE");
-Assert::parse("RESET MASTER, SLAVE, QUERY CACHE");
+Assert::parseSerialize("RESET MASTER");
+Assert::parseSerialize("RESET SLAVE");
+Assert::parseSerialize("RESET QUERY CACHE");
+Assert::parseSerialize("RESET MASTER, SLAVE, QUERY CACHE");

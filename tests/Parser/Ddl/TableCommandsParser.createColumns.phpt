@@ -8,7 +8,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // types
-Assert::parse("CREATE TABLE tbl1 (
+Assert::parseSerialize("CREATE TABLE tbl1 (
   col_0 BIGINT UNSIGNED,
   col_1 INT,
   col_2 MEDIUMINT,
@@ -43,36 +43,36 @@ Assert::parse("CREATE TABLE tbl1 (
 // todo: type aliases
 
 // [NOT NULL | NULL]
-Assert::parse("CREATE TABLE tbl1 (col1 INT NOT NULL)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT NULL)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT NOT NULL)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT NULL)");
 
 // [DEFAULT default_value]
-Assert::parse("CREATE TABLE tbl1 (col1 INT DEFAULT 123)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT DEFAULT '123')");
-Assert::parse("CREATE TABLE tbl1 (col1 INT DEFAULT NULL)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT DEFAULT 123)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT DEFAULT '123')");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT DEFAULT NULL)");
 
 // [AUTO_INCREMENT]
-Assert::parse("CREATE TABLE tbl1 (col1 INT AUTO_INCREMENT)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT AUTO_INCREMENT)");
 
 // [UNIQUE [KEY] | [PRIMARY] KEY]
-Assert::parse("CREATE TABLE tbl1 (col1 INT PRIMARY KEY)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT UNIQUE KEY)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT UNIQUE)", "CREATE TABLE tbl1 (col1 INT UNIQUE KEY)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT KEY)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT PRIMARY KEY)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT UNIQUE KEY)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT UNIQUE)", "CREATE TABLE tbl1 (col1 INT UNIQUE KEY)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT KEY)");
 
 // [COMMENT 'string']
-Assert::parse("CREATE TABLE tbl1 (col1 INT COMMENT 'com1')");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT COMMENT 'com1')");
 
 // [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
-Assert::parse("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT FIXED)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT DYNAMIC)");
-Assert::parse("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT DEFAULT)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT FIXED)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT DYNAMIC)");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT COLUMN_FORMAT DEFAULT)");
 
 // [reference_definition]
-Assert::parse("CREATE TABLE tbl1 (col1 INT REFERENCES tbl1 (col1))");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT REFERENCES tbl1 (col1))");
 
 // [check_constraint_definition]
-Assert::parse("CREATE TABLE tbl1 (col1 INT CHECK (col1 > 0))");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT CHECK (col1 > 0))");
 
 
 // generated columns
@@ -94,4 +94,4 @@ $result = 'CREATE TABLE tbl1 (
   col_5 INT GENERATED ALWAYS AS (YEAR(col_0)) VIRTUAL,
   col_6 INT GENERATED ALWAYS AS (YEAR(col_0)) STORED
 )';
-Assert::parse($query, $result);
+Assert::parseSerialize($query, $result);

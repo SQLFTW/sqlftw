@@ -8,6 +8,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // RESET PERSIST [[IF EXISTS] system_var_name]
-Assert::parse("RESET PERSIST");
-Assert::parse("RESET PERSIST sql_mode");
-Assert::parse("RESET PERSIST IF EXISTS sql_mode");
+Assert::parseSerialize("RESET PERSIST");
+Assert::parseSerialize("RESET PERSIST sql_mode");
+Assert::parseSerialize("RESET PERSIST IF EXISTS sql_mode");

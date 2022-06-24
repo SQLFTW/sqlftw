@@ -8,18 +8,18 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // FLUSH
-Assert::parse("FLUSH NO_WRITE_TO_BINLOG DES_KEY_FILE", "FLUSH LOCAL DES_KEY_FILE");
-Assert::parse("FLUSH LOCAL HOSTS");
-Assert::parse("FLUSH BINARY LOGS");
-Assert::parse("FLUSH ENGINE LOGS");
-Assert::parse("FLUSH ERROR LOGS");
-Assert::parse("FLUSH GENERAL LOGS");
-Assert::parse("FLUSH RELAY LOGS");
-Assert::parse("FLUSH SLOW LOGS");
-Assert::parse("FLUSH RELAY LOGS FOR CHANNEL chan1", "FLUSH RELAY LOGS FOR CHANNEL 'chan1'");
-Assert::parse("FLUSH OPTIMIZER_COSTS");
-Assert::parse("FLUSH PRIVILEGES");
-Assert::parse("FLUSH QUERY CACHE");
-Assert::parse("FLUSH STATUS");
-Assert::parse("FLUSH USER_RESOURCES");
-Assert::parse("FLUSH PRIVILEGES, STATUS");
+Assert::parseSerialize("FLUSH NO_WRITE_TO_BINLOG DES_KEY_FILE", "FLUSH LOCAL DES_KEY_FILE");
+Assert::parseSerialize("FLUSH LOCAL HOSTS");
+Assert::parseSerialize("FLUSH BINARY LOGS");
+Assert::parseSerialize("FLUSH ENGINE LOGS");
+Assert::parseSerialize("FLUSH ERROR LOGS");
+Assert::parseSerialize("FLUSH GENERAL LOGS");
+Assert::parseSerialize("FLUSH RELAY LOGS");
+Assert::parseSerialize("FLUSH SLOW LOGS");
+Assert::parseSerialize("FLUSH RELAY LOGS FOR CHANNEL chan1", "FLUSH RELAY LOGS FOR CHANNEL 'chan1'");
+Assert::parseSerialize("FLUSH OPTIMIZER_COSTS");
+Assert::parseSerialize("FLUSH PRIVILEGES");
+Assert::parseSerialize("FLUSH QUERY CACHE");
+Assert::parseSerialize("FLUSH STATUS");
+Assert::parseSerialize("FLUSH USER_RESOURCES");
+Assert::parseSerialize("FLUSH PRIVILEGES, STATUS");

@@ -8,6 +8,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // KILL
-Assert::parse("KILL 17");
-Assert::parse("KILL CONNECTION 17", "KILL 17");
-Assert::parse("KILL QUERY 17", "KILL 17");
+Assert::parseSerialize("KILL 17");
+Assert::parseSerialize("KILL CONNECTION 17", "KILL 17");
+Assert::parseSerialize("KILL QUERY 17", "KILL 17");

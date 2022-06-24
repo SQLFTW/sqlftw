@@ -8,4 +8,4 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // DELIMITER ??
-Assert::parse("DELIMITER ;;");
+Assert::parseSerialize("DELIMITER ;;");

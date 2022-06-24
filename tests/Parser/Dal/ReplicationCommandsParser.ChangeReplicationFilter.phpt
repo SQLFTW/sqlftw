@@ -7,7 +7,7 @@ use SqlFtw\Tests\Assert;
 require __DIR__ . '/../../bootstrap.php';
 
 // CHANGE REPLICATION FILTER
-Assert::parse("CHANGE REPLICATION FILTER
+Assert::parseSerialize("CHANGE REPLICATION FILTER
   REPLICATE_DO_DB = (db1, db2),
   REPLICATE_IGNORE_DB = (db3, db4),
   REPLICATE_DO_TABLE = (db1.table1, db2.table2),

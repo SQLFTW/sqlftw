@@ -8,8 +8,8 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // CREATE FUNCTION SONAME
-Assert::parse("CREATE AGGREGATE FUNCTION function_name RETURNS REAL SONAME 'shared_library_name'");
-Assert::parse(
+Assert::parseSerialize("CREATE AGGREGATE FUNCTION function_name RETURNS REAL SONAME 'shared_library_name'");
+Assert::parseSerialize(
     "CREATE FUNCTION function_name RETURNS STRING SONAME shared_library_name",
     "CREATE FUNCTION function_name RETURNS STRING SONAME 'shared_library_name'"
 );

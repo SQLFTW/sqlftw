@@ -8,7 +8,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // INSTALL PLUGIN
-Assert::parse("INSTALL PLUGIN plug1 SONAME 'library.so'");
+Assert::parseSerialize("INSTALL PLUGIN plug1 SONAME 'library.so'");
 
 // UNINSTALL PLUGIN
-Assert::parse("UNINSTALL PLUGIN plug1");
+Assert::parseSerialize("UNINSTALL PLUGIN plug1");

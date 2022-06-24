@@ -8,7 +8,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // DO expr [, expr] ...
-Assert::parse("DO proc1");
-Assert::parse("DO proc1(var1)");
-Assert::parse("DO proc1(var1, var2)");
-Assert::parse("DO proc1(), proc2()");
+Assert::parseSerialize("DO proc1");
+Assert::parseSerialize("DO proc1(var1)");
+Assert::parseSerialize("DO proc1(var1, var2)");
+Assert::parseSerialize("DO proc1(), proc2()");

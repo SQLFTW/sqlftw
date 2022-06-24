@@ -8,4 +8,4 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // RESTART
-Assert::parse("RESTART");
+Assert::parseSerialize("RESTART");
