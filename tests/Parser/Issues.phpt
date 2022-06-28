@@ -80,3 +80,6 @@ CREATE TABLE `order_packages` (
     CONSTRAINT `order_packages_packs` FOREIGN KEY (`packingId`) REFERENCES `packs` (`id`),
     CONSTRAINT `order_packages_orders` FOREIGN KEY (`orderId`) REFERENCES `orders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;");
+
+// https://github.com/SQLFTW/sqlftw/issues/9
+Assert::validCommand("CREATE INDEX my_index ON my_table (my_column) ALGORITHM=INPLACE LOCK=NONE;");
