@@ -66,8 +66,7 @@
             "php80 vendor/nette/tester/src/tester tests -C --colors 1",
             "php74 vendor/nette/tester/src/tester tests -C --colors 1",
             "php73 vendor/nette/tester/src/tester tests -C --colors 1",
-            "php72 vendor/nette/tester/src/tester tests -C --colors 1",
-            "php71 vendor/nette/tester/src/tester tests -C --colors 1"
+            "php72 vendor/nette/tester/src/tester tests -C --colors 1"
         ],
         "tests:coverage": "php vendor/nette/tester/src/tester tests -c tests --colors 1 -p phpdbg --coverage tests/coverage.html --coverage-src sources",
 
