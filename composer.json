@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": "^7.1|^8.1",
+        "php": "^7.1|^8.0",
         "dogma/dogma": "^0.2.13"
     },
     "require-dev": {
