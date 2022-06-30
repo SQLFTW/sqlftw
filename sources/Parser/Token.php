@@ -30,9 +30,6 @@ final class Token
     /** @var string|null */
     public $original;
 
-    /** @var string|null */
-    public $condition;
-
     /** @var LexerException|null */
     public $exception;
 
@@ -42,7 +39,6 @@ final class Token
         int $row,
         string $value,
         ?string $original = null,
-        ?string $condition = null,
         ?LexerException $exception = null
     ) {
         $this->type = $type;
@@ -50,7 +46,6 @@ final class Token
         $this->row = $row;
         $this->value = $value;
         $this->original = $original;
-        $this->condition = $condition;
         $this->exception = $exception;
     }
 
