@@ -195,8 +195,9 @@ class Lexer
     {
         // last significant token parsed (comments and whitespace are skipped here)
         $previous = new Token(TokenType::END, 0, 0, '');
-        $condition = null;
         $delimiter = $this->settings->getDelimiter();
+        $commentDepth = 0;
+        $condition = null;
 
         $length = strlen($string);
         $position = 0;
@@ -435,11 +436,6 @@ class Lexer
                     } elseif ($next === '*') {
                         $position++;
                         $column++;
-                        if ($condition !== null) {
-                            $exception = new LexerException('Comment inside conditional comment.', $position, $string);
-
-                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::INVALID, $start, $row, '', null, $exception);
-                        }
                         if (preg_match('~^[Mm]?!(?:\d{5,6})?~', substr($string, $position, 10), $m) === 1) {
                             $versionId = strtoupper(str_replace('!', '', $m[0]));
                             if ($this->platform->interpretOptionalComment($versionId)) {
@@ -451,17 +447,28 @@ class Lexer
                             }
                         }
 
+                        $hint = $string[$position] === '+';
+
                         // parse as a regular comment
+                        $commentDepth++;
                         $value = $char . $next;
                         $ok = false;
                         while ($position < $length) {
                             $next = $string[$position];
-                            if ($next === '*' && ($position + 1 < $length) && $string[$position + 1] === '/') {
+                            if (!$hint && $next === '/' && ($position + 1 < $length) && $string[$position + 1] === '*') {
                                 $value .= $next . $string[$position + 1];
                                 $position += 2;
                                 $column += 2;
-                                $ok = true;
-                                break;
+                                $commentDepth++;
+                            } elseif ($next === '*' && ($position + 1 < $length) && $string[$position + 1] === '/') {
+                                $value .= $next . $string[$position + 1];
+                                $position += 2;
+                                $column += 2;
+                                $commentDepth--;
+                                if ($commentDepth === 0) {
+                                    $ok = true;
+                                    break;
+                                }
                             } elseif ($next === "\n") {
                                 $value .= $next;
                                 $position++;

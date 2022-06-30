@@ -73,6 +73,9 @@ $skips = [
     // Heatwave analytics plugin
     'secondary_engine',
 
+    // this test for a bug contains another bug. we are implementing correct behavior (nested comments)
+    'innodb_bug48024.test',
+
     // badly named result file
     'r/server_offline_7.test',
 
@@ -146,11 +149,6 @@ $replacements = [
     // invalid "," before ENGINE
     'ddl_rewriter.test' => ["PARTITION p1 VALUES IN (1) DATA DIRECTORY = '/tmp' ,ENGINE = InnoDB" => "PARTITION p1 VALUES IN (1) DATA DIRECTORY = '/tmp' ENGINE = InnoDB"],
 
-    // fuck nested comments. not even touching this
-    'comments.test' => ["/* */ */" => "*/"],
-    'rpl_stm_create_if_not_exists.test' => ['/*blabla*/ ' => ''],
-    'partition_mgm.test' => ["/* Test\n   of multi-line\n   comment */" => ''],
-
     // names concatenation in ANSI mode
     'parser.test' => [
         // todo: string concatenation in ansi_strings mode? are you kidding me?
@@ -183,7 +181,7 @@ $knownFailures = [
 $parser = ParserHelper::getParserFactory(Platform::MYSQL, '8.0.29')->getParser();
 $settings = $parser->getSettings();
 
-//$only = 'sp-error.test';
+//$only = 'innodb_bug48024.test';
 
 $dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test';
 //$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test/t';

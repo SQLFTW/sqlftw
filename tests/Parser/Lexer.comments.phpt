@@ -18,6 +18,20 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT, '/* comment */', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 14);
 
+$tokens = $lexer->tokenizeAll(' /* comment /* inside */ comment */ ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT, '/* comment /* inside */ comment */', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 35);
+
+// according to /suite/innodb/t/innodb_bug48024.test this seems to be a valid comment, but the test is buggy and does
+// not really test what it seems to. MySQL does not terminate the comment, but does not produce any error.
+// implementing correct behavior (unterminated comment error), like PostgreSQL does
+$tokens = $lexer->tokenizeAll(' /*/ comment /*/ ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::INVALID, '/*/ comment /*/ ', 1);
+
 $tokens = $lexer->tokenizeAll(' /* comment ');
 Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
@@ -32,7 +46,7 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 15);
 
 // OPTIONAL_COMMENT
 $tokens = $lexer->tokenizeAll(' /*!90000 comment */ ');
-//Assert::count($tokens, 3);
+Assert::count($tokens, 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, '/*!90000 comment */', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 20);

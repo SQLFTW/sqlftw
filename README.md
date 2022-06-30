@@ -19,20 +19,21 @@ SQL syntax support:
 
 supports all SQL commands from MySQL 5.x to MySQL 8.0.29 and almost all language features
 
-not yet supported features:
-- support for ascii-incompatible multibyte encodings like `shift-jis` or `gb18030`
-- resolving operator precedence in expressions
-- regular comments (conditional comments are parsed)
-- optimizer hint comments
-- quoted delimiters
-- implicit string concatenation of double-quoted strings in ANSI mode (`"foo" "bar"`)
-- nested comments (throws parse error; deprecated in MySQL 8)
+not supported features, that will fail to parse:
+- support for ascii-incompatible multibyte encodings like `shift-jis` or `gb18030` (fails to parse)
+- quoted delimiters (not implemented, probably will fail)
+- implicit string concatenation of double-quoted names in ANSI mode (`"foo" "bar"`; this is supported on strings, but not on names)
+
+parsed, but ignored features (no model and serialization):
+- resolving operator precedence in expressions (operators of the same tier are just parsed from left to right)
+- regular comments inside statements (comments before statement are collected and conditional comments are parsed)
+- optimizer hint comments (ignored)
 - HeatWave plugin features (SECONDARY_ENGINE)
+- `SELECT ... PROCEDURE ANALYSE (...)` - removed in MySQL 8
+- `WEIGHT_STRING(... LEVEL ...)` - removed in MySQL 8
 
-parsed, but ignored features:
-- `SELECT ... PROCEDURE ANALYSE (...)` - removed
-- `WEIGHT_STRING(... LEVEL ...)` - removed
-
+features implemented other way than MySQL:
+- Parser produces an error on unterminated comments same as PostgreSQL does (MySQL is silent and according to tests, this might be a bug)
 
 Architecture:
 -------------
@@ -54,16 +55,19 @@ Basic usage:
 
 use ...
 
-$platform = new Platform(Platform::MYSQL, '8.0');
+$platform = new Platform(Platform::MYSQL, '8.0'); // version defaults to x.x.99 when no patch number is given
 $settings = new ParserSettings($platform);
 $parser = new Parser($settings);
-try {
-    $commands = $parser->parse('SELECT foo FROM ...');
-    foreach ($commands as $command) {
-        // ...
+
+// returns a Generator. will not parse anything if you don't iterate over it
+$commands = $parser->parse('SELECT foo FROM ...');
+foreach ($commands as [$command, $tokenList, $start, $end]) {
+    // Parser does not throw exceptions. this allows to parse partially invalid code and not fail on first error
+    if ($command instanceof InvalidCommand) {
+        $e = $command->getException();
+        ...
     }
-} catch (ParserException $e) {
-    // ...
+    ...
 }
 ```
 
@@ -72,18 +76,18 @@ Current state of development:
 -----------------------------
 
 where we are now:
-- [x] ~99.9% MySQL language features implemented
-- [x] basic unit tests with serialisation
-- [x] tested against several thousands of tables and migrations
-- [x] parses everything from MySQL test suite (no false negatives)
-- [ ] fails on all error tests from MySQL test suite (no false positives)
-- [ ] serialisation testing on MySQL test suite (all features kept as expected)
-- [ ] fuzzy testing (parser handles mutated SQL strings exactly like a real DB)
-- [ ] porting my static analysis tools on the new parser (probably many API changes)
-- [ ] distinguishing server version (parsing for exact version of the DB server)
-- [ ] 100% MySQL language features implemented
-- [ ] release of first stable version?
-- [ ] other platforms? (MariaDB, SQLite, PostgreSQL, ...)
+- ☑ ~99.9% MySQL language features implemented
+- ☑ basic unit tests with serialisation
+- ☑ tested against several thousands of tables and migrations
+- ☑ parses everything from MySQL test suite (no false negatives)
+- ☐ fails on all error tests from MySQL test suite (no false positives)
+- ☐ serialisation testing on MySQL test suite (all features kept as expected)
+- ☐ fuzzy testing (parser handles mutated SQL strings exactly like a real DB)
+- ☐ porting my static analysis tools on the new parser (probably many API changes)
+- ☐ distinguishing server version (parsing for exact version of the DB server)
+- ☐ 100% MySQL language features implemented
+- ☐ release of first stable version?
+- ☐ other platforms? (MariaDB, SQLite, PostgreSQL, ...)
 
 
 Author:
