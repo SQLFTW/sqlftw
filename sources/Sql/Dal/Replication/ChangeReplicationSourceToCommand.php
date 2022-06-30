@@ -96,7 +96,7 @@ class ChangeReplicationSourceToCommand extends Statement implements ReplicationC
                 } elseif ($option === ReplicaOption::IGNORE_SERVER_IDS) {
                     return $option . ' = (' . $formatter->formatValuesList($value) . ')';
                 } elseif ($value instanceof TimeInterval) {
-                    return $option . ' = INTERVAL ' . $formatter->formatValue($value);
+                    return $option . ' = INTERVAL ' . $value->serialize($formatter);
                 } else {
                     return $option . ' = ' . $formatter->formatValue($value);
                 }
