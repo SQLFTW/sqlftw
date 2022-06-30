@@ -24,6 +24,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SqlSerializable;
 use function array_map;
+use function array_values;
 use function implode;
 use function is_numeric;
 use function is_string;
@@ -32,6 +33,17 @@ use function str_replace;
 class Formatter
 {
     use StrictBehaviorMixin;
+
+    /** @var string[] */
+    private const MYSQL_ESCAPES = [
+        '\\' => '\\\\',
+        "\x00" => '\0',
+        "\x08" => '\b',
+        "\n" => '\n', // 0a
+        "\r" => '\r', // 0d
+        "\t" => '\t', // 09
+        "\x1a" => '\Z', // 1a (legacy Win EOF)
+    ];
 
     /** @var ParserSettings */
     private $settings;
@@ -134,7 +146,10 @@ class Formatter
 
     public function formatString(string $string): string
     {
-        // todo: replace entities (\n...)
+        if (!$this->settings->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
+            $string = str_replace(array_keys(self::MYSQL_ESCAPES), array_values(self::MYSQL_ESCAPES), $string);
+        }
+
         return "'" . str_replace("'", "''", $string) . "'";
     }
 

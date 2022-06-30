@@ -54,8 +54,20 @@ class Lexer
 
     private const OPERATOR_SYMBOLS = ['!', '%', '&', '*', '+', '-', '/', ':', '<', '=', '>', '\\', '^', '|', '~'];
 
-    public const UUID_REGEXP = '~^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$~i';
-    public const IP_V4_REGEXP = '~^((?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]))~';
+    private const MYSQL_ESCAPES = [
+        '\\0' => "\x00",
+        "\\'" => "'",
+        '\\"' => '"',
+        '\\b' => "\x08",
+        '\\n' => "\n",
+        '\\r' => "\r",
+        '\\t' => "\t",
+        '\\Z' => "\x1A",
+        '\\\\' => '\\',
+    ];
+
+    public const UUID_REGEXP = '~^[\dA-F]{8}-[\dA-F]{4}-[\dA-F]{4}-[\dA-F]{4}-[\dA-F]{12}$~i';
+    public const IP_V4_REGEXP = '~^((?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))~';
 
     /** @var array<string, int> (this is in fact array<int, int>, but PHPStan is unable to cope with the auto-casting of numeric string keys) */
     private static $numbersKey;
@@ -93,6 +105,12 @@ class Lexer
     /** @var array<string, int> */
     private $operatorsKey;
 
+    /** @var string[] */
+    private $escapeKeys;
+
+    /** @var string[] */
+    private $escapeValues;
+
     public function __construct(
         ParserSettings $settings,
         bool $withComments = true,
@@ -114,6 +132,8 @@ class Lexer
         $this->reservedKey = array_flip($this->platform->getReserved());
         $this->keywordsKey = array_flip($this->platform->getNonReserved());
         $this->operatorsKey = array_flip($this->platform->getOperators());
+        $this->escapeKeys = array_keys(self::MYSQL_ESCAPES);
+        $this->escapeValues = array_keys(self::MYSQL_ESCAPES);
     }
 
     /**
@@ -999,57 +1019,17 @@ class Lexer
             return new Token($type | T::INVALID, $startAt, $row, $prefix . $orig, $prefix . $orig, $condition, $exception);
         }
 
-        $value = $this->unescapeString($orig, $quote);
+        // remove quotes
+        $value = substr($orig, 1, -1);
+        // unescape double quotes
+        $value = str_replace($quote . $quote, $quote, $value);
 
-        return new Token($type, $startAt, $row, ($prefix === '@' || $prefix === '@@' ? $prefix : '') . $value, $prefix . $orig, $condition);
-    }
-
-    /**
-     * NO_BACKSLASH_ESCAPES mode:
-     * Disable the use of the backslash character (\) as an escape character within strings.
-     * With this mode enabled, backslash becomes an ordinary character like any other.
-     *
-     * \0   An ASCII NUL (X'00') character
-     * \'   A single quote (') character
-     * \"   A double quote (") character
-     * \b   A backspace character
-     * \n   A newline (linefeed) character
-     * \r   A carriage return character
-     * \t   A tab character
-     * \Z   ASCII 26 (Control+Z)
-     * \\   A backslash (\) character
-     *
-     * (do not unescape. keep original for LIKE)
-     * \%   A % character
-     * \_   A _ character
-     *
-     * A ' inside a string quoted with ' may be written as ''.
-     * A " inside a string quoted with " may be written as "".
-     */
-    private function unescapeString(string $string, string $quote): string
-    {
-        $translations = [
-            '\\0' => "\x00",
-            '\\\'' => '\'',
-            '\\""' => '""',
-            '\\b' => "\x08",
-            '\\n' => "\n",
-            '\\r' => "\r",
-            '\\t' => "\t",
-            '\\Z' => "\x1A",
-            '\\\\' => '\\',
-        ];
-
-        $string = substr($string, 1, -1);
-
-        $string = str_replace($quote . $quote, $quote, $string);
-        if (!$this->settings->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
-            $string = str_replace(array_keys($translations), array_values($translations), $string);
-
-            // todo: ???
+        if (!$backslashes && ($quote !== "'" || ($quote === '"' && $this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)))) {
+            // unescape backslashes only in string context
+            $value = str_replace($this->escapeKeys, $this->escapeValues, $value);
         }
 
-        return $string;
+        return new Token($type, $startAt, $row, ($prefix === '@' || $prefix === '@@' ? $prefix : '') . $value, $prefix . $orig, $condition);
     }
 
     private function parseNumber(string $string, int &$position, int &$column, int $row, string $start, ?string $condition): ?Token
