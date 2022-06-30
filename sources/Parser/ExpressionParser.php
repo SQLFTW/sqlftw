@@ -910,7 +910,7 @@ class ExpressionParser
      */
     public function parseLimitOrOffsetValue(TokenList $tokenList)
     {
-        if ($tokenList->getSettings()->inRoutine()) {
+        if ($tokenList->inRoutine()) {
             $token = $tokenList->get(TokenType::NAME, TokenType::AT_VARIABLE);
             if ($token !== null) {
                 return new SimpleName($token->value);

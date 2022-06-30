@@ -21,15 +21,6 @@ class ParserSettings
     /** @var Platform */
     private $platform;
 
-    /** @var bool */
-    private $multiStatements;
-
-    /**
-     * @var bool - true when parsing mysql .test files containing non-SQL syntax
-     * @internal
-     */
-    public $mysqlTestMode = false;
-
     // state -----------------------------------------------------------------------------------------------------------
 
     /** @var string */
@@ -41,15 +32,11 @@ class ParserSettings
     /** @var SqlMode */
     private $mode;
 
-    /** @var bool */
-    private $inRoutine = false;
-
     public function __construct(
         Platform $platform,
         ?string $delimiter = null,
         ?Charset $charset = null,
-        ?SqlMode $mode = null,
-        bool $multiStatements = false
+        ?SqlMode $mode = null
     ) {
         if ($delimiter === null) {
             $delimiter = ';';
@@ -58,7 +45,6 @@ class ParserSettings
         $this->delimiter = $delimiter;
         $this->charset = $charset;
         $this->mode = $mode ?? $platform->getDefaultMode();
-        $this->multiStatements = $multiStatements;
     }
 
     public function getPlatform(): Platform
@@ -94,26 +80,6 @@ class ParserSettings
     public function setMode(SqlMode $mode): void
     {
         $this->mode = $mode;
-    }
-
-    public function multiStatements(): bool
-    {
-        return $this->multiStatements;
-    }
-
-    public function setMultiStatements(bool $value): void
-    {
-        $this->multiStatements = $value;
-    }
-
-    public function inRoutine(): bool
-    {
-        return $this->inRoutine;
-    }
-
-    public function setInRoutine(bool $value): void
-    {
-        $this->inRoutine = $value;
     }
 
 }

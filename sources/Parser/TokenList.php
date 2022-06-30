@@ -28,6 +28,7 @@ use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
+use function array_slice;
 use function array_values;
 use function call_user_func;
 use function count;
@@ -73,14 +74,22 @@ class TokenList
     /** @var Platform */
     private $platform;
 
+    /** @var bool */
+    private $invalid;
+
+    // parser state ----------------------------------------------------------------------------------------------------
+
     /** @var int */
     private $autoSkip;
 
     /** @var int */
     private $position = 0;
 
-    /** @var bool */
-    private $invalid;
+    /** @var bool Are we inside a function or procedure definition? */
+    private $inRoutine = false;
+
+    /** @var bool Should we expect a delimiter after the command? */
+    private $embedded = false;
 
     /**
      * @param non-empty-array<Token> $tokens
@@ -92,6 +101,14 @@ class TokenList
         $this->platform = $settings->getPlatform();
         $this->autoSkip = $autoSkip;
         $this->invalid = $invalid;
+    }
+
+    /**
+     * @return Token[]
+     */
+    public function getTokens(): array
+    {
+        return $this->tokens;
     }
 
     public function getSettings(): ParserSettings
@@ -112,6 +129,26 @@ class TokenList
     public function invalid(): bool
     {
         return $this->invalid;
+    }
+
+    public function inRoutine(): bool
+    {
+        return $this->inRoutine;
+    }
+
+    public function setInRoutine(bool $value): void
+    {
+        $this->inRoutine = $value;
+    }
+
+    public function embedded(): bool
+    {
+        return $this->embedded;
+    }
+
+    public function setEmbedded(bool $value): void
+    {
+        $this->embedded = $value;
     }
 
     public function using(?string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool
@@ -148,6 +185,9 @@ class TokenList
                 continue;
             } elseif (($token->type & T::SYMBOL) !== 0 && $token->value === ';') {
                 // trailing ;
+                continue;
+            } elseif (($token->type & T::DELIMITER) !== 0) {
+                // trailing delimiter
                 continue;
             } else {
                 return false;
@@ -189,12 +229,19 @@ class TokenList
         return $this->tokens[0]->position;
     }
 
-    /**
-     * @return Token[]
-     */
-    public function getTokens(): array
+    public function getEndOffset(): int
     {
-        return $this->tokens;
+        $token = end($this->tokens);
+        $value = $token->original ?? $token->value;
+
+        return $token->position + strlen($value);
+    }
+
+    public function slice($startOffset, $endOffset): self
+    {
+        $tokens = array_slice($this->tokens, $startOffset, $endOffset - $startOffset);
+
+        return new self($tokens, $this->settings, $this->autoSkip);
     }
 
     public function getLast(): Token

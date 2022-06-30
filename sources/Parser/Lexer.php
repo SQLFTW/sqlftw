@@ -148,22 +148,19 @@ class Lexer
             if (($token->type & TokenType::INVALID) !== 0) {
                 $invalid = true;
             }
+
+            $buffer[] = $token;
+
             if (($token->type & TokenType::DELIMITER) !== 0) {
-                if ($buffer !== []) {
-                    yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
-                }
-
-                $invalid = false;
-                $buffer = [];
-            } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {
-                $buffer[] = $token;
-
                 yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
 
                 $invalid = false;
                 $buffer = [];
-            } else {
-                $buffer[] = $token;
+            } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {
+                yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
+
+                $invalid = false;
+                $buffer = [];
             }
         }
         if ($buffer !== []) {

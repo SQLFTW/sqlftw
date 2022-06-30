@@ -14,6 +14,7 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParsingException;
 use SqlFtw\Parser\Token;
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use function class_exists;
 use function gettype;
@@ -89,7 +90,7 @@ class Assert extends DogmaAssert
         if (count($results) > 1) {
             self::fail('More than one command found in given SQL code.');
         }
-        $command = $results[0];
+        [$command, $tokenList, $start, $end] = $results[0];
 
         if ($command instanceof InvalidCommand) {
             if (class_exists(Debugger::class)) {
@@ -118,7 +119,8 @@ class Assert extends DogmaAssert
         if (count($results) > 1) {
             self::fail('More than one command found in given SQL code.');
         }
-        $command = $results[0];
+        [$command, $tokenList, $start, $end] = $results[0];
+
         if ($command instanceof InvalidCommand) {
             if (class_exists(Debugger::class)) {
                 Debugger::dump($command->getTokenList());
@@ -132,20 +134,23 @@ class Assert extends DogmaAssert
     public static function validCommands(
         string $sql,
         ?Parser $parser = null,
+        ?Formatter $formatter = null,
         ?callable $onError = null
     ): void {
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
 
         try {
-            foreach ($parser->parse($sql) as $command) {
+            /** @var TokenList $tokenList */
+            foreach ($parser->parse($sql) as [$command, $tokenList, $start, $end]) {
                 if ($command instanceof InvalidCommand) {
                     $fail = $onError !== null ? $onError($command, $sql) : true;
                     if ($fail) {
                         throw $command->getException();
                     }
-                } else {
-                    self::true(true);
+                    continue;
                 }
+
+                self::true(true);
             }
         } catch (LexerException $e) {
             if (class_exists(Debugger::class)) {

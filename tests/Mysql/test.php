@@ -11,8 +11,11 @@ use Dogma\Str;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Sql\Command;
 use SqlFtw\Tests\Assert;
 use SqlFtw\Tests\ParserHelper;
 use function dirname;
@@ -80,14 +83,6 @@ $skips = [
     'mysqltest.test',
     'charset_master.test',
 ];
-
-$multiStatementFiles = [
-    'rpl_multi_query', 'rpl_sp', 'audit_plugin_2', 'innodb_bug48024', 'ndb_sp', 'nesting', 'prepared_stmts_by_stored_programs',
-    'rpl_events', 'rpl_bug31076', 'func_time', 'metadata', 'multi_statement', 'parser', 'partition', 'session_tracker_trx_state_myisam',
-    'signal', 'sp-security', 'sp-ucs2', 'sp', 'sp_trans_myisam', 'trigger', 'view', 'query_cache', 'session_tracker_trx_state',
-    'sp_notembedded', 'sp_trans', 'rpl_row_sp007', 'binlog_switch_inside_trans', 'sql_low_priority_updates_func',
-];
-$multiStatementRegexp = '~(' . implode('|', $multiStatementFiles) . ')\\.test$~';
 
 $replacements = [
     // some test fixtures
@@ -187,9 +182,8 @@ $knownFailures = [
 
 $parser = ParserHelper::getParserFactory(Platform::MYSQL, '8.0.29')->getParser();
 $settings = $parser->getSettings();
-$settings->mysqlTestMode = false;
 
-//$only = 'fulltext.test';
+//$only = 'sp-error.test';
 
 $dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test';
 //$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test/t';
@@ -235,23 +229,18 @@ foreach ($it as $fileInfo) {
     // reset settings
     $settings->setMode($settings->getPlatform()->getDefaultMode());
     $settings->setDelimiter(';');
-    $settings->setMultiStatements(false);
-    if (preg_match($multiStatementRegexp, $path) !== 0) {
-        // multi-statements
-        $settings->setMultiStatements(true);
-    }
 
     $count++;
     $size += strlen($contents);
 
-    /*$formatter = new Formatter($settings);
+    $formatter = new Formatter($settings);
     $after = static function (TokenList $tokenList, array $commands) use ($formatter): void {
         Assert::same($tokenList->serialize(), implode("\n", array_map(static function (Command $command) use ($formatter): string {
             return $command->serialize($formatter);
         }, $commands)));
-    };*/
+    };
 
-    Assert::validCommands($contents, $parser, static function (InvalidCommand $command, string $sql) use ($count, $path, $knownFailures): bool
+    Assert::validCommands($contents, $parser, $formatter, static function (InvalidCommand $command, string $sql) use ($count, $path, $knownFailures): bool
     {
         $statement = $command->getTokenList()->serialize();
         $comments = $command->getCommentsBefore();

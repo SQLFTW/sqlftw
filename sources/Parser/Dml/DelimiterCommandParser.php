@@ -24,6 +24,10 @@ class DelimiterCommandParser
         $tokenList->expectKeyword(Keyword::DELIMITER);
         $delimiter = $tokenList->expect(TokenType::DELIMITER_DEFINITION)->value;
 
+        // Parser uses delimiter token to detect if the command has been parsed completely,
+        // but there might be no delimiter after delimiter definition
+        $tokenList->rewind(-1);
+
         return new DelimiterCommand($delimiter);
     }
 

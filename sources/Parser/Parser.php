@@ -16,11 +16,8 @@ use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\MultiStatement;
 use SqlFtw\Sql\Statement;
 use Throwable;
-use function count;
-use function iterator_to_array;
 use function strtoupper;
 
 class Parser
@@ -68,54 +65,30 @@ class Parser
     }
 
     /**
-     * @return Generator<Command>
+     * @return Generator<array{Command&Statement, TokenList, int, int}>
      */
     public function parse(string $sql): Generator
     {
         $tokenLists = $this->lexer->tokenizeLists($sql);
 
+        /** @var TokenList $tokenList */
         foreach ($tokenLists as $tokenList) {
-            $commands = [];
-            do {
-                $commands[] = $command = $this->parseTokenList($tokenList);
+            $start = $tokenList->getPosition();
+            $command = $this->parseTokenList($tokenList);
+            $end = $tokenList->getPosition();
 
-                try {
-                    $this->settingsUpdater->updateSettings($command, $this->settings, $tokenList);
-                } catch (ParsingException $e) {
-                    $tokenList->finish();
+            try {
+                $this->settingsUpdater->updateSettings($command, $this->settings, $tokenList);
+            } catch (ParsingException $e) {
+                $tokenList->finish();
+                $command = new InvalidCommand($tokenList, $command->getCommentsBefore(), $e);
 
-                    yield new InvalidCommand($tokenList, $command->getCommentsBefore(), $e);
+                yield [$command, $tokenList, $start, $end];
 
-                    break;
-                }
+                continue;
+            }
 
-                if ($tokenList->isFinished()) {
-                    if (count($commands) === 1) {
-                        yield $command;
-
-                        break;
-                    } else {
-                        yield new MultiStatement($commands);
-
-                        break;
-                    }
-                } else {
-                    try {
-                        //rd($command);
-                        if (!$this->settings->multiStatements()) {
-                            $tokenList->expectEnd();
-                        }
-
-                        $tokenList->expectSymbol(';');
-                    } catch (ParsingException $e) {
-                        $tokenList->finish();
-
-                        yield new InvalidCommand($tokenList, $command->getCommentsBefore(), $e);
-
-                        break;
-                    }
-                }
-            } while (true);
+            yield [$command, $tokenList, $start, $end];
         }
     }
 
@@ -132,6 +105,8 @@ class Parser
         $first = $tokenList->get();
         do {
             if ($first === null) {
+                return new EmptyCommand($tokenList, $comments);
+            } elseif (($first->type & TokenType::DELIMITER) !== 0) {
                 return new EmptyCommand($tokenList, $comments);
             } elseif (($first->type & TokenType::COMMENT) !== 0) {
                 $comments[] = $first->value;
@@ -152,7 +127,7 @@ class Parser
                 return new InvalidCommand($tokenList, $comments, $exception);
             }
             $first = $tokenList->get();
-        } while ($first === null || ($first->type & TokenType::COMMENT) !== 0);
+        } while ($first === null || ($first->type & (TokenType::COMMENT | TokenType::DELIMITER)) !== 0);
         $tokenList->setAutoSkip($autoSkip);
 
         // list with invalid tokens
@@ -178,6 +153,15 @@ class Parser
 
             if ($comments !== []) {
                 $command->setCommentsBefore($comments);
+            }
+
+            // ensures that the command was parsed completely
+            if (!$tokenList->embedded() && !$tokenList->isFinished()) {
+                if ($tokenList->has(TokenType::DELIMITER_DEFINITION)) {
+                    $tokenList->pass(TokenType::DELIMITER);
+                } elseif (!$tokenList->has(TokenType::DELIMITER)) {
+                    $tokenList->expectSymbol(';');
+                }
             }
 
             return $command;

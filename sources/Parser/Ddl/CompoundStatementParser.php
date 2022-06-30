@@ -16,6 +16,7 @@ use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Ddl\Compound\CaseStatement;
 use SqlFtw\Sql\Ddl\Compound\CloseCursorStatement;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
@@ -92,34 +93,21 @@ class CompoundStatementParser
             $tokenList->expectSymbol(':');
         }
 
-        $tokenList->getSettings()->setInRoutine(true);
-        try {
-            if ($tokenList->hasAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
-                // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
-                return $this->parseStatement($tokenList->rewind($position));
-            } else {
-                return $this->parser->parseTokenList($tokenList->rewind($position));
-            }
-        } finally {
-            $tokenList->getSettings()->setInRoutine(false);
+        $previous = $tokenList->embedded();
+        $tokenList->setEmbedded(true);
+        $tokenList->setInRoutine(true);
+
+        if ($tokenList->hasAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
+            // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
+            $statement = $this->parseStatement($tokenList->rewind($position));
+        } else {
+            $statement = $this->parser->parseTokenList($tokenList->rewind($position));
         }
-    }
 
-    /**
-     * @return array<Statement>
-     */
-    private function parseStatementList(TokenList $tokenList): array
-    {
-        $statements = [];
-        do {
-            if ($tokenList->hasAnyKeyword(Keyword::END, Keyword::UNTIL, Keyword::WHEN, Keyword::ELSE, Keyword::ELSEIF)) {
-                $tokenList->rewind(-1);
-                break;
-            }
-            $statements[] = $this->parseStatement($tokenList);
-        } while ($tokenList->hasSymbol(';'));
+        $tokenList->setEmbedded($previous);
+        $tokenList->setInRoutine(false);
 
-        return $statements;
+        return $statement;
     }
 
     /**
@@ -156,40 +144,69 @@ class CompoundStatementParser
             );
         }
         switch ($keyword) {
-            case Keyword::BEGIN:
-                return $this->parseBlock($tokenList, $label);
             case Keyword::LOOP:
-                return $this->parseLoop($tokenList, $label);
+                $statement = $this->parseLoop($tokenList, $label);
+                break;
             case Keyword::REPEAT:
-                return $this->parseRepeat($tokenList, $label);
+                $statement = $this->parseRepeat($tokenList, $label);
+                break;
             case Keyword::WHILE:
-                return $this->parseWhile($tokenList, $label);
+                $statement = $this->parseWhile($tokenList, $label);
+                break;
             case Keyword::CASE:
-                return $this->parseCase($tokenList);
+                $statement = $this->parseCase($tokenList);
+                break;
             case Keyword::IF:
-                return $this->parseIf($tokenList);
+                $statement = $this->parseIf($tokenList);
+                break;
             case Keyword::DECLARE:
-                return $this->parseDeclare($tokenList);
+                $statement = $this->parseDeclare($tokenList);
+                break;
             case Keyword::OPEN:
-                return new OpenCursorStatement($tokenList->expectName());
+                $statement = new OpenCursorStatement($tokenList->expectName());
+                break;
             case Keyword::FETCH:
-                return $this->parseFetch($tokenList);
+                $statement = $this->parseFetch($tokenList);
+                break;
             case Keyword::CLOSE:
-                return new CloseCursorStatement($tokenList->expectName());
+                $statement = new CloseCursorStatement($tokenList->expectName());
+                break;
             case Keyword::GET:
-                return $this->parseGetDiagnostics($tokenList->rewind($position));
+                $statement = $this->parseGetDiagnostics($tokenList->rewind($position));
+                break;
             case Keyword::SIGNAL:
             case Keyword::RESIGNAL:
-                return $this->parseSignalResignal($tokenList->rewind(-1));
+                $statement = $this->parseSignalResignal($tokenList->rewind(-1));
+                break;
             case Keyword::RETURN:
-                return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
+                $statement = new ReturnStatement($this->expressionParser->parseExpression($tokenList));
+                break;
             case Keyword::LEAVE:
-                return new LeaveStatement($tokenList->expectName());
+                $statement = new LeaveStatement($tokenList->expectName());
+                break;
             case Keyword::ITERATE:
-                return new IterateStatement($tokenList->expectName());
+                $statement = new IterateStatement($tokenList->expectName());
+                break;
+            case Keyword::BEGIN:
+                $statement = $this->parseBlock($tokenList, $label);
+                break;
             default:
-                return $this->parser->parseTokenList($tokenList);
+                $previous = $tokenList->embedded();
+                // do not check delimiter in Parser, because it will be checked here
+                $tokenList->setEmbedded(true);
+                $statement = $this->parser->parseTokenList($tokenList);
+                $tokenList->setEmbedded($previous);
+                break;
         }
+
+        // ensures that the statement was parsed completely
+        if (!$tokenList->embedded() && !$tokenList->isFinished()) {
+            if (!$tokenList->has(TokenType::DELIMITER)) {
+                $tokenList->expectSymbol(';');
+            }
+        }
+
+        return $statement;
     }
 
     private function parseBlock(TokenList $tokenList, ?string $label): CompoundStatement
@@ -205,6 +222,35 @@ class CompoundStatementParser
         }
 
         return new CompoundStatement($statements, $label);
+    }
+
+    /**
+     * @return array<Statement>
+     */
+    private function parseStatementList(TokenList $tokenList): array
+    {
+        $statements = [];
+
+        // for empty lists
+        if ($tokenList->hasAnyKeyword(Keyword::END, Keyword::UNTIL, Keyword::WHEN, Keyword::ELSE, Keyword::ELSEIF)) {
+            $tokenList->rewind(-1);
+            return $statements;
+        }
+
+        $previous = $tokenList->embedded();
+        $tokenList->setEmbedded(false);
+        do {
+            $statements[] = $this->parseStatement($tokenList);
+
+            // termination condition
+            if ($tokenList->hasAnyKeyword(Keyword::END, Keyword::UNTIL, Keyword::WHEN, Keyword::ELSE, Keyword::ELSEIF)) {
+                $tokenList->rewind(-1);
+                break;
+            }
+        } while (!$tokenList->isFinished());
+        $tokenList->setEmbedded($previous);
+
+        return $statements;
     }
 
     /**
@@ -404,7 +450,12 @@ class CompoundStatementParser
                 $conditions[] = new Condition($type, $value);
             } while ($tokenList->hasSymbol(','));
 
+            $previous = $tokenList->embedded();
+            $tokenList->setEmbedded(true);
+
             $statement = $this->parseStatement($tokenList);
+
+            $tokenList->setEmbedded($previous);
 
             return new DeclareHandlerStatement($action, $conditions, $statement);
         }
