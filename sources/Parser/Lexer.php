@@ -22,7 +22,6 @@ use SqlFtw\Sql\SqlMode;
 use function array_flip;
 use function array_keys;
 use function array_merge;
-use function array_values;
 use function ctype_digit;
 use function implode;
 use function iterator_to_array;
@@ -886,13 +885,6 @@ class Lexer
 
                             yield $previous = new Token(T::INVALID, $start, $row, $del, $del, $exception);
                             break;
-                        }
-                        if (substr($del, -strlen($delimiter)) === $delimiter) { // str_ends_with()
-                            $trimmed = substr($del, 0, -strlen($delimiter));
-                            if ($trimmed !== $delimiter) {
-                                // do not trim delimiter when would not change the current one (;; vs ;)
-                                $del = $trimmed;
-                            }
                         }
                         if ($this->settings->getPlatform()->isReserved(strtoupper($del))) {
                             $exception = new LexerException('Delimiter can not be a reserved word', $position, $string);

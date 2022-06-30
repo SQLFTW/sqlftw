@@ -63,20 +63,20 @@ class MysqlTestFilter
                 array_splice($rows, $i, count($rows) - $i, ['-- XB1 removed all']);
                 break;
             } elseif (preg_match('~^\s*DELIMITER (.*)~i', $row, $m) !== 0) {
-                // only save (trim previous delimiter)
                 $d = trim($m[1]);
                 //rl($delimiter, $i, 'y');
                 //rl($d, null, 'g');
+                // stripping Perl delimiter from SQL delimiter definition
                 $delimiter = Str::endsWith($d, $delimiter) ? substr($d, 0, -strlen($delimiter)) : $d;
+                $rows[$i] = 'DELIMITER ' . $delimiter . ' -- XBZ';
                 //rl($delimiter);
                 $quotedDelimiter = preg_quote($delimiter, '~');
             } elseif (preg_match('~^\s*--delimiter (.*)~i', $row, $m) !== 0) {
                 // delimiter
-                // adding previous delimiter to prevent problems with "--delimiter |;" (interpreted exactly) vs "DELIMITER |;" (previous delimiter trimmed)
                 $d = trim($m[1]);
                 //rl($delimiter, $i, 'y');
                 //rl($d, null, 'g');
-                $rows[$i] = 'DELIMITER ' . $d . $delimiter;
+                $rows[$i] = 'DELIMITER ' . $d . ' -- XB0';
                 $delimiter = $d;
                 //rl($delimiter);
                 $quotedDelimiter = preg_quote($delimiter, '~');

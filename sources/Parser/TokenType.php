@@ -102,7 +102,7 @@ class TokenType extends IntSet
     /** Statement delimiter determined by DELIMITER keyword or default ";" */
     public const DELIMITER = PowersOfTwo::_256M;
 
-    /** Token following the DELIMITER keyword and consisting of symbols */
+    /** Token following the DELIMITER keyword */
     public const DELIMITER_DEFINITION = PowersOfTwo::_512M;
 
     /** Not a real token. Indicates expectation of end of token list */
