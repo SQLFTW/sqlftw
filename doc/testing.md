@@ -12,8 +12,9 @@ majority of unit tests check parser in this way:
 - resulting `Command` is serialized back to string
 - original code and result string is compared and should be equal
 
-there are of course some differences. mainly these three:
+there are of course some differences. mainly these four:
 - parser does not track white space, so things like spaces and indentation are normalized
+- keywords and other special values are normalized to upper-case
 - (My)SQL uses some aliases like `\N` == `null` or `CHARSET` == `CHARACTER SET`. these are also normalized
 - in some cases there are optional syntax features that are normalized (always removed or always added). e.g. optional `=` in table options etc.
 
