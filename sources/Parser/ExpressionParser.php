@@ -503,7 +503,11 @@ class ExpressionParser
             // ~ simple_expr
             // ! simple_expr
             // BINARY simple_expr
-            if ($operator === Operator::BINARY && $tokenList->isFinished() || $tokenList->hasSymbol(';') || $tokenList->hasSymbol(',')) {
+            $semi = $coma = false;
+            if ($operator === Operator::BINARY && ($tokenList->isFinished() || $semi = $tokenList->hasSymbol(';') || $coma = $tokenList->hasSymbol(','))) {
+                if ($semi || $coma) {
+                    $tokenList->rewind(-1);
+                }
                 return new SimpleName(Charset::BINARY);
             } else {
                 return new UnaryOperator(Operator::get($operator), $this->parseSimpleExpression($tokenList));
