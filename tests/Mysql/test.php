@@ -31,7 +31,7 @@ use function substr;
 
 require dirname(__DIR__) . '/bootstrap.php';
 
-ini_set('memory_limit', (string) (256* 1024 * 1024));
+ini_set('memory_limit', (string) (4 * 1024 * 1024 * 1024));
 
 $skips = [
     // todo: problems with �\' in shift-jis encoding. need to tokenize strings per-character not per-byte
