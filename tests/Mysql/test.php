@@ -238,9 +238,10 @@ foreach ($it as $fileInfo) {
         }, $commands)));
     };
 
-    Assert::validCommands($contents, $parser, $formatter, static function (InvalidCommand $command, string $sql) use ($count, $path, $knownFailures): bool
+    Assert::validCommands($contents, $parser, $formatter, static function (string $sql, InvalidCommand $command, TokenList $tokenList, int $start, int $end)
+        use ($count, $path, $knownFailures): bool
     {
-        $statement = $command->getTokenList()->serialize();
+        $statement = $tokenList->serialize();
         $comments = $command->getCommentsBefore();
         $lastComment = end($comments);
         if (in_array($statement, $knownFailures, true)) {
@@ -252,10 +253,10 @@ foreach ($it as $fileInfo) {
         }
 
         rl($count . ': ' . Str::after($path, 'mysql-test'));
-        rd($command->getTokenList());
+        rd($tokenList);
         rd($statement);
         rd($comments);
-        $firstToken = $command->getTokenList()->getTokens()[0];
+        $firstToken = $tokenList->getTokens()[0];
         rd(substr($sql, $firstToken->position - 100, 200));
 
         return true;

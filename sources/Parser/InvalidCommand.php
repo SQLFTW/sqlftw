@@ -19,25 +19,16 @@ class InvalidCommand extends Statement implements Command
 {
     use StrictBehaviorMixin;
 
-    /** @var TokenList */
-    private $tokenList;
-
     /** @var Throwable */
     private $exception;
 
     /**
      * @param string[] $commentsBefore
      */
-    public function __construct(TokenList $tokenList, array $commentsBefore, Throwable $exception)
+    public function __construct(array $commentsBefore, Throwable $exception)
     {
-        $this->tokenList = $tokenList;
         $this->commentsBefore = $commentsBefore;
         $this->exception = $exception;
-    }
-
-    public function getTokenList(): TokenList
-    {
-        return $this->tokenList;
     }
 
     public function getException(): Throwable
@@ -47,7 +38,7 @@ class InvalidCommand extends Statement implements Command
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->tokenList->serialize();
+        return 'invalid command';
     }
 
 }

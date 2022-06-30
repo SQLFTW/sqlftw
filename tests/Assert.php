@@ -143,7 +143,7 @@ class Assert extends DogmaAssert
             /** @var TokenList $tokenList */
             foreach ($parser->parse($sql) as [$command, $tokenList, $start, $end]) {
                 if ($command instanceof InvalidCommand) {
-                    $fail = $onError !== null ? $onError($command, $sql) : true;
+                    $fail = $onError !== null ? $onError($sql, $command, $tokenList, $start, $end) : true;
                     if ($fail) {
                         throw $command->getException();
                     }

@@ -81,7 +81,7 @@ class Parser
                 $this->settingsUpdater->updateSettings($command, $this->settings, $tokenList);
             } catch (ParsingException $e) {
                 $tokenList->finish();
-                $command = new InvalidCommand($tokenList, $command->getCommentsBefore(), $e);
+                $command = new InvalidCommand($command->getCommentsBefore(), $e);
 
                 yield [$command, $tokenList, $start, $end];
 
@@ -119,12 +119,12 @@ class Parser
                 $exception = InvalidTokenException::tokens(TokenType::KEYWORD, 0, self::STARTING_KEYWORDS, $first, $tokenList);
                 $tokenList->finish();
 
-                return new InvalidCommand($tokenList, $comments, $exception);
+                return new InvalidCommand($comments, $exception);
             } else {
                 $exception = InvalidTokenException::tokens(TokenType::KEYWORD, 0, self::STARTING_KEYWORDS, $first, $tokenList);
                 $tokenList->finish();
 
-                return new InvalidCommand($tokenList, $comments, $exception);
+                return new InvalidCommand($comments, $exception);
             }
             $first = $tokenList->get();
         } while ($first === null || ($first->type & (TokenType::COMMENT | TokenType::DELIMITER)) !== 0);
@@ -144,7 +144,7 @@ class Parser
             $exception = $exception;
             $tokenList->finish();
 
-            return new InvalidCommand($tokenList, $comments, $exception);
+            return new InvalidCommand($comments, $exception);
         }
 
         // parse!
@@ -169,7 +169,7 @@ class Parser
             // Throwable should not be here
             $tokenList->finish();
 
-            return new InvalidCommand($tokenList, $comments, $e);
+            return new InvalidCommand($comments, $e);
         }
     }
 
