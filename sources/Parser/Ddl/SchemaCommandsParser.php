@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
@@ -17,6 +18,7 @@ use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\SchemaOptions;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
 use SqlFtw\Sql\Keyword;
+use function trim;
 
 class SchemaCommandsParser
 {
@@ -63,11 +65,14 @@ class SchemaCommandsParser
         $tokenList->expectKeyword(Keyword::CREATE);
         $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $schema = $tokenList->expectName();
+        $name = $tokenList->expectName();
+        if ($name === '' || trim($name) !== $name) {
+            throw new ParserException('Invalid schema name.', $tokenList);
+        }
 
         $options = $this->parseOptions($tokenList);
 
-        return new CreateSchemaCommand($schema, $options, $ifNotExists);
+        return new CreateSchemaCommand($name, $options, $ifNotExists);
     }
 
     private function parseOptions(TokenList $tokenList): ?SchemaOptions
