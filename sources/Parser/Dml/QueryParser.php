@@ -40,6 +40,7 @@ use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\UserVariable;
@@ -310,6 +311,9 @@ class QueryParser
                 }
             }
             $alias = $this->expressionParser->parseAlias($tokenList);
+            if ($alias !== null && $expression instanceof QualifiedName && $expression->getName() === '*') {
+                throw new ParserException('Cannot use alias after *.', $tokenList);
+            }
 
             $what[] = new SelectExpression($expression, $alias, $window);
         } while ($tokenList->hasSymbol(','));
