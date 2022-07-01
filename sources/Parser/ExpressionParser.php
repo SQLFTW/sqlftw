@@ -1140,6 +1140,9 @@ class ExpressionParser
                 if ($type->equalsValue(BaseType::FLOAT)) {
                     // FLOAT(10.3) is valid :E
                     $length = (int) $tokenList->expect(TokenType::NUMBER)->value;
+                    if ($length < 0) {
+                        throw new ParserException('Invalid FLOAT precision.', $tokenList);
+                    }
                 } else {
                     $length = (int) $tokenList->expectUnsignedInt();
                 }
