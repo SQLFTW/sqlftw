@@ -578,8 +578,14 @@ class TableCommandsParser
                     } elseif ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
                         // RENAME {INDEX|KEY} old_index_name TO new_index_name
                         $oldName = $tokenList->expectName();
+                        if (strtoupper($oldName) === Keyword::PRIMARY) {
+                            throw new ParserException('Cannot rename key PRIMARY.', $tokenList);
+                        }
                         $tokenList->expectKeyword(Keyword::TO);
                         $newName = $tokenList->expectName();
+                        if (strtoupper($newName) === Keyword::PRIMARY) {
+                            throw new ParserException('Cannot rename key to PRIMARY.', $tokenList);
+                        }
                         $actions[] = new RenameIndexAction($oldName, $newName);
                     } else {
                         // RENAME [TO|AS] new_tbl_name
