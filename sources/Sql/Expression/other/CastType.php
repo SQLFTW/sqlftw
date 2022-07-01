@@ -93,13 +93,13 @@ class CastType implements ArgumentNode
     private function checkSize(BaseType $type, ?array $size): void
     {
         // phpcs:disable SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
-        if ($type->isDecimal() || $type->equalsValue(BaseType::FLOAT)) {
+        if ($type->isDecimal()) {
             if ($size !== null && !(count($size) === 1 || count($size) === 2)) {
                 throw new InvalidDefinitionException("One or two integer size parameters required for type {$type->getValue()}.");
             }
         } elseif ($type->isFloatingPointNumber()) {
-            if ($size !== null && count($size) !== 2) {
-                throw new InvalidDefinitionException("Two integer size parameters required for type {$type->getValue()}.");
+            if ($size !== null && count($size) !== 1) {
+                throw new InvalidDefinitionException("One integer size parameters required for type {$type->getValue()}.");
             }
         } elseif ($type->isInteger() || $type->getValue() === BaseType::BIT) {
             if ($size !== null && count($size) !== 1) {
