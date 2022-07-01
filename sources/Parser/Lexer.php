@@ -436,14 +436,21 @@ class Lexer
                     } elseif ($next === '*') {
                         $position++;
                         $column++;
-                        if (preg_match('~^[Mm]?!(?:\d{5,6})?~', substr($string, $position, 10), $m) === 1) {
-                            $versionId = strtoupper(str_replace('!', '', $m[0]));
-                            if ($this->platform->interpretOptionalComment($versionId)) {
-                                $condition = $versionId;
-                                $position += strlen($versionId) + 1;
-                                $column += strlen($versionId) + 1;
-                                // continue parsing as conditional code
-                                break;
+
+                        $optional = $string[$position] === '!';
+                        // todo: Maria
+                        $validOptional = true;
+                        if ($optional) {
+                            $validOptional = preg_match('~^[Mm]?!(?:00000|[1-9]\d{4,5})?(?: |\\*/)~', substr($string, $position, 10), $m) === 1;
+                            if ($validOptional) {
+                                $versionId = strtoupper(str_replace('!', '', $m[0]));
+                                if ($this->platform->interpretOptionalComment($versionId)) {
+                                    $condition = $versionId;
+                                    $position += strlen($versionId) + 1;
+                                    $column += strlen($versionId) + 1;
+                                    // continue parsing as conditional code
+                                    break;
+                                }
                             }
                         }
 
@@ -452,7 +459,7 @@ class Lexer
                         // parse as a regular comment
                         $commentDepth++;
                         $value = $char . $next;
-                        $ok = false;
+                        $terminated = false;
                         while ($position < $length) {
                             $next = $string[$position];
                             if (!$hint && $next === '/' && ($position + 1 < $length) && $string[$position + 1] === '*') {
@@ -466,7 +473,7 @@ class Lexer
                                 $column += 2;
                                 $commentDepth--;
                                 if ($commentDepth === 0) {
-                                    $ok = true;
+                                    $terminated = true;
                                     break;
                                 }
                             } elseif ($next === "\n") {
@@ -480,17 +487,23 @@ class Lexer
                                 $column++;
                             }
                         }
-                        if (!$ok) {
+                        if (!$terminated) {
                             $exception = new LexerException('End of comment not found.', $position, $string);
 
                             yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::INVALID, $start, $row, $value, null, $exception);
+                            break;
+                        } elseif (!$validOptional) {
+                            $exception = new LexerException('Invalid optional comment: ' . $value, $position, $string);
+
+                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT | T::INVALID, $start, $row, $value, null, $exception);
+                            break;
                         }
 
                         if ($this->withComments) {
-                            if ($value[2] === '!' || ($value[3] === '!' && ($value[2] === 'm' || $value[2] === 'M'))) {
+                            if ($optional) {
                                 // /*!12345 comment (when not interpreted as code) */
                                 yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, $start, $row, $value);
-                            } elseif ($value[2] === '+') {
+                            } elseif ($hint) {
                                 // /*+ comment */
                                 yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::HINT_COMMENT, $start, $row, $value);
                             } else {

@@ -28,12 +28,12 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 35);
 // not really test what it seems to. MySQL does not terminate the comment, but does not produce any error.
 // implementing correct behavior (unterminated comment error), like PostgreSQL does
 $tokens = $lexer->tokenizeAll(' /*/ comment /*/ ');
-Assert::count($tokens, 3);
+Assert::count($tokens, 2);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::INVALID, '/*/ comment /*/ ', 1);
 
 $tokens = $lexer->tokenizeAll(' /* comment ');
-Assert::count($tokens, 3);
+Assert::count($tokens, 2);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::INVALID, '/* comment ', 1);
 
@@ -51,6 +51,11 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, '/*!90000 comment */', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 20);
 
+$tokens = $lexer->tokenizeAll(' /*!2*/ ');
+Assert::count($tokens, 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT | T::INVALID, '/*!2*/', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
 
 // DOUBLE_HYPHEN_COMMENT
