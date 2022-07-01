@@ -239,7 +239,7 @@ class TokenList
 
     public function slice($startOffset, $endOffset): self
     {
-        $tokens = array_slice($this->tokens, $startOffset, $endOffset - $startOffset);
+        $tokens = array_slice($this->tokens, $startOffset, $endOffset - $startOffset + 1);
 
         return new self($tokens, $this->settings, $this->autoSkip);
     }
