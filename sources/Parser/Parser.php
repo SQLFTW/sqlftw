@@ -77,6 +77,10 @@ class Parser
             $command = $this->parseTokenList($tokenList);
             $end = $tokenList->getPosition();
 
+            if ($command instanceof EmptyCommand && $command->getCommentsBefore() === []) {
+                continue;
+            }
+
             try {
                 $this->settingsUpdater->updateSettings($command, $this->settings, $tokenList);
             } catch (ParsingException $e) {
