@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Ddl;
 use Dogma\Re;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
@@ -113,6 +114,10 @@ class IndexCommandsParser
         } else {
             $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::KEY);
             $name = $tokenList->expectName();
+        }
+
+        if ($name !== null && ($name === '' || strtoupper($name) === Keyword::PRIMARY)) {
+            throw new ParserException('Invalid index name.', $tokenList);
         }
 
         $algorithm = null;
