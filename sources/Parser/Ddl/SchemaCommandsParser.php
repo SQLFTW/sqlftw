@@ -39,14 +39,17 @@ class SchemaCommandsParser
     {
         $tokenList->expectKeyword(Keyword::ALTER);
         $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
-        $schema = $tokenList->getNonReservedName();
+        $name = $tokenList->getNonReservedName();
+        if ($name === '' || ($name !== null && trim($name) !== $name)) {
+            throw new ParserException('Invalid schema name.', $tokenList);
+        }
 
         $options = $this->parseOptions($tokenList);
         if ($options === null) {
             $tokenList->missingAnyKeyword(Keyword::DEFAULT, Keyword::CHARACTER, Keyword::CHARSET, Keyword::COLLATE, Keyword::ENCRYPTION, Keyword::READ);
         }
 
-        return new AlterSchemaCommand($schema, $options);
+        return new AlterSchemaCommand($name, $options);
     }
 
     /**
