@@ -82,6 +82,7 @@ use SqlFtw\Sql\Ddl\Table\CreateTableLikeCommand;
 use SqlFtw\Sql\Ddl\Table\DropTableCommand;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Ddl\Table\Option\TableCompression;
 use SqlFtw\Sql\Ddl\Table\Option\TableInsertMethod;
 use SqlFtw\Sql\Ddl\Table\Option\TableOption;
@@ -763,6 +764,17 @@ class TableCommandsParser
                 } else {
                     $tokenList->rewind($position);
                 }
+            }
+        }
+
+        if ($startTransaction) {
+            if ($query !== null) {
+                throw new ParserException('Cannot start transaction when creating table from a query.', $tokenList);
+            }
+            /** @var StorageEngine|null $engine */
+            $engine = $options[TableOption::ENGINE] ?? null;
+            if ($temporary || ($engine !== null && !$engine->transactional())) {
+                throw new ParserException('Cannot start transaction when creating table with non-transactional engine.', $tokenList);
             }
         }
 

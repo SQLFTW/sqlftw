@@ -13,6 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 use function strtolower;
 
+/**
+ * @see https://en.wikipedia.org/wiki/Comparison_of_MySQL_database_engines
+ */
 class StorageEngine implements SqlSerializable
 {
 
@@ -31,37 +34,84 @@ class StorageEngine implements SqlSerializable
     public const CSV = 'CSV';
     public const ARCHIVE = 'Archive';
     public const BLACKHOLE = 'Blackhole';
+    public const TEMP_TABLE = 'TempTable';
 
     // NDB
     public const NDB = 'NDB';
     public const NDBCLUSTER = 'ndbcluster';
     public const NDBINFO = 'ndbinfo';
 
-    // other (deprecated etc.)
+    // Percona
+    public const TOKUDB = 'TokuDB';
+    public const XTRADB = 'XtraDB';
+
+    // MariaDB
+    public const ARIA = 'Aria';
+    public const MARIA = 'Maria'; // ???
+    public const CONNECT = 'Connect';
+    public const FEDERATED_X = 'FederatedX';
+    public const COLUMN_STORE = 'ColumnStore';
+    public const MROONGA = 'Mroonga';
+    public const MYROCKS = 'MyRocks';
+    public const OQGRAPH = 'OQGRAPH';
+    public const S3 = 'S3';
+    public const SEQUENCE = 'SEQUENCE';
+    public const SPHINX = 'Sphinx';
+    public const SPIDER = 'SPIDER';
+
+    // deprecated etc.
+    public const BERKELEYDB = 'BerkeleyDB';
     public const MERGE = 'Merge';
     public const MRG_MYISAM = 'MRG_MyISAM';
     public const FEDERATED = 'Federated';
     public const FALCON = 'Falcon';
-    public const MARIA = 'Maria';
     public const HEAP = 'HEAP'; // old alias for Memory
 
     /** @var array<string, string> */
     private static $map = [
-        'innodb' => self::INNODB,
-        'myisam' => self::MYISAM,
-        'memory' => self::MEMORY,
-        'csv' => self::CSV,
         'archive' => self::ARCHIVE,
+        'aria' => self::ARIA,
+        'berkeleydb' => self::BERKELEYDB,
         'blackhole' => self::BLACKHOLE,
+        'columnstrore' => self::COLUMN_STORE,
+        'csv' => self::CSV,
+        'falcon' => self::FALCON,
+        'federated' => self::FEDERATED,
+        'federatedx' => self::FEDERATED_X,
+        'heap' => self::HEAP,
+        'innodb' => self::INNODB,
+        'maria' => self::MARIA,
+        'memory' => self::MEMORY,
+        'merge' => self::MERGE,
+        'mrg_myisam' => self::MRG_MYISAM,
+        'mroonga' => self::MROONGA,
+        'myisam' => self::MYISAM,
+        'myrocks' => self::MYROCKS,
         'ndb' => self::NDB,
         'ndbcluster' => self::NDBCLUSTER,
         'ndbinfo' => self::NDBINFO,
-        'merge' => self::MERGE,
-        'mrg_myisam' => self::MRG_MYISAM,
-        'federated' => self::FEDERATED,
-        'falcon' => self::FALCON,
-        'maria' => self::MARIA,
-        'heap' => self::HEAP,
+        'oqgraph' => self::OQGRAPH,
+        's3' => self::S3,
+        'sequence' => self::SEQUENCE,
+        'sphinx' => self::SPHINX,
+        'spider' => self::SPIDER,
+        'temptable' => self::TEMP_TABLE,
+        'tokudb' => self::TOKUDB,
+        'xtradb' => self::XTRADB,
+    ];
+
+    private static $transactional = [
+        self::BERKELEYDB,
+        self::FALCON,
+        self::FEDERATED_X,
+        self::COLUMN_STORE,
+        self::INNODB,
+        self::MYROCKS,
+        self::NDB,
+        self::NDBCLUSTER,
+        self::SPIDER,
+        self::TOKUDB,
+        self::XTRADB,
     ];
 
     public function getValue(): string
@@ -74,6 +124,11 @@ class StorageEngine implements SqlSerializable
         $normalized = self::$map[strtolower($value)] ?? $value;
 
         return $this->value === $normalized;
+    }
+
+    public function transactional(): bool
+    {
+        return in_array($this->getValue(), self::$transactional, true);
     }
 
     public function serialize(Formatter $formatter): string
