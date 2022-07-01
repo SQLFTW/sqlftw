@@ -554,7 +554,7 @@ class TableCommandsParser
                 case Keyword::ORDER:
                     // ORDER BY col_name [, col_name] ...
                     $tokenList->expectKeyword(Keyword::BY);
-                    $columns = $this->expressionParser->parseOrderBy($tokenList);
+                    $columns = $this->expressionParser->parseOrderBy($tokenList, true);
                     $actions[] = new OrderByAction($columns);
                     break;
                 case Keyword::REBUILD:

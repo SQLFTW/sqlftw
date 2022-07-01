@@ -873,7 +873,7 @@ class ExpressionParser
      *
      * @return non-empty-array<OrderByExpression>
      */
-    public function parseOrderBy(TokenList $tokenList): array
+    public function parseOrderBy(TokenList $tokenList, bool $nameOnly = false): array
     {
         $orderBy = [];
         do {
@@ -901,6 +901,10 @@ class ExpressionParser
 
             if ($collation === null && $tokenList->hasKeyword(Keyword::COLLATE)) {
                 $collation = $tokenList->expectCollationName();
+            }
+
+            if ($nameOnly && $column === null) {
+                throw new ParserException('Only column name is allowed in ORDER BY expression.', $tokenList);
             }
 
             $orderBy[] = new OrderByExpression($order, $column, $expression, $position, $collation);
