@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Dml;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Transaction\CommitCommand;
 use SqlFtw\Sql\Dml\Transaction\LockInstanceCommand;
@@ -185,6 +186,9 @@ class TransactionCommandsParser
             if ($tokenList->hasKeywords(Keyword::ISOLATION, Keyword::LEVEL)) {
                 $isolationLevel = $tokenList->expectMultiKeywordsEnum(TransactionIsolationLevel::class);
             } elseif ($tokenList->hasKeyword(Keyword::READ)) {
+                if ($write !== null) {
+                    throw new ParserException('READ/WRITE defined twice.', $tokenList);
+                }
                 if ($tokenList->hasKeyword(Keyword::WRITE)) {
                     $write = true;
                 } else {
@@ -224,6 +228,9 @@ class TransactionCommandsParser
                 $tokenList->expectKeywords(Keyword::CONSISTENT, Keyword::SNAPSHOT);
                 $consistent = true;
             } elseif ($tokenList->hasKeyword(Keyword::READ)) {
+                if ($write !== null) {
+                    throw new ParserException('READ/WRITE defined twice.', $tokenList);
+                }
                 if ($tokenList->hasKeyword(Keyword::WRITE)) {
                     $write = true;
                 } else {
