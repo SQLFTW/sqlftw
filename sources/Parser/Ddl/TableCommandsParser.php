@@ -1280,8 +1280,12 @@ class TableCommandsParser
                 return [TableOption::AUTO_INCREMENT, $tokenList->expectUnsignedInt()];
             case Keyword::AVG_ROW_LENGTH:
                 $tokenList->passSymbol('=');
+                $length = (int) $tokenList->expectUnsignedInt();
+                if ($length >= 2 ** 32) {
+                    throw new ParserException('Invalid average row length value.', $tokenList);
+                }
 
-                return [TableOption::AVG_ROW_LENGTH, (int) $tokenList->expectUnsignedInt()];
+                return [TableOption::AVG_ROW_LENGTH, $length];
             case Keyword::CHARACTER:
                 $tokenList->expectKeyword(Keyword::SET);
                 // fall-through
@@ -1360,8 +1364,12 @@ class TableCommandsParser
                 return [TableOption::INSERT_METHOD, $tokenList->expectKeywordEnum(TableInsertMethod::class)];
             case Keyword::KEY_BLOCK_SIZE:
                 $tokenList->passSymbol('=');
+                $size = (int) $tokenList->expectUnsignedInt();
+                if ($size >= 2 ** 31 - 1) {
+                    throw new ParserException('Invalid key block size.', $tokenList);
+                }
 
-                return [TableOption::KEY_BLOCK_SIZE, (int) $tokenList->expectUnsignedInt()];
+                return [TableOption::KEY_BLOCK_SIZE, $size];
             case Keyword::MAX_ROWS:
                 $tokenList->passSymbol('=');
 
