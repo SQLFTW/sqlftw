@@ -104,7 +104,7 @@ class Parser
     {
         // collecting comments and checking first applicable token
         $autoSkip = $tokenList->getAutoSkip();
-        $tokenList->setAutoSkip(TokenType::WHITESPACE);
+        $tokenList->setAutoSkip($autoSkip & TokenType::WHITESPACE);
         $comments = [];
         $first = $tokenList->get();
         do {
