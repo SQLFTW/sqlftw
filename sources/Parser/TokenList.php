@@ -1153,7 +1153,7 @@ class TokenList
 
     public function expectQualifiedName(): QualifiedName
     {
-        $first = $this->expectName();
+        $first = $this->expectNonReservedName();
         if ($this->hasSymbol('.')) {
             if ($this->hasOperator(Operator::MULTIPLY)) {
                 $second = Operator::MULTIPLY;

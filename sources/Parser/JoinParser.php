@@ -27,6 +27,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;
 use function count;
@@ -237,6 +238,8 @@ class JoinParser
 
                 return new TableReferenceParentheses($references);
             }
+        } elseif ($tokenList->hasKeyword(Keyword::DUAL)) {
+            return new TableReferenceTable(new QualifiedName(Keyword::DUAL));
         } else {
             // tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
             $table = $tokenList->expectQualifiedName();
