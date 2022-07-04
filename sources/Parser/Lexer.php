@@ -22,6 +22,7 @@ use SqlFtw\Sql\SqlMode;
 use function array_flip;
 use function array_keys;
 use function array_merge;
+use function array_values;
 use function ctype_digit;
 use function implode;
 use function iterator_to_array;
@@ -132,7 +133,7 @@ class Lexer
         $this->keywordsKey = array_flip($this->platform->getNonReserved());
         $this->operatorsKey = array_flip($this->platform->getOperators());
         $this->escapeKeys = array_keys(self::MYSQL_ESCAPES);
-        $this->escapeValues = array_keys(self::MYSQL_ESCAPES);
+        $this->escapeValues = array_values(self::MYSQL_ESCAPES);
     }
 
     /**
@@ -1036,7 +1037,7 @@ class Lexer
         // unescape double quotes
         $value = str_replace($quote . $quote, $quote, $value);
 
-        if (!$backslashes && ($quote !== "'" || ($quote === '"' && $this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)))) {
+        if ($backslashes && ($quote === "'" || ($quote === '"' && !$this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)))) {
             // unescape backslashes only in string context
             $value = str_replace($this->escapeKeys, $this->escapeValues, $value);
         }
