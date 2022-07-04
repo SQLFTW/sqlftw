@@ -83,6 +83,14 @@ class Assert extends DogmaAssert
         }
     }
 
+    public static function tokenList(string $sql): TokenList
+    {
+        $settings = new ParserSettings(Platform::get(Platform::MYSQL, '5.7'));
+        $lexer = new Lexer($settings, true, true);
+
+        return iterator_to_array($lexer->tokenizeLists($sql))[0];
+    }
+
     public static function parseSerialize(
         string $query,
         ?string $expected = null,

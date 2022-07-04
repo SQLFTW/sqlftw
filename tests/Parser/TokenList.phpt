@@ -46,3 +46,18 @@ Assert::same($tokenList->getLast()->value, $name->value);
 
 $tokenList->rewind(9);
 Assert::same($tokenList->getLast()->value, $name->value);
+
+
+expectNonReservedName:
+$tokenList = Assert::tokenList(' 1 ');
+Assert::exception(static function () use ($tokenList) {
+    $tokenList->expectNonReservedName();
+}, InvalidTokenException::class);
+
+$tokenList = Assert::tokenList(' select ');
+Assert::exception(static function () use ($tokenList) {
+    $tokenList->expectNonReservedName();
+}, InvalidTokenException::class);
+
+$tokenList = Assert::tokenList(' `select` ');
+Assert::same( $tokenList->expectNonReservedName(), 'select');
