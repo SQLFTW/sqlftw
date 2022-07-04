@@ -25,7 +25,6 @@ use function array_merge;
 use function array_values;
 use function ctype_digit;
 use function implode;
-use function iterator_to_array;
 use function ltrim;
 use function ord;
 use function preg_match;
@@ -134,15 +133,6 @@ class Lexer
         $this->operatorsKey = array_flip($this->platform->getOperators());
         $this->escapeKeys = array_keys(self::MYSQL_ESCAPES);
         $this->escapeValues = array_values(self::MYSQL_ESCAPES);
-    }
-
-    /**
-     * Tokenize SQL code and return an array of Token objects.
-     * @return Token[]
-     */
-    public function tokenizeAll(string $string): array
-    {
-        return iterator_to_array($this->tokenize($string));
     }
 
     /**

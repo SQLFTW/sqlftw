@@ -9,13 +9,16 @@ use Dogma\Re;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
+use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
+use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Parser\ParsingException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Platform;
 use function class_exists;
 use function gettype;
 use function implode;
@@ -29,6 +32,21 @@ use function str_replace;
  */
 class Assert extends DogmaAssert
 {
+
+    public static function tokens(string $sql, int $count, ?string $mode = null): array
+    {
+        $settings = new ParserSettings(Platform::get(Platform::MYSQL, '5.7'));
+        if ($mode !== null) {
+            $settings->setMode($settings->getMode()->add($mode));
+        }
+        $lexer = new Lexer($settings, true, true);
+
+        $tokens = iterator_to_array($lexer->tokenize($sql));
+
+        self::count($tokens, $count);
+
+        return $tokens;
+    }
 
     public static function token(Token $token, int $type, ?string $value = null, ?int $position = null): void
     {
