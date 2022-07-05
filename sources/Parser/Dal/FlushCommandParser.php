@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushOption;
@@ -81,6 +82,9 @@ class FlushCommandParser
             $tokenList->expectKeywords(Keyword::READ, Keyword::LOCK);
             $withReadLock = true;
         } elseif ($keyword === Keyword::FOR) {
+            if ($tables === null) {
+                throw new ParserException('Tables have to be defined for FLUSH TABLES FOR EXPORT.', $tokenList);
+            }
             $tokenList->expectKeyword(Keyword::EXPORT);
             $forExport = true;
         }
