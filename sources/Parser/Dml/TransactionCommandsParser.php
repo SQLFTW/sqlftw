@@ -237,6 +237,8 @@ class TransactionCommandsParser
                     $tokenList->expectKeyword(Keyword::ONLY);
                     $write = false;
                 }
+            } else {
+                break;
             }
         } while ($tokenList->hasSymbol(','));
 
