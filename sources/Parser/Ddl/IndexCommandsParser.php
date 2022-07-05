@@ -122,8 +122,10 @@ class IndexCommandsParser
         }
 
         $algorithm = null;
-        if ($tokenList->hasAnyKeyword(Keyword::USING, Keyword::TYPE)) {
-            $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
+        if (!$type->equalsValue(IndexType::FULLTEXT)) {
+            if ($tokenList->hasAnyKeyword(Keyword::USING, Keyword::TYPE)) {
+                $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
+            }
         }
 
         $table = null;
