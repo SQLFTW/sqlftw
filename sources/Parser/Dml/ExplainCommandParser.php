@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Dml;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\Utility\DescribeTableCommand;
@@ -144,6 +145,9 @@ class ExplainCommandParser
             case Keyword::FOR:
                 $tokenList->expectKeyword(Keyword::CONNECTION);
                 $connectionId = (int) $tokenList->expectUnsignedInt();
+                if ($type !== null && $type->equalsValue(ExplainType::ANALYZE)) {
+                    throw new ParserException('EXPLAIN ANALYZE FOR CONNECTION is not supported.', $tokenList);
+                }
 
                 return new ExplainForConnectionCommand($connectionId, $type);
             case null:
