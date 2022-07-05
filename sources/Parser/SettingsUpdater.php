@@ -47,7 +47,11 @@ class SettingsUpdater
             }
         }
 
-        // todo: sniff for SET NAMES, SET CHARSET, SET innodb_strict_mode = ON ...
+        // todo: SET NAMES
+        // todo: SET CHARSET
+        // SET innodb_strict_mode = ON
+        // SET sql_require_primary_key = true
+        // SET sql_safe_updates = ON
     }
 
     private function detectSqlModeChange(RootNode $expression, ParserSettings $settings, TokenList $tokenList): void
