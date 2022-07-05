@@ -27,16 +27,46 @@ class TimeIntervalUnit extends SqlEnum
     public const QUARTER = Keyword::QUARTER;
     public const YEAR = Keyword::YEAR;
 
-    public const SECOND_MICROSECOND = Keyword::SECOND_MICROSECOND;
-    public const MINUTE_MICROSECOND = Keyword::MINUTE_MICROSECOND;
-    public const MINUTE_SECOND = Keyword::MINUTE_SECOND;
-    public const HOUR_MICROSECOND = Keyword::HOUR_MICROSECOND;
-    public const HOUR_SECOND = Keyword::HOUR_SECOND;
-    public const HOUR_MINUTE = Keyword::HOUR_MINUTE;
-    public const DAY_MICROSECOND = Keyword::DAY_MICROSECOND;
-    public const DAY_SECOND = Keyword::DAY_SECOND;
-    public const DAY_MINUTE = Keyword::DAY_MINUTE;
-    public const DAY_HOUR = Keyword::DAY_HOUR;
-    public const YEAR_MONTH = Keyword::YEAR_MONTH;
+    public const SECOND_MICROSECOND = Keyword::SECOND_MICROSECOND; // 0:0
+    public const MINUTE_SECOND = Keyword::MINUTE_SECOND; // 0:0
+    public const HOUR_MINUTE = Keyword::HOUR_MINUTE; // 0:0
+    public const DAY_HOUR = Keyword::DAY_HOUR; // 0:0
+    public const YEAR_MONTH = Keyword::YEAR_MONTH; // 0:0
+
+    public const MINUTE_MICROSECOND = Keyword::MINUTE_MICROSECOND; // 0:0:0
+    public const HOUR_SECOND = Keyword::HOUR_SECOND; // 0:0:0
+    public const DAY_MINUTE = Keyword::DAY_MINUTE; // 0:0:0
+
+    public const HOUR_MICROSECOND = Keyword::HOUR_MICROSECOND; // 0:0:0:0
+    public const DAY_SECOND = Keyword::DAY_SECOND; // 0:0:0:0
+
+    public const DAY_MICROSECOND = Keyword::DAY_MICROSECOND; // 0:0:0:0:0
+
+    /** @var array<string, int> */
+    private static $parts = [
+        self::SECOND_MICROSECOND => 2,
+        self::MINUTE_SECOND => 2,
+        self::HOUR_MINUTE => 2,
+        self::DAY_HOUR => 2,
+        self::YEAR_MONTH => 2,
+        self::MINUTE_MICROSECOND => 3,
+        self::HOUR_SECOND => 3,
+        self::DAY_MINUTE => 3,
+        self::HOUR_MICROSECOND => 4,
+        self::DAY_SECOND => 4,
+        self::DAY_MICROSECOND => 5,
+    ];
+
+    public function getParts(): int
+    {
+        $value = $this->getValue();
+
+        return self::$parts[$value] ?? 1;
+    }
+
+    public function hasMicroseconds(): bool
+    {
+        return in_array($this->getValue(), [self::MICROSECOND, self::SECOND_MICROSECOND, self::MINUTE_MICROSECOND, self::HOUR_MICROSECOND, self::DAY_MICROSECOND], true);
+    }
 
 }

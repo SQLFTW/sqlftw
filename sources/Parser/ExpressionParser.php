@@ -61,6 +61,7 @@ use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\RowExpression;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\SystemVariable;
@@ -79,6 +80,7 @@ use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use function in_array;
+use function preg_match;
 use function sprintf;
 use function strlen;
 use function strtoupper;
@@ -1016,8 +1018,32 @@ class ExpressionParser
     public function parseInterval(TokenList $tokenList): TimeInterval
     {
         $value = $this->parseExpression($tokenList);
-
         $unit = $tokenList->expectKeywordEnum(TimeIntervalUnit::class);
+
+        if ($value instanceof UintLiteral && $value->getValue() === '0') {
+            throw new ParserException('Invalid interval value (zero).', $tokenList);
+        } elseif ($value instanceof Stringliteral) {
+            $parts = $unit->getParts();
+            if ($parts === 5) {
+                if (preg_match('~^\d+(:\d+){1,4}$~', $value->getValue()) !== 1) {
+                    throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
+                }
+            } elseif ($parts === 4) {
+                if (preg_match('~^\d+(:\d+){1,3}$~', $value->getValue()) !== 1) {
+                    throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
+                }
+            } elseif ($parts === 3) {
+                if (preg_match('~^\d+(:\d+){1,2}$~', $value->getValue()) !== 1) {
+                    throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
+                }
+            } elseif ($parts === 2) {
+                if (preg_match('~^\d+:\d+$~', $value->getValue()) !== 1) {
+                    throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
+                }
+            } else {
+                throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
+            }
+        }
 
         return new TimeInterval($value, $unit);
     }

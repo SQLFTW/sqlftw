@@ -20,8 +20,10 @@ use SqlFtw\Sql\Ddl\Event\EventDefinition;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Subquery;
+use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Keyword;
 
 class EventCommandsParser
@@ -154,6 +156,9 @@ class EventCommandsParser
             $value = $every->getValue();
             if ($value instanceof FunctionCall || ($value instanceof Parentheses && $value->getContents() instanceof Subquery)) {
                 throw new ParserException('Select in event schedule is not supported.', $tokenList);
+            }
+            if ($every->getUnit()->hasMicroseconds()) {
+                throw new ParserException('Microseconds in event schedule are not supported.', $tokenList);
             }
 
             if ($tokenList->hasKeyword(Keyword::STARTS)) {
