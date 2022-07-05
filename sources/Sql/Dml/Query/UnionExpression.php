@@ -37,18 +37,23 @@ class UnionExpression extends Statement implements Query
     /** @var SelectInto|null */
     private $into;
 
+    /** @var SelectLocking[]|null */
+    private $locking;
+
     /**
      * @param non-empty-array<Query> $queries
      * @param non-empty-array<UnionType> $types
      * @param non-empty-array<OrderByExpression>|null $orderBy
      * @param int|SimpleName|null $limit
+     * @param SelectLocking[]|null $locking
      */
     public function __construct(
         array $queries,
         array $types,
         ?array $orderBy = null,
         $limit = null,
-        ?SelectInto $into = null
+        ?SelectInto $into = null,
+        ?array $locking = null
     )
     {
         if (count($queries) !== count($types) + 1) {
@@ -59,6 +64,7 @@ class UnionExpression extends Statement implements Query
         $this->orderBy = $orderBy;
         $this->limit = $limit;
         $this->into = $into;
+        $this->locking = $locking;
     }
 
     /**
@@ -98,6 +104,14 @@ class UnionExpression extends Statement implements Query
         return $this->into;
     }
 
+    /**
+     * @return SelectLocking[]|null
+     */
+    private function getLocking(): ?array
+    {
+        return $this->locking;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = $this->queries[0]->serialize($formatter);
@@ -114,6 +128,9 @@ class UnionExpression extends Statement implements Query
         }
         if ($this->into !== null) {
             $result .= "\n\t" . $formatter->indent($this->into->serialize($formatter));
+        }
+        if ($this->locking !== null) {
+            $result .= $formatter->formatSerializablesList($this->locking);
         }
 
         return $result;

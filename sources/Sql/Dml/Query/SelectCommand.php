@@ -242,6 +242,14 @@ class SelectCommand extends Statement implements SimpleQuery
         return $this->locking;
     }
 
+    public function removeLocking(): self
+    {
+        $that = clone $this;
+        $that->locking = null;
+
+        return $that;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';

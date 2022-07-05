@@ -119,6 +119,8 @@ class QueryParser
 
         [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
 
+        $locking = $this->parseLocking($tokenList);
+
         // order, limit and into of last unparenthesized query belong to the whole union result
         /** @var Query $lastQuery PHPStan assumes it might be null :E */
         $lastQuery = array_pop($queries);
@@ -152,10 +154,28 @@ class QueryParser
                     $lastQuery = $lastQuery->removeInto();
                 }
             }
+
+            if ($lastQuery instanceof SelectCommand) {
+                $queryLocking = $lastQuery->getLocking();
+                if ($queryLocking !== null) {
+                    if ($locking !== null) {
+                        throw new ParserException("Duplicate INTO clause in last query and in UNION.", $tokenList);
+                    } else {
+                        $locking = $queryLocking;
+                        $lastQuery = $lastQuery->removeLocking();
+                    }
+                }
+            }
         }
         $queries[] = $lastQuery;
 
-        return new UnionExpression($queries, $types, $orderBy, $limit, $into);
+        foreach ($queries as $query) {
+            if ($query instanceof SelectCommand && $query->getLocking() !== null) {
+                throw new ParserException("Locking options are not allowed in UNION without parentheses around query.", $tokenList);
+            }
+        }
+
+        return new UnionExpression($queries, $types, $orderBy, $limit, $into, $locking);
     }
 
     /**
@@ -401,35 +421,7 @@ class QueryParser
             $into = $this->parseInto($tokenList);
         }
 
-        $locking = [];
-        do {
-            $updated = false;
-            if ($tokenList->hasKeywords(Keyword::LOCK, Keyword::IN, Keyword::SHARE, Keyword::MODE)) {
-                $lockOption = SelectLockOption::get(SelectLockOption::LOCK_IN_SHARE_MODE);
-                $locking[] = new SelectLocking($lockOption);
-                $updated = true;
-            } elseif ($tokenList->hasKeyword(Keyword::FOR)) {
-                if ($tokenList->hasKeyword(Keyword::UPDATE)) {
-                    $lockOption = SelectLockOption::get(SelectLockOption::FOR_UPDATE);
-                } else {
-                    $tokenList->expectKeyword(Keyword::SHARE);
-                    $lockOption = SelectLockOption::get(SelectLockOption::FOR_SHARE);
-                }
-                $lockTables = null;
-                if ($tokenList->hasKeyword(Keyword::OF)) {
-                    $lockTables = [];
-                    do {
-                        $lockTables[] = $tokenList->expectQualifiedName();
-                    } while ($tokenList->hasSymbol(','));
-                }
-                $lockWaitOption = $tokenList->getMultiKeywordsEnum(SelectLockWaitOption::class);
-                $locking[] = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
-                $updated = true;
-            }
-        } while ($updated);
-        if ($locking === []) {
-            $locking = null;
-        }
+        $locking = $this->parseLocking($tokenList);
 
         if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
             $into = $this->parseInto($tokenList);
@@ -547,6 +539,45 @@ class QueryParser
 
             return new SelectInto($variables);
         }
+    }
+
+    /**
+     * @return SelectLockOption[]|null
+     */
+    private function parseLocking(TokenList $tokenList): ?array
+    {
+        $locking = [];
+        do {
+            $updated = false;
+            if ($tokenList->hasKeywords(Keyword::LOCK, Keyword::IN, Keyword::SHARE, Keyword::MODE)) {
+                $lockOption = SelectLockOption::get(SelectLockOption::LOCK_IN_SHARE_MODE);
+                $locking[] = new SelectLocking($lockOption);
+                $updated = true;
+            } elseif ($tokenList->hasKeyword(Keyword::FOR)) {
+                if ($tokenList->hasKeyword(Keyword::UPDATE)) {
+                    $lockOption = SelectLockOption::get(SelectLockOption::FOR_UPDATE);
+                } else {
+                    $tokenList->expectKeyword(Keyword::SHARE);
+                    $lockOption = SelectLockOption::get(SelectLockOption::FOR_SHARE);
+                }
+                $lockTables = null;
+                if ($tokenList->hasKeyword(Keyword::OF)) {
+                    $lockTables = [];
+                    do {
+                        $lockTables[] = $tokenList->expectQualifiedName();
+                    } while ($tokenList->hasSymbol(','));
+                }
+                $lockWaitOption = $tokenList->getMultiKeywordsEnum(SelectLockWaitOption::class);
+                $locking[] = new SelectLocking($lockOption, $lockWaitOption, $lockTables);
+                $updated = true;
+            }
+        } while ($updated);
+
+        if ($locking === []) {
+            $locking = null;
+        }
+
+        return $locking;
     }
 
     /**
