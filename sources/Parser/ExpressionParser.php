@@ -794,7 +794,13 @@ class ExpressionParser
         /** @var QueryParser $queryParser */
         $queryParser = ($this->queryParserProxy)();
 
-        return new Subquery($queryParser->parseQuery($tokenList));
+        $tokenList->setInSubquery(true);
+
+        $query = $queryParser->parseQuery($tokenList);
+
+        $tokenList->setInSubquery(false);
+
+        return new Subquery($query);
     }
 
     public function parseLiteral(TokenList $tokenList): Literal

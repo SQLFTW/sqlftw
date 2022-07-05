@@ -11,6 +11,7 @@ namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Dml\TableReference\EscapedTableReference;
 use SqlFtw\Sql\Dml\TableReference\IndexHint;
 use SqlFtw\Sql\Dml\TableReference\IndexHintAction;
@@ -31,6 +32,7 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Statement;
 use function count;
 
 class JoinParser
@@ -186,12 +188,12 @@ class JoinParser
 
         $lateral = $tokenList->hasKeyword(Keyword::LATERAL);
         if ($lateral) {
-            $query = ($this->queryParserProxy)()->parseQuery($tokenList);
+            $query = $this->parseSubquery($tokenList);
             [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
             return new TableReferenceSubquery($query, $alias, $columns, true);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
-            $query = ($this->queryParserProxy)()->parseQuery($tokenList->rewind($position));
+            $query = $this->parseSubquery($tokenList->rewind($position));
             [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
             return new TableReferenceSubquery($query, $alias, $columns, false);
@@ -227,7 +229,7 @@ class JoinParser
             }
 
             if ($isQuery) {
-                $query = ($this->queryParserProxy)()->parseQuery($tokenList->rewind($position));
+                $query = $this->parseSubquery($tokenList->rewind($position));
                 [$alias, $columns] = $this->parseAliasAndColumns($tokenList);
 
                 return new TableReferenceSubquery($query, $alias, $columns, false);
@@ -264,6 +266,20 @@ class JoinParser
 
             return new TableReferenceTable($table, $alias, $partitions, $indexHints);
         }
+    }
+
+    /**
+     * @return Query&Statement
+     */
+    private function parseSubquery(TokenList $tokenList): Query
+    {
+        $tokenList->setInSubquery(true);
+
+        $query = ($this->queryParserProxy)()->parseQuery($tokenList);
+
+        $tokenList->setInSubquery(false);
+
+        return $query;
     }
 
     /**

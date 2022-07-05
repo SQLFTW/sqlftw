@@ -170,8 +170,13 @@ class QueryParser
         $queries[] = $lastQuery;
 
         foreach ($queries as $query) {
-            if ($query instanceof SelectCommand && $query->getLocking() !== null) {
-                throw new ParserException("Locking options are not allowed in UNION without parentheses around query.", $tokenList);
+            if ($query instanceof SelectCommand) {
+                if ($query->getInto() !== null) {
+                    throw new ParserException("INTO not allowed in UNION or subquery.", $tokenList);
+                }
+                if ($query->getLocking() !== null) {
+                    throw new ParserException("Locking options are not allowed in UNION without parentheses around query.", $tokenList);
+                }
             }
         }
 
@@ -207,7 +212,11 @@ class QueryParser
     private function parseParenthesizedQueryExpression(TokenList $tokenList, ?WithClause $with = null): ParenthesizedQueryExpression
     {
         $tokenList->expectSymbol('(');
+        $tokenList->setInSubquery(true);
+
         $query = $this->parseQuery($tokenList);
+
+        $tokenList->setInSubquery(false);
         $tokenList->expectSymbol(')');
 
         [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);
@@ -339,8 +348,10 @@ class QueryParser
         } while ($tokenList->hasSymbol(','));
 
         $into = null;
-        if ($tokenList->hasKeyword(Keyword::INTO)) {
-            $into = $this->parseInto($tokenList);
+        if (!$tokenList->inSubquery()) {
+            if ($tokenList->hasKeyword(Keyword::INTO)) {
+                $into = $this->parseInto($tokenList);
+            }
         }
 
         $from = null;
@@ -417,14 +428,18 @@ class QueryParser
             $this->expressionParser->parseFunctionCall($tokenList, 'PROCEDURE ANALYSE');
         }
 
-        if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
-            $into = $this->parseInto($tokenList);
+        if (!$tokenList->inSubquery()) {
+            if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
+                $into = $this->parseInto($tokenList);
+            }
         }
 
         $locking = $this->parseLocking($tokenList);
 
-        if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
-            $into = $this->parseInto($tokenList);
+        if (!$tokenList->inSubquery()) {
+            if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
+                $into = $this->parseInto($tokenList);
+            }
         }
 
         return new SelectCommand($what, $from, $where, $groupBy, $having, $with, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);
@@ -493,8 +508,11 @@ class QueryParser
                 $offset = $this->expressionParser->parseLimitOrOffsetValue($tokenList);
             }
         }
-        if ($tokenList->hasKeyword(Keyword::INTO)) {
-            $into = $this->parseInto($tokenList);
+
+        if (!$tokenList->inSubquery()) {
+            if ($tokenList->hasKeyword(Keyword::INTO)) {
+                $into = $this->parseInto($tokenList);
+            }
         }
 
         return [$orderBy, $limit, $offset, $into];

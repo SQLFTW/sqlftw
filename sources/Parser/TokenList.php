@@ -95,6 +95,9 @@ class TokenList
     /** @var bool Are we inside a function or procedure definition? */
     private $inRoutine = false;
 
+    /** @var bool Are we inside a subquery? */
+    private $inSubquery = 0;
+
     /** @var bool Should we expect a delimiter after the command? */
     private $embedded = false;
 
@@ -147,6 +150,16 @@ class TokenList
     public function setInRoutine(bool $value): void
     {
         $this->inRoutine = $value;
+    }
+
+    public function inSubquery(): bool
+    {
+        return $this->inSubquery > 0;
+    }
+
+    public function setInSubquery(bool $value): void
+    {
+        $this->inSubquery += $value ? 1 : -1;
     }
 
     public function embedded(): bool
