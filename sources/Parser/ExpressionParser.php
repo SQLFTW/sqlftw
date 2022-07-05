@@ -763,7 +763,10 @@ class ExpressionParser
         if ($tokenList->hasKeyword(Keyword::IN)) {
             $mode = $tokenList->expectMultiKeywordsEnum(MatchMode::class);
         }
-        $expansion = $tokenList->hasKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
+        $expansion = false;
+        if ($mode === null || !$mode->equalsValue(MatchMode::BOOLEAN_MODE)) {
+            $expansion = $tokenList->hasKeywords(Keyword::WITH, Keyword::QUERY, Keyword::EXPANSION);
+        }
         $tokenList->expectSymbol(')');
 
         return new MatchExpression($columns, $query, $mode, $expansion);
