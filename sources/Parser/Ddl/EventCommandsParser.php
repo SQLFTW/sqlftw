@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
@@ -18,6 +19,9 @@ use SqlFtw\Sql\Ddl\Event\DropEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventDefinition;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
+use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\Parentheses;
+use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Keyword;
 
 class EventCommandsParser
@@ -142,13 +146,27 @@ class EventCommandsParser
 
         if ($tokenList->hasKeyword(Keyword::AT)) {
             $at = $this->expressionParser->parseExpression($tokenList);
+            if ($at instanceof Parentheses && $at->getContents() instanceof Subquery) {
+                throw new ParserException('Select in event schedule is not supported.', $tokenList);
+            }
         } elseif ($tokenList->hasKeyword(Keyword::EVERY)) {
             $every = $this->expressionParser->parseInterval($tokenList);
+            $value = $every->getValue();
+            if ($value instanceof FunctionCall || ($value instanceof Parentheses && $value->getContents() instanceof Subquery)) {
+                throw new ParserException('Select in event schedule is not supported.', $tokenList);
+            }
+
             if ($tokenList->hasKeyword(Keyword::STARTS)) {
                 $startTime = $this->expressionParser->parseExpression($tokenList);
+                if ($startTime instanceof Parentheses && $startTime->getContents() instanceof Subquery) {
+                    throw new ParserException('Select in event schedule is not supported.', $tokenList);
+                }
             }
             if ($tokenList->hasKeyword(Keyword::ENDS)) {
                 $endTime = $this->expressionParser->parseExpression($tokenList);
+                if ($endTime instanceof Parentheses && $endTime->getContents() instanceof Subquery) {
+                    throw new ParserException('Select in event schedule is not supported.', $tokenList);
+                }
             }
         } else {
             $tokenList->missingAnyKeyword(Keyword::AT, Keyword::EVERY);
