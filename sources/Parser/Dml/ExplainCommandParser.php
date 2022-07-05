@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\Utility\DescribeTableCommand;
+use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainType;
 use SqlFtw\Sql\Expression\Operator;
@@ -116,12 +117,8 @@ class ExplainCommandParser
         if ($what === null) {
             $what = $tokenList->hasSymbol('(') ? '(' : null;
         }
-        $statement = $connectionId = null;
+        $statement = null;
         switch ($what) {
-            case Keyword::FOR:
-                $tokenList->expectKeyword(Keyword::CONNECTION);
-                $connectionId = (int) $tokenList->expectUnsignedInt();
-                break;
             case Keyword::WITH:
                 $statement = $this->withParser->parseWith($tokenList->rewind($position));
                 break;
@@ -144,6 +141,11 @@ class ExplainCommandParser
             case Keyword::REPLACE:
                 $statement = $this->insertCommandParser->parseReplace($tokenList->rewind($position));
                 break;
+            case Keyword::FOR:
+                $tokenList->expectKeyword(Keyword::CONNECTION);
+                $connectionId = (int) $tokenList->expectUnsignedInt();
+
+                return new ExplainForConnectionCommand($connectionId, $type);
             case null:
                 // DESCRIBE
                 $table = $tokenList->expectQualifiedName();
@@ -155,7 +157,7 @@ class ExplainCommandParser
                 return new DescribeTableCommand($table, $column);
         }
 
-        return new ExplainStatementCommand($statement, $connectionId, $type);
+        return new ExplainStatementCommand($statement, $type);
     }
 
 }

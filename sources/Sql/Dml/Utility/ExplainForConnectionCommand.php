@@ -11,29 +11,28 @@ namespace SqlFtw\Sql\Dml\Utility;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Statement;
 
-class ExplainStatementCommand extends Statement implements DmlCommand
+class ExplainForConnectionCommand extends Statement implements DmlCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var Command */
-    private $statement;
+    /** @var int */
+    private $connectionId;
 
     /** @var ExplainType|null */
     private $type;
 
-    public function __construct(Command $statement, ?ExplainType $type = null)
+    public function __construct(int $connectionId = null, ?ExplainType $type = null)
     {
-        $this->statement = $statement;
+        $this->connectionId = $connectionId;
         $this->type = $type;
     }
 
-    public function getStatement(): Command
+    public function getConnectionId(): int
     {
-        return $this->statement;
+        return $this->connectionId;
     }
 
     public function getType(): ?ExplainType
@@ -47,7 +46,7 @@ class ExplainStatementCommand extends Statement implements DmlCommand
         if ($this->type !== null) {
             $result .= $this->type->serialize($formatter) . ' ';
         }
-        $result .= $this->statement->serialize($formatter);
+        $result .= 'FOR CONNECTION ' . $this->connectionId;
 
         return $result;
     }

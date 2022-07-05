@@ -16,8 +16,10 @@ use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Compound\CaseStatement;
 use SqlFtw\Sql\Ddl\Compound\CloseCursorStatement;
 use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
@@ -44,6 +46,7 @@ use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
 use SqlFtw\Sql\Ddl\Compound\SignalStatement;
 use SqlFtw\Sql\Ddl\Compound\StatementInformationItem;
 use SqlFtw\Sql\Ddl\Compound\WhileStatement;
+use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
@@ -103,7 +106,7 @@ class CompoundStatementParser
             // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
             $statement = $this->parseStatement($tokenList->rewind($position));
         } else {
-            $statement = $this->parser->parseTokenList($tokenList->rewind($position));
+            $statement = $this->parseCommand($tokenList->rewind($position));
         }
 
         $tokenList->setEmbedded($previous);
@@ -196,11 +199,9 @@ class CompoundStatementParser
                 $previous = $tokenList->embedded();
                 // do not check delimiter in Parser, because it will be checked here
                 $tokenList->setEmbedded(true);
-                $statement = $this->parser->parseTokenList($tokenList);
+                $statement = $this->parseCommand($tokenList);
                 $tokenList->setEmbedded($previous);
-                if ($statement instanceof InvalidCommand) {
-                    throw $statement->getException();
-                }
+
                 break;
         }
 
@@ -209,6 +210,22 @@ class CompoundStatementParser
             if (!$tokenList->has(TokenType::DELIMITER)) {
                 $tokenList->expectSymbol(';');
             }
+        }
+
+        return $statement;
+    }
+
+    /**
+     * @return Command&Statement
+     */
+    private function parseCommand(TokenList $tokenList): Command
+    {
+        $statement = $this->parser->parseTokenList($tokenList);
+
+        if ($statement instanceof InvalidCommand) {
+            throw $statement->getException();
+        } elseif ($statement instanceof ExplainForConnectionCommand) {
+            throw new ParserException('Cannot use EXPLAIN FOR CONNECTION inside a PROCEDURE.', $tokenList);
         }
 
         return $statement;
