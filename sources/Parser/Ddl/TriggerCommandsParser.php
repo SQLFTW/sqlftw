@@ -19,6 +19,7 @@ use SqlFtw\Sql\Ddl\Trigger\TriggerOrder;
 use SqlFtw\Sql\Ddl\Trigger\TriggerPosition;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 class TriggerCommandsParser
 {
@@ -77,7 +78,7 @@ class TriggerCommandsParser
         $triggerPosition = null;
         if ($order !== null) {
             $order = TriggerOrder::get($order);
-            $otherTrigger = $tokenList->expectName();
+            $otherTrigger = $tokenList->expectName(Entity::TRIGGER);
             $triggerPosition = new TriggerPosition($order, $otherTrigger);
         }
 

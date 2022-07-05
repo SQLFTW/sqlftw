@@ -30,6 +30,7 @@ use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use function count;
 
 class JoinParser
@@ -77,7 +78,7 @@ class JoinParser
     public function parseTableReference(TokenList $tokenList): TableReferenceNode
     {
         if ($tokenList->hasSymbol('{')) {
-            $tokenList->expectName('OJ');
+            $tokenList->expectName(null, 'OJ');
             $reference = $this->parseTableReference($tokenList);
             $tokenList->expectSymbol('}');
 
@@ -217,7 +218,7 @@ class JoinParser
                         if ($openParens === 0) {
                             if ($tokenList->hasKeyword(Keyword::AS)) {
                                 $isQuery = true;
-                            } elseif ($tokenList->getNonKeywordName() !== null) {
+                            } elseif ($tokenList->getNonKeywordName(Entity::ALIAS) !== null) {
                                 $isQuery = true;
                             }
                         }
@@ -250,7 +251,7 @@ class JoinParser
                 do {
                     // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
                     /** @var non-empty-array<string> $partitions */
-                    $partitions[] = $tokenList->expectName();
+                    $partitions[] = $tokenList->expectName(Entity::PARTITION);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
@@ -276,7 +277,7 @@ class JoinParser
         if ($tokenList->hasSymbol('(')) {
             $columns = [];
             do {
-                $columns[] = $tokenList->expectNonReservedName();
+                $columns[] = $tokenList->expectNonReservedName(Entity::COLUMN);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
@@ -296,7 +297,7 @@ class JoinParser
             $tokenList->expectSymbol('(');
             $using = [];
             do {
-                $using[] = $tokenList->expectName();
+                $using[] = $tokenList->expectName(Entity::COLUMN);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
@@ -336,7 +337,7 @@ class JoinParser
                     if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
                         $indexes[] = new PrimaryLiteral();
                     } else {
-                        $indexes[] = $tokenList->expectName();
+                        $indexes[] = $tokenList->expectName(Entity::INDEX);
                     }
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');

@@ -19,6 +19,7 @@ use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 class DeleteCommandParser
 {
@@ -88,7 +89,7 @@ class DeleteCommandParser
                 $tokenList->expectSymbol('(');
                 $partitions = [];
                 do {
-                    $partitions[] = $tokenList->expectName();
+                    $partitions[] = $tokenList->expectName(Entity::PARTITION);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }

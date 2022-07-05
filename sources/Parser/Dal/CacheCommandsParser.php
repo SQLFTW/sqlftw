@@ -15,6 +15,7 @@ use SqlFtw\Sql\Dal\Cache\CacheIndexCommand;
 use SqlFtw\Sql\Dal\Cache\LoadIndexIntoCacheCommand;
 use SqlFtw\Sql\Dal\Cache\TableIndexList;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 /**
  * MySQL MyISAM tables only
@@ -50,7 +51,7 @@ class CacheCommandsParser
         $partitions = $this->parsePartitions($tokenList);
 
         $tokenList->expectKeyword(Keyword::IN);
-        $keyCache = $tokenList->expectName();
+        $keyCache = $tokenList->expectName(null);
 
         return new CacheIndexCommand($keyCache, $tableIndexLists, $partitions);
     }
@@ -95,7 +96,7 @@ class CacheCommandsParser
             $tokenList->expectSymbol('(');
             $indexes = [];
             do {
-                $indexes[] = $tokenList->expectName();
+                $indexes[] = $tokenList->expectName(Entity::INDEX);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
@@ -118,7 +119,7 @@ class CacheCommandsParser
         } else {
             $partitions = [];
             do {
-                $partitions[] = $tokenList->expectName();
+                $partitions[] = $tokenList->expectName(Entity::PARTITION);
             } while ($tokenList->hasSymbol(','));
         }
         $tokenList->expectSymbol(')');

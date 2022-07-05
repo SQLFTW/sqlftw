@@ -26,6 +26,7 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
+use SqlFtw\Sql\Entity;
 
 class SetCommandsParser
 {
@@ -126,9 +127,9 @@ class SetCommandsParser
         $tokenList->expectKeywords(Keyword::RESET, Keyword::PERSIST);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
         if ($ifExists) {
-            $variable = $tokenList->expectName();
+            $variable = $tokenList->expectName(null);
         } else {
-            $variable = $tokenList->getName();
+            $variable = $tokenList->getName(null);
         }
         if ($variable !== null) {
             $variable = MysqlVariable::get($variable);
@@ -155,17 +156,17 @@ class SetCommandsParser
                 // GLOBAL foo
                 $name = $tokenList->expectNonReservedNameOrString();
                 if ($tokenList->hasSymbol('.')) {
-                    $name .= '.' . $tokenList->expectName();
+                    $name .= '.' . $tokenList->expectName(null);
                 }
                 $variable = $this->expressionParser->createSystemVariable($tokenList, $name, $scope);
             } elseif (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
                 // @foo, @@foo...
                 $variable = $this->expressionParser->parseAtVariable($tokenList, $token->value);
             } else {
-                $name = $tokenList->expectName();
+                $name = $tokenList->expectName(null);
                 if ($tokenList->hasSymbol('.')) {
                     // NEW.foo etc.
-                    $name2 = $tokenList->expectName();
+                    $name2 = $tokenList->expectName(Entity::COLUMN);
                     $variable = new QualifiedName($name2, $name);
                 } elseif (MysqlVariable::validateValue($name)) {
                     // system variable without scope

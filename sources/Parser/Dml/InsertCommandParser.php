@@ -27,6 +27,7 @@ use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Statement;
 
 class InsertCommandParser
@@ -112,10 +113,10 @@ class InsertCommandParser
 
             $alias = $columnAliases = null;
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName();
+                $alias = $tokenList->expectName(Entity::ALIAS);
                 if ($tokenList->hasSymbol('(')) {
                     do {
-                        $columnAliases[] = $tokenList->expectName();
+                        $columnAliases[] = $tokenList->expectName(Entity::ALIAS);
                     } while ($tokenList->hasSymbol(','));
                     $tokenList->expectSymbol(')');
                 }
@@ -132,7 +133,7 @@ class InsertCommandParser
 
             $alias = null;
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName();
+                $alias = $tokenList->expectName(Entity::ALIAS);
             }
 
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
@@ -210,7 +211,7 @@ class InsertCommandParser
             $tokenList->expectSymbol('(');
             $partitions = [];
             do {
-                $partitions[] = $tokenList->expectName();
+                $partitions[] = $tokenList->expectName(Entity::PARTITION);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }

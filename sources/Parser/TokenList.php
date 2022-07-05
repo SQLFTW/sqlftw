@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\InvalidValueException as InvalidEnumValueException;
+use Dogma\Str;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
@@ -26,6 +27,7 @@ use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 use function array_slice;
@@ -37,10 +39,12 @@ use function implode;
 use function in_array;
 use function ltrim;
 use function preg_match;
+use function rtrim;
+use function strlen;
 use function strtolower;
 use function strtoupper;
 use function substr;
-use function trim;
+use function ucfirst;
 
 /**
  * Holds list of lexer tokens and a pointer to current token
@@ -74,6 +78,9 @@ class TokenList
     /** @var Platform */
     private $platform;
 
+    /** @var array<string, int> */
+    private $maxLengths;
+
     /** @var bool */
     private $invalid;
 
@@ -99,6 +106,7 @@ class TokenList
         $this->tokens = $tokens;
         $this->settings = $settings;
         $this->platform = $settings->getPlatform();
+        $this->maxLengths = $settings->getMaxLengths();
         $this->autoSkip = $autoSkip;
         $this->invalid = $invalid;
     }
@@ -801,7 +809,7 @@ class TokenList
 
     // names ---------------------------------------------------------------------------------------------------------
 
-    public function expectName(?string $name = null, int $mask = 0): string
+    public function expectName(?string $object, ?string $name = null, int $mask = 0): string
     {
         $token = $this->expect(T::NAME, $mask);
         if ($name !== null && strtoupper($token->value) !== $name) {
@@ -809,6 +817,7 @@ class TokenList
 
             throw InvalidTokenException::tokens(T::NAME, 0, $name, $token, $this);
         }
+        $this->validateName($object, $token->value);
 
         return $token->value;
     }
@@ -824,11 +833,13 @@ class TokenList
         return $token->value;
     }
 
-    public function getName(?string $name = null): ?string
+    public function getName(?string $object, ?string $name = null): ?string
     {
         $position = $this->position;
         $token = $this->get(T::NAME, 0, $name);
         if ($token !== null) {
+            $this->validateName($object, $token->value);
+
             return $token->value;
         }
         $this->position = $position;
@@ -857,33 +868,22 @@ class TokenList
      */
     public function hasName(string $name): bool
     {
-        return $this->getName($name) !== null;
-    }
-
-    public function expectNonKeywordName(?string $name = null): string
-    {
-        $token = $this->expect(T::NAME, T::KEYWORD);
-        if ($name !== null && $token->value !== $name) {
-            $this->position--;
-
-            throw InvalidTokenException::tokens(T::NAME, T::KEYWORD, $name, $token, $this);
-        }
-
-        return $token->value;
+        return $this->getName(null, $name) !== null;
     }
 
     // todo: probably all calls to this should call expectNonReservedName() instead
-    public function getNonKeywordName(?string $name = null): ?string
+    public function getNonKeywordName(?string $object, ?string $name = null): ?string
     {
         $token = $this->get(T::NAME, T::KEYWORD, $name);
         if ($token === null) {
             return null;
         }
+        $this->validateName($object, $token->value);
 
         return $token->value;
     }
 
-    public function expectNonReservedName(?string $name = null): string
+    public function expectNonReservedName(?string $object, ?string $name = null): string
     {
         $token = $this->expect(T::NAME, T::RESERVED);
         if ($name !== null && $token->value !== $name) {
@@ -891,18 +891,35 @@ class TokenList
 
             throw InvalidTokenException::tokens(T::NAME, T::RESERVED, $name, $token, $this);
         }
+        $this->validateName($object, $token->value);
 
         return $token->value;
     }
 
-    public function getNonReservedName(?string $name = null, int $mask = 0): ?string
+    public function getNonReservedName(?string $object, ?string $name = null, int $mask = 0): ?string
     {
         $token = $this->get(T::NAME, T::RESERVED | $mask, $name);
         if ($token === null) {
             return null;
         }
+        $this->validateName($object, $token->value);
 
         return $token->value;
+    }
+
+    private function validateName(?string $object, string $name): void
+    {
+        if ($name === '') {
+            throw new ParserException('Name must not be empty.', $this);
+        }
+        if ($object !== null) {
+            if (($object === Entity::SCHEMA || $object === Entity::TABLE || $object === Entity::COLUMN) && rtrim($name) !== $name) {
+                throw new ParserException(ucfirst($object) . ' name must not contain right side white space.', $this);
+            }
+            if (Str::length($name) > $this->maxLengths[$object]) {
+                throw new ParserException(ucfirst($object) . " name must not be at most {$this->maxLengths[$object]} characters long.", $this);
+            }
+        }
     }
 
     // keywords --------------------------------------------------------------------------------------------------------
@@ -1153,12 +1170,12 @@ class TokenList
 
     public function expectQualifiedName(): QualifiedName
     {
-        $first = $this->expectNonReservedName();
+        $first = $this->expectNonReservedName(Entity::SCHEMA);
         if ($this->hasSymbol('.')) {
             if ($this->hasOperator(Operator::MULTIPLY)) {
                 $second = Operator::MULTIPLY;
             } else {
-                $second = $this->expectName();
+                $second = $this->expectName(Entity::TABLE);
             }
 
             return new QualifiedName($second, $first);
@@ -1171,7 +1188,7 @@ class TokenList
     {
         $position = $this->position;
 
-        $first = $this->getNonReservedName();
+        $first = $this->getNonReservedName(Entity::SCHEMA);
         if ($first === null) {
             $this->position = $position;
 
@@ -1184,7 +1201,7 @@ class TokenList
             if ($secondToken !== null) {
                 $second = $secondToken->value;
             } else {
-                $second = $this->expectName();
+                $second = $this->expectName(Entity::TABLE);
             }
 
             return new QualifiedName($second, $first);
@@ -1216,7 +1233,7 @@ class TokenList
         } else {
             $charset = $this->getString();
             if ($charset === null) {
-                $charset = $this->expectName();
+                $charset = $this->expectName(null);
             }
             if (!Charset::validateValue($charset)) {
                 $values = Charset::getAllowedValues();

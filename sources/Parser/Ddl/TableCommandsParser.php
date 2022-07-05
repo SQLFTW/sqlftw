@@ -106,6 +106,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Statement;
 use function array_values;
 use function strtoupper;
@@ -249,7 +250,7 @@ class TableCommandsParser
                                 if ($tokenList->hasKeyword(Keyword::FIRST)) {
                                     $after = ModifyColumnAction::FIRST;
                                 } elseif ($tokenList->hasKeyword(Keyword::AFTER)) {
-                                    $after = $tokenList->expectName();
+                                    $after = $tokenList->expectName(Entity::COLUMN);
                                 }
                                 $actions[] = new AddColumnAction($column, $after);
                             }
@@ -305,7 +306,7 @@ class TableCommandsParser
                                 if ($tokenList->hasKeyword(Keyword::FIRST)) {
                                     $after = ModifyColumnAction::FIRST;
                                 } elseif ($tokenList->hasKeyword(Keyword::AFTER)) {
-                                    $after = $tokenList->expectName();
+                                    $after = $tokenList->expectName(Entity::COLUMN);
                                 }
                                 $actions[] = new AddColumnAction($column, $after);
                             } else {
@@ -329,12 +330,12 @@ class TableCommandsParser
                 case Keyword::ALTER:
                     if ($tokenList->hasKeyword(Keyword::INDEX)) {
                         // ALTER INDEX index_name {VISIBLE | INVISIBLE}
-                        $index = $tokenList->expectName();
+                        $index = $tokenList->expectName(Entity::INDEX);
                         $visible = $tokenList->expectAnyKeyword(Keyword::VISIBLE, Keyword::INVISIBLE);
                         $actions[] = new AlterIndexAction($index, $visible === Keyword::VISIBLE);
                     } elseif ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
                         // ALTER CONSTRAINT symbol [NOT] ENFORCED
-                        $constraint = $tokenList->expectName();
+                        $constraint = $tokenList->expectName(Entity::CONSTRAINT);
                         $enforced = true;
                         if ($tokenList->hasKeyword(Keyword::NOT)) {
                             $enforced = false;
@@ -343,7 +344,7 @@ class TableCommandsParser
                         $actions[] = new AlterConstraintAction($constraint, $enforced);
                     } elseif ($tokenList->hasKeyword(Keyword::CHECK)) {
                         // ALTER CHECK symbol [NOT] ENFORCED
-                        $check = $tokenList->expectName();
+                        $check = $tokenList->expectName(Entity::CONSTRAINT);
                         $enforced = true;
                         if ($tokenList->hasKeyword(Keyword::NOT)) {
                             $enforced = false;
@@ -353,7 +354,7 @@ class TableCommandsParser
                     } else {
                         // ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT | SET INVISIBLE | SET VISIBLE}
                         $tokenList->passKeyword(Keyword::COLUMN);
-                        $column = $tokenList->expectName();
+                        $column = $tokenList->expectName(Entity::COLUMN);
                         $default = $visible = null;
                         if ($tokenList->hasKeywords(Keyword::SET, Keyword::DEFAULT)) {
                             if ($tokenList->hasSymbol('(')) {
@@ -383,13 +384,13 @@ class TableCommandsParser
                 case Keyword::CHANGE:
                     // CHANGE [COLUMN] old_col_name new_col_name column_definition [FIRST|AFTER col_name]
                     $tokenList->passKeyword(Keyword::COLUMN);
-                    $oldName = $tokenList->expectName();
+                    $oldName = $tokenList->expectName(Entity::COLUMN);
                     $column = $this->parseColumn($tokenList);
                     $after = null;
                     if ($tokenList->hasKeyword(Keyword::FIRST)) {
                         $after = ModifyColumnAction::FIRST;
                     } elseif ($tokenList->hasKeyword(Keyword::AFTER)) {
-                        $after = $tokenList->expectName();
+                        $after = $tokenList->expectName(Entity::COLUMN);
                     }
                     $actions[] = new ChangeColumnAction($oldName, $column, $after);
                     break;
@@ -442,20 +443,20 @@ class TableCommandsParser
                         case Keyword::INDEX:
                         case Keyword::KEY:
                             // DROP {INDEX|KEY} index_name
-                            $actions[] = new DropIndexAction($tokenList->expectName());
+                            $actions[] = new DropIndexAction($tokenList->expectName(Entity::INDEX));
                             break;
                         case Keyword::FOREIGN:
                             // DROP FOREIGN KEY fk_symbol
                             $tokenList->expectKeyword(Keyword::KEY);
-                            $actions[] = new DropForeignKeyAction($tokenList->expectName());
+                            $actions[] = new DropForeignKeyAction($tokenList->expectName(Entity::CONSTRAINT));
                             break;
                         case Keyword::CONSTRAINT:
                             // DROP CONSTRAINT symbol
-                            $actions[] = new DropConstraintAction($tokenList->expectName());
+                            $actions[] = new DropConstraintAction($tokenList->expectName(Entity::CONSTRAINT));
                             break;
                         case Keyword::CHECK:
                             // DROP CHECK symbol
-                            $actions[] = new DropCheckAction($tokenList->expectName());
+                            $actions[] = new DropCheckAction($tokenList->expectName(Entity::CONSTRAINT));
                             break;
                         case Keyword::PARTITION:
                             // DROP PARTITION partition_names
@@ -474,7 +475,7 @@ class TableCommandsParser
                         case Keyword::COLUMN:
                             // DROP [COLUMN] col_name
                             $tokenList->passKeyword(Keyword::COLUMN);
-                            $actions[] = new DropColumnAction($tokenList->expectName());
+                            $actions[] = new DropColumnAction($tokenList->expectName(Entity::COLUMN));
                             break;
                         default:
                             if ($second !== null && ($second->type & TokenType::UNQUOTED_NAME) !== 0) {
@@ -494,7 +495,7 @@ class TableCommandsParser
                 case Keyword::EXCHANGE:
                     // EXCHANGE PARTITION partition_name WITH TABLE tbl_name [{WITH|WITHOUT} VALIDATION]
                     $tokenList->expectKeyword(Keyword::PARTITION);
-                    $partition = $tokenList->expectName();
+                    $partition = $tokenList->expectName(Entity::PARTITION);
                     $tokenList->expectKeywords(Keyword::WITH, Keyword::TABLE);
                     $table = $tokenList->expectQualifiedName();
                     $validation = $tokenList->getAnyKeyword(Keyword::WITH, Keyword::WITHOUT);
@@ -542,7 +543,7 @@ class TableCommandsParser
                     if ($tokenList->hasKeyword(Keyword::FIRST)) {
                         $after = ModifyColumnAction::FIRST;
                     } elseif ($tokenList->hasKeyword(Keyword::AFTER)) {
-                        $after = $tokenList->expectName();
+                        $after = $tokenList->expectName(Entity::COLUMN);
                     }
                     $actions[] = new ModifyColumnAction($column, $after);
                     break;
@@ -572,18 +573,18 @@ class TableCommandsParser
                 case Keyword::RENAME:
                     if ($tokenList->hasKeyword(Keyword::COLUMN)) {
                         // RENAME COLUMN old_col_name TO new_col_name
-                        $oldName = $tokenList->expectName();
+                        $oldName = $tokenList->expectName(Entity::COLUMN);
                         $tokenList->expectKeyword(Keyword::TO);
-                        $newName = $tokenList->expectName();
+                        $newName = $tokenList->expectName(Entity::COLUMN);
                         $actions[] = new RenameColumnAction($oldName, $newName);
                     } elseif ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
                         // RENAME {INDEX|KEY} old_index_name TO new_index_name
-                        $oldName = $tokenList->expectName();
+                        $oldName = $tokenList->expectName(Entity::INDEX);
                         if (strtoupper($oldName) === Keyword::PRIMARY) {
                             throw new ParserException('Cannot rename key PRIMARY.', $tokenList);
                         }
                         $tokenList->expectKeyword(Keyword::TO);
-                        $newName = $tokenList->expectName();
+                        $newName = $tokenList->expectName(Entity::INDEX);
                         if ($newName === '' || strtoupper($newName) === Keyword::PRIMARY) {
                             throw new ParserException('Invalid index name.', $tokenList);
                         }
@@ -831,7 +832,7 @@ class TableCommandsParser
      */
     private function parseColumn(TokenList $tokenList): ColumnDefinition
     {
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::COLUMN);
 
         $type = $this->expressionParser->parseColumnType($tokenList);
         if ($tokenList->getKeywordEnum(BaseType::class) !== null) {
@@ -1157,7 +1158,7 @@ class TableCommandsParser
     {
         $name = null;
         if ($tokenList->hasKeyword(Keyword::CONSTRAINT)) {
-            $name = $tokenList->getNonReservedName();
+            $name = $tokenList->getNonReservedName(Entity::CONSTRAINT);
         }
 
         $keyword = $tokenList->expectAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN, Keyword::CHECK);
@@ -1192,7 +1193,7 @@ class TableCommandsParser
     private function parseForeignKey(TokenList $tokenList): ForeignKeyDefinition
     {
         $tokenList->expectKeywords(Keyword::FOREIGN, Keyword::KEY);
-        $indexName = $tokenList->getName();
+        $indexName = $tokenList->getName(Entity::INDEX);
 
         $columns = $this->parseNonEmptyColumnList($tokenList);
         $reference = $this->parseReference($tokenList);
@@ -1586,7 +1587,7 @@ class TableCommandsParser
     private function parsePartitionDefinition(TokenList $tokenList): PartitionDefinition
     {
         $tokenList->expectKeyword(Keyword::PARTITION);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::PARTITION);
 
         $lessThan = $values = null;
         if ($tokenList->hasKeyword(Keyword::VALUES)) {
@@ -1626,7 +1627,7 @@ class TableCommandsParser
             $subpartitions = [];
             do {
                 $tokenList->expectKeyword(Keyword::SUBPARTITION);
-                $subName = $tokenList->expectName();
+                $subName = $tokenList->expectName(Entity::PARTITION);
                 $subOptions = $this->parsePartitionOptions($tokenList);
                 $subpartitions[$subName] = $subOptions;
             } while ($tokenList->hasSymbol(','));
@@ -1711,7 +1712,7 @@ class TableCommandsParser
         }
         $names = [];
         do {
-            $names[] = $tokenList->expectName();
+            $names[] = $tokenList->expectName(Entity::PARTITION);
         } while ($tokenList->hasSymbol(','));
 
         return $names;
@@ -1729,7 +1730,7 @@ class TableCommandsParser
         }
 
         do {
-            $columns[] = $tokenList->expectName();
+            $columns[] = $tokenList->expectName(Entity::COLUMN);
         } while ($tokenList->hasSymbol(','));
         $tokenList->expectSymbol(')');
 
@@ -1745,7 +1746,7 @@ class TableCommandsParser
         $tokenList->expectSymbol('(');
 
         do {
-            $columns[] = $tokenList->expectName();
+            $columns[] = $tokenList->expectName(Entity::COLUMN);
         } while ($tokenList->hasSymbol(','));
         $tokenList->expectSymbol(')');
 

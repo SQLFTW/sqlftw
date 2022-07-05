@@ -973,13 +973,15 @@ class Lexer
     {
         $startAt = $position - 1 - strlen($prefix);
         $length = strlen($string);
-        $backslashes = !$this->settings->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
+        $isString = ($type & T::STRING) !== 0;
+        $backslashes = $isString && !$this->settings->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
 
         $orig = [$quote];
         $escaped = false;
         $finished = false;
         while ($position < $length) {
             $next = $string[$position];
+            // todo: check for \0 in names?
             if ($next === $quote) {
                 $orig[] = $next;
                 $position++;
@@ -1026,8 +1028,7 @@ class Lexer
         $value = substr($orig, 1, -1);
         // unescape double quotes
         $value = str_replace($quote . $quote, $quote, $value);
-
-        if ($backslashes && ($quote === "'" || ($quote === '"' && !$this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)))) {
+        if ($backslashes) {
             // unescape backslashes only in string context
             $value = str_replace($this->escapeKeys, $this->escapeValues, $value);
         }

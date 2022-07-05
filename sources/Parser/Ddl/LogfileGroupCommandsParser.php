@@ -15,6 +15,7 @@ use SqlFtw\Sql\Ddl\LogfileGroup\AlterLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\CreateLogfileGroupCommand;
 use SqlFtw\Sql\Ddl\LogfileGroup\DropLogfileGroupCommand;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 /**
  * MySQL 5.7 only
@@ -33,7 +34,7 @@ class LogfileGroupCommandsParser
     public function parseAlterLogfileGroup(TokenList $tokenList): AlterLogfileGroupCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::LOGFILE, Keyword::GROUP);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::LOG_FILE_GROUP);
         $tokenList->expectKeywords(Keyword::ADD, Keyword::UNDOFILE);
         $undoFile = $tokenList->expectString();
 
@@ -68,7 +69,7 @@ class LogfileGroupCommandsParser
     public function parseCreateLogfileGroup(TokenList $tokenList): CreateLogfileGroupCommand
     {
         $tokenList->expectKeywords(Keyword::CREATE, Keyword::LOGFILE, Keyword::GROUP);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::LOG_FILE_GROUP);
         $tokenList->expectKeywords(Keyword::ADD, Keyword::UNDOFILE);
         $undoFile = $tokenList->expectString();
 
@@ -110,7 +111,7 @@ class LogfileGroupCommandsParser
     public function parseDropLogfileGroup(TokenList $tokenList): DropLogfileGroupCommand
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::LOGFILE, Keyword::GROUP);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::LOG_FILE_GROUP);
 
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {

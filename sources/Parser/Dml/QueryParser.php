@@ -307,7 +307,7 @@ class QueryParser
                     $window = $this->parseWindow($tokenList);
                     $tokenList->expectSymbol(')');
                 } else {
-                    $window = $tokenList->expectName();
+                    $window = $tokenList->expectName(null);
                 }
             }
             $alias = $this->expressionParser->parseAlias($tokenList);
@@ -364,7 +364,7 @@ class QueryParser
         if ($tokenList->hasKeyword(Keyword::WINDOW)) {
             $windows = [];
             do {
-                $name = $tokenList->expectName();
+                $name = $tokenList->expectName(null);
                 $tokenList->expectKeyword(Keyword::AS);
 
                 $tokenList->expectSymbol('(');
@@ -539,7 +539,7 @@ class QueryParser
                 if ($token !== null) {
                     $variable = new UserVariable($token->value);
                 } else {
-                    $name = $tokenList->expectName();
+                    $name = $tokenList->expectName(null);
                     $variable = new SimpleName($name);
                 }
                 $variables[] = $variable;
@@ -573,7 +573,7 @@ class QueryParser
      */
     public function parseWindow(TokenList $tokenList): WindowSpecification
     {
-        $name = $tokenList->getNonReservedName();
+        $name = $tokenList->getNonReservedName(null);
 
         $partitionBy = $orderBy = $frame = null;
         if ($tokenList->hasKeywords(Keyword::PARTITION, Keyword::BY)) {

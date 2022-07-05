@@ -28,7 +28,7 @@ class PreparedCommandsParser
     {
         $tokenList->expectAnyKeyword(Keyword::DEALLOCATE, Keyword::DROP);
         $tokenList->expectKeyword(Keyword::PREPARE);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(null);
 
         return new DeallocatePrepareCommand($name);
     }
@@ -40,7 +40,7 @@ class PreparedCommandsParser
     public function parseExecute(TokenList $tokenList): ExecuteCommand
     {
         $tokenList->expectKeyword(Keyword::EXECUTE);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(null);
         $variables = null;
         if ($tokenList->hasKeyword(Keyword::USING)) {
             $variables = [];
@@ -59,7 +59,7 @@ class PreparedCommandsParser
     public function parsePrepare(TokenList $tokenList): PrepareCommand
     {
         $tokenList->expectKeyword(Keyword::PREPARE);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(null);
         $tokenList->expectKeyword(Keyword::FROM);
 
         $variable = $tokenList->get(TokenType::AT_VARIABLE);

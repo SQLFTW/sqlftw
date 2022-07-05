@@ -45,6 +45,7 @@ use SqlFtw\Sql\Ddl\Compound\StatementInformationItem;
 use SqlFtw\Sql\Ddl\Compound\WhileStatement;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Statement;
 
 class CompoundStatementParser
@@ -88,7 +89,7 @@ class CompoundStatementParser
         }
 
         $position = $tokenList->getPosition();
-        $label = $tokenList->getNonKeywordName();
+        $label = $tokenList->getNonKeywordName(Entity::LABEL);
         if ($label !== null) {
             $tokenList->expectSymbol(':');
         }
@@ -126,7 +127,7 @@ class CompoundStatementParser
     private function parseStatement(TokenList $tokenList): Statement
     {
         $position = $tokenList->getPosition();
-        $label = $tokenList->getNonReservedName();
+        $label = $tokenList->getNonReservedName(Entity::LABEL);
         if (!$tokenList->hasSymbol(':')) {
             $label = null;
             $tokenList->rewind($position);
@@ -163,13 +164,13 @@ class CompoundStatementParser
                 $statement = $this->parseDeclare($tokenList);
                 break;
             case Keyword::OPEN:
-                $statement = new OpenCursorStatement($tokenList->expectName());
+                $statement = new OpenCursorStatement($tokenList->expectName(null));
                 break;
             case Keyword::FETCH:
                 $statement = $this->parseFetch($tokenList);
                 break;
             case Keyword::CLOSE:
-                $statement = new CloseCursorStatement($tokenList->expectName());
+                $statement = new CloseCursorStatement($tokenList->expectName(null));
                 break;
             case Keyword::GET:
                 $statement = $this->parseGetDiagnostics($tokenList->rewind($position));
@@ -182,10 +183,10 @@ class CompoundStatementParser
                 $statement = new ReturnStatement($this->expressionParser->parseExpression($tokenList));
                 break;
             case Keyword::LEAVE:
-                $statement = new LeaveStatement($tokenList->expectName());
+                $statement = new LeaveStatement($tokenList->expectName(Entity::LABEL));
                 break;
             case Keyword::ITERATE:
-                $statement = new IterateStatement($tokenList->expectName());
+                $statement = new IterateStatement($tokenList->expectName(Entity::LABEL));
                 break;
             case Keyword::BEGIN:
                 $statement = $this->parseBlock($tokenList, $label);
@@ -215,7 +216,7 @@ class CompoundStatementParser
         $tokenList->expectKeyword(Keyword::END);
 
         if ($label !== null) {
-            $endLabel = $tokenList->getName();
+            $endLabel = $tokenList->getName(Entity::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->missing($label);
             }
@@ -264,7 +265,7 @@ class CompoundStatementParser
         $tokenList->expectKeywords(Keyword::END, Keyword::LOOP);
 
         if ($label !== null) {
-            $endLabel = $tokenList->getName();
+            $endLabel = $tokenList->getName(Entity::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->missing($label);
             }
@@ -287,7 +288,7 @@ class CompoundStatementParser
         $tokenList->expectKeywords(Keyword::END, Keyword::REPEAT);
 
         if ($label !== null) {
-            $endLabel = $tokenList->getName();
+            $endLabel = $tokenList->getName(Entity::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->missing($label);
             }
@@ -309,7 +310,7 @@ class CompoundStatementParser
         $tokenList->expectKeywords(Keyword::END, Keyword::WHILE);
 
         if ($label !== null) {
-            $endLabel = $tokenList->getName();
+            $endLabel = $tokenList->getName(Entity::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->missing($label);
             }
@@ -439,7 +440,7 @@ class CompoundStatementParser
                         $value = $tokenList->expectNonReservedNameOrString();
                     }
                 } else {
-                    $value = $tokenList->getName();
+                    $value = $tokenList->getName(null);
                     if ($value !== null) {
                         $type = ConditionType::get(ConditionType::CONDITION);
                     } else {
@@ -460,7 +461,7 @@ class CompoundStatementParser
             return new DeclareHandlerStatement($action, $conditions, $statement);
         }
 
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(null);
 
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
@@ -485,7 +486,7 @@ class CompoundStatementParser
         /** @var non-empty-array<string> $names */
         $names = [$name];
         while ($tokenList->hasSymbol(',')) {
-            $names[] = $tokenList->expectName();
+            $names[] = $tokenList->expectName(null);
         }
         $type = $this->expressionParser->parseColumnType($tokenList);
         $default = null;
@@ -506,11 +507,11 @@ class CompoundStatementParser
         } else {
             $tokenList->passKeyword(Keyword::FROM);
         }
-        $cursor = $tokenList->expectName();
+        $cursor = $tokenList->expectName(null);
         $tokenList->expectKeyword(Keyword::INTO);
         $variables = [];
         do {
-            $variables[] = $tokenList->expectName();
+            $variables[] = $tokenList->expectName(null);
         } while ($tokenList->hasSymbol(','));
 
         return new FetchStatement($cursor, $variables);
@@ -567,7 +568,7 @@ class CompoundStatementParser
             $conditionNumber = $this->expressionParser->parseExpression($tokenList);
             $conditionItems = [];
             do {
-                $target = $tokenList->expectName();
+                $target = $tokenList->expectName(null);
                 $tokenList->expectOperator(Operator::EQUAL);
                 $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class);
                 $conditionItems[] = new DiagnosticsItem($target, $item);
@@ -575,7 +576,7 @@ class CompoundStatementParser
         } else {
             $statementItems = [];
             do {
-                $target = $tokenList->expectName();
+                $target = $tokenList->expectName(null);
                 $tokenList->expectOperator(Operator::EQUAL);
                 $item = $tokenList->expectKeywordEnum(StatementInformationItem::class);
                 $statementItems[] = new DiagnosticsItem($target, $item);
@@ -635,7 +636,7 @@ class CompoundStatementParser
             $tokenList->passKeyword(Keyword::VALUE);
             $condition = $tokenList->expectString();
         } else {
-            $condition = $tokenList->getNonReservedName();
+            $condition = $tokenList->getNonReservedName(null);
         }
         $items = [];
         if ($tokenList->hasKeyword(Keyword::SET)) {

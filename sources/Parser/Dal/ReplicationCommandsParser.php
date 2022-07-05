@@ -40,6 +40,7 @@ use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\UserName;
 use function array_shift;
 use function explode;
@@ -352,7 +353,7 @@ class ReplicationCommandsParser
                         $values = [];
                         do {
                             if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
-                                $values[] = $tokenList->expectName();
+                                $values[] = $tokenList->expectName(Entity::SCHEMA);
                             } else {
                                 $values[] = $tokenList->expectString();
                             }
@@ -368,9 +369,9 @@ class ReplicationCommandsParser
                         $values = [];
                         do {
                             $tokenList->expectSymbol('(');
-                            $key = $tokenList->expectName();
+                            $key = $tokenList->expectName(Entity::SCHEMA);
                             $tokenList->expectSymbol(',');
-                            $value = $tokenList->expectName();
+                            $value = $tokenList->expectName(Entity::SCHEMA);
                             $tokenList->expectSymbol(')');
                             $values[$key] = $value;
                         } while ($tokenList->hasSymbol(','));

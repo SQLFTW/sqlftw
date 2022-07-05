@@ -56,7 +56,7 @@ class InstanceCommandParser
             return new AlterInstanceCommand($action, $forChannel, $noRollbackOnError);
         } elseif ($tokenList->using(null, 50700)) {
             $tokenList->expectKeywords(Keyword::ALTER, Keyword::INSTANCE, Keyword::ROTATE);
-            $tokenList->expectName('INNODB');
+            $tokenList->expectName(null, 'INNODB');
             $tokenList->expectKeywords(Keyword::MASTER, Keyword::KEY);
 
             return new AlterInstanceCommand(AlterInstanceAction::get(AlterInstanceAction::ROTATE_INNODB_MASTER_KEY));

@@ -18,6 +18,7 @@ use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\SchemaOptions;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use function trim;
 
 class SchemaCommandsParser
@@ -39,7 +40,7 @@ class SchemaCommandsParser
     {
         $tokenList->expectKeyword(Keyword::ALTER);
         $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
-        $name = $tokenList->getNonReservedName();
+        $name = $tokenList->getNonReservedName(Entity::SCHEMA);
         if ($name === '' || ($name !== null && trim($name) !== $name)) {
             throw new ParserException('Invalid schema name.', $tokenList);
         }
@@ -68,7 +69,7 @@ class SchemaCommandsParser
         $tokenList->expectKeyword(Keyword::CREATE);
         $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::SCHEMA);
         if ($name === '' || trim($name) !== $name) {
             throw new ParserException('Invalid schema name.', $tokenList);
         }
@@ -131,7 +132,7 @@ class SchemaCommandsParser
         $tokenList->expectKeyword(Keyword::DROP);
         $tokenList->expectAnyKeyword(Keyword::DATABASE, Keyword::SCHEMA);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
-        $schema = $tokenList->expectName();
+        $schema = $tokenList->expectName(Entity::SCHEMA);
 
         return new DropSchemaCommand($schema, $ifExists);
     }

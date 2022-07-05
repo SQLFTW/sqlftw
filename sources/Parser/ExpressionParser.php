@@ -75,6 +75,7 @@ use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use function in_array;
@@ -529,7 +530,7 @@ class ExpressionParser
         } elseif ($tokenList->hasSymbol('{')) {
             // {identifier expr}
             // @see https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/escape-sequences-in-odbc?view=sql-server-ver16
-            $name = $tokenList->expectName();
+            $name = $tokenList->expectName(null);
             $expression = $this->parseExpression($tokenList);
             $tokenList->expectSymbol('}');
 
@@ -631,13 +632,13 @@ class ExpressionParser
             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                 $name2 = '*'; // tbl.*
             } else {
-                $name2 = $tokenList->expectName();
+                $name2 = $tokenList->expectName(Entity::TABLE);
             }
             if ($name2 !== '*' && $tokenList->hasSymbol('.')) {
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     $name3 = '*'; // db.tbl.*
                 } else {
-                    $name3 = $tokenList->expectName();
+                    $name3 = $tokenList->expectName(Entity::COLUMN);
                 }
             }
         }
@@ -673,9 +674,9 @@ class ExpressionParser
             }
             $scope = Scope::get(substr($atVariable, 2));
 
-            $name = $tokenList->expectName();
+            $name = $tokenList->expectName(null);
             if ($tokenList->hasSymbol('.')) {
-                $name .= '.' . $tokenList->expectName();
+                $name .= '.' . $tokenList->expectName(null);
             }
 
             return $this->createSystemVariable($tokenList, $name, $scope);
@@ -683,7 +684,7 @@ class ExpressionParser
             // @@foo
             $name = substr($atVariable, 2);
             if ($tokenList->hasSymbol('.')) {
-                $name .= '.' . $tokenList->expectName();
+                $name .= '.' . $tokenList->expectName(null);
             }
 
             return $this->createSystemVariable($tokenList, $name);
@@ -768,11 +769,11 @@ class ExpressionParser
 
     public function parseColumnIdentifier(TokenList $tokenList): ColumnIdentifier
     {
-        $first = $tokenList->expectName();
+        $first = $tokenList->expectName(Entity::SCHEMA);
         if ($tokenList->hasSymbol('.')) {
-            $second = $tokenList->expectName();
+            $second = $tokenList->expectName(Entity::TABLE);
             if ($tokenList->hasSymbol('.')) {
-                $third = $tokenList->expectName();
+                $third = $tokenList->expectName(Entity::COLUMN);
 
                 return new ColumnName($third, $second, $first);
             }
@@ -935,10 +936,10 @@ class ExpressionParser
             if ($alias !== null) {
                 return $alias;
             } else {
-                return $tokenList->expectName(null, TokenType::AT_VARIABLE);
+                return $tokenList->expectName(Entity::ALIAS, null, TokenType::AT_VARIABLE);
             }
         } else {
-            $alias = $tokenList->getNonReservedName(null, TokenType::AT_VARIABLE);
+            $alias = $tokenList->getNonReservedName(Entity::ALIAS, null, TokenType::AT_VARIABLE);
             if ($alias !== null) {
                 return $alias;
             } else {

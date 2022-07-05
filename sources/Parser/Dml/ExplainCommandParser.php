@@ -17,6 +17,7 @@ use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use function strtoupper;
 
 class ExplainCommandParser
@@ -94,7 +95,7 @@ class ExplainCommandParser
             if ($type === Keyword::ANALYZE) {
                 if ($tokenList->hasKeyword(Keyword::FORMAT)) {
                     $tokenList->expectSymbol('=');
-                    $tokenList->expectName('TREE');
+                    $tokenList->expectName(null, 'TREE');
                 }
                 $type = ExplainType::get(ExplainType::ANALYZE);
             } elseif ($type === Keyword::FORMAT) {
@@ -146,7 +147,7 @@ class ExplainCommandParser
             case null:
                 // DESCRIBE
                 $table = $tokenList->expectQualifiedName();
-                $column = $tokenList->getName();
+                $column = $tokenList->getName(Entity::COLUMN);
                 if ($column === null) {
                     $column = $tokenList->getString();
                 }

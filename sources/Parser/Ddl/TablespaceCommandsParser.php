@@ -16,6 +16,7 @@ use SqlFtw\Sql\Ddl\Tablespace\CreateTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\DropTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\TablespaceOption;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 class TablespaceCommandsParser
 {
@@ -39,7 +40,7 @@ class TablespaceCommandsParser
         $undo = $tokenList->hasKeyword(Keyword::UNDO);
         $tokenList->expectKeyword(Keyword::TABLESPACE);
 
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::TABLESPACE);
 
         $options = [];
         $keyword = $tokenList->getAnyKeyword(Keyword::ADD, Keyword::DROP);
@@ -59,7 +60,7 @@ class TablespaceCommandsParser
             $options[TablespaceOption::WAIT] = true;
         }
         if ($tokenList->hasKeywords(Keyword::RENAME, Keyword::TO)) {
-            $options[TablespaceOption::RENAME_TO] = $tokenList->expectName();
+            $options[TablespaceOption::RENAME_TO] = $tokenList->expectName(Entity::TABLESPACE);
         }
         if ($tokenList->hasKeyword(Keyword::SET)) {
             $options[TablespaceOption::SET] = $tokenList->expectAnyKeyword(Keyword::ACTIVE, Keyword::INACTIVE);
@@ -102,7 +103,7 @@ class TablespaceCommandsParser
         $undo = $tokenList->hasKeyword(Keyword::UNDO);
         $tokenList->expectKeyword(Keyword::TABLESPACE);
 
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::TABLESPACE);
 
         // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [
@@ -127,7 +128,7 @@ class TablespaceCommandsParser
                     break;
                 case Keyword::USE:
                     $tokenList->expectKeywords(Keyword::LOGFILE, Keyword::GROUP);
-                    $options[TablespaceOption::USE_LOGFILE_GROUP] = $tokenList->expectName();
+                    $options[TablespaceOption::USE_LOGFILE_GROUP] = $tokenList->expectName(Entity::LOG_FILE_GROUP);
                     break;
                 case Keyword::EXTENT_SIZE:
                     $tokenList->passSymbol('=');
@@ -183,11 +184,11 @@ class TablespaceCommandsParser
         $undo = $tokenList->hasKeyword(Keyword::UNDO);
         $tokenList->expectKeyword(Keyword::TABLESPACE);
 
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::TABLESPACE);
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
             $tokenList->passSymbol('=');
-            $engine = $tokenList->expectName();
+            $engine = $tokenList->expectStorageEngineName();
         }
 
         return new DropTablespaceCommand($name, $engine, $undo);

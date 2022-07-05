@@ -63,6 +63,7 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 use function array_values;
@@ -710,7 +711,7 @@ class UserCommandsParser
             if ($tokenList->hasSymbol('(')) {
                 $columns = [];
                 do {
-                    $columns[] = $tokenList->expectName();
+                    $columns[] = $tokenList->expectName(Entity::COLUMN);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
@@ -751,13 +752,13 @@ class UserCommandsParser
 
             return new UserPrivilegeResource(UserPrivilegeResource::ALL, $object ? UserPrivilegeResource::ALL : null, $resourceType);
         } else {
-            $name = $tokenList->expectName();
+            $name = $tokenList->expectName(Entity::SCHEMA);
             if ($tokenList->hasSymbol('.')) {
                 $schema = $name;
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     return new UserPrivilegeResource($schema, UserPrivilegeResource::ALL, $resourceType);
                 } else {
-                    $name = $tokenList->expectName();
+                    $name = $tokenList->expectName(Entity::TABLE);
 
                     return new UserPrivilegeResource($schema, $name, $resourceType);
                 }

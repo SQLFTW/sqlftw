@@ -64,6 +64,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Statement;
 
 class ShowCommandsParser
@@ -356,7 +357,7 @@ class ShowCommandsParser
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
         $table = $tokenList->expectQualifiedName();
         if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $schema = $tokenList->expectName();
+            $schema = $tokenList->expectName(Entity::SCHEMA);
             $table = new QualifiedName($table->getName(), $schema);
         }
 
@@ -390,7 +391,7 @@ class ShowCommandsParser
             case Keyword::DATABASE:
             case Keyword::SCHEMA:
                 // SHOW CREATE {DATABASE | SCHEMA} db_name
-                return new ShowCreateSchemaCommand($tokenList->expectName());
+                return new ShowCreateSchemaCommand($tokenList->expectName(Entity::SCHEMA));
             case Keyword::EVENT:
                 // SHOW CREATE EVENT event_name
                 return new ShowCreateEventCommand($tokenList->expectQualifiedName());
@@ -437,7 +438,7 @@ class ShowCommandsParser
      */
     private function parseShowEngine(TokenList $tokenList): ShowEngineCommand
     {
-        $engine = $tokenList->expectName();
+        $engine = $tokenList->expectStorageEngineName();
         $what = $tokenList->expectKeywordEnum(ShowEngineOption::class);
 
         return new ShowEngineCommand($engine, $what);
@@ -467,7 +468,7 @@ class ShowCommandsParser
     {
         $from = $like = $where = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $from = $tokenList->expectName();
+            $from = $tokenList->expectName(Entity::SCHEMA);
         }
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();
@@ -526,7 +527,7 @@ class ShowCommandsParser
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
         $table = $tokenList->expectQualifiedName();
         if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $schema = $tokenList->expectName();
+            $schema = $tokenList->expectName(Entity::SCHEMA);
             $table = new QualifiedName($table->getName(), $schema);
         }
         $where = null;
@@ -545,7 +546,7 @@ class ShowCommandsParser
         $tokenList->expectKeyword(Keyword::TABLES);
         $from = $like = $where = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $from = $tokenList->expectName();
+            $from = $tokenList->expectName(Entity::SCHEMA);
         }
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();
@@ -693,7 +694,7 @@ class ShowCommandsParser
         $tokenList->expectKeyword(Keyword::STATUS);
         $from = $like = $where = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $from = $tokenList->expectName();
+            $from = $tokenList->expectName(Entity::SCHEMA);
         }
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();
@@ -714,7 +715,7 @@ class ShowCommandsParser
         $tokenList->expectKeyword(Keyword::TABLES);
         $schema = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $schema = $tokenList->expectName();
+            $schema = $tokenList->expectName(Entity::SCHEMA);
         }
         $like = $where = null;
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
@@ -733,7 +734,7 @@ class ShowCommandsParser
     {
         $from = $like = $where = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $from = $tokenList->expectName();
+            $from = $tokenList->expectName(Entity::SCHEMA);
         }
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();

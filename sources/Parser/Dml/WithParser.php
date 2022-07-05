@@ -20,6 +20,7 @@ use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Dml\WithExpression;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Statement;
 
 class WithParser
@@ -49,12 +50,12 @@ class WithParser
 
         $expressions = [];
         do {
-            $name = $tokenList->expectName();
+            $name = $tokenList->expectName(null);
             $columns = null;
             if ($tokenList->hasSymbol('(')) {
                 $columns = [];
                 do {
-                    $columns[] = $tokenList->expectName();
+                    $columns[] = $tokenList->expectName(Entity::COLUMN);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }

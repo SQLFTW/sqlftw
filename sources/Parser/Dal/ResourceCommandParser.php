@@ -17,6 +17,7 @@ use SqlFtw\Sql\Dal\Resource\DropResourceGroupCommand;
 use SqlFtw\Sql\Dal\Resource\ResourceGroupType;
 use SqlFtw\Sql\Dal\Resource\SetResourceGroupCommand;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 class ResourceCommandParser
 {
@@ -33,7 +34,7 @@ class ResourceCommandParser
     public function parseAlterResourceGroup(TokenList $tokenList): AlterResourceGroupCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::RESOURCE, Keyword::GROUP);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::RESOURCE_GROUP);
 
         [$vcpus, $threadPriority, $enable, $force] = $this->parseResourceGroupOptions($tokenList);
 
@@ -52,7 +53,7 @@ class ResourceCommandParser
     public function parseCreateResourceGroup(TokenList $tokenList): CreateResourceGroupCommand
     {
         $tokenList->expectKeywords(Keyword::CREATE, Keyword::RESOURCE, Keyword::GROUP);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::RESOURCE_GROUP);
 
         $tokenList->expectKeyword(Keyword::TYPE);
         $tokenList->passSymbol('=');
@@ -108,7 +109,7 @@ class ResourceCommandParser
     public function parseDropResourceGroup(TokenList $tokenList): DropResourceGroupCommand
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::RESOURCE, Keyword::GROUP);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::RESOURCE_GROUP);
         $force = $tokenList->hasKeyword(Keyword::FORCE);
 
         return new DropResourceGroupCommand($name, $force);
@@ -121,7 +122,7 @@ class ResourceCommandParser
     public function parseSetResourceGroup(TokenList $tokenList): SetResourceGroupCommand
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::RESOURCE, Keyword::GROUP);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::RESOURCE_GROUP);
         $threadIds = null;
         if ($tokenList->hasKeywords(Keyword::FOR)) {
             do {

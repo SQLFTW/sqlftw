@@ -21,6 +21,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 class LoadCommandsParser
 {
@@ -113,7 +114,7 @@ class LoadCommandsParser
             $tokenList->expectSymbol('(');
             $partitions = [];
             do {
-                $partitions[] = $tokenList->expectName();
+                $partitions[] = $tokenList->expectName(Entity::PARTITION);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
@@ -143,7 +144,7 @@ class LoadCommandsParser
             $fields = [];
             if (!$tokenList->hasSymbol(')')) {
                 do {
-                    $fields[] = $tokenList->expectName();
+                    $fields[] = $tokenList->expectName(Entity::COLUMN);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
@@ -153,7 +154,7 @@ class LoadCommandsParser
         if ($tokenList->hasKeyword(Keyword::SET)) {
             $setters = [];
             do {
-                $field = $tokenList->expectName();
+                $field = $tokenList->expectName(Entity::COLUMN);
                 $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 $setters[$field] = $expression;

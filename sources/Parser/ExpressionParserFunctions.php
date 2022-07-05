@@ -35,6 +35,7 @@ use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
 use SqlFtw\Sql\Expression\TimeZone;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use function explode;
 use function in_array;
 use function strtoupper;
@@ -129,9 +130,9 @@ trait ExpressionParserFunctions
             $expression = $this->parseExpression($tokenList);
             // todo: not sure where alias is allowed. can built-in functions have aliased params or UDF only?
             if (!isset($namedParams[Keyword::AS]) && $tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName();
+                $alias = $tokenList->expectName(Entity::ALIAS);
                 $expression = new AliasExpression($expression, $alias);
-            } elseif (($alias = $tokenList->getNonKeywordName()) !== null) {
+            } elseif (($alias = $tokenList->getNonKeywordName(Entity::ALIAS)) !== null) {
                 // non-reserved is not enough here
                 $expression = new AliasExpression($expression, $alias);
             }
@@ -319,7 +320,7 @@ trait ExpressionParserFunctions
                 continue;
             }
 
-            $name = $tokenList->expectName();
+            $name = $tokenList->expectName(Entity::COLUMN);
 
             if ($tokenList->hasKeywords(Keyword::FOR, Keyword::ORDINALITY)) {
                 $columns[] = new JsonTableOrdinalityColumn($name);

@@ -13,6 +13,7 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Utility\UseCommand;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 class UseCommandParser
 {
@@ -24,9 +25,9 @@ class UseCommandParser
     public function parseUse(TokenList $tokenList): UseCommand
     {
         $tokenList->expectKeyword(Keyword::USE);
-        $db = $tokenList->expectName();
+        $schema = $tokenList->expectName(Entity::SCHEMA);
 
-        return new UseCommand($db);
+        return new UseCommand($schema);
     }
 
 }

@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Statement;
 
 class DropTablespaceCommand extends Statement implements TablespaceCommand
@@ -20,13 +21,13 @@ class DropTablespaceCommand extends Statement implements TablespaceCommand
     /** @var string */
     private $name;
 
-    /** @var string|null */
+    /** @var StorageEngine|null */
     private $engine;
 
     /** @var bool */
     private $undo;
 
-    public function __construct(string $name, ?string $engine = null, bool $undo = false)
+    public function __construct(string $name, ?StorageEngine $engine = null, bool $undo = false)
     {
         $this->name = $name;
         $this->engine = $engine;
@@ -38,7 +39,7 @@ class DropTablespaceCommand extends Statement implements TablespaceCommand
         return $this->name;
     }
 
-    public function getEngine(): ?string
+    public function getEngine(): ?StorageEngine
     {
         return $this->engine;
     }
@@ -52,7 +53,7 @@ class DropTablespaceCommand extends Statement implements TablespaceCommand
         $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
 
         if ($this->engine !== null) {
-            $result .= ' ENGINE ' . $formatter->formatName($this->engine);
+            $result .= ' ENGINE ' . $this->engine->serialize($formatter);
         }
 
         return $result;

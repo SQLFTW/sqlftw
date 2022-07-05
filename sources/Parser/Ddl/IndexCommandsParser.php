@@ -24,6 +24,7 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexOptions;
 use SqlFtw\Sql\Ddl\Table\Index\IndexPart;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Order;
 
 class IndexCommandsParser
@@ -110,13 +111,13 @@ class IndexCommandsParser
 
         if ($inTable) {
             $tokenList->getAnyKeyword(Keyword::INDEX, Keyword::KEY);
-            $name = $tokenList->getNonReservedName();
+            $name = $tokenList->getNonReservedName(Entity::INDEX);
         } else {
             $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::KEY);
-            $name = $tokenList->expectName();
+            $name = $tokenList->expectName(Entity::INDEX);
         }
 
-        if ($name !== null && ($name === '' || strtoupper($name) === Keyword::PRIMARY)) {
+        if ($name !== null && strtoupper($name) === Keyword::PRIMARY) {
             throw new ParserException('Invalid index name.', $tokenList);
         }
 
@@ -151,7 +152,7 @@ class IndexCommandsParser
                 $keyBlockSize = (int) $tokenList->expectUnsignedInt();
             } elseif ($keyword === Keyword::WITH) {
                 $tokenList->expectKeyword(Keyword::PARSER);
-                $withParser = $tokenList->expectName();
+                $withParser = $tokenList->expectName(null);
             } elseif ($keyword === Keyword::COMMENT) {
                 $commentString = $tokenList->expectString();
                 // parse "COMMENT 'MERGE_THRESHOLD=40';"
@@ -208,7 +209,7 @@ class IndexCommandsParser
 
                 $parts[] = new IndexPart($expression, null, $order);
             } else {
-                $part = $tokenList->expectName();
+                $part = $tokenList->expectName(Entity::INDEX);
                 $length = null;
                 if ($tokenList->hasSymbol('(')) {
                     $length = (int) $tokenList->expectUnsignedInt();
@@ -237,7 +238,7 @@ class IndexCommandsParser
     public function parseDropIndex(TokenList $tokenList): DropIndexCommand
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::INDEX);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(Entity::INDEX);
         $tokenList->expectKeyword(Keyword::ON);
         $table = $tokenList->expectQualifiedName();
         $algorithm = null;

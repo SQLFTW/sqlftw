@@ -98,7 +98,7 @@ class TransactionCommandsParser
     public function parseReleaseSavepoint(TokenList $tokenList): ReleaseSavepointCommand
     {
         $tokenList->expectKeywords(Keyword::RELEASE, Keyword::SAVEPOINT);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(null);
 
         return new ReleaseSavepointCommand($name);
     }
@@ -138,7 +138,7 @@ class TransactionCommandsParser
         $tokenList->expectKeyword(Keyword::TO);
         $tokenList->passKeyword(Keyword::SAVEPOINT);
 
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(null);
 
         return new RollbackToSavepointCommand($name);
     }
@@ -149,7 +149,7 @@ class TransactionCommandsParser
     public function parseSavepoint(TokenList $tokenList): SavepointCommand
     {
         $tokenList->expectKeyword(Keyword::SAVEPOINT);
-        $name = $tokenList->expectName();
+        $name = $tokenList->expectName(null);
 
         return new SavepointCommand($name);
     }

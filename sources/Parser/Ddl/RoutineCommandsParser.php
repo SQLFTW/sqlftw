@@ -165,7 +165,7 @@ class RoutineCommandsParser
         $tokenList->expectSymbol('(');
         if (!$tokenList->hasSymbol(')')) {
             do {
-                $param = $tokenList->expectName();
+                $param = $tokenList->expectName(null);
                 $type = $this->expressionParser->parseColumnType($tokenList);
                 $params[$param] = $type;
             } while ($tokenList->hasSymbol(','));
@@ -223,7 +223,7 @@ class RoutineCommandsParser
         if (!$tokenList->hasSymbol(')')) {
             do {
                 $inOut = $tokenList->getKeywordEnum(InOutParamFlag::class);
-                $param = $tokenList->expectName();
+                $param = $tokenList->expectName(null);
                 $type = $this->expressionParser->parseColumnType($tokenList);
                 $params[] = new ProcedureParam($param, $type, $inOut);
             } while ($tokenList->hasSymbol(','));

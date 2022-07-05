@@ -25,6 +25,7 @@ use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Entity;
 
 class ViewCommandsParser
 {
@@ -108,7 +109,7 @@ class ViewCommandsParser
         if ($tokenList->hasSymbol('(')) {
             $columns = [];
             do {
-                $columns[] = $tokenList->expectName();
+                $columns[] = $tokenList->expectName(Entity::COLUMN);
             } while ($tokenList->hasSymbol(','));
 
             $tokenList->expectSymbol(')');

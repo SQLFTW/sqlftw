@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Statement;
 
 class ShowEngineCommand extends Statement implements ShowCommand
@@ -18,20 +19,20 @@ class ShowEngineCommand extends Statement implements ShowCommand
     use StrictBehaviorMixin;
 
     /** @var string */
-    private $name;
+    private $engine;
 
     /** @var ShowEngineOption */
     private $option;
 
-    public function __construct(string $name, ShowEngineOption $option)
+    public function __construct(StorageEngine $engine, ShowEngineOption $option)
     {
-        $this->name = $name;
+        $this->engine = $engine;
         $this->option = $option;
     }
 
-    public function getName(): string
+    public function getEngine(): StorageEngine
     {
-        return $this->name;
+        return $this->engine;
     }
 
     public function getOption(): ShowEngineOption
@@ -41,7 +42,7 @@ class ShowEngineCommand extends Statement implements ShowCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW ENGINE ' . $formatter->formatName($this->name) . ' ' . $this->option->serialize($formatter);
+        return 'SHOW ENGINE ' . $this->engine->serialize($formatter) . ' ' . $this->option->serialize($formatter);
     }
 
 }
