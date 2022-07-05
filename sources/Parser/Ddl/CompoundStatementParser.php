@@ -14,6 +14,7 @@ namespace SqlFtw\Parser\Ddl;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -197,6 +198,9 @@ class CompoundStatementParser
                 $tokenList->setEmbedded(true);
                 $statement = $this->parser->parseTokenList($tokenList);
                 $tokenList->setEmbedded($previous);
+                if ($statement instanceof InvalidCommand) {
+                    throw $statement->getException();
+                }
                 break;
         }
 
