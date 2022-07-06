@@ -1248,10 +1248,12 @@ class ExpressionParser
                 $charset = Charset::get(Charset::ASCII);
             }
 
-            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-                $collation = $tokenList->expectCollationName();
-            } elseif ($collation === null) {
-                $collation = $tokenList->getCollationName();
+            if ($collation === null) {
+                if ($tokenList->hasKeyword(Keyword::COLLATE)) {
+                    $collation = $tokenList->expectCollationName();
+                } else {
+                    $collation = $tokenList->getCollationName();
+                }
             }
         }
 
