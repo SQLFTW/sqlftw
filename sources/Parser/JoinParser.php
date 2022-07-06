@@ -238,6 +238,10 @@ class JoinParser
                 $tokenList->expectSymbol('(');
                 $references = $this->parseTableReferences($tokenList);
                 $tokenList->expectSymbol(')');
+                if ($references instanceof TableReferenceSubquery) {
+                    // throws, because there is no alias
+                    $this->parseAliasAndColumns($tokenList);
+                }
 
                 return new TableReferenceParentheses($references);
             }
@@ -287,7 +291,7 @@ class JoinParser
      */
     private function parseAliasAndColumns(TokenList $tokenList): array
     {
-        $alias = $this->expressionParser->parseAlias($tokenList);
+        $alias = $this->expressionParser->parseAlias($tokenList, true);
 
         $columns = null;
         if ($tokenList->hasSymbol('(')) {

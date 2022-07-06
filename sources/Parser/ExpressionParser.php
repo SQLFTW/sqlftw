@@ -940,7 +940,7 @@ class ExpressionParser
         return (int) $tokenList->expectUnsignedInt();
     }
 
-    public function parseAlias(TokenList $tokenList): ?string
+    public function parseAlias(TokenList $tokenList, bool $required = false): ?string
     {
         if ($tokenList->hasKeyword(Keyword::AS)) {
             $alias = $tokenList->getString();
@@ -954,7 +954,12 @@ class ExpressionParser
             if ($alias !== null) {
                 return $alias;
             } else {
-                return $tokenList->getString();
+                $alias = $tokenList->getString();
+                if ($alias === null && $required) {
+                    throw new ParserException('Alias is required here.', $tokenList);
+                }
+
+                return $alias;
             }
         }
     }
