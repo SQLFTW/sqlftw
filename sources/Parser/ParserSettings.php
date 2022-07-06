@@ -51,7 +51,7 @@ class ParserSettings
         Entity::LOG_FILE_GROUP => 64,
         Entity::RESOURCE_GROUP => 64,
         Entity::ALIAS => 256,
-        Entity::LABEL => 16,
+        Entity::LABEL => 256, // doc says 16, but db parses anything
     ];
 
     public function __construct(
