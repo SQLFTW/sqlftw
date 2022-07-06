@@ -131,7 +131,7 @@ class QueryParser
                     throw new ParserException("Duplicate ORDER BY clause in last query and in UNION.", $tokenList);
                 } else {
                     $orderBy = $queryOrderBy;
-                    $lastQuery = $lastQuery->removeLimit();
+                    $lastQuery = $lastQuery->removeOrderBy();
                 }
             }
 
@@ -176,6 +176,9 @@ class QueryParser
                 }
                 if ($query->getLimit() !== null) {
                     throw new ParserException("LIMIT not allowed in UNION without parentheses around query.", $tokenList);
+                }
+                if ($query->getOrderBy() !== null) {
+                    throw new ParserException("ORDER BY not allowed in UNION without parentheses around query.", $tokenList);
                 }
                 if ($query->getLocking() !== null) {
                     throw new ParserException("Locking options are not allowed in UNION without parentheses around query.", $tokenList);
