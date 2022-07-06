@@ -23,7 +23,7 @@ class SetNamesCommand extends Statement implements SetCommand
     /** @var Charset|DefaultLiteral */
     private $charset;
 
-    /** @var Collation|DefaultLiteral|null */
+    /** @var Collation|null */
     private $collation;
 
     /** @var array<SetAssignment> */
@@ -31,10 +31,9 @@ class SetNamesCommand extends Statement implements SetCommand
 
     /**
      * @param Charset|DefaultLiteral $charset
-     * @param Collation|DefaultLiteral|null $collation
      * @param array<SetAssignment> $assignments
      */
-    public function __construct($charset, $collation, array $assignments = [])
+    public function __construct($charset, ?Collation $collation, array $assignments = [])
     {
         $this->charset = $charset;
         $this->collation = $collation;
@@ -49,10 +48,7 @@ class SetNamesCommand extends Statement implements SetCommand
         return $this->charset;
     }
 
-    /**
-     * @return Collation|DefaultLiteral|null
-     */
-    public function getCollation()
+    public function getCollation(): ?Collation
     {
         return $this->collation;
     }

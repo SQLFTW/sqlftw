@@ -18,8 +18,6 @@ use function strtolower;
 class Charset extends SqlEnum implements ArgumentNode
 {
 
-    public const DEFAULT = 'default';
-
     public const ARMSCII_8 = 'armscii8';
     public const ASCII = 'ascii';
     public const BIG_5 = 'big5';

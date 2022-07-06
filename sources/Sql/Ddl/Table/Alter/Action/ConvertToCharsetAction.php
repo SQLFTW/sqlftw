@@ -13,24 +13,31 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\Expression\DefaultLiteral;
 
 class ConvertToCharsetAction implements TableAction
 {
     use StrictBehaviorMixin;
 
-    /** @var Charset */
+    /** @var Charset|DefaultLiteral */
     private $charset;
 
     /** @var Collation|null */
     private $collation;
 
-    public function __construct(Charset $charset, ?Collation $collation)
+    /**
+     * @param Charset|DefaultLiteral $charset
+     */
+    public function __construct($charset, ?Collation $collation)
     {
         $this->charset = $charset;
         $this->collation = $collation;
     }
 
-    public function getCharset(): Charset
+    /**
+     * @return Charset|DefaultLiteral
+     */
+    public function getCharset()
     {
         return $this->charset;
     }

@@ -89,8 +89,7 @@ class SetCommandsParser
     }
 
     /**
-     * SET NAMES {'charset_name'
-     *     [COLLATE 'collation_name'] | DEFAULT}
+     * SET NAMES {'charset_name' [COLLATE 'collation_name'] | DEFAULT}
      *     [, variable_name [=] value]
      */
     public function parseSetNames(TokenList $tokenList): SetNamesCommand
@@ -102,11 +101,8 @@ class SetCommandsParser
             $charset = new DefaultLiteral();
         } else {
             $charset = $tokenList->expectCharsetName();
-        }
-        if ($tokenList->hasKeyword(Keyword::COLLATE)) {
-            if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $collation = new DefaultLiteral();
-            } else {
+
+            if ($tokenList->hasKeyword(Keyword::COLLATE)) {
                 $collation = $tokenList->expectCollationName();
             }
         }

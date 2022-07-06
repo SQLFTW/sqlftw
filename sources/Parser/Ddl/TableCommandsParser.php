@@ -411,8 +411,11 @@ class TableCommandsParser
                     if (!$tokenList->hasKeyword(Keyword::CHARSET)) {
                         $tokenList->expectKeywords(Keyword::CHARACTER, Keyword::SET);
                     }
-                    /** @var Charset $charset */
-                    $charset = $tokenList->expectCharsetName();
+                    if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                        $charset = new DefaultLiteral();
+                    } else {
+                        $charset = $tokenList->expectCharsetName();
+                    }
                     $collation = null;
                     if ($tokenList->hasKeyword(Keyword::COLLATE)) {
                         $collation = $tokenList->expectCollationName();
