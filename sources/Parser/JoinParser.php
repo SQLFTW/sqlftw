@@ -80,7 +80,7 @@ class JoinParser
     public function parseTableReference(TokenList $tokenList): TableReferenceNode
     {
         if ($tokenList->hasSymbol('{')) {
-            $tokenList->expectName(null, 'OJ');
+            $tokenList->expectKeyword(Keyword::OJ);
             $reference = $this->parseTableReference($tokenList);
             $tokenList->expectSymbol('}');
 
