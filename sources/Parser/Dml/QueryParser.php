@@ -169,7 +169,7 @@ class QueryParser
         }
         $queries[] = $lastQuery;
 
-        foreach ($queries as $query) {
+        foreach ($queries as $i => $query) {
             if ($query instanceof SelectCommand) {
                 if ($query->getInto() !== null) {
                     throw new ParserException("INTO not allowed in UNION or subquery.", $tokenList);
@@ -183,6 +183,8 @@ class QueryParser
                 if ($query->getLocking() !== null) {
                     throw new ParserException("Locking options are not allowed in UNION without parentheses around query.", $tokenList);
                 }
+            } elseif ($i !== 0 && $query instanceof ParenthesizedQueryExpression && $query->getQuery() instanceof UnionExpression) {
+                throw new ParserException("Nested UNIONs are only allowed on left side.", $tokenList);
             }
         }
 
