@@ -181,6 +181,9 @@ class QueryParser
                 if ($i !== 0 && $query->getQuery() instanceof UnionExpression) {
                     throw new ParserException("Nested UNIONs are only allowed on left side.", $tokenList);
                 }
+                if ($query->containsInto()) {
+                    throw new ParserException("INTO not allowed in UNION or subquery.", $tokenList);
+                }
             }
         }
 
@@ -216,11 +219,7 @@ class QueryParser
     private function parseParenthesizedQueryExpression(TokenList $tokenList, ?WithClause $with = null): ParenthesizedQueryExpression
     {
         $tokenList->expectSymbol('(');
-        $tokenList->setInSubquery(true);
-
         $query = $this->parseQuery($tokenList);
-
-        $tokenList->setInSubquery(false);
         $tokenList->expectSymbol(')');
 
         [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);

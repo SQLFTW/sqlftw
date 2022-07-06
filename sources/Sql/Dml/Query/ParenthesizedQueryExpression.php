@@ -114,6 +114,19 @@ class ParenthesizedQueryExpression extends Statement implements Query
         return $this->into;
     }
 
+    public function containsInto(): bool
+    {
+        if ($this->into !== null) {
+            return true;
+        } elseif ($this->query instanceof self && $this->query->containsInto()) {
+            return true;
+        } elseif (!$this->query instanceof self && $this->query->getInto() !== null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';
