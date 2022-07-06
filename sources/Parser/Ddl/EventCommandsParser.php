@@ -20,10 +20,8 @@ use SqlFtw\Sql\Ddl\Event\EventDefinition;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Subquery;
-use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Keyword;
 
 class EventCommandsParser
@@ -83,6 +81,10 @@ class EventCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::DO)) {
             $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
+        }
+
+        if ($schedule === null && $preserve === null && $newName === null && $comment === null && $body === null) {
+            throw new ParserException('ALTER EVENT without changes is not allowed.', $tokenList);
         }
 
         return new AlterEventCommand($name, $schedule, $body, $definer, $state, $preserve, $comment, $newName);
