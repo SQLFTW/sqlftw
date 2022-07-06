@@ -1526,6 +1526,9 @@ class TableCommandsParser
             if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
                 $tokenList->expectOperator(Operator::EQUAL);
                 $algorithm = (int) $tokenList->expectUnsignedInt();
+                if ($algorithm !== 1 && $algorithm !== 2) {
+                    throw new ParserException('Only 1|2 values allowed for partitioning algorithm.', $tokenList);
+                }
             }
             $columns = $this->parseColumnList($tokenList);
             $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_KEY : PartitioningConditionType::KEY);
