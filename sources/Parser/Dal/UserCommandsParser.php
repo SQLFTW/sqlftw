@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\User\AddAuthFactor;
 use SqlFtw\Sql\Dal\User\AlterAuthOption;
@@ -68,10 +69,41 @@ use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 use function array_values;
 use function count;
+use function in_array;
 
 class UserCommandsParser
 {
     use StrictBehaviorMixin;
+
+    private const RESOURCE_PRIVILEGES = [
+        UserPrivilegeResourceType::TABLE => [
+            StaticUserPrivilege::ALTER,
+            StaticUserPrivilege::CREATE_VIEW,
+            StaticUserPrivilege::CREATE,
+            StaticUserPrivilege::DELETE,
+            StaticUserPrivilege::DROP,
+            StaticUserPrivilege::GRANT_OPTION,
+            StaticUserPrivilege::INDEX,
+            StaticUserPrivilege::INSERT,
+            StaticUserPrivilege::REFERENCES,
+            StaticUserPrivilege::SELECT,
+            StaticUserPrivilege::SHOW_VIEW,
+            StaticUserPrivilege::TRIGGER,
+            StaticUserPrivilege::UPDATE,
+        ],
+        UserPrivilegeResourceType::FUNCTION => [
+            StaticUserPrivilege::ALTER_ROUTINE,
+            StaticUserPrivilege::CREATE_ROUTINE,
+            StaticUserPrivilege::EXECUTE,
+            StaticUserPrivilege::GRANT_OPTION,
+        ],
+        UserPrivilegeResourceType::PROCEDURE => [
+            StaticUserPrivilege::ALTER_ROUTINE,
+            StaticUserPrivilege::CREATE_ROUTINE,
+            StaticUserPrivilege::EXECUTE,
+            StaticUserPrivilege::GRANT_OPTION,
+        ],
+    ];
 
     /**
      * ALTER USER [IF EXISTS]
@@ -652,6 +684,8 @@ class UserCommandsParser
             // GRANT ... ON ... TO
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
+            $this->checkPrivilegeAndResource($tokenList, $resource, $privileges);
+
             $tokenList->expectKeyword(Keyword::TO);
 
             $users = [];
@@ -769,6 +803,22 @@ class UserCommandsParser
     }
 
     /**
+     * @param non-empty-array<UserPrivilege> $privileges
+     */
+    private function checkPrivilegeAndResource(TokenList $tokenList, UserPrivilegeResource $resource, array $privileges): void
+    {
+        $type = $resource->getObjectType()->getValue();
+        if (isset(self::RESOURCE_PRIVILEGES[$type])) {
+            foreach ($privileges as $privilege) {
+                $privilegeType = $privilege->getType();
+                if ($privilegeType instanceof StaticUserPrivilege && !in_array($privilegeType->getValue(), self::RESOURCE_PRIVILEGES[$type])) {
+                    throw new ParserException('Invalid combination of resource and privilege.', $tokenList);
+                }
+            }
+        }
+    }
+
+    /**
      * RENAME USER old_user TO new_user
      *     [, old_user TO new_user] ...
      */
@@ -834,6 +884,8 @@ class UserCommandsParser
             // REVOKE ... ON ... FROM
             $privileges = $this->parsePrivilegesList($tokenList);
             $resource = $this->parseResource($tokenList);
+            $this->checkPrivilegeAndResource($tokenList, $resource, $privileges);
+
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUsersList($tokenList);
 
