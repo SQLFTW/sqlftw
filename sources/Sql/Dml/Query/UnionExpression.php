@@ -126,6 +126,14 @@ class UnionExpression extends Statement implements Query
         return $this->into;
     }
 
+    public function removeInto(): Query
+    {
+        $that = clone $this;
+        $that->into = null;
+
+        return $that;
+    }
+
     /**
      * @return SelectLocking[]|null
      */

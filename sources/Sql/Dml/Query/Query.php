@@ -41,4 +41,9 @@ interface Query extends DmlCommand
 
     public function getInto(): ?SelectInto;
 
+    /**
+     * @return static
+     */
+    public function removeInto(): self;
+
 }

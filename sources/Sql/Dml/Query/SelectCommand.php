@@ -226,6 +226,14 @@ class SelectCommand extends Statement implements SimpleQuery
         return $this->into;
     }
 
+    public function removeInto(): Query
+    {
+        $that = clone $this;
+        $that->into = null;
+
+        return $that;
+    }
+
     /**
      * @return non-empty-array<SelectLocking>|null
      */

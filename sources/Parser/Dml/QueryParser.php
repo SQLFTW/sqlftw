@@ -103,7 +103,6 @@ class QueryParser
         $queries = [$this->parseQueryBlock($tokenList, $with)];
         $types = [];
 
-        $tokenList->setInSubquery(true);
         while ($tokenList->hasKeyword(Keyword::UNION)) {
             if ($tokenList->hasKeyword(Keyword::ALL)) {
                 $types[] = UnionType::get(UnionType::ALL);
@@ -114,7 +113,6 @@ class QueryParser
             }
             $queries[] = $this->parseQueryBlock($tokenList);
         }
-        $tokenList->setInSubquery(false);
 
         if (count($queries) === 1 || count($types) === 0) {
             return $queries[0];
@@ -157,6 +155,16 @@ class QueryParser
             } else {
                 $limit = $queryLimit;
                 $lastQuery = $lastQuery->removeLimit();
+            }
+        }
+
+        $queryInto = $lastQuery->getInto();
+        if ($queryInto !== null) {
+            if ($into !== null) {
+                throw new ParserException("Duplicate INTO clause in last query and in UNION.", $tokenList);
+            } else {
+                $into = $queryInto;
+                $lastQuery = $lastQuery->removeInto();
             }
         }
 
@@ -230,6 +238,16 @@ class QueryParser
                 if ($column !== null && !$column instanceof SimpleName) {
                     throw new ParserException('Qualified name in ORDER BY is not allowed in parenthesized query expression.', $tokenList);
                 }
+            }
+        }
+
+        $queryInto = $query->getInto();
+        if ($queryInto !== null) {
+            if ($into !== null) {
+                throw new ParserException("Duplicate INTO clause in query and in parenthesized query expression.", $tokenList);
+            } else {
+                $into = $queryInto;
+                $query = $query->removeInto();
             }
         }
 

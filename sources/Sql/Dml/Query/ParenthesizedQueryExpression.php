@@ -127,6 +127,14 @@ class ParenthesizedQueryExpression extends Statement implements Query
         }
     }
 
+    public function removeInto(): Query
+    {
+        $that = clone $this;
+        $that->into = null;
+
+        return $that;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';
