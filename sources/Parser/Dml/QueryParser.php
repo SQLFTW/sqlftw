@@ -174,6 +174,9 @@ class QueryParser
                 if ($query->getInto() !== null) {
                     throw new ParserException("INTO not allowed in UNION or subquery.", $tokenList);
                 }
+                if ($query->getLimit() !== null) {
+                    throw new ParserException("LIMIT not allowed in UNION without parentheses around query.", $tokenList);
+                }
                 if ($query->getLocking() !== null) {
                     throw new ParserException("Locking options are not allowed in UNION without parentheses around query.", $tokenList);
                 }
