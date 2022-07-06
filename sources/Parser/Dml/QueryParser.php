@@ -224,6 +224,15 @@ class QueryParser
 
         [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);
 
+        if ($orderBy !== null) {
+            foreach ($orderBy as $order) {
+                $column = $order->getColumn();
+                if ($column !== null && !$column instanceof SimpleName) {
+                    throw new ParserException('Qualified name in ORDER BY is not allowed in parenthesized query expression.', $tokenList);
+                }
+            }
+        }
+
         return new ParenthesizedQueryExpression($query, $with, $orderBy, $limit, $offset, $into);
     }
 
