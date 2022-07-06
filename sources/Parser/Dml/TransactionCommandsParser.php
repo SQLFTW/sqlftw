@@ -64,6 +64,10 @@ class TransactionCommandsParser
             $release = true;
         }
 
+        if ($chain && $release) {
+            throw new ParserException('CHAIN and RELEASE cannot be both specified.', $tokenList);
+        }
+
         return new CommitCommand($chain, $release);
     }
 
@@ -123,6 +127,10 @@ class TransactionCommandsParser
             $tokenList->expectKeyword(Keyword::RELEASE);
         } elseif ($tokenList->hasKeyword(Keyword::RELEASE)) {
             $release = true;
+        }
+
+        if ($chain && $release) {
+            throw new ParserException('CHAIN and RELEASE cannot be both specified.', $tokenList);
         }
 
         return new RollbackCommand($chain, $release);
