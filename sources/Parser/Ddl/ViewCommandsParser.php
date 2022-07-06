@@ -37,10 +37,8 @@ class ViewCommandsParser
     /** @var QueryParser */
     private $queryParser;
 
-    public function __construct(
-        ExpressionParser $expressionParser,
-        QueryParser $queryParser
-    ) {
+    public function __construct(ExpressionParser $expressionParser, QueryParser $queryParser)
+    {
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
     }
@@ -116,7 +114,9 @@ class ViewCommandsParser
         }
 
         $tokenList->expectKeyword(Keyword::AS);
+        $tokenList->setInSubquery(true);
         $body = $this->queryParser->parseQuery($tokenList);
+        $tokenList->setInSubquery(false);
 
         if ($tokenList->hasKeyword(Keyword::WITH)) {
             $checkOption = $tokenList->getMultiKeywordsEnum(ViewCheckOption::class);
