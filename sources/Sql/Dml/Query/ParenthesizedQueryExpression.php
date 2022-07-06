@@ -72,11 +72,33 @@ class ParenthesizedQueryExpression extends Statement implements Query
     }
 
     /**
+     * @return static
+     */
+    public function removeOrderBy(): Query
+    {
+        $that = clone $this;
+        $that->orderBy = null;
+
+        return $that;
+    }
+
+    /**
      * @return int|SimpleName|null
      */
     public function getLimit()
     {
         return $this->limit;
+    }
+
+    /**
+     * @return static
+     */
+    public function removeLimit(): Query
+    {
+        $that = clone $this;
+        $that->limit = null;
+
+        return $that;
     }
 
     /**

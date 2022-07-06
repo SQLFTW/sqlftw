@@ -15,19 +15,4 @@ namespace SqlFtw\Sql\Dml\Query;
 interface SimpleQuery extends Query
 {
 
-    /**
-     * @return static
-     */
-    public function removeOrderBy(): self;
-
-    /**
-     * @return static
-     */
-    public function removeLimit(): self;
-
-    /**
-     * @return static
-     */
-    public function removeInto(): self;
-
 }

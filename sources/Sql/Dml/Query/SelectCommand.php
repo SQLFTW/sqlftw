@@ -176,7 +176,7 @@ class SelectCommand extends Statement implements SimpleQuery
         return $this->orderBy;
     }
 
-    public function removeOrderBy(): SimpleQuery
+    public function removeOrderBy(): Query
     {
         $that = clone $this;
         $that->orderBy = null;
@@ -192,7 +192,7 @@ class SelectCommand extends Statement implements SimpleQuery
         return $this->limit;
     }
 
-    public function removeLimit(): SimpleQuery
+    public function removeLimit(): Query
     {
         $that = clone $this;
         $that->limit = null;
@@ -224,14 +224,6 @@ class SelectCommand extends Statement implements SimpleQuery
     public function getInto(): ?SelectInto
     {
         return $this->into;
-    }
-
-    public function removeInto(): SimpleQuery
-    {
-        $that = clone $this;
-        $that->into = null;
-
-        return $that;
     }
 
     /**

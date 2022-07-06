@@ -102,6 +102,8 @@ class QueryParser
     {
         $queries = [$this->parseQueryBlock($tokenList, $with)];
         $types = [];
+
+        $tokenList->setInSubquery(true);
         while ($tokenList->hasKeyword(Keyword::UNION)) {
             if ($tokenList->hasKeyword(Keyword::ALL)) {
                 $types[] = UnionType::get(UnionType::ALL);
@@ -112,6 +114,7 @@ class QueryParser
             }
             $queries[] = $this->parseQueryBlock($tokenList);
         }
+        $tokenList->setInSubquery(false);
 
         if (count($queries) === 1 || count($types) === 0) {
             return $queries[0];
@@ -124,67 +127,60 @@ class QueryParser
         // order, limit and into of last unparenthesized query belong to the whole union result
         /** @var Query $lastQuery PHPStan assumes it might be null :E */
         $lastQuery = array_pop($queries);
-        if ($lastQuery instanceof SimpleQuery) {
-            $queryOrderBy = $lastQuery->getOrderBy();
-            if ($queryOrderBy !== null) {
-                if ($orderBy !== null) {
-                    throw new ParserException("Duplicate ORDER BY clause in last query and in UNION.", $tokenList);
-                } else {
-                    $orderBy = $queryOrderBy;
-                    $lastQuery = $lastQuery->removeOrderBy();
-                }
-            }
 
-            $queryLimit = $lastQuery->getLimit();
-            if ($queryLimit !== null) {
-                if ($limit !== null) {
-                    throw new ParserException("Duplicate LIMIT clause in last query and in UNION.", $tokenList);
-                } else {
-                    $limit = $queryLimit;
-                    $lastQuery = $lastQuery->removeLimit();
-                }
-            }
-
-            $queryInto = $lastQuery->getInto();
-            if ($queryInto !== null) {
-                if ($into !== null) {
+        if ($lastQuery instanceof SelectCommand) {
+            $queryLocking = $lastQuery->getLocking();
+            if ($queryLocking !== null) {
+                if ($locking !== null) {
                     throw new ParserException("Duplicate INTO clause in last query and in UNION.", $tokenList);
                 } else {
-                    $into = $queryInto;
-                    $lastQuery = $lastQuery->removeInto();
-                }
-            }
-
-            if ($lastQuery instanceof SelectCommand) {
-                $queryLocking = $lastQuery->getLocking();
-                if ($queryLocking !== null) {
-                    if ($locking !== null) {
-                        throw new ParserException("Duplicate INTO clause in last query and in UNION.", $tokenList);
-                    } else {
-                        $locking = $queryLocking;
-                        $lastQuery = $lastQuery->removeLocking();
-                    }
+                    $locking = $queryLocking;
+                    $lastQuery = $lastQuery->removeLocking();
                 }
             }
         }
+
+        $queryOrderBy = $lastQuery->getOrderBy();
+        if ($queryOrderBy !== null) {
+            if ($orderBy !== null) {
+                throw new ParserException("Duplicate ORDER BY clause in last query and in UNION.", $tokenList);
+            } else {
+                $orderBy = $queryOrderBy;
+                $lastQuery = $lastQuery->removeOrderBy();
+            }
+        }
+
+        $queryLimit = $lastQuery->getLimit();
+        if ($queryLimit !== null) {
+            if ($limit !== null) {
+                throw new ParserException("Duplicate LIMIT clause in last query and in UNION.", $tokenList);
+            } else {
+                $limit = $queryLimit;
+                $lastQuery = $lastQuery->removeLimit();
+            }
+        }
+
         $queries[] = $lastQuery;
 
         foreach ($queries as $i => $query) {
             if ($query instanceof SelectCommand) {
-                if ($query->getInto() !== null) {
-                    throw new ParserException("INTO not allowed in UNION or subquery.", $tokenList);
-                }
-                if ($query->getLimit() !== null) {
-                    throw new ParserException("LIMIT not allowed in UNION without parentheses around query.", $tokenList);
-                }
-                if ($query->getOrderBy() !== null) {
-                    throw new ParserException("ORDER BY not allowed in UNION without parentheses around query.", $tokenList);
-                }
                 if ($query->getLocking() !== null) {
                     throw new ParserException("Locking options are not allowed in UNION without parentheses around query.", $tokenList);
                 }
-            } elseif ($i !== 0 && $query instanceof ParenthesizedQueryExpression && $query->getQuery() instanceof UnionExpression) {
-                throw new ParserException("Nested UNIONs are only allowed on left side.", $tokenList);
+            }
+            if ($query->getLimit() !== null) {
+                throw new ParserException("LIMIT not allowed in UNION without parentheses around query.", $tokenList);
+            }
+            if ($query->getOrderBy() !== null) {
+                throw new ParserException("ORDER BY not allowed in UNION without parentheses around query.", $tokenList);
+            }
+            if ($query->getInto() !== null) {
+                throw new ParserException("INTO not allowed in UNION or subquery.", $tokenList);
+            }
+            if ($query instanceof ParenthesizedQueryExpression) {
+                if ($i !== 0 && $query->getQuery() instanceof UnionExpression) {
+                    throw new ParserException("Nested UNIONs are only allowed on left side.", $tokenList);
+                }
             }
         }
 

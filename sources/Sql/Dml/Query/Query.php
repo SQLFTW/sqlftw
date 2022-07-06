@@ -25,9 +25,19 @@ interface Query extends DmlCommand
     public function getOrderBy(): ?array;
 
     /**
+     * @return static
+     */
+    public function removeOrderBy(): self;
+
+    /**
      * @return int|SimpleName|null
      */
     public function getLimit();
+
+    /**
+     * @return static
+     */
+    public function removeLimit(): self;
 
     public function getInto(): ?SelectInto;
 
