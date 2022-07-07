@@ -1181,11 +1181,17 @@ class ExpressionParser
                 if ($type->equalsValue(BaseType::FLOAT)) {
                     // FLOAT(10.3) is valid :E
                     $length = (int) $tokenList->expect(TokenType::NUMBER)->value;
-                    if ($length < 0) {
+                    if ($length <= 0) {
                         throw new ParserException('Invalid FLOAT precision.', $tokenList);
                     }
                 } else {
                     $length = (int) $tokenList->expectUnsignedInt();
+                    if ($length < 0) {
+                        // only a warning for CHAR(0)
+                        throw new ParserException('Invalid type length.', $tokenList);
+                    } elseif ($type->isNumber() && $length === 0) {
+                        throw new ParserException('Invalid type length.', $tokenList);
+                    }
                 }
                 $decimals = null;
                 if ($type->hasDecimals()) {
@@ -1201,6 +1207,9 @@ class ExpressionParser
                 $tokenList->expectSymbol(')');
 
                 if ($decimals !== null) {
+                    if ($length < $decimals) {
+                        throw new ParserException('Type length can not be smaller than count of decimal places.', $tokenList);
+                    }
                     $size = [$length, $decimals];
                 } else {
                     $size = [$length];
