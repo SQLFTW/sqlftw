@@ -14,8 +14,8 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Cache\CacheIndexCommand;
 use SqlFtw\Sql\Dal\Cache\LoadIndexIntoCacheCommand;
 use SqlFtw\Sql\Dal\Cache\TableIndexList;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Keyword;
 
 /**
  * MySQL MyISAM tables only

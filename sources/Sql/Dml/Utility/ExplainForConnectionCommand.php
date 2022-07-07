@@ -24,7 +24,7 @@ class ExplainForConnectionCommand extends Statement implements DmlCommand
     /** @var ExplainType|null */
     private $type;
 
-    public function __construct(int $connectionId = null, ?ExplainType $type = null)
+    public function __construct(int $connectionId, ?ExplainType $type = null)
     {
         $this->connectionId = $connectionId;
         $this->type = $type;

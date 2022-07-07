@@ -12,11 +12,13 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
+use function preg_match;
 
 class TimeZoneOffset implements TimeZone
 {
     use StrictBehaviorMixin;
 
+    /** @var string */
     private $value;
 
     public function __construct(string $value)
@@ -26,6 +28,11 @@ class TimeZoneOffset implements TimeZone
         }
 
         $this->value = $value;
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

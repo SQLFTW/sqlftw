@@ -20,6 +20,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\FileFormat;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\AssignOperator;
 use SqlFtw\Sql\Expression\BaseType;
@@ -76,7 +77,6 @@ use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use function in_array;
@@ -1036,7 +1036,7 @@ class ExpressionParser
 
         if ($value instanceof UintLiteral && $value->getValue() === '0') {
             throw new ParserException('Invalid interval value (zero).', $tokenList);
-        } elseif ($value instanceof Stringliteral) {
+        } elseif ($value instanceof StringLiteral) {
             $parts = $unit->getParts();
             if ($parts === 5) {
                 if (preg_match('~^\d+(:\d+){1,4}$~', $value->getValue()) !== 1) {

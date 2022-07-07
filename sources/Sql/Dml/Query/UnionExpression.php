@@ -37,7 +37,7 @@ class UnionExpression extends Statement implements Query
     /** @var SelectInto|null */
     private $into;
 
-    /** @var SelectLocking[]|null */
+    /** @var non-empty-array<SelectLocking>|null */
     private $locking;
 
     /**
@@ -45,7 +45,7 @@ class UnionExpression extends Statement implements Query
      * @param non-empty-array<UnionType> $types
      * @param non-empty-array<OrderByExpression>|null $orderBy
      * @param int|SimpleName|null $limit
-     * @param SelectLocking[]|null $locking
+     * @param non-empty-array<SelectLocking>|null $locking
      */
     public function __construct(
         array $queries,
@@ -135,9 +135,9 @@ class UnionExpression extends Statement implements Query
     }
 
     /**
-     * @return SelectLocking[]|null
+     * @return non-empty-array<SelectLocking>|null
      */
-    private function getLocking(): ?array
+    public function getLocking(): ?array
     {
         return $this->locking;
     }

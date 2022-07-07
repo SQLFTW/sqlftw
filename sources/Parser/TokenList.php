@@ -12,11 +12,13 @@ namespace SqlFtw\Parser;
 use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Str;
 use Dogma\StrictBehaviorMixin;
+use InvalidArgumentException;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
@@ -27,13 +29,13 @@ use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 use function array_slice;
 use function array_values;
 use function call_user_func;
 use function count;
+use function end;
 use function explode;
 use function implode;
 use function in_array;
@@ -95,10 +97,10 @@ class TokenList
     /** @var bool Are we inside a function or procedure definition? */
     private $inRoutine = false;
 
-    /** @var bool Are we inside an UNION expression? */
+    /** @var bool Are we inside a UNION expression? */
     private $inUnion = false;
 
-    /** @var bool Are we inside a subquery? */
+    /** @var int Are we inside a subquery? */
     private $inSubquery = 0;
 
     /** @var bool Should we expect a delimiter after the command? */
@@ -271,8 +273,12 @@ class TokenList
         return $token->position + strlen($value);
     }
 
-    public function slice($startOffset, $endOffset): self
+    public function slice(int $startOffset, int $endOffset): self
     {
+        if ($startOffset >= $endOffset) {
+            throw new InvalidArgumentException('Start offset should be smaller than end offset');
+        }
+        /** @var non-empty-array<Token> $tokens */
         $tokens = array_slice($this->tokens, $startOffset, $endOffset - $startOffset + 1);
 
         return new self($tokens, $this->settings, $this->autoSkip);
@@ -1250,9 +1256,7 @@ class TokenList
 
     public function expectCharsetName(): Charset
     {
-        if ($this->hasKeyword(Keyword::DEFAULT)) {
-            return Charset::get(Charset::DEFAULT);
-        } elseif ($this->hasKeyword(Keyword::BINARY)) {
+        if ($this->hasKeyword(Keyword::BINARY)) {
             return Charset::get(Charset::BINARY);
         } elseif ($this->hasKeyword(Keyword::ASCII)) {
             return Charset::get(Charset::ASCII);

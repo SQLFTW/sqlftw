@@ -23,6 +23,8 @@ use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Statement;
+use function array_keys;
 use function array_map;
 use function array_values;
 use function implode;
@@ -34,7 +36,6 @@ class Formatter
 {
     use StrictBehaviorMixin;
 
-    /** @var string[] */
     private const MYSQL_ESCAPES = [
         '\\' => '\\\\',
         "\x00" => '\0',
@@ -57,22 +58,16 @@ class Formatter
     /** @var bool */
     public $quoteAllNames;
 
-    /** @var bool */
-    public $canonicalizeTypes;
-
     public function __construct(
         ParserSettings $settings,
         string $indent = '  ',
         bool $comments = false,
-        bool $quoteAllNames = false,
-        bool $canonicalizeTypes = true
-    )
-    {
+        bool $quoteAllNames = false
+    ) {
         $this->settings = $settings;
         $this->indent = $indent;
         $this->comments = $comments;
         $this->quoteAllNames = $quoteAllNames;
-        $this->canonicalizeTypes = $canonicalizeTypes;
     }
 
     public function getSettings(): ParserSettings

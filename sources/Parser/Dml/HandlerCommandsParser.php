@@ -16,8 +16,8 @@ use SqlFtw\Sql\Dml\Handler\HandlerCloseCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerOpenCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadTarget;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Keyword;
 
 class HandlerCommandsParser
 {

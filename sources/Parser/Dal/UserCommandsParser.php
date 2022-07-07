@@ -59,12 +59,12 @@ use SqlFtw\Sql\Dal\User\UserResourceOption;
 use SqlFtw\Sql\Dal\User\UserResourceOptionType;
 use SqlFtw\Sql\Dal\User\UserTlsOption;
 use SqlFtw\Sql\Dal\User\UserTlsOptionType;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 use function array_values;
@@ -815,7 +815,7 @@ class UserCommandsParser
         if (isset(self::RESOURCE_PRIVILEGES[$name])) {
             foreach ($privileges as $privilege) {
                 $privilegeType = $privilege->getType();
-                if ($privilegeType instanceof StaticUserPrivilege && !in_array($privilegeType->getValue(), self::RESOURCE_PRIVILEGES[$name])) {
+                if ($privilegeType instanceof StaticUserPrivilege && !in_array($privilegeType->getValue(), self::RESOURCE_PRIVILEGES[$name], true)) {
                     throw new ParserException('Invalid combination of resource and privilege.', $tokenList);
                 }
             }

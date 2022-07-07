@@ -47,9 +47,9 @@ use SqlFtw\Sql\Ddl\Compound\SignalStatement;
 use SqlFtw\Sql\Ddl\Compound\StatementInformationItem;
 use SqlFtw\Sql\Ddl\Compound\WhileStatement;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Statement;
 
 class CompoundStatementParser

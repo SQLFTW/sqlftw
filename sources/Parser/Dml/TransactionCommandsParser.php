@@ -64,7 +64,7 @@ class TransactionCommandsParser
             $release = true;
         }
 
-        if ($chain && $release) {
+        if ($chain === true && $release === true) {
             throw new ParserException('CHAIN and RELEASE cannot be both specified.', $tokenList);
         }
 
@@ -129,7 +129,7 @@ class TransactionCommandsParser
             $release = true;
         }
 
-        if ($chain && $release) {
+        if ($chain === true && $release === true) {
             throw new ParserException('CHAIN and RELEASE cannot be both specified.', $tokenList);
         }
 

@@ -15,8 +15,8 @@ use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\CreateTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\DropTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\TablespaceOption;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Keyword;
 
 class TablespaceCommandsParser
 {

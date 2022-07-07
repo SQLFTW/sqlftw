@@ -18,7 +18,7 @@ class ShowEngineCommand extends Statement implements ShowCommand
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var StorageEngine */
     private $engine;
 
     /** @var ShowEngineOption */

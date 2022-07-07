@@ -1157,6 +1157,7 @@ class MysqlVariable extends SqlEnum
     public const TEST_SECURITY_CONTEXT_GET_FIELD = 'test_security_context_get_field';
     public const TEST_SECURITY_CONTEXT_GET_VALUE = 'test_security_context_get_value';
 
+    /** @var array<string, string|string[]> */
     private static $types = [
         // https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html
         self::ACTIVATE_ALL_ROLES_ON_LOGIN => BaseType::BOOL,

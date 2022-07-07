@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
+use function in_array;
 
 class TimeIntervalUnit extends SqlEnum
 {

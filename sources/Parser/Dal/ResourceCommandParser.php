@@ -16,8 +16,8 @@ use SqlFtw\Sql\Dal\Resource\CreateResourceGroupCommand;
 use SqlFtw\Sql\Dal\Resource\DropResourceGroupCommand;
 use SqlFtw\Sql\Dal\Resource\ResourceGroupType;
 use SqlFtw\Sql\Dal\Resource\SetResourceGroupCommand;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Keyword;
 
 class ResourceCommandParser
 {

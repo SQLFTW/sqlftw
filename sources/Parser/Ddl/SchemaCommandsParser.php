@@ -17,8 +17,8 @@ use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\SchemaOptions;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Keyword;
 use function trim;
 
 class SchemaCommandsParser

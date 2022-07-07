@@ -22,10 +22,10 @@ use SqlFtw\Sql\Ddl\View\DropViewOption;
 use SqlFtw\Sql\Ddl\View\ViewAlgorithm;
 use SqlFtw\Sql\Ddl\View\ViewCheckOption;
 use SqlFtw\Sql\Dml\Query\Query;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Entity;
 
 class ViewCommandsParser
 {

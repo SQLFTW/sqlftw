@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
@@ -17,9 +18,9 @@ use SqlFtw\Sql\Dml\Utility\DescribeTableCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainType;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Entity;
 use function strtoupper;
 
 class ExplainCommandParser
@@ -86,7 +87,7 @@ class ExplainCommandParser
      *   | UPDATE statement
      * }
      *
-     * @return ExplainStatementCommand|DescribeTableCommand
+     * @return ExplainStatementCommand|ExplainForConnectionCommand|DescribeTableCommand
      */
     public function parseExplain(TokenList $tokenList): Command
     {
@@ -159,6 +160,8 @@ class ExplainCommandParser
                 }
 
                 return new DescribeTableCommand($table, $column);
+            default:
+                throw new ShouldNotHappenException('Dead branch.');
         }
 
         return new ExplainStatementCommand($statement, $type);

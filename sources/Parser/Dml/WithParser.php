@@ -14,13 +14,10 @@ use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Dml\Delete\DeleteCommand;
-use SqlFtw\Sql\Dml\Query\Query;
-use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Dml\WithExpression;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 
 class WithParser

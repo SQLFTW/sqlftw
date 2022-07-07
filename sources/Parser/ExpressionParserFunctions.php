@@ -15,6 +15,7 @@ use Dogma\ShouldNotHappenException;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\AliasExpression;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\BuiltInFunction;
@@ -35,14 +36,12 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
 use SqlFtw\Sql\Expression\TimeZone;
-use SqlFtw\Sql\Expression\TimeZoneOffset;
 use SqlFtw\Sql\Expression\TimeZoneName;
+use SqlFtw\Sql\Expression\TimeZoneOffset;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Entity;
 use function explode;
 use function in_array;
 use function preg_match;
-use function strtoupper;
 
 trait ExpressionParserFunctions
 {
@@ -149,11 +148,11 @@ trait ExpressionParserFunctions
 
         // timezone casting check (parse error in MySQL)
         if ($function instanceof BuiltInFunction && $function->getFullName() === BuiltInFunction::CAST) {
-            if ($arguments[0] instanceof DatetimeLiteral
-                && isset($arguments['AT TIME ZONE'])
-                && $arguments['AS']->getValue() !== Keyword::DATETIME
-                && $arguments['AS']->getValue() !== Keyword::TIMESTAMP
-            ) {
+            /** @var CastType $type */
+            $type = $arguments['AS'];
+            $type = $type->getBaseType();
+            $name = $type !== null ? $type->getValue() : null;
+            if ($arguments[0] instanceof DatetimeLiteral && isset($arguments['AT TIME ZONE']) && $name !== Keyword::DATETIME && $name !== Keyword::TIMESTAMP) {
                 throw new ParserException('Cannot cast datetime with a timezone to this type.', $tokenList);
             }
         }

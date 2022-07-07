@@ -27,7 +27,6 @@ use SqlFtw\Sql\Dml\Query\SelectLocking;
 use SqlFtw\Sql\Dml\Query\SelectLockOption;
 use SqlFtw\Sql\Dml\Query\SelectLockWaitOption;
 use SqlFtw\Sql\Dml\Query\SelectOption;
-use SqlFtw\Sql\Dml\Query\SimpleQuery;
 use SqlFtw\Sql\Dml\Query\TableCommand;
 use SqlFtw\Sql\Dml\Query\UnionExpression;
 use SqlFtw\Sql\Dml\Query\UnionType;
@@ -581,7 +580,7 @@ class QueryParser
     }
 
     /**
-     * @return SelectLockOption[]|null
+     * @return non-empty-array<SelectLocking>|null
      */
     private function parseLocking(TokenList $tokenList): ?array
     {
@@ -613,7 +612,7 @@ class QueryParser
         } while ($updated);
 
         if ($locking === []) {
-            $locking = null;
+            return null;
         }
 
         return $locking;

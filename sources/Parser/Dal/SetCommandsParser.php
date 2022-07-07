@@ -20,13 +20,13 @@ use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
-use SqlFtw\Sql\Entity;
 
 class SetCommandsParser
 {
@@ -173,6 +173,7 @@ class SetCommandsParser
                 } else {
                     // throws
                     $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION));
+                    exit;
                 }
             }
 

@@ -19,8 +19,8 @@ use SqlFtw\Sql\Dal\Table\CheckTableCommand;
 use SqlFtw\Sql\Dal\Table\CheckTableOption;
 use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
 use SqlFtw\Sql\Dal\Table\RepairTableCommand;
-use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Keyword;
 
 class TableMaintenanceCommandsParser
 {

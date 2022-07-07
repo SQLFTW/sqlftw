@@ -50,14 +50,14 @@ Assert::same($tokenList->getLast()->value, $name->value);
 
 expectNonReservedName:
 $tokenList = Assert::tokenList(' 1 ');
-Assert::exception(static function () use ($tokenList) {
+Assert::exception(static function () use ($tokenList): void {
     $tokenList->expectNonReservedName(null);
 }, InvalidTokenException::class);
 
 $tokenList = Assert::tokenList(' select ');
-Assert::exception(static function () use ($tokenList) {
+Assert::exception(static function () use ($tokenList): void {
     $tokenList->expectNonReservedName(null);
 }, InvalidTokenException::class);
 
 $tokenList = Assert::tokenList(' `select` ');
-Assert::same( $tokenList->expectNonReservedName(null), 'select');
+Assert::same($tokenList->expectNonReservedName(null), 'select');

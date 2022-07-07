@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
+use function in_array;
 use function strtolower;
 
 /**
@@ -100,6 +101,7 @@ class StorageEngine implements SqlSerializable
         'xtradb' => self::XTRADB,
     ];
 
+    /** @var string[] */
     private static $transactional = [
         self::BERKELEYDB,
         self::FALCON,

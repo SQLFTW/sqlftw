@@ -46,7 +46,7 @@ class InvalidTokenException extends ParserException
         $context = self::formatContext($tokenList);
 
         if ($token === null) {
-            return new static(sprintf(
+            return new self(sprintf(
                 "Expected token %s%s, but end of query found instead at position %d in:\n%s",
                 $expectedToken,
                 $expectedValue,
@@ -58,7 +58,7 @@ class InvalidTokenException extends ParserException
         $actualToken = implode('|', TokenType::getByValue($token->type)->getConstantNames());
         $actualValue = ExceptionValueFormatter::format($token->value);
 
-        return new static(sprintf(
+        return new self(sprintf(
             "Expected token %s%s, but token %s with value %s found instead at position %d in:\n%s",
             $expectedToken,
             $expectedValue,

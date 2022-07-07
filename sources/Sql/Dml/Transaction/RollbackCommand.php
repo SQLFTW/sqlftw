@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Transaction;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 
 class RollbackCommand extends Statement implements TransactionCommand
@@ -25,6 +26,10 @@ class RollbackCommand extends Statement implements TransactionCommand
 
     public function __construct(?bool $chain, ?bool $release)
     {
+        if ($chain === true && $release === true) {
+            throw new InvalidDefinitionException('CHAIN and RELEASE cannot be both specified.');
+        }
+
         $this->chain = $chain;
         $this->release = $release;
     }
