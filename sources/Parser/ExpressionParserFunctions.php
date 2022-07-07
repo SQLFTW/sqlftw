@@ -19,6 +19,7 @@ use SqlFtw\Sql\Expression\AliasExpression;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CastType;
+use SqlFtw\Sql\Expression\DatetimeLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\JsonErrorCondition;
 use SqlFtw\Sql\Expression\JsonTableExistsPathColumn;
@@ -145,6 +146,17 @@ trait ExpressionParserFunctions
             }
             $arguments[] = $expression;
         } while (true);
+
+        // timezone casting check (parse error in MySQL)
+        if ($function instanceof BuiltInFunction && $function->getFullName() === BuiltInFunction::CAST) {
+            if ($arguments[0] instanceof DatetimeLiteral
+                && isset($arguments['AT TIME ZONE'])
+                && $arguments['AS']->getValue() !== Keyword::DATETIME
+                && $arguments['AS']->getValue() !== Keyword::TIMESTAMP
+            ) {
+                throw new ParserException('Cannot cast datetime with a timezone to this type.', $tokenList);
+            }
+        }
 
         // AGG_FUNC(...) [from_first_last] [null_treatment] [over_clause]
         $fromFirst = null;
