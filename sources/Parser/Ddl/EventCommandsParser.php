@@ -83,7 +83,7 @@ class EventCommandsParser
             $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
         }
 
-        if ($schedule === null && $preserve === null && $newName === null && $comment === null && $body === null) {
+        if ($schedule === null && $preserve === null && $newName === null && $state === null && $comment === null && $body === null) {
             throw new ParserException('ALTER EVENT without changes is not allowed.', $tokenList);
         }
 
