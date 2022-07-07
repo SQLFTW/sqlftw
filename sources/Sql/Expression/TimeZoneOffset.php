@@ -1,0 +1,36 @@
+<?php declare(strict_types = 1);
+/**
+ * This file is part of the SqlFtw library (https://github.com/sqlftw)
+ *
+ * Copyright (c) 2017 Vlasta Neubauer (@paranoiq)
+ *
+ * For the full copyright and license information read the file 'license.md', distributed with this source code
+ */
+
+namespace SqlFtw\Sql\Expression;
+
+use Dogma\StrictBehaviorMixin;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
+
+class TimeZoneOffset implements TimeZone
+{
+    use StrictBehaviorMixin;
+
+    private $value;
+
+    public function __construct(string $value)
+    {
+        if (preg_match('~[+-](?:[01]\d|2[0-3]):[0-5]\d~', $value) !== 1) {
+            throw new InvalidDefinitionException("Invalid time zone offset $value.");
+        }
+
+        $this->value = $value;
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        return "'$this->value'";
+    }
+
+}

@@ -34,10 +34,13 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
 use SqlFtw\Sql\Expression\TimeZone;
+use SqlFtw\Sql\Expression\TimeZoneOffset;
+use SqlFtw\Sql\Expression\TimeZoneName;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Entity;
 use function explode;
 use function in_array;
+use function preg_match;
 use function strtoupper;
 
 trait ExpressionParserFunctions
@@ -95,12 +98,16 @@ trait ExpressionParserFunctions
                         $arguments[$keyword] = $this->parseLiteral($tokenList);
                         continue 3;
                     case TimeZone::class:
-                        $interval = $tokenList->hasKeyword(Keyword::INTERVAL);
-                        $zone = strtoupper($tokenList->expectString());
-                        if (($interval === false && $zone === 'UTC') || $zone === '+00:00') {
-                            $arguments[$keyword] = TimeZone::get(TimeZone::UTC);
+                        $tokenList->passKeyword(Keyword::INTERVAL);
+                        $zone = $tokenList->expectString();
+                        if (preg_match('~[+-](?:[01]\d|2[0-3]):[0-5]\d~', $zone) === 1) {
+                            $arguments[$keyword] = new TimeZoneOffset($zone);
                         } else {
-                            throw new ParserException("Invalid time zone specification. Only 'UTC' or [INTERVAL] '+00:00' is supported.", $tokenList);
+                            if ($zone === '') {
+                                $arguments[$keyword] = TimeZoneName::get(TimeZoneName::UTC);
+                            } else {
+                                $arguments[$keyword] = TimeZoneName::get($zone);
+                            }
                         }
                         continue 3;
                     case false:
