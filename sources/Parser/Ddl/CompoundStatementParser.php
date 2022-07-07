@@ -482,7 +482,7 @@ class CompoundStatementParser
             return new DeclareHandlerStatement($action, $conditions, $statement);
         }
 
-        $name = $tokenList->expectName(null);
+        $name = $tokenList->expectNonReservedName(null);
 
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
@@ -507,7 +507,7 @@ class CompoundStatementParser
         /** @var non-empty-array<string> $names */
         $names = [$name];
         while ($tokenList->hasSymbol(',')) {
-            $names[] = $tokenList->expectName(null);
+            $names[] = $tokenList->expectNonReservedName(null);
         }
         $type = $this->expressionParser->parseColumnType($tokenList);
         $default = null;
