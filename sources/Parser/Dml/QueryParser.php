@@ -103,6 +103,7 @@ class QueryParser
         $queries = [$this->parseQueryBlock($tokenList, $with)];
         $types = [];
 
+        $tokenList->setInUnion(true);
         while ($tokenList->hasKeyword(Keyword::UNION)) {
             if ($tokenList->hasKeyword(Keyword::ALL)) {
                 $types[] = UnionType::get(UnionType::ALL);
@@ -113,6 +114,7 @@ class QueryParser
             }
             $queries[] = $this->parseQueryBlock($tokenList);
         }
+        $tokenList->setInUnion(false);
 
         if (count($queries) === 1 || count($types) === 0) {
             return $queries[0];
@@ -387,15 +389,6 @@ class QueryParser
         $from = null;
         if ($tokenList->hasKeyword(Keyword::FROM)) {
             $from = $this->joinParser->parseTableReferences($tokenList);
-            /*
-            // todo: should be part of the table references or not?
-            if ($tokenList->mayConsumeKeyword(Keyword::PARTITION)) {
-                $partitions = [];
-                do {
-                    $partitions[] = $tokenList->consumeName();
-                } while ($tokenList->mayConsumeComma());
-            }
-            */
         }
 
         $where = null;
@@ -458,18 +451,16 @@ class QueryParser
             $this->expressionParser->parseFunctionCall($tokenList, 'PROCEDURE ANALYSE');
         }
 
-        if (!$tokenList->inSubquery()) {
+        $locking = $this->parseLocking($tokenList);
+
+        if (!$tokenList->inSubquery() && !($tokenList->inUnion() && $from !== null)) {
             if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
                 $into = $this->parseInto($tokenList);
             }
         }
 
-        $locking = $this->parseLocking($tokenList);
-
-        if (!$tokenList->inSubquery()) {
-            if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
-                $into = $this->parseInto($tokenList);
-            }
+        if ($locking === null) {
+            $locking = $this->parseLocking($tokenList);
         }
 
         return new SelectCommand($what, $from, $where, $groupBy, $having, $with, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);

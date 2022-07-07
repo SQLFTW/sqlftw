@@ -95,6 +95,9 @@ class TokenList
     /** @var bool Are we inside a function or procedure definition? */
     private $inRoutine = false;
 
+    /** @var bool Are we inside an UNION expression? */
+    private $inUnion = false;
+
     /** @var bool Are we inside a subquery? */
     private $inSubquery = 0;
 
@@ -160,6 +163,16 @@ class TokenList
     public function setInSubquery(bool $value): void
     {
         $this->inSubquery += $value ? 1 : -1;
+    }
+
+    public function inUnion(): bool
+    {
+        return $this->inUnion;
+    }
+
+    public function setInUnion(bool $value): void
+    {
+        $this->inUnion = $value;
     }
 
     public function embedded(): bool

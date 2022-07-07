@@ -1101,7 +1101,6 @@ class TableCommandsParser
                     $type = $type->addCharset($tokenList->expectCharsetName());
                     break;
                 case Keyword::COLLATE:
-                    rd($type);
                     if ($type->getCollation() !== null) {
                         throw new ParserException('Duplicit collation definition on column.', $tokenList);
                     }
