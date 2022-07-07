@@ -834,7 +834,7 @@ class TableCommandsParser
      */
     private function parseColumn(TokenList $tokenList): ColumnDefinition
     {
-        $name = $tokenList->expectName(Entity::COLUMN);
+        $name = $tokenList->expectNonReservedName(Entity::COLUMN);
 
         $type = $this->expressionParser->parseColumnType($tokenList);
         if ($tokenList->getKeywordEnum(BaseType::class) !== null) {
