@@ -216,6 +216,9 @@ class IndexCommandsParser
                 $length = null;
                 if ($tokenList->hasSymbol('(')) {
                     $length = (int) $tokenList->expectUnsignedInt();
+                    if ($length === 0) {
+                        throw new ParserException('Index prefix length must be positive.', $tokenList);
+                    }
                     $tokenList->expectSymbol(')');
                 }
 
