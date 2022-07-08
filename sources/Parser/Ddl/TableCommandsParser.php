@@ -102,6 +102,7 @@ use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -1009,6 +1010,9 @@ class TableCommandsParser
                     $type->addSrid((int) $tokenList->expectUnsignedInt());
                     break;
             }
+        }
+        if ($default !== null && !$default instanceof NullLiteral && !$default instanceof FunctionCall && $type->getBaseType()->isSpatial()) {
+            throw new ParserException('GEOMETRY columns cannot have a default value.', $tokenList);
         }
 
         return new ColumnDefinition($name, $type, $default, $null, $visible, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $engineAttribute, $secondaryEngineAttribute, $storage, $reference, $check);
