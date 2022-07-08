@@ -753,6 +753,7 @@ class MysqlVariable extends SqlEnum
     public const OLD_PASSWORDS = 'old_passwords'; // removed in 8.0
     public const OPEN_FILES_LIMIT = 'open_files_limit';
 
+    public const OPTIMIZER_MAX_SUBGRAPH_PAIRS = 'optimizer_max_subgraph_pairs';
     public const OPTIMIZER_PRUNE_LEVEL = 'optimizer_prune_level';
     public const OPTIMIZER_SEARCH_DEPTH = 'optimizer_search_depth';
     public const OPTIMIZER_SWITCH = 'optimizer_switch'; // new in 5.7Mes
