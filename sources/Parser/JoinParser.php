@@ -31,6 +31,7 @@ use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 use function count;
@@ -361,6 +362,9 @@ class JoinParser
                     }
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
+            }
+            if (!$action->equalsValue(IndexHintAction::USE) && $indexes == []) {
+                throw new ParserException('Indexes cannot be empty for action ' . $action->getValue() . '.', $tokenList);
             }
 
             $hints[] = new IndexHint($action, $target, $indexes);

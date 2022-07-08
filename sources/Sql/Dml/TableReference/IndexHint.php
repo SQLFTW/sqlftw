@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 
 class IndexHint implements SqlSerializable
@@ -32,6 +33,9 @@ class IndexHint implements SqlSerializable
      */
     public function __construct(IndexHintAction $action, ?IndexHintTarget $target, array $indexes)
     {
+        if (!$action->equalsValue(IndexHintAction::USE) && $indexes == []) {
+            throw new InvalidDefinitionException('Indexes cannot be empty for action ' . $action->getValue() . '.');
+        }
         $this->action = $action;
         $this->target = $target;
         $this->indexes = $indexes;
