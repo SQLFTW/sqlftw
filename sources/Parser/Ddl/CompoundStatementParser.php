@@ -48,7 +48,12 @@ use SqlFtw\Sql\Ddl\Compound\StatementInformationItem;
 use SqlFtw\Sql\Ddl\Compound\WhileStatement;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\Scope;
+use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 
@@ -589,7 +594,7 @@ class CompoundStatementParser
             $conditionNumber = $this->expressionParser->parseExpression($tokenList);
             $conditionItems = [];
             do {
-                $target = $tokenList->expectName(null);
+                $target = $this->parseTarget($tokenList);
                 $tokenList->expectOperator(Operator::EQUAL);
                 $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class);
                 $conditionItems[] = new DiagnosticsItem($target, $item);
@@ -597,7 +602,7 @@ class CompoundStatementParser
         } else {
             $statementItems = [];
             do {
-                $target = $tokenList->expectName(null);
+                $target = $this->parseTarget($tokenList);
                 $tokenList->expectOperator(Operator::EQUAL);
                 $item = $tokenList->expectKeywordEnum(StatementInformationItem::class);
                 $statementItems[] = new DiagnosticsItem($target, $item);
@@ -605,6 +610,26 @@ class CompoundStatementParser
         }
 
         return new GetDiagnosticsStatement($area, $statementItems, $conditionNumber, $conditionItems);
+    }
+
+    private function parseTarget(TokenList $tokenList): Identifier
+    {
+        if (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
+            $variable = $this->expressionParser->parseAtVariable($tokenList, $token->value);
+            if (!$variable instanceof UserVariable) {
+                throw new ParserException('User variable or local variable expected.', $tokenList);
+            }
+
+            return $variable;
+        } else {
+            $name = $tokenList->expectName(null);
+            if ($tokenList->inRoutine()) {
+                // local variable
+                return new SimpleName($name);
+            } else {
+                throw new ParserException('User variable or local variable expected.', $tokenList);
+            }
+        }
     }
 
     /**

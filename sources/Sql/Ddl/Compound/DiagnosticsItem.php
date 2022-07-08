@@ -11,25 +11,26 @@ namespace SqlFtw\Sql\Ddl\Compound;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\SqlSerializable;
 
 class DiagnosticsItem implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
+    /** @var Identifier */
     private $target;
 
     /** @var InformationItem */
     private $item;
 
-    public function __construct(string $target, InformationItem $item)
+    public function __construct(Identifier $target, InformationItem $item)
     {
         $this->target = $target;
         $this->item = $item;
     }
 
-    public function getTarget(): string
+    public function getTarget(): Identifier
     {
         return $this->target;
     }
@@ -41,7 +42,7 @@ class DiagnosticsItem implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return $formatter->formatName($this->target) . ' = ' . $this->item->serialize($formatter);
+        return $this->target->serialize($formatter) . ' = ' . $this->item->serialize($formatter);
     }
 
 }
