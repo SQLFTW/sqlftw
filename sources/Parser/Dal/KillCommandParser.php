@@ -11,8 +11,11 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Kill\KillCommand;
+use SqlFtw\Sql\Expression\Parentheses;
+use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Keyword;
 
 class KillCommandParser
@@ -35,6 +38,10 @@ class KillCommandParser
         $tokenList->expectKeyword(Keyword::KILL);
         $tokenList->getAnyKeyword(Keyword::CONNECTION, Keyword::QUERY);
         $id = $this->expressionParser->parseExpression($tokenList);
+
+        if ($id instanceof Parentheses && $id->getContents() instanceof Subquery) {
+            throw new ParserException('Kill does not support subquery.', $tokenList);
+        }
 
         return new KillCommand($id);
     }
