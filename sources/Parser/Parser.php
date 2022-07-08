@@ -499,7 +499,7 @@ class Parser
                 }
             case Keyword::GET:
                 // GET DIAGNOSTICS
-                return $this->factory->getCompoundStatementParser()->parseGetDiagnostics($tokenList->rewind($start));
+                return $this->factory->getErrorCommandsParser()->parseGetDiagnostics($tokenList->rewind($start));
             case Keyword::GRANT:
                 // GRANT
                 return $this->factory->getUserCommandsParser()->parseGrant($tokenList->rewind($start));
@@ -619,7 +619,7 @@ class Parser
                 }
             case Keyword::RESIGNAL:
                 // RESIGNAL
-                return $this->factory->getCompoundStatementParser()->parseSignalResignal($tokenList->rewind($start));
+                return $this->factory->getErrorCommandsParser()->parseSignalResignal($tokenList->rewind($start));
             case Keyword::RESTART:
                 // RESTART
                 return $this->factory->getRestartCommandParser()->parseRestart($tokenList->rewind($start));
@@ -684,7 +684,7 @@ class Parser
                 return $this->factory->getShutdownCommandParser()->parseShutdown($tokenList->rewind($start));
             case Keyword::SIGNAL:
                 // SIGNAL
-                return $this->factory->getCompoundStatementParser()->parseSignalResignal($tokenList->rewind($start));
+                return $this->factory->getErrorCommandsParser()->parseSignalResignal($tokenList->rewind($start));
             case Keyword::START:
                 $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA, Keyword::TRANSACTION);
                 if ($second === Keyword::GROUP_REPLICATION) {

@@ -7,16 +7,18 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Dml\Error;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Ddl\Compound\CompoundStatementItem;
+use SqlFtw\Sql\Ddl\Compound\ConditionInformationItem;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 use function is_numeric;
 
-class ResignalStatement extends Statement implements Command, CompoundStatementItem
+class ResignalCommand extends Statement implements Command, CompoundStatementItem
 {
     use StrictBehaviorMixin;
 

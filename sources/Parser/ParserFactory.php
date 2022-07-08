@@ -43,6 +43,7 @@ use SqlFtw\Parser\Dml\CallCommandParser;
 use SqlFtw\Parser\Dml\DeleteCommandParser;
 use SqlFtw\Parser\Dml\DelimiterCommandParser;
 use SqlFtw\Parser\Dml\DoCommandsParser;
+use SqlFtw\Parser\Dml\ErrorCommandsParser;
 use SqlFtw\Parser\Dml\ExplainCommandParser;
 use SqlFtw\Parser\Dml\HandlerCommandsParser;
 use SqlFtw\Parser\Dml\HelpCommandParser;
@@ -167,6 +168,11 @@ class ParserFactory
     public function getDoCommandParser(): DoCommandsParser
     {
         return new DoCommandsParser($this->expressionParser);
+    }
+
+    public function getErrorCommandsParser(): ErrorCommandsParser
+    {
+        return new ErrorCommandsParser($this->expressionParser);
     }
 
     public function getEventCommandsParser(): EventCommandsParser

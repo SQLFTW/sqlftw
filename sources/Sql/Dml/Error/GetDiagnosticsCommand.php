@@ -7,18 +7,20 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Dml\Error;
 
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Ddl\Compound\CompoundStatementItem;
+use SqlFtw\Sql\Ddl\Compound\ConditionInformationItem;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
 
-class GetDiagnosticsStatement extends Statement implements CompoundStatementItem, Command
+class GetDiagnosticsCommand extends Statement implements CompoundStatementItem, Command
 {
     use StrictBehaviorMixin;
 
