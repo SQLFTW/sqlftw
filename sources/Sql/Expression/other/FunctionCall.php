@@ -106,7 +106,7 @@ class FunctionCall implements RootNode
             foreach ($this->arguments as $name => $argument) {
                 if (is_int($name)) {
                     // value, value...
-                    $arguments .= ($first ? '' : ', ') . ' ' . $argument->serialize($formatter);
+                    $arguments .= ($first ? '' : ', ') . $argument->serialize($formatter);
                 } elseif ($this->function->equalsValue(BuiltInFunction::TRIM)) {
                     // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
                     if ($name === Keyword::FROM) {
