@@ -77,7 +77,7 @@ class TableReferenceTable implements TableReferenceNode
             $result .= ' AS ' . $formatter->formatName($this->alias);
         }
         if ($this->indexHints !== null) {
-            $result .= $formatter->formatSerializablesList($this->indexHints);
+            $result .= ' ' . $formatter->formatSerializablesList($this->indexHints);
         }
 
         return $result;
