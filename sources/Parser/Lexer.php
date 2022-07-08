@@ -343,14 +343,25 @@ class Lexer
                             }
                         }
 
+                        $yieldDelimiter = false;
                         if (substr($value, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                             // fucking name-like delimiter after name without whitespace
                             $value = substr($value, 0, -strlen($delimiter));
+                            $yieldDelimiter = true;
+                        }
+                        $upper = strtoupper(substr($value, 2));
+                        if ($upper === 'DEFAULT') {
+                            // todo: probably all magic functions?
+                            $exception = new LexerException("Invalid variable name $value.", $position, $string);
 
-                            yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
+                            yield new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, $row, $value, null, $exception);
+                            break;
+                        }
+
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
+
+                        if ($yieldDelimiter) {
                             yield new Token(T::DELIMITER, $start, $row, $delimiter, null);
-                        } else {
-                            yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
                         }
                     } elseif ($second === '`' || $second === "'" || $second === '"') {
                         $position++;
@@ -372,14 +383,25 @@ class Lexer
                             }
                         }
 
+                        $yieldDelimiter = false;
                         if (substr($value, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                             // fucking name-like delimiter after name without whitespace
                             $value = substr($value, 0, -strlen($delimiter));
+                            $yieldDelimiter = true;
+                        }
+                        $upper = strtoupper(substr($value, 1));
+                        if ($upper === 'DEFAULT') {
+                            // todo: probably all magic functions?
+                            $exception = new LexerException("Invalid variable name $value.", $position, $string);
 
-                            yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
+                            yield new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, $row, $value, null, $exception);
+                            break;
+                        }
+
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
+
+                        if ($yieldDelimiter) {
                             yield new Token(T::DELIMITER, $start, $row, $delimiter, null);
-                        } else {
-                            yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
                         }
                     } else {
                         // simple @ (valid as empty host name)
@@ -974,6 +996,7 @@ class Lexer
         $startAt = $position - 1 - strlen($prefix);
         $length = strlen($string);
         $isString = ($type & T::STRING) !== 0;
+        $isAtVariable = ($type & T::AT_VARIABLE) !== 0;
         $backslashes = $isString && !$this->settings->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
 
         $orig = [$quote];
@@ -1033,7 +1056,7 @@ class Lexer
             $value = str_replace($this->escapeKeys, $this->escapeValues, $value);
         }
 
-        return new Token($type, $startAt, $row, ($prefix === '@' || $prefix === '@@' ? $prefix : '') . $value, $prefix . $orig);
+        return new Token($type, $startAt, $row, ($isAtVariable ? $prefix : '') . $value, $prefix . $orig);
     }
 
     private function parseNumber(string $string, int &$position, int &$column, int $row, string $start): ?Token
