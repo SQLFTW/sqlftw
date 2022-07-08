@@ -118,11 +118,6 @@ class BaseType extends SqlEnum
     public const MULTILINESTRING = Keyword::MULTILINESTRING;
     public const MULTIPOLYGON = Keyword::MULTIPOLYGON;
 
-    public function serialize(Formatter $formatter): string
-    {
-        return parent::serialize($formatter);
-    }
-
     public function isInteger(): bool
     {
         return in_array($this->getValue(), [

@@ -32,9 +32,10 @@ class Entity
     public const RESOURCE_GROUP = 'resource group';
     public const ALIAS = 'alias';
     public const LABEL = 'label';
+    public const USER = 'user';
+    public const HOST = 'host';
 
     // other named objects:
-    // - user
     // - local variable
     // - system variable
     // - function parameter

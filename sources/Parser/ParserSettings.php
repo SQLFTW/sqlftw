@@ -52,6 +52,8 @@ class ParserSettings
         Entity::RESOURCE_GROUP => 64,
         Entity::ALIAS => 256,
         Entity::LABEL => 256, // doc says 16, but db parses anything
+        Entity::USER => 32,
+        Entity::HOST => 255,
     ];
 
     public function __construct(

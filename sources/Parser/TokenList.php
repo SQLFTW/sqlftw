@@ -764,9 +764,21 @@ class TokenList
         return $token !== null ? $token->value : null;
     }
 
-    public function expectNonKeywordNameOrString(): string
+    public function getNameOrStringEnumValue(string ...$values): ?string
     {
-        return $this->expect(T::NAME | T::STRING, T::KEYWORD)->value;
+        $token = $this->get(T::NAME | T::STRING);
+        if ($token === null) {
+            return null;
+        }
+
+        $value = strtoupper($token->value);
+        if (!in_array($value, $values, true)) {
+            $this->position--;
+
+            return null;
+        }
+
+        return $value;
     }
 
     /**
@@ -788,7 +800,7 @@ class TokenList
             /** @var string[] $values */
             $values = call_user_func([$className, 'getAllowedValues']);
 
-            throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
+            throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
         }
     }
 
@@ -954,7 +966,7 @@ class TokenList
 
     private function validateName(?string $object, string $name): void
     {
-        if ($name === '') {
+        if ($object !== null && $name === '') {
             throw new ParserException('Name must not be empty.', $this);
         }
         if ($object !== null) {
@@ -1257,14 +1269,21 @@ class TokenList
 
     public function expectUserName(): UserName
     {
-        $name = $this->expectNonKeywordNameOrString();
+        $name = $this->expectNonReservedNameOrString();
+        // characters, not bytes
+        if (mb_strlen($name) > $this->maxLengths[Entity::USER]) {
+            throw new ParserException('Too long user name.', $this);
+        }
+        $host = null;
         $token = $this->get(T::AT_VARIABLE);
         if ($token !== null) {
-            $host = $token->value;
-            $token = ltrim($host, '@');
+            $host = ltrim($token->value, '@');
+            if (strlen($host) > $this->maxLengths[Entity::HOST]) {
+                throw new ParserException('Too long host name.', $this);
+            }
         }
 
-        return new UserName($name, $token);
+        return new UserName($name, $host);
     }
 
     public function expectCharsetName(): Charset
