@@ -23,6 +23,7 @@ Debugger::$strictMode = true;
 FormattersDogma::register();
 
 Dumper::$hiddenFields[] = 'sql';
+Dumper::$hiddenFields[] = 'maxLengths';
 Dumper::$doNotTraverse[] = Parser::class;
 
 // TokenType value

@@ -590,6 +590,7 @@ class ExpressionParser
             return $value;
         }
 
+        $position = $tokenList->getPosition();
         $token = $tokenList->expect(TokenType::VALUE | TokenType::NAME);
 
         if (($token->type & TokenType::BINARY_LITERAL) !== 0) {
@@ -627,8 +628,16 @@ class ExpressionParser
                 }
             }
         }
+        if ($tokenList->hasSymbol('(')) {
+            // function()
+            return $this->parseFunctionCall($tokenList, $token->value);
+        } elseif (BuiltInFunction::validateValue($token->value) && BuiltInFunction::isBareName($token->value)) {
+            // function without parentheses
+            return new FunctionCall(BuiltInFunction::get($token->value));
+        }
 
-        $name1 = $token->value;
+        $tokenList->rewind($position);
+        $name1 = $tokenList->expectNonReservedName(null);
         $name2 = $name3 = null;
         if ($tokenList->hasSymbol('.')) {
             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
@@ -646,17 +655,14 @@ class ExpressionParser
         }
 
         if ($name3 !== null) {
-            // identifier
+            // schema.table.column
             return new ColumnName($name3, $name2, $name1);
         } elseif ($tokenList->hasSymbol('(')) {
-            // function_call
+            // schema.function()
             return $this->parseFunctionCall($tokenList, $name1, $name2);
         } elseif ($name2 !== null) {
-            // identifier
+            // schema.table
             return new QualifiedName($name2, $name1);
-        } elseif (BuiltInFunction::isValid($name1) && BuiltInFunction::isBareName($name1)) {
-            // function without parentheses
-            return new FunctionCall(BuiltInFunction::get($name1));
         } else {
             // identifier
             return new SimpleName($name1);

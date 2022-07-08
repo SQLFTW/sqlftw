@@ -22,11 +22,14 @@ use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\Expression\EnumValueLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
+use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
+use function is_array;
 
 class SetCommandsParser
 {
@@ -178,7 +181,22 @@ class SetCommandsParser
             }
 
             $operator = $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
-            $expression = $this->expressionParser->parseAssignExpression($tokenList);
+
+            if ($variable instanceof SystemVariable) {
+                $type = MysqlVariable::getType($variable->getName());
+                if (is_array($type)) {
+                    $value = $tokenList->getNameOrStringEnumValue(...$type);
+                    if ($value !== null) {
+                        $expression = new EnumValueLiteral($value);
+                    } else {
+                        $expression = $this->expressionParser->parseAssignExpression($tokenList);
+                    }
+                } else {
+                    $expression = $this->expressionParser->parseAssignExpression($tokenList);
+                }
+            } else {
+                $expression = $this->expressionParser->parseAssignExpression($tokenList);
+            }
 
             $assignments[] = new SetAssignment($variable, $expression, $operator);
         } while ($tokenList->hasSymbol(','));

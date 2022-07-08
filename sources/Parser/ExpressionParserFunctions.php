@@ -21,6 +21,7 @@ use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CastType;
 use SqlFtw\Sql\Expression\DatetimeLiteral;
+use SqlFtw\Sql\Expression\EnumValueLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\JsonErrorCondition;
 use SqlFtw\Sql\Expression\JsonTableExistsPathColumn;
@@ -40,7 +41,6 @@ use SqlFtw\Sql\Expression\TimeZoneName;
 use SqlFtw\Sql\Expression\TimeZoneOffset;
 use SqlFtw\Sql\Keyword;
 use function explode;
-use function in_array;
 use function preg_match;
 
 trait ExpressionParserFunctions
@@ -110,7 +110,13 @@ trait ExpressionParserFunctions
                             }
                         }
                         continue 3;
-                    case false:
+                    case TimeTypeLiteral::class:
+                        $arguments[] = new TimeTypeLiteral($keyword);
+                        continue 3;
+                    case EnumValueLiteral::class:
+                        $arguments[] = new EnumValueLiteral($keyword);
+                        continue 3;
+                    case 'SKIP':
                         // skip parsing other arguments
                         while (!$tokenList->isFinished()) {
                             $token = $tokenList->get();
@@ -120,11 +126,6 @@ trait ExpressionParserFunctions
                         }
                         $tokenList->rewind(-1);
                         continue 3;
-                    case null:
-                        if (in_array($keyword, [Keyword::DATE, Keyword::TIME, Keyword::DATETIME], true)) {
-                            $arguments[] = new TimeTypeLiteral($keyword);
-                            continue 3;
-                        }
                     default:
                         throw new ShouldNotHappenException('Unsupported named parameter type.');
                 }

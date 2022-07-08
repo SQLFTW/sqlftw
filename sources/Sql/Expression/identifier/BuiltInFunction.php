@@ -13,6 +13,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
+use function strtoupper;
 
 class BuiltInFunction extends SqlEnum implements FunctionIdentifier
 {
@@ -611,7 +612,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
      * - when no value follows the keyword (indicated by null), the keyword is parsed as a Literal - e.g. GET_FORMAT(DATE ISO) -> [new Literal('DATE'), 'ISO']
      * - parameters of some functions need special parsing (indicated by false) - CONVERT(), JSON_TABLE(), TRIM()
      *
-     * @var array<string, array<string, class-string|null|false>>
+     * @var array<string, array<string, class-string|string>>
      */
     private static $namedParams = [
         // AVG([DISTINCT | ALL] expr)
@@ -631,16 +632,38 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         // COUNT([DISTINCT | ALL] expr,[expr...])
         self::COUNT => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
         // EXTRACT(unit FROM date)
-        self::EXTRACT => [Keyword::FROM => RootNode::class],
+        self::EXTRACT => [
+            Keyword::MICROSECOND => EnumValueLiteral::class,
+            Keyword::SECOND => EnumValueLiteral::class,
+            Keyword::MINUTE => EnumValueLiteral::class,
+            Keyword::HOUR => EnumValueLiteral::class,
+            Keyword::DAY => EnumValueLiteral::class,
+            Keyword::WEEK => EnumValueLiteral::class,
+            Keyword::MONTH => EnumValueLiteral::class,
+            Keyword::QUARTER => EnumValueLiteral::class,
+            Keyword::YEAR => EnumValueLiteral::class,
+            Keyword::SECOND_MICROSECOND => EnumValueLiteral::class,
+            Keyword::MINUTE_SECOND => EnumValueLiteral::class,
+            Keyword::HOUR_MINUTE => EnumValueLiteral::class,
+            Keyword::DAY_HOUR => EnumValueLiteral::class,
+            Keyword::YEAR_MONTH => EnumValueLiteral::class,
+            Keyword::MINUTE_MICROSECOND => EnumValueLiteral::class,
+            Keyword::HOUR_SECOND => EnumValueLiteral::class,
+            Keyword::DAY_MINUTE => EnumValueLiteral::class,
+            Keyword::HOUR_MICROSECOND => EnumValueLiteral::class,
+            Keyword::DAY_SECOND => EnumValueLiteral::class,
+            Keyword::DAY_MICROSECOND => EnumValueLiteral::class,
+            Keyword::FROM => RootNode::class,
+        ],
         // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
-        self::GET_FORMAT => [Keyword::DATE => null, Keyword::TIME => null, Keyword::DATETIME => null],
+        self::GET_FORMAT => [Keyword::DATE => TimeTypeLiteral::class, Keyword::TIME => TimeTypeLiteral::class, Keyword::DATETIME => TimeTypeLiteral::class],
         // GROUP_CONCAT([DISTINCT] expr [,expr ...] [ORDER BY {unsigned_integer | col_name | expr} [ASC | DESC] [,col_name ...]] [SEPARATOR str_val])
         self::GROUP_CONCAT => [Keyword::DISTINCT => RootNode::class, Keyword::ORDER . ' ' . Keyword::BY => OrderByExpression::class, Keyword::SEPARATOR => Literal::class,],
         // JSON_TABLE(expr, path COLUMNS (column_list) [AS] alias)
         // has special handling because of irregular syntax
-        self::JSON_TABLE => [Keyword::COLUMNS => false, Keyword::AS => false],
+        self::JSON_TABLE => [Keyword::COLUMNS => '*', Keyword::AS => '*'],
         // JSON_VALUE(json_doc, path [RETURNING type] [on_empty] [on_error])
-        self::JSON_VALUE => [Keyword::RETURNING => CastType::class, Keyword::ON . ' ' . Keyword::EMPTY => false, Keyword::ON . ' ' . Keyword::ERROR => false],
+        self::JSON_VALUE => [Keyword::RETURNING => CastType::class, Keyword::ON . ' ' . Keyword::EMPTY => '*', Keyword::ON . ' ' . Keyword::ERROR => '*'],
         // MAX([DISTINCT | ALL] expr)
         self::MAX => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
         // MIN([DISTINCT | ALL] expr)
@@ -659,11 +682,11 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::STD => [Keyword::ALL => RootNode::class],
         // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
         // has special handling because of the suffix FROM
-        self::TRIM => [Keyword::BOTH => false, Keyword::LEADING => false, Keyword::TRAILING => false, Keyword::FROM => false],
+        self::TRIM => [Keyword::BOTH => '*', Keyword::LEADING => '*', Keyword::TRAILING => '*', Keyword::FROM => '*'],
         // VARIANCE([ALL] expr)
         self::VARIANCE => [Keyword::ALL => RootNode::class],
         // WEIGHT_STRING(str [AS {CHAR|BINARY}(N)] [LEVEL ...] [flags]) -- "The flags clause currently is unused."
-        self::WEIGHT_STRING => [Keyword::AS => CastType::class, Keyword::LEVEL => false],
+        self::WEIGHT_STRING => [Keyword::AS => CastType::class, Keyword::LEVEL => 'SKIP'],
     ];
 
     public function isAggregate(): bool
@@ -693,6 +716,8 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
 
     public static function isBareName(string $name): bool
     {
+        $name = strtoupper($name);
+
         return in_array($name, self::$bare, true);
     }
 

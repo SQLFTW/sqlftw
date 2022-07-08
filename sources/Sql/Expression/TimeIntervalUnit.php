@@ -28,20 +28,20 @@ class TimeIntervalUnit extends SqlEnum
     public const QUARTER = Keyword::QUARTER;
     public const YEAR = Keyword::YEAR;
 
-    public const SECOND_MICROSECOND = Keyword::SECOND_MICROSECOND; // 0:0
+    public const SECOND_MICROSECOND = Keyword::SECOND_MICROSECOND; // 0.0
     public const MINUTE_SECOND = Keyword::MINUTE_SECOND; // 0:0
     public const HOUR_MINUTE = Keyword::HOUR_MINUTE; // 0:0
-    public const DAY_HOUR = Keyword::DAY_HOUR; // 0:0
-    public const YEAR_MONTH = Keyword::YEAR_MONTH; // 0:0
+    public const DAY_HOUR = Keyword::DAY_HOUR; // 0 0
+    public const YEAR_MONTH = Keyword::YEAR_MONTH; // 0-0
 
-    public const MINUTE_MICROSECOND = Keyword::MINUTE_MICROSECOND; // 0:0:0
+    public const MINUTE_MICROSECOND = Keyword::MINUTE_MICROSECOND; // 0:0.0
     public const HOUR_SECOND = Keyword::HOUR_SECOND; // 0:0:0
-    public const DAY_MINUTE = Keyword::DAY_MINUTE; // 0:0:0
+    public const DAY_MINUTE = Keyword::DAY_MINUTE; // 0 0:0
 
-    public const HOUR_MICROSECOND = Keyword::HOUR_MICROSECOND; // 0:0:0:0
-    public const DAY_SECOND = Keyword::DAY_SECOND; // 0:0:0:0
+    public const HOUR_MICROSECOND = Keyword::HOUR_MICROSECOND; // 0:0:0.0
+    public const DAY_SECOND = Keyword::DAY_SECOND; // 0 0:0:0
 
-    public const DAY_MICROSECOND = Keyword::DAY_MICROSECOND; // 0:0:0:0:0
+    public const DAY_MICROSECOND = Keyword::DAY_MICROSECOND; // 0 0:0:0.0
 
     /** @var array<string, int> */
     private static $parts = [
