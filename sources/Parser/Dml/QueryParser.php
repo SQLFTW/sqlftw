@@ -15,6 +15,7 @@ use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Dml\Query\GroupByExpression;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
 use SqlFtw\Sql\Dml\Query\Query;
@@ -401,7 +402,10 @@ class QueryParser
             $groupBy = [];
             do {
                 $expression = $this->expressionParser->parseAssignExpression($tokenList);
-                $order = $tokenList->getKeywordEnum(Order::class);
+                $order = null;
+                if ($tokenList->using(Platform::MYSQL, null, 50799)) {
+                    $order = $tokenList->getKeywordEnum(Order::class);
+                }
                 $groupBy[] = new GroupByExpression($expression, $order);
             } while ($tokenList->hasSymbol(','));
 
