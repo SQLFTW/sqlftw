@@ -52,6 +52,7 @@ class SettingsUpdater
         // SET innodb_strict_mode = ON
         // SET sql_require_primary_key = true
         // SET sql_safe_updates = ON
+        // autocommit, character_set_client, character_set_results, character_set_connection
     }
 
     private function detectSqlModeChange(RootNode $expression, ParserSettings $settings, TokenList $tokenList): void
