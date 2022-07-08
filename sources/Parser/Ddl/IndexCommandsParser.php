@@ -123,7 +123,7 @@ class IndexCommandsParser
         }
 
         $algorithm = null;
-        if (!$type->equalsValue(IndexType::FULLTEXT)) {
+        if (!$type->equalsValue(IndexType::FULLTEXT) && !$type->equalsValue(IndexType::SPATIAL)) {
             if ($tokenList->hasAnyKeyword(Keyword::USING, Keyword::TYPE)) {
                 $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
             }
