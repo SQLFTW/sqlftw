@@ -537,7 +537,7 @@ class ExpressionParser
             $tokenList->expectSymbol('}');
 
             return new CurlyExpression($name, $expression);
-        } elseif ($tokenList->has(TokenType::PLACEHOLDER)) {
+        } elseif ($tokenList->inPrepared() && $tokenList->has(TokenType::PLACEHOLDER)) {
             // param_marker
             return new Placeholder();
         }

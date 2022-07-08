@@ -100,10 +100,13 @@ class TokenList
     /** @var bool Are we inside a UNION expression? */
     private $inUnion = false;
 
+    /** @var bool Are we inside a prepared statement declaration? */
+    private $inPrepared = false;
+
     /** @var int Are we inside a subquery? */
     private $inSubquery = 0;
 
-    /** @var bool Should we expect a delimiter after the command? */
+    /** @var bool Should we expect a delimiter after the command? (command directly embedded into another command) */
     private $embedded = false;
 
     /**
@@ -157,16 +160,6 @@ class TokenList
         $this->inRoutine = $value;
     }
 
-    public function inSubquery(): bool
-    {
-        return $this->inSubquery > 0;
-    }
-
-    public function setInSubquery(bool $value): void
-    {
-        $this->inSubquery += $value ? 1 : -1;
-    }
-
     public function inUnion(): bool
     {
         return $this->inUnion;
@@ -175,6 +168,26 @@ class TokenList
     public function setInUnion(bool $value): void
     {
         $this->inUnion = $value;
+    }
+
+    public function inPrepared(): bool
+    {
+        return $this->inPrepared;
+    }
+
+    public function setInPrepared(bool $value): void
+    {
+        $this->inPrepared = $value;
+    }
+
+    public function inSubquery(): bool
+    {
+        return $this->inSubquery > 0;
+    }
+
+    public function setInSubquery(bool $value): void
+    {
+        $this->inSubquery += $value ? 1 : -1;
     }
 
     public function embedded(): bool
