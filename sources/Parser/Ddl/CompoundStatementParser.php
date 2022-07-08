@@ -46,6 +46,15 @@ use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
 use SqlFtw\Sql\Ddl\Compound\SignalStatement;
 use SqlFtw\Sql\Ddl\Compound\StatementInformationItem;
 use SqlFtw\Sql\Ddl\Compound\WhileStatement;
+use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
+use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
+use SqlFtw\Sql\Ddl\Event\EventCommand;
+use SqlFtw\Sql\Ddl\View\AlterViewCommand;
+use SqlFtw\Sql\Dml\Load\LoadDataCommand;
+use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
+use SqlFtw\Sql\Dml\Prepared\PreparedStatementCommand;
+use SqlFtw\Sql\Dml\Transaction\LockTablesCommand;
+use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Identifier;
@@ -58,6 +67,7 @@ use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Routine;
 use SqlFtw\Sql\Statement;
 
 class CompoundStatementParser
@@ -73,11 +83,8 @@ class CompoundStatementParser
     /** @var QueryParser */
     private $queryParser;
 
-    public function __construct(
-        Parser $parser,
-        ExpressionParser $expressionParser,
-        QueryParser $queryParser
-    ) {
+    public function __construct(Parser $parser, ExpressionParser $expressionParser, QueryParser $queryParser)
+    {
         $this->parser = $parser;
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
@@ -94,9 +101,9 @@ class CompoundStatementParser
      *     [statement_list]
      *   END [end_label]
      */
-    public function parseRoutineBody(TokenList $tokenList, bool $allowReturn): Statement
+    public function parseRoutineBody(TokenList $tokenList, string $routine): Statement
     {
-        if ($allowReturn && $tokenList->hasKeyword(Keyword::RETURN)) {
+        if ($routine === Routine::FUNCTION && $tokenList->hasKeyword(Keyword::RETURN)) {
             return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
         }
 
@@ -106,19 +113,18 @@ class CompoundStatementParser
             $tokenList->expectSymbol(':');
         }
 
-        $previous = $tokenList->embedded();
-        $tokenList->setEmbedded(true);
-        $tokenList->setInRoutine(true);
+        $previous = $tokenList->inEmbedded();
+        $tokenList->startEmbedded();
+        $tokenList->startRoutine($routine);
 
         if ($tokenList->hasAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF)) {
-            // todo: test others: Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE
             $statement = $this->parseStatement($tokenList->rewind($position));
         } else {
-            $statement = $this->parseCommand($tokenList->rewind($position));
+            $statement = $this->parseCommand($tokenList->rewind($position), true);
         }
 
-        $tokenList->setEmbedded($previous);
-        $tokenList->setInRoutine(false);
+        $previous ? $tokenList->startEmbedded() : $tokenList->endEmbedded();
+        $tokenList->endRoutine();
 
         return $statement;
     }
@@ -146,15 +152,19 @@ class CompoundStatementParser
         }
 
         $position = $tokenList->getPosition();
-
+        $in = $tokenList->inRoutine();
+rd($in);
         if ($label !== null) {
             $keyword = $tokenList->expectAnyKeyword(Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE);
         } else {
-            $keyword = $tokenList->getAnyKeyword(
-                Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF,
-                Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::GET, Keyword::SIGNAL,
-                Keyword::RESIGNAL, Keyword::RETURN, Keyword::LEAVE, Keyword::ITERATE
-            );
+            $keywords = [
+                Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF, Keyword::DECLARE,
+                Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::GET, Keyword::SIGNAL, Keyword::RESIGNAL, Keyword::LEAVE, Keyword::ITERATE
+            ];
+            if ($in === Routine::FUNCTION) {
+                $keywords[] = Keyword::RETURN;
+            }
+            $keyword = $tokenList->getAnyKeyword(...$keywords);
         }
         switch ($keyword) {
             case Keyword::LOOP:
@@ -204,17 +214,17 @@ class CompoundStatementParser
                 $statement = $this->parseBlock($tokenList, $label);
                 break;
             default:
-                $previous = $tokenList->embedded();
+                $previous = $tokenList->inEmbedded();
                 // do not check delimiter in Parser, because it will be checked here
-                $tokenList->setEmbedded(true);
-                $statement = $this->parseCommand($tokenList);
-                $tokenList->setEmbedded($previous);
+                $tokenList->startEmbedded();
+                $statement = $this->parseCommand($tokenList, $previous);
+                $previous ? $tokenList->startEmbedded() : $tokenList->endEmbedded();
 
                 break;
         }
 
         // ensures that the statement was parsed completely
-        if (!$tokenList->embedded() && !$tokenList->isFinished()) {
+        if (!$tokenList->inEmbedded() && !$tokenList->isFinished()) {
             if (!$tokenList->has(TokenType::DELIMITER)) {
                 $tokenList->expectSymbol(';');
             }
@@ -226,14 +236,27 @@ class CompoundStatementParser
     /**
      * @return Command&Statement
      */
-    private function parseCommand(TokenList $tokenList): Command
+    private function parseCommand(TokenList $tokenList, bool $topLevel): Command
     {
+        $in = $tokenList->inRoutine();
         $statement = $this->parser->parseTokenList($tokenList);
 
         if ($statement instanceof InvalidCommand) {
             throw $statement->getException();
         } elseif ($statement instanceof ExplainForConnectionCommand) {
-            throw new ParserException('Cannot use EXPLAIN FOR CONNECTION inside a PROCEDURE.', $tokenList);
+            throw new ParserException('Cannot use EXPLAIN FOR CONNECTION inside a routine.', $tokenList);
+        } elseif ($statement instanceof LockTablesCommand || $statement instanceof UnlockTablesCommand) {
+            throw new ParserException('Cannot use LOCK TABLES or UNLOCK TABLES inside a routine.', $tokenList);
+        } elseif ($statement instanceof AlterEventCommand && $topLevel && $in === Routine::EVENT) {
+            throw new ParserException('Cannot use ALTER EVENT inside ALTER EVENT directly. Use BEGIN/END block.', $tokenList);
+        } elseif ($statement instanceof CreateEventCommand) {
+            throw new ParserException('Cannot use CREATE EVENT inside an procedure.', $tokenList);
+        } elseif ($statement instanceof AlterViewCommand) {
+            throw new ParserException('Cannot use ALTER VIEW inside a routine.', $tokenList);
+        } elseif ($statement instanceof LoadDataCommand || $statement instanceof LoadXmlCommand) {
+            throw new ParserException('Cannot use LOAD DATA or LOAD XML inside a routine.', $tokenList);
+        } elseif ($in !== Routine::PROCEDURE && $statement instanceof PreparedStatementCommand) {
+            throw new ParserException('Cannot use prepared statements inside a function, trigger or event.', $tokenList);
         }
 
         return $statement;
@@ -267,8 +290,8 @@ class CompoundStatementParser
             return $statements;
         }
 
-        $previous = $tokenList->embedded();
-        $tokenList->setEmbedded(false);
+        $previous = $tokenList->inEmbedded();
+        $tokenList->endEmbedded();
         do {
             $statements[] = $this->parseStatement($tokenList);
 
@@ -278,7 +301,7 @@ class CompoundStatementParser
                 break;
             }
         } while (!$tokenList->isFinished());
-        $tokenList->setEmbedded($previous);
+        $previous ? $tokenList->startEmbedded() : $tokenList->endEmbedded();
 
         return $statements;
     }
@@ -480,12 +503,10 @@ class CompoundStatementParser
                 $conditions[] = new Condition($type, $value);
             } while ($tokenList->hasSymbol(','));
 
-            $previous = $tokenList->embedded();
-            $tokenList->setEmbedded(true);
-
+            $previous = $tokenList->inEmbedded();
+            $tokenList->startEmbedded();
             $statement = $this->parseStatement($tokenList);
-
-            $tokenList->setEmbedded($previous);
+            $previous ? $tokenList->startEmbedded() : $tokenList->endEmbedded();
 
             return new DeclareHandlerStatement($action, $conditions, $statement);
         }
@@ -634,7 +655,7 @@ class CompoundStatementParser
             return $variable;
         } else {
             $name = $tokenList->expectName(null);
-            if ($tokenList->inRoutine()) {
+            if ($tokenList->inRoutine() !== null) {
                 // local variable
                 return new SimpleName($name);
             } else {

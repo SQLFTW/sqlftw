@@ -23,6 +23,7 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Routine;
 
 class EventCommandsParser
 {
@@ -80,7 +81,7 @@ class EventCommandsParser
             $comment = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::DO)) {
-            $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
+            $body = $this->compoundStatementParser->parseRoutineBody($tokenList, Routine::EVENT);
         }
 
         if ($schedule === null && $preserve === null && $newName === null && $state === null && $comment === null && $body === null) {
@@ -130,7 +131,7 @@ class EventCommandsParser
         }
 
         $tokenList->expectKeyword(Keyword::DO);
-        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
+        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, Routine::EVENT);
 
         $event = new EventDefinition($name, $schedule, $body, $definer, $state, $preserve, $comment);
 

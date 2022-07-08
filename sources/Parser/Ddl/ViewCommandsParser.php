@@ -114,9 +114,10 @@ class ViewCommandsParser
         }
 
         $tokenList->expectKeyword(Keyword::AS);
-        $tokenList->setInSubquery(true);
+
+        $tokenList->startSubquery();
         $body = $this->queryParser->parseQuery($tokenList);
-        $tokenList->setInSubquery(false);
+        $tokenList->endSubquery();
 
         if ($tokenList->hasKeyword(Keyword::WITH)) {
             $checkOption = $tokenList->getMultiKeywordsEnum(ViewCheckOption::class);

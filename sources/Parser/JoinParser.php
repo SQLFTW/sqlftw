@@ -278,11 +278,9 @@ class JoinParser
      */
     private function parseSubquery(TokenList $tokenList): Query
     {
-        $tokenList->setInSubquery(true);
-
+        $tokenList->startSubquery();
         $query = ($this->queryParserProxy)()->parseQuery($tokenList);
-
-        $tokenList->setInSubquery(false);
+        $tokenList->endSubquery();
 
         return $query;
     }

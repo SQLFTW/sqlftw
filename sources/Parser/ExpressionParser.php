@@ -800,11 +800,9 @@ class ExpressionParser
         /** @var QueryParser $queryParser */
         $queryParser = ($this->queryParserProxy)();
 
-        $tokenList->setInSubquery(true);
-
+        $tokenList->startSubquery();
         $query = $queryParser->parseQuery($tokenList);
-
-        $tokenList->setInSubquery(false);
+        $tokenList->endSubquery();
 
         return new Subquery($query);
     }
@@ -936,7 +934,7 @@ class ExpressionParser
      */
     public function parseLimitOrOffsetValue(TokenList $tokenList)
     {
-        if ($tokenList->inRoutine()) {
+        if ($tokenList->inRoutine() !== null) {
             $token = $tokenList->get(TokenType::NAME, TokenType::AT_VARIABLE);
             if ($token !== null) {
                 return new SimpleName($token->value);

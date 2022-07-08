@@ -103,7 +103,7 @@ class QueryParser
         $queries = [$this->parseQueryBlock($tokenList, $with)];
         $types = [];
 
-        $tokenList->setInUnion(true);
+        $tokenList->startUnion();
         while ($tokenList->hasKeyword(Keyword::UNION)) {
             if ($tokenList->hasKeyword(Keyword::ALL)) {
                 $types[] = UnionType::get(UnionType::ALL);
@@ -114,7 +114,7 @@ class QueryParser
             }
             $queries[] = $this->parseQueryBlock($tokenList);
         }
-        $tokenList->setInUnion(false);
+        $tokenList->endUnion();
 
         if (count($queries) === 1 || count($types) === 0) {
             return $queries[0];

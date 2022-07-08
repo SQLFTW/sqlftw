@@ -94,8 +94,8 @@ class TokenList
     /** @var int */
     private $position = 0;
 
-    /** @var bool Are we inside a function or procedure definition? */
-    private $inRoutine = false;
+    /** @var string[] Are we inside a function, procedure, trigger or event definition? */
+    private $inRoutine = [];
 
     /** @var bool Are we inside a UNION expression? */
     private $inUnion = false;
@@ -107,7 +107,7 @@ class TokenList
     private $inSubquery = 0;
 
     /** @var bool Should we expect a delimiter after the command? (command directly embedded into another command) */
-    private $embedded = false;
+    private $inEmbedded = false;
 
     /**
      * @param non-empty-array<Token> $tokens
@@ -150,14 +150,19 @@ class TokenList
         return $this->invalid;
     }
 
-    public function inRoutine(): bool
+    public function inRoutine(): ?string
     {
-        return $this->inRoutine;
+        return $this->inRoutine !== [] ? end($this->inRoutine) : null;
     }
 
-    public function setInRoutine(bool $value): void
+    public function startRoutine(string $value): void
     {
-        $this->inRoutine = $value;
+        $this->inRoutine[] = $value;
+    }
+
+    public function endRoutine(): void
+    {
+        array_pop($this->inRoutine);
     }
 
     public function inUnion(): bool
@@ -165,9 +170,14 @@ class TokenList
         return $this->inUnion;
     }
 
-    public function setInUnion(bool $value): void
+    public function startUnion(): void
     {
-        $this->inUnion = $value;
+        $this->inUnion = true;
+    }
+
+    public function endUnion(): void
+    {
+        $this->inUnion = false;
     }
 
     public function inPrepared(): bool
@@ -175,9 +185,14 @@ class TokenList
         return $this->inPrepared;
     }
 
-    public function setInPrepared(bool $value): void
+    public function startPrepared(): void
     {
-        $this->inPrepared = $value;
+        $this->inPrepared = true;
+    }
+
+    public function endPrepared(): void
+    {
+        $this->inPrepared = false;
     }
 
     public function inSubquery(): bool
@@ -185,19 +200,29 @@ class TokenList
         return $this->inSubquery > 0;
     }
 
-    public function setInSubquery(bool $value): void
+    public function startSubquery(): void
     {
-        $this->inSubquery += $value ? 1 : -1;
+        $this->inSubquery++;
     }
 
-    public function embedded(): bool
+    public function endSubquery(): void
     {
-        return $this->embedded;
+        $this->inSubquery--;
     }
 
-    public function setEmbedded(bool $value): void
+    public function inEmbedded(): bool
     {
-        $this->embedded = $value;
+        return $this->inEmbedded;
+    }
+
+    public function startEmbedded(): void
+    {
+        $this->inEmbedded = true;
+    }
+
+    public function endEmbedded(): void
+    {
+        $this->inEmbedded = false;
     }
 
     public function using(?string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool

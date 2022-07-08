@@ -20,6 +20,7 @@ use SqlFtw\Sql\Ddl\Trigger\TriggerPosition;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Routine;
 
 class TriggerCommandsParser
 {
@@ -82,7 +83,7 @@ class TriggerCommandsParser
             $triggerPosition = new TriggerPosition($order, $otherTrigger);
         }
 
-        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, false);
+        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, Routine::TRIGGER);
 
         return new CreateTriggerCommand($name, $event, $table, $body, $definer, $triggerPosition, $ifNotExists);
     }

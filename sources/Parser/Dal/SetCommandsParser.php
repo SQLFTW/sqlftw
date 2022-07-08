@@ -170,7 +170,7 @@ class SetCommandsParser
                 } elseif (MysqlVariable::validateValue($name)) {
                     // system variable without scope
                     $variable = $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION));
-                } elseif ($tokenList->inRoutine()) {
+                } elseif ($tokenList->inRoutine() !== null) {
                     // local variable
                     $variable = new QualifiedName($name);
                 } else {

@@ -160,7 +160,7 @@ class Parser
             }
 
             // ensures that the command was parsed completely
-            if (!$tokenList->embedded() && !$tokenList->isFinished()) {
+            if (!$tokenList->inEmbedded() && !$tokenList->isFinished()) {
                 if ($tokenList->has(TokenType::DELIMITER_DEFINITION)) {
                     $tokenList->pass(TokenType::DELIMITER);
                 } elseif (!$tokenList->has(TokenType::DELIMITER)) {
