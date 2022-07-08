@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Dal;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Dal\User\AddAuthFactor;
 use SqlFtw\Sql\Dal\User\AlterAuthOption;
 use SqlFtw\Sql\Dal\User\AlterCurrentUserCommand;
@@ -364,7 +365,7 @@ class UserCommandsParser
         if (!$currentUser && $authPlugin !== null && $tokenList->hasKeyword(Keyword::AS)) {
             $as = $tokenList->expectStringValue();
         } elseif ($tokenList->hasKeyword(Keyword::BY)) {
-            if ($tokenList->hasKeyword(Keyword::PASSWORD)) {
+            if ($tokenList->using(Platform::MYSQL, null, 50799) && $tokenList->hasKeyword(Keyword::PASSWORD)) {
                 $oldHashedPassword = true;
                 $password = $tokenList->expectStringValue();
             } elseif ($tokenList->hasKeywords(Keyword::RANDOM, Keyword::PASSWORD)) {
