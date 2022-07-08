@@ -151,7 +151,7 @@ class UserCommandsParser
             } else {
                 $option = $replace = null;
                 if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
-                    [$authPlugin, $password, $as, $oldHashedPassword] = $this->parseAuthOptionParts($tokenList);
+                    [$authPlugin, $password, $as, $oldHashedPassword] = $this->parseAuthOptionParts($tokenList, true);
                     $option = new AuthOption($authPlugin, $password, $as, null, $oldHashedPassword);
                 }
 
@@ -354,14 +354,14 @@ class UserCommandsParser
     /**
      * @return array{string|null, StringValue|false|null, StringValue|null, bool}
      */
-    private function parseAuthOptionParts(TokenList $tokenList): array
+    private function parseAuthOptionParts(TokenList $tokenList, bool $currentUser = false): array
     {
         $authPlugin = $password = $as = null;
         $oldHashedPassword = false;
-        if ($tokenList->hasKeyword(Keyword::WITH)) {
+        if (!$currentUser && $tokenList->hasKeyword(Keyword::WITH)) {
             $authPlugin = $tokenList->expectNonReservedNameOrString();
         }
-        if ($authPlugin !== null && $tokenList->hasKeyword(Keyword::AS)) {
+        if (!$currentUser && $authPlugin !== null && $tokenList->hasKeyword(Keyword::AS)) {
             $as = $tokenList->expectStringValue();
         } elseif ($tokenList->hasKeyword(Keyword::BY)) {
             if ($tokenList->hasKeyword(Keyword::PASSWORD)) {
