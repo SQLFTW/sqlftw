@@ -49,10 +49,13 @@ use SqlFtw\Sql\Ddl\Compound\WhileStatement;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Identifier;
+use SqlFtw\Sql\Expression\IntLiteral;
+use SqlFtw\Sql\Expression\NullLiteral;
+use SqlFtw\Sql\Expression\NumberLiteral;
 use SqlFtw\Sql\Expression\Operator;
-use SqlFtw\Sql\Expression\QualifiedName;
-use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\StringLiteral;
+use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
@@ -588,10 +591,18 @@ class CompoundStatementParser
         $area = $tokenList->getKeywordEnum(DiagnosticsArea::class);
         $tokenList->expectKeyword(Keyword::DIAGNOSTICS);
 
-        $statementItems = $conditionItems = $conditionNumber = null;
+        $statementItems = $conditionItems = $condition = null;
         if ($tokenList->hasKeyword(Keyword::CONDITION)) {
-            // todo: integer or variable
-            $conditionNumber = $this->expressionParser->parseExpression($tokenList);
+            $condition = $this->expressionParser->parseExpression($tokenList);
+            if (($condition instanceof IntLiteral && !$condition instanceof UintLiteral) || (
+                !$condition instanceof StringLiteral
+                && !$condition instanceof NumberLiteral
+                && !$condition instanceof SimpleName
+                && !$condition instanceof UserVariable
+                && !$condition instanceof NullLiteral
+            )) {
+                throw new ParserException('Only unsigned int, null or variable names is allowed as condition number.', $tokenList);
+            }
             $conditionItems = [];
             do {
                 $target = $this->parseTarget($tokenList);
@@ -609,7 +620,7 @@ class CompoundStatementParser
             } while ($tokenList->hasSymbol(','));
         }
 
-        return new GetDiagnosticsStatement($area, $statementItems, $conditionNumber, $conditionItems);
+        return new GetDiagnosticsStatement($area, $statementItems, $condition, $conditionItems);
     }
 
     private function parseTarget(TokenList $tokenList): Identifier
