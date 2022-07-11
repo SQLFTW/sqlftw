@@ -12,7 +12,6 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
-use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
@@ -25,21 +24,14 @@ class DeleteCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var WithParser */
-    private $withParser;
-
     /** @var ExpressionParser */
     private $expressionParser;
 
     /** @var JoinParser */
     private $joinParser;
 
-    public function __construct(
-        WithParser $withParser,
-        ExpressionParser $expressionParser,
-        JoinParser $joinParser
-    ) {
-        $this->withParser = $withParser;
+    public function __construct(ExpressionParser $expressionParser, JoinParser $joinParser)
+    {
         $this->expressionParser = $expressionParser;
         $this->joinParser = $joinParser;
     }
@@ -64,17 +56,6 @@ class DeleteCommandParser
      */
     public function parseDelete(TokenList $tokenList, ?WithClause $with = null): DeleteCommand
     {
-        if ($tokenList->hasKeyword(Keyword::WITH)) {
-            if ($with !== null) {
-                throw new ParserException('WITH defined twice.', $tokenList);
-            }
-
-            /** @var DeleteCommand $command */
-            $command = $this->withParser->parseWith($tokenList->rewind(-1));
-
-            return $command;
-        }
-
         $tokenList->expectKeyword(Keyword::DELETE);
         $lowPriority = $tokenList->hasKeywords(Keyword::LOW_PRIORITY);
         $quick = $tokenList->hasKeyword(Keyword::QUICK);

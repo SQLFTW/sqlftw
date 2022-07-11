@@ -9,13 +9,16 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\ParserException;
+use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\Query\GroupByExpression;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
 use SqlFtw\Sql\Dml\Query\Query;
@@ -37,6 +40,8 @@ use SqlFtw\Sql\Dml\Query\WindowFrameType;
 use SqlFtw\Sql\Dml\Query\WindowFrameUnits;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\Dml\WithClause;
+use SqlFtw\Sql\Dml\WithExpression;
+use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
@@ -54,23 +59,75 @@ class QueryParser
 {
     use StrictBehaviorMixin;
 
+    /** @var ParserFactory */
+    private $parserFactory;
+
     /** @var ExpressionParser */
     private $expressionParser;
 
     /** @var JoinParser */
     private $joinParser;
 
-    /** @var WithParser */
-    private $withParser;
-
     public function __construct(
+        ParserFactory $parserFactory,
         ExpressionParser $expressionParser,
-        JoinParser $joinParser,
-        WithParser $withParser
+        JoinParser $joinParser
     ) {
+        $this->parserFactory = $parserFactory;
         $this->expressionParser = $expressionParser;
         $this->joinParser = $joinParser;
-        $this->withParser = $withParser;
+    }
+
+    /**
+     * with_clause:
+     *   WITH [RECURSIVE]
+     *     cte_name [(col_name [, col_name] ...)] AS (subquery)
+     *     [, cte_name [(col_name [, col_name] ...)] AS (subquery)] ...
+     *
+     * @return Statement&(Query|UpdateCommand|DeleteCommand)
+     */
+    public function parseWith(TokenList $tokenList): Command
+    {
+        $tokenList->expectKeyword(Keyword::WITH);
+        $recursive = $tokenList->hasKeyword(Keyword::RECURSIVE);
+
+        $expressions = [];
+        do {
+            $name = $tokenList->expectName(null);
+            $columns = null;
+            if ($tokenList->hasSymbol('(')) {
+                $columns = [];
+                do {
+                    $columns[] = $tokenList->expectName(Entity::COLUMN);
+                } while ($tokenList->hasSymbol(','));
+                $tokenList->expectSymbol(')');
+            }
+            $tokenList->expectKeyword(Keyword::AS);
+            $tokenList->expectSymbol('(');
+            $query = $this->parserFactory->getQueryParser()->parseQuery($tokenList);
+            $tokenList->expectSymbol(')');
+
+            $expressions[] = new WithExpression($query, $name, $columns);
+        } while ($tokenList->hasSymbol(','));
+
+        $with = new WithClause($expressions, $recursive);
+
+        if ($tokenList->hasSymbol('(')) {
+            $next = '(';
+        } else {
+            $next = $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::UPDATE, Keyword::DELETE);
+        }
+        switch ($next) {
+            case '(':
+            case Keyword::SELECT:
+                return $this->parserFactory->getQueryParser()->parseQuery($tokenList->rewind(-1), $with);
+            case Keyword::UPDATE:
+                return $this->parserFactory->getUpdateCommandParser()->parseUpdate($tokenList->rewind(-1), $with);
+            case Keyword::DELETE:
+                return $this->parserFactory->getDeleteCommandParser()->parseDelete($tokenList->rewind(-1), $with);
+            default:
+                throw new ShouldNotHappenException('');
+        }
     }
 
     /**
@@ -292,7 +349,7 @@ class QueryParser
             }
 
             /** @var SelectCommand $select */
-            $select = $this->withParser->parseWith($tokenList->rewind(-1));
+            $select = $this->parseWith($tokenList->rewind(-1));
 
             return $select;
         }

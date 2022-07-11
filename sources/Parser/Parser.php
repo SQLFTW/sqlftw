@@ -745,7 +745,7 @@ class Parser
                 return $this->factory->getQueryParser()->parseQuery($tokenList->rewind($start));
             case Keyword::WITH:
                 // WITH ... SELECT|UPDATE|DELETE
-                return $this->factory->getWithParser()->parseWith($tokenList->rewind($start));
+                return $this->factory->getQueryParser()->parseWith($tokenList->rewind($start));
             case Keyword::XA:
                 // XA {START|BEGIN}
                 // XA END

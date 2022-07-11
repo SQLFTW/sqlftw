@@ -25,21 +25,14 @@ class UpdateCommandParser
 {
     use StrictBehaviorMixin;
 
-    /** @var WithParser */
-    private $withParser;
-
     /** @var ExpressionParser */
     private $expressionParser;
 
     /** @var JoinParser */
     private $joinParser;
 
-    public function __construct(
-        WithParser $withParser,
-        ExpressionParser $expressionParser,
-        JoinParser $joinParser
-    ) {
-        $this->withParser = $withParser;
+    public function __construct(ExpressionParser $expressionParser, JoinParser $joinParser)
+    {
         $this->expressionParser = $expressionParser;
         $this->joinParser = $joinParser;
     }
@@ -57,17 +50,6 @@ class UpdateCommandParser
      */
     public function parseUpdate(TokenList $tokenList, ?WithClause $with = null): UpdateCommand
     {
-        if ($tokenList->hasKeyword(Keyword::WITH)) {
-            if ($with !== null) {
-                throw new ParserException('WITH defined twice.', $tokenList);
-            }
-
-            /** @var UpdateCommand $update */
-            $update = $this->withParser->parseWith($tokenList->rewind(-1));
-
-            return $update;
-        }
-
         $tokenList->expectKeyword(Keyword::UPDATE);
         $lowPriority = $tokenList->hasKeyword(Keyword::LOW_PRIORITY);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);

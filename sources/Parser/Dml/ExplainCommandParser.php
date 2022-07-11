@@ -30,9 +30,6 @@ class ExplainCommandParser
     /** @var QueryParser */
     private $queryParser;
 
-    /** @var WithParser */
-    private $withParser;
-
     /** @var InsertCommandParser */
     private $insertCommandParser;
 
@@ -44,14 +41,12 @@ class ExplainCommandParser
 
     public function __construct(
         QueryParser $queryParser,
-        WithParser $withParser,
         InsertCommandParser $insertCommandParser,
         UpdateCommandParser $updateCommandParser,
         DeleteCommandParser $deleteCommandParser
     )
     {
         $this->queryParser = $queryParser;
-        $this->withParser = $withParser;
         $this->insertCommandParser = $insertCommandParser;
         $this->updateCommandParser = $updateCommandParser;
         $this->deleteCommandParser = $deleteCommandParser;
@@ -122,7 +117,7 @@ class ExplainCommandParser
         $statement = null;
         switch ($what) {
             case Keyword::WITH:
-                $statement = $this->withParser->parseWith($tokenList->rewind($position));
+                $statement = $this->queryParser->parseWith($tokenList->rewind($position));
                 break;
             case Keyword::SELECT:
             case '(':

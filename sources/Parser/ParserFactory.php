@@ -54,7 +54,6 @@ use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\Dml\TransactionCommandsParser;
 use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
-use SqlFtw\Parser\Dml\WithParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
 
 class ParserFactory
@@ -73,9 +72,6 @@ class ParserFactory
     /** @var JoinParser */
     private $joinParser;
 
-    /** @var WithParser */
-    private $withParser;
-
     /** @var QueryParser */
     private $queryParser;
 
@@ -92,8 +88,7 @@ class ParserFactory
         };
         $this->expressionParser = new ExpressionParser($queryParserProxy);
         $this->joinParser = new JoinParser($this->expressionParser, $queryParserProxy);
-        $this->withParser = new WithParser($this);
-        $this->queryParser = new QueryParser($this->expressionParser, $this->joinParser, $this->withParser);
+        $this->queryParser = new QueryParser($this, $this->expressionParser, $this->joinParser);
         $this->routineParser = new RoutineParser($this->parser, $this->expressionParser, $this->queryParser);
     }
 
@@ -108,11 +103,6 @@ class ParserFactory
     }
 
     // command parsers -------------------------------------------------------------------------------------------------
-
-    public function getWithParser(): WithParser
-    {
-        return $this->withParser;
-    }
 
     public function getQueryParser(): QueryParser
     {
@@ -151,7 +141,7 @@ class ParserFactory
 
     public function getDeleteCommandParser(): DeleteCommandParser
     {
-        return new DeleteCommandParser($this->withParser, $this->expressionParser, $this->joinParser);
+        return new DeleteCommandParser($this->expressionParser, $this->joinParser);
     }
 
     public function getDelimiterCommandParser(): DelimiterCommandParser
@@ -178,7 +168,6 @@ class ParserFactory
     {
         return new ExplainCommandParser(
             $this->queryParser,
-            $this->withParser,
             $this->getInsertCommandParser(),
             $this->getUpdateCommandParser(),
             $this->getDeleteCommandParser()
@@ -322,7 +311,7 @@ class ParserFactory
 
     public function getUpdateCommandParser(): UpdateCommandParser
     {
-        return new UpdateCommandParser($this->withParser, $this->expressionParser, $this->joinParser);
+        return new UpdateCommandParser($this->expressionParser, $this->joinParser);
     }
 
     public function getUseCommandParser(): UseCommandParser
