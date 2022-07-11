@@ -7,32 +7,33 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class OpenCursorStatement extends Statement implements CompoundStatementItem
+class LeaveStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
     /** @var string */
-    private $name;
+    private $label;
 
-    public function __construct(string $name)
+    public function __construct(string $label)
     {
-        $this->name = $name;
+        $this->label = $label;
     }
 
-    public function getName(): string
+    public function getLabel(): string
     {
-        return $this->name;
+        return $this->label;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'OPEN ' . $formatter->formatName($this->name) . ";\n";
+        return 'LEAVE ' . $formatter->formatName($this->label);
     }
 
 }

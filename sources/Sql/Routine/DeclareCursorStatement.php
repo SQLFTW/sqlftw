@@ -7,22 +7,28 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\Query\Query;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class CloseCursorStatement extends Statement implements CompoundStatementItem
+class DeclareCursorStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
     /** @var string */
     private $name;
 
-    public function __construct(string $name)
+    /** @var Query */
+    private $query;
+
+    public function __construct(string $name, Query $query)
     {
         $this->name = $name;
+        $this->query = $query;
     }
 
     public function getName(): string
@@ -30,9 +36,14 @@ class CloseCursorStatement extends Statement implements CompoundStatementItem
         return $this->name;
     }
 
+    public function getQuery(): Query
+    {
+        return $this->query;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'CLOSE ' . $formatter->formatName($this->name) . ";\n";
+        return 'DECLARE ' . $formatter->formatName($this->name) . ' CURSOR FOR ' . $this->query->serialize($formatter);
     }
 
 }

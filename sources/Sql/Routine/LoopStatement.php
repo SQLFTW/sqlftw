@@ -1,12 +1,13 @@
 <?php declare(strict_types = 1);
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class CompoundStatement extends Statement
+class LoopStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
@@ -44,13 +45,13 @@ class CompoundStatement extends Statement
         if ($this->label !== null) {
             $result .= $formatter->formatName($this->label) . ': ';
         }
-        $result .= "BEGIN \n";
-        if ($this->statements !== []) {
-            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
-        }
-        $result .= ' END';
 
-        return $result;
+        $result .= "LOOP \n";
+        if ($this->statements !== []) {
+            $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+        }
+
+        return $result . 'END LOOP';
     }
 
 }

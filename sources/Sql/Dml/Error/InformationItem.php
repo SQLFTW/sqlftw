@@ -7,11 +7,11 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Dml\Error;
 
 use SqlFtw\Sql\SqlSerializable;
 
-interface CompoundStatementItem extends SqlSerializable
+interface InformationItem extends SqlSerializable
 {
 
 }

@@ -26,7 +26,6 @@ use SqlFtw\Parser\Dal\ShowCommandsParser;
 use SqlFtw\Parser\Dal\ShutdownCommandParser;
 use SqlFtw\Parser\Dal\TableMaintenanceCommandsParser;
 use SqlFtw\Parser\Dal\UserCommandsParser;
-use SqlFtw\Parser\Ddl\CompoundStatementParser;
 use SqlFtw\Parser\Ddl\EventCommandsParser;
 use SqlFtw\Parser\Ddl\IndexCommandsParser;
 use SqlFtw\Parser\Ddl\InstanceCommandParser;
@@ -80,8 +79,8 @@ class ParserFactory
     /** @var QueryParser */
     private $queryParser;
 
-    /** @var CompoundStatementParser */
-    private $compoundStatementParser;
+    /** @var RoutineParser */
+    private $routineParser;
 
     public function __construct(ParserSettings $settings, Parser $parser)
     {
@@ -95,7 +94,7 @@ class ParserFactory
         $this->joinParser = new JoinParser($this->expressionParser, $queryParserProxy);
         $this->withParser = new WithParser($this);
         $this->queryParser = new QueryParser($this->expressionParser, $this->joinParser, $this->withParser);
-        $this->compoundStatementParser = new CompoundStatementParser($this->parser, $this->expressionParser, $this->queryParser);
+        $this->routineParser = new RoutineParser($this->parser, $this->expressionParser, $this->queryParser);
     }
 
     public function getParser(): Parser
@@ -118,11 +117,6 @@ class ParserFactory
     public function getQueryParser(): QueryParser
     {
         return $this->queryParser;
-    }
-
-    public function getCompoundStatementParser(): CompoundStatementParser
-    {
-        return $this->compoundStatementParser;
     }
 
     public function getBinlogCommandParser(): BinlogCommandParser
@@ -177,7 +171,7 @@ class ParserFactory
 
     public function getEventCommandsParser(): EventCommandsParser
     {
-        return new EventCommandsParser($this->compoundStatementParser, $this->expressionParser);
+        return new EventCommandsParser($this->routineParser, $this->expressionParser);
     }
 
     public function getExplainCommandParser(): ExplainCommandParser
@@ -273,7 +267,7 @@ class ParserFactory
 
     public function getRoutineCommandsParser(): RoutineCommandsParser
     {
-        return new RoutineCommandsParser($this->expressionParser, $this->compoundStatementParser);
+        return new RoutineCommandsParser($this->expressionParser, $this->routineParser);
     }
 
     public function getServerCommandsParser(): ServerCommandsParser
@@ -323,7 +317,7 @@ class ParserFactory
 
     public function getTriggerCommandsParser(): TriggerCommandsParser
     {
-        return new TriggerCommandsParser($this->expressionParser, $this->compoundStatementParser);
+        return new TriggerCommandsParser($this->expressionParser, $this->routineParser);
     }
 
     public function getUpdateCommandParser(): UpdateCommandParser

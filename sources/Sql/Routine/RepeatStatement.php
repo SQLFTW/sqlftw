@@ -1,13 +1,14 @@
 <?php declare(strict_types = 1);
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class WhileStatement extends Statement implements CompoundStatementItem
+class RepeatStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
@@ -54,11 +55,11 @@ class WhileStatement extends Statement implements CompoundStatementItem
         if ($this->label !== null) {
             $result .= $formatter->formatName($this->label) . ': ';
         }
-        $result .= 'WHILE ' . $this->condition->serialize($formatter) . " DO\n";
+        $result .= "REPEAT\n";
         if ($this->statements !== []) {
             $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
         }
-        $result .= "END WHILE";
+        $result .= "UNTIL " . $this->condition->serialize($formatter) . "\nEND REPEAT";
 
         return $result;
     }

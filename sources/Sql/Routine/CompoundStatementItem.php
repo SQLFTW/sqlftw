@@ -7,15 +7,11 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Dml\Error;
+namespace SqlFtw\Sql\Routine;
 
-use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlEnum;
+use SqlFtw\Sql\SqlSerializable;
 
-class StatementInformationItem extends SqlEnum implements InformationItem
+interface CompoundStatementItem extends SqlSerializable
 {
-
-    public const NUMBER = Keyword::NUMBER;
-    public const ROW_COUNT = Keyword::ROW_COUNT;
 
 }

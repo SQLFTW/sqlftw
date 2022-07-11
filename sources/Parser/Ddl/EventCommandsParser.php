@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Ddl;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
+use SqlFtw\Parser\RoutineParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
@@ -23,19 +24,19 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Routine;
+use SqlFtw\Sql\Routine\Routine;
 
 class EventCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var CompoundStatementParser */
+    /** @var RoutineParser */
     private $compoundStatementParser;
 
     /** @var ExpressionParser */
     private $expressionParser;
 
-    public function __construct(CompoundStatementParser $compoundStatementParser, ExpressionParser $expressionParser)
+    public function __construct(RoutineParser $compoundStatementParser, ExpressionParser $expressionParser)
     {
         $this->compoundStatementParser = $compoundStatementParser;
         $this->expressionParser = $expressionParser;

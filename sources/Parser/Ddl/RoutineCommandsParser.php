@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\RoutineParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Routines\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routines\AlterProcedureCommand;
@@ -24,7 +25,7 @@ use SqlFtw\Sql\Ddl\Routines\RoutineSideEffects;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Routine;
+use SqlFtw\Sql\Routine\Routine;
 
 class RoutineCommandsParser
 {
@@ -33,10 +34,10 @@ class RoutineCommandsParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var CompoundStatementParser */
+    /** @var RoutineParser */
     private $compoundStatementParser;
 
-    public function __construct(ExpressionParser $expressionParser, CompoundStatementParser $compoundStatementParser)
+    public function __construct(ExpressionParser $expressionParser, RoutineParser $compoundStatementParser)
     {
         $this->expressionParser = $expressionParser;
         $this->compoundStatementParser = $compoundStatementParser;

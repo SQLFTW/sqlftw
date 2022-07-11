@@ -7,33 +7,33 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class ReturnStatement extends Statement implements CompoundStatementItem
+class OpenCursorStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var RootNode */
-    private $expression;
+    /** @var string */
+    private $name;
 
-    public function __construct(RootNode $expression)
+    public function __construct(string $name)
     {
-        $this->expression = $expression;
+        $this->name = $name;
     }
 
-    public function getExpression(): RootNode
+    public function getName(): string
     {
-        return $this->expression;
+        return $this->name;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'RETURN ' . $this->expression->serialize($formatter);
+        return 'OPEN ' . $formatter->formatName($this->name) . ";\n";
     }
 
 }

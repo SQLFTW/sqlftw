@@ -1,17 +1,22 @@
 <?php declare(strict_types = 1);
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class LoopStatement extends Statement implements CompoundStatementItem
+class WhileStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
     /** @var Statement[] */
     private $statements;
+
+    /** @var RootNode */
+    private $condition;
 
     /** @var string|null */
     private $label;
@@ -19,9 +24,10 @@ class LoopStatement extends Statement implements CompoundStatementItem
     /**
      * @param Statement[] $statements
      */
-    public function __construct(array $statements, ?string $label)
+    public function __construct(array $statements, RootNode $condition, ?string $label)
     {
         $this->statements = $statements;
+        $this->condition = $condition;
         $this->label = $label;
     }
 
@@ -31,6 +37,11 @@ class LoopStatement extends Statement implements CompoundStatementItem
     public function getStatements(): array
     {
         return $this->statements;
+    }
+
+    public function getCondition(): RootNode
+    {
+        return $this->condition;
     }
 
     public function getLabel(): ?string
@@ -44,13 +55,13 @@ class LoopStatement extends Statement implements CompoundStatementItem
         if ($this->label !== null) {
             $result .= $formatter->formatName($this->label) . ': ';
         }
-
-        $result .= "LOOP \n";
+        $result .= 'WHILE ' . $this->condition->serialize($formatter) . " DO\n";
         if ($this->statements !== []) {
-            $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
         }
+        $result .= "END WHILE";
 
-        return $result . 'END LOOP';
+        return $result;
     }
 
 }

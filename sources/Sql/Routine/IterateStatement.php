@@ -7,13 +7,14 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class LeaveStatement extends Statement implements CompoundStatementItem
+class IterateStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
@@ -32,7 +33,7 @@ class LeaveStatement extends Statement implements CompoundStatementItem
 
     public function serialize(Formatter $formatter): string
     {
-        return 'LEAVE ' . $formatter->formatName($this->label);
+        return 'ITERATE ' . $formatter->formatName($this->label);
     }
 
 }

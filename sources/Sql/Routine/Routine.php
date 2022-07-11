@@ -7,16 +7,17 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
-class HandlerAction extends SqlEnum
+class Routine extends SqlEnum
 {
 
-    public const CONTINUE = Keyword::CONTINUE;
-    public const EXIT = Keyword::EXIT;
-    public const UNDO = Keyword::UNDO;
+    public const PROCEDURE = Keyword::PROCEDURE;
+    public const FUNCTION = Keyword::FUNCTION;
+    public const TRIGGER = Keyword::TRIGGER;
+    public const EVENT = Keyword::EVENT;
 
 }

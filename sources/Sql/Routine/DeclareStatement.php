@@ -7,15 +7,16 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class DeclareStatement extends Statement implements CompoundStatementItem
+class DeclareStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 

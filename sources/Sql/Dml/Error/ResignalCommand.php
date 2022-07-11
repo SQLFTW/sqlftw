@@ -12,13 +12,11 @@ namespace SqlFtw\Sql\Dml\Error;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Ddl\Compound\CompoundStatementItem;
-use SqlFtw\Sql\Ddl\Compound\ConditionInformationItem;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 use function is_numeric;
 
-class ResignalCommand extends Statement implements Command, CompoundStatementItem
+class ResignalCommand extends Statement implements Command
 {
     use StrictBehaviorMixin;
 

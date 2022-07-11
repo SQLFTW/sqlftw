@@ -14,7 +14,7 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Sql\Ddl\Compound\ConditionInformationItem;
+use SqlFtw\Sql\Dml\Error\ConditionInformationItem;
 use SqlFtw\Sql\Dml\Error\DiagnosticsArea;
 use SqlFtw\Sql\Dml\Error\DiagnosticsItem;
 use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;

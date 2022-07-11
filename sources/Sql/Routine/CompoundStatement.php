@@ -1,21 +1,17 @@
 <?php declare(strict_types = 1);
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
-class RepeatStatement extends Statement implements CompoundStatementItem
+class CompoundStatement extends Statement
 {
     use StrictBehaviorMixin;
 
     /** @var Statement[] */
     private $statements;
-
-    /** @var RootNode */
-    private $condition;
 
     /** @var string|null */
     private $label;
@@ -23,10 +19,9 @@ class RepeatStatement extends Statement implements CompoundStatementItem
     /**
      * @param Statement[] $statements
      */
-    public function __construct(array $statements, RootNode $condition, ?string $label)
+    public function __construct(array $statements, ?string $label)
     {
         $this->statements = $statements;
-        $this->condition = $condition;
         $this->label = $label;
     }
 
@@ -36,11 +31,6 @@ class RepeatStatement extends Statement implements CompoundStatementItem
     public function getStatements(): array
     {
         return $this->statements;
-    }
-
-    public function getCondition(): RootNode
-    {
-        return $this->condition;
     }
 
     public function getLabel(): ?string
@@ -54,11 +44,11 @@ class RepeatStatement extends Statement implements CompoundStatementItem
         if ($this->label !== null) {
             $result .= $formatter->formatName($this->label) . ': ';
         }
-        $result .= "REPEAT\n";
+        $result .= "BEGIN \n";
         if ($this->statements !== []) {
             $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
         }
-        $result .= "UNTIL " . $this->condition->serialize($formatter) . "\nEND REPEAT";
+        $result .= ' END';
 
         return $result;
     }

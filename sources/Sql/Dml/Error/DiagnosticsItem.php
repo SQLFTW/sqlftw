@@ -11,7 +11,6 @@ namespace SqlFtw\Sql\Dml\Error;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Ddl\Compound\InformationItem;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\SqlSerializable;
 

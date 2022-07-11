@@ -9,37 +9,11 @@
 
 // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
 
-namespace SqlFtw\Parser\Ddl;
+namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
-use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\InvalidCommand;
-use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserException;
-use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\Ddl\Compound\CaseStatement;
-use SqlFtw\Sql\Ddl\Compound\CloseCursorStatement;
-use SqlFtw\Sql\Ddl\Compound\CompoundStatement;
-use SqlFtw\Sql\Ddl\Compound\Condition;
-use SqlFtw\Sql\Ddl\Compound\ConditionInformationItem;
-use SqlFtw\Sql\Ddl\Compound\ConditionType;
-use SqlFtw\Sql\Ddl\Compound\DeclareConditionStatement;
-use SqlFtw\Sql\Ddl\Compound\DeclareCursorStatement;
-use SqlFtw\Sql\Ddl\Compound\DeclareHandlerStatement;
-use SqlFtw\Sql\Ddl\Compound\DeclareStatement;
-use SqlFtw\Sql\Ddl\Compound\FetchStatement;
-use SqlFtw\Sql\Ddl\Compound\HandlerAction;
-use SqlFtw\Sql\Ddl\Compound\IfStatement;
-use SqlFtw\Sql\Ddl\Compound\IterateStatement;
-use SqlFtw\Sql\Ddl\Compound\LeaveStatement;
-use SqlFtw\Sql\Ddl\Compound\LoopStatement;
-use SqlFtw\Sql\Ddl\Compound\OpenCursorStatement;
-use SqlFtw\Sql\Ddl\Compound\RepeatStatement;
-use SqlFtw\Sql\Ddl\Compound\ReturnStatement;
-use SqlFtw\Sql\Ddl\Compound\WhileStatement;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
@@ -51,10 +25,29 @@ use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Routine;
+use SqlFtw\Sql\Routine\Routine;
+use SqlFtw\Sql\Routine\CaseStatement;
+use SqlFtw\Sql\Routine\CloseCursorStatement;
+use SqlFtw\Sql\Routine\CompoundStatement;
+use SqlFtw\Sql\Routine\Condition;
+use SqlFtw\Sql\Routine\ConditionType;
+use SqlFtw\Sql\Routine\DeclareConditionStatement;
+use SqlFtw\Sql\Routine\DeclareCursorStatement;
+use SqlFtw\Sql\Routine\DeclareHandlerStatement;
+use SqlFtw\Sql\Routine\DeclareStatement;
+use SqlFtw\Sql\Routine\FetchStatement;
+use SqlFtw\Sql\Routine\HandlerAction;
+use SqlFtw\Sql\Routine\IfStatement;
+use SqlFtw\Sql\Routine\IterateStatement;
+use SqlFtw\Sql\Routine\LeaveStatement;
+use SqlFtw\Sql\Routine\LoopStatement;
+use SqlFtw\Sql\Routine\OpenCursorStatement;
+use SqlFtw\Sql\Routine\RepeatStatement;
+use SqlFtw\Sql\Routine\ReturnStatement;
+use SqlFtw\Sql\Routine\WhileStatement;
 use SqlFtw\Sql\Statement;
 
-class CompoundStatementParser
+class RoutineParser
 {
     use StrictBehaviorMixin;
 

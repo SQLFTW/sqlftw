@@ -7,32 +7,34 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Compound;
+namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class IterateStatement extends Statement implements CompoundStatementItem
+class ReturnStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    /** @var string */
-    private $label;
+    /** @var RootNode */
+    private $expression;
 
-    public function __construct(string $label)
+    public function __construct(RootNode $expression)
     {
-        $this->label = $label;
+        $this->expression = $expression;
     }
 
-    public function getLabel(): string
+    public function getExpression(): RootNode
     {
-        return $this->label;
+        return $this->expression;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ITERATE ' . $formatter->formatName($this->label);
+        return 'RETURN ' . $this->expression->serialize($formatter);
     }
 
 }
