@@ -74,6 +74,17 @@ Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::NAME | T::DOUBLE_QUOTED_STRING, 'string1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 10);
 
+// escaping quotes
+$tokens = Assert::tokens(' "str\\"ing1" ', 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING, 'str"ing1', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 12);
+
+$tokens = Assert::tokens(' "str\\"" ', 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING, 'str"', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
+
 
 // SINGLE_QUOTED_STRING
 $tokens = Assert::tokens(" 'string1' ", 3);
@@ -97,6 +108,11 @@ $tokens = Assert::tokens(" 'str\\'ing1' ", 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, "str'ing1", 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 12);
+
+$tokens = Assert::tokens(" 'str\\'' ", 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, "str'", 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 
 $tokens = Assert::tokens(" '\\\\' ", 3);
