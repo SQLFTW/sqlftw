@@ -893,7 +893,7 @@ class TokenList
 
     // names ---------------------------------------------------------------------------------------------------------
 
-    public function expectName(?string $object, ?string $name = null, int $mask = 0): string
+    public function expectName(?string $entity, ?string $name = null, int $mask = 0): string
     {
         $token = $this->expect(T::NAME, $mask);
         if ($name !== null && strtoupper($token->value) !== $name) {
@@ -901,7 +901,7 @@ class TokenList
 
             throw InvalidTokenException::tokens(T::NAME, 0, $name, $token, $this);
         }
-        $this->validateName($object, $token->value);
+        $this->validateName($entity, $token->value);
 
         return $token->value;
     }
@@ -917,12 +917,12 @@ class TokenList
         return $token->value;
     }
 
-    public function getName(?string $object, ?string $name = null): ?string
+    public function getName(?string $entity, ?string $name = null): ?string
     {
         $position = $this->position;
         $token = $this->get(T::NAME, 0, $name);
         if ($token !== null) {
-            $this->validateName($object, $token->value);
+            $this->validateName($entity, $token->value);
 
             return $token->value;
         }
@@ -956,18 +956,18 @@ class TokenList
     }
 
     // todo: probably all calls to this should call expectNonReservedName() instead
-    public function getNonKeywordName(?string $object, ?string $name = null): ?string
+    public function getNonKeywordName(?string $entity, ?string $name = null): ?string
     {
         $token = $this->get(T::NAME, T::KEYWORD, $name);
         if ($token === null) {
             return null;
         }
-        $this->validateName($object, $token->value);
+        $this->validateName($entity, $token->value);
 
         return $token->value;
     }
 
-    public function expectNonReservedName(?string $object, ?string $name = null): string
+    public function expectNonReservedName(?string $entity, ?string $name = null): string
     {
         $token = $this->expect(T::NAME, T::RESERVED);
         if ($name !== null && $token->value !== $name) {
@@ -975,33 +975,33 @@ class TokenList
 
             throw InvalidTokenException::tokens(T::NAME, T::RESERVED, $name, $token, $this);
         }
-        $this->validateName($object, $token->value);
+        $this->validateName($entity, $token->value);
 
         return $token->value;
     }
 
-    public function getNonReservedName(?string $object, ?string $name = null, int $mask = 0): ?string
+    public function getNonReservedName(?string $entity, ?string $name = null, int $mask = 0): ?string
     {
         $token = $this->get(T::NAME, T::RESERVED | $mask, $name);
         if ($token === null) {
             return null;
         }
-        $this->validateName($object, $token->value);
+        $this->validateName($entity, $token->value);
 
         return $token->value;
     }
 
-    private function validateName(?string $object, string $name): void
+    private function validateName(?string $entity, string $name): void
     {
-        if ($object !== null && $name === '') {
+        if ($entity !== null && $entity !== Entity::TABLESPACE && $name === '') {
             throw new ParserException('Name must not be empty.', $this);
         }
-        if ($object !== null) {
-            if (($object === Entity::SCHEMA || $object === Entity::TABLE || $object === Entity::COLUMN) && rtrim($name) !== $name) {
-                throw new ParserException(ucfirst($object) . ' name must not contain right side white space.', $this);
+        if ($entity !== null) {
+            if (($entity === Entity::SCHEMA || $entity === Entity::TABLE || $entity === Entity::COLUMN) && rtrim($name) !== $name) {
+                throw new ParserException(ucfirst($entity) . ' name must not contain right side white space.', $this);
             }
-            if (Str::length($name) > $this->maxLengths[$object]) {
-                throw new ParserException(ucfirst($object) . " name must not be at most {$this->maxLengths[$object]} characters long.", $this);
+            if (Str::length($name) > $this->maxLengths[$entity]) {
+                throw new ParserException(ucfirst($entity) . " name must not be at most {$this->maxLengths[$entity]} characters long.", $this);
             }
         }
     }
