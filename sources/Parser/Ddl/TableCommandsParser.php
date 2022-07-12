@@ -1444,7 +1444,7 @@ class TableCommandsParser
             case Keyword::TABLESPACE:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::TABLESPACE, $tokenList->expectNonReservedNameOrString()];
+                return [TableOption::TABLESPACE, $tokenList->expectNonReservedName(Entity::TABLESPACE)];
             case Keyword::UNION:
                 $tokenList->passSymbol('=');
                 $tokenList->expectSymbol('(');

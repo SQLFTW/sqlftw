@@ -150,6 +150,8 @@ class TableOptionsList
                     return $option . $valueSeparator . '(' . $formatter->formatSerializablesList($value) . ')';
                 } elseif ($option === TableOption::AUTO_INCREMENT) {
                     return $option . $valueSeparator . $value;
+                } elseif ($option === TableOption::TABLESPACE) {
+                    return $option . $valueSeparator . $formatter->formatName($value);
                 } else {
                     return $option . $valueSeparator . $formatter->formatValue($value);
                 }

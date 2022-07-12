@@ -1001,7 +1001,7 @@ class TokenList
                 throw new ParserException(ucfirst($entity) . ' name must not contain right side white space.', $this);
             }
             if (Str::length($name) > $this->maxLengths[$entity]) {
-                throw new ParserException(ucfirst($entity) . " name must not be at most {$this->maxLengths[$entity]} characters long.", $this);
+                throw new ParserException(ucfirst($entity) . " name must be at most {$this->maxLengths[$entity]} characters long.", $this);
             }
         }
     }
