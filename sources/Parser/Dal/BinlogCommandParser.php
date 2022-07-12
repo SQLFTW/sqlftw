@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Binlog\BinlogCommand;
 use SqlFtw\Sql\Keyword;
@@ -25,6 +26,9 @@ class BinlogCommandParser
     {
         $tokenList->expectKeyword(Keyword::BINLOG);
         $value = $tokenList->expectString();
+        if ($value === '') {
+            throw new InvalidValueException('base64 encoded binlog command', $tokenList);
+        }
 
         return new BinlogCommand($value);
     }
