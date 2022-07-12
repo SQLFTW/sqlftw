@@ -184,6 +184,8 @@ class Lexer
      */
     public function tokenize(string $string): Generator
     {
+        $oldNull = $this->settings->getPlatform()->getVersion()->getId() < 80000;
+
         // last significant token parsed (comments and whitespace are skipped here)
         $previous = new Token(TokenType::END, 0, 0, '');
         $delimiter = $this->settings->getDelimiter();
@@ -281,7 +283,7 @@ class Lexer
                     }
                     // continue
                 case '\\':
-                    if ($char === '\\' && $position < $length && $string[$position] === 'N') {
+                    if ($oldNull && $char === '\\' && $position < $length && $string[$position] === 'N') {
                         $position++;
                         $column++;
                         yield $previous = new Token(T::SYMBOL | T::VALUE, $start, $row, '\\N', null);
