@@ -49,10 +49,10 @@ Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 WHERE col1 = 1 AND col
 
 //     [GROUP BY {col_name | expr | position}
 //       [ASC | DESC], ... [WITH ROLLUP]]
-Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 GROUP BY col3, col4 ASC, col5 DESC");
-Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 GROUP BY col3 IS NULL, col4 - 10 ASC, col5 < 1 DESC");
-Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 GROUP BY 1, 2 ASC, 3 DESC");
-Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 GROUP BY 1, 2 ASC, 3 DESC WITH ROLLUP");
+Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 GROUP BY col3, col4 ASC, col5 DESC", null, 50700);
+Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 GROUP BY col3 IS NULL, col4 - 10 ASC, col5 < 1 DESC", null, 50700);
+Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 GROUP BY 1, 2 ASC, 3 DESC", null, 50700);
+Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 GROUP BY 1, 2 ASC, 3 DESC WITH ROLLUP", null, 50700);
 
 //     [HAVING where_condition]
 Assert::parseSerialize("SELECT col1, col2 FROM tbl1, tbl2 HAVING col1 = 1 AND col2 = 2");

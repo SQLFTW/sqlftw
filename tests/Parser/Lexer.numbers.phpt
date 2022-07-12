@@ -92,13 +92,13 @@ Assert::invalidToken($tokens[1], T::VALUE | T::NUMBER | T::INVALID, '~^Invalid n
 $tokens = Assert::tokens(' 1.23e-', 2);
 Assert::invalidToken($tokens[1], T::VALUE | T::NUMBER | T::INVALID, '~^Invalid number exponent~', 1);
 
-$tokens = Assert::tokens(' 1.23ef', 2);
+$tokens = Assert::tokens(' 1.23ef', 3);
 Assert::invalidToken($tokens[1], T::VALUE | T::NUMBER | T::INVALID, '~^Invalid number exponent~', 1);
 
-$tokens = Assert::tokens(' 1.23e+f', 2);
+$tokens = Assert::tokens(' 1.23e+f', 3);
 Assert::invalidToken($tokens[1], T::VALUE | T::NUMBER | T::INVALID, '~^Invalid number exponent~', 1);
 
-$tokens = Assert::tokens(' 1.23e-f', 2);
+$tokens = Assert::tokens(' 1.23e-f', 3);
 Assert::invalidToken($tokens[1], T::VALUE | T::NUMBER | T::INVALID, '~^Invalid number exponent~', 1);
 
 $tokens = Assert::tokens(' -(1) ', 6);

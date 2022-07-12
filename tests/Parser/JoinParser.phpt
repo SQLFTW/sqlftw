@@ -8,17 +8,14 @@ require __DIR__ . '/../bootstrap.php';
 
 
 // unions vs brackets
-Assert::parseSerialize("SELECT * FROM SELECT * FROM tbl1 AS ali1"); // subquery without parens
 Assert::parseSerialize("SELECT * FROM (SELECT * FROM tbl1) AS ali1"); // subquery in parens
 Assert::parseSerialize("SELECT * FROM ((SELECT * FROM tbl1)) AS ali1"); // subquery in double parens
 Assert::parseSerialize("SELECT * FROM (((SELECT * FROM tbl1))) AS ali1"); // subquery in triple parens
-Assert::parseSerialize("SELECT * FROM (((SELECT * FROM tbl1)) AS ali1)"); // parenthesize
-Assert::parseSerialize("SELECT * FROM (((SELECT * FROM tbl1) AS ali1))");
-Assert::parseSerialize("SELECT * FROM (((SELECT * FROM tbl1 AS ali1)))");
+Assert::parseSerialize("SELECT * FROM (((SELECT * FROM tbl1 AS ali1))) AS ali2"); // parenthesize
 
-Assert::parseSerialize("SELECT * FROM (SELECT * FROM tbl1 UNION SELECT * FROM tbl2)");
-Assert::parseSerialize("SELECT * FROM ((SELECT * FROM tbl1 UNION SELECT * FROM tbl2))");
-Assert::parseSerialize("SELECT * FROM (((SELECT * FROM tbl1 UNION SELECT * FROM tbl2)))");
+Assert::parseSerialize("SELECT * FROM (SELECT * FROM tbl1 UNION SELECT * FROM tbl2) AS ali1");
+Assert::parseSerialize("SELECT * FROM ((SELECT * FROM tbl1 UNION SELECT * FROM tbl2)) AS ali1");
+Assert::parseSerialize("SELECT * FROM (((SELECT * FROM tbl1 UNION SELECT * FROM tbl2))) AS ali1");
 
 // unbracketed cascade joins
 Assert::parseSerialize("SELECT sq2_t1.col_varchar AS sq2_field1

@@ -33,7 +33,7 @@ class IndexHint implements SqlSerializable
      */
     public function __construct(IndexHintAction $action, ?IndexHintTarget $target, array $indexes)
     {
-        if (!$action->equalsValue(IndexHintAction::USE) && $indexes == []) {
+        if (!$action->equalsValue(IndexHintAction::USE) && $indexes === []) {
             throw new InvalidDefinitionException('Indexes cannot be empty for action ' . $action->getValue() . '.');
         }
         $this->action = $action;

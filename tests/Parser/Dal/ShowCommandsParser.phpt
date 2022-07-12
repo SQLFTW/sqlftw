@@ -71,8 +71,8 @@ Assert::parseSerialize("SHOW SCHEMAS WHERE col1 = 1", "SHOW DATABASES WHERE col1
 
 
 // SHOW ENGINE engine_name {STATUS | MUTEX}
-Assert::parseSerialize("SHOW ENGINE innodb STATUS");
-Assert::parseSerialize("SHOW ENGINE innodb MUTEX");
+Assert::parseSerialize("SHOW ENGINE InnoDB STATUS");
+Assert::parseSerialize("SHOW ENGINE InnoDB MUTEX");
 
 
 // SHOW [STORAGE] ENGINES

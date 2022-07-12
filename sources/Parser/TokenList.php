@@ -31,6 +31,7 @@ use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
+use function array_pop;
 use function array_slice;
 use function array_values;
 use function call_user_func;
@@ -40,6 +41,7 @@ use function explode;
 use function implode;
 use function in_array;
 use function ltrim;
+use function mb_strlen;
 use function preg_match;
 use function rtrim;
 use function strlen;
@@ -1296,6 +1298,7 @@ class TokenList
     {
         $name = $this->expectNonReservedNameOrString();
         // characters, not bytes
+        // todo: encoding
         if (mb_strlen($name) > $this->maxLengths[Entity::USER]) {
             throw new ParserException('Too long user name.', $this);
         }

@@ -25,7 +25,6 @@ use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Routine\Routine;
 use SqlFtw\Sql\Routine\CaseStatement;
 use SqlFtw\Sql\Routine\CloseCursorStatement;
 use SqlFtw\Sql\Routine\CompoundStatement;
@@ -44,6 +43,7 @@ use SqlFtw\Sql\Routine\LoopStatement;
 use SqlFtw\Sql\Routine\OpenCursorStatement;
 use SqlFtw\Sql\Routine\RepeatStatement;
 use SqlFtw\Sql\Routine\ReturnStatement;
+use SqlFtw\Sql\Routine\Routine;
 use SqlFtw\Sql\Routine\WhileStatement;
 use SqlFtw\Sql\Statement;
 

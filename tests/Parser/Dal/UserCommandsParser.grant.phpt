@@ -13,9 +13,9 @@ Assert::parseSerialize("GRANT ALL ON *.* TO usr1@host1");
 Assert::parseSerialize("GRANT ALL ON db1 TO usr1@host1");
 Assert::parseSerialize("GRANT ALL ON db1.* TO usr1@host1");
 Assert::parseSerialize("GRANT ALL ON db1.tbl1 TO usr1@host1");
-Assert::parseSerialize("GRANT ALL ON TABLE tbl1 TO usr1@host1");
-Assert::parseSerialize("GRANT ALL ON FUNCTION func1 TO usr1@host1");
-Assert::parseSerialize("GRANT ALL ON PROCEDURE proc1 TO usr1@host1");
+Assert::parseSerialize("GRANT SELECT ON TABLE tbl1 TO usr1@host1");
+Assert::parseSerialize("GRANT EXECUTE ON FUNCTION func1 TO usr1@host1");
+Assert::parseSerialize("GRANT EXECUTE ON PROCEDURE proc1 TO usr1@host1");
 
 // privileges
 Assert::parseSerialize("GRANT ALTER ON * TO usr1@host1");

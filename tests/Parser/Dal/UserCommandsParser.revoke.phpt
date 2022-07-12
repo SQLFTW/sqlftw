@@ -13,9 +13,9 @@ Assert::parseSerialize("REVOKE ALTER ON *.* FROM usr1@host1");
 Assert::parseSerialize("REVOKE ALTER ON db1 FROM usr1@host1");
 Assert::parseSerialize("REVOKE ALTER ON db1.* FROM usr1@host1");
 Assert::parseSerialize("REVOKE ALTER ON db1.tbl1 FROM usr1@host1");
-Assert::parseSerialize("REVOKE ALTER ON TABLE tbl1 FROM usr1@host1");
-Assert::parseSerialize("REVOKE ALTER ON FUNCTION func1 FROM usr1@host1");
-Assert::parseSerialize("REVOKE ALTER ON PROCEDURE proc1 FROM usr1@host1");
+Assert::parseSerialize("REVOKE SELECT ON TABLE tbl1 FROM usr1@host1");
+Assert::parseSerialize("REVOKE EXECUTE ON FUNCTION func1 FROM usr1@host1");
+Assert::parseSerialize("REVOKE EXECUTE ON PROCEDURE proc1 FROM usr1@host1");
 
 // privileges
 Assert::parseSerialize("REVOKE ALTER ON * FROM usr1@host1");

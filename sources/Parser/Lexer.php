@@ -1138,6 +1138,9 @@ class Lexer
                             $expComplete = true;
                         } else {
                             if (trim($exp, 'e+-') === '' && strpos($base, '.') !== false) {
+                                $len = strlen($base . $exp) - 1;
+                                $position += $len;
+                                $column += $len;
                                 $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
 
                                 return new Token($type | T::INVALID, $startAt, $row, $base . $exp, $base . $exp, $exception);
@@ -1147,6 +1150,9 @@ class Lexer
                     }
                     if (!$expComplete) {
                         if (strpos($base, '.') !== false) {
+                            $len = strlen($base . $exp) - 1;
+                            $position += $len;
+                            $column += $len;
                             $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
 
                             return new Token($type | T::INVALID, $startAt, $row, $base . $exp, $base . $exp, $exception);

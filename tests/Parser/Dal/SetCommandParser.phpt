@@ -8,10 +8,10 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // SET ...
-Assert::parseSerialize("SET var1 = 1");
-Assert::parseSerialize("SET var1 = 1, var2 = 2");
+Assert::parseSerialize("SET basedir = 1", 'SET @@SESSION.basedir = 1');
+Assert::parseSerialize("SET basedir = 1, datadir = 2", 'SET @@SESSION.basedir = 1, @@SESSION.datadir = 2');
 Assert::parseSerialize("SET @var1 = 1");
-Assert::parseSerialize("SET @@basedir = 1");
+Assert::parseSerialize("SET @@basedir = 1"); // todo: inconsistent serialization
 
 Assert::parseSerialize("SET @@SESSION.basedir = 1");
 Assert::parseSerialize("SET @@GLOBAL.basedir = 1");

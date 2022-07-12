@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// spell-check-ignore: MROONGA MYROCKS Mroonga OQGRAPH Percona TOKUDB XTRADB columnstrore federatedx mroonga myrocks oqgraph tokudb xtradb
+
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Formatter\Formatter;

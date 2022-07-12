@@ -6,10 +6,10 @@ use SqlFtw\Tests\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-// ALTER [DEFINER = { user | CURRENT_USER }] EVENT event_name
-Assert::parseSerialize("ALTER EVENT evt1");
-Assert::parseSerialize("ALTER DEFINER = usr1@host1 EVENT evt1");
-Assert::parseSerialize("ALTER DEFINER = CURRENT_USER EVENT evt1");
+// ALTER [DEFINER = { user | CURRENT_USER }] EVENT event_name [RENAME TO new_event_name]
+Assert::parseSerialize("ALTER EVENT evt1 RENAME TO evt2");
+Assert::parseSerialize("ALTER DEFINER = usr1@host1 EVENT evt1 RENAME TO evt2");
+Assert::parseSerialize("ALTER DEFINER = CURRENT_USER EVENT evt1 RENAME TO evt2");
 
 // [ON SCHEDULE schedule:]
 //   {AT timestamp [+ INTERVAL interval] ... | EVERY interval}
@@ -27,9 +27,6 @@ Assert::parseSerialize("ALTER EVENT evt1 ON SCHEDULE EVERY 6 HOUR STARTS '2001-0
 // [ON COMPLETION [NOT] PRESERVE]
 Assert::parseSerialize("ALTER EVENT evt1 ON COMPLETION PRESERVE");
 Assert::parseSerialize("ALTER EVENT evt1 ON COMPLETION NOT PRESERVE");
-
-// [RENAME TO new_event_name]
-Assert::parseSerialize("ALTER EVENT evt1 RENAME TO evt2");
 
 // [ENABLE | DISABLE | DISABLE ON SLAVE]
 Assert::parseSerialize("ALTER EVENT evt1 ENABLE");

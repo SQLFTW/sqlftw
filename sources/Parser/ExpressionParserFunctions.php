@@ -111,6 +111,8 @@ trait ExpressionParserFunctions
                         }
                         continue 3;
                     case TimeTypeLiteral::class:
+                        /** @var 'DATE'|'DATETIME'|'TIME' $keyword */
+                        $keyword = $keyword;
                         $arguments[] = new TimeTypeLiteral($keyword);
                         continue 3;
                     case EnumValueLiteral::class:

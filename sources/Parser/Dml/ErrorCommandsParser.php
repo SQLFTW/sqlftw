@@ -123,7 +123,8 @@ class ErrorCommandsParser
 
     private function parseTarget(TokenList $tokenList): Identifier
     {
-        if (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
+        $token = $tokenList->get(TokenType::AT_VARIABLE);
+        if ($token !== null) {
             $variable = $this->expressionParser->parseAtVariable($tokenList, $token->value);
             if (!$variable instanceof UserVariable) {
                 throw new ParserException('User variable or local variable expected.', $tokenList);

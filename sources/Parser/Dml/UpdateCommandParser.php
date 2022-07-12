@@ -13,7 +13,6 @@ use Countable;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\JoinParser;
-use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;

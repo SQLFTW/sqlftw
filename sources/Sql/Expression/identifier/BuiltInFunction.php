@@ -730,7 +730,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     }
 
     /**
-     * @return array<string, class-string|false|null>
+     * @return array<string, class-string|string>
      */
     public function getNamedParams(): array
     {
