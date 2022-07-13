@@ -1300,13 +1300,21 @@ class TokenList
         return new QualifiedName($first);
     }
 
-    public function expectUserName(): UserName
+    public function expectUserName(bool $forRole = false): UserName
     {
-        $name = $this->expectNonReservedNameOrString();
+        static $notAllowed = [
+            Keyword::EVENT, Keyword::FILE, Keyword::NONE, Keyword::PROCESS, Keyword::PROXY,
+            Keyword::RELOAD, Keyword::REPLICATION, Keyword::RESOURCE, Keyword::SUPER,
+        ];
+
+        $token = $this->expect(T::NAME | T::STRING, T::RESERVED);
+        $name = $token->value;
         // characters, not bytes
         // todo: encoding
         if (mb_strlen($name) > $this->maxLengths[Entity::USER]) {
             throw new ParserException('Too long user name.', $this);
+        } elseif ($forRole & ($token->type & T::UNQUOTED_NAME) !== 0 && in_array(strtoupper($name), $notAllowed, true)) {
+            throw new ParserException('User name not allowed.', $this);
         }
         $host = null;
         $token = $this->get(T::AT_VARIABLE);

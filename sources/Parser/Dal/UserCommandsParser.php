@@ -1047,7 +1047,7 @@ class UserCommandsParser
     {
         $roles = [];
         do {
-            $roles[] = $tokenList->expectUserName();
+            $roles[] = $tokenList->expectUserName(true);
         } while ($tokenList->hasSymbol(','));
 
         return $roles;
