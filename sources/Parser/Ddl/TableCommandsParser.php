@@ -1496,14 +1496,33 @@ class TableCommandsParser
                 $subpartitionsNumber = (int) $tokenList->expectUnsignedInt();
             }
         }
+
         $partitions = null;
         if ($tokenList->hasSymbol('(')) {
             $partitions = [];
+            $subCount = false;
             do {
-                $partitions[] = $this->parsePartitionDefinition($tokenList);
+                $partition = $this->parsePartitionDefinition($tokenList);
+                $partitions[] = $partition;
+
+                // every partition has the same number of subpartitions
+                if ($subCount === false) {
+                    $sub = $partition->getSubpartitions();
+                    $subCount = $count = $sub === null ? 0 : count($sub);
+                } else {
+                    $sub = $partition->getSubpartitions();
+                    $count = $sub === null ? 0 : count($sub);
+                    if ($subCount !== $count) {
+                        throw new ParserException('Uneven number of subpartitions.', $tokenList);
+                    }
+                }
+                if ($subpartitionsCondition === null && $count !== 0) {
+                    throw new ParserException('Subpartitions without SUBPARTITION clause.', $tokenList);
+                }
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
+
 
         return new PartitioningDefinition($condition, $partitions, $partitionsNumber, $subpartitionsCondition, $subpartitionsNumber);
     }
