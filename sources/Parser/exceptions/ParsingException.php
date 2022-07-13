@@ -10,25 +10,8 @@
 namespace SqlFtw\Parser;
 
 use Dogma\Exception;
-use Throwable;
-use function debug_backtrace;
 
 class ParsingException extends Exception
 {
-
-    /** @var bool */
-    public static $debug = false;
-
-    /** @var mixed[][]|null */
-    public $backtrace;
-
-    public function __construct(string $message, ?Throwable $previous = null, int $code = 0)
-    {
-        parent::__construct($message, $previous, $code);
-
-        if (self::$debug) {
-            $this->backtrace = debug_backtrace();
-        }
-    }
 
 }
