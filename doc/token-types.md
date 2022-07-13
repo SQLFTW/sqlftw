@@ -32,8 +32,8 @@ TokenType constants:
     - **BINARY_LITERAL**
     - **HEXADECIMAL_LITERAL**
     - **UUID** - e.g. `3E11FA47-71CA-11E1-9E33-C80AA9429562`
-    - **PLACEHOLDER** - `?`
 - **SYMBOL** - `(`, `)`, `[`, `]`, `{`, `}`, `.`, `,`, `;`
     - **OPERATOR** - `+`, `||` etc.
+    - **PLACEHOLDER** - `?`
 - **DELIMITER** - default `;`
 - **DELIMITER_DEFINITION**

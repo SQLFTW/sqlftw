@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Statement;
 use function array_values;
@@ -33,7 +34,7 @@ class ValuesCommand extends Statement implements SimpleQuery
     /**
      * @param non-empty-array<Row> $rows
      * @param non-empty-array<OrderByExpression>|null $orderBy
-     * @param int|SimpleName|null $limit
+     * @param int|SimpleName|Placeholder|null $limit
      */
     public function __construct(
         array $rows,

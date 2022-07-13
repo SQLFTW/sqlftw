@@ -317,7 +317,7 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
                     break;
                 case '?':
-                    yield $previous = new Token(T::VALUE | T::PLACEHOLDER, $start, $row, $char, null);
+                    yield $previous = new Token(T::SYMBOL | T::PLACEHOLDER, $start, $row, $char, null);
                     break;
                 case '@':
                     $value = $char;

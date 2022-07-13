@@ -15,6 +15,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
@@ -73,8 +74,8 @@ class SelectCommand extends Statement implements SimpleQuery
      * @param non-empty-array<GroupByExpression>|null $groupBy
      * @param non-empty-array<WindowSpecification>|null $windows ($name => $spec)
      * @param non-empty-array<OrderByExpression>|null $orderBy
-     * @param int|SimpleName|null $limit
-     * @param int|SimpleName|null $offset
+     * @param int|SimpleName|Placeholder|null $limit
+     * @param int|SimpleName|Placeholder|null $offset
      * @param array<string, bool> $options
      * @param non-empty-array<SelectLocking>|null $locking
      */

@@ -231,7 +231,7 @@ class ParserFactory
 
     public function getPreparedCommandsParser(): PreparedCommandsParser
     {
-        return new PreparedCommandsParser();
+        return new PreparedCommandsParser($this->parser);
     }
 
     public function getReplicationCommandsParser(): ReplicationCommandsParser

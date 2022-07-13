@@ -67,12 +67,15 @@ class Parser
     /**
      * @return Generator<array{Command&Statement, TokenList, int, int}>
      */
-    public function parse(string $sql): Generator
+    public function parse(string $sql, bool $prepared = false): Generator
     {
         $tokenLists = $this->lexer->tokenizeLists($sql);
 
         /** @var TokenList $tokenList */
         foreach ($tokenLists as $tokenList) {
+            if ($prepared) {
+                $tokenList->startPrepared();
+            }
             $start = $tokenList->getPosition();
             $command = $this->parseTokenList($tokenList);
             $end = $tokenList->getPosition();

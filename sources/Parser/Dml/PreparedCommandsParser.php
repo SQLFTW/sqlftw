@@ -10,16 +10,28 @@
 namespace SqlFtw\Parser\Dml;
 
 use Dogma\StrictBehaviorMixin;
+use SqlFtw\Parser\InvalidCommand;
+use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Prepared\DeallocatePrepareCommand;
 use SqlFtw\Sql\Dml\Prepared\ExecuteCommand;
 use SqlFtw\Sql\Dml\Prepared\PrepareCommand;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 
 class PreparedCommandsParser
 {
     use StrictBehaviorMixin;
+
+    /** @var Parser */
+    private $parser;
+
+    public function __construct(Parser $parser)
+    {
+        $this->parser = $parser;
+    }
 
     /**
      * {DEALLOCATE | DROP} PREPARE stmt_name
@@ -64,9 +76,17 @@ class PreparedCommandsParser
 
         $variable = $tokenList->get(TokenType::AT_VARIABLE);
         if ($variable !== null) {
-            $statement = $variable->value;
+            $statement = new UserVariable($variable->value);
         } else {
-            $statement = $tokenList->expectString();
+            $sql = $tokenList->expectString();
+            $statements = iterator_to_array($this->parser->parse($sql, true));
+            if (count($statements) > 1) {
+                throw new ParserException('Multiple statements in PREPARE.', $tokenList);
+            }
+            [$statement, $tokens, ] = $statements[0];
+            if ($statement instanceof InvalidCommand) {
+                throw new ParserException('Invalid statement in PREPARE.', $tokenList, $statement->getException());
+            }
         }
 
         return new PrepareCommand($name, $statement);

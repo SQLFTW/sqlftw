@@ -930,7 +930,7 @@ class ExpressionParser
     }
 
     /**
-     * @return int|SimpleName
+     * @return int|SimpleName|Placeholder
      */
     public function parseLimitOrOffsetValue(TokenList $tokenList)
     {
@@ -939,6 +939,8 @@ class ExpressionParser
             if ($token !== null) {
                 return new SimpleName($token->value);
             }
+        } elseif ($tokenList->inPrepared() && $tokenList->has(TokenType::PLACEHOLDER)) {
+            return new Placeholder();
         }
 
         return (int) $tokenList->expectUnsignedInt();

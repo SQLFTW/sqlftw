@@ -124,28 +124,24 @@ class TokenList
         $this->invalid = $invalid;
     }
 
-    /**
-     * @return Token[]
-     */
-    public function getTokens(): array
-    {
-        return $this->tokens;
-    }
-
     public function getSettings(): ParserSettings
     {
         return $this->settings;
     }
 
-    public function getAutoSkip(): int
+    public function using(?string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool
     {
-        return $this->autoSkip;
+        return $this->platform->matches($platform, $minVersion, $maxVersion);
     }
 
-    public function setAutoSkip(int $autoSkip): void
+    public function check(string $feature, ?int $minVersion = null, ?int $maxVersion = null, ?string $platform = null): void
     {
-        $this->autoSkip = $autoSkip;
+        if (!$this->platform->matches($platform, $minVersion, $maxVersion)) {
+            throw new InvalidVersionException($feature, $this);
+        }
     }
+
+    // state -----------------------------------------------------------------------------------------------------------
 
     public function invalid(): bool
     {
@@ -227,18 +223,6 @@ class TokenList
         $this->inEmbedded = false;
     }
 
-    public function using(?string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool
-    {
-        return $this->platform->matches($platform, $minVersion, $maxVersion);
-    }
-
-    public function check(string $feature, ?int $minVersion = null, ?int $maxVersion = null, ?string $platform = null): void
-    {
-        if (!$this->platform->matches($platform, $minVersion, $maxVersion)) {
-            throw new InvalidVersionException($feature, $this);
-        }
-    }
-
     public function finish(): void
     {
         $this->position = count($this->tokens);
@@ -273,6 +257,8 @@ class TokenList
         return true;
     }
 
+    // navigation ------------------------------------------------------------------------------------------------------
+
     public function getPosition(): int
     {
         return $this->position;
@@ -291,6 +277,16 @@ class TokenList
         return $this;
     }
 
+    public function getAutoSkip(): int
+    {
+        return $this->autoSkip;
+    }
+
+    public function setAutoSkip(int $autoSkip): void
+    {
+        $this->autoSkip = $autoSkip;
+    }
+
     private function doAutoSkip(): void
     {
         $token = $this->tokens[$this->position] ?? null;
@@ -298,6 +294,16 @@ class TokenList
             $this->position++;
             $token = $this->tokens[$this->position] ?? null;
         }
+    }
+
+    // contents --------------------------------------------------------------------------------------------------------
+
+    /**
+     * @return Token[]
+     */
+    public function getTokens(): array
+    {
+        return $this->tokens;
     }
 
     public function getStartOffset(): int

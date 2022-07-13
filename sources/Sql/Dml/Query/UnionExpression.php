@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Query;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
@@ -44,7 +45,7 @@ class UnionExpression extends Statement implements Query
      * @param non-empty-array<Query> $queries
      * @param non-empty-array<UnionType> $types
      * @param non-empty-array<OrderByExpression>|null $orderBy
-     * @param int|SimpleName|null $limit
+     * @param int|SimpleName|Placeholder|null $limit
      * @param non-empty-array<SelectLocking>|null $locking
      */
     public function __construct(

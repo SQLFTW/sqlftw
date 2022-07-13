@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Statement;
 
@@ -38,8 +39,8 @@ class ParenthesizedQueryExpression extends Statement implements Query
 
     /**
      * @param non-empty-array<OrderByExpression>|null $orderBy
-     * @param int|SimpleName|null $limit
-     * @param int|SimpleName|null $offset
+     * @param int|SimpleName|Placeholder|null $limit
+     * @param int|SimpleName|Placeholder|null $offset
      */
     public function __construct(
         Query $query,

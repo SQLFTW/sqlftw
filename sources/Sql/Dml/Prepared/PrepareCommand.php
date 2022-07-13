@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Prepared;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Statement;
 
 class PrepareCommand extends Statement implements PreparedStatementCommand
@@ -20,10 +21,13 @@ class PrepareCommand extends Statement implements PreparedStatementCommand
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var UserVariable|Statement */
     private $statement;
 
-    public function __construct(string $name, string $statement)
+    /**
+     * @param UserVariable|Statement $statement
+     */
+    public function __construct(string $name, $statement)
     {
         $this->name = $name;
         $this->statement = $statement;
@@ -31,8 +35,10 @@ class PrepareCommand extends Statement implements PreparedStatementCommand
 
     public function serialize(Formatter $formatter): string
     {
+        $statement = $this->statement->serialize($formatter);
+
         return 'PREPARE ' . $formatter->formatName($this->name) . ' FROM '
-            . ($this->statement[0] === '@' ? $this->statement : $formatter->formatString($this->statement));
+            . ($this->statement instanceof UserVariable ? $statement : $formatter->formatString($statement));
     }
 
 }

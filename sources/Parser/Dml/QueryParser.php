@@ -47,6 +47,7 @@ use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
@@ -410,6 +411,8 @@ class QueryParser
         do {
             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                 $expression = new Asterisk();
+            } elseif ($tokenList->inPrepared() && $tokenList->has(TokenType::PLACEHOLDER)) {
+                $expression = new Placeholder();
             } else {
                 $expression = $this->expressionParser->parseAssignExpression($tokenList);
             }
@@ -569,7 +572,7 @@ class QueryParser
     }
 
     /**
-     * @return array{non-empty-array<OrderByExpression>|null, int|SimpleName|null, int|SimpleName|null, SelectInto|null}
+     * @return array{non-empty-array<OrderByExpression>|null, int|SimpleName|Placeholder|null, int|SimpleName|Placeholder|null, SelectInto|null}
      */
     private function parseOrderLimitOffsetInto(TokenList $tokenList, bool $parseOffset = true): array
     {

@@ -16,6 +16,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -60,7 +61,7 @@ class DeleteCommand extends Statement implements DmlCommand
     /**
      * @param non-empty-array<array{QualifiedName, string|null}> $tables
      * @param non-empty-array<OrderByExpression>|null $orderBy
-     * @param int|SimpleName|null $limit
+     * @param int|SimpleName|Placeholder|null $limit
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(

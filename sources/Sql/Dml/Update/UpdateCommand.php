@@ -17,6 +17,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -54,7 +55,7 @@ class UpdateCommand extends Statement implements DmlCommand
     /**
      * @param non-empty-array<Assignment> $values
      * @param non-empty-array<OrderByExpression>|null $orderBy
-     * @param int|SimpleName|null $limit
+     * @param int|SimpleName|Placeholder|null $limit
      */
     public function __construct(
         TableReferenceNode $tableReferences,
