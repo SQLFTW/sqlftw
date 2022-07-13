@@ -266,22 +266,25 @@ class QueryParser
     {
         if ($tokenList->hasSymbol('(')) {
             return $this->parseParenthesizedQueryExpression($tokenList->rewind(-1), $with);
-        } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH)) {
+        }
+
+        $keywords = $with !== null
+            ? [Keyword::SELECT]
+            : [Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH];
+
+        $keyword = $tokenList->expectAnyKeyword(...$keywords);
+        if ($keyword === Keyword::SELECT) {
             return $this->parseSelect($tokenList->rewind(-1), $with);
-        } elseif ($tokenList->hasKeyword(Keyword::TABLE)) {
-            if ($with !== null) {
-                throw new ParserException("WITH is not allowed in TABLE query.", $tokenList);
-            }
-
+        } elseif ($keyword === Keyword::TABLE) {
             return $this->parseTable($tokenList->rewind(-1));
-        } elseif ($tokenList->hasKeyword(Keyword::VALUES)) {
-            if ($with !== null) {
-                throw new ParserException("WITH is not allowed in VALUES query.", $tokenList);
-            }
-
+        } elseif ($keyword === Keyword::VALUES) {
             return $this->parseValues($tokenList->rewind(-1));
         } else {
-            $tokenList->missingAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH);
+            $statement =  $this->parseWith($tokenList->rewind(-1));
+            if (!$statement instanceof SelectCommand) {
+                throw new ParserException('Expected SELECT.', $tokenList);
+            }
+            return $statement;
         }
     }
 
@@ -345,17 +348,6 @@ class QueryParser
      */
     public function parseSelect(TokenList $tokenList, ?WithClause $with = null): Query
     {
-        if ($tokenList->hasKeyword(Keyword::WITH)) {
-            if ($with !== null) {
-                throw new ParserException('WITH defined twice.', $tokenList);
-            }
-
-            /** @var SelectCommand $select */
-            $select = $this->parseWith($tokenList->rewind(-1));
-
-            return $select;
-        }
-
         $tokenList->expectKeyword(Keyword::SELECT);
 
         // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
