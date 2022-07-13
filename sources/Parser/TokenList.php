@@ -999,11 +999,13 @@ class TokenList
 
     private function validateName(?string $entity, string $name): void
     {
+        static $trailingWhitespaceNotAllowed = [Entity::SCHEMA, Entity::TABLE, Entity::COLUMN, Entity::PARTITION];
+
         if ($entity !== null && $entity !== Entity::TABLESPACE && $name === '') {
             throw new ParserException('Name must not be empty.', $this);
         }
         if ($entity !== null) {
-            if (($entity === Entity::SCHEMA || $entity === Entity::TABLE || $entity === Entity::COLUMN) && rtrim($name) !== $name) {
+            if (in_array($entity, $trailingWhitespaceNotAllowed, true) && rtrim($name) !== $name) {
                 throw new ParserException(ucfirst($entity) . ' name must not contain right side white space.', $this);
             }
             if (Str::length($name) > $this->maxLengths[$entity]) {
