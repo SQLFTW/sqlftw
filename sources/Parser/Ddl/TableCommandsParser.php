@@ -107,12 +107,14 @@ use SqlFtw\Sql\Expression\MaxValueLiteral;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\Parentheses;
+use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 use function array_values;
+use function is_array;
 use function strtoupper;
 
 /**
@@ -1506,7 +1508,8 @@ class TableCommandsParser
             $partitions = [];
             $subCount = false;
             do {
-                $partition = $this->parsePartitionDefinition($tokenList, $condition);
+                $last = $partitionsNumber !== null && $partitionsNumber - 1 === count($partitions);
+                $partition = $this->parsePartitionDefinition($tokenList, $condition, $last);
                 $partitions[] = $partition;
 
                 // every partition has the same number of subpartitions
@@ -1525,6 +1528,18 @@ class TableCommandsParser
                 }
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
+
+            if ($partitionsNumber !== null && $partitionsNumber !== count($partitions)) {
+                throw new ParserException('Wrong number of partitions.', $tokenList);
+            }
+            if ($subpartitionsNumber !== null) {
+                foreach ($partitions as $partition) {
+                    $subpartitions = $partition->getSubpartitions();
+                    if ($subpartitions !== null && count($subpartitions) !== $subpartitionsNumber) {
+                        throw new ParserException('Wrong number of subpartitions.', $tokenList);
+                    }
+                }
+            }
         }
 
 
@@ -1619,17 +1634,27 @@ class TableCommandsParser
      *         [TABLESPACE [=] tablespace_name]
      *         [NODEGROUP [=] number]             // NDB only
      */
-    private function parsePartitionDefinition(TokenList $tokenList, ?PartitioningCondition $condition = null): PartitionDefinition
+    private function parsePartitionDefinition(TokenList $tokenList, ?PartitioningCondition $condition = null, ?bool $last = false): PartitionDefinition
     {
         $tokenList->expectKeyword(Keyword::PARTITION);
         $name = $tokenList->expectName(Entity::PARTITION);
 
-        $columns = $condition !== null ? $condition->getColumns() : null;
-        $columns = $columns !== null ? count($columns) : null;
+        $columns = $type = null;
+        if ($condition !== null) {
+            $columns = $condition->getColumns() ?? $condition->getExpression();
+            if ($columns instanceof ListExpression) {
+                $columns = $columns->getItems();
+            } elseif ($columns instanceof RootNode) {
+                $columns = [$columns];
+            }
+            $columns = $columns !== null ? count($columns) : null;
+
+            $type = $condition->getType()->getValue();
+        }
 
         $lessThan = $values = null;
-        if ($tokenList->hasKeyword(Keyword::VALUES)) {
-            if ($tokenList->hasKeywords(Keyword::LESS, Keyword::THAN)) {
+        if (($type === PartitioningConditionType::RANGE || $type === PartitioningConditionType::LIST || $type === null) && $tokenList->hasKeyword(Keyword::VALUES)) {
+            if (($type === PartitioningConditionType::RANGE || $type === null) && $tokenList->hasKeywords(Keyword::LESS, Keyword::THAN)) {
                 if ($tokenList->hasKeyword(Keyword::MAXVALUE)) {
                     $lessThan = new MaxValueLiteral();
                     // check values count
@@ -1657,8 +1682,7 @@ class TableCommandsParser
                     }
                     $tokenList->expectSymbol(')');
                 }
-            } else {
-                $tokenList->expectKeyword(Keyword::IN);
+            } elseif (($type === PartitioningConditionType::LIST || $type === null) && $tokenList->hasKeyword(Keyword::IN)) {
                 $tokenList->expectSymbol('(');
                 $values = [];
                 do {
@@ -1684,6 +1708,8 @@ class TableCommandsParser
                             // check values count
                             if ($columns !== null && $columns !== count($items)) {
                                 throw new ParserException('Count of values does not match count of columns.', $tokenList);
+                            } elseif (count($items) > 16) {
+                                throw new ParserException('More than 16 columns are not allowed.', $tokenList);
                             }
                         }
                     } elseif ($columns > 1) {
@@ -1693,6 +1719,10 @@ class TableCommandsParser
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
+        } elseif (/*!$last && */$columns !== null && $condition->getType()->equalsAny(PartitioningConditionType::LIST)) {
+            throw new ParserException('Missing values definition.', $tokenList);
+        } elseif ($columns !== null && $condition->getType()->equalsAny(PartitioningConditionType::RANGE)) {
+            throw new ParserException('Missing values definition.', $tokenList);
         }
 
         $options = $this->parsePartitionOptions($tokenList);
