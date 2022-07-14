@@ -787,12 +787,12 @@ class TokenList
 
     public function expectNonReservedNameOrString(): string
     {
-        return $this->expect(T::NAME | T::STRING, T::RESERVED)->value;
+        return $this->expect(T::NAME | T::STRING, T::RESERVED | T::AT_VARIABLE)->value;
     }
 
     public function getNonReservedNameOrString(): ?string
     {
-        $token = $this->get(T::NAME | T::STRING, T::RESERVED);
+        $token = $this->get(T::NAME | T::STRING, T::RESERVED | T::AT_VARIABLE);
 
         return $token !== null ? $token->value : null;
     }
@@ -1309,7 +1309,7 @@ class TokenList
             Keyword::RELOAD, Keyword::REPLICATION, Keyword::RESOURCE, Keyword::SUPER,
         ];
 
-        $token = $this->expect(T::NAME | T::STRING, T::RESERVED);
+        $token = $this->expect(T::NAME | T::STRING, T::RESERVED | T::AT_VARIABLE);
         $name = $token->value;
         // characters, not bytes
         // todo: encoding
