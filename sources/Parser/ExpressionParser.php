@@ -48,7 +48,6 @@ use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
-use SqlFtw\Sql\Expression\MaxValueLiteral;
 use SqlFtw\Sql\Expression\NoneLiteral;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\NumberLiteral;
@@ -613,8 +612,6 @@ class ExpressionParser
                 return new BoolLiteral(false);
             } elseif ($upper === Keyword::ON || $upper === Keyword::OFF) {
                 return new OnOffLiteral($upper === Keyword::ON);
-            } elseif ($upper === Keyword::MAXVALUE) {
-                return new MaxValueLiteral();
             } elseif ($upper === Keyword::ALL) {
                 return new AllLiteral();
             } elseif ($upper === Keyword::NONE) {
@@ -834,14 +831,12 @@ class ExpressionParser
                 return new DefaultLiteral();
             } elseif ($upper === Keyword::ON || $upper === Keyword::OFF) {
                 return new OnOffLiteral($upper === Keyword::ON);
-            } elseif ($upper === Keyword::MAXVALUE) {
-                return new MaxValueLiteral();
             } elseif ($upper === Keyword::ALL) {
                 return new AllLiteral();
             } elseif ($upper === Keyword::NONE) {
                 return new NoneLiteral();
             } else {
-                $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::MAXVALUE, Keyword::ALL, Keyword::NONE);
+                $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::ALL, Keyword::NONE);
             }
         } elseif (($token->type & TokenType::BINARY_LITERAL) !== 0) {
             return new BinaryLiteral($token->value);

@@ -23,12 +23,10 @@ class PartitionDefinition implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
-    public const MAX_VALUE = true;
-
     /** @var string */
     private $name;
 
-    /** @var non-empty-array<string|int|float|bool|Literal>|RootNode|bool|null */
+    /** @var non-empty-array<Literal>|RootNode|null */
     private $lessThan;
 
     /** @var non-empty-array<RootNode>|null */
@@ -41,7 +39,7 @@ class PartitionDefinition implements SqlSerializable
     private $subpartitions;
 
     /**
-     * @param non-empty-array<string|int|float|bool|Literal>|RootNode|bool|null $lessThan
+     * @param non-empty-array<Literal>|RootNode|null $lessThan
      * @param non-empty-array<RootNode>|null $values
      * @param non-empty-array<string, int|string>|null $options
      * @param non-empty-array<string, non-empty-array<int|string>|null>|null $subpartitions
@@ -76,7 +74,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string|int|float|bool|Literal>|RootNode|bool|null
+     * @return non-empty-array<Literal>|RootNode|null
      */
     public function getLessThan()
     {
@@ -113,12 +111,10 @@ class PartitionDefinition implements SqlSerializable
 
         if ($this->lessThan !== null) {
             $result .= ' VALUES LESS THAN ';
-            if ($this->lessThan instanceof RootNode) {
-                $result .= '(' . $this->lessThan->serialize($formatter) . ')';
-            } elseif (is_array($this->lessThan)) {
+            if (is_array($this->lessThan)) {
                 $result .= '(' . $formatter->formatValuesList($this->lessThan) . ')';
             } else {
-                $result .= 'MAXVALUE';
+                $result .= '(' . $this->lessThan->serialize($formatter) . ')';
             }
         } elseif ($this->values !== null) {
             $result .= ' VALUES IN (' . $formatter->formatSerializablesList($this->values) . ')';

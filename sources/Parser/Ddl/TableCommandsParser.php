@@ -102,8 +102,12 @@ use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\ListExpression;
+use SqlFtw\Sql\Expression\MaxValueLiteral;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\Parentheses;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
@@ -1624,13 +1628,17 @@ class TableCommandsParser
         if ($tokenList->hasKeyword(Keyword::VALUES)) {
             if ($tokenList->hasKeywords(Keyword::LESS, Keyword::THAN)) {
                 if ($tokenList->hasKeyword(Keyword::MAXVALUE)) {
-                    $lessThan = PartitionDefinition::MAX_VALUE;
+                    $lessThan = new MaxValueLiteral();
                 } else {
                     $tokenList->expectSymbol('(');
                     if ($tokenList->seek(TokenType::SYMBOL, ',', 2) !== null) {
                         $lessThan = [];
                         do {
-                            $lessThan[] = $this->expressionParser->parseLiteral($tokenList);
+                            if ($tokenList->hasKeyword(Keyword::MAXVALUE)) {
+                                $lessThan[] = new MaxValueLiteral();
+                            } else {
+                                $lessThan[] = $this->expressionParser->parseLiteral($tokenList);
+                            }
                             if (!$tokenList->hasSymbol(',')) {
                                 break;
                             }
@@ -1645,7 +1653,21 @@ class TableCommandsParser
                 $tokenList->expectSymbol('(');
                 $values = [];
                 do {
-                    $values[] = $this->expressionParser->parseExpression($tokenList);
+                    $values[] = $value = $this->expressionParser->parseExpression($tokenList);
+
+                    // check MAXVALUE
+                    if ($value instanceof SimpleName && strtoupper($value->getName()) === Keyword::MAXVALUE) {
+                        throw new ParserException('MAXVALUE is not allowed in values list.', $tokenList);
+                    } elseif ($value instanceof Parentheses) {
+                        $list = $value->getContents();
+                        if ($list instanceof ListExpression) {
+                            foreach ($list->getItems() as $item) {
+                                if ($item instanceof SimpleName && strtoupper($item->getName()) === Keyword::MAXVALUE) {
+                                    throw new ParserException('MAXVALUE is not allowed in values list.', $tokenList);
+                                }
+                            }
+                        }
+                    }
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
