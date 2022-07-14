@@ -729,6 +729,9 @@ class UserCommandsParser
         do {
             // static (keywords)
             $type = $tokenList->getMultiNameEnum(StaticUserPrivilege::class);
+            if ($type !== null && $type->equalsValue(StaticUserPrivilege::PROXY)) {
+                throw new ParserException('Cannot combine PROXY privilege with others.', $tokenList);
+            }
             if ($type === null) {
                 $name = $tokenList->getNonReservedNameOrString();
                 if ($name !== null) {
