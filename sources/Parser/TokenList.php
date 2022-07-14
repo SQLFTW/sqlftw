@@ -973,9 +973,9 @@ class TokenList
         return $token->value;
     }
 
-    public function expectNonReservedName(?string $entity, ?string $name = null): string
+    public function expectNonReservedName(?string $entity, ?string $name = null, int $mask = 0): string
     {
-        $token = $this->expect(T::NAME, T::RESERVED);
+        $token = $this->expect(T::NAME, T::RESERVED | $mask);
         if ($name !== null && $token->value !== $name) {
             $this->position--;
 
