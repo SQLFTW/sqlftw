@@ -1506,7 +1506,7 @@ class TableCommandsParser
             $partitions = [];
             $subCount = false;
             do {
-                $partition = $this->parsePartitionDefinition($tokenList);
+                $partition = $this->parsePartitionDefinition($tokenList, $condition);
                 $partitions[] = $partition;
 
                 // every partition has the same number of subpartitions
@@ -1619,32 +1619,41 @@ class TableCommandsParser
      *         [TABLESPACE [=] tablespace_name]
      *         [NODEGROUP [=] number]             // NDB only
      */
-    private function parsePartitionDefinition(TokenList $tokenList): PartitionDefinition
+    private function parsePartitionDefinition(TokenList $tokenList, ?PartitioningCondition $condition = null): PartitionDefinition
     {
         $tokenList->expectKeyword(Keyword::PARTITION);
         $name = $tokenList->expectName(Entity::PARTITION);
+
+        $columns = $condition !== null ? $condition->getColumns() : null;
+        $columns = $columns !== null ? count($columns) : null;
 
         $lessThan = $values = null;
         if ($tokenList->hasKeyword(Keyword::VALUES)) {
             if ($tokenList->hasKeywords(Keyword::LESS, Keyword::THAN)) {
                 if ($tokenList->hasKeyword(Keyword::MAXVALUE)) {
                     $lessThan = new MaxValueLiteral();
+                    // check values count
+                    if ($columns !== null && $columns !== 1) {
+                        throw new ParserException('Count of values does not match count of columns.', $tokenList);
+                    }
                 } else {
                     $tokenList->expectSymbol('(');
-                    if ($tokenList->seek(TokenType::SYMBOL, ',', 2) !== null) {
-                        $lessThan = [];
-                        do {
-                            if ($tokenList->hasKeyword(Keyword::MAXVALUE)) {
-                                $lessThan[] = new MaxValueLiteral();
-                            } else {
-                                $lessThan[] = $this->expressionParser->parseLiteral($tokenList);
-                            }
-                            if (!$tokenList->hasSymbol(',')) {
-                                break;
-                            }
-                        } while (true);
-                    } else {
-                        $lessThan = $this->expressionParser->parseExpression($tokenList);
+
+                    $lessThan = [];
+                    do {
+                        if ($tokenList->hasKeyword(Keyword::MAXVALUE)) {
+                            $lessThan[] = new MaxValueLiteral();
+                        } else {
+                            $lessThan[] = $this->expressionParser->parseExpression($tokenList);
+                        }
+                        if (!$tokenList->hasSymbol(',')) {
+                            break;
+                        }
+                    } while (true);
+
+                    // check values count
+                    if ($columns !== null && $columns !== count($lessThan)) {
+                        throw new ParserException('Count of values does not match count of columns.', $tokenList);
                     }
                     $tokenList->expectSymbol(')');
                 }
@@ -1655,18 +1664,31 @@ class TableCommandsParser
                 do {
                     $values[] = $value = $this->expressionParser->parseExpression($tokenList);
 
-                    // check MAXVALUE
                     if ($value instanceof SimpleName && strtoupper($value->getName()) === Keyword::MAXVALUE) {
+                        // check MAXVALUE
                         throw new ParserException('MAXVALUE is not allowed in values list.', $tokenList);
                     } elseif ($value instanceof Parentheses) {
+                        // check values count
+                        if ($columns === 1) {
+                            throw new ParserException('Row expressions in VALUES IN only allowed for multi-field column partitioning.', $tokenList);
+                        }
                         $list = $value->getContents();
                         if ($list instanceof ListExpression) {
-                            foreach ($list->getItems() as $item) {
+                            $items = $list->getItems();
+                            // check MAXVALUE
+                            foreach ($items as $item) {
                                 if ($item instanceof SimpleName && strtoupper($item->getName()) === Keyword::MAXVALUE) {
                                     throw new ParserException('MAXVALUE is not allowed in values list.', $tokenList);
                                 }
                             }
+                            // check values count
+                            if ($columns !== null && $columns !== count($items)) {
+                                throw new ParserException('Count of values does not match count of columns.', $tokenList);
+                            }
                         }
+                    } elseif ($columns > 1) {
+                        // check values count
+                        throw new ParserException('Count of values does not match count of columns.', $tokenList);
                     }
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
