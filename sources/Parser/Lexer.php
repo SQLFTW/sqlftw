@@ -456,7 +456,7 @@ class Lexer
                         // todo: Maria
                         $validOptional = true;
                         if ($optional) {
-                            $validOptional = preg_match('~^[Mm]?!(?:00000|[1-9]\d{4,5})?(?: |\\*/)~', substr($string, $position, 10), $m) === 1;
+                            $validOptional = preg_match('~^[Mm]?!(?:00000|[1-9]\d{4,5})?(?:\n| |\\*/)~', substr($string, $position, 10), $m) === 1;
                             if ($validOptional) {
                                 $versionId = strtoupper(str_replace('!', '', $m[0]));
                                 if ($this->platform->interpretOptionalComment($versionId)) {
