@@ -103,6 +103,10 @@ class RoutineParser
         $previous ? $tokenList->startEmbedded() : $tokenList->endEmbedded();
         $tokenList->endRoutine();
 
+        if ($statement instanceof EmptyCommand) {
+            throw new ParserException('Routine body can not be empty.', $tokenList);
+        }
+
         return $statement;
     }
 

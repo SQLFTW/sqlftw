@@ -18,26 +18,17 @@ class EmptyCommand extends Statement implements Command
 {
     use StrictBehaviorMixin;
 
-    /** @var TokenList */
-    private $tokenList;
-
     /**
      * @param string[] $commentsBefore
      */
-    public function __construct(TokenList $tokenList, array $commentsBefore)
+    public function __construct(array $commentsBefore)
     {
-        $this->tokenList = $tokenList;
         $this->commentsBefore = $commentsBefore;
-    }
-
-    public function getTokenList(): TokenList
-    {
-        return $this->tokenList;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->tokenList->serialize();
+        return '';
     }
 
 }

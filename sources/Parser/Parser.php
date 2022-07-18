@@ -112,9 +112,9 @@ class Parser
         $first = $tokenList->get();
         do {
             if ($first === null) {
-                return new EmptyCommand($tokenList, $comments);
+                return new EmptyCommand($comments);
             } elseif (($first->type & TokenType::DELIMITER) !== 0) {
-                return new EmptyCommand($tokenList, $comments);
+                return new EmptyCommand($comments);
             } elseif (($first->type & TokenType::COMMENT) !== 0) {
                 $comments[] = $first->value;
             } elseif (($first->type & TokenType::KEYWORD) !== 0) {
