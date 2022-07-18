@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dml;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
@@ -27,13 +26,13 @@ class DeleteCommandParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var JoinParser */
-    private $joinParser;
+    /** @var TableReferenceParser */
+    private $tableReferenceParser;
 
-    public function __construct(ExpressionParser $expressionParser, JoinParser $joinParser)
+    public function __construct(ExpressionParser $expressionParser, TableReferenceParser $tableReferenceParser)
     {
         $this->expressionParser = $expressionParser;
-        $this->joinParser = $joinParser;
+        $this->tableReferenceParser = $tableReferenceParser;
     }
 
     /**
@@ -65,7 +64,7 @@ class DeleteCommandParser
         if ($tokenList->hasKeyword(Keyword::FROM)) {
             $tables = $this->parseTablesList($tokenList);
             if ($tokenList->hasKeyword(Keyword::USING)) {
-                $references = $this->joinParser->parseTableReferences($tokenList);
+                $references = $this->tableReferenceParser->parseTableReferences($tokenList);
             } elseif ($tokenList->hasKeyword(Keyword::PARTITION)) {
                 $tokenList->expectSymbol('(');
                 $partitions = [];
@@ -77,7 +76,7 @@ class DeleteCommandParser
         } else {
             $tables = $this->parseTablesList($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
-            $references = $this->joinParser->parseTableReferences($tokenList);
+            $references = $this->tableReferenceParser->parseTableReferences($tokenList);
         }
 
         $where = null;

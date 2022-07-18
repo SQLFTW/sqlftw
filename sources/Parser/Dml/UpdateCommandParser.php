@@ -12,7 +12,6 @@ namespace SqlFtw\Parser\Dml;
 use Countable;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
@@ -27,13 +26,13 @@ class UpdateCommandParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var JoinParser */
-    private $joinParser;
+    /** @var TableReferenceParser */
+    private $tableReferenceParser;
 
-    public function __construct(ExpressionParser $expressionParser, JoinParser $joinParser)
+    public function __construct(ExpressionParser $expressionParser, TableReferenceParser $tableReferenceParser)
     {
         $this->expressionParser = $expressionParser;
-        $this->joinParser = $joinParser;
+        $this->tableReferenceParser = $tableReferenceParser;
     }
 
     /**
@@ -53,7 +52,7 @@ class UpdateCommandParser
         $lowPriority = $tokenList->hasKeyword(Keyword::LOW_PRIORITY);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
 
-        $tableReferences = $this->joinParser->parseTableReferences($tokenList);
+        $tableReferences = $this->tableReferenceParser->parseTableReferences($tokenList);
 
         $tokenList->expectKeyword(Keyword::SET);
         $values = [];

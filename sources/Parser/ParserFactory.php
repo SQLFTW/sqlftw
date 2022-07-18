@@ -51,6 +51,7 @@ use SqlFtw\Parser\Dml\InsertCommandParser;
 use SqlFtw\Parser\Dml\LoadCommandsParser;
 use SqlFtw\Parser\Dml\PreparedCommandsParser;
 use SqlFtw\Parser\Dml\QueryParser;
+use SqlFtw\Parser\Dml\TableReferenceParser;
 use SqlFtw\Parser\Dml\TransactionCommandsParser;
 use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
@@ -69,8 +70,8 @@ class ParserFactory
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var JoinParser */
-    private $joinParser;
+    /** @var TableReferenceParser */
+    private $tableReferenceParser;
 
     /** @var QueryParser */
     private $queryParser;
@@ -87,8 +88,8 @@ class ParserFactory
             return $this->queryParser;
         };
         $this->expressionParser = new ExpressionParser($queryParserProxy);
-        $this->joinParser = new JoinParser($this->expressionParser, $queryParserProxy);
-        $this->queryParser = new QueryParser($this, $this->expressionParser, $this->joinParser);
+        $this->tableReferenceParser = new TableReferenceParser($this->expressionParser, $queryParserProxy);
+        $this->queryParser = new QueryParser($this, $this->expressionParser, $this->tableReferenceParser);
         $this->routineBodyParser = new RoutineBodyParser($this->parser, $this->expressionParser, $this->queryParser);
     }
 
@@ -141,7 +142,7 @@ class ParserFactory
 
     public function getDeleteCommandParser(): DeleteCommandParser
     {
-        return new DeleteCommandParser($this->expressionParser, $this->joinParser);
+        return new DeleteCommandParser($this->expressionParser, $this->tableReferenceParser);
     }
 
     public function getDelimiterCommandParser(): DelimiterCommandParser
@@ -311,7 +312,7 @@ class ParserFactory
 
     public function getUpdateCommandParser(): UpdateCommandParser
     {
-        return new UpdateCommandParser($this->expressionParser, $this->joinParser);
+        return new UpdateCommandParser($this->expressionParser, $this->tableReferenceParser);
     }
 
     public function getUseCommandParser(): UseCommandParser

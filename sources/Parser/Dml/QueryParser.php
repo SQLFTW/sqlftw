@@ -12,7 +12,6 @@ namespace SqlFtw\Parser\Dml;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\JoinParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Parser\TokenList;
@@ -68,17 +67,17 @@ class QueryParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var JoinParser */
-    private $joinParser;
+    /** @var TableReferenceParser */
+    private $tableReferenceParser;
 
     public function __construct(
         ParserFactory $parserFactory,
         ExpressionParser $expressionParser,
-        JoinParser $joinParser
+        TableReferenceParser $tableReferenceParser
     ) {
         $this->parserFactory = $parserFactory;
         $this->expressionParser = $expressionParser;
-        $this->joinParser = $joinParser;
+        $this->tableReferenceParser = $tableReferenceParser;
     }
 
     /**
@@ -440,7 +439,7 @@ class QueryParser
 
         $from = null;
         if ($tokenList->hasKeyword(Keyword::FROM)) {
-            $from = $this->joinParser->parseTableReferences($tokenList);
+            $from = $this->tableReferenceParser->parseTableReferences($tokenList);
         }
 
         $where = null;

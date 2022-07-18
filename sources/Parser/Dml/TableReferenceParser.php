@@ -7,10 +7,13 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Parser;
+namespace SqlFtw\Parser\Dml;
 
 use Dogma\StrictBehaviorMixin;
-use SqlFtw\Parser\Dml\QueryParser;
+use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
+use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Dml\TableReference\EscapedTableReference;
 use SqlFtw\Sql\Dml\TableReference\IndexHint;
@@ -35,7 +38,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 use function count;
 
-class JoinParser
+class TableReferenceParser
 {
     use StrictBehaviorMixin;
 
