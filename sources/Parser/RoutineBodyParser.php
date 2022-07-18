@@ -47,7 +47,7 @@ use SqlFtw\Sql\Routine\Routine;
 use SqlFtw\Sql\Routine\WhileStatement;
 use SqlFtw\Sql\Statement;
 
-class RoutineParser
+class RoutineBodyParser
 {
     use StrictBehaviorMixin;
 
@@ -78,7 +78,7 @@ class RoutineParser
      *     [statement_list]
      *   END [end_label]
      */
-    public function parseRoutineBody(TokenList $tokenList, string $routine): Statement
+    public function parseBody(TokenList $tokenList, string $routine): Statement
     {
         if ($routine === Routine::FUNCTION && $tokenList->hasKeyword(Keyword::RETURN)) {
             return new ReturnStatement($this->expressionParser->parseExpression($tokenList));

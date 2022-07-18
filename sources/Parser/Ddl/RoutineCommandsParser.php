@@ -11,7 +11,7 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\RoutineParser;
+use SqlFtw\Parser\RoutineBodyParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Routine\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routine\AlterProcedureCommand;
@@ -34,13 +34,13 @@ class RoutineCommandsParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var RoutineParser */
-    private $compoundStatementParser;
+    /** @var RoutineBodyParser */
+    private $routineBodyParser;
 
-    public function __construct(ExpressionParser $expressionParser, RoutineParser $compoundStatementParser)
+    public function __construct(ExpressionParser $expressionParser, RoutineBodyParser $routineBodyParser)
     {
         $this->expressionParser = $expressionParser;
-        $this->compoundStatementParser = $compoundStatementParser;
+        $this->routineBodyParser = $routineBodyParser;
     }
 
     /**
@@ -179,7 +179,7 @@ class RoutineCommandsParser
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
-        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, Routine::FUNCTION);
+        $body = $this->routineBodyParser->parseBody($tokenList, Routine::FUNCTION);
 
         return new CreateFunctionCommand($name, $body, $params, $returnType, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language, $ifNotExists);
     }
@@ -234,7 +234,7 @@ class RoutineCommandsParser
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
-        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, Routine::PROCEDURE);
+        $body = $this->routineBodyParser->parseBody($tokenList, Routine::PROCEDURE);
 
         return new CreateProcedureCommand($name, $body, $params, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language, $ifNotExists);
     }

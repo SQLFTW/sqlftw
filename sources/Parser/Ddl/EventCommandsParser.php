@@ -12,7 +12,7 @@ namespace SqlFtw\Parser\Ddl;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
-use SqlFtw\Parser\RoutineParser;
+use SqlFtw\Parser\RoutineBodyParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
@@ -30,15 +30,15 @@ class EventCommandsParser
 {
     use StrictBehaviorMixin;
 
-    /** @var RoutineParser */
-    private $compoundStatementParser;
+    /** @var RoutineBodyParser */
+    private $routineBodyParser;
 
     /** @var ExpressionParser */
     private $expressionParser;
 
-    public function __construct(RoutineParser $compoundStatementParser, ExpressionParser $expressionParser)
+    public function __construct(RoutineBodyParser $routineBodyParser, ExpressionParser $expressionParser)
     {
-        $this->compoundStatementParser = $compoundStatementParser;
+        $this->routineBodyParser = $routineBodyParser;
         $this->expressionParser = $expressionParser;
     }
 
@@ -82,7 +82,7 @@ class EventCommandsParser
             $comment = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::DO)) {
-            $body = $this->compoundStatementParser->parseRoutineBody($tokenList, Routine::EVENT);
+            $body = $this->routineBodyParser->parseBody($tokenList, Routine::EVENT);
         }
 
         if ($schedule === null && $preserve === null && $newName === null && $state === null && $comment === null && $body === null) {
@@ -132,7 +132,7 @@ class EventCommandsParser
         }
 
         $tokenList->expectKeyword(Keyword::DO);
-        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, Routine::EVENT);
+        $body = $this->routineBodyParser->parseBody($tokenList, Routine::EVENT);
 
         $event = new EventDefinition($name, $schedule, $body, $definer, $state, $preserve, $comment);
 

@@ -75,8 +75,8 @@ class ParserFactory
     /** @var QueryParser */
     private $queryParser;
 
-    /** @var RoutineParser */
-    private $routineParser;
+    /** @var RoutineBodyParser */
+    private $routineBodyParser;
 
     public function __construct(ParserSettings $settings, Parser $parser)
     {
@@ -89,7 +89,7 @@ class ParserFactory
         $this->expressionParser = new ExpressionParser($queryParserProxy);
         $this->joinParser = new JoinParser($this->expressionParser, $queryParserProxy);
         $this->queryParser = new QueryParser($this, $this->expressionParser, $this->joinParser);
-        $this->routineParser = new RoutineParser($this->parser, $this->expressionParser, $this->queryParser);
+        $this->routineBodyParser = new RoutineBodyParser($this->parser, $this->expressionParser, $this->queryParser);
     }
 
     public function getParser(): Parser
@@ -161,7 +161,7 @@ class ParserFactory
 
     public function getEventCommandsParser(): EventCommandsParser
     {
-        return new EventCommandsParser($this->routineParser, $this->expressionParser);
+        return new EventCommandsParser($this->routineBodyParser, $this->expressionParser);
     }
 
     public function getExplainCommandParser(): ExplainCommandParser
@@ -256,7 +256,7 @@ class ParserFactory
 
     public function getRoutineCommandsParser(): RoutineCommandsParser
     {
-        return new RoutineCommandsParser($this->expressionParser, $this->routineParser);
+        return new RoutineCommandsParser($this->expressionParser, $this->routineBodyParser);
     }
 
     public function getServerCommandsParser(): ServerCommandsParser
@@ -306,7 +306,7 @@ class ParserFactory
 
     public function getTriggerCommandsParser(): TriggerCommandsParser
     {
-        return new TriggerCommandsParser($this->expressionParser, $this->routineParser);
+        return new TriggerCommandsParser($this->expressionParser, $this->routineBodyParser);
     }
 
     public function getUpdateCommandParser(): UpdateCommandParser

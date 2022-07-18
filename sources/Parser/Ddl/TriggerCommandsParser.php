@@ -11,7 +11,7 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
-use SqlFtw\Parser\RoutineParser;
+use SqlFtw\Parser\RoutineBodyParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Trigger\CreateTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
@@ -30,15 +30,12 @@ class TriggerCommandsParser
     /** @var ExpressionParser */
     private $expressionParser;
 
-    /** @var RoutineParser */
-    private $compoundStatementParser;
+    /** @var RoutineBodyParser */
+    private $routineBodyParser;
 
-    public function __construct(
-        ExpressionParser $expressionParser,
-        RoutineParser $compoundStatementParser
-    ) {
+    public function __construct(ExpressionParser $expressionParser, RoutineBodyParser $routineBodyParser) {
         $this->expressionParser = $expressionParser;
-        $this->compoundStatementParser = $compoundStatementParser;
+        $this->routineBodyParser = $routineBodyParser;
     }
 
     /**
@@ -84,7 +81,7 @@ class TriggerCommandsParser
             $triggerPosition = new TriggerPosition($order, $otherTrigger);
         }
 
-        $body = $this->compoundStatementParser->parseRoutineBody($tokenList, Routine::TRIGGER);
+        $body = $this->routineBodyParser->parseBody($tokenList, Routine::TRIGGER);
 
         return new CreateTriggerCommand($name, $event, $table, $body, $definer, $triggerPosition, $ifNotExists);
     }
