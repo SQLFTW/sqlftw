@@ -1533,8 +1533,8 @@ class TableCommandsParser
                 throw new ParserException('Wrong number of partitions.', $tokenList);
             }
             if ($subpartitionsNumber !== null) {
-                foreach ($partitions as $partition) {
-                    $subpartitions = $partition->getSubpartitions();
+                foreach ($partitions as $part) {
+                    $subpartitions = $part->getSubpartitions();
                     if ($subpartitions !== null && count($subpartitions) !== $subpartitionsNumber) {
                         throw new ParserException('Wrong number of subpartitions.', $tokenList);
                     }
@@ -1719,9 +1719,9 @@ class TableCommandsParser
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
-        } elseif (/*!$last && */$columns !== null && $condition->getType()->equalsAny(PartitioningConditionType::LIST)) {
+        } elseif ($columns !== null && $type === PartitioningConditionType::LIST) {
             throw new ParserException('Missing values definition.', $tokenList);
-        } elseif ($columns !== null && $condition->getType()->equalsAny(PartitioningConditionType::RANGE)) {
+        } elseif ($columns !== null && $type === PartitioningConditionType::RANGE) {
             throw new ParserException('Missing values definition.', $tokenList);
         }
 

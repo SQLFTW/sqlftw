@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Partition;
 use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\MaxValueLiteral;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
 use function implode;
@@ -26,7 +26,7 @@ class PartitionDefinition implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var non-empty-array<Literal>|RootNode|null */
+    /** @var non-empty-array<RootNode>|MaxValueLiteral|null */
     private $lessThan;
 
     /** @var non-empty-array<RootNode>|null */
@@ -39,7 +39,7 @@ class PartitionDefinition implements SqlSerializable
     private $subpartitions;
 
     /**
-     * @param non-empty-array<Literal>|RootNode|null $lessThan
+     * @param non-empty-array<RootNode>|MaxValueLiteral|null $lessThan
      * @param non-empty-array<RootNode>|null $values
      * @param non-empty-array<string, int|string>|null $options
      * @param non-empty-array<string, non-empty-array<int|string>|null>|null $subpartitions
@@ -74,7 +74,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<Literal>|RootNode|null
+     * @return non-empty-array<RootNode>|MaxValueLiteral|null
      */
     public function getLessThan()
     {
@@ -114,7 +114,7 @@ class PartitionDefinition implements SqlSerializable
             if (is_array($this->lessThan)) {
                 $result .= '(' . $formatter->formatValuesList($this->lessThan) . ')';
             } else {
-                $result .= '(' . $this->lessThan->serialize($formatter) . ')';
+                $result .= $this->lessThan->serialize($formatter);
             }
         } elseif ($this->values !== null) {
             $result .= ' VALUES IN (' . $formatter->formatSerializablesList($this->values) . ')';
