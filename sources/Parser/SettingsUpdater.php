@@ -32,6 +32,9 @@ use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
 use function trim;
 
+/**
+ * Analyzes commands which may affect parser behavior and updates global parser state
+ */
 class SettingsUpdater
 {
     use StrictBehaviorMixin;

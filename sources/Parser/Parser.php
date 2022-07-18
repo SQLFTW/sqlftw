@@ -20,6 +20,9 @@ use SqlFtw\Sql\Statement;
 use Throwable;
 use function strtoupper;
 
+/**
+ * SQL parser - takes an SQL string and generates `Command` objects
+ */
 class Parser
 {
     use StrictBehaviorMixin;

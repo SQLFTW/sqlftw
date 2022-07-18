@@ -14,6 +14,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Statement;
 
+/**
+ * Returned when parsing empty string
+ */
 class EmptyCommand extends Statement implements Command
 {
     use StrictBehaviorMixin;

@@ -51,7 +51,9 @@ use function substr;
 use function ucfirst;
 
 /**
- * Holds list of lexer tokens and a pointer to current token
+ * List of lexer tokens and a local parser state (parser state, that does not persist between statements)
+ *
+ * Contained tokens represent either one or more SQL statements
  *
  * Method names explanation:
  * - seekFoo() - seeks token forward without consuming it

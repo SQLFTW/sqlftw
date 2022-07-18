@@ -11,6 +11,9 @@ namespace SqlFtw\Parser;
 
 use Dogma\StrictBehaviorMixin;
 
+/**
+ * Represents atomic part of SQL syntax
+ */
 final class Token
 {
     use StrictBehaviorMixin;

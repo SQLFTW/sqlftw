@@ -15,6 +15,9 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\SqlMode;
 
+/**
+ * Initial settings and global parser state (information, that persists between statements and affects parsing)
+ */
 class ParserSettings
 {
     use StrictBehaviorMixin;

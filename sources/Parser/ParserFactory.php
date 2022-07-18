@@ -57,6 +57,9 @@ use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
 
+/**
+ * Factory for all specialized parsers
+ */
 class ParserFactory
 {
     use StrictBehaviorMixin;

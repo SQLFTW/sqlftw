@@ -38,8 +38,7 @@ use function substr;
 use function trim;
 
 /**
- * todo:
- * - quoted delimiters
+ * SQL lexer - breaks input string into `Token` objects, resolves delimiters and returns `TokenList` objects
  */
 class Lexer
 {

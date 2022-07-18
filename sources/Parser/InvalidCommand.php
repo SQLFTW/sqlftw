@@ -15,6 +15,9 @@ use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Statement;
 use Throwable;
 
+/**
+ * Returned when encountered a syntax error
+ */
 class InvalidCommand extends Statement implements Command
 {
     use StrictBehaviorMixin;
