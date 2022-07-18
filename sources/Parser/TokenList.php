@@ -1315,7 +1315,7 @@ class TokenList
         // todo: encoding
         if (mb_strlen($name) > $this->maxLengths[Entity::USER]) {
             throw new ParserException('Too long user name.', $this);
-        } elseif ($forRole & ($token->type & T::UNQUOTED_NAME) !== 0 && in_array(strtoupper($name), $notAllowed, true)) {
+        } elseif ($forRole && ($token->type & T::UNQUOTED_NAME) !== 0 && in_array(strtoupper($name), $notAllowed, true)) {
             throw new ParserException('User name not allowed.', $this);
         }
         $host = null;
