@@ -411,8 +411,6 @@ class QueryParser
         do {
             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                 $expression = new Asterisk();
-            } elseif ($tokenList->inPrepared() && $tokenList->has(TokenType::PLACEHOLDER)) {
-                $expression = new Placeholder();
             } else {
                 $expression = $this->expressionParser->parseAssignExpression($tokenList);
             }
