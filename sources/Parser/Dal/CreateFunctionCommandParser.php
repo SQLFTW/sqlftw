@@ -11,7 +11,7 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Dal\Routines\CreateFunctionSonameCommand;
+use SqlFtw\Sql\Dal\Routine\CreateFunctionSonameCommand;
 use SqlFtw\Sql\Ddl\Routines\UdfReturnDataType;
 use SqlFtw\Sql\Keyword;
 
