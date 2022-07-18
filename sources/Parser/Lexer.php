@@ -23,6 +23,7 @@ use function array_flip;
 use function array_keys;
 use function array_merge;
 use function array_values;
+use function ctype_alnum;
 use function ctype_digit;
 use function implode;
 use function ltrim;
@@ -317,6 +318,18 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
                     break;
                 case '?':
+                    if ($position < $length && ctype_alnum($string[$position])) {
+                        $exception = new LexerException("Invalid character after placeholder $string[$position].", $position, $string);
+
+                        yield new Token(T::SYMBOL | T::PLACEHOLDER | T::INVALID, $start, $row, '?', null, $exception);
+                        break;
+                    } elseif ($position > 1 && ctype_alnum($string[$position - 2])) {
+                        $exception = new LexerException("Invalid character before placeholder {$string[$position - 2]}.", $position, $string);
+
+                        yield new Token(T::SYMBOL | T::PLACEHOLDER | T::INVALID, $start, $row, '?', null, $exception);
+                        break;
+                    }
+
                     yield $previous = new Token(T::SYMBOL | T::PLACEHOLDER, $start, $row, $char, null);
                     break;
                 case '@':
