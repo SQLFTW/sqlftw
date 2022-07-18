@@ -7,9 +7,9 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Routines;
+namespace SqlFtw\Sql\Ddl\Routine;
 
-interface StoredFunctionCommand extends StoredRoutineCommand
+interface StoredProcedureCommand extends StoredRoutineCommand
 {
 
 }

@@ -7,16 +7,19 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Routines;
+namespace SqlFtw\Sql\Ddl\Routine;
 
+use Dogma\Arr;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
+use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
+use function implode;
 
-class CreateProcedureCommand extends Statement implements StoredProcedureCommand, CreateRoutineCommand
+class CreateFunctionCommand extends Statement implements StoredFunctionCommand, CreateRoutineCommand
 {
     use StrictBehaviorMixin;
 
@@ -26,8 +29,11 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
     /** @var Statement */
     private $body;
 
-    /** @var ProcedureParam[] */
+    /** @var ColumnType[] ($name => $type) */
     private $params;
+
+    /** @var ColumnType */
+    private $returnType;
 
     /** @var UserExpression|null */
     private $definer;
@@ -51,12 +57,13 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
     private $ifNotExists;
 
     /**
-     * @param ProcedureParam[] $params
+     * @param ColumnType[] $params
      */
     public function __construct(
         QualifiedName $name,
         Statement $body,
         array $params,
+        ColumnType $returnType,
         ?UserExpression $definer = null,
         ?bool $deterministic = null,
         ?SqlSecurity $security = null,
@@ -68,6 +75,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
         $this->name = $name;
         $this->body = $body;
         $this->params = $params;
+        $this->returnType = $returnType;
         $this->definer = $definer;
         $this->deterministic = $deterministic;
         $this->security = $security;
@@ -88,11 +96,16 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
     }
 
     /**
-     * @return ProcedureParam[]
+     * @return ColumnType[] ($name => $type)
      */
     public function getParams(): array
     {
         return $this->params;
+    }
+
+    public function getReturnType(): ColumnType
+    {
+        return $this->returnType;
     }
 
     public function getDefiner(): ?UserExpression
@@ -136,17 +149,16 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
         if ($this->definer !== null) {
             $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
-        $result .= ' PROCEDURE ';
+        $result .= ' FUNCTION ';
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
         $result .= $this->name->serialize($formatter);
 
-        $result .= '(';
-        if ($this->params !== []) {
-             $result .= $formatter->formatSerializablesList($this->params);
-        }
-        $result .= ')';
+        $result .= '(' . implode(', ', Arr::mapPairs($this->params, static function (string $name, ColumnType $type) use ($formatter) {
+            return $formatter->formatName($name) . ' ' . $type->serialize($formatter);
+        })) . ')';
+        $result .= ' RETURNS ' . $this->returnType->serialize($formatter);
 
         if ($this->comment !== null) {
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);
