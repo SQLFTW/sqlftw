@@ -14,6 +14,7 @@ use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
 class ParenthesizedQueryExpression extends Statement implements Query
@@ -28,10 +29,10 @@ class ParenthesizedQueryExpression extends Statement implements Query
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|SimpleName|null */
+    /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
-    /** @var int|SimpleName|null */
+    /** @var int|SimpleName|Placeholder|null */
     private $offset;
 
     /** @var SelectInto|null */
@@ -84,7 +85,7 @@ class ParenthesizedQueryExpression extends Statement implements Query
     }
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getLimit()
     {
@@ -103,7 +104,7 @@ class ParenthesizedQueryExpression extends Statement implements Query
     }
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getOffset()
     {
@@ -149,9 +150,9 @@ class ParenthesizedQueryExpression extends Statement implements Query
             $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\nLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= " OFFSET " . ($this->offset instanceof SimpleName ? $this->offset->serialize($formatter) : $this->offset);
+                $result .= " OFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
         if ($this->into !== null) {

@@ -14,6 +14,7 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
 class TableCommand extends Statement implements SimpleQuery
@@ -25,10 +26,10 @@ class TableCommand extends Statement implements SimpleQuery
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|SimpleName|null */
+    /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
-    /** @var int|SimpleName|null */
+    /** @var int|SimpleName|Placeholder|null */
     private $offset;
 
     /** @var SelectInto|null */
@@ -76,7 +77,7 @@ class TableCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getLimit()
     {
@@ -92,7 +93,7 @@ class TableCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getOffset()
     {
@@ -121,9 +122,9 @@ class TableCommand extends Statement implements SimpleQuery
         }
 
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\nLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= "\nOFFSET " . ($this->offset instanceof SimpleName ? $this->offset->serialize($formatter) : $this->offset);
+                $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
 

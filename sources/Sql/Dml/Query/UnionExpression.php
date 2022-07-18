@@ -15,6 +15,7 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use function array_values;
 use function count;
@@ -32,7 +33,7 @@ class UnionExpression extends Statement implements Query
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|SimpleName|null */
+    /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
     /** @var SelectInto|null */
@@ -104,7 +105,7 @@ class UnionExpression extends Statement implements Query
     }
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getLimit()
     {
@@ -155,7 +156,7 @@ class UnionExpression extends Statement implements Query
             $result .= "\n\tORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\n\tLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\n\tLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
         }
         if ($this->into !== null) {
             $result .= "\n\t" . $formatter->indent($this->into->serialize($formatter));

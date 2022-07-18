@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 
 /**
@@ -30,7 +31,7 @@ interface Query extends DmlCommand
     public function removeOrderBy(): self;
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getLimit();
 

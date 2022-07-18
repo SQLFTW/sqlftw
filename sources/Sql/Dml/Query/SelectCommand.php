@@ -18,6 +18,7 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
 class SelectCommand extends Statement implements SimpleQuery
@@ -48,10 +49,10 @@ class SelectCommand extends Statement implements SimpleQuery
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|SimpleName|null */
+    /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
-    /** @var int|SimpleName|null */
+    /** @var int|SimpleName|Placeholder|null */
     private $offset;
 
     /** @var SelectDistinctOption|null */
@@ -186,7 +187,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getLimit()
     {
@@ -202,7 +203,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getOffset()
     {
@@ -300,9 +301,9 @@ class SelectCommand extends Statement implements SimpleQuery
             $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\nLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= "\nOFFSET " . ($this->offset instanceof SimpleName ? $this->offset->serialize($formatter) : $this->offset);
+                $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
         if ($this->into !== null) {

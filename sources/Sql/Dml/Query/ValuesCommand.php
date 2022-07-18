@@ -13,6 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use function array_values;
 
@@ -25,7 +26,7 @@ class ValuesCommand extends Statement implements SimpleQuery
     /** @var non-empty-array<OrderByExpression>|null */
     private $orderBy;
 
-    /** @var int|SimpleName|null */
+    /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
     /** @var SelectInto|null */
@@ -74,7 +75,7 @@ class ValuesCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return int|SimpleName|null
+     * @return int|SimpleName|Placeholder|null
      */
     public function getLimit()
     {
@@ -117,7 +118,7 @@ class ValuesCommand extends Statement implements SimpleQuery
         }
 
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . ($this->limit instanceof SimpleName ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\nLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
         }
 
         if ($this->into !== null) {
