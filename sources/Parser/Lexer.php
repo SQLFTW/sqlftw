@@ -570,7 +570,7 @@ class Lexer
                 case '-':
                     $second = $position < $length ? $string[$position] : '';
                     $numberCanFollow = ($previous->type & T::END) !== 0
-                        || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
+                        || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && strtoupper($previous->value) === Keyword::DEFAULT);
                     if ($numberCanFollow) {
                         $token = $this->parseNumber($string, $position, $column, $row, '-');
@@ -630,7 +630,7 @@ class Lexer
                 case '+':
                     $next = $position < $length ? $string[$position] : '';
                     $numberCanFollow = ($previous->type & T::END) !== 0
-                        || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')')
+                        || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($numberCanFollow && isset(self::$numbersKey[$next])) {
                         $token = $this->parseNumber($string, $position, $column, $row, '+');
