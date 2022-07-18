@@ -26,6 +26,7 @@
     "prefer-stable": true,
     "scripts": {
         "da": "composer dump-autoload",
+        "ag": "@generate:doc",
         "c": "@check:all",
         "cf": "@check:fast",
         "t": "@tests:run",
@@ -43,6 +44,9 @@
             "php -r \"@mkdir('temp/cache', 0777, true);\"",
             "rm -rf temp/cache/*"
         ],
+
+        "generate:doc": "php81 ../../tools/apigen/bin/apigen sources --output doc/api",
+
         "check:fast": [
             "@tests:run",
             "@phpstan:run",
