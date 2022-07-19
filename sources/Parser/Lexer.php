@@ -22,6 +22,7 @@ use SqlFtw\Sql\SqlMode;
 use function array_flip;
 use function array_keys;
 use function array_merge;
+use function array_pop;
 use function array_values;
 use function ctype_alnum;
 use function ctype_digit;
@@ -95,6 +96,9 @@ class Lexer
     /** @var bool */
     private $withWhitespace;
 
+    /** @var string|null */
+    private $condition;
+
     /** @var array<string, int> */
     private $reservedKey;
 
@@ -162,11 +166,29 @@ class Lexer
             $buffer[] = $token;
 
             if (($token->type & TokenType::DELIMITER) !== 0) {
+                if ($this->condition !== null) {
+                    $last = array_pop($buffer);
+                    $this->condition = null;
+                    $exception = new LexerException("End of optional comment not found.", $token->position, '');
+                    $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
+                    $buffer[] = $last;
+                    $invalid = true;
+                }
+
                 yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
 
                 $invalid = false;
                 $buffer = [];
             } elseif (($token->type & TokenType::DELIMITER_DEFINITION) !== 0) {
+                if ($this->condition !== null) {
+                    $last = array_pop($buffer);
+                    $this->condition = null;
+                    $exception = new LexerException("End of optional comment not found.", $token->position, '');
+                    $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
+                    $buffer[] = $last;
+                    $invalid = true;
+                }
+
                 yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
 
                 $invalid = false;
@@ -174,6 +196,13 @@ class Lexer
             }
         }
         if ($buffer !== []) {
+            if ($this->condition !== null) {
+                $this->condition = null;
+                $exception = new LexerException("End of optional comment not found.", $token->position, '');
+                $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
+                $invalid = true;
+            }
+
             yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
         }
     }
@@ -190,7 +219,7 @@ class Lexer
         $previous = new Token(TokenType::END, 0, 0, '');
         $delimiter = $this->settings->getDelimiter();
         $commentDepth = 0;
-        $condition = null;
+        $this->condition = null;
 
         $length = strlen($string);
         $position = 0;
@@ -275,8 +304,8 @@ class Lexer
                     break;
                 case '*':
                     // /*!12345 ... */
-                    if ($position < $length && $condition !== null && $string[$position] === '/') {
-                        $condition = null;
+                    if ($position < $length && $this->condition !== null && $string[$position] === '/') {
+                        $this->condition = null;
                         $position++;
                         $column++;
                         break;
@@ -472,7 +501,7 @@ class Lexer
                             if ($validOptional) {
                                 $versionId = strtoupper(str_replace('!', '', $m[0]));
                                 if ($this->platform->interpretOptionalComment($versionId)) {
-                                    $condition = $versionId;
+                                    $this->condition = $versionId;
                                     $position += strlen($versionId) + 1;
                                     $column += strlen($versionId) + 1;
                                     // continue parsing as conditional code
@@ -520,6 +549,7 @@ class Lexer
                             yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::INVALID, $start, $row, $value, null, $exception);
                             break;
                         } elseif (!$validOptional) {
+                            $this->condition = null;
                             $exception = new LexerException('Invalid optional comment: ' . $value, $position, $string);
 
                             yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT | T::INVALID, $start, $row, $value, null, $exception);
