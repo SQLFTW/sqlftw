@@ -497,6 +497,12 @@ class Lexer
                         // todo: Maria
                         $validOptional = true;
                         if ($optional) {
+                            if (strlen($string) > $position + 1 && $string[$position + 1] === '*' && $string[$position + 2] === '/') {
+                                // /*!*/
+                                $position += 3;
+                                $column += 3;
+                                break;
+                            }
                             $validOptional = preg_match('~^[Mm]?!(?:00000|[1-9]\d{4,5})?(?:\n| |\\*/)~', substr($string, $position, 10), $m) === 1;
                             if ($validOptional) {
                                 $versionId = strtoupper(str_replace('!', '', $m[0]));
