@@ -20,6 +20,8 @@ use SqlFtw\Sql\Dml\Prepared\ExecuteCommand;
 use SqlFtw\Sql\Dml\Prepared\PrepareCommand;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
+use function get_class;
+use function in_array;
 
 class PreparedCommandsParser
 {
@@ -83,9 +85,13 @@ class PreparedCommandsParser
             if (count($statements) > 1) {
                 throw new ParserException('Multiple statements in PREPARE.', $tokenList);
             }
-            [$statement, $tokens, ] = $statements[0];
+            [$statement, ] = $statements[0];
             if ($statement instanceof InvalidCommand) {
                 throw new ParserException('Invalid statement in PREPARE.', $tokenList, $statement->getException());
+            }
+            $class = get_class($statement);
+            if (!in_array($class, $tokenList->getSettings()->getPlatform()->getPreparableCommands(), true)) {
+                throw new ParserException('Non-preparable statement in PREPARE: ' . $class, $tokenList);
             }
         }
 

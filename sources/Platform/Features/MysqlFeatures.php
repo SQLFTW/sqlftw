@@ -9,6 +9,100 @@
 
 namespace SqlFtw\Platform\Features;
 
+use SqlFtw\Sql\Dal\Cache\CacheIndexCommand;
+use SqlFtw\Sql\Dal\Cache\LoadIndexIntoCacheCommand;
+use SqlFtw\Sql\Dal\Flush\FlushCommand;
+use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
+use SqlFtw\Sql\Dal\Kill\KillCommand;
+use SqlFtw\Sql\Dal\Plugin\InstallPluginCommand;
+use SqlFtw\Sql\Dal\Plugin\UninstallPluginCommand;
+use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
+use SqlFtw\Sql\Dal\Replication\ResetMasterCommand;
+use SqlFtw\Sql\Dal\Replication\ResetReplicaCommand;
+use SqlFtw\Sql\Dal\Replication\ResetSlaveCommand;
+use SqlFtw\Sql\Dal\Replication\StartReplicaCommand;
+use SqlFtw\Sql\Dal\Replication\StartSlaveCommand;
+use SqlFtw\Sql\Dal\Replication\StopReplicaCommand;
+use SqlFtw\Sql\Dal\Replication\StopSlaveCommand;
+use SqlFtw\Sql\Dal\Set\SetNamesCommand;
+use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
+use SqlFtw\Sql\Dal\Show\ShowBinaryLogsCommand;
+use SqlFtw\Sql\Dal\Show\ShowBinlogEventsCommand;
+use SqlFtw\Sql\Dal\Show\ShowCharacterSetCommand;
+use SqlFtw\Sql\Dal\Show\ShowCollationCommand;
+use SqlFtw\Sql\Dal\Show\ShowColumnsCommand;
+use SqlFtw\Sql\Dal\Show\ShowCreateEventCommand;
+use SqlFtw\Sql\Dal\Show\ShowCreateFunctionCommand;
+use SqlFtw\Sql\Dal\Show\ShowCreateProcedureCommand;
+use SqlFtw\Sql\Dal\Show\ShowCreateTableCommand;
+use SqlFtw\Sql\Dal\Show\ShowCreateTriggerCommand;
+use SqlFtw\Sql\Dal\Show\ShowCreateViewCommand;
+use SqlFtw\Sql\Dal\Show\ShowEngineCommand;
+use SqlFtw\Sql\Dal\Show\ShowEnginesCommand;
+use SqlFtw\Sql\Dal\Show\ShowEventsCommand;
+use SqlFtw\Sql\Dal\Show\ShowFunctionStatusCommand;
+use SqlFtw\Sql\Dal\Show\ShowGrantsCommand;
+use SqlFtw\Sql\Dal\Show\ShowIndexesCommand;
+use SqlFtw\Sql\Dal\Show\ShowMasterStatusCommand;
+use SqlFtw\Sql\Dal\Show\ShowOpenTablesCommand;
+use SqlFtw\Sql\Dal\Show\ShowProcedureStatusCommand;
+use SqlFtw\Sql\Dal\Show\ShowProfileCommand;
+use SqlFtw\Sql\Dal\Show\ShowReplicaStatusCommand;
+use SqlFtw\Sql\Dal\Show\ShowSchemasCommand;
+use SqlFtw\Sql\Dal\Show\ShowSlaveStatusCommand;
+use SqlFtw\Sql\Dal\Show\ShowStatusCommand;
+use SqlFtw\Sql\Dal\Show\ShowTablesCommand;
+use SqlFtw\Sql\Dal\Show\ShowTableStatusCommand;
+use SqlFtw\Sql\Dal\Show\ShowTriggersCommand;
+use SqlFtw\Sql\Dal\Show\ShowVariablesCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTableDropHistogramCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTablesCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTableUpdateHistogramCommand;
+use SqlFtw\Sql\Dal\Table\ChecksumTableCommand;
+use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
+use SqlFtw\Sql\Dal\Table\RepairTableCommand;
+use SqlFtw\Sql\Dal\User\AlterUserCommand;
+use SqlFtw\Sql\Dal\User\CreateUserCommand;
+use SqlFtw\Sql\Dal\User\DropUserCommand;
+use SqlFtw\Sql\Dal\User\GrantCommand;
+use SqlFtw\Sql\Dal\User\RenameUserCommand;
+use SqlFtw\Sql\Dal\User\RevokeAllCommand;
+use SqlFtw\Sql\Dal\User\RevokeCommand;
+use SqlFtw\Sql\Dal\User\RevokeProxyCommand;
+use SqlFtw\Sql\Dal\User\RevokeRoleCommand;
+use SqlFtw\Sql\Dal\User\SetPasswordCommand;
+use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
+use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
+use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
+use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
+use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
+use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
+use SqlFtw\Sql\Ddl\Table\CreateTableLikeCommand;
+use SqlFtw\Sql\Ddl\Table\DropTableCommand;
+use SqlFtw\Sql\Ddl\Table\RenameTableCommand;
+use SqlFtw\Sql\Ddl\Table\TruncateTableCommand;
+use SqlFtw\Sql\Ddl\View\CreateViewCommand;
+use SqlFtw\Sql\Ddl\View\DropViewCommand;
+use SqlFtw\Sql\Dml\Call\CallCommand;
+use SqlFtw\Sql\Dml\Delete\DeleteCommand;
+use SqlFtw\Sql\Dml\DoCommand\DoCommand;
+use SqlFtw\Sql\Dml\Insert\InsertCommand;
+use SqlFtw\Sql\Dml\Insert\InsertSelectCommand;
+use SqlFtw\Sql\Dml\Insert\InsertSetCommand;
+use SqlFtw\Sql\Dml\Insert\InsertValuesCommand;
+use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
+use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
+use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
+use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
+use SqlFtw\Sql\Dml\Query\SelectCommand;
+use SqlFtw\Sql\Dml\Query\TableCommand;
+use SqlFtw\Sql\Dml\Query\UnionExpression;
+use SqlFtw\Sql\Dml\Query\ValuesCommand;
+use SqlFtw\Sql\Dml\Transaction\CommitCommand;
+use SqlFtw\Sql\Dml\Transaction\RollbackCommand;
+use SqlFtw\Sql\Dml\Update\UpdateCommand;
+use SqlFtw\Sql\Dml\Utility\DescribeTableCommand;
+use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\Operator;
@@ -1522,6 +1616,105 @@ class MysqlFeatures extends FeaturesList
     /** @var array<array{string, int, int}> */
     public $variables = [
         // todo: variables
+    ];
+
+    /** @var array<array<{class-string, int, int}> */
+    public $preparableCommands = [
+        // https://dev.mysql.com/doc/refman/8.0/en/sql-prepared-statements.html (terribly incomplete)
+        [AlterTableCommand::class, self::MIN, self::MAX],
+        [AlterUserCommand::class, self::MIN, self::MAX],
+        [AnalyzeTablesCommand::class, self::MIN, self::MAX],
+        [AnalyzeTableDropHistogramCommand::class, self::MIN, self::MAX],
+        [AnalyzeTableUpdateHistogramCommand::class, self::MIN, self::MAX],
+        [CacheIndexCommand::class, self::MIN, self::MAX],
+        [CallCommand::class, self::MIN, self::MAX],
+        [ChangeMasterToCommand::class, self::MIN, self::MAX],
+        [ChecksumTableCommand::class, self::MIN, self::MAX],
+        [CommitCommand::class, self::MIN, self::MAX],
+        [CreateIndexCommand::class, self::MIN, self::MAX],
+        [CreateSchemaCommand::class, self::MIN, self::MAX],
+        [CreateTableCommand::class, self::MIN, self::MAX],
+        [CreateTableLikeCommand::class, self::MIN, self::MAX],
+        [CreateUserCommand::class, self::MIN, self::MAX],
+        [CreateViewCommand::class, self::MIN, self::MAX],
+        [DeleteCommand::class, self::MIN, self::MAX],
+        [DescribeTableCommand::class, self::MIN, self::MAX],
+        [DoCommand::class, self::MIN, self::MAX],
+        [DropIndexCommand::class, self::MIN, self::MAX],
+        [DropSchemaCommand::class, self::MIN, self::MAX],
+        [DropTableCommand::class, self::MIN, self::MAX],
+        [DropUserCommand::class, self::MIN, self::MAX],
+        [DropViewCommand::class, self::MIN, self::MAX],
+        [ExplainStatementCommand::class, self::MIN, self::MAX],
+        [FlushCommand::class, self::MIN, self::MAX],
+        [FlushTablesCommand::class, self::MIN, self::MAX],
+        [GrantCommand::class, self::MIN, self::MAX],
+        [InsertCommand::class, self::MIN, self::MAX],
+        [InsertSelectCommand::class, self::MIN, self::MAX],
+        [InsertSetCommand::class, self::MIN, self::MAX],
+        [InsertValuesCommand::class, self::MIN, self::MAX],
+        [InstallPluginCommand::class, self::MIN, self::MAX],
+        [KillCommand::class, self::MIN, self::MAX],
+        [LoadIndexIntoCacheCommand::class, self::MIN, self::MAX],
+        [OptimizeTableCommand::class, self::MIN, self::MAX],
+        [ParenthesizedQueryExpression::class, self::MIN, self::MAX],
+        [RenameTableCommand::class, self::MIN, self::MAX],
+        [RenameUserCommand::class, self::MIN, self::MAX],
+        [RepairTableCommand::class, self::MIN, self::MAX],
+        [ReplaceCommand::class, self::MIN, self::MAX],
+        [ReplaceSelectCommand::class, self::MIN, self::MAX],
+        [ReplaceSetCommand::class, self::MIN, self::MAX],
+        [ResetMasterCommand::class, self::MIN, self::MAX],
+        [ResetReplicaCommand::class, self::MIN, self::MAX],
+        [ResetSlaveCommand::class, self::MIN, self::MAX],
+        [RevokeAllCommand::class, self::MIN, self::MAX],
+        [RevokeCommand::class, self::MIN, self::MAX],
+        [RevokeProxyCommand::class, self::MIN, self::MAX],
+        [RevokeRoleCommand::class, self::MIN, self::MAX],
+        [RollbackCommand::class, self::MIN, self::MAX],
+        [SelectCommand::class, self::MIN, self::MAX],
+        [SetVariablesCommand::class, self::MIN, self::MAX],
+        [SetNamesCommand::class, self::MIN, self::MAX],
+        [SetPasswordCommand::class, self::MIN, self::MAX],
+        [ShowBinaryLogsCommand::class, self::MIN, self::MAX],
+        [ShowBinlogEventsCommand::class, self::MIN, self::MAX],
+        [ShowCharacterSetCommand::class, self::MIN, self::MAX],
+        [ShowCollationCommand::class, self::MIN, self::MAX],
+        [ShowColumnsCommand::class, self::MIN, self::MAX],
+        [ShowCreateEventCommand::class, self::MIN, self::MAX],
+        [ShowCreateFunctionCommand::class, self::MIN, self::MAX],
+        [ShowCreateProcedureCommand::class, self::MIN, self::MAX],
+        [ShowCreateTableCommand::class, self::MIN, self::MAX],
+        [ShowCreateTriggerCommand::class, self::MIN, self::MAX],
+        [ShowCreateViewCommand::class, self::MIN, self::MAX],
+        [ShowEngineCommand::class, self::MIN, self::MAX],
+        [ShowEnginesCommand::class, self::MIN, self::MAX],
+        [ShowEventsCommand::class, self::MIN, self::MAX],
+        [ShowFunctionStatusCommand::class, self::MIN, self::MAX],
+        [ShowGrantsCommand::class, self::MIN, self::MAX],
+        [ShowIndexesCommand::class, self::MIN, self::MAX],
+        [ShowMasterStatusCommand::class, self::MIN, self::MAX],
+        [ShowOpenTablesCommand::class, self::MIN, self::MAX],
+        [ShowProcedureStatusCommand::class, self::MIN, self::MAX],
+        [ShowProfileCommand::class, self::MIN, self::MAX],
+        [ShowReplicaStatusCommand::class, self::MIN, self::MAX],
+        [ShowSchemasCommand::class, self::MIN, self::MAX],
+        [ShowSlaveStatusCommand::class, self::MIN, self::MAX],
+        [ShowStatusCommand::class, self::MIN, self::MAX],
+        [ShowTablesCommand::class, self::MIN, self::MAX],
+        [ShowTableStatusCommand::class, self::MIN, self::MAX],
+        [ShowTriggersCommand::class, self::MIN, self::MAX],
+        [ShowVariablesCommand::class, self::MIN, self::MAX],
+        [StartReplicaCommand::class, self::MIN, self::MAX],
+        [StartSlaveCommand::class, self::MIN, self::MAX],
+        [StopReplicaCommand::class, self::MIN, self::MAX],
+        [StopSlaveCommand::class, self::MIN, self::MAX],
+        [TableCommand::class, self::MIN, self::MAX],
+        [TruncateTableCommand::class, self::MIN, self::MAX],
+        [UnionExpression::class, self::MIN, self::MAX],
+        [UninstallPluginCommand::class, self::MIN, self::MAX],
+        [UpdateCommand::class, self::MIN, self::MAX],
+        [ValuesCommand::class, self::MIN, self::MAX],
     ];
 
 }

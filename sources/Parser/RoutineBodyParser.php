@@ -14,13 +14,24 @@ namespace SqlFtw\Parser;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Dal\Flush\FlushCommand;
+use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
+use SqlFtw\Sql\Dal\Replication\ResetMasterCommand;
+use SqlFtw\Sql\Dal\Replication\ResetSlaveCommand;
+use SqlFtw\Sql\Dal\Show\ShowErrorsCommand;
+use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
+use SqlFtw\Sql\Ddl\Event\EventCommand;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
+use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;
+use SqlFtw\Sql\Dml\Error\ResignalCommand;
+use SqlFtw\Sql\Dml\Error\SignalCommand;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\Dml\Prepared\PreparedStatementCommand;
 use SqlFtw\Sql\Dml\Transaction\LockTablesCommand;
+use SqlFtw\Sql\Dml\Transaction\TransactionCommand;
 use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Entity;
@@ -46,6 +57,8 @@ use SqlFtw\Sql\Routine\ReturnStatement;
 use SqlFtw\Sql\Routine\Routine;
 use SqlFtw\Sql\Routine\WhileStatement;
 use SqlFtw\Sql\Statement;
+use function get_class;
+use function in_array;
 
 class RoutineBodyParser
 {
@@ -230,6 +243,21 @@ class RoutineBodyParser
             throw new ParserException('Cannot use LOAD DATA or LOAD XML inside a routine.', $tokenList);
         } elseif ($in !== Routine::PROCEDURE && $statement instanceof PreparedStatementCommand) {
             throw new ParserException('Cannot use prepared statements inside a function, trigger or event.', $tokenList);
+        } elseif ($in !== Routine::PROCEDURE && ($statement instanceof ResetMasterCommand || $statement instanceof ResetSlaveCommand)) {
+            throw new ParserException('Cannot use RESET MASTER/SLAVE inside a function, trigger or event.', $tokenList);
+        } elseif ($in !== Routine::PROCEDURE && ($statement instanceof FlushCommand || $statement instanceof FlushTablesCommand)) {
+            throw new ParserException('Cannot use FLUSH inside a function, trigger or event.', $tokenList);
+        } elseif ($statement instanceof SignalCommand || $statement instanceof ResignalCommand
+            || $statement instanceof GetDiagnosticsCommand || $statement instanceof ShowWarningsCommand
+            || $statement instanceof ShowErrorsCommand || $statement instanceof PreparedStatementCommand
+            || $statement instanceof TransactionCommand || $statement instanceof EventCommand
+        ) {
+            // ok
+        } else {
+            $class = get_class($statement);
+            if (!in_array($class, $tokenList->getSettings()->getPlatform()->getPreparableCommands(), true)) {
+                throw new ParserException('Non-preparable statement in routine body: ' . $class, $tokenList);
+            }
         }
 
         return $statement;

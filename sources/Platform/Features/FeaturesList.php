@@ -39,4 +39,7 @@ abstract class FeaturesList
     /** @var array<array{string, int, int}> */
     public $variables = [];
 
+    /** @var array<array<{class-string, int, int}> */
+    public $preparableCommands = [];
+
 }

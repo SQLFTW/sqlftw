@@ -110,6 +110,9 @@ class Platform
     /** @var string[] */
     private $variables;
 
+    /** @var class-string[] */
+    private $preparableCommands;
+
     final private function __construct(string $name, Version $version)
     {
         $this->name = $name;
@@ -345,6 +348,18 @@ class Platform
         }
 
         return $this->variables;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPreparableCommands(): array
+    {
+        if ($this->preparableCommands === null) {
+            $this->preparableCommands = $this->filterForVersion($this->featuresList->preparableCommands, $this->version->getId());
+        }
+
+        return $this->preparableCommands;
     }
 
     /**
