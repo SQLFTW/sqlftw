@@ -332,6 +332,19 @@ class TokenList
         return new self($tokens, $this->settings, $this->autoSkip);
     }
 
+    public function filter(callable $filter): self
+    {
+        /** @var non-empty-array<Token> $tokens */
+        $tokens = [];
+        foreach ($this->tokens as $token) {
+            if (!$filter($token)) {
+                $tokens[] = $token;
+            }
+        }
+
+        return new self($tokens, $this->settings, $this->autoSkip);
+    }
+
     public function getLast(): Token
     {
         $position = $this->position;
