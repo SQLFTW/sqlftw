@@ -78,6 +78,7 @@ class UserCommandsParser
 
     private const RESOURCE_PRIVILEGES = [
         UserPrivilegeResourceType::TABLE => [
+            StaticUserPrivilege::ALL,
             StaticUserPrivilege::ALTER,
             StaticUserPrivilege::CREATE_VIEW,
             StaticUserPrivilege::CREATE,
@@ -93,12 +94,14 @@ class UserCommandsParser
             StaticUserPrivilege::UPDATE,
         ],
         UserPrivilegeResourceType::FUNCTION => [
+            StaticUserPrivilege::ALL,
             StaticUserPrivilege::ALTER_ROUTINE,
             StaticUserPrivilege::CREATE_ROUTINE,
             StaticUserPrivilege::EXECUTE,
             StaticUserPrivilege::GRANT_OPTION,
         ],
         UserPrivilegeResourceType::PROCEDURE => [
+            StaticUserPrivilege::ALL,
             StaticUserPrivilege::ALTER_ROUTINE,
             StaticUserPrivilege::CREATE_ROUTINE,
             StaticUserPrivilege::EXECUTE,
