@@ -14,22 +14,22 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
-use function is_numeric;
 
 class SignalCommand extends Statement implements Command
 {
     use StrictBehaviorMixin;
 
-    /** @var string|null */
+    /** @var SqlState|string|null */
     private $condition;
 
     /** @var array<string, RootNode> */
     private $items;
 
     /**
+     * @param SqlState|string|null
      * @param array<string, RootNode> $items
      */
-    public function __construct(?string $condition, array $items)
+    public function __construct($condition, array $items)
     {
         foreach ($items as $key => $value) {
             ConditionInformationItem::get($key);
@@ -38,7 +38,10 @@ class SignalCommand extends Statement implements Command
         $this->items = $items;
     }
 
-    public function getCondition(): ?string
+    /**
+     * @return SqlState|string|null
+     */
+    public function getCondition()
     {
         return $this->condition;
     }
@@ -54,9 +57,10 @@ class SignalCommand extends Statement implements Command
     public function serialize(Formatter $formatter): string
     {
         $result = 'SIGNAL';
-        $sqlState = is_numeric($this->condition);
-        if ($this->condition !== null) {
-            $result .= ' ' . ($sqlState ? 'SQLSTATE ' . $this->condition : $this->condition);
+        if ($this->condition instanceof SqlState) {
+            $result .= ' ' . "SQLSTATE '{$this->condition->getValue()}'";
+        } elseif ($this->condition !== null) {
+            $result .= ' ' . $this->condition;
         }
         if ($this->items !== []) {
             $result .= ' SET ' . $formatter->formatSerializablesMap($this->items);

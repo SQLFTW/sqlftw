@@ -20,6 +20,8 @@ use SqlFtw\Sql\Dml\Error\DiagnosticsItem;
 use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;
 use SqlFtw\Sql\Dml\Error\ResignalCommand;
 use SqlFtw\Sql\Dml\Error\SignalCommand;
+use SqlFtw\Sql\Dml\Error\SqlState;
+use SqlFtw\Sql\Dml\Error\SqlStateCategory;
 use SqlFtw\Sql\Dml\Error\StatementInformationItem;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntLiteral;
@@ -190,7 +192,10 @@ class ErrorCommandsParser
 
         if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
             $tokenList->passKeyword(Keyword::VALUE);
-            $condition = $tokenList->expectString();
+            $condition = $tokenList->expectNameOrStringEnum(SqlState::class);
+            if ($condition->getCategory()->equalsValue(SqlStateCategory::SUCCESS)) {
+                throw new ParserException('Only non-success SQL states are allowed.', $tokenList);
+            }
         } else {
             $condition = $tokenList->getNonReservedName(null);
         }
@@ -198,13 +203,25 @@ class ErrorCommandsParser
         if ($tokenList->hasKeyword(Keyword::SET)) {
             do {
                 $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class)->getValue();
+                if (isset($items[$item])) {
+                    throw new ParserException("Duplicit condition $item.", $tokenList);
+                } elseif ($item === ConditionInformationItem::RETURNED_SQLSTATE) {
+                    throw new ParserException("Cannot set condition $item.", $tokenList);
+                }
                 $tokenList->expectOperator(Operator::EQUAL);
                 $value = $this->expressionParser->parseExpression($tokenList);
+                if ($item === ConditionInformationItem::MYSQL_ERRNO && $value instanceof IntLiteral && !$value instanceof UintLiteral) {
+                    throw new ParserException('Unsigned int expected.', $tokenList);
+                }
                 $items[$item] = $value;
             } while ($tokenList->hasSymbol(','));
         }
 
         if ($which === Keyword::SIGNAL) {
+            if ($condition === null && $items === []) {
+                throw new ParserException("Empty SIGNAL/RESIGNAL statement.", $tokenList);
+            }
+
             return new SignalCommand($condition, $items);
         } else {
             return new ResignalCommand($condition, $items);
