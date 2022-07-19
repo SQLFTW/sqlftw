@@ -227,6 +227,11 @@ class ExpressionParser
         $left = $this->parsePredicate($tokenList);
         $operator = $tokenList->getAnyOperator(...$operators);
         if ($operator !== null) {
+            if ($operator === Operator::SAFE_EQUAL) {
+                $right = $this->parseBooleanPrimary($tokenList);
+
+                return new ComparisonOperator($left, Operator::get($operator), null, $right);
+            }
             /** @var 'ALL'|'ANY'|'SOME'|null $quantifier */
             $quantifier = $tokenList->getAnyKeyword(Keyword::ALL, Keyword::ANY, Keyword::SOME);
             if ($quantifier !== null) {
@@ -235,14 +240,10 @@ class ExpressionParser
                 $tokenList->expectSymbol(')');
 
                 return new ComparisonOperator($left, Operator::get($operator), $quantifier, $subquery);
-            } elseif ($operator !== Operator::SAFE_EQUAL) {
-                $right = $this->parseBooleanPrimary($tokenList);
-
-                return new ComparisonOperator($left, Operator::get($operator), null, $right);
             } else {
                 $right = $this->parseBooleanPrimary($tokenList);
 
-                return new BinaryOperator($left, Operator::get($operator), $right);
+                return new ComparisonOperator($left, Operator::get($operator), null, $right);
             }
         }
 
