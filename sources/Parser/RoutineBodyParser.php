@@ -23,6 +23,7 @@ use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventCommand;
+use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;
 use SqlFtw\Sql\Dml\Error\ResignalCommand;
@@ -252,6 +253,7 @@ class RoutineBodyParser
             || $statement instanceof GetDiagnosticsCommand || $statement instanceof ShowWarningsCommand
             || $statement instanceof ShowErrorsCommand || $statement instanceof PreparedStatementCommand
             || $statement instanceof TransactionCommand || $statement instanceof EventCommand
+            || $statement instanceof DropTriggerCommand
         ) {
             // ok
         } else {

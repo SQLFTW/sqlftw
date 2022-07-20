@@ -71,6 +71,7 @@ use SqlFtw\Sql\Dal\User\RevokeCommand;
 use SqlFtw\Sql\Dal\User\RevokeProxyCommand;
 use SqlFtw\Sql\Dal\User\RevokeRoleCommand;
 use SqlFtw\Sql\Dal\User\SetPasswordCommand;
+use SqlFtw\Sql\Dal\User\SetRoleCommand;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
 use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
@@ -93,6 +94,7 @@ use SqlFtw\Sql\Dml\Insert\InsertValuesCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
+use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
 use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\Dml\Query\TableCommand;
@@ -1661,9 +1663,9 @@ class MysqlFeatures extends FeaturesList
         [RenameTableCommand::class, self::MIN, self::MAX],
         [RenameUserCommand::class, self::MIN, self::MAX],
         [RepairTableCommand::class, self::MIN, self::MAX],
-        [ReplaceCommand::class, self::MIN, self::MAX],
         [ReplaceSelectCommand::class, self::MIN, self::MAX],
         [ReplaceSetCommand::class, self::MIN, self::MAX],
+        [ReplaceValuesCommand::class, self::MIN, self::MAX],
         [ResetMasterCommand::class, self::MIN, self::MAX],
         [ResetReplicaCommand::class, self::MIN, self::MAX],
         [ResetSlaveCommand::class, self::MIN, self::MAX],
@@ -1676,6 +1678,7 @@ class MysqlFeatures extends FeaturesList
         [SetVariablesCommand::class, self::MIN, self::MAX],
         [SetNamesCommand::class, self::MIN, self::MAX],
         [SetPasswordCommand::class, self::MIN, self::MAX],
+        [SetRoleCommand::class, self::MIN, self::MAX],
         [ShowBinaryLogsCommand::class, self::MIN, self::MAX],
         [ShowBinlogEventsCommand::class, self::MIN, self::MAX],
         [ShowCharacterSetCommand::class, self::MIN, self::MAX],

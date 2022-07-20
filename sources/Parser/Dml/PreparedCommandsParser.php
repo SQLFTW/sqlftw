@@ -15,11 +15,13 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Ddl\Routine\StoredProcedureCommand;
 use SqlFtw\Sql\Dml\Prepared\DeallocatePrepareCommand;
 use SqlFtw\Sql\Dml\Prepared\ExecuteCommand;
 use SqlFtw\Sql\Dml\Prepared\PrepareCommand;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Routine\Routine;
 use function get_class;
 use function in_array;
 
@@ -90,7 +92,9 @@ class PreparedCommandsParser
                 throw new ParserException('Invalid statement in PREPARE.', $tokenList, $statement->getException());
             }
             $class = get_class($statement);
-            if (!in_array($class, $tokenList->getSettings()->getPlatform()->getPreparableCommands(), true)) {
+            if ($tokenList->inRoutine() === Routine::PROCEDURE && $statement instanceof StoredProcedureCommand) {
+                // ok
+            } elseif (!in_array($class, $tokenList->getSettings()->getPlatform()->getPreparableCommands(), true)) {
                 throw new ParserException('Non-preparable statement in PREPARE: ' . $class, $tokenList);
             }
         }
