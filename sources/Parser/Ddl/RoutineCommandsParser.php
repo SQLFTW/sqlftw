@@ -14,6 +14,7 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\RoutineBodyParser;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Routine\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routine\AlterProcedureCommand;
 use SqlFtw\Sql\Ddl\Routine\CreateFunctionCommand;
@@ -180,8 +181,9 @@ class RoutineCommandsParser
 
         $tokenList->expectKeyword(Keyword::RETURNS);
         $returnType = $this->expressionParser->parseColumnType($tokenList);
-        if ($returnType->getCollation() !== null) {
-            throw new ParserException('Collation in return type is not supported.', $tokenList);
+        $collation = $returnType->getCollation();
+        if ($collation !== null && $collation->equalsValue(Collation::BINARY)) {
+            throw new ParserException('Binary collation in return type is not supported.', $tokenList);
         }
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
