@@ -174,6 +174,11 @@ class RoutineCommandsParser
                     throw new ParserException('Duplicit parameter name.', $tokenList);
                 }
                 $type = $this->expressionParser->parseColumnType($tokenList);
+                $charset = $type->getCharset();
+                $collation = $type->getCollation();
+                if ($charset === null && ($collation !== null && !$collation->equalsValue(Collation::BINARY))) {
+                    throw new ParserException('Character set is required for IN parameter with collation.', $tokenList);
+                }
                 $params[$param] = $type;
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
@@ -181,9 +186,10 @@ class RoutineCommandsParser
 
         $tokenList->expectKeyword(Keyword::RETURNS);
         $returnType = $this->expressionParser->parseColumnType($tokenList);
+        $charset = $returnType->getCharset();
         $collation = $returnType->getCollation();
-        if ($collation !== null && $collation->equalsValue(Collation::BINARY)) {
-            throw new ParserException('Binary collation in return type is not supported.', $tokenList);
+        if ($charset === null && $collation !== null) {
+            throw new ParserException('Character set is required for return type with collation.', $tokenList);
         }
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
@@ -239,6 +245,11 @@ class RoutineCommandsParser
                     throw new ParserException('Duplicit parameter name.', $tokenList);
                 }
                 $type = $this->expressionParser->parseColumnType($tokenList);
+                $charset = $type->getCharset();
+                $collation = $type->getCollation();
+                if ($inOut !== null && $inOut->equalsAny(InOutParamFlag::IN, InOutParamFlag::INOUT) && $charset === null && $collation !== null) {
+                    throw new ParserException('Character set is required for IN parameter with collation.', $tokenList);
+                }
                 $params[$param] = new ProcedureParam($param, $type, $inOut);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');

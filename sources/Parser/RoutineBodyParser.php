@@ -23,6 +23,7 @@ use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventCommand;
+use SqlFtw\Sql\Ddl\Routine\InOutParamFlag;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;
@@ -555,6 +556,11 @@ class RoutineBodyParser
             $names[] = $tokenList->expectNonReservedName(null);
         }
         $type = $this->expressionParser->parseColumnType($tokenList);
+        $charset = $type->getCharset();
+        $collation = $type->getCollation();
+        if ($charset === null && $collation !== null) {
+            throw new ParserException('Character set is required for variable with collation.', $tokenList);
+        }
         $default = null;
         if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
             $default = $this->expressionParser->parseExpression($tokenList);
