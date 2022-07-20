@@ -180,6 +180,9 @@ class RoutineCommandsParser
 
         $tokenList->expectKeyword(Keyword::RETURNS);
         $returnType = $this->expressionParser->parseColumnType($tokenList);
+        if ($returnType->getCollation() !== null) {
+            throw new ParserException('Collation in return type is not supported.', $tokenList);
+        }
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
