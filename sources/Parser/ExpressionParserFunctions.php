@@ -35,6 +35,7 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
 use SqlFtw\Sql\Expression\TimeZone;
 use SqlFtw\Sql\Expression\TimeZoneName;
@@ -48,9 +49,16 @@ trait ExpressionParserFunctions
 
     public function parseFunctionCall(TokenList $tokenList, string $name1, ?string $name2 = null): FunctionCall
     {
-        $function = $name2 === null && BuiltInFunction::validateValue($name1)
-            ? BuiltInFunction::get($name1)
-            : new QualifiedName($name2 ?? $name1, $name2 !== null ? $name1 : null);
+        if ($name2 === null && BuiltInFunction::validateValue($name1)) {
+            $function = BuiltInFunction::get($name1);
+        } elseif ($name2 !== null) {
+            $tokenList->validateName(Entity::SCHEMA, $name1);
+            $tokenList->validateName(Entity::ROUTINE, $name2);
+            $function = new QualifiedName($name2, $name1);
+        } else {
+            $tokenList->validateName(Entity::ROUTINE, $name1);
+            $function = new SimpleName($name1);
+        }
 
         $arguments = [];
         if ($function instanceof BuiltInFunction) {

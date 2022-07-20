@@ -1012,7 +1012,7 @@ class TokenList
         return $token->value;
     }
 
-    private function validateName(?string $entity, string $name): void
+    public function validateName(?string $entity, string $name): void
     {
         static $trailingWhitespaceNotAllowed = [Entity::SCHEMA, Entity::TABLE, Entity::COLUMN, Entity::PARTITION];
 
