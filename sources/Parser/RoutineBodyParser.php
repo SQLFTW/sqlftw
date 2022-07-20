@@ -46,7 +46,7 @@ use SqlFtw\Sql\Routine\ConditionType;
 use SqlFtw\Sql\Routine\DeclareConditionStatement;
 use SqlFtw\Sql\Routine\DeclareCursorStatement;
 use SqlFtw\Sql\Routine\DeclareHandlerStatement;
-use SqlFtw\Sql\Routine\DeclareStatement;
+use SqlFtw\Sql\Routine\DeclareVariablesStatement;
 use SqlFtw\Sql\Routine\FetchStatement;
 use SqlFtw\Sql\Routine\HandlerAction;
 use SqlFtw\Sql\Routine\IfStatement;
@@ -480,7 +480,7 @@ class RoutineBodyParser
      *   | NOT FOUND
      *   | SQLEXCEPTION
      *
-     * @return DeclareStatement|DeclareCursorStatement|DeclareConditionStatement|DeclareHandlerStatement
+     * @return DeclareVariablesStatement|DeclareCursorStatement|DeclareConditionStatement|DeclareHandlerStatement
      */
     private function parseDeclare(TokenList $tokenList)
     {
@@ -557,7 +557,7 @@ class RoutineBodyParser
             $default = $this->expressionParser->parseExpression($tokenList);
         }
 
-        return new DeclareStatement($names, $type, $default);
+        return new DeclareVariablesStatement($names, $type, $default);
     }
 
     /**

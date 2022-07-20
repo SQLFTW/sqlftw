@@ -16,7 +16,7 @@ use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
-class DeclareStatement extends Statement implements SqlSerializable
+class DeclareVariablesStatement extends Statement implements SqlSerializable
 {
     use StrictBehaviorMixin;
 
