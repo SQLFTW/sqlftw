@@ -516,7 +516,10 @@ class RoutineBodyParser
 
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
+
+            $tokenList->startSubquery();
             $query = $this->queryParser->parseQuery($tokenList);
+            $tokenList->endSubquery();
 
             return new DeclareCursorStatement($name, $query);
         } elseif ($tokenList->hasKeyword(Keyword::CONDITION)) {
