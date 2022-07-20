@@ -503,9 +503,9 @@ class Lexer
                                 $column += 3;
                                 break;
                             }
-                            $validOptional = preg_match('~^[Mm]?!(?:00000|[1-9]\d{4,5})?(?:\n| |\\*/)~', substr($string, $position, 10), $m) === 1;
+                            $validOptional = preg_match('~^([Mm]?!(?:00000|[1-9]\d{4,5})?)(?:[^\d])~', substr($string, $position, 10), $m) === 1;
                             if ($validOptional) {
-                                $versionId = strtoupper(str_replace('!', '', $m[0]));
+                                $versionId = strtoupper(str_replace('!', '', $m[1]));
                                 if ($this->platform->interpretOptionalComment($versionId)) {
                                     $this->condition = $versionId;
                                     $position += strlen($versionId) + 1;
