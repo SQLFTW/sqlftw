@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Routine;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
-use function strlen;
 
 class DeclareConditionStatement extends Statement implements SqlSerializable
 {
@@ -22,11 +22,11 @@ class DeclareConditionStatement extends Statement implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var int|string */
+    /** @var int|SqlState */
     private $value;
 
     /**
-     * @param int|string $value
+     * @param int|SqlState $value
      */
     public function __construct(string $name, $value)
     {
@@ -40,7 +40,7 @@ class DeclareConditionStatement extends Statement implements SqlSerializable
     }
 
     /**
-     * @return int|string
+     * @return int|SqlState
      */
     public function getValue()
     {
@@ -49,8 +49,14 @@ class DeclareConditionStatement extends Statement implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DECLARE ' . $formatter->formatName($this->name)
-            . ' CONDITION FOR ' . (strlen((string) $this->value) > 4 ? 'SQLSTATE ' : '') . $formatter->formatValue($this->value);
+        $result = 'DECLARE ' . $formatter->formatName($this->name) . ' CONDITION FOR ';
+        if ($this->value instanceof SqlState) {
+            $result .= "SQLSTATE '{$this->value->serialize($formatter)}'";
+        } else {
+            $result .= $this->value;
+        }
+
+        return $result;
     }
 
 }
