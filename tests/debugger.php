@@ -5,18 +5,17 @@ namespace Test;
 use Dogma\Debug\Ansi;
 use Dogma\Debug\Dumper;
 use Dogma\Debug\FormattersDogma;
+use SqlFtw\Parser\InvalidTokenException;
 use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParsingException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Tests\MysqlTestAssert;
 use Tracy\Debugger;
 use function get_class;
 use function implode;
-
-ParsingException::$debug = true;
 
 Debugger::$maxDepth = 9;
 Debugger::$strictMode = true;
@@ -25,6 +24,12 @@ FormattersDogma::register();
 Dumper::$hiddenFields[] = 'sql';
 Dumper::$hiddenFields[] = 'maxLengths';
 Dumper::$doNotTraverse[] = Parser::class;
+Dumper::$doNotTraverse[] = MysqlTestAssert::class . '::validCommands';
+Dumper::$doNotTraverse[] = InvalidTokenException::class . '::tokens';
+Dumper::$namespaceReplacements['~SqlFtw\\\\Parser\\\\(.*)~'] = '..\1';
+Dumper::$namespaceReplacements['~SqlFtw\\\\Formatter\\\\(.*)~'] = '..\1';
+Dumper::$namespaceReplacements['~SqlFtw\\\\Sql\\\\(.*)~'] = '..\1';
+Dumper::$namespaceReplacements['~SqlFtw\\\\Platform\\\\(.*)~'] = '..\1';
 
 // TokenType value
 Dumper::$intFormatters = [
@@ -37,20 +42,20 @@ Dumper::$intFormatters = [
 
 // Token
 $tokenFormatter = static function (Token $token, int $depth = 0): string {
-    $type = implode('|', TokenType::getByValue($token->type)->getConstantNames());
-    $info = Dumper::$showInfo;
+    $oldInfo = Dumper::$showInfo;
     Dumper::$showInfo = false;
-
     $value = Dumper::dumpValue($token->value, $depth + 1);
     if (($token->type & (TokenType::COMMENT | TokenType::WHITESPACE)) !== 0) {
         $value = Ansi::dgray(Ansi::removeColors($value));
     }
+    Dumper::$showInfo = $oldInfo;
+
+    $type = implode('|', TokenType::getByValue($token->type)->getConstantNames());
     $orig = $token->original !== null && $token->original !== $token->value ? ' / ' . Dumper::value($token->original) : '';
+    $info = Dumper::$showInfo ? ' ' . Dumper::info('// #' . Dumper::objectHash($token)) : '';
     $res = Dumper::name(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
         . Dumper::value2($type) . ' ' . Dumper::info('at row') . ' ' . $token->row
-        . Dumper::bracket(')');
-
-    Dumper::$showInfo = $info;
+        . Dumper::bracket(')') . $info;
 
     return $res;
 };
