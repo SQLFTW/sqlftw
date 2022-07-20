@@ -20,7 +20,6 @@ use SqlFtw\Sql\Dml\Error\DiagnosticsItem;
 use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;
 use SqlFtw\Sql\Dml\Error\ResignalCommand;
 use SqlFtw\Sql\Dml\Error\SignalCommand;
-use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\Dml\Error\SqlStateCategory;
 use SqlFtw\Sql\Dml\Error\StatementInformationItem;
 use SqlFtw\Sql\Expression\Identifier;
@@ -193,7 +192,7 @@ class ErrorCommandsParser
 
         if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
             $tokenList->passKeyword(Keyword::VALUE);
-            $condition = $tokenList->expectNameOrStringEnum(SqlState::class);
+            $condition = $tokenList->expectSqlState();
             if ($condition->getCategory()->equalsValue(SqlStateCategory::SUCCESS)) {
                 throw new ParserException('Only non-success SQL states are allowed.', $tokenList);
             }

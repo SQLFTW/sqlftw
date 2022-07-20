@@ -58,7 +58,7 @@ class ResignalCommand extends Statement implements Command
     {
         $result = 'RESIGNAL';
         if ($this->condition instanceof SqlState) {
-            $result .= ' ' . "SQLSTATE '{$this->condition->getValue()}'";
+            $result .= ' SQLSTATE ' . $this->condition->serialize($formatter);
         } elseif ($this->condition !== null) {
             $result .= ' ' . $this->condition;
         }

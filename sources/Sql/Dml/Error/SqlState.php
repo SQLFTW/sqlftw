@@ -9,12 +9,16 @@
 
 namespace SqlFtw\Sql\Dml\Error;
 
-use SqlFtw\Sql\SqlEnum;
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\SqlSerializable;
+use function preg_match;
+use function substr;
 
-class SqlState extends SqlEnum
+class SqlState implements SqlSerializable
 {
 
-    // https://en.wikipedia.org/wiki/SQLSTATE
+    // as per SQL:2011 - https://en.wikipedia.org/wiki/SQLSTATE
     public const S_00000_SUCCESS = '00000';
     public const S_01000_WARNING = '01000';
     public const S_01001_CURSOR_OPERATION_CONFLICT = '01001';
@@ -307,14 +311,40 @@ class SqlState extends SqlEnum
     public const S_HY108_INVALID_CURSOR_POSITION = 'HY108';
     public const S_HYC00_OPTIONAL_FEATURE_NOT_IMPLEMENTED = 'HYC00';
 
+    /** @var string */
+    private $value;
+
+    public function __construct(string $value)
+    {
+        if (!preg_match('~^[\dA-Z]{5}$~', $value)) {
+            throw new InvalidDefinitionException('Invalid SQLSTATE value.');
+        }
+        $this->value = $value;
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
     public function getClass(): SqlStateClass
     {
-        return SqlStateClass::get(substr($this->getValue(), 0, 2));
+        $class = substr($this->getValue(), 0, 2);
+        if (!SqlStateClass::isValid($class)) {
+            $class = SqlStateClass::CUSTOM;
+        }
+
+        return SqlStateClass::get($class);
     }
 
     public function getCategory(): SqlStateCategory
     {
         return $this->getClass()->getCategory();
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        return "'$this->value'";
     }
 
 }

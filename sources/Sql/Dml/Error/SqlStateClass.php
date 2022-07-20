@@ -14,6 +14,8 @@ use SqlFtw\Sql\SqlEnum;
 class SqlStateClass extends SqlEnum
 {
 
+    public const CUSTOM = '';
+
     public const C_00_SUCCESS = '00';
     public const C_01_WARNING = '01';
     public const C_02_NO_DATA = '02';

@@ -28,7 +28,6 @@ use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;
 use SqlFtw\Sql\Dml\Error\ResignalCommand;
 use SqlFtw\Sql\Dml\Error\SignalCommand;
-use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\Dml\Error\SqlStateCategory;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
@@ -501,7 +500,7 @@ class RoutineBodyParser
                 } elseif ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
                     $type = ConditionType::get(ConditionType::SQL_STATE);
                     $tokenList->passKeyword(Keyword::VALUE);
-                    $value = $tokenList->expectNameOrStringEnum(SqlState::class);
+                    $value = $tokenList->expectSqlState();
                     if ($value->getCategory()->equalsValue(SqlStateCategory::SUCCESS)) {
                         throw new ParserException('Only non-success SQL states are allowed.', $tokenList);
                     }
@@ -539,7 +538,7 @@ class RoutineBodyParser
             $tokenList->expectKeywords(Keyword::FOR);
             if ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
                 $tokenList->passKeyword(Keyword::VALUE);
-                $value = $tokenList->expectNameOrStringEnum(SqlState::class);
+                $value = $tokenList->expectSqlState();
                 if ($value->getCategory()->equalsValue(SqlStateCategory::SUCCESS)) {
                     throw new ParserException('Only non-success SQL states are allowed.', $tokenList);
                 }

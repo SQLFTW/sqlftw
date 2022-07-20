@@ -16,6 +16,8 @@ use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Util\TypeChecker;
+use function is_int;
+use function is_string;
 
 class Condition implements SqlSerializable
 {
@@ -61,12 +63,12 @@ class Condition implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        if ($this->type->equalsAny(ConditionType::ERROR)) {
+        if (is_int($this->value)) {
             return (string) $this->value;
-        } elseif ($this->type->equalsAny(ConditionType::CONDITION)) {
+        } elseif (is_string($this->value)) {
             return $formatter->formatName((string) $this->value);
-        } elseif ($this->type->equalsAny(ConditionType::SQL_STATE)) {
-            return "SQLSTATE '{$this->value->serialize($formatter)}'";
+        } elseif ($this->value instanceof SqlState) {
+            return 'SQLSTATE ' . $this->value->serialize($formatter);
         } else {
             return $this->type->serialize($formatter);
         }

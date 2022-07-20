@@ -18,6 +18,7 @@ use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
+use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
@@ -1394,6 +1395,16 @@ class TokenList
 
             return Collation::get($value);
         }
+    }
+
+    public function expectSqlState(): SqlState
+    {
+        $value = $this->expectString();
+        if (!preg_match('~^[\dA-Z]{5}$~', $value)) {
+            throw new ParserException("Invalid SQLSTATE value $value.", $this);
+        }
+
+        return new SqlState($value);
     }
 
     public function expectStorageEngineName(): StorageEngine
