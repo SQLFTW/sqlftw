@@ -27,6 +27,7 @@ use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;
 use SqlFtw\Sql\Dml\Error\ResignalCommand;
 use SqlFtw\Sql\Dml\Error\SignalCommand;
+use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\Dml\Prepared\PreparedStatementCommand;
@@ -488,10 +489,7 @@ class RoutineBodyParser
                 } elseif ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
                     $type = ConditionType::get(ConditionType::SQL_STATE);
                     $tokenList->passKeyword(Keyword::VALUE);
-                    $value = $tokenList->getUnsignedInt();
-                    if ($value === null) {
-                        $value = $tokenList->expectNonReservedNameOrString();
-                    }
+                    $value = $tokenList->expectNameOrStringEnum(SqlState::class);
                 } else {
                     $value = $tokenList->getName(null);
                     if ($value !== null) {
