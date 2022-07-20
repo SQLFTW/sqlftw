@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\RoutineBodyParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Routine\AlterFunctionCommand;
@@ -168,6 +169,9 @@ class RoutineCommandsParser
         if (!$tokenList->hasSymbol(')')) {
             do {
                 $param = $tokenList->expectName(null);
+                if (isset($params[$param])) {
+                    throw new ParserException('Duplicit parameter name.', $tokenList);
+                }
                 $type = $this->expressionParser->parseColumnType($tokenList);
                 $params[$param] = $type;
             } while ($tokenList->hasSymbol(','));
@@ -226,8 +230,11 @@ class RoutineCommandsParser
             do {
                 $inOut = $tokenList->getKeywordEnum(InOutParamFlag::class);
                 $param = $tokenList->expectName(null);
+                if (isset($params[$param])) {
+                    throw new ParserException('Duplicit parameter name.', $tokenList);
+                }
                 $type = $this->expressionParser->parseColumnType($tokenList);
-                $params[] = new ProcedureParam($param, $type, $inOut);
+                $params[$param] = new ProcedureParam($param, $type, $inOut);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
