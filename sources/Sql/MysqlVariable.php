@@ -1129,37 +1129,6 @@ class MysqlVariable extends SqlEnum
     public const NEW_CACHE__KEY_BUFFER_SIZE = 'new_cache.key_buffer_size';
     public const SECOND_CACHE__KEY_BUFFER_SIZE = 'second_cache.key_buffer_size';
 
-    // test
-    public const TEST_COMPONENT__INT_SYS_VAR = 'test_component.int_sys_var';
-    public const TEST_COMPONENT__BOOL_SYS_VAR = 'test_component.bool_sys_var';
-    public const TEST_COMPONENT__ENUM_SYS_VAR = 'test_component.enum_sys_var';
-    public const TEST_COMPONENT__STR_SYS_VAR = 'test_component.str_sys_var';
-    public const TEST_COMPONENT__UINT_SYS_VAR = 'test_component.uint_sys_var';
-    public const TEST_COMPONENT__LONG_SYS_VAR = 'test_component.long_sys_var';
-    public const TEST_COMPONENT__ULONG_SYS_VAR = 'test_component.ulong_sys_var';
-    public const TEST_COMPONENT__LONGLONG_SYS_VAR = 'test_component.longlong_sys_var';
-    public const TEST_COMPONENT__ULONGLONG_SYS_VAR = 'test_component.ulonglong_sys_var';
-    public const TEST_COMPONENT_STR__STR_SYS_VAR = 'test_component_str.str_sys_var';
-    public const TEST_COMPONENT_INT__INT_SYS_VAR = 'test_component_int.int_sys_var';
-    public const TEST_COMPONENT_INT__UINT_SYS_VAR = 'test_component_int.uint_sys_var';
-    public const TEST_COMPONENT__SENSITIVE_STRING_1 = 'test_component.sensitive_string_1';
-    public const TEST_COMPONENT__SENSITIVE_STRING_2 = 'test_component.sensitive_string_2';
-    public const TEST_COMPONENT__SENSITIVE_RO_STRING_1 = 'test_component.sensitive_ro_string_1';
-    public const EXAMPLE_ULONG_VAR = 'example_ulong_var';
-    public const EXAMPLE_ENUM_VAR = 'example_enum_var';
-    public const EXAMPLE_DOUBLE_VAR = 'example_double_var';
-    public const EXAMPLE_DOUBLE_THDVAR = 'example_double_thdvar';
-    public const EXAMPLE_CREATE_COUNT_THDVAR = 'example_create_count_thdvar';
-    public const EXAMPLE_LAST_CREATE_THDVAR = 'example_last_create_thdvar';
-    public const EXAMPLE_SIGNED_INT_VAR = 'example_signed_int_var';
-    public const EXAMPLE_SIGNED_INT_THDVAR = 'example_signed_int_thdvar';
-    public const EXAMPLE_SIGNED_LONG_VAR = 'example_signed_long_var';
-    public const EXAMPLE_SIGNED_LONG_THDVAR = 'example_signed_long_thdvar';
-    public const EXAMPLE_SIGNED_LONGLONG_VAR = 'example_signed_longlong_var';
-    public const EXAMPLE_SIGNED_LONGLONG_THDVAR = 'example_signed_longlong_thdvar';
-    public const TEST_SECURITY_CONTEXT_GET_FIELD = 'test_security_context_get_field';
-    public const TEST_SECURITY_CONTEXT_GET_VALUE = 'test_security_context_get_value';
-
     /** @var array<string, string|string[]> */
     private static $types = [
         // https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html
