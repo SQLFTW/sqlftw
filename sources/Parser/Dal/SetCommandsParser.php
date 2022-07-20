@@ -13,6 +13,7 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Set\ResetPersistCommand;
@@ -26,6 +27,7 @@ use SqlFtw\Sql\Expression\EnumValueLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
@@ -172,7 +174,7 @@ class SetCommandsParser
                     $variable = $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION));
                 } elseif ($tokenList->inRoutine() !== null) {
                     // local variable
-                    $variable = new QualifiedName($name);
+                    $variable = new SimpleName($name);
                 } else {
                     // throws
                     $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION));
@@ -196,6 +198,9 @@ class SetCommandsParser
                 }
             } else {
                 $expression = $this->expressionParser->parseAssignExpression($tokenList);
+                if (($variable instanceof SimpleName || $variable instanceof QualifiedName) && $expression instanceof DefaultLiteral) {
+                    throw new ParserException('Local variables cannot be set to DEFAULT.', $tokenList);
+                }
             }
 
             $assignments[] = new SetAssignment($variable, $expression, $operator);
