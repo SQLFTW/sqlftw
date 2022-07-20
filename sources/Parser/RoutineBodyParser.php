@@ -213,8 +213,17 @@ class RoutineBodyParser
 
         // ensures that the statement was parsed completely
         if (!$tokenList->inEmbedded() && !$tokenList->isFinished()) {
-            if (!$tokenList->has(TokenType::DELIMITER)) {
-                $tokenList->expectSymbol(';');
+            if ($statement instanceof CompoundStatement
+                || ($statement instanceof DeclareHandlerStatement && $statement->getStatement() instanceof CompoundStatement)
+            ) {
+                // ; not mandatory after `end`
+                if (!$tokenList->has(TokenType::DELIMITER)) {
+                    $tokenList->passSymbol(';');
+                }
+            } else {
+                if (!$tokenList->has(TokenType::DELIMITER)) {
+                    $tokenList->expectSymbol(';');
+                }
             }
         }
 
