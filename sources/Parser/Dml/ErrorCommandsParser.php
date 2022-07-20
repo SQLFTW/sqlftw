@@ -100,7 +100,8 @@ class ErrorCommandsParser
                     && !$condition instanceof SimpleName
                     && !$condition instanceof UserVariable
                     && !$condition instanceof NullLiteral
-                )) {
+                )
+            ) {
                 throw new ParserException('Only unsigned int, null or variable names is allowed as condition number.', $tokenList);
             }
             $conditionItems = [];
