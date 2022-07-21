@@ -163,6 +163,14 @@ class BaseType extends SqlEnum
         return $this->isText() || $this->isBinary();
     }
 
+    public function isBlob(): bool
+    {
+        return in_array($this->getValue(), [
+            self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB,
+            self::TINYTEXT, self::TEXT, self::MEDIUMTEXT, self::LONGTEXT,
+        ], true);
+    }
+
     public function isSpatial(): bool
     {
         return in_array($this->getValue(), [
