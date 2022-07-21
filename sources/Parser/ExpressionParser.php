@@ -1191,7 +1191,7 @@ class ExpressionParser
                     if ($length < 0) {
                         // only a warning for CHAR(0)
                         throw new ParserException('Invalid type length.', $tokenList);
-                    } elseif ($type->isNumber() && !$type->isInteger() && $length === 0) {
+                    } elseif ($type->isNumber() && !$type->isInteger() && !$type->isDecimal() && $length === 0) {
                         throw new ParserException('Invalid type length.', $tokenList);
                     } elseif ($type->equalsValue(BaseType::YEAR) && $length !== 4) {
                         throw new ParserException('Invalid type length.', $tokenList);
@@ -1210,10 +1210,14 @@ class ExpressionParser
                 }
                 $tokenList->expectSymbol(')');
 
+                if ($type->isDecimal() && $length > 65) {
+                    throw new ParserException('Invalid DECIMAL precision.', $tokenList);
+                }
+
                 if ($decimals !== null) {
                     if ($length < $decimals) {
                         throw new ParserException('Type length can not be smaller than count of decimal places.', $tokenList);
-                    } elseif ($type->isFloatingPointNumber() && $decimals > 30) {
+                    } elseif ($decimals > 30) {
                         throw new ParserException('Count of decimal places must be at most 30.', $tokenList);
                     }
                     $size = [$length, $decimals];
