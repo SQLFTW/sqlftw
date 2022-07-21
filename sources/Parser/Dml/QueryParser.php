@@ -44,6 +44,7 @@ use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Dml\WithExpression;
 use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Asterisk;
+use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
@@ -556,7 +557,11 @@ class QueryParser
             $values = [];
             if (!$tokenList->hasSymbol(')') || !$tokenList->inInsert()) {
                 do {
-                    $values[] = $this->expressionParser->parseExpression($tokenList);
+                    $value = $this->expressionParser->parseExpression($tokenList);
+                    if ($value instanceof DefaultLiteral && !$tokenList->inInsert()) {
+                        throw new ParserException('Cannot use DEFAULT in ROW() expression outside and INSERT.', $tokenList);
+                    }
+                    $values[] = $value;
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
