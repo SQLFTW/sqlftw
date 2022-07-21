@@ -34,6 +34,7 @@ use SqlFtw\Sql\Dal\Show\ShowColumnsCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateEventCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateFunctionCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateProcedureCommand;
+use SqlFtw\Sql\Dal\Show\ShowCreateSchemaCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateTableCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateTriggerCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateViewCommand;
@@ -46,6 +47,7 @@ use SqlFtw\Sql\Dal\Show\ShowIndexesCommand;
 use SqlFtw\Sql\Dal\Show\ShowMasterStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowOpenTablesCommand;
 use SqlFtw\Sql\Dal\Show\ShowProcedureStatusCommand;
+use SqlFtw\Sql\Dal\Show\ShowProcessListCommand;
 use SqlFtw\Sql\Dal\Show\ShowProfileCommand;
 use SqlFtw\Sql\Dal\Show\ShowReplicaStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowSchemasCommand;
@@ -1687,6 +1689,8 @@ class MysqlFeatures extends FeaturesList
         [ShowCreateEventCommand::class, self::MIN, self::MAX],
         [ShowCreateFunctionCommand::class, self::MIN, self::MAX],
         [ShowCreateProcedureCommand::class, self::MIN, self::MAX],
+        [ShowProcessListCommand::class, self::MIN, self::MAX],
+        [ShowCreateSchemaCommand::class, self::MIN, self::MAX],
         [ShowCreateTableCommand::class, self::MIN, self::MAX],
         [ShowCreateTriggerCommand::class, self::MIN, self::MAX],
         [ShowCreateViewCommand::class, self::MIN, self::MAX],

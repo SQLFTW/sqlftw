@@ -16,6 +16,7 @@ use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
+use SqlFtw\Sql\Dal\Replication\ReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\ResetMasterCommand;
 use SqlFtw\Sql\Dal\Replication\ResetSlaveCommand;
 use SqlFtw\Sql\Dal\Show\ShowErrorsCommand;
@@ -24,6 +25,9 @@ use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventCommand;
 use SqlFtw\Sql\Ddl\Routine\InOutParamFlag;
+use SqlFtw\Sql\Ddl\Schema\SchemaCommand;
+use SqlFtw\Sql\Ddl\Server\ServerCommand;
+use SqlFtw\Sql\Ddl\Tablespace\TablespaceCommand;
 use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\Ddl\View\AlterViewCommand;
 use SqlFtw\Sql\Dml\Error\GetDiagnosticsCommand;
@@ -264,7 +268,9 @@ class RoutineBodyParser
             || $statement instanceof GetDiagnosticsCommand || $statement instanceof ShowWarningsCommand
             || $statement instanceof ShowErrorsCommand || $statement instanceof PreparedStatementCommand
             || $statement instanceof TransactionCommand || $statement instanceof EventCommand
-            || $statement instanceof DropTriggerCommand
+            || $statement instanceof DropTriggerCommand || $statement instanceof SchemaCommand
+            || $statement instanceof TablespaceCommand || $statement instanceof ServerCommand
+            || $statement instanceof ReplicationCommand
         ) {
             // ok
         } else {
