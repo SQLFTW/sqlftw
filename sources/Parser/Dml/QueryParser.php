@@ -518,6 +518,10 @@ class QueryParser
             $locking = $this->parseLocking($tokenList);
         }
 
+        if ($from === null && count($what) === 1 && $what[0]->getExpression() instanceof Asterisk) {
+            throw new ParserException('No tables used in query.', $tokenList);
+        }
+
         return new SelectCommand($what, $from, $where, $groupBy, $having, $with, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);
     }
 
