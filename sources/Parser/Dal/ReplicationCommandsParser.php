@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Dal;
 use Dogma\ShouldNotHappenException;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
@@ -39,7 +40,9 @@ use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
 use function array_shift;
@@ -406,6 +409,9 @@ class ReplicationCommandsParser
             $log = $tokenList->expectString();
         } elseif ($tokenList->hasKeyword(Keyword::BEFORE)) {
             $before = $this->expressionParser->parseExpression($tokenList);
+            if ($before instanceof Parentheses && $before->getContents() instanceof Subquery) {
+                throw new ParserException('Subquery is not allowed here.', $tokenList);
+            }
         } else {
             $tokenList->missingAnyKeyword(Keyword::TO, Keyword::BEFORE);
         }
