@@ -1213,6 +1213,8 @@ class ExpressionParser
                 if ($decimals !== null) {
                     if ($length < $decimals) {
                         throw new ParserException('Type length can not be smaller than count of decimal places.', $tokenList);
+                    } elseif ($type->isFloatingPointNumber() && $decimals > 30) {
+                        throw new ParserException('Count of decimal places must be at most 30.', $tokenList);
                     }
                     $size = [$length, $decimals];
                 } else {
