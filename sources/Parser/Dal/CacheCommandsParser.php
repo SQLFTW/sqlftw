@@ -14,7 +14,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Cache\CacheIndexCommand;
 use SqlFtw\Sql\Dal\Cache\LoadIndexIntoCacheCommand;
 use SqlFtw\Sql\Dal\Cache\TableIndexList;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 
 /**
@@ -96,7 +96,7 @@ class CacheCommandsParser
             $tokenList->expectSymbol('(');
             $indexes = [];
             do {
-                $indexes[] = $tokenList->expectName(Entity::INDEX);
+                $indexes[] = $tokenList->expectName(EntityType::INDEX);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
@@ -119,7 +119,7 @@ class CacheCommandsParser
         } else {
             $partitions = [];
             do {
-                $partitions[] = $tokenList->expectName(Entity::PARTITION);
+                $partitions[] = $tokenList->expectName(EntityType::PARTITION);
             } while ($tokenList->hasSymbol(','));
         }
         $tokenList->expectSymbol(')');

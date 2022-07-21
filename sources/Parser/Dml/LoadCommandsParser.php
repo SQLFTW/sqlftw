@@ -17,7 +17,7 @@ use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadPriority;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
@@ -114,7 +114,7 @@ class LoadCommandsParser
             $tokenList->expectSymbol('(');
             $partitions = [];
             do {
-                $partitions[] = $tokenList->expectName(Entity::PARTITION);
+                $partitions[] = $tokenList->expectName(EntityType::PARTITION);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
@@ -144,7 +144,7 @@ class LoadCommandsParser
             $fields = [];
             if (!$tokenList->hasSymbol(')')) {
                 do {
-                    $fields[] = $tokenList->expectName(Entity::COLUMN);
+                    $fields[] = $tokenList->expectName(EntityType::COLUMN);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
@@ -154,7 +154,7 @@ class LoadCommandsParser
         if ($tokenList->hasKeyword(Keyword::SET)) {
             $setters = [];
             do {
-                $field = $tokenList->expectName(Entity::COLUMN);
+                $field = $tokenList->expectName(EntityType::COLUMN);
                 $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 $setters[$field] = $expression;

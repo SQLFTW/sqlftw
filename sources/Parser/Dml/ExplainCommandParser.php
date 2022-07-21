@@ -18,7 +18,7 @@ use SqlFtw\Sql\Dml\Utility\DescribeTableCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainType;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use function strtoupper;
@@ -149,7 +149,7 @@ class ExplainCommandParser
             case null:
                 // DESCRIBE
                 $table = $tokenList->expectQualifiedName();
-                $column = $tokenList->getName(Entity::COLUMN);
+                $column = $tokenList->getName(EntityType::COLUMN);
                 if ($column === null) {
                     $column = $tokenList->getString();
                 }

@@ -42,7 +42,7 @@ use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Dml\WithExpression;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\Operator;
@@ -102,7 +102,7 @@ class QueryParser
             if ($tokenList->hasSymbol('(')) {
                 $columns = [];
                 do {
-                    $columns[] = $tokenList->expectName(Entity::COLUMN);
+                    $columns[] = $tokenList->expectName(EntityType::COLUMN);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql;
 
 use Dogma\StaticClassMixin;
 
-class Entity
+class EntityType
 {
     use StaticClassMixin;
 
@@ -38,7 +38,7 @@ class Entity
     // other named objects:
     // - local variable
     // - system variable
-    // - function parameter
+    // - routine parameter
     // - index part
     // - cursor
     // - prepared statement
@@ -47,5 +47,6 @@ class Entity
     // - condition
     // - savepoint
     // - enum value
+    // - user lock
 
 }

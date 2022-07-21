@@ -15,7 +15,7 @@ use Dogma\ShouldNotHappenException;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\AliasExpression;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\BuiltInFunction;
@@ -52,11 +52,11 @@ trait ExpressionParserFunctions
         if ($name2 === null && BuiltInFunction::validateValue($name1)) {
             $function = BuiltInFunction::get($name1);
         } elseif ($name2 !== null) {
-            $tokenList->validateName(Entity::SCHEMA, $name1);
-            $tokenList->validateName(Entity::ROUTINE, $name2);
+            $tokenList->validateName(EntityType::SCHEMA, $name1);
+            $tokenList->validateName(EntityType::ROUTINE, $name2);
             $function = new QualifiedName($name2, $name1);
         } else {
-            $tokenList->validateName(Entity::ROUTINE, $name1);
+            $tokenList->validateName(EntityType::ROUTINE, $name1);
             $function = new SimpleName($name1);
         }
 
@@ -148,9 +148,9 @@ trait ExpressionParserFunctions
             $expression = $this->parseExpression($tokenList);
             // todo: not sure where alias is allowed. can built-in functions have aliased params or UDF only?
             if (!isset($namedParams[Keyword::AS]) && $tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName(Entity::ALIAS);
+                $alias = $tokenList->expectName(EntityType::ALIAS);
                 $expression = new AliasExpression($expression, $alias);
-            } elseif (($alias = $tokenList->getNonKeywordName(Entity::ALIAS)) !== null) {
+            } elseif (($alias = $tokenList->getNonKeywordName(EntityType::ALIAS)) !== null) {
                 // non-reserved is not enough here
                 $expression = new AliasExpression($expression, $alias);
             }
@@ -349,7 +349,7 @@ trait ExpressionParserFunctions
                 continue;
             }
 
-            $name = $tokenList->expectName(Entity::COLUMN);
+            $name = $tokenList->expectName(EntityType::COLUMN);
 
             if ($tokenList->hasKeywords(Keyword::FOR, Keyword::ORDINALITY)) {
                 $columns[] = new JsonTableOrdinalityColumn($name);

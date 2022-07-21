@@ -12,7 +12,7 @@ namespace SqlFtw\Parser;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\SqlMode;
 
 /**
@@ -38,25 +38,25 @@ class ParserSettings
 
     /** @var array<string, int> */
     private $maxLengths = [
-        Entity::SCHEMA => 64,
-        Entity::TABLE => 64,
-        Entity::VIEW => 64,
-        Entity::COLUMN => 64,
-        Entity::INDEX => 64,
-        Entity::CONSTRAINT => 64,
-        Entity::ROUTINE => 64,
-        Entity::EVENT => 64, // not documented
-        Entity::TRIGGER => 64, // not documented
-        Entity::USER_VARIABLE => 64,
-        Entity::TABLESPACE => 64,
-        Entity::PARTITION => 64, // not documented
-        Entity::SERVER => 64,
-        Entity::LOG_FILE_GROUP => 64,
-        Entity::RESOURCE_GROUP => 64,
-        Entity::ALIAS => 256,
-        Entity::LABEL => 256, // doc says 16, but db parses anything
-        Entity::USER => 32,
-        Entity::HOST => 255,
+        EntityType::SCHEMA => 64,
+        EntityType::TABLE => 64,
+        EntityType::VIEW => 64,
+        EntityType::COLUMN => 64,
+        EntityType::INDEX => 64,
+        EntityType::CONSTRAINT => 64,
+        EntityType::ROUTINE => 64,
+        EntityType::EVENT => 64, // not documented
+        EntityType::TRIGGER => 64, // not documented
+        EntityType::USER_VARIABLE => 64,
+        EntityType::TABLESPACE => 64,
+        EntityType::PARTITION => 64, // not documented
+        EntityType::SERVER => 64,
+        EntityType::LOG_FILE_GROUP => 64,
+        EntityType::RESOURCE_GROUP => 64,
+        EntityType::ALIAS => 256,
+        EntityType::LABEL => 256, // doc says 16, but db parses anything
+        EntityType::USER => 32,
+        EntityType::HOST => 255,
     ];
 
     public function __construct(

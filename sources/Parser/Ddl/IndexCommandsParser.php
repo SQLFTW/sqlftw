@@ -23,7 +23,7 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexOptions;
 use SqlFtw\Sql\Ddl\Table\Index\IndexPart;
 use SqlFtw\Sql\Ddl\Table\Index\IndexType;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use function strtoupper;
@@ -112,10 +112,10 @@ class IndexCommandsParser
 
         if ($inTable) {
             $tokenList->getAnyKeyword(Keyword::INDEX, Keyword::KEY);
-            $name = $tokenList->getNonReservedName(Entity::INDEX);
+            $name = $tokenList->getNonReservedName(EntityType::INDEX);
         } else {
             $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::KEY);
-            $name = $tokenList->expectName(Entity::INDEX);
+            $name = $tokenList->expectName(EntityType::INDEX);
         }
 
         if ($name !== null && strtoupper($name) === Keyword::PRIMARY) {
@@ -212,7 +212,7 @@ class IndexCommandsParser
 
                 $parts[] = new IndexPart($expression, null, $order);
             } else {
-                $part = $tokenList->expectName(Entity::INDEX);
+                $part = $tokenList->expectName(EntityType::INDEX);
                 $length = null;
                 if ($tokenList->hasSymbol('(')) {
                     $length = (int) $tokenList->expectUnsignedInt();
@@ -244,7 +244,7 @@ class IndexCommandsParser
     public function parseDropIndex(TokenList $tokenList): DropIndexCommand
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::INDEX);
-        $name = $tokenList->expectName(Entity::INDEX);
+        $name = $tokenList->expectName(EntityType::INDEX);
         $tokenList->expectKeyword(Keyword::ON);
         $table = $tokenList->expectQualifiedName();
         $algorithm = null;

@@ -19,7 +19,7 @@ use SqlFtw\Sql\Dal\Table\CheckTableCommand;
 use SqlFtw\Sql\Dal\Table\CheckTableOption;
 use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
 use SqlFtw\Sql\Dal\Table\RepairTableCommand;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 
 class TableMaintenanceCommandsParser
@@ -54,7 +54,7 @@ class TableMaintenanceCommandsParser
         $columns = $buckets = null;
         if ($tokenList->hasKeywords(Keyword::UPDATE, Keyword::HISTOGRAM, Keyword::ON)) {
             do {
-                $columns[] = $tokenList->expectName(Entity::COLUMN);
+                $columns[] = $tokenList->expectName(EntityType::COLUMN);
             } while ($tokenList->hasSymbol(','));
 
             if ($tokenList->hasKeyword(Keyword::WITH)) {
@@ -65,7 +65,7 @@ class TableMaintenanceCommandsParser
             return new AnalyzeTableUpdateHistogramCommand($tables[0], $columns, $buckets, $local);
         } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::HISTOGRAM, Keyword::ON)) {
             do {
-                $columns[] = $tokenList->expectName(Entity::COLUMN);
+                $columns[] = $tokenList->expectName(EntityType::COLUMN);
             } while ($tokenList->hasSymbol(','));
 
             return new AnalyzeTableDropHistogramCommand($tables[0], $columns, $local);

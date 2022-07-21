@@ -19,7 +19,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Dml\Error\SqlState;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
@@ -1025,9 +1025,9 @@ class TokenList
 
     public function validateName(?string $entity, string $name): void
     {
-        static $trailingWhitespaceNotAllowed = [Entity::SCHEMA, Entity::TABLE, Entity::COLUMN, Entity::PARTITION];
+        static $trailingWhitespaceNotAllowed = [EntityType::SCHEMA, EntityType::TABLE, EntityType::COLUMN, EntityType::PARTITION];
 
-        if ($entity !== null && $entity !== Entity::TABLESPACE && $name === '') {
+        if ($entity !== null && $entity !== EntityType::TABLESPACE && $name === '') {
             throw new ParserException('Name must not be empty.', $this);
         }
         if ($entity !== null) {
@@ -1288,12 +1288,12 @@ class TokenList
 
     public function expectQualifiedName(): QualifiedName
     {
-        $first = $this->expectNonReservedName(Entity::SCHEMA);
+        $first = $this->expectNonReservedName(EntityType::SCHEMA);
         if ($this->hasSymbol('.')) {
             if ($this->hasOperator(Operator::MULTIPLY)) {
                 $second = Operator::MULTIPLY;
             } else {
-                $second = $this->expectName(Entity::TABLE);
+                $second = $this->expectName(EntityType::TABLE);
             }
 
             return new QualifiedName($second, $first);
@@ -1306,7 +1306,7 @@ class TokenList
     {
         $position = $this->position;
 
-        $first = $this->getNonReservedName(Entity::SCHEMA);
+        $first = $this->getNonReservedName(EntityType::SCHEMA);
         if ($first === null) {
             $this->position = $position;
 
@@ -1319,7 +1319,7 @@ class TokenList
             if ($secondToken !== null) {
                 $second = $secondToken->value;
             } else {
-                $second = $this->expectName(Entity::TABLE);
+                $second = $this->expectName(EntityType::TABLE);
             }
 
             return new QualifiedName($second, $first);
@@ -1339,7 +1339,7 @@ class TokenList
         $name = $token->value;
         // characters, not bytes
         // todo: encoding
-        if (mb_strlen($name) > $this->maxLengths[Entity::USER]) {
+        if (mb_strlen($name) > $this->maxLengths[EntityType::USER]) {
             throw new ParserException('Too long user name.', $this);
         } elseif ($forRole && ($token->type & T::UNQUOTED_NAME) !== 0 && in_array(strtoupper($name), $notAllowed, true)) {
             throw new ParserException('User name not allowed.', $this);
@@ -1348,7 +1348,7 @@ class TokenList
         $token = $this->get(T::AT_VARIABLE);
         if ($token !== null) {
             $host = ltrim($token->value, '@');
-            if (strlen($host) > $this->maxLengths[Entity::HOST]) {
+            if (strlen($host) > $this->maxLengths[EntityType::HOST]) {
                 throw new ParserException('Too long host name.', $this);
             }
         }

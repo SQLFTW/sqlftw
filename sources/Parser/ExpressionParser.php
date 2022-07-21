@@ -20,7 +20,7 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\FileFormat;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\AssignOperator;
 use SqlFtw\Sql\Expression\BaseType;
@@ -650,13 +650,13 @@ class ExpressionParser
             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                 $name2 = '*'; // tbl.*
             } else {
-                $name2 = $tokenList->expectName(Entity::TABLE);
+                $name2 = $tokenList->expectName(EntityType::TABLE);
             }
             if ($name2 !== '*' && $tokenList->hasSymbol('.')) {
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     $name3 = '*'; // db.tbl.*
                 } else {
-                    $name3 = $tokenList->expectName(Entity::COLUMN);
+                    $name3 = $tokenList->expectName(EntityType::COLUMN);
                 }
             }
         }
@@ -787,11 +787,11 @@ class ExpressionParser
 
     public function parseColumnIdentifier(TokenList $tokenList): ColumnIdentifier
     {
-        $first = $tokenList->expectName(Entity::SCHEMA);
+        $first = $tokenList->expectName(EntityType::SCHEMA);
         if ($tokenList->hasSymbol('.')) {
-            $second = $tokenList->expectName(Entity::TABLE);
+            $second = $tokenList->expectName(EntityType::TABLE);
             if ($tokenList->hasSymbol('.')) {
-                $third = $tokenList->expectName(Entity::COLUMN);
+                $third = $tokenList->expectName(EntityType::COLUMN);
 
                 return new ColumnName($third, $second, $first);
             }
@@ -956,10 +956,10 @@ class ExpressionParser
             if ($alias !== null) {
                 return $alias;
             } else {
-                return $tokenList->expectNonReservedName(Entity::ALIAS, null, TokenType::AT_VARIABLE);
+                return $tokenList->expectNonReservedName(EntityType::ALIAS, null, TokenType::AT_VARIABLE);
             }
         } else {
-            $alias = $tokenList->getNonReservedName(Entity::ALIAS, null, TokenType::AT_VARIABLE);
+            $alias = $tokenList->getNonReservedName(EntityType::ALIAS, null, TokenType::AT_VARIABLE);
             if ($alias !== null) {
                 return $alias;
             } else {

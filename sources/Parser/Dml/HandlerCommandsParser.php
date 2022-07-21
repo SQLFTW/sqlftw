@@ -16,7 +16,7 @@ use SqlFtw\Sql\Dml\Handler\HandlerCloseCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerOpenCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadCommand;
 use SqlFtw\Sql\Dml\Handler\HandlerReadTarget;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 
 class HandlerCommandsParser
@@ -41,7 +41,7 @@ class HandlerCommandsParser
         $tokenList->expectKeyword(Keyword::OPEN);
 
         $tokenList->passKeyword(Keyword::AS);
-        $alias = $tokenList->getName(Entity::ALIAS);
+        $alias = $tokenList->getName(EntityType::ALIAS);
 
         return new HandlerOpenCommand($table, $alias);
     }
@@ -63,7 +63,7 @@ class HandlerCommandsParser
         $values = $index = null;
         $what = $tokenList->getAnyKeyword(Keyword::FIRST, Keyword::NEXT);
         if ($what === null) {
-            $index = $tokenList->getNonReservedName(Entity::INDEX);
+            $index = $tokenList->getNonReservedName(EntityType::INDEX);
             $what = $tokenList->getAnyKeyword(...HandlerReadTarget::getKeywords());
         }
         if ($what !== null) {

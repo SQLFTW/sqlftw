@@ -30,7 +30,7 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceParentheses;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
@@ -224,7 +224,7 @@ class TableReferenceParser
                         if ($openParens === 0) {
                             if ($tokenList->hasKeyword(Keyword::AS)) {
                                 $isQuery = true;
-                            } elseif ($tokenList->getNonKeywordName(Entity::ALIAS) !== null) {
+                            } elseif ($tokenList->getNonKeywordName(EntityType::ALIAS) !== null) {
                                 $isQuery = true;
                             }
                         }
@@ -261,7 +261,7 @@ class TableReferenceParser
                 do {
                     // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
                     /** @var non-empty-array<string> $partitions */
-                    $partitions[] = $tokenList->expectName(Entity::PARTITION);
+                    $partitions[] = $tokenList->expectName(EntityType::PARTITION);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
@@ -299,7 +299,7 @@ class TableReferenceParser
         if ($tokenList->hasSymbol('(')) {
             $columns = [];
             do {
-                $columns[] = $tokenList->expectNonReservedName(Entity::COLUMN);
+                $columns[] = $tokenList->expectNonReservedName(EntityType::COLUMN);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
@@ -319,7 +319,7 @@ class TableReferenceParser
             $tokenList->expectSymbol('(');
             $using = [];
             do {
-                $using[] = $tokenList->expectName(Entity::COLUMN);
+                $using[] = $tokenList->expectName(EntityType::COLUMN);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }
@@ -359,7 +359,7 @@ class TableReferenceParser
                     if ($tokenList->hasKeyword(Keyword::PRIMARY)) {
                         $indexes[] = new PrimaryLiteral();
                     } else {
-                        $indexes[] = $tokenList->expectName(Entity::INDEX);
+                        $indexes[] = $tokenList->expectName(EntityType::INDEX);
                     }
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');

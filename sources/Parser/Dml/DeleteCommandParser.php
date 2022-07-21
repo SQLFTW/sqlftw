@@ -14,7 +14,7 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
@@ -69,7 +69,7 @@ class DeleteCommandParser
                 $tokenList->expectSymbol('(');
                 $partitions = [];
                 do {
-                    $partitions[] = $tokenList->expectName(Entity::PARTITION);
+                    $partitions[] = $tokenList->expectName(EntityType::PARTITION);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }

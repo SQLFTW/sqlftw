@@ -36,7 +36,7 @@ use SqlFtw\Sql\Dal\Replication\StopGroupReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\StopReplicaCommand;
 use SqlFtw\Sql\Dal\Replication\StopSlaveCommand;
 use SqlFtw\Sql\Dal\Replication\UuidSet;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
@@ -356,7 +356,7 @@ class ReplicationCommandsParser
                         $values = [];
                         do {
                             if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
-                                $values[] = $tokenList->expectName(Entity::SCHEMA);
+                                $values[] = $tokenList->expectName(EntityType::SCHEMA);
                             } else {
                                 $values[] = $tokenList->expectString();
                             }
@@ -372,9 +372,9 @@ class ReplicationCommandsParser
                         $values = [];
                         do {
                             $tokenList->expectSymbol('(');
-                            $key = $tokenList->expectName(Entity::SCHEMA);
+                            $key = $tokenList->expectName(EntityType::SCHEMA);
                             $tokenList->expectSymbol(',');
-                            $value = $tokenList->expectName(Entity::SCHEMA);
+                            $value = $tokenList->expectName(EntityType::SCHEMA);
                             $tokenList->expectSymbol(')');
                             $values[$key] = $value;
                         } while ($tokenList->hasSymbol(','));

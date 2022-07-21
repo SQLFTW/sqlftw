@@ -21,7 +21,7 @@ use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\EnumValueLiteral;
 use SqlFtw\Sql\Expression\Operator;
@@ -167,7 +167,7 @@ class SetCommandsParser
                 $name = $tokenList->expectName(null);
                 if ($tokenList->hasSymbol('.')) {
                     // NEW.foo etc.
-                    $name2 = $tokenList->expectName(Entity::COLUMN);
+                    $name2 = $tokenList->expectName(EntityType::COLUMN);
                     $variable = new QualifiedName($name2, $name);
                 } elseif (MysqlVariable::validateValue($name)) {
                     // system variable without scope

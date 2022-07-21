@@ -23,7 +23,7 @@ use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
@@ -114,10 +114,10 @@ class InsertCommandParser
 
             $alias = $columnAliases = null;
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName(Entity::ALIAS);
+                $alias = $tokenList->expectName(EntityType::ALIAS);
                 if ($tokenList->hasSymbol('(')) {
                     do {
-                        $columnAliases[] = $tokenList->expectName(Entity::ALIAS);
+                        $columnAliases[] = $tokenList->expectName(EntityType::ALIAS);
                     } while ($tokenList->hasSymbol(','));
                     $tokenList->expectSymbol(')');
                 }
@@ -134,7 +134,7 @@ class InsertCommandParser
 
             $alias = null;
             if ($tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName(Entity::ALIAS);
+                $alias = $tokenList->expectName(EntityType::ALIAS);
             }
 
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
@@ -219,7 +219,7 @@ class InsertCommandParser
             $tokenList->expectSymbol('(');
             $partitions = [];
             do {
-                $partitions[] = $tokenList->expectName(Entity::PARTITION);
+                $partitions[] = $tokenList->expectName(EntityType::PARTITION);
             } while ($tokenList->hasSymbol(','));
             $tokenList->expectSymbol(')');
         }

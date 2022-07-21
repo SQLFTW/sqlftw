@@ -18,7 +18,7 @@ use SqlFtw\Sql\Ddl\Trigger\DropTriggerCommand;
 use SqlFtw\Sql\Ddl\Trigger\TriggerEvent;
 use SqlFtw\Sql\Ddl\Trigger\TriggerOrder;
 use SqlFtw\Sql\Ddl\Trigger\TriggerPosition;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Routine\Routine;
@@ -77,7 +77,7 @@ class TriggerCommandsParser
         $triggerPosition = null;
         if ($order !== null) {
             $order = TriggerOrder::get($order);
-            $otherTrigger = $tokenList->expectName(Entity::TRIGGER);
+            $otherTrigger = $tokenList->expectName(EntityType::TRIGGER);
             $triggerPosition = new TriggerPosition($order, $otherTrigger);
         }
 

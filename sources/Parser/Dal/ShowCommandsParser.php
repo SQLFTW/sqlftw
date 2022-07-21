@@ -60,7 +60,7 @@ use SqlFtw\Sql\Dal\Show\ShowTableStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowTriggersCommand;
 use SqlFtw\Sql\Dal\Show\ShowVariablesCommand;
 use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
@@ -357,7 +357,7 @@ class ShowCommandsParser
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
         $table = $tokenList->expectQualifiedName();
         if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $schema = $tokenList->expectName(Entity::SCHEMA);
+            $schema = $tokenList->expectName(EntityType::SCHEMA);
             $table = new QualifiedName($table->getName(), $schema);
         }
 
@@ -391,7 +391,7 @@ class ShowCommandsParser
             case Keyword::DATABASE:
             case Keyword::SCHEMA:
                 // SHOW CREATE {DATABASE | SCHEMA} db_name
-                return new ShowCreateSchemaCommand($tokenList->expectName(Entity::SCHEMA));
+                return new ShowCreateSchemaCommand($tokenList->expectName(EntityType::SCHEMA));
             case Keyword::EVENT:
                 // SHOW CREATE EVENT event_name
                 return new ShowCreateEventCommand($tokenList->expectQualifiedName());
@@ -468,7 +468,7 @@ class ShowCommandsParser
     {
         $from = $like = $where = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $from = $tokenList->expectName(Entity::SCHEMA);
+            $from = $tokenList->expectName(EntityType::SCHEMA);
         }
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();
@@ -527,7 +527,7 @@ class ShowCommandsParser
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
         $table = $tokenList->expectQualifiedName();
         if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $schema = $tokenList->expectName(Entity::SCHEMA);
+            $schema = $tokenList->expectName(EntityType::SCHEMA);
             $table = new QualifiedName($table->getName(), $schema);
         }
         $where = null;
@@ -546,7 +546,7 @@ class ShowCommandsParser
         $tokenList->expectKeyword(Keyword::TABLES);
         $from = $like = $where = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $from = $tokenList->expectName(Entity::SCHEMA);
+            $from = $tokenList->expectName(EntityType::SCHEMA);
         }
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();
@@ -694,7 +694,7 @@ class ShowCommandsParser
         $tokenList->expectKeyword(Keyword::STATUS);
         $from = $like = $where = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $from = $tokenList->expectName(Entity::SCHEMA);
+            $from = $tokenList->expectName(EntityType::SCHEMA);
         }
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();
@@ -715,7 +715,7 @@ class ShowCommandsParser
         $tokenList->expectKeyword(Keyword::TABLES);
         $schema = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $schema = $tokenList->expectName(Entity::SCHEMA);
+            $schema = $tokenList->expectName(EntityType::SCHEMA);
         }
         $like = $where = null;
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
@@ -734,7 +734,7 @@ class ShowCommandsParser
     {
         $from = $like = $where = null;
         if ($tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
-            $from = $tokenList->expectName(Entity::SCHEMA);
+            $from = $tokenList->expectName(EntityType::SCHEMA);
         }
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
             $like = $tokenList->expectString();

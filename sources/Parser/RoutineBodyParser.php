@@ -41,7 +41,7 @@ use SqlFtw\Sql\Dml\Transaction\LockTablesCommand;
 use SqlFtw\Sql\Dml\Transaction\TransactionCommand;
 use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainForConnectionCommand;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Routine\CaseStatement;
 use SqlFtw\Sql\Routine\CloseCursorStatement;
@@ -106,7 +106,7 @@ class RoutineBodyParser
         }
 
         $position = $tokenList->getPosition();
-        $label = $tokenList->getNonKeywordName(Entity::LABEL);
+        $label = $tokenList->getNonKeywordName(EntityType::LABEL);
         if ($label !== null) {
             $tokenList->expectSymbol(':');
         }
@@ -147,7 +147,7 @@ class RoutineBodyParser
     private function parseStatement(TokenList $tokenList): Statement
     {
         $position = $tokenList->getPosition();
-        $label = $tokenList->getNonReservedName(Entity::LABEL);
+        $label = $tokenList->getNonReservedName(EntityType::LABEL);
         if (!$tokenList->hasSymbol(':')) {
             $label = null;
             $tokenList->rewind($position);
@@ -199,10 +199,10 @@ class RoutineBodyParser
                 $statement = new ReturnStatement($this->expressionParser->parseExpression($tokenList));
                 break;
             case Keyword::LEAVE:
-                $statement = new LeaveStatement($tokenList->expectName(Entity::LABEL));
+                $statement = new LeaveStatement($tokenList->expectName(EntityType::LABEL));
                 break;
             case Keyword::ITERATE:
-                $statement = new IterateStatement($tokenList->expectName(Entity::LABEL));
+                $statement = new IterateStatement($tokenList->expectName(EntityType::LABEL));
                 break;
             case Keyword::BEGIN:
                 $statement = $this->parseBlock($tokenList, $label);
@@ -289,7 +289,7 @@ class RoutineBodyParser
         $tokenList->expectKeyword(Keyword::END);
 
         if ($label !== null) {
-            $endLabel = $tokenList->getName(Entity::LABEL);
+            $endLabel = $tokenList->getName(EntityType::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->missing($label);
             }
@@ -338,7 +338,7 @@ class RoutineBodyParser
         $tokenList->expectKeywords(Keyword::END, Keyword::LOOP);
 
         if ($label !== null) {
-            $endLabel = $tokenList->getName(Entity::LABEL);
+            $endLabel = $tokenList->getName(EntityType::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->missing($label);
             }
@@ -361,7 +361,7 @@ class RoutineBodyParser
         $tokenList->expectKeywords(Keyword::END, Keyword::REPEAT);
 
         if ($label !== null) {
-            $endLabel = $tokenList->getName(Entity::LABEL);
+            $endLabel = $tokenList->getName(EntityType::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->missing($label);
             }
@@ -383,7 +383,7 @@ class RoutineBodyParser
         $tokenList->expectKeywords(Keyword::END, Keyword::WHILE);
 
         if ($label !== null) {
-            $endLabel = $tokenList->getName(Entity::LABEL);
+            $endLabel = $tokenList->getName(EntityType::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
                 $tokenList->missing($label);
             }

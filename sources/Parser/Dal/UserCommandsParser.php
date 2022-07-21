@@ -60,7 +60,7 @@ use SqlFtw\Sql\Dal\User\UserResourceOption;
 use SqlFtw\Sql\Dal\User\UserResourceOptionType;
 use SqlFtw\Sql\Dal\User\UserTlsOption;
 use SqlFtw\Sql\Dal\User\UserTlsOptionType;
-use SqlFtw\Sql\Entity;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Operator;
@@ -757,7 +757,7 @@ class UserCommandsParser
             if ($tokenList->hasSymbol('(')) {
                 $columns = [];
                 do {
-                    $columns[] = $tokenList->expectName(Entity::COLUMN);
+                    $columns[] = $tokenList->expectName(EntityType::COLUMN);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
             }
@@ -798,13 +798,13 @@ class UserCommandsParser
 
             return new UserPrivilegeResource(UserPrivilegeResource::ALL, $object ? UserPrivilegeResource::ALL : null, $resourceType);
         } else {
-            $name = $tokenList->expectName(Entity::SCHEMA);
+            $name = $tokenList->expectName(EntityType::SCHEMA);
             if ($tokenList->hasSymbol('.')) {
                 $schema = $name;
                 if ($tokenList->hasOperator(Operator::MULTIPLY)) {
                     return new UserPrivilegeResource($schema, UserPrivilegeResource::ALL, $resourceType);
                 } else {
-                    $name = $tokenList->expectName(Entity::TABLE);
+                    $name = $tokenList->expectName(EntityType::TABLE);
 
                     return new UserPrivilegeResource($schema, $name, $resourceType);
                 }
