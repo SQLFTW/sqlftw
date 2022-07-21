@@ -1232,8 +1232,12 @@ class ExpressionParser
             $tokenList->expectSymbol('(');
             $values = [];
             do {
-                $values[] = $tokenList->expectStringValue();
+                $value = $tokenList->expectStringValue();
+                $values[$value->getValue()] = $value;
             } while ($tokenList->hasSymbol(','));
+            if (count($values) > 64 && $type->equalsValue(BaseType::SET)) {
+                throw new ParserException('Too many SET values.', $tokenList);
+            }
             $tokenList->expectSymbol(')');
         } elseif ($type->hasFsp() && $tokenList->hasSymbol('(')) {
             $size = [(int) $tokenList->expectUnsignedInt()];
