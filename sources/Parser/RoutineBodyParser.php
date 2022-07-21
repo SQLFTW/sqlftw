@@ -61,7 +61,7 @@ use SqlFtw\Sql\Routine\LoopStatement;
 use SqlFtw\Sql\Routine\OpenCursorStatement;
 use SqlFtw\Sql\Routine\RepeatStatement;
 use SqlFtw\Sql\Routine\ReturnStatement;
-use SqlFtw\Sql\Routine\Routine;
+use SqlFtw\Sql\Routine\RoutineType;
 use SqlFtw\Sql\Routine\WhileStatement;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\SubqueryType;
@@ -101,7 +101,7 @@ class RoutineBodyParser
      */
     public function parseBody(TokenList $tokenList, string $routine): Statement
     {
-        if ($routine === Routine::FUNCTION && $tokenList->hasKeyword(Keyword::RETURN)) {
+        if ($routine === RoutineType::FUNCTION && $tokenList->hasKeyword(Keyword::RETURN)) {
             return new ReturnStatement($this->expressionParser->parseExpression($tokenList));
         }
 
@@ -162,7 +162,7 @@ class RoutineBodyParser
                 Keyword::BEGIN, Keyword::LOOP, Keyword::REPEAT, Keyword::WHILE, Keyword::CASE, Keyword::IF,
                 Keyword::DECLARE, Keyword::OPEN, Keyword::FETCH, Keyword::CLOSE, Keyword::LEAVE, Keyword::ITERATE,
             ];
-            if ($in === Routine::FUNCTION) {
+            if ($in === RoutineType::FUNCTION) {
                 $keywords[] = Keyword::RETURN;
             }
             $keyword = $tokenList->getAnyKeyword(...$keywords);
@@ -250,7 +250,7 @@ class RoutineBodyParser
             throw new ParserException('Cannot use EXPLAIN FOR CONNECTION inside a routine.', $tokenList);
         } elseif ($statement instanceof LockTablesCommand || $statement instanceof UnlockTablesCommand) {
             throw new ParserException('Cannot use LOCK TABLES or UNLOCK TABLES inside a routine.', $tokenList);
-        } elseif ($statement instanceof AlterEventCommand && $topLevel && $in === Routine::EVENT) {
+        } elseif ($statement instanceof AlterEventCommand && $topLevel && $in === RoutineType::EVENT) {
             throw new ParserException('Cannot use ALTER EVENT inside ALTER EVENT directly. Use BEGIN/END block.', $tokenList);
         } elseif ($statement instanceof CreateEventCommand) {
             throw new ParserException('Cannot use CREATE EVENT inside an procedure.', $tokenList);
@@ -258,11 +258,11 @@ class RoutineBodyParser
             throw new ParserException('Cannot use ALTER VIEW inside a routine.', $tokenList);
         } elseif ($statement instanceof LoadDataCommand || $statement instanceof LoadXmlCommand) {
             throw new ParserException('Cannot use LOAD DATA or LOAD XML inside a routine.', $tokenList);
-        } elseif ($in !== Routine::PROCEDURE && $statement instanceof PreparedStatementCommand) {
+        } elseif ($in !== RoutineType::PROCEDURE && $statement instanceof PreparedStatementCommand) {
             throw new ParserException('Cannot use prepared statements inside a function, trigger or event.', $tokenList);
-        } elseif ($in !== Routine::PROCEDURE && ($statement instanceof ResetMasterCommand || $statement instanceof ResetSlaveCommand)) {
+        } elseif ($in !== RoutineType::PROCEDURE && ($statement instanceof ResetMasterCommand || $statement instanceof ResetSlaveCommand)) {
             throw new ParserException('Cannot use RESET MASTER/SLAVE inside a function, trigger or event.', $tokenList);
-        } elseif ($in !== Routine::PROCEDURE && ($statement instanceof FlushCommand || $statement instanceof FlushTablesCommand)) {
+        } elseif ($in !== RoutineType::PROCEDURE && ($statement instanceof FlushCommand || $statement instanceof FlushTablesCommand)) {
             throw new ParserException('Cannot use FLUSH inside a function, trigger or event.', $tokenList);
         } elseif ($statement instanceof SignalCommand || $statement instanceof ResignalCommand
             || $statement instanceof GetDiagnosticsCommand || $statement instanceof ShowWarningsCommand

@@ -27,7 +27,7 @@ use SqlFtw\Sql\Ddl\Routine\RoutineSideEffects;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Routine\Routine;
+use SqlFtw\Sql\Routine\RoutineType;
 
 class RoutineCommandsParser
 {
@@ -194,7 +194,7 @@ class RoutineCommandsParser
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
-        $body = $this->routineBodyParser->parseBody($tokenList, Routine::FUNCTION);
+        $body = $this->routineBodyParser->parseBody($tokenList, RoutineType::FUNCTION);
 
         return new CreateFunctionCommand($name, $body, $params, $returnType, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language, $ifNotExists);
     }
@@ -257,7 +257,7 @@ class RoutineCommandsParser
 
         [$comment, $language, $sideEffects, $sqlSecurity, $deterministic] = $this->parseRoutineCharacteristics($tokenList, true);
 
-        $body = $this->routineBodyParser->parseBody($tokenList, Routine::PROCEDURE);
+        $body = $this->routineBodyParser->parseBody($tokenList, RoutineType::PROCEDURE);
 
         return new CreateProcedureCommand($name, $body, $params, $definer, $deterministic, $sqlSecurity, $sideEffects, $comment, $language, $ifNotExists);
     }

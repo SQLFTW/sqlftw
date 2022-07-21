@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Routine;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
-class Routine extends SqlEnum
+class RoutineType extends SqlEnum
 {
 
     public const PROCEDURE = Keyword::PROCEDURE;

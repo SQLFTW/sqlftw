@@ -30,7 +30,7 @@ use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Routine\Routine;
+use SqlFtw\Sql\Routine\RoutineType;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\SubqueryType;
 use SqlFtw\Sql\UserName;
@@ -101,7 +101,7 @@ class TokenList
     /** @var int */
     private $position = 0;
 
-    /** @var array<Routine::*> Are we inside a function, procedure, trigger or event definition? */
+    /** @var array<RoutineType::*> Are we inside a function, procedure, trigger or event definition? */
     private $inRoutine = [];
 
     /** @var array<SubqueryType::*> Are we inside a subquery, and what type? */
@@ -159,7 +159,7 @@ class TokenList
     }
 
     /**
-     * @param string&Routine::* $value
+     * @param string&RoutineType::* $value
      */
     public function startRoutine(string $type): void
     {

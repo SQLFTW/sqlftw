@@ -21,7 +21,7 @@ use SqlFtw\Sql\Dml\Prepared\ExecuteCommand;
 use SqlFtw\Sql\Dml\Prepared\PrepareCommand;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Routine\Routine;
+use SqlFtw\Sql\Routine\RoutineType;
 use function get_class;
 use function in_array;
 
@@ -92,7 +92,7 @@ class PreparedCommandsParser
                 throw new ParserException('Invalid statement in PREPARE.', $tokenList, $statement->getException());
             }
             $class = get_class($statement);
-            if ($tokenList->inRoutine() === Routine::PROCEDURE && $statement instanceof StoredProcedureCommand) {
+            if ($tokenList->inRoutine() === RoutineType::PROCEDURE && $statement instanceof StoredProcedureCommand) {
                 // ok
             } elseif (!in_array($class, $tokenList->getSettings()->getPlatform()->getPreparableCommands(), true)) {
                 throw new ParserException('Non-preparable statement in PREPARE: ' . $class, $tokenList);
