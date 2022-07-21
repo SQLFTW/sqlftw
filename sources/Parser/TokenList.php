@@ -111,6 +111,9 @@ class TokenList
     /** @var int Are we inside a subquery? */
     private $inSubquery = 0;
 
+    /** @var bool Subquery inside in INSERT command */
+    private $inInsert = false;
+
     /** @var bool Should we expect a delimiter after the command? (command directly embedded into another command) */
     private $inEmbedded = false;
 
@@ -209,6 +212,21 @@ class TokenList
     public function endSubquery(): void
     {
         $this->inSubquery--;
+    }
+
+    public function inInsert(): bool
+    {
+        return $this->inInsert;
+    }
+
+    public function startInsert(): void
+    {
+        $this->inInsert = true;
+    }
+
+    public function endInsert(): void
+    {
+        $this->inInsert = false;
     }
 
     public function inEmbedded(): bool

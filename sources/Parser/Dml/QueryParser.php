@@ -554,7 +554,7 @@ class QueryParser
             $tokenList->expectKeyword(Keyword::ROW);
             $tokenList->expectSymbol('(');
             $values = [];
-            if (!$tokenList->hasSymbol(')')) {
+            if (!$tokenList->hasSymbol(')') || !$tokenList->inInsert()) {
                 do {
                     $values[] = $this->expressionParser->parseExpression($tokenList);
                 } while ($tokenList->hasSymbol(','));

@@ -141,7 +141,10 @@ class InsertCommandParser
             return new InsertSetCommand($table, $assignments, $columns, $alias, $partitions, $priority, $ignore, $update);
         }
 
+        $tokenList->startInsert();
         $query = $this->queryParser->parseQuery($tokenList);
+        $tokenList->endInsert();
+
         $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
         return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
