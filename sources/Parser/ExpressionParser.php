@@ -80,6 +80,7 @@ use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
 use function in_array;
+use function ltrim;
 use function preg_match;
 use function sprintf;
 use function strlen;
@@ -705,6 +706,8 @@ class ExpressionParser
             return $this->createSystemVariable($tokenList, $name);
         } else {
             // @foo
+            $tokenList->validateName(EntityType::USER_VARIABLE, ltrim($atVariable, '@'));
+
             return new UserVariable($atVariable);
         }
     }

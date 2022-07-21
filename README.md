@@ -33,7 +33,8 @@ parsed, but ignored features (no model and serialization):
 - `WEIGHT_STRING(... LEVEL ...)` - removed in MySQL 8
 
 features implemented other way than MySQL:
-- Parser produces an error on unterminated comments same as PostgreSQL does (MySQL is silent and according to tests, this might be a bug)
+- parser produces an error on unterminated comments same as PostgreSQL does (MySQL is silent and according to tests, this might be a bug)
+- parser produces an error when reading user variable with invalid name (MySQL silently ignores them and return null)
 
 Architecture:
 -------------
