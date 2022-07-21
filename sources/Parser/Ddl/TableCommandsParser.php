@@ -109,12 +109,13 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;
 use function array_values;
-use function is_array;
 use function strtoupper;
 
 /**
@@ -906,7 +907,7 @@ class TableCommandsParser
                 case Keyword::DEFAULT:
                     if ($tokenList->hasSymbol('(')) {
                         // [DEFAULT (expr)]
-                        $default = $this->expressionParser->parseExpression($tokenList);
+                        $default = new Parentheses($this->expressionParser->parseExpression($tokenList));
                         $tokenList->expectSymbol(')');
                         break;
                     }
@@ -1017,8 +1018,18 @@ class TableCommandsParser
                     break;
             }
         }
-        if ($default !== null && !$default instanceof NullLiteral && !$default instanceof FunctionCall && $type->getBaseType()->isSpatial()) {
+
+        $hasDefaultValue = $default !== null && !$default instanceof NullLiteral && !$default instanceof Parentheses;
+        if ($hasDefaultValue && $type->getBaseType()->isSpatial()) {
             throw new ParserException('GEOMETRY columns cannot have a default value.', $tokenList);
+        }
+
+        if ($default instanceof StringLiteral && $default->getValue() === ''
+            && !$tokenList->getSettings()->getMode()->containsAny(SqlMode::TRADITIONAL, SqlMode::STRICT_TRANS_TABLES)
+        ) {
+            // default '' is allowed in some modes
+        } elseif ($hasDefaultValue && $type->getBaseType()->isBlob()) {
+            throw new ParserException('BLOB columns cannot have a default value.', $tokenList);
         }
 
         return new ColumnDefinition($name, $type, $default, $null, $visible, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $engineAttribute, $secondaryEngineAttribute, $storage, $reference, $check);
