@@ -1218,6 +1218,9 @@ class ExpressionParser
                     }
                     $size = [$length, $decimals];
                 } else {
+                    if ($type->equalsValue(BaseType::FLOAT) && $length > 53) {
+                        throw new ParserException('Invalid FLOAT precision.', $tokenList);
+                    }
                     $size = [$length];
                 }
             }
