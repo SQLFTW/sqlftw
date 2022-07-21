@@ -60,6 +60,7 @@ use SqlFtw\Sql\Routine\ReturnStatement;
 use SqlFtw\Sql\Routine\Routine;
 use SqlFtw\Sql\Routine\WhileStatement;
 use SqlFtw\Sql\Statement;
+use SqlFtw\Sql\SubqueryType;
 use function get_class;
 use function in_array;
 
@@ -530,7 +531,7 @@ class RoutineBodyParser
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
 
-            $tokenList->startSubquery();
+            $tokenList->startSubquery(SubqueryType::CURSOR);
             $query = $this->queryParser->parseQuery($tokenList);
             $tokenList->endSubquery();
 

@@ -115,6 +115,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;
+use SqlFtw\Sql\SubqueryType;
 use function array_values;
 use function strtoupper;
 
@@ -734,7 +735,9 @@ class TableCommandsParser
         $query = $items = null;
         if ($bodyOpen) {
             if ($tokenList->hasAnyKeyword(Keyword::WITH, Keyword::SELECT)) {
+                $tokenList->startSubquery(SubqueryType::CREATE_TABLE);
                 $query = $this->queryParser->parseQuery($tokenList->rewind($position));
+                $tokenList->endSubquery();
             } else {
                 $items = $this->parseCreateTableBody($tokenList->rewind($position));
             }
@@ -767,11 +770,15 @@ class TableCommandsParser
 
         if ($query === null) {
             if ($tokenList->hasKeyword(Keyword::AS) || $items === null || $duplicateOption !== null) {
+                $tokenList->startSubquery(SubqueryType::CREATE_TABLE);
                 $query = $this->queryParser->parseQuery($tokenList);
+                $tokenList->endSubquery();
             } elseif (!$tokenList->isFinished()) {
                 $position = $tokenList->getPosition();
                 if (!$tokenList->hasSymbol(';')) {
+                    $tokenList->startSubquery(SubqueryType::CREATE_TABLE);
                     $query = $this->queryParser->parseQuery($tokenList);
+                    $tokenList->endSubquery();
                 } else {
                     $tokenList->rewind($position);
                 }

@@ -26,6 +26,7 @@ use SqlFtw\Sql\Entity;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\SubqueryType;
 
 class ViewCommandsParser
 {
@@ -115,7 +116,7 @@ class ViewCommandsParser
 
         $tokenList->expectKeyword(Keyword::AS);
 
-        $tokenList->startSubquery();
+        $tokenList->startSubquery(SubqueryType::CREATE_VIEW);
         $body = $this->queryParser->parseQuery($tokenList);
         $tokenList->endSubquery();
 

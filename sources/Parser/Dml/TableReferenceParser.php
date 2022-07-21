@@ -36,6 +36,7 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
+use SqlFtw\Sql\SubqueryType;
 use function count;
 
 class TableReferenceParser
@@ -280,7 +281,7 @@ class TableReferenceParser
      */
     private function parseSubquery(TokenList $tokenList): Query
     {
-        $tokenList->startSubquery();
+        $tokenList->startSubquery(SubqueryType::FROM);
         $query = ($this->queryParserProxy)()->parseQuery($tokenList);
         $tokenList->endSubquery();
 

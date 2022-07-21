@@ -29,6 +29,7 @@ use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
+use SqlFtw\Sql\SubqueryType;
 
 class InsertCommandParser
 {
@@ -141,9 +142,9 @@ class InsertCommandParser
             return new InsertSetCommand($table, $assignments, $columns, $alias, $partitions, $priority, $ignore, $update);
         }
 
-        $tokenList->startInsert();
+        $tokenList->startSubquery(SubqueryType::INSERT);
         $query = $this->queryParser->parseQuery($tokenList);
-        $tokenList->endInsert();
+        $tokenList->endSubquery();
 
         $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
@@ -184,12 +185,16 @@ class InsertCommandParser
 
         if ($tokenList->hasSymbol('(')) {
             $tokenList->expectAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE, Keyword::VALUES);
+            $tokenList->startSubquery(SubqueryType::REPLACE);
             $query = $this->queryParser->parseQuery($tokenList->rewind(-1));
+            $tokenList->endSubquery();
             $tokenList->expectSymbol(')');
 
             return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE)) { // no Keyword::VALUES!
+            $tokenList->startSubquery(SubqueryType::REPLACE);
             $query = $this->queryParser->parseQuery($tokenList->rewind(-1));
+            $tokenList->endSubquery();
 
             return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {

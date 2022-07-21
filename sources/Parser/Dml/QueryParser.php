@@ -55,6 +55,7 @@ use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\Statement;
+use SqlFtw\Sql\SubqueryType;
 use function array_pop;
 use function count;
 
@@ -107,7 +108,9 @@ class QueryParser
             }
             $tokenList->expectKeyword(Keyword::AS);
             $tokenList->expectSymbol('(');
+            $tokenList->startSubquery(SubqueryType::WITH);
             $query = $this->parserFactory->getQueryParser()->parseQuery($tokenList);
+            $tokenList->endSubquery();
             $tokenList->expectSymbol(')');
 
             $expressions[] = new WithExpression($query, $name, $columns);
@@ -518,7 +521,7 @@ class QueryParser
             $locking = $this->parseLocking($tokenList);
         }
 
-        if ($from === null && count($what) === 1 && $what[0]->getExpression() instanceof Asterisk) {
+        if ($from === null && count($what) === 1 && $what[0]->getExpression() instanceof Asterisk && !$tokenList->inSubquery(SubqueryType::EXISTS)) {
             throw new ParserException('No tables used in query.', $tokenList);
         }
 
@@ -559,10 +562,10 @@ class QueryParser
             $tokenList->expectKeyword(Keyword::ROW);
             $tokenList->expectSymbol('(');
             $values = [];
-            if (!$tokenList->hasSymbol(')') || !$tokenList->inInsert()) {
+            if (!$tokenList->hasSymbol(')') || !$tokenList->inSubquery(SubqueryType::INSERT)) {
                 do {
                     $value = $this->expressionParser->parseExpression($tokenList);
-                    if ($value instanceof DefaultLiteral && !$tokenList->inInsert()) {
+                    if ($value instanceof DefaultLiteral && !$tokenList->inSubquery(SubqueryType::INSERT)) {
                         throw new ParserException('Cannot use DEFAULT in ROW() expression outside and INSERT.', $tokenList);
                     }
                     $values[] = $value;

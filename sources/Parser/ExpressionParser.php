@@ -78,6 +78,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
+use SqlFtw\Sql\SubqueryType;
 use function in_array;
 use function preg_match;
 use function sprintf;
@@ -236,7 +237,9 @@ class ExpressionParser
             $quantifier = $tokenList->getAnyKeyword(Keyword::ALL, Keyword::ANY, Keyword::SOME);
             if ($quantifier !== null) {
                 $tokenList->expectSymbol('(');
+                $tokenList->startSubquery($quantifier);
                 $subquery = new Parentheses($this->parseSubquery($tokenList));
+                $tokenList->endSubquery();
                 $tokenList->expectSymbol(')');
 
                 return new ComparisonOperator($left, Operator::get($operator), $quantifier, $subquery);
@@ -309,7 +312,9 @@ class ExpressionParser
                 $tokenList->expectKeyword(Keyword::IN);
                 $tokenList->expectSymbol('(');
                 if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
+                    $tokenList->startSubquery(SubqueryType::IN);
                     $subquery = new Parentheses($this->parseSubquery($tokenList->rewind(-1)));
+                    $tokenList->endSubquery();
                     $tokenList->expectSymbol(')');
                     $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
 
@@ -518,7 +523,9 @@ class ExpressionParser
         } elseif ($tokenList->hasSymbol('(')) {
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                 // (subquery)
+                $tokenList->startSubquery(SubqueryType::EXPRESSION);
                 $subquery = $this->parseSubquery($tokenList->rewind(-1));
+                $tokenList->endSubquery();
                 $tokenList->expectSymbol(')');
 
                 return new Parentheses($subquery);
@@ -547,7 +554,9 @@ class ExpressionParser
             case Keyword::EXISTS:
                 // EXISTS (subquery)
                 $tokenList->expectSymbol('(');
+                $tokenList->startSubquery(SubqueryType::EXISTS);
                 $subquery = $this->parseSubquery($tokenList);
+                $tokenList->endSubquery();
                 $tokenList->expectSymbol(')');
 
                 return new ExistsExpression($subquery);
@@ -798,9 +807,7 @@ class ExpressionParser
         /** @var QueryParser $queryParser */
         $queryParser = ($this->queryParserProxy)();
 
-        $tokenList->startSubquery();
         $query = $queryParser->parseQuery($tokenList);
-        $tokenList->endSubquery();
 
         return new Subquery($query);
     }

@@ -30,7 +30,9 @@ use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Routine\Routine;
 use SqlFtw\Sql\SqlEnum;
+use SqlFtw\Sql\SubqueryType;
 use SqlFtw\Sql\UserName;
 use function array_pop;
 use function array_slice;
@@ -99,20 +101,17 @@ class TokenList
     /** @var int */
     private $position = 0;
 
-    /** @var string[] Are we inside a function, procedure, trigger or event definition? */
+    /** @var array<Routine::*> Are we inside a function, procedure, trigger or event definition? */
     private $inRoutine = [];
+
+    /** @var array<SubqueryType::*> Are we inside a subquery, and what type? */
+    private $inSubquery = [];
 
     /** @var bool Are we inside a UNION expression? */
     private $inUnion = false;
 
     /** @var bool Are we inside a prepared statement declaration? */
     private $inPrepared = false;
-
-    /** @var int Are we inside a subquery? */
-    private $inSubquery = 0;
-
-    /** @var bool Subquery inside in INSERT command */
-    private $inInsert = false;
 
     /** @var bool Should we expect a delimiter after the command? (command directly embedded into another command) */
     private $inEmbedded = false;
@@ -159,14 +158,42 @@ class TokenList
         return $this->inRoutine !== [] ? end($this->inRoutine) : null;
     }
 
-    public function startRoutine(string $value): void
+    /**
+     * @param string&Routine::* $value
+     */
+    public function startRoutine(string $type): void
     {
-        $this->inRoutine[] = $value;
+        $this->inRoutine[] = $type;
     }
 
     public function endRoutine(): void
     {
         array_pop($this->inRoutine);
+    }
+
+    /**
+     * @param null|string&SubqueryType::* $type
+     */
+    public function inSubquery(?string $type = null): bool
+    {
+        if ($type !== null) {
+            return $this->inSubquery !== [] && end($this->inSubquery) === $type;
+        } else {
+            return $this->inSubquery !== [];
+        }
+    }
+
+    /**
+     * @param null|string&SubqueryType::* $type
+     */
+    public function startSubquery(string $type): void
+    {
+        $this->inSubquery[] = $type;
+    }
+
+    public function endSubquery(): void
+    {
+        array_pop($this->inSubquery);
     }
 
     public function inUnion(): bool
@@ -192,41 +219,6 @@ class TokenList
     public function startPrepared(): void
     {
         $this->inPrepared = true;
-    }
-
-    public function endPrepared(): void
-    {
-        $this->inPrepared = false;
-    }
-
-    public function inSubquery(): bool
-    {
-        return $this->inSubquery > 0;
-    }
-
-    public function startSubquery(): void
-    {
-        $this->inSubquery++;
-    }
-
-    public function endSubquery(): void
-    {
-        $this->inSubquery--;
-    }
-
-    public function inInsert(): bool
-    {
-        return $this->inInsert;
-    }
-
-    public function startInsert(): void
-    {
-        $this->inInsert = true;
-    }
-
-    public function endInsert(): void
-    {
-        $this->inInsert = false;
     }
 
     public function inEmbedded(): bool
