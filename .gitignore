@@ -2,6 +2,7 @@
 /log
 /temp
 /vendor
+/tests/**/output/*
 local.neon
 build.local.properties
 netteForms.js
