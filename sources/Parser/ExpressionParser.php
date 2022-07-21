@@ -1191,7 +1191,9 @@ class ExpressionParser
                     if ($length < 0) {
                         // only a warning for CHAR(0)
                         throw new ParserException('Invalid type length.', $tokenList);
-                    } elseif ($type->isNumber() && $length === 0) {
+                    } elseif ($type->isNumber() && !$type->isInteger() && $length === 0) {
+                        throw new ParserException('Invalid type length.', $tokenList);
+                    } elseif ($type->equalsValue(BaseType::YEAR) && $length !== 4) {
                         throw new ParserException('Invalid type length.', $tokenList);
                     }
                 }
