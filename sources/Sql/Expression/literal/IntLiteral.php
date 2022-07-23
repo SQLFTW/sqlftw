@@ -11,11 +11,11 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 
-class IntLiteral extends NumberLiteral
+class IntLiteral extends NumericLiteral implements IntValue
 {
     use StrictBehaviorMixin;
 
-    public function asInteger(): int
+    public function asInt(): int
     {
         return (int) $this->value;
     }

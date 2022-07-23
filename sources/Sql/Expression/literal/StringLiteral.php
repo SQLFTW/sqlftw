@@ -28,7 +28,7 @@ use function implode;
  * with charset:
  * _utf8 'string'
  */
-class StringLiteral implements StringValue
+class StringLiteral implements StringValue, BoolValue
 {
     use StrictBehaviorMixin;
 
@@ -68,6 +68,11 @@ class StringLiteral implements StringValue
     public function asString(): string
     {
         return implode('', $this->parts);
+    }
+
+    public function asBool(): ?bool
+    {
+        return implode('', $this->parts) !== '';
     }
 
     public function serialize(Formatter $formatter): string

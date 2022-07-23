@@ -21,7 +21,7 @@ use function substr;
 /**
  * e.g. 0b01101110
  */
-class BinaryLiteral implements UintValue, StringValue
+class BinaryLiteral implements BoolValue, UintValue, StringValue
 {
     use StrictBehaviorMixin;
 
@@ -59,9 +59,14 @@ class BinaryLiteral implements UintValue, StringValue
         return $string;
     }
 
-    public function asInteger(): int
+    public function asInt(): int
     {
         return (int) bindec($this->value);
+    }
+
+    public function asBool(): ?bool
+    {
+        return ((int) bindec($this->value)) !== 0;
     }
 
     public function serialize(Formatter $formatter): string

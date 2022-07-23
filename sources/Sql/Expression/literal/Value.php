@@ -9,6 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
+/**
+ * Literals with concrete value
+ */
 interface Value extends Literal
 {
 

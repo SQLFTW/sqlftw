@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class BoolLiteral implements Value, KeywordLiteral
+class BoolLiteral implements BoolValue, KeywordLiteral
 {
     use StrictBehaviorMixin;
 
@@ -27,6 +27,11 @@ class BoolLiteral implements Value, KeywordLiteral
     public function getValue(): string
     {
         return $this->value ? 'TRUE' : 'FALSE';
+    }
+
+    public function asBool(): ?bool
+    {
+        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

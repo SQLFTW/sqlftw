@@ -9,6 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
+/**
+ * Literals convertible to string
+ */
 interface StringValue extends Value
 {
 

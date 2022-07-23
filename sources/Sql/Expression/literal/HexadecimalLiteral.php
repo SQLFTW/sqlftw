@@ -22,7 +22,7 @@ use function substr;
 /**
  * e.g. 0x001F
  */
-class HexadecimalLiteral implements StringValue, UintValue
+class HexadecimalLiteral implements BoolValue, StringValue, UintValue
 {
     use StrictBehaviorMixin;
 
@@ -60,9 +60,14 @@ class HexadecimalLiteral implements StringValue, UintValue
         return $string;
     }
 
-    public function asInteger(): int
+    public function asInt(): int
     {
         return (int) hexdec($this->value);
+    }
+
+    public function asBool(): ?bool
+    {
+        return ((int) hexdec($this->value)) !== 0;
     }
 
     public function serialize(Formatter $formatter): string

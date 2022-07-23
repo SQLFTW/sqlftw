@@ -13,11 +13,12 @@ namespace SqlFtw\Sql\Expression;
 
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
+use function strtolower;
 
 /**
  * Size in bytes - e.g. 1024, 16k, 4M, 1G
  */
-class SizeLiteral implements Literal
+class SizeLiteral implements UintValue
 {
     use StrictBehaviorMixin;
 
@@ -34,6 +35,22 @@ class SizeLiteral implements Literal
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function asInt(): int
+    {
+        $base = (int) $this->value;
+        $unit = strtolower($this->value[strlen($this->value) - 1]);
+
+        if ($unit === 'g') {
+            return $base * 1024 * 1024 * 1024;
+        } elseif ($unit === 'm') {
+            return $base * 1024 * 1024;
+        } elseif ($unit === 'k') {
+            return $base * 1024;
+        } else {
+            return $base;
+        }
     }
 
     public function serialize(Formatter $formatter): string

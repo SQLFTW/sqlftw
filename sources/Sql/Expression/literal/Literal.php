@@ -10,7 +10,9 @@
 namespace SqlFtw\Sql\Expression;
 
 /**
- * 1, 'x', TRUE, NULL
+ * Literals representing a concrete value or acting in place of value known at compile time (e.g. DEFAULT)
+ *
+ * e.g. 1, 'x', TRUE, NULL, DEFAULT, MAXVALUE...
  */
 interface Literal extends RootNode
 {

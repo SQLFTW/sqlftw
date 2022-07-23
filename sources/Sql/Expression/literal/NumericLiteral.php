@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class NumberLiteral implements Value
+class NumericLiteral implements NumericValue
 {
     use StrictBehaviorMixin;
 
@@ -27,6 +27,11 @@ class NumberLiteral implements Value
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function asFloat(): float
+    {
+        return (float) $this->value;
     }
 
     public function serialize(Formatter $formatter): string

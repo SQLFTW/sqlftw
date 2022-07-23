@@ -50,7 +50,7 @@ use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
 use SqlFtw\Sql\Expression\NoneLiteral;
 use SqlFtw\Sql\Expression\NullLiteral;
-use SqlFtw\Sql\Expression\NumberLiteral;
+use SqlFtw\Sql\Expression\NumericLiteral;
 use SqlFtw\Sql\Expression\OnOffLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
@@ -610,7 +610,7 @@ class ExpressionParser
         } elseif (($token->type & TokenType::INT) !== 0) {
             return new IntLiteral($token->value);
         } elseif (($token->type & TokenType::NUMBER) !== 0) {
-            return new NumberLiteral($token->value);
+            return new NumericLiteral($token->value);
         } elseif (($token->type & TokenType::SYMBOL) !== 0 && $token->value === '\\N') {
             return new NullLiteral();
         } elseif (($token->type & TokenType::KEYWORD) !== 0) {
@@ -856,7 +856,7 @@ class ExpressionParser
         } elseif (($token->type & TokenType::INT) !== 0) {
             return new IntLiteral($token->value);
         } elseif (($token->type & TokenType::NUMBER) !== 0) {
-            return new NumberLiteral($token->value);
+            return new NumericLiteral($token->value);
         } elseif (($token->type & TokenType::SYMBOL) !== 0 && $token->value === '\\N') {
             return new NullLiteral();
         } else {

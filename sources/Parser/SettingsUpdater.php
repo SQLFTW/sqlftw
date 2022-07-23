@@ -76,15 +76,15 @@ class SettingsUpdater
         } elseif ($expression instanceof DefaultLiteral) {
             $settings->setMode($this->sqlModeFromString(Keyword::DEFAULT, $settings->getPlatform(), $tokenList));
         } elseif ($expression instanceof UintLiteral) {
-            $settings->setMode($this->sqlModeFromInt($expression->asInteger(), $settings->getPlatform(), $tokenList));
+            $settings->setMode($this->sqlModeFromInt($expression->asInt(), $settings->getPlatform(), $tokenList));
         } elseif ($expression instanceof FunctionCall) {
             $function = $expression->getFunction();
             if ($function instanceof QualifiedName && $function->equals('sys.list_add')) {
                 [$first, $second] = $expression->getArguments();
                 if ($first instanceof SystemVariable && $first->getName() === MysqlVariable::SQL_MODE && $second instanceof StringValue) {
-                    $expression = $settings->getMode()->getValue() . ',' . $second->asString();
+                    $value = $settings->getMode()->getValue() . ',' . $second->asString();
                     // needed to expand groups
-                    $mode = $this->sqlModeFromString($expression, $settings->getPlatform(), $tokenList);
+                    $mode = $this->sqlModeFromString($value, $settings->getPlatform(), $tokenList);
                     $settings->setMode($mode);
                 } else {
                     throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);

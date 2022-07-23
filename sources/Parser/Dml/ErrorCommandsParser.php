@@ -25,7 +25,7 @@ use SqlFtw\Sql\Dml\Error\StatementInformationItem;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\NullLiteral;
-use SqlFtw\Sql\Expression\NumberLiteral;
+use SqlFtw\Sql\Expression\NumericLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringLiteral;
@@ -95,7 +95,7 @@ class ErrorCommandsParser
             $condition = $this->expressionParser->parseExpression($tokenList);
             if (($condition instanceof IntLiteral && !$condition instanceof UintLiteral) || (
                     !$condition instanceof StringLiteral
-                    && !$condition instanceof NumberLiteral
+                    && !$condition instanceof NumericLiteral
                     && !$condition instanceof SimpleName
                     && !$condition instanceof UserVariable
                     && !$condition instanceof NullLiteral

@@ -9,9 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
-interface UintValue extends Value
+/**
+ * Literals convertible to unsigned int
+ */
+interface UintValue extends IntValue
 {
-
-    public function asInteger(): int;
 
 }

@@ -12,13 +12,18 @@ namespace SqlFtw\Sql\Expression;
 use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
-class NullLiteral implements Value, KeywordLiteral
+class NullLiteral implements BoolValue, KeywordLiteral
 {
     use StrictBehaviorMixin;
 
     public function getValue(): string
     {
         return 'NULL';
+    }
+
+    public function asBool(): ?bool
+    {
+        return null;
     }
 
     public function serialize(Formatter $formatter): string
