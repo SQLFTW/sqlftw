@@ -12,7 +12,6 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Show\ShowBinaryLogsCommand;
@@ -69,7 +68,6 @@ use SqlFtw\Sql\Statement;
 
 class ShowCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

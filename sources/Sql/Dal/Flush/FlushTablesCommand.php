@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Flush;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class FlushTablesCommand extends Statement implements DalCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<QualifiedName>|null */
     private $tables;

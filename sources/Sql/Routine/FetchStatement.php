@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class FetchStatement extends Statement
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $cursor;

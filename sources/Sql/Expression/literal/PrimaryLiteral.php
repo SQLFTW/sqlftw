@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class PrimaryLiteral implements KeywordLiteral
 {
-    use StrictBehaviorMixin;
 
     public function getValue(): string
     {

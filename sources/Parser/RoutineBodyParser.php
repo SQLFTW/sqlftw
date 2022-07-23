@@ -11,7 +11,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
@@ -70,7 +69,6 @@ use function in_array;
 
 class RoutineBodyParser
 {
-    use StrictBehaviorMixin;
 
     /** @var Parser */
     private $parser;

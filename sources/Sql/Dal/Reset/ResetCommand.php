@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Reset;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Statement;
 
 class ResetCommand extends Statement implements DalCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<ResetOption> */
     private $options;

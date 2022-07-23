@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 
 class OrderByAction implements TableAction
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<OrderByExpression> */
     private $columns;

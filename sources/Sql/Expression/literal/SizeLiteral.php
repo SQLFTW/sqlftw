@@ -11,7 +11,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use function strtolower;
 
@@ -20,7 +19,6 @@ use function strtolower;
  */
 class SizeLiteral implements UintValue
 {
-    use StrictBehaviorMixin;
 
     public const REGEXP = '~[1-9][0-9]*(kmg)?~i';
 

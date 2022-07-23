@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 
 class UserPrivilege implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var UserPrivilegeType */
     private $type;

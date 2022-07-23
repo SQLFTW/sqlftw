@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Utility;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Statement;
 
 class ExplainForConnectionCommand extends Statement implements DmlCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var int */
     private $connectionId;

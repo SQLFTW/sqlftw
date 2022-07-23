@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Server\CreateSpatialReferenceSystemCommand;
 use SqlFtw\Sql\Ddl\Server\DropSpatialReferenceSystemCommand;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Keyword;
 
 class SpatialCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * CREATE OR REPLACE SPATIAL REFERENCE SYSTEM

@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 
 class TableReferenceJsonTable implements TableReferenceNode
 {
-    use StrictBehaviorMixin;
 
     /** @var FunctionCall */
     private $table;

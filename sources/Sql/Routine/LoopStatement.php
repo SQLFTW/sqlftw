@@ -2,14 +2,12 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
 class LoopStatement extends Statement implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var Statement[] */
     private $statements;

@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use function strval;
 
 class CoalescePartitionAction implements PartitioningAction
 {
-    use StrictBehaviorMixin;
 
     /** @var int */
     private $value;

@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 
 class InnerJoin extends Join
 {
-    use StrictBehaviorMixin;
 
     /** @var bool */
     private $crossJoin;

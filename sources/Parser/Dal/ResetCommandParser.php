@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Reset\ResetCommand;
 use SqlFtw\Sql\Dal\Reset\ResetOption;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Keyword;
 
 class ResetCommandParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * RESET reset_option [, reset_option] ...

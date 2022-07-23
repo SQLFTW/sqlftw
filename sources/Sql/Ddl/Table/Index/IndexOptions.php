@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 use function ltrim;
 
 class IndexOptions implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var int|null */
     private $keyBlockSize;

@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Restart;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Statement;
 
 class RestartCommand extends Statement implements DalCommand
 {
-    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

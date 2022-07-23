@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
@@ -23,7 +22,6 @@ use SqlFtw\Formatter\Formatter;
  */
 class ComparisonOperator implements OperatorExpression
 {
-    use StrictBehaviorMixin;
 
     /** @var RootNode */
     private $left;

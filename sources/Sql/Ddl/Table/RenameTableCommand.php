@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\CombineIterator;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -21,7 +20,6 @@ use function rtrim;
 
 class RenameTableCommand extends Statement implements DdlTablesCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<QualifiedName> */
     protected $names;

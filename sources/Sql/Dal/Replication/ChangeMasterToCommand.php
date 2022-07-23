@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -24,7 +23,6 @@ use function implode;
  */
 class ChangeMasterToCommand extends Statement implements ReplicationCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<string, SlaveOptionValue|null> */
     private $options;

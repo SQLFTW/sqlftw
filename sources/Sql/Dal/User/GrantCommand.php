@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Statement;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\UserName;
 
 class GrantCommand extends Statement implements UserCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<UserPrivilege> */
     private $privileges;

@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
 class IterateStatement extends Statement implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $label;

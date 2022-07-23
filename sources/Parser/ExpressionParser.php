@@ -13,7 +13,6 @@ namespace SqlFtw\Parser;
 
 use Dogma\Re;
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use Dogma\Time\DateTime;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Charset;
@@ -89,7 +88,6 @@ use function substr;
 
 class ExpressionParser
 {
-    use StrictBehaviorMixin;
     use ExpressionParserFunctions;
 
     private const PUNCTUATION = '[~`@#$%^&\'"\\\\=[\\]{}()<>;:,.?!_|\\/*+-]';

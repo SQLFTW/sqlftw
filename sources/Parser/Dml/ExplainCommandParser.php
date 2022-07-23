@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser\Dml;
 
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
@@ -25,7 +24,6 @@ use function strtoupper;
 
 class ExplainCommandParser
 {
-    use StrictBehaviorMixin;
 
     /** @var QueryParser */
     private $queryParser;

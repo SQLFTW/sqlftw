@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Update;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\DmlCommand;
@@ -27,7 +26,6 @@ use function count;
 
 class UpdateCommand extends Statement implements DmlCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var TableReferenceNode */
     private $tableReferences;

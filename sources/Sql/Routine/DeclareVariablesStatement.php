@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\RootNode;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Statement;
 
 class DeclareVariablesStatement extends Statement implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<string> */
     private $names;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
@@ -23,7 +22,6 @@ use function trim;
 
 class SchemaCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * ALTER {DATABASE | SCHEMA} [db_name]

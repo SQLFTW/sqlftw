@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 
 class AddColumnsAction implements ColumnAction
 {
-    use StrictBehaviorMixin;
 
     public const FIRST = true;
 

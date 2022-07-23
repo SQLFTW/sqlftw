@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Dml\Query;
 
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\FileFormat;
@@ -21,7 +20,6 @@ use SqlFtw\Sql\SqlSerializable;
 
 class SelectInto implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<UserVariable|SimpleName>|null */
     private $variables;

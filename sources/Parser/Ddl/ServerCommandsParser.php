@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Server\AlterServerCommand;
 use SqlFtw\Sql\Ddl\Server\CreateServerCommand;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Keyword;
 
 class ServerCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * ALTER SERVER server_name

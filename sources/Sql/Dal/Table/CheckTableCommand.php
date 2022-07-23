@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Table;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class CheckTableCommand extends Statement implements DalTablesCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<QualifiedName> */
     private $names;

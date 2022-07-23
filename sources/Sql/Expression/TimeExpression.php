@@ -11,7 +11,6 @@ namespace SqlFtw\Sql\Expression;
 
 use DateInterval;
 use DateTimeInterface;
-use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Span\DateTimeSpan;
@@ -21,7 +20,6 @@ use SqlFtw\Sql\SqlSerializable;
 
 class TimeExpression implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var Date|Time|DateTime|BuiltInFunction */
     private $initial;

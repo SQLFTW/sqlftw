@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Ddl\Routine;
 
 use Dogma\Arr;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
@@ -21,7 +20,6 @@ use function implode;
 
 class CreateFunctionCommand extends Statement implements StoredFunctionCommand, CreateRoutineCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

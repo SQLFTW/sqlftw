@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Expression\RootNode;
 
 class CheckDefinition implements TableItem, ConstraintBody
 {
-    use StrictBehaviorMixin;
 
     /** @var RootNode */
     private $expression;

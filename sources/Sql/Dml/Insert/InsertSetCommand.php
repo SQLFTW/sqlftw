@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Expression\QualifiedName;
 
 class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<Assignment> */
     private $assignments;

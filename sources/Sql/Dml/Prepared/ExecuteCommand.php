@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Prepared;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 use function implode;
 
 class ExecuteCommand extends Statement implements PreparedStatementCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

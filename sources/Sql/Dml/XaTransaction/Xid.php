@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\SqlSerializable;
 
 class Xid implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var StringValue */
     private $transactionId;

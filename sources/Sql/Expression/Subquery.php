@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Dml\Query\Query;
  */
 class Subquery implements ExpressionNode
 {
-    use StrictBehaviorMixin;
 
     /** @var Query */
     private $subquery;

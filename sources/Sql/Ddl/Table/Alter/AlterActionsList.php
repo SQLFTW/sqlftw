@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterTableAction;
 use SqlFtw\Sql\SqlSerializable;
@@ -18,7 +17,6 @@ use function rtrim;
 
 class AlterActionsList implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var AlterTableAction[] */
     private $actions;

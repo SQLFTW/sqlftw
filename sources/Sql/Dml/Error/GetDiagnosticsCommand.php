@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Dml\Error;
 
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
@@ -20,7 +19,6 @@ use SqlFtw\Util\TypeChecker;
 
 class GetDiagnosticsCommand extends Statement implements Command
 {
-    use StrictBehaviorMixin;
 
     /** @var DiagnosticsArea|null */
     private $area;

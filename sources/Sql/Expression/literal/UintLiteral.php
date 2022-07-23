@@ -9,10 +9,8 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 
 class UintLiteral extends IntLiteral implements UintValue
 {
-    use StrictBehaviorMixin;
 
 }

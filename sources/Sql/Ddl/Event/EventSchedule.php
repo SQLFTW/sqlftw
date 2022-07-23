@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\TimeInterval;
@@ -19,7 +18,6 @@ use SqlFtw\Sql\SqlSerializable;
 
 class EventSchedule implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var RootNode|null */
     private $time;

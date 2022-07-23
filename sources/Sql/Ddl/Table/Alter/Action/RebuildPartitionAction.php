@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class RebuildPartitionAction implements PartitioningAction
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<string>|null */
     private $partitions;

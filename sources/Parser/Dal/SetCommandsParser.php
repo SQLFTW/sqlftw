@@ -11,7 +11,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
@@ -35,7 +34,6 @@ use function is_array;
 
 class SetCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

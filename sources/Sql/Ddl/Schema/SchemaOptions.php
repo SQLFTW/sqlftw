@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Schema;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -18,7 +17,6 @@ use function ltrim;
 
 class SchemaOptions implements SchemaCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var Charset|null */
     private $charset;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class AlterProcedureCommand extends Statement implements StoredProcedureCommand, AlterRoutineCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

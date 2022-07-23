@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
@@ -20,7 +19,6 @@ use function count;
  */
 class CaseExpression extends Statement implements RootNode
 {
-    use StrictBehaviorMixin;
 
     /** @var RootNode|null */
     private $condition;

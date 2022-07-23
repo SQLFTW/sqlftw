@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Dml\Load;
 
 use Dogma\Arr;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DmlCommand;
@@ -22,7 +21,6 @@ use function implode;
 
 abstract class LoadCommand extends Statement implements DmlCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $file;

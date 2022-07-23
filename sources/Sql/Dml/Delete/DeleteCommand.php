@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Delete;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
@@ -27,7 +26,6 @@ use function implode;
 
 class DeleteCommand extends Statement implements DmlCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<array{QualifiedName, string|null}> */
     private $tables;

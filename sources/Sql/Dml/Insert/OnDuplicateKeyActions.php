@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\SqlSerializable;
 
 class OnDuplicateKeyActions implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<Assignment> */
     private $assignments;

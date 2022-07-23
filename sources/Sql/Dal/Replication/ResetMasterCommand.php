@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Statement;
 
 class ResetMasterCommand extends Statement implements ReplicationCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionNode|null */
     private $binlogPosition;

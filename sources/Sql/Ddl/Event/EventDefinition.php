@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class EventDefinition
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

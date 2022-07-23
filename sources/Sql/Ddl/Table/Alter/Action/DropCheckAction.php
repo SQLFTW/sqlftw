@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class DropCheckAction implements CheckAction
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

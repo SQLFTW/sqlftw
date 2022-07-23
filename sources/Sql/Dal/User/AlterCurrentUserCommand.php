@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class AlterCurrentUserCommand extends Statement implements UserCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var AuthOption|null */
     private $option;

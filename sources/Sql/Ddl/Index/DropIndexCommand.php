@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Index;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
@@ -19,7 +18,6 @@ use SqlFtw\Sql\Statement;
 
 class DropIndexCommand extends Statement implements IndexCommand, DdlTableCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

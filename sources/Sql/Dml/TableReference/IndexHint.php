@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\SqlSerializable;
 
 class IndexHint implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var IndexHintAction */
     private $action;

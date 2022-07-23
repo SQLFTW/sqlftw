@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Statement;
 
 class SetCharacterSetCommand extends Statement implements SetCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var Charset|null */
     private $charset;

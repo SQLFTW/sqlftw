@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
@@ -35,7 +34,6 @@ use SqlFtw\Sql\Keyword;
 
 class ErrorCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

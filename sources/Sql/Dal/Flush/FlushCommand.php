@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Flush;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Statement;
@@ -18,7 +17,6 @@ use function implode;
 
 class FlushCommand extends Statement implements DalCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<FlushOption> */
     private $options;

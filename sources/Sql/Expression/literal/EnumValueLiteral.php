@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class EnumValueLiteral implements Literal
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $value;

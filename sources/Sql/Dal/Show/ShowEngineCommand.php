@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Statement;
 
 class ShowEngineCommand extends Statement implements ShowCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var StorageEngine */
     private $engine;

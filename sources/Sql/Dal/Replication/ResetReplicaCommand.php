@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class ResetReplicaCommand extends Statement implements ReplicationCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var bool */
     private $all;

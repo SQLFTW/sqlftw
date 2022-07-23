@@ -10,12 +10,10 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Countable;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class TableReferenceParentheses implements TableReferenceNode, Countable
 {
-    use StrictBehaviorMixin;
 
     /** @var TableReferenceNode */
     private $content;

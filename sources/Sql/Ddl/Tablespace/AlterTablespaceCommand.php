@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlSerializable;
@@ -22,7 +21,6 @@ use function is_int;
  */
 class AlterTablespaceCommand extends Statement implements TablespaceCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

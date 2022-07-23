@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class PurgeBinaryLogsCommand extends Statement implements ReplicationCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $toLog;

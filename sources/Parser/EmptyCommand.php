@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Statement;
@@ -19,7 +18,6 @@ use SqlFtw\Sql\Statement;
  */
 class EmptyCommand extends Statement implements Command
 {
-    use StrictBehaviorMixin;
 
     /**
      * @param string[] $commentsBefore

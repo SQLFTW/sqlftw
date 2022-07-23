@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Expression\QualifiedName;
 
 class InsertSelectCommand extends InsertOrReplaceCommand implements InsertCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var Query */
     private $query;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
@@ -27,7 +26,6 @@ use function in_array;
 
 class PreparedCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var Parser */
     private $parser;

@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
 class ShowSchemasCommand extends Statement implements ShowCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $like;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Resource;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Statement;
@@ -19,7 +18,6 @@ use function implode;
 
 class CreateResourceGroupCommand extends Statement implements DalCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

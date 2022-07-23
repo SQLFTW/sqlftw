@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\EntityType;
@@ -20,7 +19,6 @@ use SqlFtw\Sql\SqlMode;
  */
 class ParserSettings
 {
-    use StrictBehaviorMixin;
 
     /** @var Platform */
     private $platform;

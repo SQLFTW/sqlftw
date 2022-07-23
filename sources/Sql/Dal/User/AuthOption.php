@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\SqlSerializable;
 
 class AuthOption implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $authPlugin;

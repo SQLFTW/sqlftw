@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\DoCommand;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ExpressionNode;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class DoCommand extends Statement implements DmlCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<ExpressionNode> */
     private $expressions;

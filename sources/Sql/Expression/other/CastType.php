@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -23,7 +22,6 @@ use function is_null;
  */
 class CastType implements ArgumentNode
 {
-    use StrictBehaviorMixin;
 
     public const UNSIGNED = true;
 

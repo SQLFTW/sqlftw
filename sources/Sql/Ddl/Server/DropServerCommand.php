@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Server;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class DropServerCommand extends Statement implements ServerCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

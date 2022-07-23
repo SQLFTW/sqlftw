@@ -13,7 +13,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
@@ -43,7 +42,6 @@ use function trim;
  */
 class Lexer
 {
-    use StrictBehaviorMixin;
 
     private const NUMBERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 

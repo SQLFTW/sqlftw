@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -21,7 +20,6 @@ use function strtolower;
 
 class UuidSet implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $uuid;

@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class ShowCreateViewCommand extends Statement implements ShowCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

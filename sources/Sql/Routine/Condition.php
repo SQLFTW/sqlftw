@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\Expression\BaseType;
@@ -21,7 +20,6 @@ use function is_string;
 
 class Condition implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var ConditionType */
     private $type;

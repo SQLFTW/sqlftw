@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Expression;
 
 use DateInterval;
-use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
 
@@ -19,7 +18,6 @@ use SqlFtw\Formatter\Formatter;
  */
 class IntervalExpression implements RootNode
 {
-    use StrictBehaviorMixin;
 
     /** @var TimeInterval */
     private $value;

@@ -9,11 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 
 class IntLiteral extends NumericLiteral implements IntValue
 {
-    use StrictBehaviorMixin;
 
     public function asInt(): int
     {

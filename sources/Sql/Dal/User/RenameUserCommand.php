@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use Dogma\CombineIterator;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -22,7 +21,6 @@ use function rtrim;
 
 class RenameUserCommand extends Statement implements UserCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<UserName|FunctionCall> */
     protected $users;

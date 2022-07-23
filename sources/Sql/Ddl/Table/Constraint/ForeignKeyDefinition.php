@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -17,7 +16,6 @@ use function count;
 
 class ForeignKeyDefinition implements TableItem, ConstraintBody
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<string> */
     private $columns;

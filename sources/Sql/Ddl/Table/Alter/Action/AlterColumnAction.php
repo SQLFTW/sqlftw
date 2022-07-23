@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\RootNode;
 
 class AlterColumnAction implements ColumnAction
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

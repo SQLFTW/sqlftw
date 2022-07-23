@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Platform;
 
-use Dogma\StrictBehaviorMixin;
 use function explode;
 use function floor;
 use function is_int;
 
 class Version
 {
-    use StrictBehaviorMixin;
 
     /** @var int */
     private $major;

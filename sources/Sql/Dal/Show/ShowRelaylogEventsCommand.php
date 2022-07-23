@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class ShowRelaylogEventsCommand extends Statement implements ShowCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $logName;

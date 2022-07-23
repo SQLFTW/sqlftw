@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\SqlSerializable;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class DeclareCursorStatement extends Statement implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

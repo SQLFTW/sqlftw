@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class ShowPluginsCommand extends Statement implements ShowCommand
 {
-    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

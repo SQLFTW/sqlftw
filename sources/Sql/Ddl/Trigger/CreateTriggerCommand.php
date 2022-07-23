@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Trigger;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class CreateTriggerCommand extends Statement implements TriggerCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

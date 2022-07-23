@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Schema;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class AlterSchemaCommand extends Statement implements SchemaCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $name;

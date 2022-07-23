@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\UserName;
 
 class AlterUserDefaultRoleCommand extends Statement implements UserCommand
 {
-    use StrictBehaviorMixin;
 
     public const NO_ROLES = false;
     public const ALL_ROLES = true;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Statement;
@@ -20,7 +19,6 @@ use Throwable;
  */
 class InvalidCommand extends Statement implements Command
 {
-    use StrictBehaviorMixin;
 
     /** @var Throwable */
     private $exception;

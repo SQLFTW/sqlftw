@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 
 class TableReferenceTable implements TableReferenceNode
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $table;

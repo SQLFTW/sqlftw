@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 
 class AddConstraintAction implements ConstraintAction
 {
-    use StrictBehaviorMixin;
 
     /** @var ConstraintDefinition */
     private $constraint;

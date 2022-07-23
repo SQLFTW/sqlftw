@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
@@ -17,7 +16,6 @@ use SqlFtw\Formatter\Formatter;
  */
 class MatchExpression implements RootNode
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<ColumnIdentifier> */
     private $columns;

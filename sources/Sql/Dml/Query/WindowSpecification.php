@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\RootNode;
@@ -19,7 +18,6 @@ use function implode;
 
 class WindowSpecification implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $name;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class ShowColumnsCommand extends Statement implements ShowCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $table;

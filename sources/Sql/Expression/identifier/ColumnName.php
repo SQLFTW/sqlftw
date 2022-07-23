@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class ColumnName implements Identifier, ColumnIdentifier
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

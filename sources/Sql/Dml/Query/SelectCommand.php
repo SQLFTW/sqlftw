@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
@@ -23,7 +22,6 @@ use SqlFtw\Sql\Statement;
 
 class SelectCommand extends Statement implements SimpleQuery
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<SelectExpression> */
     private $columns;

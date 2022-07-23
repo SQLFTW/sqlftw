@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
@@ -20,7 +19,6 @@ use SqlFtw\Sql\Keyword;
 
 class KillCommandParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

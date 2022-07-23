@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class DropTableCommand extends Statement implements DdlTablesCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<QualifiedName> */
     private $names;

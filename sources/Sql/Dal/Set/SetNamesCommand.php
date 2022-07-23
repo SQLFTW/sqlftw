@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Statement;
 
 class SetNamesCommand extends Statement implements SetCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var Charset|DefaultLiteral */
     private $charset;

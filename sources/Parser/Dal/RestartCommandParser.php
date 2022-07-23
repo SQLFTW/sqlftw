@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Restart\RestartCommand;
 use SqlFtw\Sql\Keyword;
 
 class RestartCommandParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * RESTART

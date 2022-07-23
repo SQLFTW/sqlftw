@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\SqlSerializable;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\UserName;
 
 class IdentifiedUser implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var UserName|FunctionCall */
     private $user;

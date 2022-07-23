@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\SqlSerializable;
 
 class ProcedureParam implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

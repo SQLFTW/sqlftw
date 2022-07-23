@@ -11,7 +11,6 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -22,7 +21,6 @@ use function implode;
 
 class ChangeReplicationFilterCommand extends Statement implements ReplicationCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<string, array<string>|array<QualifiedName>> */
     private $filters;

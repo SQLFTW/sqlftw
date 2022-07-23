@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use Dogma\Arr;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\MaxValueLiteral;
 use SqlFtw\Sql\Expression\RootNode;
@@ -21,7 +20,6 @@ use function is_int;
 
 class PartitionDefinition implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

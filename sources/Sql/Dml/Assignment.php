@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
@@ -23,7 +22,6 @@ use function ucfirst;
 
 class Assignment implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var ColumnIdentifier */
     private $variable;

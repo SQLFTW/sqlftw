@@ -9,11 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 
 class OperatorPrioritySolver
 {
-    use StrictBehaviorMixin;
 
     /**
      * priority:

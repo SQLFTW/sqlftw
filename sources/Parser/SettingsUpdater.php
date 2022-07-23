@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
@@ -37,7 +36,6 @@ use function trim;
  */
 class SettingsUpdater
 {
-    use StrictBehaviorMixin;
 
     public function updateSettings(Command $command, ParserSettings $settings, TokenList $tokenList): void
     {

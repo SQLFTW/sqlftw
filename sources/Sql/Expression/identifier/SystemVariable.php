@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\MysqlVariable;
@@ -19,7 +18,6 @@ use function implode;
 
 class SystemVariable implements Identifier
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

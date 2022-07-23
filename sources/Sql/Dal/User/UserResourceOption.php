@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 
 class UserResourceOption implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var UserResourceOptionType */
     private $type;

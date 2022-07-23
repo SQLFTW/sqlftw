@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\RootNode;
@@ -18,7 +17,6 @@ use function is_string;
 
 class SelectExpression implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var RootNode|Asterisk */
     private $expression;

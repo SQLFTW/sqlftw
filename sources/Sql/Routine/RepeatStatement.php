@@ -2,7 +2,6 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
@@ -10,7 +9,6 @@ use SqlFtw\Sql\Statement;
 
 class RepeatStatement extends Statement implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var Statement[] */
     private $statements;

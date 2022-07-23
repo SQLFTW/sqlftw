@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -21,7 +20,6 @@ use function is_int;
  */
 class FunctionCall implements RootNode
 {
-    use StrictBehaviorMixin;
 
     /** @var FunctionIdentifier */
     private $function;

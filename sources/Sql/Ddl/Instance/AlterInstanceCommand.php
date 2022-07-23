@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Instance;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\DdlCommand;
 use SqlFtw\Sql\Statement;
 
 class AlterInstanceCommand extends Statement implements DdlCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var AlterInstanceAction */
     private $action;

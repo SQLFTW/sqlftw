@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -18,7 +17,6 @@ use function count;
 
 class IfStatement extends Statement
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<RootNode> */
     private $conditions;

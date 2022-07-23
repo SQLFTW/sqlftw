@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class CreateEventCommand extends Statement implements EventCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var EventDefinition */
     private $event;

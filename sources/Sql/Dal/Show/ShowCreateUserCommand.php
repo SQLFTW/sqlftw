@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
 class ShowCreateUserCommand extends Statement implements ShowCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var UserName */
     private $name;

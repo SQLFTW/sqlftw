@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\RoutineBodyParser;
@@ -28,7 +27,6 @@ use SqlFtw\Sql\Routine\RoutineType;
 
 class EventCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var RoutineBodyParser */
     private $routineBodyParser;

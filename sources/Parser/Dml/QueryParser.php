@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser\Dml;
 
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParserFactory;
@@ -61,7 +60,6 @@ use function count;
 
 class QueryParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ParserFactory */
     private $parserFactory;

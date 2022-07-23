@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Cache;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 use function is_array;
@@ -19,7 +18,6 @@ use function is_array;
  */
 class CacheIndexCommand extends Statement implements CacheCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $keyCache;

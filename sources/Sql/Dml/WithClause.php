@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 
 class WithClause implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<WithExpression> */
     private $expressions;

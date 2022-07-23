@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -21,7 +20,6 @@ use function is_string;
  */
 class OrderByExpression implements ArgumentNode
 {
-    use StrictBehaviorMixin;
 
     /** @var Order|null */
     private $order;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Resource\AlterResourceGroupCommand;
 use SqlFtw\Sql\Dal\Resource\CreateResourceGroupCommand;
@@ -21,7 +20,6 @@ use SqlFtw\Sql\Keyword;
 
 class ResourceCommandParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * ALTER RESOURCE GROUP group_name

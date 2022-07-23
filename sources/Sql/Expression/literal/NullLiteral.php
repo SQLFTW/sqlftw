@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class NullLiteral implements BoolValue, KeywordLiteral
 {
-    use StrictBehaviorMixin;
 
     public function getValue(): string
     {

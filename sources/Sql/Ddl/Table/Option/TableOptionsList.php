@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use Dogma\Arr;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -28,7 +27,6 @@ use function is_int;
  */
 class TableOptionsList
 {
-    use StrictBehaviorMixin;
 
     /** @var array<string, TableOptionValue|null> */
     private $options = [];

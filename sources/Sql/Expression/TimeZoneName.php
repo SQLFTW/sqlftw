@@ -11,13 +11,11 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlEnum;
 
 class TimeZoneName extends SqlEnum implements TimeZone
 {
-    use StrictBehaviorMixin;
 
     public const UTC = 'UTC';
 

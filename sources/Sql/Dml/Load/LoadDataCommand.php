@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Load;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
@@ -19,7 +18,6 @@ use SqlFtw\Sql\Expression\RootNode;
 
 class LoadDataCommand extends LoadCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var FileFormat|null */
     private $format;

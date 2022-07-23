@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class LockTablesCommand extends Statement implements TransactionCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<LockTablesItem> */
     private $items;

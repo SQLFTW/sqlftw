@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\Component;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class InstallComponentCommand extends Statement implements ComponentCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<string> */
     private $components;

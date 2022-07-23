@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\Table;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTableCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

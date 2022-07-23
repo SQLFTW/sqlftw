@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Expression\DefaultLiteral;
 
 class ConvertToCharsetAction implements TableAction
 {
-    use StrictBehaviorMixin;
 
     /** @var Charset|DefaultLiteral */
     private $charset;

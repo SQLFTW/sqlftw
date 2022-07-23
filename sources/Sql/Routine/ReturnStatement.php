@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class ReturnStatement extends Statement implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var RootNode */
     private $expression;

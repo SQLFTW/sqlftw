@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
@@ -22,7 +21,6 @@ use function count;
 
 class UnionExpression extends Statement implements Query
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<Query> */
     private $queries;

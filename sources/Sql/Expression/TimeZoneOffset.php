@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function preg_match;
 
 class TimeZoneOffset implements TimeZone
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $value;

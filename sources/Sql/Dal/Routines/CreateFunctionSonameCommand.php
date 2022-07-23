@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Ddl\Routine\UdfReturnDataType;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Statement;
 
 class CreateFunctionSonameCommand extends Statement implements DalCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

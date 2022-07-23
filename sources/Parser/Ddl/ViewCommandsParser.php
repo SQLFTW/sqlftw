@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
@@ -30,7 +29,6 @@ use SqlFtw\Sql\SubqueryType;
 
 class ViewCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

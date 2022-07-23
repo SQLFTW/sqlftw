@@ -10,14 +10,12 @@
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use Dogma\ShouldNotHappenException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 
 class ConstraintDefinition implements TableItem
 {
-    use StrictBehaviorMixin;
 
     /** @var ConstraintType */
     private $type;

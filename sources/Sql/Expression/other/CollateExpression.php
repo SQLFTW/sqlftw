@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Collation;
 
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Collation;
  */
 class CollateExpression implements RootNode
 {
-    use StrictBehaviorMixin;
 
     /** @var RootNode */
     private $expression;

@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class StartGroupReplicationCommand extends Statement implements GroupReplicationCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string|null */
     private $user;

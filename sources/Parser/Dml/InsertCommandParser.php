@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Assignment;
@@ -33,7 +32,6 @@ use SqlFtw\Sql\SubqueryType;
 
 class InsertCommandParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

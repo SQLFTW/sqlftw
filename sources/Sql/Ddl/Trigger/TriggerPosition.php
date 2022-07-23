@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Trigger;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlSerializable;
 
 class TriggerPosition implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var TriggerOrder */
     private $order;

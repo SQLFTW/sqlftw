@@ -11,7 +11,6 @@ namespace SqlFtw\Parser;
 
 use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Str;
-use Dogma\StrictBehaviorMixin;
 use InvalidArgumentException;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
@@ -76,7 +75,6 @@ use function ucfirst;
  */
 class TokenList
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<Token> */
     private $tokens;

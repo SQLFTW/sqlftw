@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
 
 class LockTablesItem implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $table;

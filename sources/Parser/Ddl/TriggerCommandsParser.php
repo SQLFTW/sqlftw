@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\RoutineBodyParser;
 use SqlFtw\Parser\TokenList;
@@ -25,7 +24,6 @@ use SqlFtw\Sql\Routine\RoutineType;
 
 class TriggerCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

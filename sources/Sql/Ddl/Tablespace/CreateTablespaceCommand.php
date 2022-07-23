@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
@@ -24,7 +23,6 @@ use function is_string;
  */
 class CreateTablespaceCommand extends Statement implements TablespaceCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

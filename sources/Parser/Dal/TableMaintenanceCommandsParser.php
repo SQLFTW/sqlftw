@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableDropHistogramCommand;
 use SqlFtw\Sql\Dal\Table\AnalyzeTablesCommand;
@@ -24,7 +23,6 @@ use SqlFtw\Sql\Keyword;
 
 class TableMaintenanceCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL]

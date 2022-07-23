@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
@@ -26,7 +25,6 @@ use function is_array;
  */
 class CreateTableCommand extends Statement implements AnyCreateTableCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

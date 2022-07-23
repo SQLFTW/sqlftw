@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class DropPrimaryKeyAction implements IndexAction
 {
-    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

@@ -9,11 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use Dogma\StrictBehaviorMixin;
 
 abstract class Join implements TableReferenceNode
 {
-    use StrictBehaviorMixin;
 
     /** @var TableReferenceNode */
     protected $left;

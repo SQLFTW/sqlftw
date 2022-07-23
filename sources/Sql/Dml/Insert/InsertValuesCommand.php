@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Insert;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ExpressionNode;
@@ -19,7 +18,6 @@ use function implode;
 
 class InsertValuesCommand extends InsertOrReplaceCommand implements InsertCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<array<ExpressionNode>> */
     private $rows;

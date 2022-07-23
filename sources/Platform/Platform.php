@@ -11,7 +11,6 @@ namespace SqlFtw\Platform;
 
 use Dogma\InvalidArgumentException;
 use Dogma\NotImplementedException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Platform\Features\FeaturesList;
 use SqlFtw\Platform\Features\MysqlFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
@@ -23,7 +22,6 @@ use function ucfirst;
 
 class Platform
 {
-    use StrictBehaviorMixin;
 
     public const SQL = 'sql';
     public const MYSQL = 'mysql';

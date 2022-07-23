@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
@@ -17,7 +16,6 @@ use SqlFtw\Formatter\Formatter;
  */
 class Parentheses implements RootNode
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionNode */
     private $contents;

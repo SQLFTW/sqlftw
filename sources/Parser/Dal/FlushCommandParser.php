@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
@@ -20,7 +19,6 @@ use SqlFtw\Sql\Keyword;
 
 class FlushCommandParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * FLUSH [NO_WRITE_TO_BINLOG | LOCAL]

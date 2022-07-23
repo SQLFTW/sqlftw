@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class NumericLiteral implements NumericValue
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     protected $value;

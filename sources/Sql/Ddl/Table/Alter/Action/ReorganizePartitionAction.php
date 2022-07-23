@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
 use SqlFtw\Sql\InvalidDefinitionException;
 
 class ReorganizePartitionAction implements PartitioningAction
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<string>|null */
     private $partitions;

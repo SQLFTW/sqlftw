@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
@@ -41,7 +40,6 @@ use function count;
 
 class TableReferenceParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Import\ImportCommand;
 use SqlFtw\Sql\Keyword;
 
 class ImportCommandParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * IMPORT TABLE FROM sdi_file [, sdi_file] ...

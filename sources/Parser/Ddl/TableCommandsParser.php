@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\InvalidValueException as InvalidEnumValueException;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidValueException;
@@ -124,7 +123,6 @@ use function strtoupper;
  */
 class TableCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

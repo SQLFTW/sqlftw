@@ -2,13 +2,11 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class CompoundStatement extends Statement
 {
-    use StrictBehaviorMixin;
 
     /** @var Statement[] */
     private $statements;

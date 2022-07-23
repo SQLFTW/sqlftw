@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\Re;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
@@ -30,7 +29,6 @@ use function strtoupper;
 
 class IndexCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

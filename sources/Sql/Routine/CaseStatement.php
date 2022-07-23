@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -19,7 +18,6 @@ use function count;
 
 class CaseStatement extends Statement implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var RootNode|null */
     private $condition;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Call;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Statement;
 
 class CallCommand extends Statement implements DmlCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $procedure;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Set;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\SqlSerializable;
 
 class SetAssignment implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var Identifier */
     private $variable;

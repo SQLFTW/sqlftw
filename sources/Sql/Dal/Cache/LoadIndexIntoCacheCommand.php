@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\Cache;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Statement;
  */
 class LoadIndexIntoCacheCommand extends Statement implements CacheCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<TableIndexList> */
     private $tableIndexLists;

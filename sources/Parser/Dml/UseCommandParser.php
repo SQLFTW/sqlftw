@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Utility\UseCommand;
 use SqlFtw\Sql\EntityType;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Keyword;
 
 class UseCommandParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * USE db_name

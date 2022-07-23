@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql\Expression;
 
 use DateInterval;
-use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Span\DateTimeSpan;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -21,7 +20,6 @@ use function sprintf;
 
 class TimeInterval implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var int|string|RootNode */
     private $value;

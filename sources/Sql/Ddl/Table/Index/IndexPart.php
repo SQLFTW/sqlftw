@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -19,7 +18,6 @@ use function is_string;
 
 class IndexPart implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string|RootNode */
     private $expression;

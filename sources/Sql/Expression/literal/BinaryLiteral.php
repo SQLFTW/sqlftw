@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use function bindec;
@@ -23,7 +22,6 @@ use function substr;
  */
 class BinaryLiteral implements BoolValue, UintValue, StringValue
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $value;

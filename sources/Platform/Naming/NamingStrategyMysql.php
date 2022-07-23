@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Platform\Naming;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Sql\Expression\QualifiedName;
 use function in_array;
 
 class NamingStrategyMysql implements NamingStrategy
 {
-    use StrictBehaviorMixin;
 
     /**
      * @param string[] $columns

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 use function is_bool;
@@ -17,7 +16,6 @@ use function is_string;
 
 class ChangeColumnAction implements ColumnAction
 {
-    use StrictBehaviorMixin;
 
     public const FIRST = true;
 

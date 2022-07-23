@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\SqlSerializable;
 
 class WithExpression implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var Query */
     private $query;

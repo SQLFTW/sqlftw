@@ -12,7 +12,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\StrictBehaviorMixin;
 use Generator;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
@@ -25,7 +24,6 @@ use function strtoupper;
  */
 class Parser
 {
-    use StrictBehaviorMixin;
 
     private const STARTING_KEYWORDS = [
         Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE, Keyword::CALL, Keyword::CHANGE,

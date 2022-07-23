@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Column;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
@@ -25,7 +24,6 @@ use SqlFtw\Sql\Expression\RootNode;
 
 class ColumnDefinition implements TableItem
 {
-    use StrictBehaviorMixin;
 
     public const AUTOINCREMENT = true;
     public const NO_AUTOINCREMENT = false;

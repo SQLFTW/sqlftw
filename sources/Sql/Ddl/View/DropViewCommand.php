@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\View;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SchemaObjectsCommand;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<QualifiedName> */
     private $names;

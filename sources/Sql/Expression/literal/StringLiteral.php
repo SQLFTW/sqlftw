@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use function count;
@@ -30,7 +29,6 @@ use function implode;
  */
 class StringLiteral implements StringValue, BoolValue
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<string> */
     private $parts;

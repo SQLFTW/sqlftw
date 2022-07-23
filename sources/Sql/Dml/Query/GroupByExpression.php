@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Order;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\SqlSerializable;
 
 class GroupByExpression implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionNode */
     private $expression;

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Cache\CacheIndexCommand;
 use SqlFtw\Sql\Dal\Cache\LoadIndexIntoCacheCommand;
@@ -22,7 +21,6 @@ use SqlFtw\Sql\Keyword;
  */
 class CacheCommandsParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * CACHE INDEX

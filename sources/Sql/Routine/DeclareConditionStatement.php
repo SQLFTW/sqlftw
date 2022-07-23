@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\SqlSerializable;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\Statement;
 
 class DeclareConditionStatement extends Statement implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

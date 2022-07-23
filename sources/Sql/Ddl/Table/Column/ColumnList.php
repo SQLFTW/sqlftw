@@ -9,11 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Column;
 
-use Dogma\StrictBehaviorMixin;
 
 class ColumnList
 {
-    use StrictBehaviorMixin;
 
     /** @var ColumnDefinition[] (string $name => $column) */
     private $columns = [];

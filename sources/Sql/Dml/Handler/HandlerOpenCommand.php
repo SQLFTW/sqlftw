@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Handler;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class HandlerOpenCommand extends Statement implements HandlerCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $table;

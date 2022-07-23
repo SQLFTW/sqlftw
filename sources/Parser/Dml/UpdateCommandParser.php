@@ -10,7 +10,6 @@
 namespace SqlFtw\Parser\Dml;
 
 use Countable;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Assignment;
@@ -21,7 +20,6 @@ use SqlFtw\Sql\Keyword;
 
 class UpdateCommandParser
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionParser */
     private $expressionParser;

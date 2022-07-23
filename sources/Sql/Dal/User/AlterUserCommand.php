@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 
 class AlterUserCommand extends Statement implements UserCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<AlteredUser> */
     private $users;

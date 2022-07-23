@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class DropConstraintAction implements ConstraintAction
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

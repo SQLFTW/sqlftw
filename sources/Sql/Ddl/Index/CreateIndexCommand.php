@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Index;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
@@ -21,7 +20,6 @@ use SqlFtw\Sql\Statement;
 
 class CreateIndexCommand extends Statement implements IndexCommand, DdlTableCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var IndexDefinition */
     private $index;

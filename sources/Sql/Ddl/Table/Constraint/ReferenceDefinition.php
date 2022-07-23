@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\SqlSerializable;
 
 class ReferenceDefinition implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $sourceTable;

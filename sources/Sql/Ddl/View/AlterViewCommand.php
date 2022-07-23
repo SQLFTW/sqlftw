@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\View;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\Ddl\SqlSecurity;
@@ -20,7 +19,6 @@ use SqlFtw\Sql\Statement;
 
 class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

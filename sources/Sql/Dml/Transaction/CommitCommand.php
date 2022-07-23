@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 
 class CommitCommand extends Statement implements TransactionCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var bool|null */
     private $chain;

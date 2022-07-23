@@ -10,13 +10,11 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use Countable;
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 
 class TableReferenceSubquery implements TableReferenceNode, Countable
 {
-    use StrictBehaviorMixin;
 
     /** @var Query */
     private $query;

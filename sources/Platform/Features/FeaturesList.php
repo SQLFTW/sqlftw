@@ -9,11 +9,9 @@
 
 namespace SqlFtw\Platform\Features;
 
-use Dogma\StrictBehaviorMixin;
 
 abstract class FeaturesList
 {
-    use StrictBehaviorMixin;
 
     protected const MIN = 10000;
     protected const MAX = 999999;

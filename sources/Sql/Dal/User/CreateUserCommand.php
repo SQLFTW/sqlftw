@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\UserName;
 
 class CreateUserCommand extends Statement implements UserCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<IdentifiedUser> */
     private $users;

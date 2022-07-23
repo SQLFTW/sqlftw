@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use function bindec;
@@ -24,7 +23,6 @@ use function substr;
  */
 class HexadecimalLiteral implements BoolValue, StringValue, UintValue
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $value;

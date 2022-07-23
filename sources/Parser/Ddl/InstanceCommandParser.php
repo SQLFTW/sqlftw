@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceAction;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Keyword;
 
 class InstanceCommandParser
 {
-    use StrictBehaviorMixin;
 
     /**
      * 8.0 https://dev.mysql.com/doc/refman/8.0/en/alter-instance.html

@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dml\Transaction;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class StartTransactionCommand extends Statement implements TransactionCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var bool|null */
     private $consistent;

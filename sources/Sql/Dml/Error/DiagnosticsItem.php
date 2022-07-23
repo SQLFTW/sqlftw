@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Dml\Error;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\SqlSerializable;
 
 class DiagnosticsItem implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var Identifier */
     private $target;

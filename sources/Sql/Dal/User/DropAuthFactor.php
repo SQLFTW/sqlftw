@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class DropAuthFactor implements AlterUserAction
 {
-    use StrictBehaviorMixin;
 
     /** @var int */
     private $factor1;

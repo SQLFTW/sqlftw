@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class UpgradePartitioningAction implements PartitioningAction
 {
-    use StrictBehaviorMixin;
 
     public function serialize(Formatter $formatter): string
     {

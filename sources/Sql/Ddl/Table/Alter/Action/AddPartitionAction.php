@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
 
 class AddPartitionAction implements PartitioningAction
 {
-    use StrictBehaviorMixin;
 
     /** @var non-empty-array<PartitionDefinition> */
     private $partitions;

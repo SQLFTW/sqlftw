@@ -12,7 +12,6 @@ namespace SqlFtw\Formatter;
 use DateTimeInterface;
 use Dogma\Arr;
 use Dogma\NotImplementedException;
-use Dogma\StrictBehaviorMixin;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
@@ -34,7 +33,6 @@ use function str_replace;
 
 class Formatter
 {
-    use StrictBehaviorMixin;
 
     private const MYSQL_ESCAPES = [
         '\\' => '\\\\',

@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
@@ -18,7 +17,6 @@ use SqlFtw\Sql\Statement;
 
 class CreateProcedureCommand extends Statement implements StoredProcedureCommand, CreateRoutineCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

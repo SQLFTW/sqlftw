@@ -9,13 +9,11 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
 
 class SetRoleCommand extends Statement implements UserCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var RolesSpecification */
     private $role;

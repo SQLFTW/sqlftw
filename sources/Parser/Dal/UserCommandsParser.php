@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
@@ -74,7 +73,6 @@ use function in_array;
 
 class UserCommandsParser
 {
-    use StrictBehaviorMixin;
 
     private const RESOURCE_PRIVILEGES = [
         UserPrivilegeResourceType::TABLE => [

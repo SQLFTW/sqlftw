@@ -9,12 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 class Asterisk implements ArgumentNode
 {
-    use StrictBehaviorMixin;
 
     public function getValue(): string
     {

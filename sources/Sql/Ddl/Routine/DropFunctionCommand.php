@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\Routine;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class DropFunctionCommand extends Statement implements StoredFunctionCommand, DropRoutineCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var QualifiedName */
     private $name;

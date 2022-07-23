@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 
 /**
@@ -18,7 +17,6 @@ use SqlFtw\Formatter\Formatter;
  */
 class TernaryOperator implements OperatorExpression
 {
-    use StrictBehaviorMixin;
 
     /** @var ExpressionNode */
     private $left;

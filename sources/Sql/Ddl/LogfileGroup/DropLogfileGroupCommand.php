@@ -9,14 +9,12 @@
 
 namespace SqlFtw\Sql\Ddl\LogfileGroup;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Statement;
 
 class DropLogfileGroupCommand extends Statement implements LogfileGroupCommand
 {
-    use StrictBehaviorMixin;
 
     /** @var string */
     private $name;

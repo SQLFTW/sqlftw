@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use Dogma\StrictBehaviorMixin;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -17,7 +16,6 @@ use SqlFtw\Sql\SqlSerializable;
 
 class WindowFrame implements SqlSerializable
 {
-    use StrictBehaviorMixin;
 
     /** @var WindowFrameUnits */
     public $units;
