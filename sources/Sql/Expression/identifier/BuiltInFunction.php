@@ -666,20 +666,22 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::JSON_VALUE => [Keyword::RETURNING => CastType::class, Keyword::ON . ' ' . Keyword::EMPTY => '*', Keyword::ON . ' ' . Keyword::ERROR => '*'],
         // MAX([DISTINCT | ALL] expr)
         self::MAX => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
+        // MID(str,pos), MID(str FROM pos), MID(str,pos,len), MID(str FROM pos FOR len)
+        self::MID => [Keyword::FROM => RootNode::class, Keyword::FOR => RootNode::class],
         // MIN([DISTINCT | ALL] expr)
         self::MIN => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
         // POSITION(substr IN str)
         self::POSITION => [Keyword::IN => RootNode::class],
         // ST_COLLECT(DISTINCT location)
         self::ST_Collect => [Keyword::DISTINCT => RootNode::class],
+        // STD([ALL] expr)
+        self::STD => [Keyword::ALL => RootNode::class],
         // SUBSTR(str,pos), SUBSTR(str FROM pos), SUBSTR(str,pos,len), SUBSTR(str FROM pos FOR len)
         self::SUBSTR => [Keyword::FROM => RootNode::class, Keyword::FOR => RootNode::class],
         // SUBSTRING(str,pos), SUBSTRING(str FROM pos), SUBSTRING(str,pos,len), SUBSTRING(str FROM pos FOR len)
         self::SUBSTRING => [Keyword::FROM => RootNode::class, Keyword::FOR => RootNode::class],
         // SUM([DISTINCT | ALL] expr)
         self::SUM => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
-        // STD([ALL] expr)
-        self::STD => [Keyword::ALL => RootNode::class],
         // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
         // has special handling because of the suffix FROM
         self::TRIM => [Keyword::BOTH => '*', Keyword::LEADING => '*', Keyword::TRAILING => '*', Keyword::FROM => '*'],
