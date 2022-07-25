@@ -13,8 +13,8 @@ use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
-use SqlFtw\Parser\ParserSettings;
 use SqlFtw\Parser\ParsingException;
+use SqlFtw\Session\Session;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -35,11 +35,11 @@ class Assert extends DogmaAssert
 
     public static function tokens(string $sql, int $count, ?string $mode = null): array
     {
-        $settings = new ParserSettings(Platform::get(Platform::MYSQL, '5.7'));
+        $session = new Session(Platform::get(Platform::MYSQL, '5.7'));
         if ($mode !== null) {
-            $settings->setMode($settings->getMode()->add($mode));
+            $session->setMode($session->getMode()->add($mode));
         }
-        $lexer = new Lexer($settings, true, true);
+        $lexer = new Lexer($session, true, true);
 
         $tokens = iterator_to_array($lexer->tokenize($sql));
 
@@ -85,8 +85,8 @@ class Assert extends DogmaAssert
 
     public static function tokenList(string $sql): TokenList
     {
-        $settings = new ParserSettings(Platform::get(Platform::MYSQL, '5.7'));
-        $lexer = new Lexer($settings, true, true);
+        $session = new Session(Platform::get(Platform::MYSQL, '5.7'));
+        $lexer = new Lexer($session, true, true);
 
         return iterator_to_array($lexer->tokenizeLists($sql))[0];
     }
@@ -110,7 +110,7 @@ class Assert extends DogmaAssert
         }
 
         $parser = ParserHelper::getParserFactory(null, $version, $delimiter)->getParser();
-        $formatter = new Formatter($parser->getSettings());
+        $formatter = new Formatter($parser->getSession());
 
         $results = iterator_to_array($parser->parse($query));
         if (count($results) > 1) {

@@ -12,7 +12,7 @@ namespace SqlFtw\Tests;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
-use SqlFtw\Parser\ParserSettings;
+use SqlFtw\Session\Session;
 use SqlFtw\Platform\Platform;
 
 class ParserHelper
@@ -31,12 +31,12 @@ class ParserHelper
     {
         $platform = Platform::get($platform ?? Platform::MYSQL, $version);
 
-        $settings = new ParserSettings($platform, $delimiter);
+        $session = new Session($platform, $delimiter);
 
-        $lexer = new Lexer($settings, $withComments, $withWhitespace);
-        $parser = new Parser($settings, $lexer);
+        $lexer = new Lexer($session, $withComments, $withWhitespace);
+        $parser = new Parser($session, $lexer);
 
-        return new ParserFactory($settings, $parser);
+        return new ParserFactory($session, $parser);
     }
 
 }

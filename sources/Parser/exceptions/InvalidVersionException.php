@@ -19,7 +19,7 @@ class InvalidVersionException extends ParserException
 
     public function __construct(string $feature, TokenList $tokenList, ?Throwable $previous = null)
     {
-        $platform = $tokenList->getSettings()->getPlatform()->format();
+        $platform = $tokenList->getSession()->getPlatform()->format();
 
         parent::__construct("Platform $platform does not support feature $feature.", $tokenList, $previous);
 

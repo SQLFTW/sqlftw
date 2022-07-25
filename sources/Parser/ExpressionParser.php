@@ -155,7 +155,7 @@ class ExpressionParser
         $left = $this->parseBooleanPrimary($tokenList);
 
         $operators = [Operator::OR, Operator::XOR, Operator::AND, Operator::AMPERSANDS];
-        if (!$tokenList->getSettings()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT)) {
+        if (!$tokenList->getSession()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT)) {
             $operators[] = Operator::PIPES;
         }
         $operator = $tokenList->getAnyOperator(...$operators);
@@ -485,7 +485,7 @@ class ExpressionParser
             return new CollateExpression($left, $collation);
         }
 
-        if ($tokenList->getSettings()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT) && $tokenList->hasOperator(Operator::PIPES)) {
+        if ($tokenList->getSession()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT) && $tokenList->hasOperator(Operator::PIPES)) {
             // simple_expr || simple_expr
             $right = $this->parseSimpleExpression($tokenList);
 

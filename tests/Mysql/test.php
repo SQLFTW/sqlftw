@@ -179,7 +179,7 @@ $knownFailures = [
 ];
 
 $parser = ParserHelper::getParserFactory(Platform::MYSQL, '8.0.29')->getParser();
-$settings = $parser->getSettings();
+$session = $parser->getSession();
 
 //$only = 'innodb_bug48024.test';
 

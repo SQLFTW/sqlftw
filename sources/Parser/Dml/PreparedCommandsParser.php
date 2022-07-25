@@ -92,7 +92,7 @@ class PreparedCommandsParser
             $class = get_class($statement);
             if ($tokenList->inRoutine() === RoutineType::PROCEDURE && $statement instanceof StoredProcedureCommand) {
                 // ok
-            } elseif (!in_array($class, $tokenList->getSettings()->getPlatform()->getPreparableCommands(), true)) {
+            } elseif (!in_array($class, $tokenList->getSession()->getPlatform()->getPreparableCommands(), true)) {
                 throw new ParserException('Non-preparable statement in PREPARE: ' . $class, $tokenList);
             }
         }

@@ -15,7 +15,7 @@ use Dogma\NotImplementedException;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
-use SqlFtw\Parser\ParserSettings;
+use SqlFtw\Session\Session;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
@@ -44,8 +44,8 @@ class Formatter
         "\x1a" => '\Z', // 1a (legacy Win EOF)
     ];
 
-    /** @var ParserSettings */
-    private $settings;
+    /** @var Session */
+    private $session;
 
     /** @var string */
     public $indent;
@@ -57,20 +57,20 @@ class Formatter
     public $quoteAllNames;
 
     public function __construct(
-        ParserSettings $settings,
+        Session $session,
         string $indent = '  ',
         bool $comments = false,
         bool $quoteAllNames = false
     ) {
-        $this->settings = $settings;
+        $this->session = $session;
         $this->indent = $indent;
         $this->comments = $comments;
         $this->quoteAllNames = $quoteAllNames;
     }
 
-    public function getSettings(): ParserSettings
+    public function getSession(): Session
     {
-        return $this->settings;
+        return $this->session;
     }
 
     public function indent(string $code): string
@@ -80,11 +80,11 @@ class Formatter
 
     public function formatName(string $name): string
     {
-        $quote = $this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES) ? '"' : '`';
+        $quote = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES) ? '"' : '`';
 
         return $this->quoteAllNames
             ? $quote . $name . $quote
-            : ($this->settings->getPlatform()->isReserved($name)
+            : ($this->session->getPlatform()->isReserved($name)
                 ? $quote . $name . $quote
                 : $name);
     }
@@ -139,7 +139,7 @@ class Formatter
 
     public function formatString(string $string): string
     {
-        if (!$this->settings->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
+        if (!$this->session->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
             $string = str_replace(array_keys(self::MYSQL_ESCAPES), array_values(self::MYSQL_ESCAPES), $string);
         }
 

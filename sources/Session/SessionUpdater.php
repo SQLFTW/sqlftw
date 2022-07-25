@@ -7,8 +7,10 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Parser;
+namespace SqlFtw\Session;
 
+use SqlFtw\Parser\ParserException;
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Set\SetCommand;
@@ -34,16 +36,24 @@ use function trim;
 /**
  * Analyzes commands which may affect parser behavior and updates global parser state
  */
-class SettingsUpdater
+class SessionUpdater
 {
 
-    public function updateSettings(Command $command, ParserSettings $settings, TokenList $tokenList): void
+    /** @var Session */
+    private $session;
+
+    public function __construct(Session $session)
+    {
+        $this->session = $session;
+    }
+
+    public function update(Command $command, TokenList $tokenList): void
     {
         if ($command instanceof SetCommand) {
             foreach ($command->getAssignments() as $assignment) {
                 $variable = $assignment->getVariable();
                 if ($variable instanceof SystemVariable && $variable->getName() === MysqlVariable::SQL_MODE) {
-                    $this->detectSqlModeChange($assignment->getExpression(), $settings, $tokenList);
+                    $this->detectSqlModeChange($assignment->getExpression(), $tokenList);
                 }
             }
         }
@@ -56,41 +66,41 @@ class SettingsUpdater
         // autocommit, character_set_client, character_set_results, character_set_connection
     }
 
-    private function detectSqlModeChange(RootNode $expression, ParserSettings $settings, TokenList $tokenList): void
+    private function detectSqlModeChange(RootNode $expression, TokenList $tokenList): void
     {
         if ($expression instanceof SystemVariable && $expression->getName() === MysqlVariable::SQL_MODE) {
             // todo: tracking both session and global?
-            $settings->setMode($settings->getPlatform()->getDefaultMode());
+            $this->session->setMode($this->session->getPlatform()->getDefaultMode());
         } elseif ($expression instanceof StringValue) {
-            $settings->setMode($this->sqlModeFromString(trim($expression->asString()), $settings->getPlatform(), $tokenList));
+            $this->session->setMode($this->sqlModeFromString(trim($expression->asString()), $this->session->getPlatform(), $tokenList));
         } elseif ($expression instanceof BoolLiteral) {
             if ($expression->getValue() === Keyword::TRUE) {
-                $settings->setMode($this->sqlModeFromInt(1, $settings->getPlatform(), $tokenList));
+                $this->session->setMode($this->sqlModeFromInt(1, $this->session->getPlatform(), $tokenList));
             } else {
-                $settings->setMode($this->sqlModeFromInt(0, $settings->getPlatform(), $tokenList));
+                $this->session->setMode($this->sqlModeFromInt(0, $this->session->getPlatform(), $tokenList));
             }
         } elseif ($expression instanceof SimpleName) {
-            $settings->setMode($this->sqlModeFromString($expression->getName(), $settings->getPlatform(), $tokenList));
+            $this->session->setMode($this->sqlModeFromString($expression->getName(), $this->session->getPlatform(), $tokenList));
         } elseif ($expression instanceof DefaultLiteral) {
-            $settings->setMode($this->sqlModeFromString(Keyword::DEFAULT, $settings->getPlatform(), $tokenList));
+            $this->session->setMode($this->sqlModeFromString(Keyword::DEFAULT, $this->session->getPlatform(), $tokenList));
         } elseif ($expression instanceof UintLiteral) {
-            $settings->setMode($this->sqlModeFromInt($expression->asInt(), $settings->getPlatform(), $tokenList));
+            $this->session->setMode($this->sqlModeFromInt($expression->asInt(), $this->session->getPlatform(), $tokenList));
         } elseif ($expression instanceof FunctionCall) {
             $function = $expression->getFunction();
             if ($function instanceof QualifiedName && $function->equals('sys.list_add')) {
                 [$first, $second] = $expression->getArguments();
                 if ($first instanceof SystemVariable && $first->getName() === MysqlVariable::SQL_MODE && $second instanceof StringValue) {
-                    $value = $settings->getMode()->getValue() . ',' . $second->asString();
+                    $value = $this->session->getMode()->getValue() . ',' . $second->asString();
                     // needed to expand groups
-                    $mode = $this->sqlModeFromString($value, $settings->getPlatform(), $tokenList);
-                    $settings->setMode($mode);
+                    $mode = $this->sqlModeFromString($value, $this->session->getPlatform(), $tokenList);
+                    $this->session->setMode($mode);
                 } else {
                     throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                 }
             } elseif ($function instanceof QualifiedName && $function->equals('sys.list_drop')) {
                 [$first, $second] = $expression->getArguments();
                 if ($first instanceof SystemVariable && $first->getName() === MysqlVariable::SQL_MODE && $second instanceof StringValue) {
-                    $settings->setMode($settings->getMode()->remove($second->asString()));
+                    $this->session->setMode($this->session->getMode()->remove($second->asString()));
                 } else {
                     throw new ParserException('Cannot detect SQL_MODE change.', $tokenList);
                 }

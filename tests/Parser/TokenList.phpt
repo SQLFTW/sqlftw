@@ -3,18 +3,19 @@
 namespace SqlFtw\Parser;
 
 use SqlFtw\Platform\Platform;
+use SqlFtw\Session\Session;
 use SqlFtw\Tests\Assert;
 
 require '../bootstrap.php';
 
-$settings = new ParserSettings(Platform::get(Platform::MYSQL, '5.7'));
+$session = new Session(Platform::get(Platform::MYSQL, '5.7'));
 
 $ws = new Token(TokenType::WHITESPACE, 0, 1, 'ws');
 $comment = new Token(TokenType::COMMENT, 1, 1, 'comment');
 $value = new Token(TokenType::VALUE, 2, 1, 'value');
 $name = new Token(TokenType::NAME, 2, 1, 'name');
 
-$tokenList = new TokenList([$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $settings);
+$tokenList = new TokenList([$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $session);
 $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT);
 
 getLast:

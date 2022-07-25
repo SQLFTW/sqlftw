@@ -16,6 +16,7 @@ namespace SqlFtw\Parser;
 use Generator;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Session\Session;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use function array_flip;
@@ -82,8 +83,8 @@ class Lexer
     /** @var array<string, int> */
     private static $operatorSymbolsKey;
 
-    /** @var ParserSettings */
-    private $settings;
+    /** @var Session */
+    private $session;
 
     /** @var Platform */
     private $platform;
@@ -113,7 +114,7 @@ class Lexer
     private $escapeValues;
 
     public function __construct(
-        ParserSettings $settings,
+        Session $session,
         bool $withComments = true,
         bool $withWhitespace = false
     ) {
@@ -125,8 +126,8 @@ class Lexer
             self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
         }
 
-        $this->settings = $settings;
-        $this->platform = $settings->getPlatform();
+        $this->session = $session;
+        $this->platform = $session->getPlatform();
         $this->withComments = $withComments;
         $this->withWhitespace = $withWhitespace;
 
@@ -173,7 +174,7 @@ class Lexer
                     $invalid = true;
                 }
 
-                yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
+                yield new TokenList($buffer, $this->session, $autoSkip, $invalid);
 
                 $invalid = false;
                 $buffer = [];
@@ -187,7 +188,7 @@ class Lexer
                     $invalid = true;
                 }
 
-                yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
+                yield new TokenList($buffer, $this->session, $autoSkip, $invalid);
 
                 $invalid = false;
                 $buffer = [];
@@ -201,7 +202,7 @@ class Lexer
                 $invalid = true;
             }
 
-            yield new TokenList($buffer, $this->settings, $autoSkip, $invalid);
+            yield new TokenList($buffer, $this->session, $autoSkip, $invalid);
         }
     }
 
@@ -211,11 +212,11 @@ class Lexer
      */
     public function tokenize(string $string): Generator
     {
-        $oldNull = $this->settings->getPlatform()->getVersion()->getId() < 80000;
+        $oldNull = $this->session->getPlatform()->getVersion()->getId() < 80000;
 
         // last significant token parsed (comments and whitespace are skipped here)
         $previous = new Token(TokenType::END, 0, 0, '');
-        $delimiter = $this->settings->getDelimiter();
+        $delimiter = $this->session->getDelimiter();
         $commentDepth = 0;
         $this->condition = null;
 
@@ -577,7 +578,7 @@ class Lexer
                     }
                     break;
                 case '"':
-                    $type = $this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)
+                    $type = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES)
                         ? T::NAME | T::DOUBLE_QUOTED_STRING
                         : T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING;
 
@@ -859,7 +860,7 @@ class Lexer
                     if ($char === 'N' && $next === '"') {
                         $position++;
                         $column++;
-                        $type = $this->settings->getMode()->containsAny(SqlMode::ANSI_QUOTES)
+                        $type = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES)
                             ? T::NAME | T::DOUBLE_QUOTED_STRING
                             : T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING;
 
@@ -967,7 +968,7 @@ class Lexer
                             yield $previous = new Token(T::INVALID, $start, $row, $del, $del, $exception);
                             break;
                         }
-                        if ($this->settings->getPlatform()->isReserved(strtoupper($del))) {
+                        if ($this->session->getPlatform()->isReserved(strtoupper($del))) {
                             $exception = new LexerException('Delimiter can not be a reserved word', $position, $string);
 
                             yield $previous = new Token(T::DELIMITER_DEFINITION | T::INVALID, $start, $row, $del, $del, $exception);
@@ -983,7 +984,7 @@ class Lexer
                          * up to the first space or end of line. For a quoted argument, the delimiter is read up to the matching quote on the line.
                          */
                         $delimiter = $del;
-                        $this->settings->setDelimiter($delimiter);
+                        $this->session->setDelimiter($delimiter);
                         yield $previous = new Token(T::DELIMITER_DEFINITION, $start, $row, $delimiter, null);
                     } else {
                         yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $row, $value, null);
@@ -1045,7 +1046,7 @@ class Lexer
         $length = strlen($string);
         $isString = ($type & T::STRING) !== 0;
         $isAtVariable = ($type & T::AT_VARIABLE) !== 0;
-        $backslashes = $isString && !$this->settings->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
+        $backslashes = $isString && !$this->session->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
 
         $orig = [$quote];
         $escaped = false;

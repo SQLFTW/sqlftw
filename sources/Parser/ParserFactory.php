@@ -55,6 +55,7 @@ use SqlFtw\Parser\Dml\TransactionCommandsParser;
 use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
+use SqlFtw\Session\Session;
 
 /**
  * Factory for all specialized parsers
@@ -62,8 +63,8 @@ use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
 class ParserFactory
 {
 
-    /** @var ParserSettings */
-    private $settings;
+    /** @var Session */
+    private $session;
 
     /** @var Parser */
     private $parser;
@@ -80,9 +81,9 @@ class ParserFactory
     /** @var RoutineBodyParser */
     private $routineBodyParser;
 
-    public function __construct(ParserSettings $settings, Parser $parser)
+    public function __construct(Session $session, Parser $parser)
     {
-        $this->settings = $settings;
+        $this->session = $session;
         $this->parser = $parser;
 
         $queryParserProxy = function (): QueryParser {
@@ -99,9 +100,9 @@ class ParserFactory
         return $this->parser;
     }
 
-    public function getSettings(): ParserSettings
+    public function getSession(): Session
     {
-        return $this->settings;
+        return $this->session;
     }
 
     // command parsers -------------------------------------------------------------------------------------------------

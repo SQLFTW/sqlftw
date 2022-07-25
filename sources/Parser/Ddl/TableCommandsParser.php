@@ -1030,7 +1030,7 @@ class TableCommandsParser
         }
 
         if ($default instanceof StringLiteral && $default->getValue() === ''
-            && !$tokenList->getSettings()->getMode()->containsAny(SqlMode::TRADITIONAL, SqlMode::STRICT_TRANS_TABLES)
+            && !$tokenList->getSession()->getMode()->containsAny(SqlMode::TRADITIONAL, SqlMode::STRICT_TRANS_TABLES)
         ) {
             // default '' is allowed in some modes
         } elseif ($hasDefaultValue && $type->getBaseType()->isBlob()) {

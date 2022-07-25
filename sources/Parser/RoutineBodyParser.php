@@ -273,7 +273,7 @@ class RoutineBodyParser
             // ok
         } else {
             $class = get_class($statement);
-            if (!in_array($class, $tokenList->getSettings()->getPlatform()->getPreparableCommands(), true)) {
+            if (!in_array($class, $tokenList->getSession()->getPlatform()->getPreparableCommands(), true)) {
                 throw new ParserException('Non-preparable statement in routine body: ' . $class, $tokenList);
             }
         }

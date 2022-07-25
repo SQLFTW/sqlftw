@@ -7,7 +7,7 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Parser;
+namespace SqlFtw\Session;
 
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Charset;
@@ -17,7 +17,7 @@ use SqlFtw\Sql\SqlMode;
 /**
  * Initial settings and global parser state (information, that persists between statements and affects parsing)
  */
-class ParserSettings
+class Session
 {
 
     /** @var Platform */

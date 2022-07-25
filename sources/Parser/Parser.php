@@ -13,6 +13,8 @@
 namespace SqlFtw\Parser;
 
 use Generator;
+use SqlFtw\Session\Session;
+use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
@@ -37,11 +39,11 @@ class Parser
         Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA,
     ];
 
-    /** @var ParserSettings */
-    private $settings;
+    /** @var Session */
+    private $session;
 
-    /** @var SettingsUpdater */
-    private $settingsUpdater;
+    /** @var SessionUpdater */
+    private $sessionUpdater;
 
     /** @var Lexer */
     private $lexer;
@@ -49,20 +51,16 @@ class Parser
     /** @var ParserFactory */
     private $factory;
 
-    public function __construct(
-        ParserSettings $settings,
-        ?Lexer $lexer = null,
-        ?SettingsUpdater $settingsUpdater = null
-    ) {
-        $this->settings = $settings;
-        $this->settingsUpdater = $settingsUpdater ?? new SettingsUpdater();
-        $this->lexer = $lexer ?? new Lexer($settings);
-        $this->factory = new ParserFactory($settings, $this);
+    public function __construct(Session $session, ?Lexer $lexer = null) {
+        $this->session = $session;
+        $this->sessionUpdater = new SessionUpdater($session);
+        $this->lexer = $lexer ?? new Lexer($session);
+        $this->factory = new ParserFactory($session, $this);
     }
 
-    public function getSettings(): ParserSettings
+    public function getSession(): Session
     {
-        return $this->settings;
+        return $this->session;
     }
 
     /**
@@ -86,7 +84,7 @@ class Parser
             }
 
             try {
-                $this->settingsUpdater->updateSettings($command, $this->settings, $tokenList);
+                $this->sessionUpdater->update($command, $tokenList);
             } catch (ParsingException $e) {
                 $tokenList->finish();
                 $command = new InvalidCommand($command->getCommentsBefore(), $e);

@@ -57,8 +57,8 @@ Basic usage:
 use ...
 
 $platform = new Platform(Platform::MYSQL, '8.0'); // version defaults to x.x.99 when no patch number is given
-$settings = new ParserSettings($platform);
-$parser = new Parser($settings);
+$session = new Session($platform);
+$parser = new Parser($session);
 
 // returns a Generator. will not parse anything if you don't iterate over it
 $commands = $parser->parse('SELECT foo FROM ...');

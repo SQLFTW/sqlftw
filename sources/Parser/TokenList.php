@@ -14,6 +14,7 @@ use Dogma\Str;
 use InvalidArgumentException;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Session\Session;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
@@ -79,8 +80,8 @@ class TokenList
     /** @var non-empty-array<Token> */
     private $tokens;
 
-    /** @var ParserSettings */
-    private $settings;
+    /** @var Session */
+    private $session;
 
     /** @var Platform */
     private $platform;
@@ -117,19 +118,19 @@ class TokenList
     /**
      * @param non-empty-array<Token> $tokens
      */
-    public function __construct(array $tokens, ParserSettings $settings, int $autoSkip = 0, bool $invalid = false)
+    public function __construct(array $tokens, Session $session, int $autoSkip = 0, bool $invalid = false)
     {
         $this->tokens = $tokens;
-        $this->settings = $settings;
-        $this->platform = $settings->getPlatform();
-        $this->maxLengths = $settings->getMaxLengths();
+        $this->session = $session;
+        $this->platform = $session->getPlatform();
+        $this->maxLengths = $session->getMaxLengths();
         $this->autoSkip = $autoSkip;
         $this->invalid = $invalid;
     }
 
-    public function getSettings(): ParserSettings
+    public function getSession(): Session
     {
-        return $this->settings;
+        return $this->session;
     }
 
     public function using(?string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool
@@ -338,7 +339,7 @@ class TokenList
         /** @var non-empty-array<Token> $tokens */
         $tokens = array_slice($this->tokens, $startOffset, $endOffset - $startOffset + 1);
 
-        return new self($tokens, $this->settings, $this->autoSkip);
+        return new self($tokens, $this->session, $this->autoSkip);
     }
 
     public function filter(callable $filter): self
@@ -351,7 +352,7 @@ class TokenList
             }
         }
 
-        return new self($tokens, $this->settings, $this->autoSkip);
+        return new self($tokens, $this->session, $this->autoSkip);
     }
 
     public function getLast(): Token
