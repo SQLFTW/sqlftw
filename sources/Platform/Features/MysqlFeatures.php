@@ -957,7 +957,7 @@ class MysqlFeatures extends FeaturesList
 
         // comparison
         [Operator::EQUAL, self::MIN, self::MAX],
-        [Operator::NON_EQUAL, self::MIN, self::MAX],
+        [Operator::NOT_EQUAL, self::MIN, self::MAX],
         [Operator::GREATER, self::MIN, self::MAX],
         [Operator::GREATER_OR_EQUAL, self::MIN, self::MAX],
         [Operator::LESS, self::MIN, self::MAX],

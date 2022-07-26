@@ -31,7 +31,7 @@ class Operator extends SqlEnum
 
     // comparison
     public const EQUAL = '=';
-    public const NON_EQUAL = '!=';
+    public const NOT_EQUAL = '!=';
     public const LESS_OR_GREATER = '<>';
     public const LESS = '<';
     public const LESS_OR_EQUAL = '<=';

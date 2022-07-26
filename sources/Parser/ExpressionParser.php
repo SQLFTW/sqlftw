@@ -221,7 +221,7 @@ class ExpressionParser
             Operator::LESS_OR_EQUAL,
             Operator::LESS,
             Operator::LESS_OR_GREATER,
-            Operator::NON_EQUAL,
+            Operator::NOT_EQUAL,
         ];
 
         $left = $this->parsePredicate($tokenList);
