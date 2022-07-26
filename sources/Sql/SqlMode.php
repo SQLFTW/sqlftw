@@ -21,6 +21,12 @@ use function explode;
 use function implode;
 use function strtoupper;
 
+/**
+ * MySQL sql_mode
+ *
+ * @see: https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html
+ * @see: https://mariadb.com/kb/en/sql-mode/
+ */
 class SqlMode extends StringSet
 {
 
