@@ -317,13 +317,13 @@ class ExpressionParser
                     $tokenList->expectSymbol(')');
                     $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
 
-                    return new BinaryOperator($left, $operator, $subquery);
+                    return new ComparisonOperator($left, $operator, null, $subquery);
                 } else {
                     $expressions = new Parentheses(new ListExpression($this->parseExpressionList($tokenList)));
                     $tokenList->expectSymbol(')');
                     $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
 
-                    return new BinaryOperator($left, $operator, $expressions);
+                    return new ComparisonOperator($left, $operator, null, $expressions);
                 }
             case Keyword::BETWEEN:
                 $middle = $this->parseBitExpression($tokenList);

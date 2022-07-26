@@ -19,6 +19,8 @@ use SqlFtw\Formatter\Formatter;
  * left <= [ALL | ANY | SOME] right
  * left > [ALL | ANY | SOME] right
  * left >= [ALL | ANY | SOME] right
+ * left <=> right
+ * left [NOT] IN right
  */
 class ComparisonOperator implements OperatorExpression
 {

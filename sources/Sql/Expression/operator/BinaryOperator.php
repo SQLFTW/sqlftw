@@ -12,13 +12,11 @@ namespace SqlFtw\Sql\Expression;
 use SqlFtw\Formatter\Formatter;
 
 /**
- * left := right
  * left AND right
  * left OR right
  * left XOR right
  * left && right
  * left || right
- * left <=> right
  * left + right
  * left - right
  * left * right
@@ -36,7 +34,6 @@ use SqlFtw\Formatter\Formatter;
  * left [NOT] REGEXP right
  * left [NOT] RLIKE right
  * left SOUNDS LIKE right
- * left [NOT] IN right
  * left -> right
  * left ->> right
  */
