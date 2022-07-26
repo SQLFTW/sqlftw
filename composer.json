@@ -26,7 +26,7 @@
     "prefer-stable": true,
     "scripts": {
         "da": "composer dump-autoload",
-        "ag": "@generate:doc",
+        "ag": "@build:doc",
         "c": "@check:all",
         "cf": "@check:fast",
         "t": "@tests:run",
@@ -45,7 +45,7 @@
             "rm -rf temp/cache/*"
         ],
 
-        "generate:doc": "php81 ../../tools/apigen/bin/apigen sources --output doc/api",
+        "build:doc": "php81 ../../tools/apigen/bin/apigen sources --output doc/api",
 
         "check:fast": [
             "@tests:run",
@@ -66,6 +66,7 @@
 
         "tests:run": "php vendor/nette/tester/src/tester tests -C --colors 1",
         "tests:all": [
+            "php82 vendor/nette/tester/src/tester tests -C --colors 1",
             "php81 vendor/nette/tester/src/tester tests -C --colors 1",
             "php80 vendor/nette/tester/src/tester tests -C --colors 1",
             "php74 vendor/nette/tester/src/tester tests -C --colors 1",
@@ -76,6 +77,7 @@
 
         "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
         "phpstan:all": [
+            "php82 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
             "php81 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
             "php80 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
             "php74 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
@@ -95,15 +97,16 @@
 
         "lint:php": "php vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
         "lint:php-all": [
+            "php82 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
             "php81 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
             "php80 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
             "php74 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
             "php73 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
-            "php72 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
-            "php71 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests"
+            "php72 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests"
         ]
     },
     "scripts-descriptions": {
+        "ag": "\u001B[0;33m⭐Run ApiGen documentation generator\u001B[0m",
         "da": "\u001B[0;33m⭐Dump autoloader (shortcut)\u001B[0m",
         "c": "\u001B[0;33m⭐Run all checks (shortcut)\u001B[0m",
         "cf": "\u001B[0;33m⭐Run fast checks (shortcut)\u001B[0m",
@@ -111,19 +114,21 @@
         "tc": "\u001B[0;33m⭐Run tests with code coverage (shortcut)\u001B[0m",
         "cs": "\u001B[0;33m⭐Run CS check\u001B[0m",
         "build": "\u001B[0;33m⭐Run build script\u001B[0m",
-        "check:fast": "Run all checks (tests, phpstan, phpcs, phplint, spell-check)",
-        "check:all": "Run all checks on all supported PHP versions (7.1 - 8.1)",
-        "tests:run": "Run tests",
-        "tests:all": "Run tests on all supported PHP versions (7.1 - 8.1)",
-        "tests:coverage": "Run tests with code coverage",
-        "phpstan:run": "Run PHPStan check",
-        "phpstan:all": "Run PHPStan check on all supported PHP versions (7.1 - 8.1)",
-        "phpcs:src": "Run CS check on /src",
-        "phpcs:tests": "Run CS check on /tests",
-        "phpcs:fix": "Run CS check with auto-fixing on /src and /tests",
-        "spell:check": "Run spell-checker",
-        "lint:php": "Run PHPLint",
-        "lint:php-all": "Run PHPLint on all supported PHP versions (7.1 - 8.1)"
+        "build:doc": "\u001B[0;33m⭐Run Apigen documentation generator\u001B[0m",
+        "check:fast": "\u001B[0;33m⭐Run all checks (tests, phpstan, phpcs, phplint, spell-check)\u001B[0m",
+        "check:all": "\u001B[0;33m⭐Run all checks on all supported PHP versions (7.2 - 8.2)\u001B[0m",
+        "tests:run": "\u001B[0;33m⭐Run tests\u001B[0m",
+        "tests:all": "\u001B[0;33m⭐Run tests on all supported PHP versions (7.2 - 8.2)\u001B[0m",
+        "tests:coverage": "\u001B[0;33m⭐Run tests with code coverage\u001B[0m",
+        "phpstan:run": "\u001B[0;33m⭐Run PHPStan check\u001B[0m",
+        "phpstan:all": "\u001B[0;33m⭐Run PHPStan check on all supported PHP versions (7.2 - 8.2)\u001B[0m",
+        "phpcs:all": "\u001B[0;33m⭐Run CS check on /src and /tests\u001B[0m",
+        "phpcs:src": "\u001B[0;33m⭐Run CS check on /src\u001B[0m",
+        "phpcs:tests": "\u001B[0;33m⭐Run CS check on /tests\u001B[0m",
+        "phpcs:fix": "\u001B[0;33m⭐Run CS check with auto-fixing on /src and /tests\u001B[0m",
+        "spell:check": "\u001B[0;33m⭐Run spell-checker\u001B[0m",
+        "lint:php": "\u001B[0;33m⭐Run PHPLint\u001B[0m",
+        "lint:php-all": "\u001B[0;33m⭐Run PHPLint on all supported PHP versions (7.2 - 8.2)\u001B[0m"
     },
     "config": {
         "allow-plugins": {
