@@ -93,7 +93,6 @@ use SqlFtw\Sql\Dml\Insert\InsertCommand;
 use SqlFtw\Sql\Dml\Insert\InsertSelectCommand;
 use SqlFtw\Sql\Dml\Insert\InsertSetCommand;
 use SqlFtw\Sql\Dml\Insert\InsertValuesCommand;
-use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
@@ -1622,7 +1621,7 @@ class MysqlFeatures extends FeaturesList
         // todo: variables
     ];
 
-    /** @var array<array<{class-string, int, int}> */
+    /** @var array<array{class-string, int, int}> */
     public $preparableCommands = [
         // https://dev.mysql.com/doc/refman/8.0/en/sql-prepared-statements.html (terribly incomplete)
         [AlterTableCommand::class, self::MIN, self::MAX],

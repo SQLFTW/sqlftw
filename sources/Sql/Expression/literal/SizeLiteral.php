@@ -12,6 +12,7 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
+use function strlen;
 use function strtolower;
 
 /**

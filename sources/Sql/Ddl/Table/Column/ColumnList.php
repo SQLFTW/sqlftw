@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Column;
 
-
 class ColumnList
 {
 

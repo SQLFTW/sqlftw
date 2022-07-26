@@ -11,12 +11,12 @@
         }
     ],
     "require": {
-        "php": "^7.1|^8.0",
-        "dogma/dogma": "^0.2.13"
+        "php": "^7.2|^8.0",
+        "dogma/dogma": "^0.2.15"
     },
     "require-dev": {
-        "dogma/dogma-dev": "0.1.28",
-        "phpstan/phpstan": "1.7.7",
+        "dogma/dogma-dev": "0.1.29",
+        "phpstan/phpstan": "1.8.2",
         "phpstan/phpstan-strict-rules": "^1.0"
     },
     "autoload": {
@@ -87,9 +87,9 @@
             "@phpcs:src",
             "@phpcs:tests"
         ],
-        "phpcs:src": "php vendor/squizlabs/php_codesniffer/bin/phpcs --standard=vendor/dogma/dogma-dev/src/CodeSniffer/ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp sources",
-        "phpcs:tests": "php vendor/squizlabs/php_codesniffer/bin/phpcs --standard=vendor/dogma/dogma-dev/src/CodeSniffer/ruleset-tests.xml --extensions=php,phpt --encoding=utf-8 --tab-width=4 -sp tests",
-        "phpcs:fix": "php vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=vendor/dogma/dogma-dev/scr/CodeSniffer/ruleset-tests.xml --extensions=php,phpt --encoding=utf-8 --tab-width=4 sources tests",
+        "phpcs:src": "php vendor/squizlabs/php_codesniffer/bin/phpcs --standard=build/CodeSniffer/ruleset.xml --extensions=php --encoding=utf-8 --tab-width=4 -sp sources",
+        "phpcs:tests": "php vendor/squizlabs/php_codesniffer/bin/phpcs --standard=build/CodeSniffer/ruleset-tests.xml --extensions=php,phpt --encoding=utf-8 --tab-width=4 -sp tests",
+        "phpcs:fix": "php vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=build/CodeSniffer/ruleset-tests.xml --extensions=php,phpt --encoding=utf-8 --tab-width=4 sources tests",
 
         "spell:check": "php vendor/spell-checker/spell-checker/spell-checker -c build/spell-checker/spell-checker.neon --checkDictionaryFiles --memoryLimit 1024M --noLogo",
 

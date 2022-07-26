@@ -23,7 +23,6 @@ use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventCommand;
-use SqlFtw\Sql\Ddl\Routine\InOutParamFlag;
 use SqlFtw\Sql\Ddl\Schema\SchemaCommand;
 use SqlFtw\Sql\Ddl\Server\ServerCommand;
 use SqlFtw\Sql\Ddl\Tablespace\TablespaceCommand;

@@ -31,7 +31,8 @@ class TriggerCommandsParser
     /** @var RoutineBodyParser */
     private $routineBodyParser;
 
-    public function __construct(ExpressionParser $expressionParser, RoutineBodyParser $routineBodyParser) {
+    public function __construct(ExpressionParser $expressionParser, RoutineBodyParser $routineBodyParser)
+    {
         $this->expressionParser = $expressionParser;
         $this->routineBodyParser = $routineBodyParser;
     }

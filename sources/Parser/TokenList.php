@@ -183,7 +183,7 @@ class TokenList
     }
 
     /**
-     * @param null|string&SubqueryType::* $type
+     * @param string&SubqueryType::* $type
      */
     public function startSubquery(string $type): void
     {

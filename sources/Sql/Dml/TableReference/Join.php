@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-
 abstract class Join implements TableReferenceNode
 {
 

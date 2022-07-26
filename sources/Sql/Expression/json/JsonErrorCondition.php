@@ -7,8 +7,6 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-// phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
-
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;

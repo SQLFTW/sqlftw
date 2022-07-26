@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-
 class UintLiteral extends IntLiteral implements UintValue
 {
 

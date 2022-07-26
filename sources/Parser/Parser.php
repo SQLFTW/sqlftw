@@ -8,7 +8,6 @@
  */
 
 // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
-// phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 
 namespace SqlFtw\Parser;
 
@@ -51,7 +50,8 @@ class Parser
     /** @var ParserFactory */
     private $factory;
 
-    public function __construct(Session $session, ?Lexer $lexer = null) {
+    public function __construct(Session $session, ?Lexer $lexer = null)
+    {
         $this->session = $session;
         $this->sessionUpdater = new SessionUpdater($session);
         $this->lexer = $lexer ?? new Lexer($session);

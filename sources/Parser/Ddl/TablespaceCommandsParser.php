@@ -103,7 +103,6 @@ class TablespaceCommandsParser
 
         $name = $tokenList->expectName(EntityType::TABLESPACE);
 
-        // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [
             Keyword::ADD, Keyword::FILE_BLOCK_SIZE, Keyword::ENCRYPTION, Keyword::USE, Keyword::EXTENT_SIZE,
             Keyword::INITIAL_SIZE, Keyword::AUTOEXTEND_SIZE, Keyword::MAX_SIZE, Keyword::NODEGROUP, Keyword::WAIT,

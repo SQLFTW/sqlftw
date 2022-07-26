@@ -116,6 +116,7 @@ use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\SubqueryType;
 use function array_values;
+use function count;
 use function strtoupper;
 
 /**
@@ -888,7 +889,6 @@ class TableCommandsParser
         $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $visible = null;
         $engineAttribute = $secondaryEngineAttribute = $storage = null;
         $autoIncrement = false;
-        // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [
             Keyword::AUTO_INCREMENT, Keyword::CHARACTER, Keyword::CHARSET, Keyword::CHECK, Keyword::COLLATE,
             Keyword::COLUMN_FORMAT, Keyword::COMMENT, Keyword::CONSTRAINT, Keyword::DEFAULT, Keyword::ENGINE_ATTRIBUTE,
@@ -1557,7 +1557,6 @@ class TableCommandsParser
                 }
             }
         }
-
 
         return new PartitioningDefinition($condition, $partitions, $partitionsNumber, $subpartitionsCondition, $subpartitionsNumber);
     }

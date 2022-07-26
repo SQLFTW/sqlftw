@@ -1,6 +1,5 @@
 <?php declare(strict_types = 1);
 
-// phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 // spell-check-ignore: DET abcdefghijklmnopqrstuvwxyz charlength crc doesn usexxx barp2 foobarp1 mgm qa abc blabla
 // spell-check-ignore: repl wp xplugin FC ddse memoryusage notembedded storedproc
 

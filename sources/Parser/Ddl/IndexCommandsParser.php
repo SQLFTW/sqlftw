@@ -140,7 +140,6 @@ class IndexCommandsParser
         }
 
         $keyBlockSize = $withParser = $mergeThreshold = $comment = $visible = $engineAttribute = $secondaryEngineAttribute = null;
-        // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [
             Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE,
             Keyword::INVISIBLE, Keyword::ENGINE_ATTRIBUTE, Keyword::SECONDARY_ENGINE_ATTRIBUTE,

@@ -78,6 +78,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
+use function count;
 use function in_array;
 use function ltrim;
 use function preg_match;

@@ -21,8 +21,10 @@ use SqlFtw\Sql\Dml\Prepared\PrepareCommand;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Routine\RoutineType;
+use function count;
 use function get_class;
 use function in_array;
+use function iterator_to_array;
 
 class PreparedCommandsParser
 {
@@ -85,12 +87,13 @@ class PreparedCommandsParser
             if (count($statements) > 1) {
                 throw new ParserException('Multiple statements in PREPARE.', $tokenList);
             }
+            // phpcs:ignore
             [$statement, ] = $statements[0];
             if ($statement instanceof InvalidCommand) {
                 throw new ParserException('Invalid statement in PREPARE.', $tokenList, $statement->getException());
             }
             $class = get_class($statement);
-            if ($tokenList->inRoutine() === RoutineType::PROCEDURE && $statement instanceof StoredProcedureCommand) {
+            if ($statement instanceof StoredProcedureCommand && $tokenList->inRoutine() === RoutineType::PROCEDURE) {
                 // ok
             } elseif (!in_array($class, $tokenList->getSession()->getPlatform()->getPreparableCommands(), true)) {
                 throw new ParserException('Non-preparable statement in PREPARE: ' . $class, $tokenList);

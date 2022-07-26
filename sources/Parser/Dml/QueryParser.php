@@ -282,7 +282,7 @@ class QueryParser
         } elseif ($keyword === Keyword::VALUES) {
             return $this->parseValues($tokenList->rewind(-1));
         } else {
-            $statement =  $this->parseWith($tokenList->rewind(-1));
+            $statement = $this->parseWith($tokenList->rewind(-1));
             if (!$statement instanceof SelectCommand) {
                 throw new ParserException('Expected SELECT.', $tokenList);
             }
@@ -352,7 +352,6 @@ class QueryParser
     {
         $tokenList->expectKeyword(Keyword::SELECT);
 
-        // phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
         $keywords = [
             Keyword::ALL, Keyword::DISTINCT, Keyword::DISTINCTROW, Keyword::HIGH_PRIORITY, Keyword::STRAIGHT_JOIN,
             Keyword::SQL_SMALL_RESULT, Keyword::SQL_BIG_RESULT, Keyword::SQL_BUFFER_RESULT, Keyword::SQL_CACHE,

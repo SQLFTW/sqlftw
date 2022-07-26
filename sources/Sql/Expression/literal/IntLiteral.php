@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-
 class IntLiteral extends NumericLiteral implements IntValue
 {
 

@@ -24,7 +24,7 @@ class ResignalCommand extends Statement implements Command
     private $items;
 
     /**
-     * @param SqlState|string|null
+     * @param SqlState|string|null $condition
      * @param array<string, RootNode> $items
      */
     public function __construct($condition, array $items)
