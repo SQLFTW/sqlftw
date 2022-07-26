@@ -197,4 +197,15 @@ class Formatter
         return "'" . $dateTime->format(DateTime::DEFAULT_FORMAT) . "'";
     }
 
+    public function serialize(SqlSerializable $serializable): string
+    {
+        if ($serializable instanceof Statement) {
+            // todo: comments
+
+            return $serializable->serialize($this);
+        } else {
+            return $serializable->serialize($this);
+        }
+    }
+
 }
