@@ -19,21 +19,21 @@ class Subquery implements ExpressionNode
 {
 
     /** @var Query */
-    private $subquery;
+    private $query;
 
-    public function __construct(Query $subquery)
+    public function __construct(Query $query)
     {
-        $this->subquery = $subquery;
+        $this->query = $query;
     }
 
-    public function getSubquery(): Query
+    public function getQuery(): Query
     {
-        return $this->subquery;
+        return $this->query;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->subquery->serialize($formatter);
+        return $this->query->serialize($formatter);
     }
 
 }
