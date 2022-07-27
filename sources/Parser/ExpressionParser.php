@@ -512,7 +512,7 @@ class ExpressionParser
             // ! simple_expr
             // BINARY simple_expr
             $semi = $coma = false;
-            if ($operator === Operator::BINARY && ($tokenList->isFinished() || $semi = $tokenList->hasSymbol(';') || $coma = $tokenList->hasSymbol(','))) {
+            if ($operator === Operator::BINARY && ($tokenList->isFinished() || ($semi = $tokenList->hasSymbol(';')) || ($coma = $tokenList->hasSymbol(',')))) {
                 if ($semi || $coma) {
                     $tokenList->rewind(-1);
                 }
