@@ -99,7 +99,7 @@ class InsertCommandParser
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
         $tokenList->passKeyword(Keyword::INTO);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
 
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);
@@ -176,7 +176,7 @@ class InsertCommandParser
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
         $tokenList->passKeyword(Keyword::INTO);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
 
         $partitions = $this->parsePartitionsList($tokenList);
         $columns = $this->parseColumnList($tokenList);

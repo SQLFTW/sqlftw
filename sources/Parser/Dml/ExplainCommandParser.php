@@ -146,7 +146,7 @@ class ExplainCommandParser
                 return new ExplainForConnectionCommand($connectionId, $type);
             case null:
                 // DESCRIBE
-                $table = $tokenList->expectQualifiedName();
+                $table = $tokenList->expectObjectIdentifier();
                 $column = $tokenList->getName(EntityType::COLUMN);
                 if ($column === null) {
                     $column = $tokenList->getString();

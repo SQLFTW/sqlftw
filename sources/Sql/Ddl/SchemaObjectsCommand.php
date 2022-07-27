@@ -9,13 +9,13 @@
 
 namespace SqlFtw\Sql\Ddl;
 
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 interface SchemaObjectsCommand extends DdlCommand
 {
 
     /**
-     * @return QualifiedName[]
+     * @return ObjectIdentifier[]
      */
     public function getNames(): array;
 

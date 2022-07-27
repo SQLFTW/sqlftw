@@ -10,21 +10,21 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class ShowCreateFunctionCommand extends Statement implements ShowCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
-    public function __construct(QualifiedName $name)
+    public function __construct(ObjectIdentifier $name)
     {
         $this->name = $name;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

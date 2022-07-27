@@ -10,41 +10,25 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
-use function explode;
 
-class QualifiedName implements ColumnIdentifier, FunctionIdentifier, TableIdentifier
+class QualifiedName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier
 {
 
     /** @var string */
     private $name;
 
-    /** @var string|null */
+    /** @var string */
     private $schema;
 
-    public function __construct(string $name, ?string $schema = null)
+    public function __construct(string $name, string $schema)
     {
         $this->name = $name;
         $this->schema = $schema;
     }
 
-    public function coalesce(string $schema): self
+    public function getSchema(): string
     {
-        return $this->schema !== null ? $this : new self($this->name, $schema);
-    }
-
-    /**
-     * @param self[] $names
-     * @return string[]
-     */
-    public static function uniqueSchemas(array $names, string $currentSchema): array
-    {
-        $schemas = [];
-        foreach ($names as $name) {
-            $schema = $name->getSchema() ?? $currentSchema;
-            $schemas[$schema] = $schema;
-        }
-
-        return $schemas;
+        return $this->schema;
     }
 
     public function getName(): string
@@ -52,38 +36,27 @@ class QualifiedName implements ColumnIdentifier, FunctionIdentifier, TableIdenti
         return $this->name;
     }
 
-    public function getSchema(): ?string
+    public function getFullName(): string
     {
-        return $this->schema;
+        return $this->schema . '.' . $this->name;
     }
 
     /**
-     * @return array{string, string|null}
+     * @return array{string, string}
      */
     public function toArray(): array
     {
         return [$this->name, $this->schema];
     }
 
-    public function getFullName(): string
-    {
-        return $this->schema !== null
-            ? $this->schema . '.' . $this->name
-            : $this->name;
-    }
-
     public function equals(string $fullName): bool
     {
-        [$schema, $name] = explode('.', $fullName);
-
-        return $this->schema === $schema && $this->name === $name;
+        return $fullName === $this->schema . '.' . $this->name;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->schema !== null
-            ? $formatter->formatName($this->schema) . '.' . $formatter->formatName($this->name)
-            : $formatter->formatName($this->name);
+        return $formatter->formatName($this->schema) . '.' . $formatter->formatName($this->name);
     }
 
 }

@@ -10,16 +10,16 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class CreateTableLikeCommand extends Statement implements AnyCreateTableCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $templateTable;
 
     /** @var bool */
@@ -29,8 +29,8 @@ class CreateTableLikeCommand extends Statement implements AnyCreateTableCommand
     private $ifNotExists;
 
     public function __construct(
-        QualifiedName $name,
-        QualifiedName $templateTable,
+        ObjectIdentifier $name,
+        ObjectIdentifier $templateTable,
         bool $temporary = false,
         bool $ifNotExists = false
     ) {
@@ -40,12 +40,12 @@ class CreateTableLikeCommand extends Statement implements AnyCreateTableCommand
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }
 
-    public function getTemplateTable(): QualifiedName
+    public function getTemplateTable(): ObjectIdentifier
     {
         return $this->templateTable;
     }

@@ -10,14 +10,14 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
 class ShowIndexesCommand extends Statement implements ShowCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var RootNode|null */
@@ -26,14 +26,14 @@ class ShowIndexesCommand extends Statement implements ShowCommand
     /** @var bool */
     private $extended;
 
-    public function __construct(QualifiedName $table, ?RootNode $where = null, bool $extended = false)
+    public function __construct(ObjectIdentifier $table, ?RootNode $where = null, bool $extended = false)
     {
         $this->table = $table;
         $this->where = $where;
         $this->extended = $extended;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

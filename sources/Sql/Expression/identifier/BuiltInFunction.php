@@ -744,6 +744,11 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         return isset(self::$namedParams[$this->getValue()]);
     }
 
+    public function getName(): string
+    {
+        return $this->getValue();
+    }
+
     public function getFullName(): string
     {
         return $this->getValue();

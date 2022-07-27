@@ -84,7 +84,7 @@ class TransactionCommandsParser
         $tokenList->expectAnyKeyword(Keyword::TABLES, Keyword::TABLE);
         $items = [];
         do {
-            $table = $tokenList->expectQualifiedName();
+            $table = $tokenList->expectObjectIdentifier();
             $alias = $this->expressionParser->parseAlias($tokenList);
             $lock = $tokenList->expectMultiKeywordsEnum(LockTableType::class);
 

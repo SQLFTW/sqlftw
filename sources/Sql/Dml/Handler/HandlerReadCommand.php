@@ -11,14 +11,14 @@ namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Literal;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
 class HandlerReadCommand extends Statement implements HandlerCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var HandlerReadTarget */
@@ -43,7 +43,7 @@ class HandlerReadCommand extends Statement implements HandlerCommand
      * @param non-empty-array<string|int|float|bool|Literal>|null $values
      */
     public function __construct(
-        QualifiedName $table,
+        ObjectIdentifier $table,
         HandlerReadTarget $what,
         ?string $index = null,
         ?array $values = null,
@@ -60,7 +60,7 @@ class HandlerReadCommand extends Statement implements HandlerCommand
         $this->offset = $offset;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

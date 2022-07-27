@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class AnalyzeTableDropHistogramCommand extends Statement implements DalTableCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var non-empty-array<string> */
@@ -28,14 +28,14 @@ class AnalyzeTableDropHistogramCommand extends Statement implements DalTableComm
     /**
      * @param non-empty-array<string> $columns
      */
-    public function __construct(QualifiedName $name, array $columns, bool $local = false)
+    public function __construct(ObjectIdentifier $name, array $columns, bool $local = false)
     {
         $this->name = $name;
         $this->columns = $columns;
         $this->local = $local;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

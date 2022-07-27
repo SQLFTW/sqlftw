@@ -10,13 +10,14 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use SqlFtw\Sql\Ddl\UserExpression;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class EventDefinition
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var EventSchedule */
@@ -38,7 +39,7 @@ class EventDefinition
     private $comment;
 
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         EventSchedule $schedule,
         Statement $body,
         ?UserExpression $definer = null,
@@ -70,7 +71,7 @@ class EventDefinition
         return $that;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

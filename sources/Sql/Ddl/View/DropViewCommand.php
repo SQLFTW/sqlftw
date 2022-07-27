@@ -11,13 +11,13 @@ namespace SqlFtw\Sql\Ddl\View;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SchemaObjectsCommand;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCommand
 {
 
-    /** @var non-empty-array<QualifiedName> */
+    /** @var non-empty-array<ObjectIdentifier> */
     private $names;
 
     /** @var bool */
@@ -27,7 +27,7 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
     private $option;
 
     /**
-     * @param non-empty-array<QualifiedName> $names
+     * @param non-empty-array<ObjectIdentifier> $names
      */
     public function __construct(array $names, bool $ifExists = false, ?DropViewOption $option = null)
     {
@@ -37,7 +37,7 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
     }
 
     /**
-     * @return non-empty-array<QualifiedName>
+     * @return non-empty-array<ObjectIdentifier>
      */
     public function getNames(): array
     {

@@ -17,25 +17,21 @@ class ColumnName implements Identifier, ColumnIdentifier
     /** @var string */
     private $name;
 
-    /** @var string|null */
+    /** @var string */
     private $table;
 
-    /** @var string|null */
+    /** @var string */
     private $schema;
 
-    public function __construct(string $name, ?string $table = null, ?string $schema = null)
+    public function __construct(string $name, string $table, string $schema)
     {
         $this->name = $name;
         $this->table = $table;
         $this->schema = $schema;
     }
 
-    public function getTableName(): ?QualifiedName
+    public function getTableName(): ?ObjectIdentifier
     {
-        if ($this->table === null) {
-            return null;
-        }
-
         return new QualifiedName($this->table, $this->schema);
     }
 
@@ -44,42 +40,26 @@ class ColumnName implements Identifier, ColumnIdentifier
         return $this->name;
     }
 
-    public function getTable(): ?string
+    public function getTable(): string
     {
         return $this->table;
     }
 
-    public function getSchema(): ?string
+    public function getSchema(): string
     {
         return $this->schema;
     }
 
     public function getFullName(): string
     {
-        $result = '';
-        if ($this->schema !== null) {
-            $result = $this->schema . '.';
-        }
-        if ($this->table !== null) {
-            $result .= $this->table . '.';
-        }
-        $result .= $this->name;
-
-        return $result;
+        return $this->schema . '.' . $this->table . '.' . $this->name;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        $result = '';
-        if ($this->schema !== null) {
-            $result = $formatter->formatName($this->schema) . '.';
-        }
-        if ($this->table !== null) {
-            $result .= $formatter->formatName($this->table) . '.';
-        }
-        $result .= $formatter->formatName($this->name);
-
-        return $result;
+        return $formatter->formatName($this->schema)
+            . '.' . $formatter->formatName($this->table)
+            . '.' . $formatter->formatName($this->name);
     }
 
 }

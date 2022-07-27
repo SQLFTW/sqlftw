@@ -350,7 +350,7 @@ class Parser
                         // CREATE ... FUNCTION [IF NOT EXISTS] sp_name ([func_parameter[, ...]]) RETURNS type
                         return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->rewind($start));
                     }
-                    $tokenList->expectQualifiedName();
+                    $tokenList->expectObjectIdentifier();
                     if ($tokenList->hasSymbol('(')) {
                         // CREATE ... FUNCTION ... sp_name ([func_parameter[, ...]]) RETURNS type
                         return $this->factory->getRoutineCommandsParser()->parseCreateFunction($tokenList->rewind($start));
@@ -507,7 +507,7 @@ class Parser
                 return $this->factory->getUserCommandsParser()->parseGrant($tokenList->rewind($start));
             case Keyword::HANDLER:
                 // HANDLER
-                $tokenList->expectQualifiedName();
+                $tokenList->expectObjectIdentifier();
                 $keyword = $tokenList->expectAnyKeyword(Keyword::OPEN, Keyword::READ, Keyword::CLOSE);
                 if ($keyword === Keyword::OPEN) {
                     return $this->factory->getHandlerCommandParser()->parseHandlerOpen($tokenList->rewind($start));

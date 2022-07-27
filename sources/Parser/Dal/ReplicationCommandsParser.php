@@ -40,8 +40,8 @@ use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\Parentheses;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Subquery;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
 use function array_shift;
@@ -360,10 +360,10 @@ class ReplicationCommandsParser
                             }
                         } while ($tokenList->hasSymbol(','));
                         break;
-                    case QualifiedName::class . '[]':
+                    case ObjectIdentifier::class . '[]':
                         $values = [];
                         do {
-                            $values[] = $tokenList->expectQualifiedName();
+                            $values[] = $tokenList->expectObjectIdentifier();
                         } while ($tokenList->hasSymbol(','));
                         break;
                     case BaseType::CHAR . '{}':

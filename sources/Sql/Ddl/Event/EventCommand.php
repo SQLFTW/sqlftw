@@ -10,11 +10,11 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use SqlFtw\Sql\Ddl\SchemaObjectCommand;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 interface EventCommand extends SchemaObjectCommand
 {
 
-    public function getName(): QualifiedName;
+    public function getName(): ObjectIdentifier;
 
 }

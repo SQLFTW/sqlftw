@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use function array_map;
 use function implode;
 
@@ -38,7 +38,7 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
-        QualifiedName $table,
+        ObjectIdentifier $table,
         array $rows,
         ?array $columns = null,
         ?string $alias = null,

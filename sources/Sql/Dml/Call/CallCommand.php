@@ -11,14 +11,14 @@ namespace SqlFtw\Sql\Dml\Call;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
 class CallCommand extends Statement implements DmlCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $procedure;
 
     /** @var array<RootNode>|null */
@@ -27,13 +27,13 @@ class CallCommand extends Statement implements DmlCommand
     /**
      * @param array<RootNode>|null $params
      */
-    public function __construct(QualifiedName $procedure, ?array $params = null)
+    public function __construct(ObjectIdentifier $procedure, ?array $params = null)
     {
         $this->procedure = $procedure;
         $this->params = $params;
     }
 
-    public function getProcedure(): QualifiedName
+    public function getProcedure(): ObjectIdentifier
     {
         return $this->procedure;
     }

@@ -17,6 +17,11 @@ use SqlFtw\Formatter\Formatter;
 class Placeholder implements Identifier
 {
 
+    public function getName(): string
+    {
+        return '?';
+    }
+
     public function getFullName(): string
     {
         return '?';

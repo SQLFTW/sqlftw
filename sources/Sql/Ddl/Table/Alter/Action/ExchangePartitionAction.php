@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 class ExchangePartitionAction implements PartitioningAction
 {
@@ -18,13 +18,13 @@ class ExchangePartitionAction implements PartitioningAction
     /** @var string */
     private $partition;
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var bool|null */
     private $validation;
 
-    public function __construct(string $partition, QualifiedName $table, ?bool $validation)
+    public function __construct(string $partition, ObjectIdentifier $table, ?bool $validation)
     {
         $this->partition = $partition;
         $this->table = $table;
@@ -36,7 +36,7 @@ class ExchangePartitionAction implements PartitioningAction
         return $this->partition;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

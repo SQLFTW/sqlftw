@@ -14,9 +14,9 @@ use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
@@ -27,7 +27,7 @@ use function implode;
 class DeleteCommand extends Statement implements DmlCommand
 {
 
-    /** @var non-empty-array<array{QualifiedName, string|null}> */
+    /** @var non-empty-array<array{ObjectIdentifier, string|null}> */
     private $tables;
 
     /** @var TableReferenceNode|null */
@@ -58,7 +58,7 @@ class DeleteCommand extends Statement implements DmlCommand
     private $ignore;
 
     /**
-     * @param non-empty-array<array{QualifiedName, string|null}> $tables
+     * @param non-empty-array<array{ObjectIdentifier, string|null}> $tables
      * @param non-empty-array<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      * @param non-empty-array<string>|null $partitions
@@ -96,7 +96,7 @@ class DeleteCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<array{QualifiedName, string|null}>
+     * @return non-empty-array<array{ObjectIdentifier, string|null}>
      */
     public function getTables(): array
     {

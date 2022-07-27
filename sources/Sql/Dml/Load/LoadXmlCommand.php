@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Load;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DuplicateOption;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
 
 class LoadXmlCommand extends LoadCommand
@@ -27,7 +27,7 @@ class LoadXmlCommand extends LoadCommand
      */
     public function __construct(
         string $file,
-        QualifiedName $table,
+        ObjectIdentifier $table,
         ?string $rowsTag = null,
         ?Charset $charset = null,
         ?array $fields = null,

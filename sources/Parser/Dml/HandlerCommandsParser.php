@@ -35,7 +35,7 @@ class HandlerCommandsParser
     public function parseHandlerOpen(TokenList $tokenList): HandlerOpenCommand
     {
         $tokenList->expectKeyword(Keyword::HANDLER);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
         $tokenList->expectKeyword(Keyword::OPEN);
 
         $tokenList->passKeyword(Keyword::AS);
@@ -55,7 +55,7 @@ class HandlerCommandsParser
     public function parseHandlerRead(TokenList $tokenList): HandlerReadCommand
     {
         $tokenList->expectKeyword(Keyword::HANDLER);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
         $tokenList->expectKeyword(Keyword::READ);
 
         $values = $index = null;
@@ -116,7 +116,7 @@ class HandlerCommandsParser
     public function parseHandlerClose(TokenList $tokenList): HandlerCloseCommand
     {
         $tokenList->expectKeyword(Keyword::HANDLER);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
         $tokenList->expectKeyword(Keyword::CLOSE);
 
         return new HandlerCloseCommand($table);

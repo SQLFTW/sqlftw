@@ -61,7 +61,7 @@ class EventCommandsParser
             $definer = $this->expressionParser->parseUserExpression($tokenList);
         }
         $tokenList->expectKeyword(Keyword::EVENT);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         if ($tokenList->hasKeywords(Keyword::ON, Keyword::SCHEDULE)) {
             $schedule = $this->parseSchedule($tokenList);
@@ -71,7 +71,7 @@ class EventCommandsParser
             $tokenList->expectKeyword(Keyword::PRESERVE);
         }
         if ($tokenList->hasKeywords(Keyword::RENAME, Keyword::TO)) {
-            $newName = $tokenList->expectQualifiedName();
+            $newName = $tokenList->expectObjectIdentifier();
         }
 
         $state = $tokenList->getMultiKeywordsEnum(EventState::class);
@@ -113,7 +113,7 @@ class EventCommandsParser
         }
         $tokenList->expectKeyword(Keyword::EVENT);
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         $tokenList->expectKeywords(Keyword::ON, Keyword::SCHEDULE);
         $schedule = $this->parseSchedule($tokenList);
@@ -190,7 +190,7 @@ class EventCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::EVENT);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         return new DropEventCommand($name, $ifExists);
     }

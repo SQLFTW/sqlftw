@@ -223,7 +223,7 @@ class TableCommandsParser
             $alterOptions[AlterTableOption::ONLINE] = true;
         }
         $tokenList->expectKeyword(Keyword::TABLE);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         do {
             $position = $tokenList->getPosition();
@@ -507,7 +507,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::PARTITION);
                     $partition = $tokenList->expectName(EntityType::PARTITION);
                     $tokenList->expectKeywords(Keyword::WITH, Keyword::TABLE);
-                    $table = $tokenList->expectQualifiedName();
+                    $table = $tokenList->expectObjectIdentifier();
                     $validation = $tokenList->getAnyKeyword(Keyword::WITH, Keyword::WITHOUT);
                     if ($validation === Keyword::WITH) {
                         $tokenList->expectKeyword(Keyword::VALIDATION);
@@ -602,7 +602,7 @@ class TableCommandsParser
                     } else {
                         // RENAME [TO|AS] new_tbl_name
                         $tokenList->getAnyKeyword(Keyword::TO, Keyword::AS);
-                        $newName = $tokenList->expectQualifiedName();
+                        $newName = $tokenList->expectObjectIdentifier();
                         $actions[] = new RenameToAction($newName);
                     }
                     break;
@@ -718,12 +718,12 @@ class TableCommandsParser
         $temporary = $tokenList->hasKeyword(Keyword::TEMPORARY);
         $tokenList->expectKeyword(Keyword::TABLE);
         $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
 
         $position = $tokenList->getPosition();
         $bodyOpen = $tokenList->hasSymbol('(');
         if ($tokenList->hasKeyword(Keyword::LIKE)) {
-            $oldTable = $tokenList->expectQualifiedName();
+            $oldTable = $tokenList->expectObjectIdentifier();
             if ($bodyOpen) {
                 $tokenList->expectSymbol(')');
             }
@@ -1249,7 +1249,7 @@ class TableCommandsParser
     private function parseReference(TokenList $tokenList): ReferenceDefinition
     {
         $tokenList->expectKeyword(Keyword::REFERENCES);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
 
         $columns = $this->parseNonEmptyColumnList($tokenList);
 
@@ -1473,7 +1473,7 @@ class TableCommandsParser
                 $tables = [];
                 if (!$tokenList->hasSymbol(')')) {
                     do {
-                        $tables[] = $tokenList->expectQualifiedName();
+                        $tables[] = $tokenList->expectObjectIdentifier();
                     } while ($tokenList->hasSymbol(','));
                     $tokenList->expectSymbol(')');
                 }
@@ -1889,7 +1889,7 @@ class TableCommandsParser
         }
         $tables = [];
         do {
-            $tables[] = $tokenList->expectQualifiedName();
+            $tables[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
         // ignored in MySQL 5.7, 8.0
@@ -1911,9 +1911,9 @@ class TableCommandsParser
         $tables = [];
         $newTables = [];
         do {
-            $tables[] = $tokenList->expectQualifiedName();
+            $tables[] = $tokenList->expectObjectIdentifier();
             $tokenList->expectKeyword(Keyword::TO);
-            $newTables[] = $tokenList->expectQualifiedName();
+            $newTables[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
         return new RenameTableCommand($tables, $newTables);
@@ -1926,7 +1926,7 @@ class TableCommandsParser
     {
         $tokenList->expectKeyword(Keyword::TRUNCATE);
         $tokenList->passKeyword(Keyword::TABLE);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
 
         return new TruncateTableCommand($table);
     }

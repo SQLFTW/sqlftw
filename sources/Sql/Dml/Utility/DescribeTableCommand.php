@@ -11,26 +11,26 @@ namespace SqlFtw\Sql\Dml\Utility;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 use function strtr;
 
 class DescribeTableCommand extends Statement implements DmlCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var string|null */
     private $column;
 
-    public function __construct(QualifiedName $table, ?string $column)
+    public function __construct(ObjectIdentifier $table, ?string $column)
     {
         $this->table = $table;
         $this->column = $column;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 use function implode;
@@ -25,7 +25,7 @@ abstract class LoadCommand extends Statement implements DmlCommand
     /** @var string */
     private $file;
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var Charset|null */
@@ -59,7 +59,7 @@ abstract class LoadCommand extends Statement implements DmlCommand
      */
     public function __construct(
         string $file,
-        QualifiedName $table,
+        ObjectIdentifier $table,
         ?Charset $charset = null,
         ?array $fields = null,
         ?array $setters = null,

@@ -22,6 +22,7 @@ use SqlFtw\Sql\Ddl\View\ViewAlgorithm;
 use SqlFtw\Sql\Ddl\View\ViewCheckOption;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\EntityType;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
@@ -81,7 +82,7 @@ class ViewCommandsParser
     }
 
     /**
-     * @return array{QualifiedName, Query, non-empty-array<string>|null, UserExpression|null, SqlSecurity|null, ViewAlgorithm|null, ViewCheckOption|null}
+     * @return array{ObjectIdentifier, Query, non-empty-array<string>|null, UserExpression|null, SqlSecurity|null, ViewAlgorithm|null, ViewCheckOption|null}
      */
     private function parseViewDefinition(TokenList $tokenList): array
     {
@@ -100,7 +101,7 @@ class ViewCommandsParser
         }
 
         $tokenList->expectKeyword(Keyword::VIEW);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         $columns = null;
         if ($tokenList->hasSymbol('(')) {
@@ -137,7 +138,7 @@ class ViewCommandsParser
 
         $names = [];
         do {
-            $names[] = $tokenList->expectQualifiedName();
+            $names[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
         $option = $tokenList->getAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE);

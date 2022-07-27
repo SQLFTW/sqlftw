@@ -9,13 +9,13 @@
 
 namespace SqlFtw\Sql;
 
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 interface TablesCommand extends Command
 {
 
     /**
-     * @return QualifiedName[]
+     * @return ObjectIdentifier[]
      */
     public function getNames(): array;
 

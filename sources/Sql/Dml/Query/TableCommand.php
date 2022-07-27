@@ -12,15 +12,15 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
 class TableCommand extends Statement implements SimpleQuery
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var non-empty-array<OrderByExpression>|null */
@@ -41,13 +41,12 @@ class TableCommand extends Statement implements SimpleQuery
      * @param int|SimpleName|Placeholder|null $offset
      */
     public function __construct(
-        QualifiedName $table,
+        ObjectIdentifier $table,
         ?array $orderBy = null,
         $limit = null,
         $offset = null,
         ?SelectInto $into = null
-    )
-    {
+    ) {
         $this->table = $table;
         $this->orderBy = $orderBy;
         $this->limit = $limit;
@@ -55,7 +54,7 @@ class TableCommand extends Statement implements SimpleQuery
         $this->into = $into;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

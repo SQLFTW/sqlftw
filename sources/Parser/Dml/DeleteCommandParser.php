@@ -14,6 +14,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\EntityType;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
@@ -96,13 +97,13 @@ class DeleteCommandParser
     }
 
     /**
-     * @return non-empty-array<array{QualifiedName, string|null}>
+     * @return non-empty-array<array{ObjectIdentifier, string|null}>
      */
     private function parseTablesList(TokenList $tokenList): array
     {
         $tables = [];
         do {
-            $table = $tokenList->expectQualifiedName();
+            $table = $tokenList->expectObjectIdentifier();
             if ($tokenList->hasSymbol('.')) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
             }

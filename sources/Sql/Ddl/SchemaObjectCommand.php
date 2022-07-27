@@ -9,11 +9,11 @@
 
 namespace SqlFtw\Sql\Ddl;
 
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 interface SchemaObjectCommand extends DdlCommand
 {
 
-    public function getName(): QualifiedName;
+    public function getName(): ObjectIdentifier;
 
 }

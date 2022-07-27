@@ -14,7 +14,9 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 
@@ -47,17 +49,19 @@ class CreateIndexCommand extends Statement implements IndexCommand, DdlTableComm
         $this->lock = $lock;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         /** @var string $name */
         $name = $this->index->getName();
+        $table = $this->getTable();
+        $schema = $table instanceof QualifiedName ? $table->getSchema() : null;
 
-        return new QualifiedName($name, $this->getTable()->getSchema());
+        return $schema !== null ? new QualifiedName($name, $schema) : new SimpleName($name);
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
-        /** @var QualifiedName $table */
+        /** @var ObjectIdentifier $table */
         $table = $this->index->getTable();
 
         return $table;

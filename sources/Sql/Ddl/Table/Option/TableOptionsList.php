@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\StorageType;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Util\TypeChecker;
@@ -64,7 +64,7 @@ class TableOptionsList
                         break;
                 }
             } elseif ($option === TableOption::UNION) {
-                TypeChecker::check($value, QualifiedName::class . '[]');
+                TypeChecker::check($value, ObjectIdentifier::class . '[]');
                 $this->options[$option] = $value;
             } else {
                 if (!TableOption::isValid($option)) {

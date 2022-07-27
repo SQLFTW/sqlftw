@@ -10,25 +10,25 @@
 namespace SqlFtw\Sql\Ddl\Routine;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class DropFunctionCommand extends Statement implements StoredFunctionCommand, DropRoutineCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(QualifiedName $name, bool $ifExists = false)
+    public function __construct(ObjectIdentifier $name, bool $ifExists = false)
     {
         $this->name = $name;
         $this->ifExists = $ifExists;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

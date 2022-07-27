@@ -11,19 +11,20 @@ namespace SqlFtw\Sql\Ddl\Trigger;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
 
 class CreateTriggerCommand extends Statement implements TriggerCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var TriggerEvent */
     private $event;
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var Statement */
@@ -39,9 +40,9 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
     private $ifNotExists;
 
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         TriggerEvent $event,
-        QualifiedName $table,
+        ObjectIdentifier $table,
         Statement $body,
         ?UserExpression $definer = null,
         ?TriggerPosition $position = null,
@@ -56,9 +57,11 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
-        return new QualifiedName($this->name->getName(), $this->table->getSchema());
+        $schema = $this->table instanceof QualifiedName ? $this->table->getSchema() : null;
+
+        return $schema !== null ? new QualifiedName($this->name->getName(), $schema) : $this->name;
     }
 
     public function getEvent(): TriggerEvent
@@ -66,7 +69,7 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
         return $this->event;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

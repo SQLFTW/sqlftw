@@ -14,13 +14,13 @@ use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\Query\Query;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var Query */
@@ -48,7 +48,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
      * @param non-empty-array<string>|null $columns
      */
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         Query $query,
         ?array $columns = null,
         ?UserExpression $definer = null,
@@ -67,7 +67,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
         $this->orReplace = $orReplace;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

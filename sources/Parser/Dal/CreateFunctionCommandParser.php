@@ -27,7 +27,7 @@ class CreateFunctionCommandParser
         $aggregate = $tokenList->hasKeyword(Keyword::AGGREGATE);
         $tokenList->expectKeyword(Keyword::FUNCTION);
 
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         $tokenList->expectKeyword(Keyword::RETURNS);
         $type = $tokenList->expectKeywordEnum(UdfReturnDataType::class);

@@ -14,13 +14,13 @@ use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SizeLiteral;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
 /**
- * @phpstan-type TableOptionValue int|bool|string|Collation|Charset|DefaultLiteral|SizeLiteral|StorageEngine|StorageType|TableCompression|TableInsertMethod|TableRowFormat|ThreeStateValue|QualifiedName[]
+ * @phpstan-type TableOptionValue int|bool|string|Collation|Charset|DefaultLiteral|SizeLiteral|StorageEngine|StorageType|TableCompression|TableInsertMethod|TableRowFormat|ThreeStateValue|ObjectIdentifier[]
  */
 class TableOption extends SqlEnum
 {
@@ -83,7 +83,7 @@ class TableOption extends SqlEnum
         self::STATS_PERSISTENT => ThreeStateValue::class,
         self::STATS_SAMPLE_PAGES => BaseType::UNSIGNED . '|' . DefaultLiteral::class,
         self::TABLESPACE => BaseType::CHAR,
-        self::UNION => QualifiedName::class . '[]',
+        self::UNION => ObjectIdentifier::class . '[]',
     ];
 
     /**

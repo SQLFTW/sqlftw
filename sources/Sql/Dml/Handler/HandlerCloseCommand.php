@@ -10,21 +10,21 @@
 namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class HandlerCloseCommand extends Statement implements HandlerCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
-    public function __construct(QualifiedName $table)
+    public function __construct(ObjectIdentifier $table)
     {
         $this->table = $table;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

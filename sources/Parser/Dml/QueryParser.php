@@ -532,7 +532,7 @@ class QueryParser
     public function parseTable(TokenList $tokenList): TableCommand
     {
         $tokenList->expectKeyword(Keyword::TABLE);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList);
 
@@ -666,7 +666,7 @@ class QueryParser
                 if ($tokenList->hasKeyword(Keyword::OF)) {
                     $lockTables = [];
                     do {
-                        $lockTables[] = $tokenList->expectQualifiedName();
+                        $lockTables[] = $tokenList->expectObjectIdentifier();
                     } while ($tokenList->hasSymbol(','));
                 }
                 $lockWaitOption = $tokenList->getMultiKeywordsEnum(SelectLockWaitOption::class);

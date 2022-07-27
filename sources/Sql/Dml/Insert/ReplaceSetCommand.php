@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
@@ -26,7 +26,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
-        QualifiedName $table,
+        ObjectIdentifier $table,
         array $assignments,
         ?array $columns = null,
         ?array $partitions = null,

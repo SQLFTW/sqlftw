@@ -34,7 +34,7 @@ class CallCommandParser
     {
         $tokenList->expectKeyword(Keyword::CALL);
 
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
         $params = null;
         if ($tokenList->hasSymbol('(')) {
             $params = [];

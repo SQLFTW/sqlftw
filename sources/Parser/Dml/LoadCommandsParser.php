@@ -17,6 +17,7 @@ use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadPriority;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\EntityType;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
@@ -92,7 +93,7 @@ class LoadCommandsParser
     }
 
     /**
-     * @return array{LoadPriority|null, bool, string, DuplicateOption|null, QualifiedName, non-empty-array<string>|null, Charset|null}
+     * @return array{LoadPriority|null, bool, string, DuplicateOption|null, ObjectIdentifier, non-empty-array<string>|null, Charset|null}
      */
     private function parseOptions(TokenList $tokenList, bool $parsePartitions): array
     {
@@ -105,7 +106,7 @@ class LoadCommandsParser
         $duplicateOption = $tokenList->getKeywordEnum(DuplicateOption::class);
 
         $tokenList->expectKeywords(Keyword::INTO, Keyword::TABLE);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
 
         $partitions = null;
         if ($parsePartitions && $tokenList->hasKeyword(Keyword::PARTITION)) {

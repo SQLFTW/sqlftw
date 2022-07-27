@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\SqlSerializable;
 
 class LockTablesItem implements SqlSerializable
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var LockTableType */
@@ -25,11 +25,26 @@ class LockTablesItem implements SqlSerializable
     /** @var string|null */
     private $alias;
 
-    public function __construct(QualifiedName $table, LockTableType $lock, ?string $alias)
+    public function __construct(ObjectIdentifier $table, LockTableType $lock, ?string $alias)
     {
         $this->table = $table;
         $this->lock = $lock;
         $this->alias = $alias;
+    }
+
+    public function getTable(): ObjectIdentifier
+    {
+        return $this->table;
+    }
+
+    public function getLock(): LockTableType
+    {
+        return $this->lock;
+    }
+
+    public function getAlias(): ?string
+    {
+        return $this->alias;
     }
 
     public function serialize(Formatter $formatter): string

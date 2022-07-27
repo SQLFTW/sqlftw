@@ -23,8 +23,10 @@ use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\StringValue;
@@ -1285,7 +1287,7 @@ class TokenList
 
     // special values --------------------------------------------------------------------------------------------------
 
-    public function expectQualifiedName(): QualifiedName
+    public function expectObjectIdentifier(): ObjectIdentifier
     {
         $first = $this->expectNonReservedName(EntityType::SCHEMA);
         if ($this->hasSymbol('.')) {
@@ -1298,10 +1300,10 @@ class TokenList
             return new QualifiedName($second, $first);
         }
 
-        return new QualifiedName($first);
+        return new SimpleName($first);
     }
 
-    public function getQualifiedName(): ?QualifiedName
+    public function getObjectIdentifier(): ?ObjectIdentifier
     {
         $position = $this->position;
 
@@ -1324,7 +1326,7 @@ class TokenList
             return new QualifiedName($second, $first);
         }
 
-        return new QualifiedName($first);
+        return new SimpleName($first);
     }
 
     public function expectUserName(bool $forRole = false): UserName

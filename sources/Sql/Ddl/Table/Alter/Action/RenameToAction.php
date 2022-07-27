@@ -10,20 +10,20 @@
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 class RenameToAction implements TableAction
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $newName;
 
-    public function __construct(QualifiedName $newName)
+    public function __construct(ObjectIdentifier $newName)
     {
         $this->newName = $newName;
     }
 
-    public function getNewName(): QualifiedName
+    public function getNewName(): ObjectIdentifier
     {
         return $this->newName;
     }

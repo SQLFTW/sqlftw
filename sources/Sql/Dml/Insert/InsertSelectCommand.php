@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 class InsertSelectCommand extends InsertOrReplaceCommand implements InsertCommand
 {
@@ -28,7 +28,7 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
-        QualifiedName $table,
+        ObjectIdentifier $table,
         Query $query,
         ?array $columns = null,
         ?array $partitions = null,

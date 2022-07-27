@@ -46,7 +46,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
-            $tables[] = $tokenList->expectQualifiedName();
+            $tables[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
         $columns = $buckets = null;
@@ -90,7 +90,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
-            $tables[] = $tokenList->expectQualifiedName();
+            $tables[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
         $option = $tokenList->getMultiKeywordsEnum(CheckTableOption::class);
@@ -107,7 +107,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
-            $tables[] = $tokenList->expectQualifiedName();
+            $tables[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
         $quick = $tokenList->hasKeyword(Keyword::QUICK);
@@ -127,7 +127,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
-            $tables[] = $tokenList->expectQualifiedName();
+            $tables[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
         return new OptimizeTableCommand($tables, $local);
@@ -145,7 +145,7 @@ class TableMaintenanceCommandsParser
         $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES);
         $tables = [];
         do {
-            $tables[] = $tokenList->expectQualifiedName();
+            $tables[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
         $quick = $tokenList->hasKeyword(Keyword::QUICK);

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Index;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
 use SqlFtw\Sql\Ddl\Table\TableItem;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use function count;
 
 class IndexDefinition implements TableItem, ConstraintBody
@@ -35,7 +35,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     /** @var IndexOptions|null */
     private $options;
 
-    /** @var QualifiedName|null */
+    /** @var ObjectIdentifier|null */
     private $table;
 
     /**
@@ -47,7 +47,7 @@ class IndexDefinition implements TableItem, ConstraintBody
         array $parts,
         ?IndexAlgorithm $algorithm = null,
         ?IndexOptions $options = null,
-        ?QualifiedName $table = null
+        ?ObjectIdentifier $table = null
     ) {
         $this->name = $name;
         $this->type = $type;
@@ -106,7 +106,7 @@ class IndexDefinition implements TableItem, ConstraintBody
         return $this->options;
     }
 
-    public function getTable(): ?QualifiedName
+    public function getTable(): ?ObjectIdentifier
     {
         return $this->table;
     }

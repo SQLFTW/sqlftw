@@ -9,11 +9,11 @@
 
 namespace SqlFtw\Sql;
 
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 interface TableCommand extends Command
 {
 
-    public function getName(): QualifiedName;
+    public function getName(): ObjectIdentifier;
 
 }

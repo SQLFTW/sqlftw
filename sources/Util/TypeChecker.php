@@ -18,6 +18,7 @@ use function ctype_digit;
 use function explode;
 use function get_class;
 use function gettype;
+use function interface_exists;
 use function is_array;
 use function is_bool;
 use function is_float;
@@ -122,7 +123,7 @@ class TypeChecker
             case BaseType::BOOL:
                 return is_bool($value);
             default:
-                if (class_exists($type)) {
+                if (class_exists($type) || interface_exists($type)) {
                     return $value instanceof $type;
                 } else {
                     throw new ShouldNotHappenException("Unexpected type '$type' in TypeChecker.");

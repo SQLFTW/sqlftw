@@ -12,13 +12,13 @@ namespace SqlFtw\Sql\Ddl\Routine;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class CreateProcedureCommand extends Statement implements StoredProcedureCommand, CreateRoutineCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var Statement */
@@ -52,7 +52,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
      * @param ProcedureParam[] $params
      */
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         Statement $body,
         array $params,
         ?UserExpression $definer = null,
@@ -75,7 +75,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

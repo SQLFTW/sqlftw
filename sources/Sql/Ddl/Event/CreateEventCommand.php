@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class CreateEventCommand extends Statement implements EventCommand
@@ -22,15 +22,13 @@ class CreateEventCommand extends Statement implements EventCommand
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(
-        EventDefinition $event,
-        bool $ifNotExists = false
-    ) {
+    public function __construct(EventDefinition $event, bool $ifNotExists = false)
+    {
         $this->event = $event;
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->event->getName();
     }

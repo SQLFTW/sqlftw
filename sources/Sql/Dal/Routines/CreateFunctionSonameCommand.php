@@ -12,13 +12,13 @@ namespace SqlFtw\Sql\Dal\Routine;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Ddl\Routine\UdfReturnDataType;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class CreateFunctionSonameCommand extends Statement implements DalCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var string */
@@ -30,7 +30,7 @@ class CreateFunctionSonameCommand extends Statement implements DalCommand
     /** @var bool */
     private $aggregate;
 
-    public function __construct(QualifiedName $name, string $libName, UdfReturnDataType $returnType, bool $aggregate)
+    public function __construct(ObjectIdentifier $name, string $libName, UdfReturnDataType $returnType, bool $aggregate)
     {
         $this->name = $name;
         $this->libName = $libName;
@@ -38,7 +38,7 @@ class CreateFunctionSonameCommand extends Statement implements DalCommand
         $this->aggregate = $aggregate;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

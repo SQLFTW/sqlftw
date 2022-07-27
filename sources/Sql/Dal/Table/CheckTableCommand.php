@@ -10,20 +10,20 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class CheckTableCommand extends Statement implements DalTablesCommand
 {
 
-    /** @var non-empty-array<QualifiedName> */
+    /** @var non-empty-array<ObjectIdentifier> */
     private $names;
 
     /** @var CheckTableOption|null */
     private $option;
 
     /**
-     * @param non-empty-array<QualifiedName> $names
+     * @param non-empty-array<ObjectIdentifier> $names
      */
     public function __construct(array $names, ?CheckTableOption $option = null)
     {
@@ -32,7 +32,7 @@ class CheckTableCommand extends Statement implements DalTablesCommand
     }
 
     /**
-     * @return non-empty-array<QualifiedName>
+     * @return non-empty-array<ObjectIdentifier>
      */
     public function getNames(): array
     {

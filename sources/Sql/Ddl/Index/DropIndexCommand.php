@@ -13,7 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Statement;
 
 class DropIndexCommand extends Statement implements IndexCommand, DdlTableCommand
@@ -22,7 +24,7 @@ class DropIndexCommand extends Statement implements IndexCommand, DdlTableComman
     /** @var string */
     private $name;
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var AlterTableAlgorithm|null */
@@ -33,7 +35,7 @@ class DropIndexCommand extends Statement implements IndexCommand, DdlTableComman
 
     public function __construct(
         string $name,
-        QualifiedName $table,
+        ObjectIdentifier $table,
         ?AlterTableAlgorithm $algorithm = null,
         ?AlterTableLock $lock = null
     ) {
@@ -43,12 +45,14 @@ class DropIndexCommand extends Statement implements IndexCommand, DdlTableComman
         $this->lock = $lock;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
-        return new QualifiedName($this->name, $this->table->getSchema());
+        $schema = $this->table instanceof QualifiedName ? $this->table->getSchema() : null;
+
+        return $schema !== null ? new QualifiedName($this->name, $schema) : new SimpleName($this->name);
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

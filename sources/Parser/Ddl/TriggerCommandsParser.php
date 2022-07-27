@@ -64,12 +64,12 @@ class TriggerCommandsParser
 
         $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
 
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         $event = $tokenList->expectMultiKeywordsEnum(TriggerEvent::class);
 
         $tokenList->expectKeyword(Keyword::ON);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
         $tokenList->expectKeywords(Keyword::FOR, Keyword::EACH, Keyword::ROW);
 
         $order = $tokenList->getAnyKeyword(Keyword::FOLLOWS, Keyword::PRECEDES);
@@ -93,7 +93,7 @@ class TriggerCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::TRIGGER);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         return new DropTriggerCommand($name, $ifExists);
     }

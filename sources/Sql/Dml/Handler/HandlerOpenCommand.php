@@ -10,25 +10,25 @@
 namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class HandlerOpenCommand extends Statement implements HandlerCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var string|null */
     private $alias;
 
-    public function __construct(QualifiedName $table, ?string $alias = null)
+    public function __construct(ObjectIdentifier $table, ?string $alias = null)
     {
         $this->table = $table;
         $this->alias = $alias;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

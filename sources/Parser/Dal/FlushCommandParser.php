@@ -14,7 +14,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushOption;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Keyword;
 
 class FlushCommandParser
@@ -66,12 +66,12 @@ class FlushCommandParser
         $tokenList->expectAnyKeyword(Keyword::TABLES, Keyword::TABLE);
 
         $tables = null;
-        $table = $tokenList->getQualifiedName();
+        $table = $tokenList->getObjectIdentifier();
         if ($table !== null) {
-            /** @var non-empty-array<QualifiedName> $tables */
+            /** @var non-empty-array<ObjectIdentifier> $tables */
             $tables = [$table];
             while ($tokenList->hasSymbol(',')) {
-                $tables[] = $tokenList->expectQualifiedName();
+                $tables[] = $tokenList->expectObjectIdentifier();
             }
         }
         $keyword = $tokenList->getAnyKeyword(Keyword::WITH, Keyword::FOR);

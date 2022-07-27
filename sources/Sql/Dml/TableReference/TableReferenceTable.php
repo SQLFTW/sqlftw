@@ -10,12 +10,12 @@
 namespace SqlFtw\Sql\Dml\TableReference;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 
 class TableReferenceTable implements TableReferenceNode
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var string|null */
@@ -31,7 +31,7 @@ class TableReferenceTable implements TableReferenceNode
      * @param non-empty-array<string>|null $partitions
      * @param non-empty-array<IndexHint>|null $indexHints
      */
-    public function __construct(QualifiedName $table, ?string $alias = null, ?array $partitions = null, ?array $indexHints = null)
+    public function __construct(ObjectIdentifier $table, ?string $alias = null, ?array $partitions = null, ?array $indexHints = null)
     {
         $this->table = $table;
         $this->alias = $alias;
@@ -39,7 +39,7 @@ class TableReferenceTable implements TableReferenceNode
         $this->indexHints = $indexHints;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

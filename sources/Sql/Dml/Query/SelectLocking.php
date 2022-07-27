@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\SqlSerializable;
 
 class SelectLocking implements SqlSerializable
@@ -22,11 +22,11 @@ class SelectLocking implements SqlSerializable
     /** @var SelectLockWaitOption|null */
     private $wait;
 
-    /** @var non-empty-array<QualifiedName>|null */
+    /** @var non-empty-array<ObjectIdentifier>|null */
     private $tables;
 
     /**
-     * @param non-empty-array<QualifiedName>|null $tables
+     * @param non-empty-array<ObjectIdentifier>|null $tables
      */
     public function __construct(SelectLockOption $for, ?SelectLockWaitOption $wait = null, ?array $tables = null)
     {
@@ -46,7 +46,7 @@ class SelectLocking implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<QualifiedName>|null
+     * @return non-empty-array<ObjectIdentifier>|null
      */
     public function getTables(): ?array
     {

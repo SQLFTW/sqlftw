@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class DropTableCommand extends Statement implements DdlTablesCommand
 {
 
-    /** @var non-empty-array<QualifiedName> */
+    /** @var non-empty-array<ObjectIdentifier> */
     private $names;
 
     /** @var bool */
@@ -29,7 +29,7 @@ class DropTableCommand extends Statement implements DdlTablesCommand
     private $cascadeRestrict;
 
     /**
-     * @param non-empty-array<QualifiedName> $names
+     * @param non-empty-array<ObjectIdentifier> $names
      */
     public function __construct(
         array $names,
@@ -44,7 +44,7 @@ class DropTableCommand extends Statement implements DdlTablesCommand
     }
 
     /**
-     * @return non-empty-array<QualifiedName>
+     * @return non-empty-array<ObjectIdentifier>
      */
     public function getNames(): array
     {

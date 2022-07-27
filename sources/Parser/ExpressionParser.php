@@ -661,7 +661,7 @@ class ExpressionParser
             }
         }
 
-        if ($name3 !== null) {
+        if ($name3 !== null && $name2 !== null) {
             // schema.table.column
             return new ColumnName($name3, $name2, $name1);
         } elseif ($tokenList->hasSymbol('(')) {

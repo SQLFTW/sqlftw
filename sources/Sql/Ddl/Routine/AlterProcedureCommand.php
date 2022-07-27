@@ -11,13 +11,13 @@ namespace SqlFtw\Sql\Ddl\Routine;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class AlterProcedureCommand extends Statement implements StoredProcedureCommand, AlterRoutineCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var SqlSecurity|null */
@@ -33,7 +33,7 @@ class AlterProcedureCommand extends Statement implements StoredProcedureCommand,
     private $language;
 
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         ?SqlSecurity $security,
         ?RoutineSideEffects $sideEffects = null,
         ?string $comment = null,
@@ -46,7 +46,7 @@ class AlterProcedureCommand extends Statement implements StoredProcedureCommand,
         $this->language = $language;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

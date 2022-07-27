@@ -10,14 +10,14 @@
 namespace SqlFtw\Sql\Dal\Cache;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\SqlSerializable;
 use function is_array;
 
 class TableIndexList implements SqlSerializable
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var non-empty-array<string>|null */
@@ -34,7 +34,7 @@ class TableIndexList implements SqlSerializable
      * @param non-empty-array<string>|true|null $partitions
      */
     public function __construct(
-        QualifiedName $table,
+        ObjectIdentifier $table,
         ?array $indexes = null,
         $partitions = null,
         bool $ignoreLeaves = false
@@ -45,7 +45,7 @@ class TableIndexList implements SqlSerializable
         $this->ignoreLeaves = $ignoreLeaves;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

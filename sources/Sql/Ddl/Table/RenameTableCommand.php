@@ -11,7 +11,9 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\CombineIterator;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function array_values;
@@ -21,15 +23,15 @@ use function rtrim;
 class RenameTableCommand extends Statement implements DdlTablesCommand
 {
 
-    /** @var non-empty-array<QualifiedName> */
+    /** @var non-empty-array<ObjectIdentifier> */
     protected $names;
 
-    /** @var non-empty-array<QualifiedName> */
+    /** @var non-empty-array<ObjectIdentifier> */
     private $newNames;
 
     /**
-     * @param non-empty-array<QualifiedName> $names
-     * @param non-empty-array<QualifiedName> $newNames
+     * @param non-empty-array<ObjectIdentifier> $names
+     * @param non-empty-array<ObjectIdentifier> $newNames
      */
     public function __construct(array $names, array $newNames)
     {
@@ -42,7 +44,7 @@ class RenameTableCommand extends Statement implements DdlTablesCommand
     }
 
     /**
-     * @return non-empty-array<QualifiedName>
+     * @return non-empty-array<ObjectIdentifier>
      */
     public function getNames(): array
     {
@@ -50,27 +52,27 @@ class RenameTableCommand extends Statement implements DdlTablesCommand
     }
 
     /**
-     * @return non-empty-array<QualifiedName>
+     * @return non-empty-array<ObjectIdentifier>
      */
     public function getNewNames(): array
     {
         return $this->newNames;
     }
 
-    public function getNewNameForTable(QualifiedName $table): ?QualifiedName
+    public function getNewNameForTable(ObjectIdentifier $table): ?ObjectIdentifier
     {
         /**
-         * @var QualifiedName $old
-         * @var QualifiedName $new
+         * @var ObjectIdentifier $old
+         * @var ObjectIdentifier $new
          */
         foreach ($this->getIterator() as $old => $new) {
             if ($old->getName() !== $table->getName()) {
                 continue;
             }
-            $oldSchema = $old->getSchema();
-            $targetSchema = $new->getSchema();
+            $oldSchema = $old instanceof QualifiedName ? $old->getSchema() : null;
+            $targetSchema = $new instanceof QualifiedName ? $new->getSchema() : null;
             if ($oldSchema === null || $oldSchema === $targetSchema) {
-                return $new->getSchema() === null ? new QualifiedName($new->getName(), $targetSchema) : $new;
+                return $targetSchema === null ? new SimpleName($new->getName()) : $new;
             }
         }
 

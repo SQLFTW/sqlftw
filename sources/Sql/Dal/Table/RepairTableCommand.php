@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class RepairTableCommand extends Statement implements DalTablesCommand
 {
 
-    /** @var non-empty-array<QualifiedName> */
+    /** @var non-empty-array<ObjectIdentifier> */
     private $names;
 
     /** @var bool */
@@ -32,7 +32,7 @@ class RepairTableCommand extends Statement implements DalTablesCommand
     private $useFrm;
 
     /**
-     * @param non-empty-array<QualifiedName> $names
+     * @param non-empty-array<ObjectIdentifier> $names
      */
     public function __construct(
         array $names,
@@ -49,7 +49,7 @@ class RepairTableCommand extends Statement implements DalTablesCommand
     }
 
     /**
-     * @return non-empty-array<QualifiedName>
+     * @return non-empty-array<ObjectIdentifier>
      */
     public function getNames(): array
     {

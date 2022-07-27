@@ -63,6 +63,7 @@ use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\Scope;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 
@@ -180,7 +181,7 @@ class ShowCommandsParser
                 $third = $tokenList->expectAnyKeyword(Keyword::CODE, Keyword::STATUS);
                 if ($third === Keyword::CODE) {
                     // SHOW FUNCTION CODE func_name
-                    return new ShowFunctionCodeCommand($tokenList->expectQualifiedName());
+                    return new ShowFunctionCodeCommand($tokenList->expectObjectIdentifier());
                 } else {
                     // SHOW FUNCTION STATUS [LIKE 'pattern' | WHERE expr]
                     return $this->parseShowFunctionStatus($tokenList);
@@ -225,7 +226,7 @@ class ShowCommandsParser
                 $third = $tokenList->expectAnyKeyword(Keyword::CODE, Keyword::STATUS);
                 if ($third === Keyword::CODE) {
                     // SHOW PROCEDURE CODE proc_name
-                    return new ShowProcedureCodeCommand($tokenList->expectQualifiedName());
+                    return new ShowProcedureCodeCommand($tokenList->expectObjectIdentifier());
                 } else {
                     // SHOW PROCEDURE STATUS [LIKE 'pattern' | WHERE expr]
                     return $this->parseShowProcedureStatus($tokenList);
@@ -353,8 +354,8 @@ class ShowCommandsParser
         $tokenList->expectAnyKeyword(Keyword::COLUMNS, Keyword::FIELDS);
 
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
-        $table = $tokenList->expectQualifiedName();
-        if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+        $table = $tokenList->expectObjectIdentifier();
+        if ($table instanceof SimpleName && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
             $schema = $tokenList->expectName(EntityType::SCHEMA);
             $table = new QualifiedName($table->getName(), $schema);
         }
@@ -392,25 +393,25 @@ class ShowCommandsParser
                 return new ShowCreateSchemaCommand($tokenList->expectName(EntityType::SCHEMA));
             case Keyword::EVENT:
                 // SHOW CREATE EVENT event_name
-                return new ShowCreateEventCommand($tokenList->expectQualifiedName());
+                return new ShowCreateEventCommand($tokenList->expectObjectIdentifier());
             case Keyword::FUNCTION:
                 // SHOW CREATE FUNCTION func_name
-                return new ShowCreateFunctionCommand($tokenList->expectQualifiedName());
+                return new ShowCreateFunctionCommand($tokenList->expectObjectIdentifier());
             case Keyword::PROCEDURE:
                 // SHOW CREATE PROCEDURE proc_name
-                return new ShowCreateProcedureCommand($tokenList->expectQualifiedName());
+                return new ShowCreateProcedureCommand($tokenList->expectObjectIdentifier());
             case Keyword::TABLE:
                 // SHOW CREATE TABLE tbl_name
-                return new ShowCreateTableCommand($tokenList->expectQualifiedName());
+                return new ShowCreateTableCommand($tokenList->expectObjectIdentifier());
             case Keyword::TRIGGER:
                 // SHOW CREATE TRIGGER trigger_name
-                return new ShowCreateTriggerCommand($tokenList->expectQualifiedName());
+                return new ShowCreateTriggerCommand($tokenList->expectObjectIdentifier());
             case Keyword::USER:
                 // SHOW CREATE USER user
                 return new ShowCreateUserCommand($tokenList->expectUserName());
             case Keyword::VIEW:
                 // SHOW CREATE VIEW view_name
-                return new ShowCreateViewCommand($tokenList->expectQualifiedName());
+                return new ShowCreateViewCommand($tokenList->expectObjectIdentifier());
             default:
                 throw new ShouldNotHappenException('');
         }
@@ -523,8 +524,8 @@ class ShowCommandsParser
         $tokenList->expectAnyKeyword(Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS);
 
         $tokenList->expectAnyKeyword(Keyword::FROM, Keyword::IN);
-        $table = $tokenList->expectQualifiedName();
-        if ($table->getSchema() === null && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
+        $table = $tokenList->expectObjectIdentifier();
+        if ($table instanceof SimpleName && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
             $schema = $tokenList->expectName(EntityType::SCHEMA);
             $table = new QualifiedName($table->getName(), $schema);
         }

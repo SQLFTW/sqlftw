@@ -55,7 +55,7 @@ class RoutineCommandsParser
     public function parseAlterFunction(TokenList $tokenList): AlterFunctionCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::FUNCTION);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         [$comment, $language, $sideEffects, $sqlSecurity] = $this->parseRoutineCharacteristics($tokenList, false);
 
@@ -74,7 +74,7 @@ class RoutineCommandsParser
     public function parseAlterProcedure(TokenList $tokenList): AlterProcedureCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::PROCEDURE);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         [$comment, $language, $sideEffects, $sqlSecurity] = $this->parseRoutineCharacteristics($tokenList, false);
 
@@ -161,7 +161,7 @@ class RoutineCommandsParser
 
         $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
 
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         $params = [];
         $tokenList->expectSymbol('(');
@@ -231,7 +231,7 @@ class RoutineCommandsParser
 
         $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
 
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         $params = [];
         $tokenList->expectSymbol('(');
@@ -267,7 +267,7 @@ class RoutineCommandsParser
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::FUNCTION);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         return new DropFunctionCommand($name, $ifExists);
     }
@@ -279,7 +279,7 @@ class RoutineCommandsParser
     {
         $tokenList->expectKeywords(Keyword::DROP, Keyword::PROCEDURE);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
-        $name = $tokenList->expectQualifiedName();
+        $name = $tokenList->expectObjectIdentifier();
 
         return new DropProcedureCommand($name, $ifExists);
     }

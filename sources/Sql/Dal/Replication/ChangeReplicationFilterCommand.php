@@ -14,6 +14,7 @@ use Dogma\ShouldNotHappenException;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
@@ -22,14 +23,14 @@ use function implode;
 class ChangeReplicationFilterCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var non-empty-array<string, array<string>|array<QualifiedName>> */
+    /** @var non-empty-array<string, array<string>|array<ObjectIdentifier>> */
     private $filters;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param non-empty-array<string, array<string>|array<QualifiedName>> $filters
+     * @param non-empty-array<string, array<string>|array<ObjectIdentifier>> $filters
      */
     public function __construct(array $filters, ?string $channel = null)
     {
@@ -45,7 +46,7 @@ class ChangeReplicationFilterCommand extends Statement implements ReplicationCom
     }
 
     /**
-     * @return non-empty-array<string, array<string>|array<QualifiedName>>
+     * @return non-empty-array<string, array<string>|array<ObjectIdentifier>>
      */
     public function getFilters(): array
     {
@@ -74,7 +75,7 @@ class ChangeReplicationFilterCommand extends Statement implements ReplicationCom
                             } else {
                                 return $filter . ' = (' . $formatter->formatStringList($values) . ')';
                             }
-                        case QualifiedName::class . '[]':
+                        case ObjectIdentifier::class . '[]':
                             // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
                             /** @var non-empty-array<QualifiedName> $values */
                             return $filter . ' = (' . $formatter->formatSerializablesList($values) . ')';

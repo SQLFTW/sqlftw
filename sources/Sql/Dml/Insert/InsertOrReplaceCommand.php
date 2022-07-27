@@ -12,13 +12,13 @@ namespace SqlFtw\Sql\Dml\Insert;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     protected $table;
 
     /** @var array<ColumnIdentifier>|null */
@@ -38,7 +38,7 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
      * @param non-empty-array<string>|null $partitions
      */
     public function __construct(
-        QualifiedName $table,
+        ObjectIdentifier $table,
         ?array $columns = null,
         ?array $partitions = null,
         ?InsertPriority $priority = null,
@@ -52,7 +52,7 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
         $this->ignore = $ignore;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

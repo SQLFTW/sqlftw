@@ -10,9 +10,11 @@
 namespace SqlFtw\Sql\Expression;
 
 /**
+ * A simple or qualified name of schema object (table, index, constraint, function, procedure, etc.)
+ *
  * e.g. `table`, `schema`.`table`
  */
-interface TableIdentifier extends Identifier
+interface ObjectIdentifier extends Identifier
 {
 
 }

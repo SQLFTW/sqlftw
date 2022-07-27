@@ -19,7 +19,7 @@ use SqlFtw\Sql\Ddl\Table\Alter\AlterTableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 use function assert;
 use function is_array;
@@ -33,7 +33,7 @@ use function trim;
 class AlterTableCommand extends Statement implements DdlTableCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var AlterActionsList */
@@ -54,7 +54,7 @@ class AlterTableCommand extends Statement implements DdlTableCommand
      * @param TableOptionsList|array<TableOptionValue>|null $tableOptions
      */
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         $actions = [],
         array $alterOptions = [],
         $tableOptions = null,
@@ -73,7 +73,7 @@ class AlterTableCommand extends Statement implements DdlTableCommand
         $this->partitioning = $partitioning;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

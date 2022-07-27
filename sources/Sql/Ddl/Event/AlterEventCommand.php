@@ -11,13 +11,13 @@ namespace SqlFtw\Sql\Ddl\Event;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class AlterEventCommand extends Statement implements EventCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var EventSchedule|null */
@@ -38,18 +38,18 @@ class AlterEventCommand extends Statement implements EventCommand
     /** @var string|null */
     private $comment;
 
-    /** @var QualifiedName|null */
+    /** @var ObjectIdentifier|null */
     private $newName;
 
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         ?EventSchedule $schedule,
         ?Statement $body = null,
         ?UserExpression $definer = null,
         ?EventState $state = null,
         ?bool $preserve = null,
         ?string $comment = null,
-        ?QualifiedName $newName = null
+        ?ObjectIdentifier $newName = null
     ) {
         $this->name = $name;
         $this->schedule = $schedule;
@@ -61,7 +61,7 @@ class AlterEventCommand extends Statement implements EventCommand
         $this->newName = $newName;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }
@@ -96,7 +96,7 @@ class AlterEventCommand extends Statement implements EventCommand
         return $this->comment;
     }
 
-    public function getNewName(): ?QualifiedName
+    public function getNewName(): ?ObjectIdentifier
     {
         return $this->newName;
     }

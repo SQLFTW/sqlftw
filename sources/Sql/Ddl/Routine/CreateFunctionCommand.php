@@ -14,14 +14,14 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\ColumnType;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 use function implode;
 
 class CreateFunctionCommand extends Statement implements StoredFunctionCommand, CreateRoutineCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var Statement */
@@ -58,7 +58,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
      * @param ColumnType[] $params
      */
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         Statement $body,
         array $params,
         ColumnType $returnType,
@@ -83,7 +83,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

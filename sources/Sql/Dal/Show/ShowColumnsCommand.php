@@ -10,14 +10,14 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
 class ShowColumnsCommand extends Statement implements ShowCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $table;
 
     /** @var string|null */
@@ -33,7 +33,7 @@ class ShowColumnsCommand extends Statement implements ShowCommand
     private $extended;
 
     public function __construct(
-        QualifiedName $table,
+        ObjectIdentifier $table,
         ?string $like = null,
         ?RootNode $where = null,
         bool $full = false,
@@ -47,7 +47,7 @@ class ShowColumnsCommand extends Statement implements ShowCommand
         $this->extended = $extended;
     }
 
-    public function getTable(): QualifiedName
+    public function getTable(): ObjectIdentifier
     {
         return $this->table;
     }

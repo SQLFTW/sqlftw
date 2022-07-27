@@ -33,6 +33,7 @@ use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\SubqueryType;
@@ -248,10 +249,10 @@ class TableReferenceParser
                 return new TableReferenceParentheses($references);
             }
         } elseif ($tokenList->hasKeyword(Keyword::DUAL)) {
-            return new TableReferenceTable(new QualifiedName(Keyword::DUAL));
+            return new TableReferenceTable(new SimpleName(Keyword::DUAL));
         } else {
             // tbl_name [PARTITION (partition_names)] [[AS] alias] [index_hint_list]
-            $table = $tokenList->expectQualifiedName();
+            $table = $tokenList->expectObjectIdentifier();
             $partitions = null;
             if ($tokenList->hasKeyword(Keyword::PARTITION)) {
                 $tokenList->expectSymbol('(');

@@ -15,6 +15,8 @@ namespace SqlFtw\Sql\Expression;
 interface Identifier extends RootNode
 {
 
+    public function getName(): string;
+
     public function getFullName(): string;
 
 }

@@ -15,6 +15,7 @@ use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Query\Query;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
@@ -26,7 +27,7 @@ use function is_array;
 class CreateTableCommand extends Statement implements AnyCreateTableCommand
 {
 
-    /** @var QualifiedName */
+    /** @var ObjectIdentifier */
     private $name;
 
     /** @var non-empty-array<TableItem>|null */
@@ -58,7 +59,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
      * @param TableOptionsList|array<TableOptionValue>|null $options
      */
     public function __construct(
-        QualifiedName $name,
+        ObjectIdentifier $name,
         ?array $items,
         $options = null,
         ?PartitioningDefinition $partitioning = null,
@@ -83,7 +84,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
         $this->startTransaction = $startTransaction;
     }
 
-    public function getName(): QualifiedName
+    public function getName(): ObjectIdentifier
     {
         return $this->name;
     }

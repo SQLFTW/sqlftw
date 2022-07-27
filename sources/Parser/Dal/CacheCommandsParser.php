@@ -40,7 +40,7 @@ class CacheCommandsParser
 
         $tableIndexLists = [];
         do {
-            $table = $tokenList->expectQualifiedName();
+            $table = $tokenList->expectObjectIdentifier();
             $indexes = $this->parseIndexes($tokenList);
 
             $tableIndexLists[] = new TableIndexList($table, $indexes);
@@ -73,7 +73,7 @@ class CacheCommandsParser
 
         $tableIndexLists = [];
         do {
-            $table = $tokenList->expectQualifiedName();
+            $table = $tokenList->expectObjectIdentifier();
             $partitions = $this->parsePartitions($tokenList);
             $indexes = $this->parseIndexes($tokenList);
             $ignoreLeaves = $tokenList->hasKeywords(Keyword::IGNORE, Keyword::LEAVES);

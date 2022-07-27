@@ -11,13 +11,13 @@ namespace SqlFtw\Sql\Dal\Flush;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
 class FlushTablesCommand extends Statement implements DalCommand
 {
 
-    /** @var non-empty-array<QualifiedName>|null */
+    /** @var non-empty-array<ObjectIdentifier>|null */
     private $tables;
 
     /** @var bool */
@@ -30,7 +30,7 @@ class FlushTablesCommand extends Statement implements DalCommand
     private $local;
 
     /**
-     * @param non-empty-array<QualifiedName>|null $tables
+     * @param non-empty-array<ObjectIdentifier>|null $tables
      */
     public function __construct(
         ?array $tables = null,
@@ -45,7 +45,7 @@ class FlushTablesCommand extends Statement implements DalCommand
     }
 
     /**
-     * @return non-empty-array<QualifiedName>|null
+     * @return non-empty-array<ObjectIdentifier>|null
      */
     public function getTables(): ?array
     {

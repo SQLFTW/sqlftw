@@ -130,7 +130,7 @@ class IndexCommandsParser
         $table = null;
         if (!$inTable) {
             $tokenList->expectKeyword(Keyword::ON);
-            $table = $tokenList->expectQualifiedName();
+            $table = $tokenList->expectObjectIdentifier();
         }
 
         $parts = $this->parseIndexParts($tokenList);
@@ -243,7 +243,7 @@ class IndexCommandsParser
         $tokenList->expectKeywords(Keyword::DROP, Keyword::INDEX);
         $name = $tokenList->expectName(EntityType::INDEX);
         $tokenList->expectKeyword(Keyword::ON);
-        $table = $tokenList->expectQualifiedName();
+        $table = $tokenList->expectObjectIdentifier();
         $algorithm = null;
         if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
             $tokenList->passSymbol('=');
