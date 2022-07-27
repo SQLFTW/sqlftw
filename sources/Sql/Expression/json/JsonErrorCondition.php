@@ -10,11 +10,12 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\SqlSerializable;
 
 /**
  * {NULL | DEFAULT json_string | ERROR} ON ...
  */
-class JsonErrorCondition implements ArgumentNode
+class JsonErrorCondition implements SqlSerializable
 {
 
     public const NULL = true;

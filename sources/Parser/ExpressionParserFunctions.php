@@ -24,6 +24,7 @@ use SqlFtw\Sql\Expression\DatetimeLiteral;
 use SqlFtw\Sql\Expression\EnumValueLiteral;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\JsonErrorCondition;
+use SqlFtw\Sql\Expression\JsonTableColumnsList;
 use SqlFtw\Sql\Expression\JsonTableExistsPathColumn;
 use SqlFtw\Sql\Expression\JsonTableNestedColumns;
 use SqlFtw\Sql\Expression\JsonTableOrdinalityColumn;
@@ -32,7 +33,6 @@ use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
-use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
@@ -336,7 +336,7 @@ trait ExpressionParserFunctions
         return new FunctionCall(BuiltInFunction::get(BuiltInFunction::JSON_TABLE), [$expression, $path, Keyword::COLUMNS => $columns]);
     }
 
-    private function parseJsonTableColumns(TokenList $tokenList): Parentheses
+    private function parseJsonTableColumns(TokenList $tokenList): JsonTableColumnsList
     {
         $tokenList->expectSymbol('(');
         $columns = [];
@@ -373,7 +373,7 @@ trait ExpressionParserFunctions
 
         $tokenList->expectSymbol(')');
 
-        return new Parentheses(new ListExpression($columns));
+        return new JsonTableColumnsList($columns);
     }
 
     /**

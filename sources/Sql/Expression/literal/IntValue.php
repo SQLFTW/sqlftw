@@ -9,19 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Formatter\Formatter;
-
-class Asterisk implements ArgumentNode, ArgumentValue
+/**
+ * Literals convertible to signed or unsigned int
+ */
+interface IntValue extends Value
 {
 
-    public function getValue(): string
-    {
-        return '*';
-    }
-
-    public function serialize(Formatter $formatter): string
-    {
-        return '*';
-    }
+    public function asInt(): int;
 
 }

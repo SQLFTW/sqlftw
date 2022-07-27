@@ -9,19 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Formatter\Formatter;
-
-class Asterisk implements ArgumentNode, ArgumentValue
+/**
+ * Literals convertible to any numeric value
+ */
+interface NumericValue extends Value
 {
 
-    public function getValue(): string
-    {
-        return '*';
-    }
-
-    public function serialize(Formatter $formatter): string
-    {
-        return '*';
-    }
+    public function asFloat(): float;
 
 }

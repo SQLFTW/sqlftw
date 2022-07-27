@@ -9,19 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Formatter\Formatter;
-
-class Asterisk implements ArgumentNode, ArgumentValue
+/**
+ * Special function argument values invalid in other places of expressions
+ *
+ * e.g. CastType, Collation etc.
+ */
+interface ArgumentValue extends ExpressionNode
 {
-
-    public function getValue(): string
-    {
-        return '*';
-    }
-
-    public function serialize(Formatter $formatter): string
-    {
-        return '*';
-    }
 
 }

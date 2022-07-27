@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-interface TimeZone extends ArgumentNode
+interface TimeZone extends ArgumentNode, ArgumentValue
 {
 
 }

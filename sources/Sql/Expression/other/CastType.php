@@ -20,7 +20,7 @@ use function is_null;
 /**
  * e.g. CAST(expr AS type)
  */
-class CastType implements ArgumentNode
+class CastType implements ArgumentNode, ArgumentValue
 {
 
     public const UNSIGNED = true;

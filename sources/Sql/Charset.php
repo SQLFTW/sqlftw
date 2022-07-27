@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql;
 
 use SqlFtw\Sql\Expression\ArgumentNode;
+use SqlFtw\Sql\Expression\ArgumentValue;
 use function array_search;
 use function explode;
 use function strpos;
 use function strtolower;
 
-class Charset extends SqlEnum implements ArgumentNode
+class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
 {
 
     public const ARMSCII_8 = 'armscii8';

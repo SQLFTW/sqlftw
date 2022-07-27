@@ -11,34 +11,28 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
-class JsonTableNestedColumns implements JsonTableColumn
+class JsonTableColumnsList implements ArgumentNode, ArgumentValue
 {
 
-    /** @var StringValue */
-    private $path;
-
-    /** @var JsonTableColumnsList */
+    /** @var non-empty-array<JsonTableColumn> */
     private $columns;
 
-    public function __construct(StringValue $path, JsonTableColumnsList $columns)
+    /**
+     * @param non-empty-array<JsonTableColumn> $columns
+     */
+    public function __construct(array $columns)
     {
-        $this->path = $path;
         $this->columns = $columns;
     }
 
-    public function getPath(): StringValue
-    {
-        return $this->path;
-    }
-
-    public function getColumns(): JsonTableColumnsList
+    public function getColumns(): array
     {
         return $this->columns;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'NESTED PATH ' . $this->path->serialize($formatter) . ' COLUMNS ' . $this->columns->serialize($formatter);
+        return '(' . $formatter->formatSerializablesList($this->columns) . ')';
     }
 
 }
