@@ -8,7 +8,7 @@ SQLFTW unit tests
 there are unit tests of course. these are written against documentation and do not cover 100% of the features yet.
 
 majority of unit tests check parser in this way:
-- parser tests a given SQL code
+- parser parses a given SQL code
 - resulting `Command` is serialized back to string
 - original code and result string is compared and should be equal
 
