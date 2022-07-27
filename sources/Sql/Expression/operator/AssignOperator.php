@@ -17,19 +17,19 @@ use SqlFtw\Formatter\Formatter;
 class AssignOperator implements OperatorExpression
 {
 
-    /** @var Identifier */
+    /** @var UserVariable */
     private $variable;
 
     /** @var RootNode */
     private $expression;
 
-    public function __construct(Identifier $variable, RootNode $expression)
+    public function __construct(UserVariable $variable, RootNode $expression)
     {
         $this->variable = $variable;
         $this->expression = $expression;
     }
 
-    public function getVariable(): Identifier
+    public function getVariable(): UserVariable
     {
         return $this->variable;
     }
