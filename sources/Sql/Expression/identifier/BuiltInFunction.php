@@ -691,6 +691,11 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::WEIGHT_STRING => [Keyword::AS => CastType::class, Keyword::LEVEL => 'SKIP'],
     ];
 
+    public function isSimple(): bool
+    {
+        return !in_array($this->getValue(), self::$window, true) && !in_array($this->getValue(), self::$aggregate, true);
+    }
+
     public function isAggregate(): bool
     {
         return in_array($this->getValue(), self::$aggregate, true);
@@ -698,7 +703,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
 
     public function isWindow(): bool
     {
-        return in_array($this->getValue(), self::$window, true) || $this->isAggregate();
+        return in_array($this->getValue(), self::$window, true) || in_array($this->getValue(), self::$aggregate, true);
     }
 
     public function hasNullTreatment(): bool
