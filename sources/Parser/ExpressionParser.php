@@ -533,8 +533,13 @@ class ExpressionParser
                 // (expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
                 $tokenList->expectSymbol(')');
+                if (count($expressions) > 1) {
+                    $expression = new ListExpression($expressions);
+                } else {
+                    $expression = $expressions[0];
+                }
 
-                return new Parentheses(new ListExpression($expressions));
+                return new Parentheses($expression);
             }
         } elseif ($tokenList->hasSymbol('{')) {
             // {identifier expr}
