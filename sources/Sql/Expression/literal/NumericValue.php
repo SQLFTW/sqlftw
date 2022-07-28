@@ -15,6 +15,9 @@ namespace SqlFtw\Sql\Expression;
 interface NumericValue extends Value
 {
 
-    public function asFloat(): float;
+    /**
+     * @return int|float
+     */
+    public function asNumber();
 
 }

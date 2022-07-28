@@ -27,7 +27,10 @@ class NumericLiteral implements NumericValue
         return $this->value;
     }
 
-    public function asFloat(): float
+    /**
+     * @return int|float
+     */
+    public function asNumber()
     {
         return (float) $this->value;
     }

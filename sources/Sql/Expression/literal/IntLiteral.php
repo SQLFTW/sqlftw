@@ -12,6 +12,11 @@ namespace SqlFtw\Sql\Expression;
 class IntLiteral extends NumericLiteral implements IntValue
 {
 
+    public function asNumber(): int
+    {
+        return (int) $this->value;
+    }
+
     public function asInt(): int
     {
         return (int) $this->value;
