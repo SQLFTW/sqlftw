@@ -926,6 +926,14 @@ class TokenList
 
     // names ---------------------------------------------------------------------------------------------------------
 
+    public function expectNameOrString(?string $entity): string
+    {
+        $token = $this->expect(T::NAME | T::STRING);
+        $this->validateName($entity, $token->value);
+
+        return $token->value;
+    }
+
     public function expectName(?string $entity, ?string $name = null, int $mask = 0): string
     {
         $token = $this->expect(T::NAME, $mask);
@@ -988,7 +996,17 @@ class TokenList
         return $this->getName(null, $name) !== null;
     }
 
-    // todo: probably all calls to this should call expectNonReservedName() instead
+    public function getNonKeywordNameOrString(?string $entity): ?string
+    {
+        $token = $this->get(T::NAME | T::STRING, T::KEYWORD);
+        if ($token === null) {
+            return null;
+        }
+        $this->validateName($entity, $token->value);
+
+        return $token->value;
+    }
+
     public function getNonKeywordName(?string $entity, ?string $name = null): ?string
     {
         $token = $this->get(T::NAME, T::KEYWORD, $name);

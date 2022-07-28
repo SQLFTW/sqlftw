@@ -148,9 +148,9 @@ trait ExpressionParserFunctions
             $expression = $this->parseExpression($tokenList);
             // todo: not sure where alias is allowed. can built-in functions have aliased params or UDF only?
             if (!isset($namedParams[Keyword::AS]) && $tokenList->hasKeyword(Keyword::AS)) {
-                $alias = $tokenList->expectName(EntityType::ALIAS);
+                $alias = $tokenList->expectNameOrString(EntityType::ALIAS);
                 $expression = new AliasExpression($expression, $alias);
-            } elseif (($alias = $tokenList->getNonKeywordName(EntityType::ALIAS)) !== null) {
+            } elseif (($alias = $tokenList->getNonKeywordNameOrString(EntityType::ALIAS)) !== null) {
                 // non-reserved is not enough here
                 $expression = new AliasExpression($expression, $alias);
             }
