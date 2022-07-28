@@ -58,6 +58,9 @@ class CastType implements ArgumentNode, ArgumentValue
         ?Collation $collation = null,
         ?int $srid = null
     ) {
+        if ($type === null && $sign !== null) {
+            $type = BaseType::get($sign ? BaseType::SIGNED : BaseType::UNSIGNED);
+        }
         if ($type !== null) {
             if (isset($sign) && !$type->isInteger()) {
                 throw new InvalidDefinitionException("Non-numeric types ({$type->getValue()}) cannot be signed/unsigned.");
@@ -161,12 +164,9 @@ class CastType implements ArgumentNode, ArgumentValue
     public function serialize(Formatter $formatter): string
     {
         $result = '';
-        if ($this->sign === true) {
-            $result .= 'SIGNED';
-        } elseif ($this->sign === false) {
-            $result = 'UNSIGNED';
+        if ($this->sign !== null && !$this->getBaseType()->equalsAny(BaseType::SIGNED, BaseType::UNSIGNED)) {
+            $result .= $this->sign ? 'SIGNED' : 'UNSIGNED';
         }
-
         if ($this->type !== null) {
             $result .= $this->type->serialize($formatter);
         }
