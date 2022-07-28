@@ -26,6 +26,9 @@ use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\Dml\Query\SelectDistinctOption;
 use SqlFtw\Sql\Dml\Query\SelectExpression;
 use SqlFtw\Sql\Dml\Query\SelectInto;
+use SqlFtw\Sql\Dml\Query\SelectIntoDumpfile;
+use SqlFtw\Sql\Dml\Query\SelectIntoOutfile;
+use SqlFtw\Sql\Dml\Query\SelectIntoVariables;
 use SqlFtw\Sql\Dml\Query\SelectLocking;
 use SqlFtw\Sql\Dml\Query\SelectLockOption;
 use SqlFtw\Sql\Dml\Query\SelectLockWaitOption;
@@ -621,11 +624,11 @@ class QueryParser
             }
             $format = $this->expressionParser->parseFileFormat($tokenList);
 
-            return new SelectInto(null, null, $outFile, $charset, $format);
+            return new SelectIntoOutfile($outFile, $charset, $format);
         } elseif ($tokenList->hasKeyword(Keyword::DUMPFILE)) {
             $dumpFile = $tokenList->expectString();
 
-            return new SelectInto(null, $dumpFile);
+            return new SelectIntoDumpfile($dumpFile);
         } else {
             $variables = [];
             do {
@@ -639,7 +642,7 @@ class QueryParser
                 $variables[] = $variable;
             } while ($tokenList->hasSymbol(','));
 
-            return new SelectInto($variables);
+            return new SelectIntoVariables($variables);
         }
     }
 
