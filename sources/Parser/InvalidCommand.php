@@ -23,13 +23,17 @@ class InvalidCommand extends Statement implements Command
     /** @var Throwable */
     private $exception;
 
+    /** @var Command|null */
+    private $command;
+
     /**
      * @param string[] $commentsBefore
      */
-    public function __construct(array $commentsBefore, Throwable $exception)
+    public function __construct(array $commentsBefore, Throwable $exception, ?Command $command = null)
     {
         $this->commentsBefore = $commentsBefore;
         $this->exception = $exception;
+        $this->command = $command;
     }
 
     public function getException(): Throwable
@@ -37,9 +41,18 @@ class InvalidCommand extends Statement implements Command
         return $this->exception;
     }
 
+    public function getCommand(): ?Command
+    {
+        return $this->command;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'invalid command';
+        if ($this->command !== null) {
+            return 'InvalidCommand: ' . $this->serialize($formatter);
+        } else {
+            return 'Invalid command';
+        }
     }
 
 }

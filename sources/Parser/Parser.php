@@ -83,15 +83,16 @@ class Parser
                 continue;
             }
 
-            try {
-                $this->sessionUpdater->update($command, $tokenList);
-            } catch (ParsingException $e) {
-                $tokenList->finish();
-                $command = new InvalidCommand($command->getCommentsBefore(), $e);
+            if ($tokenList->inRoutine() === null && !$tokenList->inPrepared()) {
+                try {
+                    $this->sessionUpdater->update($command, $tokenList);
+                } catch (ParsingException $e) {
+                    $command = new InvalidCommand($command->getCommentsBefore(), $e, $command);
 
-                yield [$command, $tokenList, $start, $end];
+                    yield [$command, $tokenList, $start, $end];
 
-                continue;
+                    continue;
+                }
             }
 
             yield [$command, $tokenList, $start, $end];
