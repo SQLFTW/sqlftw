@@ -12,11 +12,12 @@ majority of unit tests check parser in this way:
 - resulting `Command` is serialized back to string
 - original code and result string is compared and should be equal
 
-there are of course some differences. mainly these four:
+there are of course some differences. mainly these:
 - parser does not track white space, so things like spaces and indentation are normalized
 - keywords and other special values are normalized to upper-case
 - (My)SQL uses some aliases like `\N` == `null` or `CHARSET` == `CHARACTER SET`. these are also normalized
-- in some cases there are optional syntax features that are normalized (always removed or always added). e.g. optional `=` in table options etc.
+- in some cases there are optional syntax features that are normalized - always removed or always added (e.g. optional `=` in table options)
+- unary operators `+` and `-` before numeric literals are normalized
 
 unit tests are not the main source of truth!
 
@@ -37,7 +38,7 @@ as much non-SQL syntax as possible while keeping as much SQL syntax as possible.
 `Parser`. the measure for success for now is, whether parser fails and wheter the resulting `Command`s can be serialized. 
 i am not currently checking if it serializes properly. working on that...
 
-this test is being runned on all ~8000 test files from mysql-server source and in all versions since 8.0.0 to current version.
+this test is being run on all ~8000 test files from mysql-server source and in all versions since 8.0.0 to current version.
 more versions will be added later (5.7...)
 
 see `/tests/Mysql`

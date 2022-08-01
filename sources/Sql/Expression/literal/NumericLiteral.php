@@ -35,6 +35,11 @@ class NumericLiteral implements NumericValue
         return (float) $this->value;
     }
 
+    public function isNegative(): bool
+    {
+        return ((float) $this->value) < 0.0;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         return $this->value;

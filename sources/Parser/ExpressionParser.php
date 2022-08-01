@@ -518,7 +518,24 @@ class ExpressionParser
                 }
                 return new SimpleName(Charset::BINARY);
             } else {
-                return new UnaryOperator(Operator::get($operator), $this->parseSimpleExpression($tokenList));
+                $right = $this->parseSimpleExpression($tokenList);
+                if ($operator === Operator::PLUS && $right instanceof NumericLiteral) {
+                    // remove prefix "+"
+                    return $right;
+                } elseif ($operator === Operator::MINUS && $right instanceof NumericLiteral) {
+                    // normalize "-<positive_number>" to "<negative_number>" and vice versa
+                    if ($right instanceof UintLiteral) {
+                        return new IntLiteral('-' . $right->getValue());
+                    } elseif ($right instanceof IntLiteral) {
+                        return new UintLiteral(substr($right->getValue(), 1));
+                    } elseif ($right->isNegative()) {
+                        return new NumericLiteral(substr($right->getValue(), 1));
+                    } else {
+                        return new NumericLiteral('-' . $right->getValue());
+                    }
+                } else {
+                    return new UnaryOperator(Operator::get($operator), $right);
+                }
             }
         } elseif ($tokenList->hasSymbol('(')) {
             if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {

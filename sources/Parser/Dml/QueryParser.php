@@ -47,6 +47,8 @@ use SqlFtw\Sql\Dml\WithExpression;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\Expression\IntervalExpression;
+use SqlFtw\Sql\Expression\NumericValue;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
@@ -760,6 +762,11 @@ class QueryParser
             $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_FOLLOWING);
         } else {
             $expression = $this->expressionParser->parseExpression($tokenList);
+            if ($expression instanceof NumericValue && $expression->isNegative()) {
+                throw new ParserException("Window frame extent cannot be a negative number.", $tokenList);
+            } elseif ($expression instanceof IntervalExpression) {
+                // todo: should resolve and check for negative
+            }
             $keyword = $tokenList->expectAnyKeyword(Keyword::PRECEDING, Keyword::FOLLOWING);
             $type = WindowFrameType::get($keyword);
         }

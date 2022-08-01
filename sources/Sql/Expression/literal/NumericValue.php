@@ -20,4 +20,6 @@ interface NumericValue extends Value
      */
     public function asNumber();
 
+    public function isNegative(): bool;
+
 }
