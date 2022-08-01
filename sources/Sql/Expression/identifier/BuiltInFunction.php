@@ -703,7 +703,10 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
 
     public function isWindow(): bool
     {
-        return in_array($this->getValue(), self::$window, true) || in_array($this->getValue(), self::$aggregate, true);
+        $name = $this->getValue();
+
+        return in_array($name, self::$window, true)
+            || (in_array($name, self::$aggregate, true) && $name !== self::GROUP_CONCAT);
     }
 
     public function hasNullTreatment(): bool

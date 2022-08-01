@@ -188,8 +188,12 @@ trait ExpressionParserFunctions
         }
 
         $over = null;
-        if ($function instanceof BuiltInFunction && $function->isWindow() && $tokenList->getKeyword(Keyword::OVER) !== null) {
-            $over = $this->parseOver($tokenList);
+        if ($tokenList->getKeyword(Keyword::OVER) !== null) {
+            if ($function instanceof BuiltInFunction && $function->isWindow()) {
+                $over = $this->parseOver($tokenList);
+            } else {
+                throw new ParserException($name1 . ' is not a window function.', $tokenList);
+            }
         }
 
         return new FunctionCall($function, $arguments, $over, $respectNulls, $fromFirst);
