@@ -734,13 +734,13 @@ class QueryParser
         $keyword = $tokenList->getAnyKeyword(Keyword::ROWS, Keyword::RANGE);
         if ($keyword !== null) {
             $units = WindowFrameUnits::get($keyword);
-            $startType = $endType = $startExpression = $endExpression = null;
             if ($tokenList->hasKeyword(Keyword::BETWEEN)) {
-                $this->parseFrameBorder($tokenList, $startType, $startExpression);
+                [$startType, $startExpression] = $this->parseFrameBorder($tokenList, true);
                 $tokenList->expectKeyword(Keyword::AND);
-                $this->parseFrameBorder($tokenList, $endType, $endExpression);
+                [$endType, $endExpression] = $this->parseFrameBorder($tokenList, false);
             } else {
-                $this->parseFrameBorder($tokenList, $startType, $startExpression);
+                [$startType, $startExpression] = $this->parseFrameBorder($tokenList, null);
+                $endType = $endExpression = null;
             }
 
             $frame = new WindowFrame($units, $startType, $endType, $startExpression, $endExpression);
@@ -757,14 +757,17 @@ class QueryParser
      *   | expr PRECEDING
      *   | expr FOLLOWING
      * }
+     *
+     * @return array{WindowFrameType, RootNode|null}
      */
-    private function parseFrameBorder(TokenList $tokenList, ?WindowFrameType &$type, ?RootNode &$expression): void
+    private function parseFrameBorder(TokenList $tokenList, ?bool $start): array
     {
+        $expression = null;
         if ($tokenList->hasKeywords(Keyword::CURRENT, Keyword::ROW)) {
             $type = WindowFrameType::get(WindowFrameType::CURRENT_ROW);
-        } elseif ($tokenList->hasKeywords(Keyword::UNBOUNDED, Keyword::PRECEDING)) {
+        } elseif ($start !== false && $tokenList->hasKeywords(Keyword::UNBOUNDED, Keyword::PRECEDING)) {
             $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_PRECEDING);
-        } elseif ($tokenList->hasKeywords(Keyword::UNBOUNDED, Keyword::FOLLOWING)) {
+        } elseif ($start !== true && $tokenList->hasKeywords(Keyword::UNBOUNDED, Keyword::FOLLOWING)) {
             $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_FOLLOWING);
         } else {
             $expression = $this->expressionParser->parseExpression($tokenList);
@@ -783,6 +786,8 @@ class QueryParser
             $keyword = $tokenList->expectAnyKeyword(Keyword::PRECEDING, Keyword::FOLLOWING);
             $type = WindowFrameType::get($keyword);
         }
+
+        return [$type, $expression];
     }
 
 }
