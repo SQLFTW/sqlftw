@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\XaTransaction\XaCommitCommand;
@@ -24,6 +25,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 use function hex2bin;
 use function str_pad;
+use const PHP_INT_MAX;
 use const STR_PAD_LEFT;
 
 class XaTransactionCommandsParser
@@ -107,6 +109,9 @@ class XaTransactionCommandsParser
                     $format = (int) hex2bin(str_pad($format->value, 16, '0', STR_PAD_LEFT));
                 } else {
                     $format = (int) $tokenList->expectUnsignedInt();
+                    if ($format === PHP_INT_MAX) {
+                        throw new ParserException('Transaction format id is too big.', $tokenList);
+                    }
                 }
             }
         }
