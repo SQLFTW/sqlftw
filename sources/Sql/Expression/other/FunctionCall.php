@@ -148,7 +148,7 @@ class FunctionCall implements RootNode
 
         if ($this->over !== null) {
             if ($this->over instanceof WindowSpecification) {
-                $result .= ' OVER (' . $this->over->serialize($formatter) . ')';
+                $result .= ' OVER ' . $this->over->serialize($formatter);
             } else {
                 $result .= ' OVER ' . $formatter->formatName($this->over);
             }
