@@ -10,10 +10,12 @@
 namespace SqlFtw\Parser\Ddl;
 
 use SqlFtw\Parser\InvalidVersionException;
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceAction;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceCommand;
 use SqlFtw\Sql\Keyword;
+use function strtolower;
 
 class InstanceCommandParser
 {
@@ -46,7 +48,10 @@ class InstanceCommandParser
             $noRollbackOnError = false;
             if ($action->equalsValue(AlterInstanceAction::RELOAD_TLS)) {
                 if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-                    $forChannel = $tokenList->expectNonReservedNameOrString();
+                    $forChannel = strtolower($tokenList->expectNonReservedNameOrString());
+                    if ($forChannel !== 'mysql_main' && $forChannel !== 'mysql_admin') {
+                        throw new ParserException('Invalid channel name.', $tokenList);
+                    }
                 }
                 $noRollbackOnError = $tokenList->hasKeywords(Keyword::NO, Keyword::ROLLBACK, Keyword::ON, Keyword::ERROR);
             }
