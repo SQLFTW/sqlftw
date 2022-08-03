@@ -14,6 +14,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use function array_map;
 use function array_pad;
 use function array_slice;
+use function array_sum;
 use function count;
 use function sprintf;
 use function str_replace;
@@ -40,9 +41,12 @@ class TimeIntervalLiteral implements TimeInterval, Value
     public function __construct(array $quantity, TimeIntervalUnit $unit, bool $negative = false)
     {
         $parts = $unit->getParts();
-        if (count($quantity) !== $parts) {
+        if (count($quantity) > $parts) {
             throw new InvalidDefinitionException('Count of values should match the unit used.');
+        } elseif (count($quantity) < $parts) {
+            $quantity = array_pad($quantity, $parts, 0);
         }
+
         $this->quantity = $quantity;
         $this->unit = $unit;
         $this->negative = $negative;
@@ -84,6 +88,11 @@ class TimeIntervalLiteral implements TimeInterval, Value
     public function getUnit(): TimeIntervalUnit
     {
         return $this->unit;
+    }
+
+    public function isZero(): bool
+    {
+        return array_sum($this->quantity) === 0;
     }
 
     public function isNegative(): bool
