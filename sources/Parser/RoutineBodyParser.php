@@ -11,6 +11,7 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
@@ -409,11 +410,17 @@ class RoutineBodyParser
             $condition = $this->expressionParser->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::WHEN);
         }
+        $formatter = new Formatter($tokenList->getSession());
         $values = [];
         /** @var non-empty-array<array<Statement>> $statementLists */
         $statementLists = [];
         do {
-            $values[] = $this->expressionParser->parseExpression($tokenList);
+            $expression = $this->expressionParser->parseExpression($tokenList);
+            $key = $expression->serialize($formatter);
+            if (isset($values[$key])) {
+                throw new ParserException('Duplicit CASE value.', $tokenList);
+            }
+            $values[$key] = $expression;
             $tokenList->expectKeyword(Keyword::THEN);
             $statementLists[] = $this->parseStatementList($tokenList);
         } while ($tokenList->hasKeyword(Keyword::WHEN));
@@ -423,7 +430,7 @@ class RoutineBodyParser
         }
         $tokenList->expectKeywords(Keyword::END, Keyword::CASE);
 
-        return new CaseStatement($condition, $values, $statementLists);
+        return new CaseStatement($condition, array_values($values), $statementLists);
     }
 
     /**
