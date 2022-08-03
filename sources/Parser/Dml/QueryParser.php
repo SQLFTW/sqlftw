@@ -56,6 +56,7 @@ use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Expression\TimeIntervalExpression;
 use SqlFtw\Sql\Expression\TimeIntervalLiteral;
@@ -775,6 +776,7 @@ class QueryParser
             $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_FOLLOWING);
         } else {
             $expression = $this->expressionParser->parseExpression($tokenList);
+
             if ($expression instanceof NumericValue && $expression->isNegative()) {
                 throw new ParserException("Window frame extent cannot be a negative number.", $tokenList);
             } elseif ($expression instanceof TimeIntervalLiteral && $expression->isNegative()) {
@@ -786,7 +788,10 @@ class QueryParser
                 // todo: should resolve and check for negative
             } elseif ($expression instanceof Identifier && !$expression instanceof Placeholder) {
                 throw new ParserException("Window frame extent cannot be an identifier.", $tokenList);
+            } elseif ($expression instanceof Subquery) {
+                throw new ParserException("Window frame extent cannot be a subquery.", $tokenList);
             }
+
             $keyword = $tokenList->expectAnyKeyword(Keyword::PRECEDING, Keyword::FOLLOWING);
             $type = WindowFrameType::get($keyword);
         }
