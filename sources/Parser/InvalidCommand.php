@@ -49,7 +49,7 @@ class InvalidCommand extends Statement implements Command
     public function serialize(Formatter $formatter): string
     {
         if ($this->command !== null) {
-            return 'InvalidCommand: ' . $this->serialize($formatter);
+            return 'InvalidCommand: ' . $this->command->serialize($formatter);
         } else {
             return 'Invalid command';
         }
