@@ -47,6 +47,7 @@ use SqlFtw\Sql\Dml\WithExpression;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\NumericValue;
 use SqlFtw\Sql\Expression\Operator;
@@ -773,6 +774,8 @@ class QueryParser
                     throw new ParserException("Window frame extent cannot be a null interval.", $tokenList);
                 }
                 // todo: should resolve and check for negative
+            } elseif ($expression instanceof Identifier && !$expression instanceof Placeholder) {
+                throw new ParserException("Window frame extent cannot be an identifier.", $tokenList);
             }
             $keyword = $tokenList->expectAnyKeyword(Keyword::PRECEDING, Keyword::FOLLOWING);
             $type = WindowFrameType::get($keyword);
