@@ -23,6 +23,7 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\TimeIntervalExpression;
+use SqlFtw\Sql\Expression\TimeIntervalLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Routine\RoutineType;
 
@@ -161,6 +162,8 @@ class EventCommandsParser
                 if ($value instanceof FunctionCall || $value instanceof Subquery) {
                     throw new ParserException('Function call or subquery in event schedule is not supported.', $tokenList);
                 }
+            } elseif ($every instanceof TimeIntervalLiteral && $every->isZero()) {
+                throw new ParserException('Event schedule interval must be strictly positive.', $tokenList);
             }
             if ($every->getUnit()->hasMicroseconds()) {
                 throw new ParserException('Microseconds in event schedule are not supported.', $tokenList);
