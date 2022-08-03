@@ -1017,7 +1017,7 @@ class TokenList
         if ($name !== null && $token->value !== $name) {
             $this->position--;
 
-            throw InvalidTokenException::tokens(T::NAME, T::RESERVED, $name, $token, $this);
+            throw InvalidTokenException::tokens(T::NAME, T::RESERVED | $mask, $name, $token, $this);
         }
         $this->validateName($entity, $token->value);
 

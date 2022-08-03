@@ -529,7 +529,7 @@ class RoutineBodyParser
             return new DeclareHandlerStatement($action, $conditions, $statement);
         }
 
-        $name = $tokenList->expectNonReservedName(null);
+        $name = $tokenList->expectNonReservedName(null, null, TokenType::AT_VARIABLE);
 
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
@@ -557,7 +557,7 @@ class RoutineBodyParser
         /** @var non-empty-array<string> $names */
         $names = [$name];
         while ($tokenList->hasSymbol(',')) {
-            $names[] = $tokenList->expectNonReservedName(null);
+            $names[] = $tokenList->expectNonReservedName(null, null, TokenType::AT_VARIABLE);
         }
         $type = $this->expressionParser->parseColumnType($tokenList);
         $charset = $type->getCharset();
