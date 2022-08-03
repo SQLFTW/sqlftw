@@ -488,6 +488,9 @@ class QueryParser
                 $window = $this->parseWindow($tokenList);
                 $tokenList->expectSymbol(')');
 
+                if (isset($windows[$name])) {
+                    throw new ParserException('Duplicit window name.', $tokenList);
+                }
                 $windows[$name] = $window;
             } while ($tokenList->hasSymbol(','));
         }
