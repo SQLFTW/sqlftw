@@ -68,6 +68,7 @@ use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\SubqueryType;
 use function array_pop;
 use function count;
+use function in_array;
 
 class QueryParser
 {
@@ -444,7 +445,7 @@ class QueryParser
         } while ($tokenList->hasSymbol(','));
 
         $into = null;
-        if (!$tokenList->inSubquery()) {
+        if ($tokenList->inSubquery() === null) {
             if ($tokenList->hasKeyword(Keyword::INTO)) {
                 $into = $this->parseInto($tokenList);
             }
@@ -506,6 +507,10 @@ class QueryParser
 
         $limit = $offset = null;
         if ($tokenList->hasKeyword(Keyword::LIMIT)) {
+            $subquery = $tokenList->inSubquery();
+            if (in_array($subquery, [SubqueryType::IN, SubqueryType::ALL, SubqueryType::ANY, SubqueryType::SOME], true)) {
+                throw new ParserException('LIMIT is not supported in IN/ALL/ANY/SOME subquery.', $tokenList);
+            }
             $limit = $this->expressionParser->parseLimitOrOffsetValue($tokenList);
             if ($tokenList->hasKeyword(Keyword::OFFSET)) {
                 $offset = $this->expressionParser->parseLimitOrOffsetValue($tokenList);
@@ -523,7 +528,7 @@ class QueryParser
 
         $locking = $this->parseLocking($tokenList);
 
-        if (!$tokenList->inSubquery() && !($tokenList->inUnion() && $from !== null)) {
+        if ($tokenList->inSubquery() === null && !($tokenList->inUnion() && $from !== null)) {
             if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
                 $into = $this->parseInto($tokenList);
             }
@@ -533,7 +538,7 @@ class QueryParser
             $locking = $this->parseLocking($tokenList);
         }
 
-        if ($from === null && count($what) === 1 && $what[0]->getExpression() instanceof Asterisk && !$tokenList->inSubquery(SubqueryType::EXISTS)) {
+        if ($from === null && count($what) === 1 && $what[0]->getExpression() instanceof Asterisk && $tokenList->inSubquery() !== SubqueryType::EXISTS) {
             throw new ParserException('No tables used in query.', $tokenList);
         }
 
@@ -574,10 +579,10 @@ class QueryParser
             $tokenList->expectKeyword(Keyword::ROW);
             $tokenList->expectSymbol('(');
             $values = [];
-            if (!$tokenList->hasSymbol(')') || !$tokenList->inSubquery(SubqueryType::INSERT)) {
+            if (!$tokenList->hasSymbol(')') || $tokenList->inSubquery() !== SubqueryType::INSERT) {
                 do {
                     $value = $this->expressionParser->parseExpression($tokenList);
-                    if ($value instanceof DefaultLiteral && !$tokenList->inSubquery(SubqueryType::INSERT)) {
+                    if ($value instanceof DefaultLiteral && $tokenList->inSubquery() !== SubqueryType::INSERT) {
                         throw new ParserException('Cannot use DEFAULT in ROW() expression outside and INSERT.', $tokenList);
                     }
                     $values[] = $value;
@@ -608,7 +613,7 @@ class QueryParser
             }
         }
 
-        if (!$tokenList->inSubquery()) {
+        if ($tokenList->inSubquery() === null) {
             if ($tokenList->hasKeyword(Keyword::INTO)) {
                 $into = $this->parseInto($tokenList);
             }

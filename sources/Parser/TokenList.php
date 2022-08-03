@@ -172,16 +172,9 @@ class TokenList
         array_pop($this->inRoutine);
     }
 
-    /**
-     * @param null|string&SubqueryType::* $type
-     */
-    public function inSubquery(?string $type = null): bool
+    public function inSubquery(): ?string
     {
-        if ($type !== null) {
-            return $this->inSubquery !== [] && end($this->inSubquery) === $type;
-        } else {
-            return $this->inSubquery !== [];
-        }
+        return $this->inSubquery !== [] ? end($this->inSubquery) : null;
     }
 
     /**
