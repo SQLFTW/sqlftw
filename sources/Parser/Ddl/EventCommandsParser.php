@@ -22,6 +22,7 @@ use SqlFtw\Sql\Ddl\Event\EventState;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Subquery;
+use SqlFtw\Sql\Expression\TimeIntervalExpression;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Routine\RoutineType;
 
@@ -155,9 +156,11 @@ class EventCommandsParser
             }
         } elseif ($tokenList->hasKeyword(Keyword::EVERY)) {
             $every = $this->expressionParser->parseInterval($tokenList);
-            $value = $every->getExpression();
-            if ($value instanceof FunctionCall || ($value instanceof Subquery)) {
-                throw new ParserException('Select in event schedule is not supported.', $tokenList);
+            if ($every instanceof TimeIntervalExpression) {
+                $value = $every->getExpression();
+                if ($value instanceof FunctionCall || $value instanceof Subquery) {
+                    throw new ParserException('Function call or subquery in event schedule is not supported.', $tokenList);
+                }
             }
             if ($every->getUnit()->hasMicroseconds()) {
                 throw new ParserException('Microseconds in event schedule are not supported.', $tokenList);
