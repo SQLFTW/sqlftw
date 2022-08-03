@@ -490,6 +490,9 @@ class RoutineBodyParser
     private function parseDeclare(TokenList $tokenList)
     {
         $action = $tokenList->getKeywordEnum(HandlerAction::class);
+        if ($action !== null && $action->equalsValue(HandlerAction::UNDO)) {
+            throw new ParserException('UNDO handler is not supported.', $tokenList);
+        }
         if ($action !== null) {
             $tokenList->expectKeywords(Keyword::HANDLER, Keyword::FOR);
 
