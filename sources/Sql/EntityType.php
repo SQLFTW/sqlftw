@@ -34,6 +34,7 @@ class EntityType
     public const LABEL = 'label';
     public const USER = 'user';
     public const HOST = 'host';
+    public const XA_TRANSACTION = 'xa transaction';
 
     // other named objects:
     // - local variable

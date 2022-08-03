@@ -21,6 +21,7 @@ use SqlFtw\Sql\Dml\XaTransaction\XaStartCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaStartOption;
 use SqlFtw\Sql\Dml\XaTransaction\XaTransactionCommand;
 use SqlFtw\Sql\Dml\XaTransaction\Xid;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 use function hex2bin;
@@ -99,6 +100,8 @@ class XaTransactionCommandsParser
     private function parseXid(TokenList $tokenList): Xid
     {
         $transactionId = $tokenList->expectStringValue();
+        $tokenList->validateName(EntityType::XA_TRANSACTION, $transactionId->getValue());
+
         $branch = $format = null;
         if ($tokenList->hasSymbol(',')) {
             $branch = $tokenList->expectStringValue();

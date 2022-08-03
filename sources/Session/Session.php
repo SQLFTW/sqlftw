@@ -55,6 +55,7 @@ class Session
         EntityType::LABEL => 256, // doc says 16, but db parses anything
         EntityType::USER => 32,
         EntityType::HOST => 255,
+        EntityType::XA_TRANSACTION => 64,
     ];
 
     public function __construct(
