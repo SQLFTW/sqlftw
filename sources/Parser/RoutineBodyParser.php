@@ -510,7 +510,7 @@ class RoutineBodyParser
                         throw new ParserException('Only non-success SQL states are allowed.', $tokenList);
                     }
                 } else {
-                    $value = $tokenList->getName(null);
+                    $value = $tokenList->getNonReservedName(null);
                     if ($value !== null) {
                         $type = ConditionType::get(ConditionType::CONDITION);
                     } else {
