@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\TimeInterval;
+use SqlFtw\Sql\Expression\TimeIntervalExpression;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
@@ -91,7 +91,7 @@ class ChangeMasterToCommand extends Statement implements ReplicationCommand
                     return null;
                 } elseif ($option === SlaveOption::IGNORE_SERVER_IDS) {
                     return $option . ' = (' . $formatter->formatValuesList($value) . ')';
-                } elseif ($value instanceof TimeInterval) {
+                } elseif ($value instanceof TimeIntervalExpression) {
                     return $option . ' = INTERVAL ' . $formatter->formatValue($value);
                 } else {
                     return $option . ' = ' . $formatter->formatValue($value);

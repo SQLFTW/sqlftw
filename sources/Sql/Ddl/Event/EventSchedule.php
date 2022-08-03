@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Event;
 use Dogma\ShouldNotHappenException;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\Expression\TimeInterval;
+use SqlFtw\Sql\Expression\TimeIntervalExpression;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -22,7 +22,7 @@ class EventSchedule implements SqlSerializable
     /** @var RootNode|null */
     private $time;
 
-    /** @var TimeInterval|null */
+    /** @var TimeIntervalExpression|null */
     private $interval;
 
     /** @var RootNode|null */
@@ -33,7 +33,7 @@ class EventSchedule implements SqlSerializable
 
     public function __construct(
         ?RootNode $time,
-        ?TimeInterval $interval = null,
+        ?TimeIntervalExpression $interval = null,
         ?RootNode $startTime = null,
         ?RootNode $endTime = null
     ) {

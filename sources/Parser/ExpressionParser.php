@@ -41,7 +41,6 @@ use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
-use SqlFtw\Sql\Expression\IntervalExpression;
 use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
@@ -66,6 +65,8 @@ use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Expression\TernaryOperator;
 use SqlFtw\Sql\Expression\TimeInterval;
+use SqlFtw\Sql\Expression\TimeIntervalExpression;
+use SqlFtw\Sql\Expression\TimeIntervalLiteral;
 use SqlFtw\Sql\Expression\TimeIntervalUnit;
 use SqlFtw\Sql\Expression\TimeLiteral;
 use SqlFtw\Sql\Expression\TimeValue;
@@ -78,6 +79,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
+use function abs;
 use function count;
 use function in_array;
 use function ltrim;
@@ -410,12 +412,10 @@ class ExpressionParser
         if ($tokenList->hasKeyword(Keyword::INTERVAL)) {
             // `INTERVAL(n+1) YEAR` (interval expression) is indistinguishable from `INTERVAL(n, 1)` (function call)
             // until we try to parse the contents of "(...)" and the following unit.
-            $position = $tokenList->getPosition();
             $interval = $this->tryParseInterval($tokenList);
             if ($interval !== null) {
-                $left = new IntervalExpression($interval);
+                $left = $interval;
             } else {
-                $tokenList->rewind($position);
                 $left = $this->parseSimpleExpression($tokenList);
             }
         } else {
@@ -599,7 +599,7 @@ class ExpressionParser
                     return $this->parseFunctionCall($tokenList, BuiltInFunction::INTERVAL);
                 } else {
                     // interval_expr
-                    return new IntervalExpression($this->parseInterval($tokenList));
+                    return $this->parseInterval($tokenList);
                 }
             case Keyword::CASE:
                 // case_expr
@@ -1067,50 +1067,31 @@ class ExpressionParser
         $value = $this->parseExpression($tokenList);
         $unit = $tokenList->expectKeywordEnum(TimeIntervalUnit::class);
 
-        if ($value instanceof UintLiteral && $value->getValue() === '0') {
+        if ($value instanceof UintLiteral && $value->asInt() === 0) {
             throw new ParserException('Invalid interval value (zero).', $tokenList);
+        } elseif ($value instanceof UintLiteral) {
+            return new TimeIntervalLiteral([$value->asInt()], $unit);
+        } elseif ($value instanceof IntLiteral) {
+            return new TimeIntervalLiteral([abs($value->asInt())], $unit, true);
+        } elseif ($value instanceof NumericLiteral) {
+            return TimeIntervalLiteral::fromString($value->getValue(), $unit); // "INTERVAL 1.5 MINUTE_SECOND" parsed ad 1 minute, 5 seconds!
         } elseif ($value instanceof StringLiteral) {
-            $parts = $unit->getParts();
-            if ($parts === 5) {
-                if (preg_match('~^\d+(:\d+){1,4}$~', $value->getValue()) !== 1) {
-                    throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
-                }
-            } elseif ($parts === 4) {
-                if (preg_match('~^\d+(:\d+){1,3}$~', $value->getValue()) !== 1) {
-                    throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
-                }
-            } elseif ($parts === 3) {
-                if (preg_match('~^\d+(:\d+){1,2}$~', $value->getValue()) !== 1) {
-                    throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
-                }
-            } elseif ($parts === 2) {
-                if (preg_match('~^\d+:\d+$~', $value->getValue()) !== 1) {
-                    throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
-                }
-            } else {
-                throw new ParserException("Invalid interval value for {$unit->getValue()}.", $tokenList);
-            }
+            return TimeIntervalLiteral::fromString($value->getValue(), $unit);
+        } else {
+            return new TimeIntervalExpression($value, $unit);
         }
-
-        return new TimeInterval($value, $unit);
     }
 
-    /**
-     * interval:
-     *     quantity {YEAR | QUARTER | MONTH | DAY | HOUR | MINUTE |
-     *          WEEK | SECOND | YEAR_MONTH | DAY_HOUR | DAY_MINUTE |
-     *          DAY_SECOND | HOUR_MINUTE | HOUR_SECOND | MINUTE_SECOND}
-     */
     public function tryParseInterval(TokenList $tokenList): ?TimeInterval
     {
-        $value = $this->parseExpression($tokenList);
+        $position = $tokenList->getPosition();
+        try {
+            return $this->parseInterval($tokenList);
+        } catch (InvalidTokenException $e) {
+            $tokenList->rewind($position);
 
-        $unit = $tokenList->getKeywordEnum(TimeIntervalUnit::class);
-        if ($unit === null) {
             return null;
         }
-
-        return new TimeInterval($value, $unit);
     }
 
     public function parseUserExpression(TokenList $tokenList): UserExpression

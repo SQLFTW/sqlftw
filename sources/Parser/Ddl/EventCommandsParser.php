@@ -155,7 +155,7 @@ class EventCommandsParser
             }
         } elseif ($tokenList->hasKeyword(Keyword::EVERY)) {
             $every = $this->expressionParser->parseInterval($tokenList);
-            $value = $every->getValue();
+            $value = $every->getExpression();
             if ($value instanceof FunctionCall || ($value instanceof Parentheses && $value->getContents() instanceof Subquery)) {
                 throw new ParserException('Select in event schedule is not supported.', $tokenList);
             }
