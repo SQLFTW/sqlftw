@@ -78,6 +78,9 @@ class CastType implements ArgumentNode, ArgumentValue
         } elseif ($size !== null || $charset !== null || $collation !== null || $srid !== null) {
             throw new InvalidDefinitionException('Only sign and array options are allowed when BaseType is not defined.');
         }
+        if ($array && $type->isSpatial()) {
+            throw new InvalidDefinitionException('Geometry array is not supported.');
+        }
 
         $this->type = $type;
         $this->size = $size;
