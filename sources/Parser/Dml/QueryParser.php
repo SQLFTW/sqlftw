@@ -60,6 +60,7 @@ use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Expression\TimeIntervalExpression;
 use SqlFtw\Sql\Expression\TimeIntervalLiteral;
+use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
@@ -734,17 +735,18 @@ class QueryParser
         }
 
         $keyword = $tokenList->getAnyKeyword(Keyword::ROWS, Keyword::RANGE);
+        $rows = $keyword === Keyword::ROWS;
         if ($keyword !== null) {
             $units = WindowFrameUnits::get($keyword);
             if ($tokenList->hasKeyword(Keyword::BETWEEN)) {
-                [$startType, $startExpression] = $this->parseFrameBorder($tokenList, true);
+                [$startType, $startExpression] = $this->parseFrameBorder($tokenList, $rows, true);
                 $tokenList->expectKeyword(Keyword::AND);
-                [$endType, $endExpression] = $this->parseFrameBorder($tokenList, false);
+                [$endType, $endExpression] = $this->parseFrameBorder($tokenList, $rows, false);
             } else {
-                [$startType, $startExpression] = $this->parseFrameBorder($tokenList, null);
+                [$startType, $startExpression] = $this->parseFrameBorder($tokenList, $rows, null);
                 $endType = $endExpression = null;
             }
-            if ($keyword === Keyword::ROWS && ($startExpression instanceof TimeInterval || $endExpression instanceof TimeInterval)) {
+            if ($rows && ($startExpression instanceof TimeInterval || $endExpression instanceof TimeInterval)) {
                 throw new ParserException('INTERVAL can only be used with RANGE frames.', $tokenList);
             }
 
@@ -765,7 +767,7 @@ class QueryParser
      *
      * @return array{WindowFrameType, RootNode|null}
      */
-    private function parseFrameBorder(TokenList $tokenList, ?bool $start): array
+    private function parseFrameBorder(TokenList $tokenList, bool $rows, ?bool $start): array
     {
         $expression = null;
         if ($tokenList->hasKeywords(Keyword::CURRENT, Keyword::ROW)) {
@@ -776,6 +778,10 @@ class QueryParser
             $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_FOLLOWING);
         } else {
             $expression = $this->expressionParser->parseExpression($tokenList);
+
+            if ($rows && (!$expression instanceof UintLiteral && !$expression instanceof Placeholder)) {
+                throw new ParserException("Window frame extent must be a positive int for ROWS.", $tokenList);
+            }
 
             if ($expression instanceof NumericValue && $expression->isNegative()) {
                 throw new ParserException("Window frame extent cannot be a negative number.", $tokenList);
