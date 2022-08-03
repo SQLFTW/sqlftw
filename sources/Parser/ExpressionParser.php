@@ -83,7 +83,6 @@ use function abs;
 use function count;
 use function in_array;
 use function ltrim;
-use function preg_match;
 use function sprintf;
 use function strlen;
 use function strtoupper;
@@ -1067,9 +1066,7 @@ class ExpressionParser
         $value = $this->parseExpression($tokenList);
         $unit = $tokenList->expectKeywordEnum(TimeIntervalUnit::class);
 
-        if ($value instanceof UintLiteral && $value->asInt() === 0) {
-            throw new ParserException('Invalid interval value (zero).', $tokenList);
-        } elseif ($value instanceof UintLiteral) {
+        if ($value instanceof UintLiteral) {
             return new TimeIntervalLiteral([$value->asInt()], $unit);
         } elseif ($value instanceof IntLiteral) {
             return new TimeIntervalLiteral([abs($value->asInt())], $unit, true);
