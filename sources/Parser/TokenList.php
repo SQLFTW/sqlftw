@@ -1045,8 +1045,9 @@ class TokenList
     public function validateName(?string $entity, string $name): void
     {
         static $trailingWhitespaceNotAllowed = [EntityType::SCHEMA, EntityType::TABLE, EntityType::COLUMN, EntityType::PARTITION, EntityType::USER_VARIABLE];
+        static $emptyAllowed = [null, EntityType::TABLESPACE, EntityType::XA_TRANSACTION];
 
-        if ($entity !== null && $entity !== EntityType::TABLESPACE && $name === '') {
+        if ($name === '' && !in_array($entity, $emptyAllowed, true)) {
             throw new ParserException('Name must not be empty.', $this);
         }
         if ($entity !== null) {
