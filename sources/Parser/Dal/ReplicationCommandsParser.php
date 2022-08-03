@@ -407,7 +407,7 @@ class ReplicationCommandsParser
             $log = $tokenList->expectString();
         } elseif ($tokenList->hasKeyword(Keyword::BEFORE)) {
             $before = $this->expressionParser->parseExpression($tokenList);
-            if ($before instanceof Parentheses && $before->getContents() instanceof Subquery) {
+            if ($before instanceof Subquery) {
                 throw new ParserException('Subquery is not allowed here.', $tokenList);
             }
         } else {

@@ -150,13 +150,13 @@ class EventCommandsParser
 
         if ($tokenList->hasKeyword(Keyword::AT)) {
             $at = $this->expressionParser->parseExpression($tokenList);
-            if ($at instanceof Parentheses && $at->getContents() instanceof Subquery) {
+            if ($at instanceof Subquery) {
                 throw new ParserException('Select in event schedule is not supported.', $tokenList);
             }
         } elseif ($tokenList->hasKeyword(Keyword::EVERY)) {
             $every = $this->expressionParser->parseInterval($tokenList);
             $value = $every->getExpression();
-            if ($value instanceof FunctionCall || ($value instanceof Parentheses && $value->getContents() instanceof Subquery)) {
+            if ($value instanceof FunctionCall || ($value instanceof Subquery)) {
                 throw new ParserException('Select in event schedule is not supported.', $tokenList);
             }
             if ($every->getUnit()->hasMicroseconds()) {
@@ -165,13 +165,13 @@ class EventCommandsParser
 
             if ($tokenList->hasKeyword(Keyword::STARTS)) {
                 $startTime = $this->expressionParser->parseExpression($tokenList);
-                if ($startTime instanceof Parentheses && $startTime->getContents() instanceof Subquery) {
+                if ($startTime instanceof Subquery) {
                     throw new ParserException('Select in event schedule is not supported.', $tokenList);
                 }
             }
             if ($tokenList->hasKeyword(Keyword::ENDS)) {
                 $endTime = $this->expressionParser->parseExpression($tokenList);
-                if ($endTime instanceof Parentheses && $endTime->getContents() instanceof Subquery) {
+                if ($endTime instanceof Subquery) {
                     throw new ParserException('Select in event schedule is not supported.', $tokenList);
                 }
             }

@@ -15,7 +15,7 @@ use SqlFtw\Sql\Dml\Query\Query;
 /**
  * (SELECT ...)
  */
-class Subquery implements ExpressionNode
+class Subquery implements RootNode
 {
 
     /** @var Query */
@@ -33,7 +33,7 @@ class Subquery implements ExpressionNode
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->query->serialize($formatter);
+        return '(' . $this->query->serialize($formatter) . ')';
     }
 
 }

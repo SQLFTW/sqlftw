@@ -240,7 +240,7 @@ class ExpressionParser
             if ($quantifier !== null) {
                 $tokenList->expectSymbol('(');
                 $tokenList->startSubquery($quantifier);
-                $subquery = new Parentheses($this->parseSubquery($tokenList));
+                $subquery = $this->parseSubquery($tokenList);
                 $tokenList->endSubquery();
                 $tokenList->expectSymbol(')');
 
@@ -315,7 +315,7 @@ class ExpressionParser
                 $tokenList->expectSymbol('(');
                 if ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::TABLE, Keyword::VALUES, Keyword::WITH)) {
                     $tokenList->startSubquery(SubqueryType::IN);
-                    $subquery = new Parentheses($this->parseSubquery($tokenList->rewind(-1)));
+                    $subquery = $this->parseSubquery($tokenList->rewind(-1));
                     $tokenList->endSubquery();
                     $tokenList->expectSymbol(')');
                     $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
@@ -545,7 +545,7 @@ class ExpressionParser
                 $tokenList->endSubquery();
                 $tokenList->expectSymbol(')');
 
-                return new Parentheses($subquery);
+                return $subquery;
             } else {
                 // (expr [, expr] ...)
                 $expressions = $this->parseExpressionList($tokenList);
