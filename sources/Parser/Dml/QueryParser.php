@@ -294,9 +294,10 @@ class QueryParser
             return $this->parseValues($tokenList->rewind(-1));
         } else {
             $statement = $this->parseWith($tokenList->rewind(-1));
-            if (!$statement instanceof SelectCommand) {
-                throw new ParserException('Expected SELECT.', $tokenList);
+            if (!$statement instanceof Query) {
+                throw new ParserException('Expected a query.', $tokenList);
             }
+
             return $statement;
         }
     }
