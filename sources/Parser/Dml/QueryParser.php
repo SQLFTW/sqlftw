@@ -56,6 +56,7 @@ use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\Expression\TimeIntervalExpression;
 use SqlFtw\Sql\Expression\TimeIntervalLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
@@ -741,6 +742,9 @@ class QueryParser
             } else {
                 [$startType, $startExpression] = $this->parseFrameBorder($tokenList, null);
                 $endType = $endExpression = null;
+            }
+            if ($keyword === Keyword::ROWS && ($startExpression instanceof TimeInterval || $endExpression instanceof TimeInterval)) {
+                throw new ParserException('INTERVAL can only be used with RANGE frames.', $tokenList);
             }
 
             $frame = new WindowFrame($units, $startType, $endType, $startExpression, $endExpression);
