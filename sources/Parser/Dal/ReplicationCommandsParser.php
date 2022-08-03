@@ -47,6 +47,7 @@ use SqlFtw\Sql\UserName;
 use function array_shift;
 use function explode;
 use function trim;
+use const PHP_INT_MAX;
 
 class ReplicationCommandsParser
 {
@@ -426,6 +427,9 @@ class ReplicationCommandsParser
         $position = null;
         if ($tokenList->hasKeyword(Keyword::TO)) {
             $position = $tokenList->expectIntLike();
+            if ((int) $position->getValue() === PHP_INT_MAX) {
+                throw new ParserException('Log file index number is too large.', $position);
+            }
         }
 
         return new ResetMasterCommand($position);
