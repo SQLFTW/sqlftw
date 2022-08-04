@@ -56,6 +56,7 @@ class Session
         EntityType::USER => 32,
         EntityType::HOST => 255,
         EntityType::XA_TRANSACTION => 64,
+        EntityType::SRS => 80,
     ];
 
     public function __construct(

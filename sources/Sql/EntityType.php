@@ -35,6 +35,7 @@ class EntityType
     public const USER = 'user';
     public const HOST = 'host';
     public const XA_TRANSACTION = 'xa transaction';
+    public const SRS = 'srs';
 
     // other named objects:
     // - local variable

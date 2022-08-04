@@ -1037,14 +1037,17 @@ class TokenList
 
     public function validateName(?string $entity, string $name): void
     {
-        static $trailingWhitespaceNotAllowed = [EntityType::SCHEMA, EntityType::TABLE, EntityType::COLUMN, EntityType::PARTITION, EntityType::USER_VARIABLE];
+        static $trailingWhitespaceNotAllowed = [EntityType::SCHEMA, EntityType::TABLE, EntityType::COLUMN, EntityType::PARTITION, EntityType::USER_VARIABLE, EntityType::SRS];
         static $emptyAllowed = [null, EntityType::TABLESPACE, EntityType::XA_TRANSACTION];
 
         if ($name === '' && !in_array($entity, $emptyAllowed, true)) {
             throw new ParserException('Name must not be empty.', $this);
         }
         if ($entity !== null) {
-            if (in_array($entity, $trailingWhitespaceNotAllowed, true) && rtrim($name) !== $name) {
+            if ($entity === EntityType::SRS && ltrim($name, " \t\r\n") !== $name) {
+                throw new ParserException(ucfirst($entity) . ' name must not contain left side white space.', $this);
+            }
+            if (in_array($entity, $trailingWhitespaceNotAllowed, true) && rtrim($name, " \t\r\n") !== $name) {
                 throw new ParserException(ucfirst($entity) . ' name must not contain right side white space.', $this);
             }
             if (Str::length($name) > $this->maxLengths[$entity]) {

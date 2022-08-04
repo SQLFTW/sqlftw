@@ -9,10 +9,13 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Server\CreateSpatialReferenceSystemCommand;
 use SqlFtw\Sql\Ddl\Server\DropSpatialReferenceSystemCommand;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
+use function strlen;
 
 class SpatialCommandsParser
 {
@@ -52,18 +55,26 @@ class SpatialCommandsParser
             switch ($keyword) {
                 case Keyword::NAME:
                     $name = $tokenList->expectString();
+                    $tokenList->validateName(EntityType::SRS, $name);
                     break;
                 case Keyword::DEFINITION:
                     $definition = $tokenList->expectString();
+                    if (strlen($definition) > 4096) {
+                        throw new ParserException('SRS definition must be at most 4096 characters long.', $tokenList);
+                    }
                     break;
                 case Keyword::ORGANIZATION:
                     $organization = $tokenList->expectString();
+                    $tokenList->validateName(EntityType::SRS, $organization);
                     if ($tokenList->hasKeywords(Keyword::IDENTIFIED, Keyword::BY)) {
                         $identifiedBy = (int) $tokenList->expectUnsignedInt();
                     }
                     break;
                 case Keyword::DESCRIPTION:
                     $description = $tokenList->expectString();
+                    if (strlen($description) > 2048) {
+                        throw new ParserException('SRS description must be at most 2048 characters long.', $tokenList);
+                    }
                     break;
             }
         }
