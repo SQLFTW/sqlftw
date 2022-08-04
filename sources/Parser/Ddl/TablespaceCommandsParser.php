@@ -57,6 +57,8 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $options[TablespaceOption::WAIT] = true;
+        } elseif ($tokenList->hasKeyword(Keyword::NO_WAIT)) {
+            $options[TablespaceOption::WAIT] = false;
         }
         if ($tokenList->hasKeywords(Keyword::RENAME, Keyword::TO)) {
             $options[TablespaceOption::RENAME_TO] = $tokenList->expectName(EntityType::TABLESPACE);
@@ -75,6 +77,10 @@ class TablespaceCommandsParser
         if ($tokenList->hasKeyword(Keyword::ENGINE_ATTRIBUTE)) {
             $tokenList->passSymbol('=');
             $options[TablespaceOption::ENGINE_ATTRIBUTE] = $tokenList->expectString();
+        }
+
+        if ($options === []) {
+            throw new ParserException('Empty ALTER command is not allowed.', $tokenList);
         }
 
         return new AlterTablespaceCommand($name, $options, $undo);
