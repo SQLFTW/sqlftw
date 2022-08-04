@@ -1810,7 +1810,7 @@ class TableCommandsParser
                     break;
                 case Keyword::TABLESPACE:
                     $tokenList->passSymbol('=');
-                    $options[PartitionOption::TABLESPACE] = $tokenList->expectNonReservedNameOrString();
+                    $options[PartitionOption::TABLESPACE] = $tokenList->expectNonReservedName(EntityType::TABLESPACE);
                     break;
                 case Keyword::NODEGROUP:
                     $tokenList->passSymbol('=');
