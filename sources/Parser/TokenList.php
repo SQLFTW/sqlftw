@@ -1053,6 +1053,9 @@ class TokenList
             if (Str::length($name) > $this->maxLengths[$entity]) {
                 throw new ParserException(ucfirst($entity) . " name must be at most {$this->maxLengths[$entity]} characters long.", $this);
             }
+            if ($entity === EntityType::INDEX && strtoupper($name) === 'GEN_CLUST_INDEX') {
+                throw new ParserException('GEN_CLUST_INDEX is a reserved name for primary index.', $this);
+            }
         }
     }
 
