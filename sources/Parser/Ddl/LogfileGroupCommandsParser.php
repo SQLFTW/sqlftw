@@ -26,7 +26,7 @@ class LogfileGroupCommandsParser
      * ALTER LOGFILE GROUP logfile_group
      *     ADD UNDOFILE 'file_name'
      *     [INITIAL_SIZE [=] size]
-     *     [WAIT]
+     *     [WAIT | NO_WAIT]
      *     [ENGINE [=] engine_name]
      */
     public function parseAlterLogfileGroup(TokenList $tokenList): AlterLogfileGroupCommand
@@ -42,7 +42,12 @@ class LogfileGroupCommandsParser
             $initialSize = $tokenList->expectSize();
         }
 
-        $wait = $tokenList->hasKeyword(Keyword::WAIT);
+        $wait = null;
+        if ($tokenList->hasKeyword(Keyword::WAIT)) {
+            $wait = true;
+        } elseif ($tokenList->hasKeyword(Keyword::NO_WAIT)) {
+            $wait = false;
+        }
 
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {

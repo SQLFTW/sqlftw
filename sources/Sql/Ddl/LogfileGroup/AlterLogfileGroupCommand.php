@@ -29,11 +29,16 @@ class AlterLogfileGroupCommand extends Statement implements LogfileGroupCommand
     /** @var SizeLiteral|null */
     private $initialSize;
 
-    /** @var bool */
+    /** @var bool|null */
     private $wait;
 
-    public function __construct(string $name, ?StorageEngine $engine, string $undoFile, ?SizeLiteral $initialSize = null, bool $wait = false)
-    {
+    public function __construct(
+        string $name,
+        ?StorageEngine $engine,
+        string $undoFile,
+        ?SizeLiteral $initialSize = null,
+        ?bool $wait = null
+    ) {
         $this->name = $name;
         $this->engine = $engine;
         $this->undoFile = $undoFile;
@@ -61,7 +66,7 @@ class AlterLogfileGroupCommand extends Statement implements LogfileGroupCommand
         return $this->initialSize;
     }
 
-    public function wait(): bool
+    public function wait(): ?bool
     {
         return $this->wait;
     }
@@ -72,8 +77,8 @@ class AlterLogfileGroupCommand extends Statement implements LogfileGroupCommand
         if ($this->initialSize !== null) {
             $result .= ' INITIAL_SIZE = ' . $this->initialSize->serialize($formatter);
         }
-        if ($this->wait) {
-            $result .= ' WAIT';
+        if ($this->wait !== null) {
+            $result .= $this->wait ? ' WAIT' : ' NO_WAIT';
         }
         if ($this->engine !== null) {
             $result .= ' ENGINE = ' . $this->engine->serialize($formatter);
