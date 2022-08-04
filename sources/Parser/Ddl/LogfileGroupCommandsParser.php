@@ -42,12 +42,16 @@ class LogfileGroupCommandsParser
             $initialSize = $tokenList->expectSize();
         }
 
+        $tokenList->passSymbol(',');
+
         $wait = null;
         if ($tokenList->hasKeyword(Keyword::WAIT)) {
             $wait = true;
         } elseif ($tokenList->hasKeyword(Keyword::NO_WAIT)) {
             $wait = false;
         }
+
+        $tokenList->passSymbol(',');
 
         $engine = null;
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
