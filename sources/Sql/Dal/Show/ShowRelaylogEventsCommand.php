@@ -27,12 +27,16 @@ class ShowRelaylogEventsCommand extends Statement implements ShowCommand
     /** @var int|null */
     private $offset;
 
-    public function __construct(?string $logName, ?int $from, ?int $limit, ?int $offset)
+    /** @var string|null */
+    private $channel;
+
+    public function __construct(?string $logName, ?int $from, ?int $limit, ?int $offset, ?string $channel)
     {
         $this->logName = $logName;
         $this->from = $from;
         $this->limit = $limit;
         $this->offset = $offset;
+        $this->channel = $channel;
     }
 
     public function getLogName(): ?string
@@ -55,6 +59,11 @@ class ShowRelaylogEventsCommand extends Statement implements ShowCommand
         return $this->offset;
     }
 
+    public function getChannel(): ?string
+    {
+        return $this->channel;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW RELAYLOG EVENTS';
@@ -70,6 +79,9 @@ class ShowRelaylogEventsCommand extends Statement implements ShowCommand
                 $result .= $this->offset . ', ';
             }
             $result .= $this->limit;
+        }
+        if ($this->channel !== null) {
+            $result .= ' FOR CHANNEL ' . $formatter->formatString($this->channel);
         }
 
         return $result;

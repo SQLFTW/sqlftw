@@ -614,12 +614,12 @@ class ShowCommandsParser
     }
 
     /**
-     * SHOW RELAYLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count]
+     * SHOW RELAYLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count] [FOR CHANNEL channel]
      */
     private function parseShowRelaylogEvents(TokenList $tokenList): ShowRelaylogEventsCommand
     {
         $tokenList->expectKeyword(Keyword::EVENTS);
-        $logName = $from = $limit = $offset = null;
+        $logName = $from = $limit = $offset = $channel = null;
         if ($tokenList->hasKeyword(Keyword::IN)) {
             $logName = $tokenList->expectString();
         }
@@ -633,8 +633,11 @@ class ShowCommandsParser
                 $limit = (int) $tokenList->expectUnsignedInt();
             }
         }
+        if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+            $channel = $tokenList->expectString();
+        }
 
-        return new ShowRelaylogEventsCommand($logName, $from, $limit, $offset);
+        return new ShowRelaylogEventsCommand($logName, $from, $limit, $offset, $channel);
     }
 
     /**
