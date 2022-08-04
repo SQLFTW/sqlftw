@@ -110,30 +110,31 @@ class TablespaceCommandsParser
 
         $name = $tokenList->expectName(EntityType::TABLESPACE);
 
+        $options = [];
+        $count = 0;
+        if ($tokenList->hasKeywords(Keyword::ADD, Keyword::DATAFILE)) {
+            $options[TablespaceOption::ADD_DATAFILE] = $tokenList->expectString();
+            $count++;
+        }
+
         $keywords = [
-            Keyword::ADD, Keyword::FILE_BLOCK_SIZE, Keyword::ENCRYPTION, Keyword::USE, Keyword::EXTENT_SIZE,
-            Keyword::INITIAL_SIZE, Keyword::MAX_SIZE, Keyword::NODEGROUP, Keyword::WAIT,
-            Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE, Keyword::ENGINE_ATTRIBUTE,
+            Keyword::FILE_BLOCK_SIZE, Keyword::ENCRYPTION, Keyword::USE, Keyword::EXTENT_SIZE, Keyword::INITIAL_SIZE,
+            Keyword::MAX_SIZE, Keyword::NODEGROUP, Keyword::WAIT, Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE, Keyword::ENGINE_ATTRIBUTE,
         ];
         if (!$undo) {
             $keywords[] = Keyword::AUTOEXTEND_SIZE;
         }
-        $options = [];
-        $count = 0;
+
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
             $count++;
             switch ($keyword) {
-                case Keyword::ADD:
-                    $tokenList->expectKeyword(Keyword::DATAFILE);
-                    $options[TablespaceOption::ADD_DATAFILE] = $tokenList->expectString();
-                    break;
                 case Keyword::FILE_BLOCK_SIZE:
                     $tokenList->passSymbol('=');
                     $options[TablespaceOption::FILE_BLOCK_SIZE] = $tokenList->expectSize();
                     break;
                 case Keyword::ENCRYPTION:
                     $tokenList->passSymbol('=');
-                    $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
+                    $options[TablespaceOption::ENCRYPTION] = $tokenList->expectYesNo();
                     break;
                 case Keyword::USE:
                     $tokenList->expectKeywords(Keyword::LOGFILE, Keyword::GROUP);
