@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Ddl\Tablespace\AlterTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\CreateTablespaceCommand;
@@ -109,7 +110,9 @@ class TablespaceCommandsParser
             Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE, Keyword::ENGINE_ATTRIBUTE,
         ];
         $options = [];
+        $count = 0;
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
+            $count++;
             switch ($keyword) {
                 case Keyword::ADD:
                     $tokenList->expectKeyword(Keyword::DATAFILE);
@@ -166,6 +169,9 @@ class TablespaceCommandsParser
                     $options[TablespaceOption::ENGINE_ATTRIBUTE] = $tokenList->expectString();
                     break;
             }
+        }
+        if ($count !== count($options)) {
+            throw new ParserException('Duplicit tablespace option.', $tokenList);
         }
 
         return new CreateTablespaceCommand($name, $options, $undo);
