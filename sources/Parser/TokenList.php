@@ -702,6 +702,19 @@ class TokenList
         throw new InvalidValueException("boolean", $this);
     }
 
+    public function expectYesNo(): bool
+    {
+        $value = $this->expect(T::VALUE)->value;
+
+        if ($value === 'Y' || $value === 'y') {
+            return true;
+        } elseif ($value === 'N' || $value === 'n') {
+            return false;
+        }
+
+        throw new InvalidValueException("Y or N", $this);
+    }
+
     public function expectUuid(): string
     {
         $token = $this->expect(T::UUID | T::STRING);

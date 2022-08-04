@@ -68,7 +68,7 @@ class TablespaceCommandsParser
         }
         if ($tokenList->hasKeywords(Keyword::ENCRYPTION)) {
             $tokenList->passSymbol('=');
-            $options[TablespaceOption::ENCRYPTION] = $tokenList->expectBool();
+            $options[TablespaceOption::ENCRYPTION] = $tokenList->expectYesNo();
         }
         if ($tokenList->hasKeyword(Keyword::ENGINE)) {
             $tokenList->passSymbol('=');
