@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser\Ddl;
 
 use Dogma\InvalidValueException as InvalidEnumValueException;
+use Dogma\Math\PowersOfTwo;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidValueException;
@@ -1461,7 +1462,11 @@ class TableCommandsParser
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
                     return [TableOption::STATS_SAMPLE_PAGES, new DefaultLiteral()];
                 } else {
-                    return [TableOption::STATS_SAMPLE_PAGES, (int) $tokenList->expectUnsignedInt()];
+                    $value = (int) $tokenList->expectUnsignedInt();
+                    if ($value === 0 || $value >= PowersOfTwo::_64K) {
+                        throw new ParserException('The valid range for stats_sample_pages is 1 to 65535.', $tokenList);
+                    }
+                    return [TableOption::STATS_SAMPLE_PAGES, $value];
                 }
             case Keyword::TABLESPACE:
                 $tokenList->passSymbol('=');
