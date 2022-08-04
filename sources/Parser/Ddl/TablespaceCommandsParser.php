@@ -112,9 +112,12 @@ class TablespaceCommandsParser
 
         $keywords = [
             Keyword::ADD, Keyword::FILE_BLOCK_SIZE, Keyword::ENCRYPTION, Keyword::USE, Keyword::EXTENT_SIZE,
-            Keyword::INITIAL_SIZE, Keyword::AUTOEXTEND_SIZE, Keyword::MAX_SIZE, Keyword::NODEGROUP, Keyword::WAIT,
+            Keyword::INITIAL_SIZE, Keyword::MAX_SIZE, Keyword::NODEGROUP, Keyword::WAIT,
             Keyword::NO_WAIT, Keyword::COMMENT, Keyword::ENGINE, Keyword::ENGINE_ATTRIBUTE,
         ];
+        if (!$undo) {
+            $keywords[] = Keyword::AUTOEXTEND_SIZE;
+        }
         $options = [];
         $count = 0;
         while (($keyword = $tokenList->getAnyKeyword(...$keywords)) !== null) {
