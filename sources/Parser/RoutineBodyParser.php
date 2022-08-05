@@ -256,8 +256,8 @@ class RoutineBodyParser
             throw new ParserException('Cannot use ALTER VIEW inside a routine.', $tokenList);
         } elseif ($statement instanceof LoadDataCommand || $statement instanceof LoadXmlCommand) {
             throw new ParserException('Cannot use LOAD DATA or LOAD XML inside a routine.', $tokenList);
-        } elseif ($in !== RoutineType::PROCEDURE && $statement instanceof PreparedStatementCommand) {
-            throw new ParserException('Cannot use prepared statements inside a function, trigger or event.', $tokenList);
+        } elseif ($in !== RoutineType::PROCEDURE && $in !== RoutineType::EVENT && $statement instanceof PreparedStatementCommand) {
+            throw new ParserException('Cannot use prepared statements inside a function or trigger.', $tokenList);
         } elseif ($in !== RoutineType::PROCEDURE && ($statement instanceof ResetMasterCommand || $statement instanceof ResetSlaveCommand)) {
             throw new ParserException('Cannot use RESET MASTER/SLAVE inside a function, trigger or event.', $tokenList);
         } elseif ($in !== RoutineType::PROCEDURE && ($statement instanceof FlushCommand || $statement instanceof FlushTablesCommand)) {
