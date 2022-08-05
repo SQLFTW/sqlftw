@@ -1176,6 +1176,10 @@ class ExpressionParser
 
         $array = $tokenList->hasKeyword(Keyword::ARRAY);
 
+        if ($array && $charset !== null) {
+            throw new ParserException('Cannot specify charset for array type.', $tokenList);
+        }
+
         return new CastType($type, $size, $sign, $array, $charset, $collation, $srid);
     }
 
