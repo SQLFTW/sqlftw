@@ -36,6 +36,7 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
 use SqlFtw\Sql\Expression\TimeZone;
 use SqlFtw\Sql\Expression\TimeZoneName;
@@ -393,6 +394,9 @@ trait ExpressionParserFunctions
                 $default = false;
             } else {
                 $default = $this->parseLiteral($tokenList);
+                if (!$default instanceof StringValue) {
+                    throw new ParserException('DEFAULT must be a JSON string.', $tokenList);
+                }
             }
             $tokenList->expectKeyword(Keyword::ON);
             $event = $tokenList->expectAnyKeyword(Keyword::EMPTY, Keyword::ERROR);
