@@ -31,6 +31,7 @@ use SqlFtw\Sql\Expression\JsonTableOrdinalityColumn;
 use SqlFtw\Sql\Expression\JsonTablePathColumn;
 use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\NumericValue;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -38,6 +39,7 @@ use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
+use SqlFtw\Sql\Expression\TimeValue;
 use SqlFtw\Sql\Expression\TimeZone;
 use SqlFtw\Sql\Expression\TimeZoneName;
 use SqlFtw\Sql\Expression\TimeZoneOffset;
@@ -394,7 +396,7 @@ trait ExpressionParserFunctions
                 $default = false;
             } else {
                 $default = $this->parseLiteral($tokenList);
-                if (!$default instanceof StringValue) {
+                if (!$default instanceof StringValue && !$default instanceof NumericValue && !$default instanceof TimeValue) {
                     throw new ParserException('DEFAULT must be a JSON string.', $tokenList);
                 }
             }
