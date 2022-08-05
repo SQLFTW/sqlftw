@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use Dogma\Math\PowersOfTwo;
 use Dogma\ShouldNotHappenException;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidValueException;
@@ -137,6 +138,9 @@ class ReplicationCommandsParser
                     break;
                 case BaseType::UNSIGNED:
                     $value = (int) $tokenList->expectUnsignedInt();
+                    if ($option->equalsValue(SlaveOption::MASTER_DELAY) && $value >= PowersOfTwo::_2G) {
+                        throw new InvalidValueException('0 to 2147483647', $tokenList);
+                    }
                     break;
                 case BaseType::NUMERIC:
                     $value = (float) $tokenList->expect(TokenType::NUMBER)->value;
@@ -269,6 +273,9 @@ class ReplicationCommandsParser
                     break;
                 case BaseType::UNSIGNED:
                     $value = (int) $tokenList->expectUnsignedInt();
+                    if ($option->equalsValue(ReplicaOption::SOURCE_DELAY) && $value >= PowersOfTwo::_2G) {
+                        throw new InvalidValueException('0 to 2147483647', $tokenList);
+                    }
                     break;
                 case BaseType::NUMERIC:
                     $value = (float) $tokenList->expect(TokenType::NUMBER)->value;
