@@ -389,7 +389,7 @@ trait ExpressionParserFunctions
     private function parseOnEmptyOnError(TokenList $tokenList): array
     {
         $onEmpty = $onError = null;
-        while (($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
+        while ($onError === null && ($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
             if ($keyword === Keyword::NULL) {
                 $default = true;
             } elseif ($keyword === Keyword::ERROR) {
