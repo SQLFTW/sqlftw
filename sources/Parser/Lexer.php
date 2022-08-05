@@ -243,15 +243,15 @@ class Lexer
                 case "\t":
                 case "\r":
                 case "\n":
-                    $value = $char;
+                    $ws = $char;
                     while ($position < $length) {
                         $next = $string[$position];
                         if ($next === ' ' || $next === "\t" || $next === "\r") {
-                            $value .= $next;
+                            $ws .= $next;
                             $position++;
                             $column++;
                         } elseif ($next === "\n") {
-                            $value .= $next;
+                            $ws .= $next;
                             $position++;
                             $column = 1;
                             $row++;
@@ -261,7 +261,7 @@ class Lexer
                     }
 
                     if ($this->withWhitespace) {
-                        yield new Token(T::WHITESPACE, $start, $row, $value, null);
+                        yield new Token(T::WHITESPACE, $start, $row, $ws, null);
                     }
                     break;
                 case '(':
@@ -275,27 +275,27 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL, $start, $row, $char, null);
                     break;
                 case ':':
-                    $value = $char;
+                    $operator = $char;
                     while ($position < $length) {
-                        $next = $string[$position];
-                        if (!isset($this->operatorsKey[$value . $next])) {
-                            if ($value !== ':') {
-                                yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
+                        $next2 = $string[$position];
+                        if (!isset($this->operatorsKey[$operator . $next2])) {
+                            if ($operator !== ':') {
+                                yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator, null);
                             } else {
                                 yield $previous = new Token(T::SYMBOL, $start, $row, $char, null);
                             }
                             break 2;
                         }
-                        if (isset(self::$operatorSymbolsKey[$next])) {
-                            $value .= $next;
+                        if (isset(self::$operatorSymbolsKey[$next2])) {
+                            $operator .= $next2;
                             $position++;
                             $column++;
                         } else {
                             break;
                         }
                     }
-                    if ($value !== ':') {
-                        yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
+                    if ($operator !== ':') {
+                        yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator, null);
                     } else {
                         yield $previous = new Token(T::SYMBOL, $start, $row, $char, null);
                     }
@@ -326,22 +326,22 @@ class Lexer
                 case '^':
                 case '|':
                 case '~':
-                    $value = $char;
+                    $operator2 = $char;
                     while ($position < $length) {
-                        $next = $string[$position];
-                        if (!isset($this->operatorsKey[$value . $next])) {
-                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
+                        $next3 = $string[$position];
+                        if (!isset($this->operatorsKey[$operator2 . $next3])) {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator2, null);
                             break 2;
                         }
-                        if (isset(self::$operatorSymbolsKey[$next])) {
-                            $value .= $next;
+                        if (isset(self::$operatorSymbolsKey[$next3])) {
+                            $operator2 .= $next3;
                             $position++;
                             $column++;
                         } else {
                             break;
                         }
                     }
-                    yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
+                    yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator2, null);
                     break;
                 case '?':
                     if ($position < $length && ctype_alnum($string[$position])) {
@@ -359,11 +359,11 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL | T::PLACEHOLDER, $start, $row, $char, null);
                     break;
                 case '@':
-                    $value = $char;
+                    $var = $char;
                     $second = $string[$position];
                     if ($second === '@') {
                         // @@variable
-                        $value .= $second;
+                        $var .= $second;
                         $position++;
                         $column++;
                         if ($string[$position] === '`') {
@@ -374,9 +374,9 @@ class Lexer
                             break;
                         }
                         while ($position < $length) {
-                            $next = $string[$position];
-                            if ($next === '@' || isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
-                                $value .= $next;
+                            $next4 = $string[$position];
+                            if ($next4 === '@' || isset(self::$nameCharsKey[$next4]) || ord($next4) > 127) {
+                                $var .= $next4;
                                 $position++;
                                 $column++;
                             } else {
@@ -385,21 +385,21 @@ class Lexer
                         }
 
                         $yieldDelimiter = false;
-                        if (substr($value, -strlen($delimiter)) === $delimiter) { // str_ends_with()
+                        if (substr($var, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                             // fucking name-like delimiter after name without whitespace
-                            $value = substr($value, 0, -strlen($delimiter));
+                            $var = substr($var, 0, -strlen($delimiter));
                             $yieldDelimiter = true;
                         }
-                        $upper = strtoupper(substr($value, 2));
+                        $upper = strtoupper(substr($var, 2));
                         if ($upper === 'DEFAULT') {
                             // todo: probably all magic functions?
-                            $exception = new LexerException("Invalid variable name $value.", $position, $string);
+                            $exception = new LexerException("Invalid variable name $var.", $position, $string);
 
-                            yield new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, $row, $value, null, $exception);
+                            yield new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, $row, $var, null, $exception);
                             break;
                         }
 
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $var, null);
 
                         if ($yieldDelimiter) {
                             yield new Token(T::DELIMITER, $start, $row, $delimiter, null);
@@ -410,13 +410,13 @@ class Lexer
                         yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, '@');
                     } elseif (isset(self::$userVariableNameCharsKey[$second]) || ord($second) > 127) {
                         // @variable
-                        $value .= $second;
+                        $var .= $second;
                         $position++;
                         $column++;
                         while ($position < $length) {
-                            $next = $string[$position];
-                            if (isset(self::$userVariableNameCharsKey[$next]) || ord($next) > 127) {
-                                $value .= $next;
+                            $next5 = $string[$position];
+                            if (isset(self::$userVariableNameCharsKey[$next5]) || ord($next5) > 127) {
+                                $var .= $next5;
                                 $position++;
                                 $column++;
                             } else {
@@ -425,67 +425,67 @@ class Lexer
                         }
 
                         $yieldDelimiter = false;
-                        if (substr($value, -strlen($delimiter)) === $delimiter) { // str_ends_with()
+                        if (substr($var, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                             // fucking name-like delimiter after name without whitespace
-                            $value = substr($value, 0, -strlen($delimiter));
+                            $var = substr($var, 0, -strlen($delimiter));
                             $yieldDelimiter = true;
                         }
-                        $upper = strtoupper(substr($value, 1));
+                        $upper = strtoupper(substr($var, 1));
                         if ($upper === 'DEFAULT') {
                             // todo: probably all magic functions?
-                            $exception = new LexerException("Invalid variable name $value.", $position, $string);
+                            $exception = new LexerException("Invalid variable name $var.", $position, $string);
 
-                            yield new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, $row, $value, null, $exception);
+                            yield new Token(T::NAME | T::AT_VARIABLE | T::INVALID, $start, $row, $var, null, $exception);
                             break;
                         }
 
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $var, null);
 
                         if ($yieldDelimiter) {
                             yield new Token(T::DELIMITER, $start, $row, $delimiter, null);
                         }
                     } else {
                         // simple @ (valid as empty host name)
-                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $value, null);
+                        yield $previous = new Token(T::NAME | T::AT_VARIABLE, $start, $row, $var, null);
                         break;
                     }
                     break;
                 case '#':
                     // # comment
-                    $value = $char;
+                    $hashComment = $char;
                     while ($position < $length) {
-                        $next = $string[$position];
-                        $value .= $next;
+                        $next6 = $string[$position];
+                        $hashComment .= $next6;
                         $position++;
                         $column++;
-                        if ($next === "\n") {
+                        if ($next6 === "\n") {
                             break;
                         }
                     }
                     if ($this->withComments) {
-                        yield $previous = new Token(T::COMMENT | T::HASH_COMMENT, $start, $row, $value, null);
+                        yield $previous = new Token(T::COMMENT | T::HASH_COMMENT, $start, $row, $hashComment, null);
                     }
                     break;
                 case '/':
-                    $next = $position < $length ? $string[$position] : '';
-                    if ($next === '/') {
+                    $next7 = $position < $length ? $string[$position] : '';
+                    if ($next7 === '/') {
                         // // comment
                         $position++;
                         $column++;
-                        $value = $char . $next;
+                        $slashComment = $char . $next7;
                         while ($position < $length) {
-                            $next = $string[$position];
-                            $value .= $next;
+                            $next7 = $string[$position];
+                            $slashComment .= $next7;
                             $position++;
                             $column++;
-                            if ($next === "\n") {
+                            if ($next7 === "\n") {
                                 break;
                             }
                         }
                         if ($this->withComments) {
-                            yield $previous = new Token(T::COMMENT | T::DOUBLE_SLASH_COMMENT, $start, $row, $value, null);
+                            yield $previous = new Token(T::COMMENT | T::DOUBLE_SLASH_COMMENT, $start, $row, $slashComment, null);
                         }
-                    } elseif ($next === '*') {
+                    } elseif ($next7 === '*') {
                         $position++;
                         $column++;
 
@@ -516,17 +516,17 @@ class Lexer
 
                         // parse as a regular comment
                         $commentDepth++;
-                        $value = $char . $next;
+                        $comment = $char . $next7;
                         $terminated = false;
                         while ($position < $length) {
-                            $next = $string[$position];
-                            if (!$hint && $next === '/' && ($position + 1 < $length) && $string[$position + 1] === '*') {
-                                $value .= $next . $string[$position + 1];
+                            $next8 = $string[$position];
+                            if (!$hint && $next8 === '/' && ($position + 1 < $length) && $string[$position + 1] === '*') {
+                                $comment .= $next8 . $string[$position + 1];
                                 $position += 2;
                                 $column += 2;
                                 $commentDepth++;
-                            } elseif ($next === '*' && ($position + 1 < $length) && $string[$position + 1] === '/') {
-                                $value .= $next . $string[$position + 1];
+                            } elseif ($next8 === '*' && ($position + 1 < $length) && $string[$position + 1] === '/') {
+                                $comment .= $next8 . $string[$position + 1];
                                 $position += 2;
                                 $column += 2;
                                 $commentDepth--;
@@ -534,13 +534,13 @@ class Lexer
                                     $terminated = true;
                                     break;
                                 }
-                            } elseif ($next === "\n") {
-                                $value .= $next;
+                            } elseif ($next8 === "\n") {
+                                $comment .= $next8;
                                 $position++;
                                 $column = 0;
                                 $row++;
                             } else {
-                                $value .= $next;
+                                $comment .= $next8;
                                 $position++;
                                 $column++;
                             }
@@ -548,26 +548,26 @@ class Lexer
                         if (!$terminated) {
                             $exception = new LexerException('End of comment not found.', $position, $string);
 
-                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::INVALID, $start, $row, $value, null, $exception);
+                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::INVALID, $start, $row, $comment, null, $exception);
                             break;
                         } elseif (!$validOptional) {
                             $this->condition = null;
-                            $exception = new LexerException('Invalid optional comment: ' . $value, $position, $string);
+                            $exception = new LexerException('Invalid optional comment: ' . $comment, $position, $string);
 
-                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT | T::INVALID, $start, $row, $value, null, $exception);
+                            yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT | T::INVALID, $start, $row, $comment, null, $exception);
                             break;
                         }
 
                         if ($this->withComments) {
                             if ($optional) {
                                 // /*!12345 comment (when not interpreted as code) */
-                                yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, $start, $row, $value);
+                                yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, $start, $row, $comment);
                             } elseif ($hint) {
                                 // /*+ comment */
-                                yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::HINT_COMMENT, $start, $row, $value);
+                                yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::HINT_COMMENT, $start, $row, $comment);
                             } else {
                                 // /* comment */
-                                yield new Token(T::COMMENT | T::BLOCK_COMMENT, $start, $row, $value);
+                                yield new Token(T::COMMENT | T::BLOCK_COMMENT, $start, $row, $comment);
                             }
                         }
                     } else {
@@ -588,8 +588,8 @@ class Lexer
                     yield $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, '`');
                     break;
                 case '.':
-                    $next = $position < $length ? $string[$position] : '';
-                    if (isset(self::$numbersKey[$next])) {
+                    $next9 = $position < $length ? $string[$position] : '';
+                    if (isset(self::$numbersKey[$next9])) {
                         $token = $this->parseNumber($string, $position, $column, $row, '.');
                         if ($token !== null) {
                             yield $previous = $token;
@@ -641,29 +641,29 @@ class Lexer
                         }
                     }
 
-                    $value = $char;
+                    $operator3 = $char;
                     while ($position < $length) {
-                        $next = $string[$position];
-                        if (!isset($this->operatorsKey[$value . $next])) {
-                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
+                        $next10 = $string[$position];
+                        if (!isset($this->operatorsKey[$operator3 . $next10])) {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator3, null);
                             break 2;
                         }
-                        if (isset(self::$operatorSymbolsKey[$next])) {
-                            $value .= $next;
+                        if (isset(self::$operatorSymbolsKey[$next10])) {
+                            $operator3 .= $next10;
                             $position++;
                             $column++;
                         } else {
                             break;
                         }
                     }
-                    yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
+                    yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator3, null);
                     break;
                 case '+':
-                    $next = $position < $length ? $string[$position] : '';
+                    $next11 = $position < $length ? $string[$position] : '';
                     $numberCanFollow = ($previous->type & T::END) !== 0
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
-                    if ($numberCanFollow && isset(self::$numbersKey[$next])) {
+                    if ($numberCanFollow && isset(self::$numbersKey[$next11])) {
                         $token = $this->parseNumber($string, $position, $column, $row, '+');
                         if ($token !== null) {
                             yield $previous = $token;
@@ -671,37 +671,37 @@ class Lexer
                         }
                     }
 
-                    $value = $char;
+                    $operator4 = $char;
                     while ($position < $length) {
-                        $next = $string[$position];
-                        if (!isset($this->operatorsKey[$value . $next])) {
-                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
+                        $next12 = $string[$position];
+                        if (!isset($this->operatorsKey[$operator4 . $next12])) {
+                            yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator4, null);
                             break 2;
                         }
-                        if (isset(self::$operatorSymbolsKey[$next])) {
-                            $value .= $next;
+                        if (isset(self::$operatorSymbolsKey[$next12])) {
+                            $operator4 .= $next12;
                             $position++;
                             $column++;
                         } else {
                             break;
                         }
                     }
-                    yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $value, null);
+                    yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator4, null);
                     break;
                 case '0':
-                    $next = $position < $length ? $string[$position] : '';
-                    if ($next === 'b') {
+                    $next13 = $position < $length ? $string[$position] : '';
+                    if ($next13 === 'b') {
                         // 0b00100011
                         $position++;
                         $column++;
                         $bits = '';
                         while ($position < $length) {
-                            $next = $string[$position];
-                            if ($next === '0' || $next === '1') {
-                                $bits .= $next;
+                            $next13 = $string[$position];
+                            if ($next13 === '0' || $next13 === '1') {
+                                $bits .= $next13;
                                 $position++;
                                 $column++;
-                            } elseif (isset(self::$nameCharsKey[$next])) {
+                            } elseif (isset(self::$nameCharsKey[$next13])) {
                                 // name pretending to be a binary literal :E
                                 $position -= strlen($bits) + 1;
                                 $column -= strlen($bits) + 1;
@@ -712,18 +712,18 @@ class Lexer
                                 break 2;
                             }
                         }
-                    } elseif ($next === 'x') {
+                    } elseif ($next13 === 'x') {
                         // 0x001f
                         $position++;
                         $column++;
                         $bits = '';
                         while ($position < $length) {
-                            $next = $string[$position];
-                            if (isset(self::$hexadecKey[$next])) {
-                                $bits .= $next;
+                            $next13 = $string[$position];
+                            if (isset(self::$hexadecKey[$next13])) {
+                                $bits .= $next13;
                                 $position++;
                                 $column++;
-                            } elseif (isset(self::$nameCharsKey[$next])) {
+                            } elseif (isset(self::$nameCharsKey[$next13])) {
                                 // name pretending to be a hexadecimal literal :E
                                 $position -= strlen($bits) + 1;
                                 $column -= strlen($bits) + 1;
@@ -745,16 +745,16 @@ class Lexer
                 case '7':
                 case '8':
                 case '9':
-                    $value = substr($string, $position - 1, 36);
+                    $uuid = substr($string, $position - 1, 36);
                     // UUID
-                    if (strlen($value) === 36 && preg_match(self::UUID_REGEXP, $value) !== 0) {
+                    if (strlen($uuid) === 36 && preg_match(self::UUID_REGEXP, $uuid) !== 0) {
                         $position += 35;
                         $column += 35;
-                        yield $previous = new Token(T::VALUE | T::UUID, $start, $row, $value, null);
+                        yield $previous = new Token(T::VALUE | T::UUID, $start, $row, $uuid, null);
                         break;
                     }
                     // IPv4
-                    if (preg_match(self::IP_V4_REGEXP, $value, $m) !== 0) {
+                    if (preg_match(self::IP_V4_REGEXP, $uuid, $m) !== 0) {
                         $position += strlen($m[0]) - 1;
                         $column += strlen($m[0]) - 1;
                         yield $previous = new Token(T::VALUE | T::STRING, $start, $row, $m[0], null);
@@ -773,15 +773,15 @@ class Lexer
                     if (($char === 'B' || $char === 'b') && $position < $length && $string[$position] === '\'') {
                         $position++;
                         $column++;
-                        $bits = $next = '';
+                        $bits = $next14 = '';
                         while ($position < $length) {
-                            $next = $string[$position];
-                            if ($next === '\'') {
+                            $next14 = $string[$position];
+                            if ($next14 === '\'') {
                                 $position++;
                                 $column++;
                                 break;
                             } else {
-                                $bits .= $next;
+                                $bits .= $next14;
                                 $position++;
                                 $column++;
                             }
@@ -792,7 +792,7 @@ class Lexer
                             yield $previous = new Token(T::VALUE | T::BINARY_LITERAL, $start, $row, $bits, $orig);
                         } else {
                             $exception = new LexerException('Invalid binary literal', $position, $string);
-                            $orig = $char . '\'' . $bits . $next;
+                            $orig = $char . '\'' . $bits . $next14;
 
                             yield $previous = new Token(T::VALUE | T::BINARY_LITERAL | T::INVALID, $start, $row, $orig, $orig, $exception);
                             break;
@@ -810,12 +810,12 @@ class Lexer
                 case 'e':
                 case 'F':
                 case 'f':
-                    $value = substr($string, $position - 1, 36);
+                    $uuid2 = substr($string, $position - 1, 36);
                     // UUID
-                    if (strlen($value) === 36 && preg_match(self::UUID_REGEXP, $value) !== 0) {
+                    if (strlen($uuid2) === 36 && preg_match(self::UUID_REGEXP, $uuid2) !== 0) {
                         $position += 35;
                         $column += 35;
-                        yield $previous = new Token(T::VALUE | T::UUID, $start, $row, $value, null);
+                        yield $previous = new Token(T::VALUE | T::UUID, $start, $row, $uuid2, null);
                         break;
                     }
                     // continue
@@ -824,15 +824,15 @@ class Lexer
                     if (($char === 'X' || $char === 'x') && $position < $length && $string[$position] === '\'') {
                         $position++;
                         $column++;
-                        $bits = $next = '';
+                        $bits = $next15 = '';
                         while ($position < $length) {
-                            $next = $string[$position];
-                            if ($next === '\'') {
+                            $next15 = $string[$position];
+                            if ($next15 === '\'') {
                                 $position++;
                                 $column++;
                                 break;
                             } else {
-                                $bits .= $next;
+                                $bits .= $next15;
                                 $position++;
                                 $column++;
                             }
@@ -844,7 +844,7 @@ class Lexer
                             yield $previous = new Token(T::VALUE | T::HEXADECIMAL_LITERAL, $start, $row, $bits, $orig);
                         } else {
                             $exception = new LexerException('Invalid hexadecimal literal', $position, $string);
-                            $orig = $char . '\'' . $bits . $next;
+                            $orig = $char . '\'' . $bits . $next15;
 
                             yield $previous = new Token(T::VALUE | T::HEXADECIMAL_LITERAL | T::INVALID, $start, $row, $orig, $orig, $exception);
                             break;
@@ -853,8 +853,8 @@ class Lexer
                     }
                     // continue
                 case 'N':
-                    $next = $position < $length ? $string[$position] : null;
-                    if ($char === 'N' && $next === '"') {
+                    $next16 = $position < $length ? $string[$position] : null;
+                    if ($char === 'N' && $next16 === '"') {
                         $position++;
                         $column++;
                         $type = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES)
@@ -863,12 +863,12 @@ class Lexer
 
                         yield $previous = $this->parseString($type, $string, $position, $column, $row, '"', 'N');
                         break;
-                    } elseif ($char === 'N' && $next === "'") {
+                    } elseif ($char === 'N' && $next16 === "'") {
                         $position++;
                         $column++;
                         yield $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, "'", 'N');
                         break;
-                    } elseif ($char === 'N' && $next === '`') {
+                    } elseif ($char === 'N' && $next16 === '`') {
                         $position++;
                         $column++;
                         yield $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, "`", 'N');
@@ -913,11 +913,11 @@ class Lexer
                 case 'z':
                 case '_':
                 case '$':
-                    $value = $char;
+                    $name = $char;
                     while ($position < $length) {
-                        $next = $string[$position];
-                        if (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
-                            $value .= $next;
+                        $next17 = $string[$position];
+                        if (isset(self::$nameCharsKey[$next17]) || ord($next17) > 127) {
+                            $name .= $next17;
                             $position++;
                             $column++;
                         } else {
@@ -925,23 +925,23 @@ class Lexer
                         }
                     }
                     $yieldDelimiter = false;
-                    if (substr($value, -strlen($delimiter)) === $delimiter) { // str_ends_with()
+                    if (substr($name, -strlen($delimiter)) === $delimiter) { // str_ends_with()
                         // fucking name-like delimiter after name without whitespace
-                        $value = substr($value, 0, -strlen($delimiter));
+                        $name = substr($name, 0, -strlen($delimiter));
                         $yieldDelimiter = true;
                     }
 
-                    $upper = strtoupper($value);
+                    $upper = strtoupper($name);
                     if (isset($this->reservedKey[$upper])) {
                         if (isset($this->operatorsKey[$upper])) {
-                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, $start, $row, $value, null);
+                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, $start, $row, $name, null);
                         } else {
-                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, $start, $row, $value, null);
+                            yield $previous = new Token(T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME, $start, $row, $name, null);
                         }
                     } elseif (isset($this->keywordsKey[$upper])) {
-                        yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $row, $value, null);
+                        yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $row, $name, null);
                     } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
-                        yield new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $row, $value, null);
+                        yield new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $row, $name, null);
                         $start = $position;
                         $whitespace = $this->parseWhitespace($string, $position, $column, $row);
                         if ($this->withWhitespace) {
@@ -950,11 +950,11 @@ class Lexer
                         $start = $position;
                         $del = '';
                         while ($position < $length) {
-                            $next = $string[$position];
-                            if ($next === "\n" || $next === "\r" || $next === "\t" || $next === ' ') {
+                            $next18 = $string[$position];
+                            if ($next18 === "\n" || $next18 === "\r" || $next18 === "\t" || $next18 === ' ') {
                                 break;
                             } else {
-                                $del .= $next;
+                                $del .= $next18;
                                 $position++;
                                 $column++;
                             }
@@ -984,7 +984,7 @@ class Lexer
                         $this->session->setDelimiter($delimiter);
                         yield $previous = new Token(T::DELIMITER_DEFINITION, $start, $row, $delimiter, null);
                     } else {
-                        yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $row, $value, null);
+                        yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $row, $name, null);
                     }
 
                     if ($yieldDelimiter) {
@@ -998,18 +998,18 @@ class Lexer
                         yield $previous = new Token(T::INVALID, $start, $row, $char, $char, $exception);
                         break;
                     }
-                    $value = $char;
+                    $name2 = $char;
                     while ($position < $length) {
-                        $next = $string[$position];
-                        if (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
-                            $value .= $next;
+                        $next19 = $string[$position];
+                        if (isset(self::$nameCharsKey[$next19]) || ord($next19) > 127) {
+                            $name2 .= $next19;
                             $position++;
                             $column++;
                         } else {
                             break;
                         }
                     }
-                    yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $row, $value, null);
+                    yield $previous = new Token(T::NAME | T::UNQUOTED_NAME, $start, $row, $name2, null);
             }
         }
     }
@@ -1246,7 +1246,7 @@ class Lexer
         }
         $value = str_replace('.e', '.0e', $value);
 
-        if (preg_match('~^(?:0|-?[1-9][0-9]*)$~', $value) !== 0) {
+        if (preg_match('~^(?:0|-?[1-9]\\d*)$~', $value) !== 0) {
             $type |= TokenType::INT;
         }
 
