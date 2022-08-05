@@ -290,7 +290,11 @@ trait ExpressionParserFunctions
         $params[] = $this->parseExpression($tokenList);
 
         if ($tokenList->hasKeyword(Keyword::RETURNING)) {
-            $params[Keyword::RETURNING] = $this->parseCastType($tokenList);
+            $type = $this->parseCastType($tokenList);
+            if ($type->isArray()) {
+                throw new ParserException('Array is not allowed as return type of JSON_VALUE.', $tokenList);
+            }
+            $params[Keyword::RETURNING] = $type;
         }
 
         [$onEmpty, $onError] = $this->parseOnEmptyOnError($tokenList);
