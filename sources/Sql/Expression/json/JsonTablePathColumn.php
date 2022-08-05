@@ -73,10 +73,10 @@ class JsonTablePathColumn implements JsonTableColumn
         $result = $this->name . ' ' . $this->type->serialize($formatter) . ' EXISTS PATH ' . $this->path->serialize($formatter);
 
         if ($this->onEmpty !== null) {
-            $result .= $this->onEmpty->serialize($formatter);
+            $result .= ' ' . $this->onEmpty->serialize($formatter);
         }
         if ($this->onError !== null) {
-            $result .= $this->onError->serialize($formatter);
+            $result .= ' ' . $this->onError->serialize($formatter);
         }
 
         return $result;
