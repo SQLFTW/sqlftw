@@ -455,12 +455,11 @@ class Lexer
                     $value = $char;
                     while ($position < $length) {
                         $next = $string[$position];
+                        $value .= $next;
+                        $position++;
+                        $column++;
                         if ($next === "\n") {
                             break;
-                        } else {
-                            $value .= $next;
-                            $position++;
-                            $column++;
                         }
                     }
                     if ($this->withComments) {
@@ -476,12 +475,11 @@ class Lexer
                         $value = $char . $next;
                         while ($position < $length) {
                             $next = $string[$position];
+                            $value .= $next;
+                            $position++;
+                            $column++;
                             if ($next === "\n") {
                                 break;
-                            } else {
-                                $value .= $next;
-                                $position++;
-                                $column++;
                             }
                         }
                         if ($this->withComments) {
@@ -622,7 +620,7 @@ class Lexer
                             if ($endOfLine === false) {
                                 $endOfLine = strlen($string);
                             }
-                            $line = substr($string, $position - 1, $endOfLine - $position + 1);
+                            $line = substr($string, $position - 1, $endOfLine - $position + 2);
                             $position += strlen($line) - 1;
                             $column += strlen($line) - 1;
 
