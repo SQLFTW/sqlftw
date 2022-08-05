@@ -18,6 +18,7 @@ use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\AliasExpression;
 use SqlFtw\Sql\Expression\Asterisk;
+use SqlFtw\Sql\Expression\BoolLiteral;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CastType;
 use SqlFtw\Sql\Expression\DatetimeLiteral;
@@ -297,7 +298,7 @@ trait ExpressionParserFunctions
             $params[Keyword::RETURNING] = $type;
         }
 
-        [$onEmpty, $onError] = $this->parseOnEmptyOnError($tokenList);
+        [$onEmpty, $onError] = $this->parseOnEmptyOnError($tokenList, true);
         if ($onEmpty !== null) {
             $params[Keyword::ON . ' ' . Keyword::EMPTY] = $onEmpty;
         }
@@ -390,17 +391,19 @@ trait ExpressionParserFunctions
     /**
      * @return array{JsonErrorCondition|null, JsonErrorCondition|null}
      */
-    private function parseOnEmptyOnError(TokenList $tokenList): array
+    private function parseOnEmptyOnError(TokenList $tokenList, $forJsonValue = false): array
     {
         $onEmpty = $onError = null;
-        while ($onError === null && ($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
+        while (!($forJsonValue && $onError !== null) && ($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {
             if ($keyword === Keyword::NULL) {
                 $default = true;
             } elseif ($keyword === Keyword::ERROR) {
                 $default = false;
             } else {
                 $default = $this->parseLiteral($tokenList);
-                if (!$default instanceof StringValue && !$default instanceof NumericValue && !$default instanceof TimeValue) {
+                if (!$default instanceof StringValue
+                    && (!$forJsonValue || (!$default instanceof NumericValue && !$default instanceof TimeValue && !$default instanceof BoolLiteral))
+                ) {
                     throw new ParserException('DEFAULT must be a JSON string.', $tokenList);
                 }
             }
