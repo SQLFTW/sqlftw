@@ -39,7 +39,6 @@ use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\NullLiteral;
 use SqlFtw\Sql\Expression\Operator;
-use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Keyword;
@@ -179,6 +178,7 @@ class ReplicationCommandsParser
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectNonReservedNameOrString();
+            $tokenList->validateName(EntityType::CHANNEL, $channel);
         }
 
         return new ChangeMasterToCommand($options, $channel);
@@ -304,6 +304,7 @@ class ReplicationCommandsParser
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectNonReservedNameOrString();
+            $tokenList->validateName(EntityType::CHANNEL, $channel);
         }
 
         return new ChangeReplicationSourceToCommand($options, $channel);
@@ -389,6 +390,7 @@ class ReplicationCommandsParser
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectNonReservedNameOrString();
+            $tokenList->validateName(EntityType::CHANNEL, $channel);
         }
 
         return new ChangeReplicationFilterCommand($filters, $channel);
@@ -448,6 +450,7 @@ class ReplicationCommandsParser
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectNonReservedNameOrString();
+            $tokenList->validateName(EntityType::CHANNEL, $channel);
         }
 
         return new ResetSlaveCommand($all, $channel);
@@ -466,6 +469,7 @@ class ReplicationCommandsParser
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectNonReservedNameOrString();
+            $tokenList->validateName(EntityType::CHANNEL, $channel);
         }
 
         return new ResetReplicaCommand($all, $channel);
@@ -603,6 +607,7 @@ class ReplicationCommandsParser
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectNonReservedNameOrString();
+            $tokenList->validateName(EntityType::CHANNEL, $channel);
         }
 
         if ($which === Keyword::SLAVE) {
@@ -726,6 +731,7 @@ class ReplicationCommandsParser
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectNonReservedNameOrString();
+            $tokenList->validateName(EntityType::CHANNEL, $channel);
         }
 
         return new StopSlaveCommand($ioThread, $sqlThread, $channel);
@@ -765,6 +771,7 @@ class ReplicationCommandsParser
         $channel = null;
         if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
             $channel = $tokenList->expectNonReservedNameOrString();
+            $tokenList->validateName(EntityType::CHANNEL, $channel);
         }
 
         return new StopReplicaCommand($ioThread, $sqlThread, $channel);
