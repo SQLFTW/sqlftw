@@ -180,7 +180,9 @@ class TablespaceCommandsParser
                     break;
             }
         }
-        if ($count !== count($options)) {
+        if ($undo && $count === 0) {
+            throw new ParserException('Incomplete tablespace definition.', $tokenList);
+        } elseif ($count !== count($options)) {
             throw new ParserException('Duplicit tablespace option.', $tokenList);
         }
 
