@@ -21,6 +21,9 @@ TokenType constants:
     - **BACKTICK_QUOTED_STRING** - `` `table1` `` (MySQL, PostgreSQL, Sqlite)
     - **SQUARE_BRACKETED_STRING** - `[table1]` (MSSQL, SqLite)
     - **AT_VARIABLE** - `@var`, `@@global`, `@'192.168.0.1'` (also includes host names)
+        - **SINGLE_QUOTED_STRING** - `@'var'`
+        - **DOUBLE_QUOTED_STRING** - `@"var"`
+        - **BACKTICK_QUOTED_STRING** - `` @`var` ``
 - **VALUE**
     - **STRING**
         - **SINGLE_QUOTED_STRING** - `'string'` (standard)

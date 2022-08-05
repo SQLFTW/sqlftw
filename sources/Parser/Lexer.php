@@ -370,7 +370,7 @@ class Lexer
                             // @@`variable`
                             $position++;
                             $column++;
-                            yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, '`', '@@');
+                            yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, '`', '@@');
                             break;
                         }
                         while ($position < $length) {
@@ -404,10 +404,18 @@ class Lexer
                         if ($yieldDelimiter) {
                             yield new Token(T::DELIMITER, $start, $row, $delimiter, null);
                         }
-                    } elseif ($second === '`' || $second === "'" || $second === '"') {
+                    } elseif ($second === '`') {
                         $position++;
                         $column++;
-                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE, $string, $position, $column, $row, $second, '@');
+                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, $second, '@');
+                    } elseif ($second === "'") {
+                        $position++;
+                        $column++;
+                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, $second, '@');
+                    } elseif ($second === '"') {
+                        $position++;
+                        $column++;
+                        yield $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::DOUBLE_QUOTED_STRING, $string, $position, $column, $row, $second, '@');
                     } elseif (isset(self::$userVariableNameCharsKey[$second]) || ord($second) > 127) {
                         // @variable
                         $var .= $second;
@@ -1037,13 +1045,16 @@ class Lexer
         return $whitespace;
     }
 
-    private function parseString(int $type, string $string, int &$position, int &$column, int &$row, string $quote, string $prefix = ''): Token
+    private function parseString(int $tokenType, string $string, int &$position, int &$column, int &$row, string $quote, string $prefix = ''): Token
     {
         $startAt = $position - 1 - strlen($prefix);
         $length = strlen($string);
-        $isString = ($type & T::STRING) !== 0;
-        $isAtVariable = ($type & T::AT_VARIABLE) !== 0;
-        $backslashes = $isString && !$this->session->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
+
+        $mode = $this->session->getMode();
+        $ansi = $mode->containsAny(SqlMode::ANSI_QUOTES);
+        $isAtVariable = ($tokenType & T::AT_VARIABLE) !== 0;
+        $mayHaveBackslashes = ($tokenType & (T::STRING | T::SINGLE_QUOTED_STRING)) !== 0 || (!$ansi && ($tokenType & T::DOUBLE_QUOTED_STRING) !== 0);
+        $backslashes = $mayHaveBackslashes && !$mode->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
 
         $orig = [$quote];
         $escaped = false;
@@ -1090,7 +1101,7 @@ class Lexer
         if (!$finished) {
             $exception = new LexerException("End of string not found. Starts with " . substr($string, $startAt - 1, 100), $position, $string);
 
-            return new Token($type | T::INVALID, $startAt, $row, $prefix . $orig, $prefix . $orig, $exception);
+            return new Token($tokenType | T::INVALID, $startAt, $row, $prefix . $orig, $prefix . $orig, $exception);
         }
 
         // remove quotes
@@ -1102,7 +1113,7 @@ class Lexer
             $value = str_replace($this->escapeKeys, $this->escapeValues, $value);
         }
 
-        return new Token($type, $startAt, $row, ($isAtVariable ? $prefix : '') . $value, $prefix . $orig);
+        return new Token($tokenType, $startAt, $row, ($isAtVariable ? $prefix : '') . $value, $prefix . $orig);
     }
 
     private function parseNumber(string $string, int &$position, int &$column, int $row, string $start): ?Token
