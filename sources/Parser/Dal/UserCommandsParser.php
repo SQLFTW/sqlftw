@@ -563,6 +563,9 @@ class UserCommandsParser
                 $value = $tokenList->getAnyKeyword(Keyword::DEFAULT, Keyword::NEVER, Keyword::INTERVAL);
                 if ($value === Keyword::INTERVAL) {
                     $value = (int) $tokenList->expectInt();
+                    if ($value > 65535) {
+                        throw new ParserException('Maximum expiration interval is 65535 days.', $tokenList);
+                    }
                     $tokenList->expectKeyword(Keyword::DAY);
                 }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE), $value);
