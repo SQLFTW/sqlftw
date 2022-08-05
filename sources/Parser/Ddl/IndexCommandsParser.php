@@ -121,7 +121,8 @@ class IndexCommandsParser
         }
 
         $algorithm = null;
-        if (!$type->equalsValue(IndexType::FULLTEXT) && !$type->equalsValue(IndexType::SPATIAL)) {
+        $canChangeAlgorithm = !$type->equalsValue(IndexType::FULLTEXT) && !$type->equalsValue(IndexType::SPATIAL);
+        if ($canChangeAlgorithm) {
             if ($tokenList->hasAnyKeyword(Keyword::USING, Keyword::TYPE)) {
                 $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
             }
@@ -135,17 +136,17 @@ class IndexCommandsParser
 
         $parts = $this->parseIndexParts($tokenList);
 
-        if ($tokenList->hasAnyKeyword(Keyword::USING, Keyword::TYPE)) {
-            $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
-        }
-
         $keyBlockSize = $withParser = $mergeThreshold = $comment = $visible = $engineAttribute = $secondaryEngineAttribute = null;
         $keywords = [
-            Keyword::USING, Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE,
+            Keyword::KEY_BLOCK_SIZE, Keyword::WITH, Keyword::COMMENT, Keyword::VISIBLE,
             Keyword::INVISIBLE, Keyword::ENGINE_ATTRIBUTE, Keyword::SECONDARY_ENGINE_ATTRIBUTE,
         ];
+        if ($canChangeAlgorithm) {
+            $keywords[] = Keyword::USING;
+            $keywords[] = Keyword::TYPE;
+        }
         while ($keyword = $tokenList->getAnyKeyword(...$keywords)) {
-            if ($keyword === Keyword::USING) {
+            if ($keyword === Keyword::USING || $keyword === Keyword::TYPE) {
                 $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
             } elseif ($keyword === Keyword::KEY_BLOCK_SIZE) {
                 $tokenList->passSymbol('=');
