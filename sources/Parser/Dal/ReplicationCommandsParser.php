@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Dal;
 
 use Dogma\ShouldNotHappenException;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -118,6 +119,12 @@ class ReplicationCommandsParser
             $type = $types[$option->getValue()];
             $value = '';
             switch ($type) {
+                case [0, 1]:
+                    $value = (int) $tokenList->expectUnsignedInt();
+                    if ($value > 1) {
+                        throw new InvalidValueException('0 or 1', $tokenList);
+                    }
+                    break;
                 case BaseType::CHAR:
                     $value = $tokenList->expectString();
                     break;
@@ -244,6 +251,12 @@ class ReplicationCommandsParser
             $type = $types[$option->getValue()];
             $value = '';
             switch ($type) {
+                case [0, 1]:
+                    $value = (int) $tokenList->expectUnsignedInt();
+                    if ($value > 1) {
+                        throw new InvalidValueException('0 or 1', $tokenList);
+                    }
+                    break;
                 case BaseType::CHAR:
                     $value = $tokenList->expectString();
                     break;

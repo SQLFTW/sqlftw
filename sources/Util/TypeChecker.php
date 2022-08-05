@@ -18,6 +18,7 @@ use function ctype_digit;
 use function explode;
 use function get_class;
 use function gettype;
+use function in_array;
 use function interface_exists;
 use function is_array;
 use function is_bool;
@@ -49,10 +50,19 @@ class TypeChecker
 {
 
     /**
+     * @param string|string[]|int[] $types
      * @param mixed $value
      */
-    public static function check($value, string $types, ?string $field = null): void
+    public static function check($value, $types, ?string $field = null): void
     {
+        if (is_array($types)) {
+            if (!in_array($value, $types, true)) {
+                throw new InvalidDefinitionException("Value should be one of '" . Str::join($types, ', ', ' or ') . "', but '$value' received.");
+            }
+
+            return;
+        }
+
         $ok = false;
         foreach (explode('|', $types) as $type) {
             $array = Str::endsWith($type, '[]');
