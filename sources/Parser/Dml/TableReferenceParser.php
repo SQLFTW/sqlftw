@@ -31,7 +31,6 @@ use SqlFtw\Sql\Dml\TableReference\TableReferenceSubquery;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Keyword;
@@ -185,6 +184,9 @@ class TableReferenceParser
             $tokenList->expectSymbol('(');
             $table = $this->expressionParser->parseJsonTable($tokenList->rewind($position));
             $alias = $this->expressionParser->parseAlias($tokenList);
+            if ($alias === null) {
+                throw new ParserException('Every json_table call must have an alias.', $tokenList);
+            }
 
             return new TableReferenceJsonTable($table, $alias);
         }
