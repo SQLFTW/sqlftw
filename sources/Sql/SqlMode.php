@@ -13,13 +13,13 @@ use Dogma\Enum\StringSet;
 use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Math\IntCalc;
 use Dogma\Math\PowersOfTwo;
-use SqlFtw\Platform\Platform;
 use function array_filter;
 use function array_merge;
 use function array_unique;
 use function explode;
 use function implode;
 use function strtoupper;
+use function trim;
 
 /**
  * MySQL sql_mode
@@ -63,8 +63,13 @@ class SqlMode extends StringSet
     public const MSSQL = 'MSSQL';
     public const ORACLE = 'ORACLE';
     public const POSTGRESQL = 'POSTGRESQL';
+
+    /** @deprecated old version */
     public const MYSQL323 = 'MYSQL323';
+    /** @deprecated old versions */
     public const MYSQL40 = 'MYSQL40';
+    /** @deprecated old versions */
+    public const NOT_USED = 'NOT_USED';
 
     /** @var array<int, string> */
     private static $numeric = [
@@ -72,7 +77,7 @@ class SqlMode extends StringSet
         PowersOfTwo::_2 => self::PIPES_AS_CONCAT,
         PowersOfTwo::_4 => self::ANSI_QUOTES,
         PowersOfTwo::_8 => self::IGNORE_SPACE,
-        // not used
+        PowersOfTwo::_16 => self::NOT_USED,
         PowersOfTwo::_32 => self::ONLY_FULL_GROUP_BY,
         PowersOfTwo::_64 => self::NO_UNSIGNED_SUBTRACTION,
         PowersOfTwo::_128 => self::NO_DIR_IN_CREATE,
@@ -161,21 +166,26 @@ class SqlMode extends StringSet
         ],
     ];
 
-    public static function getFromInt(int $int, Platform $platform): self
+    public static function getFromInt(int $int): self
     {
+        if ($int < 0) {
+            throw new InvalidDefinitionException("Invalid value for system variable @@sql_mode: $int - value must not be negative.");
+        }
         $parts = [];
         foreach (IntCalc::binaryComponents($int) as $i) {
             if (isset(self::$numeric[$i])) {
                 $parts[] = self::$numeric[$i];
+            } else {
+                throw new InvalidDefinitionException("Invalid value for system variable @@sql_mode: $int - unknown component $i.");
             }
-            // todo: non-existing values?
         }
 
-        return self::getFromString(implode(',', $parts), $platform);
+        return self::getFromString(implode(',', $parts));
     }
 
-    public static function getFromString(string $string, Platform $platform): self
+    public static function getFromString(string $string): self
     {
+        $string = trim($string);
         /** @var string[] $parts */
         $parts = explode(',', strtoupper($string));
         $parts = array_filter($parts);
@@ -186,9 +196,7 @@ class SqlMode extends StringSet
         }
         $items = [];
         foreach ($parts as $part) {
-            if ($part === self::DEFAULT) {
-                $items = $platform->getDefaultModes();
-            } elseif (isset(self::$groups[$part])) {
+            if (isset(self::$groups[$part])) {
                 $items = array_merge($items, self::$groups[$part]);
             } else {
                 $items[] = $part;

@@ -19,10 +19,10 @@ class Version
     /** @var int */
     private $major;
 
-    /** @var int|null */
+    /** @var int */
     private $minor;
 
-    /** @var int|null */
+    /** @var int */
     private $patch;
 
     /**
@@ -47,7 +47,7 @@ class Version
         if ($this->major > 90) {
             return $this->major;
         } else {
-            return $this->major * 10000 + ($this->minor ?? 0) * 100 + ($this->patch ?? 0);
+            return $this->major * 10000 + ($this->minor) * 100 + ($this->patch);
         }
     }
 
@@ -56,12 +56,12 @@ class Version
         return $this->major;
     }
 
-    public function getMinor(): ?int
+    public function getMinor(): int
     {
         return $this->minor;
     }
 
-    public function getPatch(): ?int
+    public function getPatch(): int
     {
         return $this->patch;
     }

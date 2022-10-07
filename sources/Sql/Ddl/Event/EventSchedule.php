@@ -15,6 +15,7 @@ use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
+use function substr;
 
 class EventSchedule implements SqlSerializable
 {
@@ -72,7 +73,7 @@ class EventSchedule implements SqlSerializable
         if ($this->time !== null) {
             $result = 'AT ' . $this->time->serialize($formatter);
         } elseif ($this->interval !== null) {
-            $result = 'EVERY ' . $this->interval->serialize($formatter);
+            $result = 'EVERY ' . substr($this->interval->serialize($formatter), 9); // strip "INTERVAL " from start
         } else {
             throw new ShouldNotHappenException('Either time or interval must be set.');
         }

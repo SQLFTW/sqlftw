@@ -21,7 +21,7 @@ Assert::parseSerialize("SELECT @var1, @var2");
 Assert::parseSerialize("SELECT @@GLOBAL.basedir, @@GLOBAL.datadir");
 Assert::parseSerialize("SELECT func1(), func2()");
 Assert::parseSerialize("SELECT db1.func1(), db2.func2()");
-Assert::parseSerialize("SELECT *");
+Assert::parseSerialize("SELECT * FROM `DUAL`");
 Assert::parseSerialize("SELECT tbl1.*, tbl2.*");
 Assert::parseSerialize("SELECT db1.tbl1.*, db2.tbl2.*");
 

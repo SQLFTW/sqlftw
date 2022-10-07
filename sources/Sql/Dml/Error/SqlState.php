@@ -316,7 +316,7 @@ class SqlState implements SqlSerializable
 
     public function __construct(string $value)
     {
-        if (!preg_match('~^[\dA-Z]{5}$~', $value)) {
+        if (preg_match('~^[\dA-Z]{5}$~', $value) === 0) {
             throw new InvalidDefinitionException('Invalid SQLSTATE value.');
         }
         $this->value = $value;

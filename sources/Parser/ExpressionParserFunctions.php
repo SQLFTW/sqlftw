@@ -30,11 +30,10 @@ use SqlFtw\Sql\Expression\JsonTableExistsPathColumn;
 use SqlFtw\Sql\Expression\JsonTableNestedColumns;
 use SqlFtw\Sql\Expression\JsonTableOrdinalityColumn;
 use SqlFtw\Sql\Expression\JsonTablePathColumn;
-use SqlFtw\Sql\Expression\ListExpression;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\NumericValue;
 use SqlFtw\Sql\Expression\Operator;
-use SqlFtw\Sql\Expression\OrderByExpression;
+use SqlFtw\Sql\Expression\OrderByListExpression;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
@@ -103,8 +102,8 @@ trait ExpressionParserFunctions
                     case CastType::class:
                         $arguments[$keyword] = $this->parseCastType($tokenList);
                         continue 3;
-                    case OrderByExpression::class:
-                        $arguments[$keyword] = new ListExpression($this->parseOrderBy($tokenList));
+                    case OrderByListExpression::class:
+                        $arguments[$keyword] = new OrderByListExpression($this->parseOrderBy($tokenList));
                         continue 3;
                     case Literal::class:
                         $arguments[$keyword] = $this->parseLiteral($tokenList);
@@ -391,7 +390,7 @@ trait ExpressionParserFunctions
     /**
      * @return array{JsonErrorCondition|null, JsonErrorCondition|null}
      */
-    private function parseOnEmptyOnError(TokenList $tokenList, $forJsonValue = false): array
+    private function parseOnEmptyOnError(TokenList $tokenList, bool $forJsonValue = false): array
     {
         $onEmpty = $onError = null;
         while (!($forJsonValue && $onError !== null) && ($keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::ERROR, Keyword::DEFAULT)) !== null) {

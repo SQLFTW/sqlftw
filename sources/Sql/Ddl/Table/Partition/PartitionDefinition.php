@@ -11,12 +11,12 @@ namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use Dogma\Arr;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\MaxValueLiteral;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
 use function implode;
 use function is_array;
-use function is_int;
 
 class PartitionDefinition implements SqlSerializable
 {
@@ -30,17 +30,17 @@ class PartitionDefinition implements SqlSerializable
     /** @var non-empty-array<RootNode>|null */
     private $values;
 
-    /** @var non-empty-array<string, int|string>|null */
+    /** @var non-empty-array<string, int|string|StorageEngine>|null */
     private $options;
 
-    /** @var non-empty-array<string, non-empty-array<int|string>|null>|null */
+    /** @var non-empty-array<string, non-empty-array<int|string|StorageEngine>|null>|null */
     private $subpartitions;
 
     /**
      * @param non-empty-array<RootNode>|MaxValueLiteral|null $lessThan
      * @param non-empty-array<RootNode>|null $values
-     * @param non-empty-array<string, int|string>|null $options
-     * @param non-empty-array<string, non-empty-array<int|string>|null>|null $subpartitions
+     * @param non-empty-array<string, int|string|StorageEngine>|null $options
+     * @param non-empty-array<string, non-empty-array<int|string|StorageEngine>|null>|null $subpartitions
      */
     public function __construct(string $name, $lessThan, ?array $values = null, ?array $options = null, ?array $subpartitions = null)
     {
@@ -88,7 +88,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string, int|string>|null
+     * @return non-empty-array<string, int|string|StorageEngine>|null
      */
     public function getOptions(): ?array
     {
@@ -96,7 +96,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string, non-empty-array<int|string>|null>|null
+     * @return non-empty-array<string, non-empty-array<int|string|StorageEngine>|null>|null
      */
     public function getSubpartitions(): ?array
     {
@@ -119,7 +119,13 @@ class PartitionDefinition implements SqlSerializable
         }
         if ($this->options !== null) {
             foreach ($this->options as $option => $value) {
-                $result .= ' ' . $option . ' = ' . (is_int($value) ? $value : $formatter->formatString($value));
+                if ($value instanceof SqlSerializable) {
+                    $result .= ' ' . $option . ' = ' . $value->serialize($formatter);
+                } elseif ($option === PartitionOption::TABLESPACE) {
+                    $result .= ' ' . $option . ' = ' . $formatter->formatName((string) $value);
+                } else {
+                    $result .= ' ' . $option . ' = ' . $formatter->formatValue($value);
+                }
             }
         }
         if ($this->subpartitions !== null) {
@@ -127,7 +133,11 @@ class PartitionDefinition implements SqlSerializable
                 $sub = 'SUBPARTITION ' . $formatter->formatName($name);
                 if ($options !== null) {
                     foreach ($options as $option => $value) {
-                        $sub .= ' ' . $option . ' = ' . (is_int($value) ? $value : $formatter->formatString($value));
+                        if ($option === PartitionOption::TABLESPACE) {
+                            $sub .= ' ' . $option . ' = ' . $formatter->formatName($value);
+                        } else {
+                            $sub .= ' ' . $option . ' = ' . $formatter->formatValue($value);
+                        }
                     }
                 }
 

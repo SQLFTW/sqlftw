@@ -78,7 +78,7 @@ class CastType implements ArgumentNode, ArgumentValue
         } elseif ($size !== null || $charset !== null || $collation !== null || $srid !== null) {
             throw new InvalidDefinitionException('Only sign and array options are allowed when BaseType is not defined.');
         }
-        if ($array && $type->isSpatial()) {
+        if ($array && $type !== null && $type->isSpatial()) {
             throw new InvalidDefinitionException('Geometry array is not supported.');
         }
 
@@ -167,8 +167,12 @@ class CastType implements ArgumentNode, ArgumentValue
     public function serialize(Formatter $formatter): string
     {
         $result = '';
-        if ($this->sign !== null && !$this->getBaseType()->equalsAny(BaseType::SIGNED, BaseType::UNSIGNED)) {
-            $result .= $this->sign ? 'SIGNED' : 'UNSIGNED';
+        $printSign = $this->sign !== null && $this->type !== null && !$this->type->equalsAny(BaseType::SIGNED, BaseType::UNSIGNED);
+        if ($printSign) {
+            $result .= $this->sign === true ? 'SIGNED' : 'UNSIGNED';
+        }
+        if ($printSign && $this->type !== null) {
+            $result .= ' ';
         }
         if ($this->type !== null) {
             $result .= $this->type->serialize($formatter);

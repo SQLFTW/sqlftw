@@ -16,12 +16,14 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
 use SqlFtw\Tests\Assert;
+use SqlFtw\Tests\MysqlTestAssert;
 use SqlFtw\Tests\ParserHelper;
+use Throwable;
 use function dirname;
+use function file_exists;
 use function file_get_contents;
+use function file_put_contents;
 use function implode;
-use function in_array;
-use function preg_match;
 use function rd;
 use function rl;
 use function str_replace;
@@ -29,6 +31,9 @@ use function strlen;
 use function substr;
 
 require dirname(__DIR__) . '/bootstrap.php';
+require __DIR__ . '/Errors.php';
+require __DIR__ . '/Failures.php';
+require __DIR__ . '/NonFailures.php';
 
 ini_set('memory_limit', (string) (4 * 1024 * 1024 * 1024));
 
@@ -68,6 +73,9 @@ $skips = [
 
     // won't fix - invalid combination of SQL and Perl comment directives
     'binlog_start_comment.test',
+
+    // need to parse some special syntax in string argument
+    'debug_sync.test',
 
     // Heatwave analytics plugin
     'secondary_engine',
@@ -113,6 +121,14 @@ $replacements = [
         'REVOKE wp_administrators, engineering ON' => 'REVOKE SELECT ON',
     ],
 
+    // broken error checks
+    'gcol_insert_ignore.test' => [
+        "error 0\n      ,ER_BLOB_KEY_WITHOUT_LENGTH\n      ,ER_UNSUPPORTED_ACTION_ON_GENERATED_COLUMN\n      ,ER_JSON_USED_AS_KEY\n    ;" => "error 0,ER_BLOB_KEY_WITHOUT_LENGTH,ER_UNSUPPORTED_ACTION_ON_GENERATED_COLUMN,ER_JSON_USED_AS_KEY;",
+        "error 0\n      ,ER_WRONG_SUB_KEY\n      ,ER_UNSUPPORTED_ACTION_ON_GENERATED_COLUMN\n      ,ER_JSON_USED_AS_KEY\n    ;" => "error 0,ER_WRONG_SUB_KEY,ER_UNSUPPORTED_ACTION_ON_GENERATED_COLUMN,ER_JSON_USED_AS_KEY;",
+        "error 0\n      ,ER_INVALID_JSON_TEXT\n      ,ER_INVALID_JSON_CHARSET\n      ,ER_CANT_CREATE_GEOMETRY_OBJECT\n    ;" => "error 0,ER_INVALID_JSON_TEXT,ER_INVALID_JSON_CHARSET,ER_CANT_CREATE_GEOMETRY_OBJECT;",
+        "error 0\n      ,ER_INVALID_JSON_VALUE_FOR_CAST\n      ,ER_TRUNCATED_WRONG_VALUE_FOR_FIELD\n      ,ER_TRUNCATED_WRONG_VALUE\n    ;" => "error 0,ER_INVALID_JSON_VALUE_FOR_CAST,ER_TRUNCATED_WRONG_VALUE_FOR_FIELD,ER_TRUNCATED_WRONG_VALUE;",
+    ],
+
     // broken strings
     'innochecksum.test' => [
         "doesn't" => 'does not',
@@ -136,6 +152,7 @@ $replacements = [
     'ndb_alter_table_column_online.test' => ["name like '%t1%'#and type like '%UserTable%';" => "name like '%t1%';#and type like '%UserTable%'"],
     'rpl_temporary.test' => ['insert into t1 select * from `\E4\F6\FC\C4\D6\DC`' => 'insert into t1 select * from `\E4\F6\FC\C4\D6\DC`;'],
     'rpl_user_variables.test' => ['CREATE FUNCTION f1() RETURNS INT RETURN @a; DELIMITER |; CREATE' => "CREATE FUNCTION f1() RETURNS INT RETURN @a;\nDELIMITER |;\nCREATE"],
+    'rpl_multi_source_cmd_errors.test' => ['START SLAVE UNTIL SOURCE_LOG_FILE = "dummy-bin.0000001", SOURCE_LOG_POS = 1729' => 'START SLAVE UNTIL SOURCE_LOG_FILE = "dummy-bin.0000001", SOURCE_LOG_POS = 1729;'],
 
     // too much hustle to filter out
     'func_misc.test' => ["if (!` SELECT (@sleep_time_per_result_row * @row_count - @max_acceptable_delay >\n              @sleep_time_per_result_row) AND (@row_count - 1 >= 3)`)" => 'if (XXX)'],
@@ -147,6 +164,15 @@ $replacements = [
 
     // invalid "," before ENGINE
     'ddl_rewriter.test' => ["PARTITION p1 VALUES IN (1) DATA DIRECTORY = '/tmp' ,ENGINE = InnoDB" => "PARTITION p1 VALUES IN (1) DATA DIRECTORY = '/tmp' ENGINE = InnoDB"],
+
+    // fucking includes :E
+    'ndb_native_default_support.test' => ['--source suite/ndb/include/turn_off_strict_sql_mode.inc' => "set sql_mode=(select replace(@@sql_mode,'STRICT_TRANS_TABLES',''));"],
+    'ndb_replace.test' => ['--source suite/ndb/include/turn_off_strict_sql_mode.inc' => "set sql_mode=(select replace(@@sql_mode,'STRICT_TRANS_TABLES',''));"],
+    'ndb_restore_conv_lossy_charbinary.test' => ['--source suite/ndb/include/turn_off_strict_sql_mode.inc' => "set sql_mode=(select replace(@@sql_mode,'STRICT_TRANS_TABLES',''));"],
+    'ndb_restore_conv_lossy_integral.test' => ['--source suite/ndb/include/turn_off_strict_sql_mode.inc' => "set sql_mode=(select replace(@@sql_mode,'STRICT_TRANS_TABLES',''));"],
+    'ndb_restore_conv_padding.test' => ['--source suite/ndb/include/turn_off_strict_sql_mode.inc' => "set sql_mode=(select replace(@@sql_mode,'STRICT_TRANS_TABLES',''));"],
+    'ndb_row_format.test' => ['--source suite/ndb/include/turn_off_strict_sql_mode.inc' => "set sql_mode=(select replace(@@sql_mode,'STRICT_TRANS_TABLES',''));"],
+    'ndb_update_no_read.test' => ['--source suite/ndb/include/turn_off_strict_sql_mode.inc' => "set sql_mode=(select replace(@@sql_mode,'STRICT_TRANS_TABLES',''));"],
 
     // names concatenation in ANSI mode
     'parser.test' => [
@@ -161,35 +187,23 @@ $replacements = [
     'sql_mode.test' => ["SELECT '\''; # restore Emacs SQL mode font lock sanity" => "SELECT ''; # restore Emacs SQL mode font lock sanity"],
 ];
 
-$knownFailures = [
-    'create table t1 (t1.index int)', // qualified column name
-    'create table t1(t1.name int)', // qualified column name
-    'create table t2(test.t2.name int)', // qualified column name
-    'REVOKE system_user_role ON *.* FROM non_sys_user', // "REVOKE <role>" has no "ON"
-    'create index on edges (s)', // index without a name
-    'create index on edges (e)', // index without a name
-    'CREATE INDEX ON t1(a)', // index without a name
-    'CREATE INDEX ON t1 (col1, col2)', // index without a name
-    // "rows" is already a reserved word
-    "--echo the result rows with missed equal to NULL should count all rows (160000)\n--echo the other rows are the failed lookups and there should not be any such\nselect if(isnull(t1.a),t2.a,NULL) missed, count(*) rows from t2 left join t1 on t1.a=t2.a group by if(isnull(t1.a),t2.a,NULL)",
-    "--echo the left join below should result in scanning t2 and do pk lookups in t1\n--replace_column 10 # 11 #\nexplain select if(isnull(t1.a),t2.a,NULL) missed, count(*) rows from t2 left join t1 on t1.a=t2.a group by if(isnull(t1.a),t2.a,NULL)",
-    'else { } DROP TABLE t2', // todo: tests
-    "-- X   --error ER_NO_SYSTEM_TABLE_ACCESS\n  CREATE PROCEDURE ddse_access() DROP TABLE mysql.innodb_index_stats(i INTEGER)", // no idea what the () on end means
-];
-
 $parser = ParserHelper::getParserFactory(Platform::MYSQL, '8.0.29')->getParser();
 $session = $parser->getSession();
+$formatter = new Formatter($session);
+$filter = new MysqlTestFilter();
 
-//$only = 'innodb_bug48024.test';
+//$only = 'rpl_temporary.test';
 
 $dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test';
-//$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test/t';
+//$dir = dirname(__DIR__, 3) . '/mysql-server/mysql-test/suite/test_services';
+$lastFailPath = __DIR__ . '/last-fail.txt';
 
 $it = new RecursiveDirectoryIterator($dir);
 $it = new RecursiveIteratorIterator($it);
 
-$count = 0;
+$files = 0;
 $size = 0;
+$queries = 0;
 
 echo "\n";
 
@@ -199,7 +213,13 @@ foreach ($it as $fileInfo) {
         continue;
     }
     $path = str_replace('\\', '/', $fileInfo->getPathname());
-    if (isset($only) && !Str::endsWith($path, $only)) {
+    if (!isset($only) && file_exists($lastFailPath)) { // @phpstan-ignore-line (debug code)
+        $only = file_get_contents($lastFailPath);
+        if ($only === '') {
+            unset($only);
+        }
+    }
+    if (isset($only) && !Str::endsWith($path, $only)) { // @phpstan-ignore-line (debug code)
         continue;
     }
     foreach ($skips as $skip) {
@@ -208,8 +228,14 @@ foreach ($it as $fileInfo) {
             continue 2;
         }
     }
+    // skip directories
+    if (strpos($path, '/suite/') !== false) {
+        //continue;
+    }
 
-    rl($path, null, 'g');
+    $files++;
+    rl($path, (string) $files, 'g');
+    //rm();
 
     $contents = (string) file_get_contents($fileInfo->getPathname());
     $contents = str_replace("\r\n", "\n", $contents);
@@ -220,51 +246,38 @@ foreach ($it as $fileInfo) {
         }
     }
 
-    $contents = MysqlTestFilter::filter($contents);
+    $contents = $filter->filter($contents);
     //continue;
 
     // reset settings
-    $settings->setMode($settings->getPlatform()->getDefaultMode());
-    $settings->setDelimiter(';');
+    $session->reset();
 
-    $count++;
     $size += strlen($contents);
 
-    $formatter = new Formatter($settings);
-    $after = static function (TokenList $tokenList, array $commands) use ($formatter): void {
-        Assert::same($tokenList->serialize(), implode("\n", array_map(static function (Command $command) use ($formatter): string {
-            return $command->serialize($formatter);
-        }, $commands)));
-    };
+    try {
+        $queries += MysqlTestAssert::validCommands($contents, $parser, $formatter, static function (
+            string $sql,
+            InvalidCommand $command,
+            TokenList $tokenList
+        ): bool {
+            $firstToken = $tokenList->getTokens()[0];
+            rd(substr($sql, $firstToken->position - 100, 200));
 
-    Assert::validCommands($contents, $parser, $formatter, static function (string $sql, InvalidCommand $command, TokenList $tokenList, int $start, int $end)
-        use ($count, $path, $knownFailures): bool
-    {
-        $statement = $tokenList->serialize();
-        $comments = $command->getCommentsBefore();
-        $lastComment = end($comments);
-        if (in_array($statement, $knownFailures, true)) {
-            return false;
-        } elseif ($lastComment !== false && Str::startsWith($lastComment, '-- error')) {
-            return false;
-        } elseif ($statement[0] === '}' || Str::endsWith($statement, '}')) {
-            return false;
-        }
+            return true;
+        });
+    } catch (Throwable $e) {
+        file_put_contents($lastFailPath, $path);
+        throw $e;
+    }
 
-        rl($count . ': ' . Str::after($path, 'mysql-test'));
-        rd($tokenList);
-        rd($statement);
-        rd($comments);
-        $firstToken = $tokenList->getTokens()[0];
-        rd(substr($sql, $firstToken->position - 100, 200));
+    file_put_contents($lastFailPath, '');
 
-        return true;
-    });
     echo '.';
-    if ($count > 500) {
-        //break;
+    if ($files >= 100000000) {
+        break;
     }
 }
 
-rl('Count: ' . $count);
+rl('Files: ' . $files);
 rl('Size: ' . Units::memory($size));
+rl('Queries: ' . $queries);

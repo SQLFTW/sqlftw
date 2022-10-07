@@ -16,7 +16,6 @@ use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use function is_array;

@@ -546,6 +546,9 @@ class UserCommandsParser
                 continue;
             } elseif ($keyword === Keyword::FAILED_LOGIN_ATTEMPTS) {
                 $value = (int) $tokenList->expectUnsignedInt();
+                if ($value > 32767) {
+                    throw new ParserException('Maximum value of failed login attempts is 32767.', $tokenList);
+                }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::FAILED_LOGIN_ATTEMPTS), $value);
                 continue;
             } elseif ($keyword === Keyword::PASSWORD_LOCK_TIME) {
@@ -553,6 +556,9 @@ class UserCommandsParser
                     $value = Keyword::UNBOUNDED;
                 } else {
                     $value = (int) $tokenList->expectUnsignedInt();
+                    if ($value > 32767) {
+                        throw new ParserException('Maximum value of password lock time is 32767.', $tokenList);
+                    }
                 }
                 $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_LOCK_TIME), $value);
                 continue;

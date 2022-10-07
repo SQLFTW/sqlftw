@@ -15,6 +15,12 @@ parameters:
         - ../../sources/Reflection/*
 
     ignoreErrors:
+        # usually rulled out by isValue()
+        - '~Parameter #1 \$expression of class SqlFtw\\Sql\\Expression\\UnresolvedExpression constructor expects~'
+        # incorrect type
+        - '~Parameter #1 \$items of static method Dogma\\Str::join\(\) expects array<string>, array<int\|string> given~'
+        # PHPstan unable to distinguish between array{foo}|array{bar} and array{foo|bar}
+        - '~Binary operation "." between int\|string and int\|string results in an error~'
 
     earlyTerminatingMethodCalls:
         SqlFtw\Parser\TokenList:

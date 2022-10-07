@@ -11,7 +11,6 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
-use function bindec;
 use function chr;
 use function hexdec;
 use function str_repeat;
@@ -52,7 +51,7 @@ class HexadecimalLiteral implements BoolValue, StringValue, UintValue
         $string = '';
         $length = strlen($value);
         for ($n = 0; $n < $length; $n += 2) {
-            $string .= chr((int) bindec(substr($value, $n, 2)));
+            $string .= chr((int) hexdec(substr($value, $n, 2)));
         }
 
         return $string;

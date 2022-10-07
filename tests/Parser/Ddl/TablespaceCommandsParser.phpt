@@ -8,8 +8,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // ALTER [UNDO] TABLESPACE tablespace_name
-Assert::parseSerialize("ALTER TABLESPACE tbs1");
-Assert::parseSerialize("ALTER UNDO TABLESPACE tbs1");
+Assert::parseSerialize("ALTER UNDO TABLESPACE tbs1 ADD DATAFILE 'file1'");
 
 // [{ADD|DROP} DATAFILE 'file_name'] -- NDB only
 Assert::parseSerialize("ALTER TABLESPACE tbs1 ADD DATAFILE 'file1'");
@@ -38,7 +37,7 @@ Assert::parseSerialize("ALTER TABLESPACE tbs1 ENGINE InnoDB");
 
 // CREATE [UNDO] TABLESPACE tablespace_name
 Assert::parseSerialize("CREATE TABLESPACE tbs1");
-Assert::parseSerialize("CREATE UNDO TABLESPACE tbs1");
+Assert::parseSerialize("CREATE UNDO TABLESPACE tbs1 ADD DATAFILE 'file1'");
 
 // [ADD DATAFILE 'file_name']
 Assert::parseSerialize("CREATE TABLESPACE tbs1 ADD DATAFILE 'file1'");

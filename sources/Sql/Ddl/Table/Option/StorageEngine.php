@@ -12,6 +12,7 @@
 namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\SqlSerializable;
 use function in_array;
 use function strtolower;
@@ -27,7 +28,10 @@ class StorageEngine implements SqlSerializable
 
     public function __construct(string $value)
     {
-        $this->value = self::$map[strtolower($value)] ?? $value;
+        if (!isset(self::$map[strtolower($value)])) {
+            throw new InvalidDefinitionException("Invalid storage engine name: $value.");
+        }
+        $this->value = self::$map[strtolower($value)];
     }
 
     // standard
@@ -38,6 +42,7 @@ class StorageEngine implements SqlSerializable
     public const ARCHIVE = 'Archive';
     public const BLACKHOLE = 'Blackhole';
     public const TEMP_TABLE = 'TempTable';
+    public const PERFORMANCE_SCHEMA = 'performance_schema';
 
     // NDB
     public const NDB = 'NDB';
@@ -94,6 +99,7 @@ class StorageEngine implements SqlSerializable
         'ndbcluster' => self::NDBCLUSTER,
         'ndbinfo' => self::NDBINFO,
         'oqgraph' => self::OQGRAPH,
+        'performance_schema' => self::PERFORMANCE_SCHEMA,
         's3' => self::S3,
         'sequence' => self::SEQUENCE,
         'sphinx' => self::SPHINX,
@@ -128,6 +134,18 @@ class StorageEngine implements SqlSerializable
         $normalized = self::$map[strtolower($value)] ?? $value;
 
         return $this->value === $normalized;
+    }
+
+    public static function validateValue(string &$value): bool
+    {
+        $normalized = self::$map[strtolower($value)] ?? null;
+
+        if ($normalized !== null) {
+            $value = $normalized;
+            return true;
+        }
+
+        return false;
     }
 
     public function transactional(): bool

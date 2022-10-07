@@ -119,12 +119,12 @@ class ResourceCommandParser
      */
     public function parseSetResourceGroup(TokenList $tokenList): SetResourceGroupCommand
     {
-        $tokenList->expectKeywords(Keyword::DROP, Keyword::RESOURCE, Keyword::GROUP);
+        $tokenList->expectKeywords(Keyword::SET, Keyword::RESOURCE, Keyword::GROUP);
         $name = $tokenList->expectName(EntityType::RESOURCE_GROUP);
         $threadIds = null;
         if ($tokenList->hasKeywords(Keyword::FOR)) {
             do {
-                $threadIds[] = (int) $tokenList->expectUuid();
+                $threadIds[] = (int) $tokenList->expectUnsignedInt();
             } while ($tokenList->hasSymbol(','));
         }
 

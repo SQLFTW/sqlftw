@@ -17,6 +17,7 @@ use SqlFtw\Sql\Ddl\Tablespace\DropTablespaceCommand;
 use SqlFtw\Sql\Ddl\Tablespace\TablespaceOption;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
+use function count;
 
 class TablespaceCommandsParser
 {

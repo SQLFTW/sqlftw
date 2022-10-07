@@ -54,8 +54,8 @@ Assert::token($tokens[1], T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, '-- comment', 1
 
 $tokens = Assert::tokens(" -- comment\n ", 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, "-- comment", 1);
-Assert::token($tokens[2], T::WHITESPACE, "\n ", 11);
+Assert::token($tokens[1], T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, "-- comment\n", 1);
+Assert::token($tokens[2], T::WHITESPACE, " ", 12);
 
 // DOUBLE_SLASH_COMMENT
 $tokens = Assert::tokens(' // comment', 2);
@@ -64,8 +64,8 @@ Assert::token($tokens[1], T::COMMENT | T::DOUBLE_SLASH_COMMENT, '// comment', 1)
 
 $tokens = Assert::tokens(" // comment\n ", 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::COMMENT | T::DOUBLE_SLASH_COMMENT, "// comment", 1);
-Assert::token($tokens[2], T::WHITESPACE, "\n ", 11);
+Assert::token($tokens[1], T::COMMENT | T::DOUBLE_SLASH_COMMENT, "// comment\n", 1);
+Assert::token($tokens[2], T::WHITESPACE, " ", 12);
 
 // HASH_COMMENT
 $tokens = Assert::tokens(' # comment', 2);
@@ -74,5 +74,5 @@ Assert::token($tokens[1], T::COMMENT | T::HASH_COMMENT, '# comment', 1);
 
 $tokens = Assert::tokens(" # comment\n ", 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::COMMENT | T::HASH_COMMENT, "# comment", 1);
-Assert::token($tokens[2], T::WHITESPACE, "\n ", 10);
+Assert::token($tokens[1], T::COMMENT | T::HASH_COMMENT, "# comment\n", 1);
+Assert::token($tokens[2], T::WHITESPACE, " ", 11);

@@ -64,7 +64,7 @@ class Condition implements SqlSerializable
         if (is_int($this->value)) {
             return (string) $this->value;
         } elseif (is_string($this->value)) {
-            return $formatter->formatName((string) $this->value);
+            return $formatter->formatName($this->value);
         } elseif ($this->value instanceof SqlState) {
             return 'SQLSTATE ' . $this->value->serialize($formatter);
         } else {

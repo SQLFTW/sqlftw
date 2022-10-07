@@ -70,13 +70,13 @@ class Lexer
     /** @var array<string, int> (this is in fact array<int, int>, but PHPStan is unable to cope with the auto-casting of numeric string keys) */
     private static $numbersKey;
 
-    /** @var array<string, int> */
+    /** @var array<string|int, int> */
     private static $hexadecKey;
 
-    /** @var array<string, int> */
+    /** @var array<string|int, int> */
     private static $nameCharsKey;
 
-    /** @var array<string, int> */
+    /** @var array<string|int, int> */
     private static $userVariableNameCharsKey;
 
     /** @var array<string, int> */
@@ -196,7 +196,7 @@ class Lexer
         if ($buffer !== []) {
             if ($this->condition !== null) {
                 $this->condition = null;
-                $exception = new LexerException("End of optional comment not found.", $token->position, '');
+                $exception = new LexerException("End of optional comment not found.", $token->position, ''); // @phpstan-ignore-line $token exists!
                 $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
                 $invalid = true;
             }
@@ -244,6 +244,10 @@ class Lexer
                 case "\r":
                 case "\n":
                     $ws = $char;
+                    if ($char === "\n") {
+                        $column = 1;
+                        $row++;
+                    }
                     while ($position < $length) {
                         $next = $string[$position];
                         if ($next === ' ' || $next === "\t" || $next === "\r") {
@@ -465,8 +469,9 @@ class Lexer
                         $next6 = $string[$position];
                         $hashComment .= $next6;
                         $position++;
-                        $column++;
                         if ($next6 === "\n") {
+                            $column = 0;
+                            $row++;
                             break;
                         }
                     }
@@ -479,14 +484,14 @@ class Lexer
                     if ($next7 === '/') {
                         // // comment
                         $position++;
-                        $column++;
                         $slashComment = $char . $next7;
                         while ($position < $length) {
                             $next7 = $string[$position];
                             $slashComment .= $next7;
                             $position++;
-                            $column++;
                             if ($next7 === "\n") {
+                                $column = 0;
+                                $row++;
                                 break;
                             }
                         }
@@ -630,7 +635,8 @@ class Lexer
                             }
                             $line = substr($string, $position - 1, $endOfLine - $position + 2);
                             $position += strlen($line) - 1;
-                            $column += strlen($line) - 1;
+                            $column = 0;
+                            $row++;
 
                             if ($this->withComments) {
                                 yield $previous = new Token(T::COMMENT | T::DOUBLE_HYPHEN_COMMENT, $start, $row, $line, null);

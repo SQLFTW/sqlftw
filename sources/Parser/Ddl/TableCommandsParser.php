@@ -1030,11 +1030,10 @@ class TableCommandsParser
             throw new ParserException('GEOMETRY columns cannot have a default value.', $tokenList);
         }
 
-        if ($default instanceof StringLiteral && $default->getValue() === ''
-            && !$tokenList->getSession()->getMode()->containsAny(SqlMode::TRADITIONAL, SqlMode::STRICT_TRANS_TABLES)
-        ) {
-            // default '' is allowed in some modes
-        } elseif ($hasDefaultValue && $type->getBaseType()->isBlob()) {
+        // default '' is allowed in non-strict mode
+        $isEmptyStringAndNonStrict = $default instanceof StringLiteral && $default->getValue() === ''
+            && !$tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_TRANS_TABLES);
+        if ($hasDefaultValue && $type->getBaseType()->isBlob() && !$isEmptyStringAndNonStrict) {
             throw new ParserException('BLOB columns cannot have a default value.', $tokenList);
         }
 
@@ -1367,8 +1366,12 @@ class TableCommandsParser
             case Keyword::DATA:
                 $tokenList->expectKeyword(Keyword::DIRECTORY);
                 $tokenList->passSymbol('=');
+                $value = $tokenList->expectString();
+                if ($value === '' || $value === '.') {
+                    throw new ParserException('Value of DATA DIRECTORY can not be empty.', $tokenList);
+                }
 
-                return [TableOption::DATA_DIRECTORY, $tokenList->expectString()];
+                return [TableOption::DATA_DIRECTORY, $value];
             case Keyword::DEFAULT:
                 if ($tokenList->hasKeyword(Keyword::CHARSET)) {
                     $tokenList->passSymbol('=');
@@ -1529,8 +1532,7 @@ class TableCommandsParser
             $partitions = [];
             $subCount = false;
             do {
-                $last = $partitionsNumber !== null && $partitionsNumber - 1 === count($partitions);
-                $partition = $this->parsePartitionDefinition($tokenList, $condition, $last);
+                $partition = $this->parsePartitionDefinition($tokenList, $condition);
                 $partitions[] = $partition;
 
                 // every partition has the same number of subpartitions
@@ -1654,7 +1656,7 @@ class TableCommandsParser
      *         [TABLESPACE [=] tablespace_name]
      *         [NODEGROUP [=] number]             // NDB only
      */
-    private function parsePartitionDefinition(TokenList $tokenList, ?PartitioningCondition $condition = null, ?bool $last = false): PartitionDefinition
+    private function parsePartitionDefinition(TokenList $tokenList, ?PartitioningCondition $condition = null): PartitionDefinition
     {
         $tokenList->expectKeyword(Keyword::PARTITION);
         $name = $tokenList->expectName(EntityType::PARTITION);
@@ -1773,7 +1775,7 @@ class TableCommandsParser
      *     [TABLESPACE [=] tablespace_name]
      *     [NODEGROUP [=] number]             // NDB only
      *
-     * @return non-empty-array<string, int|string>|null
+     * @return non-empty-array<string, int|string|StorageEngine>|null
      */
     private function parsePartitionOptions(TokenList $tokenList): ?array
     {
@@ -1789,7 +1791,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::ENGINE);
                 case Keyword::ENGINE:
                     $tokenList->passSymbol('=');
-                    $options[PartitionOption::ENGINE] = $tokenList->expectNonReservedNameOrString();
+                    $options[PartitionOption::ENGINE] = $tokenList->expectStorageEngineName();
                     break;
                 case Keyword::COMMENT:
                     $tokenList->passSymbol('=');

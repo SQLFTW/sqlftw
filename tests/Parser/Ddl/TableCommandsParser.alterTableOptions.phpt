@@ -99,7 +99,7 @@ Assert::parseSerialize("ALTER TABLE tbl1 STATS_PERSISTENT DEFAULT");
 Assert::parseSerialize("ALTER TABLE tbl1 STATS_SAMPLE_PAGES 17");
 
 // TABLESPACE
-Assert::parseSerialize("ALTER TABLE tbl1 TABLESPACE 'tbs1'");
+Assert::parseSerialize("ALTER TABLE tbl1 TABLESPACE tbs1");
 
 // UNION
 Assert::parseSerialize("ALTER TABLE tbl1 UNION (tbl2, tbl3)");

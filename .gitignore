@@ -3,6 +3,7 @@
 /temp
 /vendor
 /tests/**/output/*
+/tests/MySQL/last-fail.txt
 local.neon
 build.local.properties
 netteForms.js

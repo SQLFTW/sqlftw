@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-
 interface TimeInterval extends RootNode
 {
 

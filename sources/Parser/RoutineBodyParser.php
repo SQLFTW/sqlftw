@@ -13,6 +13,7 @@ namespace SqlFtw\Parser;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Dml\QueryParser;
+use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
@@ -24,6 +25,8 @@ use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
 use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Event\EventCommand;
+use SqlFtw\Sql\Ddl\Instance\AlterInstanceCommand;
+use SqlFtw\Sql\Ddl\LogfileGroup\LogfileGroupCommand;
 use SqlFtw\Sql\Ddl\Schema\SchemaCommand;
 use SqlFtw\Sql\Ddl\Server\ServerCommand;
 use SqlFtw\Sql\Ddl\Tablespace\TablespaceCommand;
@@ -64,6 +67,7 @@ use SqlFtw\Sql\Routine\RoutineType;
 use SqlFtw\Sql\Routine\WhileStatement;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\SubqueryType;
+use function array_values;
 use function get_class;
 use function in_array;
 
@@ -79,11 +83,19 @@ class RoutineBodyParser
     /** @var QueryParser */
     private $queryParser;
 
-    public function __construct(Parser $parser, ExpressionParser $expressionParser, QueryParser $queryParser)
-    {
+    /** @var SessionUpdater */
+    private $sessionUpdater;
+
+    public function __construct(
+        Parser $parser,
+        ExpressionParser $expressionParser,
+        QueryParser $queryParser,
+        SessionUpdater $sessionUpdater
+    ) {
         $this->parser = $parser;
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
+        $this->sessionUpdater = $sessionUpdater;
     }
 
     /**
@@ -96,6 +108,8 @@ class RoutineBodyParser
      *   [begin_label:] BEGIN
      *     [statement_list]
      *   END [end_label]
+     *
+     * @param string&RoutineType::* $routine
      */
     public function parseBody(TokenList $tokenList, string $routine): Statement
     {
@@ -215,6 +229,10 @@ class RoutineBodyParser
                 break;
         }
 
+        if (!$statement instanceof Command) {
+            $this->sessionUpdater->processStatement($statement);
+        }
+
         // ensures that the statement was parsed completely
         if (!$tokenList->inEmbedded() && !$tokenList->isFinished()) {
             if ($statement instanceof CompoundStatement
@@ -268,7 +286,8 @@ class RoutineBodyParser
             || $statement instanceof TransactionCommand || $statement instanceof EventCommand
             || $statement instanceof DropTriggerCommand || $statement instanceof SchemaCommand
             || $statement instanceof TablespaceCommand || $statement instanceof ServerCommand
-            || $statement instanceof ReplicationCommand
+            || $statement instanceof ReplicationCommand || $statement instanceof AlterInstanceCommand
+            || $statement instanceof LogfileGroupCommand
         ) {
             // ok
         } else {
@@ -525,6 +544,9 @@ class RoutineBodyParser
                         $type = ConditionType::get(ConditionType::CONDITION);
                     } else {
                         $value = (int) $tokenList->expectUnsignedInt();
+                        if ($value === 0) {
+                            throw new ParserException('Condition value must be greater than 0.', $tokenList);
+                        }
                         $type = ConditionType::get(ConditionType::ERROR);
                     }
                 }
@@ -559,6 +581,9 @@ class RoutineBodyParser
                 }
             } else {
                 $value = (int) $tokenList->expectUnsignedInt();
+                if ($value === 0) {
+                    throw new ParserException('Condition value must be greater than 0.', $tokenList);
+                }
             }
 
             return new DeclareConditionStatement($name, $value);

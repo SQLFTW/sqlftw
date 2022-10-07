@@ -17,11 +17,11 @@ use SqlFtw\Formatter\Formatter;
 class ListExpression implements ArgumentNode
 {
 
-    /** @var non-empty-array<ExpressionNode> */
+    /** @var non-empty-array<RootNode> */
     private $items;
 
     /**
-     * @param non-empty-array<ExpressionNode> $items
+     * @param non-empty-array<RootNode> $items
      */
     public function __construct(array $items)
     {
@@ -29,7 +29,7 @@ class ListExpression implements ArgumentNode
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-array<RootNode>
      */
     public function getItems(): array
     {

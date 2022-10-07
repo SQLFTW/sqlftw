@@ -12,8 +12,8 @@ namespace SqlFtw\Tests;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserFactory;
-use SqlFtw\Session\Session;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Session\Session;
 
 class ParserHelper
 {
@@ -36,7 +36,7 @@ class ParserHelper
         $lexer = new Lexer($session, $withComments, $withWhitespace);
         $parser = new Parser($session, $lexer);
 
-        return new ParserFactory($session, $parser);
+        return $parser->getParserFactory();
     }
 
 }

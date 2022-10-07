@@ -19,7 +19,6 @@ use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Keyword;
 

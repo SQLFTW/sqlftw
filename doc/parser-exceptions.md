@@ -12,3 +12,25 @@ Parser exceptions hierarchy:
 also can be thrown:
 
 - **InvalidDefinitionException** - should not be thrown when using `Parser`, only when assembling commands or their components by hand
+
+
+- LexerError
+  - message 
+  - input
+  - input position
+- ParserError
+  - @SqlNode 
+  - message
+  - token list position
+- ParserWarning
+  - @SqlNode
+  - message
+- VersionError
+  - @SqlNode
+  - message
+  - version
+- TypeError
+  - @SqlNode
+  - message
+  - invalid value
+  - expected type

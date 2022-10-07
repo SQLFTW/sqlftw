@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Sql\SqlSerializable;
 
-Interface SelectInto extends SqlSerializable
+interface SelectInto extends SqlSerializable
 {
 
 }

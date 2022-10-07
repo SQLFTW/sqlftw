@@ -24,7 +24,6 @@ use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
-use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SubqueryType;
 

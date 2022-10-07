@@ -76,6 +76,7 @@ use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
@@ -85,6 +86,7 @@ use function in_array;
 use function ltrim;
 use function sprintf;
 use function strlen;
+use function strtolower;
 use function strtoupper;
 use function substr;
 
@@ -654,6 +656,10 @@ class ExpressionParser
                 } else {
                     return new DefaultLiteral();
                 }
+            } elseif ($upper === Keyword::SYSTEM) {
+                // hack for "SET GLOBAL log_timestamps=SYSTEM;"
+                // todo: better solution? hard to know this special less reserved word can be used without parser knowing too much context
+                return new SimpleName(Keyword::SYSTEM);
             }
         }
         if ($tokenList->hasSymbol('(')) {
@@ -700,7 +706,7 @@ class ExpressionParser
     /**
      * @return SystemVariable|UserVariable
      */
-    public function parseAtVariable(TokenList $tokenList, string $atVariable): Identifier
+    public function parseAtVariable(TokenList $tokenList, string $atVariable, bool $write = false): Identifier
     {
         if (in_array(strtoupper($atVariable), ['@@LOCAL', '@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
             // @@global.foo
@@ -715,7 +721,7 @@ class ExpressionParser
                 $name .= '.' . $tokenList->expectName(null);
             }
 
-            return $this->createSystemVariable($tokenList, $name, $scope);
+            return $this->createSystemVariable($tokenList, $name, $scope, $write);
         } elseif (substr($atVariable, 0, 2) === '@@') {
             // @@foo
             $name = substr($atVariable, 2);
@@ -723,7 +729,7 @@ class ExpressionParser
                 $name .= '.' . $tokenList->expectName(null);
             }
 
-            return $this->createSystemVariable($tokenList, $name);
+            return $this->createSystemVariable($tokenList, $name, null, $write);
         } else {
             // @foo
             $tokenList->validateName(EntityType::USER_VARIABLE, ltrim($atVariable, '@'));
@@ -732,12 +738,58 @@ class ExpressionParser
         }
     }
 
-    public function createSystemVariable(TokenList $tokenList, string $name, ?Scope $scope = null): SystemVariable
+    public function createSystemVariable(TokenList $tokenList, string $name, ?Scope $scope = null, bool $write = false): SystemVariable
     {
+        $name = strtolower($name);
         try {
-            return new SystemVariable($name, $scope);
+            $variable = new SystemVariable($name, $scope);
         } catch (InvalidDefinitionException $e) {
-            throw new ParserException('Invalid system variable name: ' . $name, $tokenList, $e);
+            throw new ParserException("Invalid system variable name: {$name}.", $tokenList, $e);
+        }
+
+        if ($write) {
+            if ($scope === null || !$scope->equalsValue(Scope::PERSIST_ONLY)) {
+                if (MysqlVariable::isDynamic($name) === false) {
+                    throw new ParserException("System variable {$name} cannot be set at runtime.", $tokenList);
+                }
+            }
+            if ($scope !== null && $scope->equalsAny(Scope::PERSIST, Scope::PERSIST_ONLY)) {
+                if (MysqlVariable::isNonPersistent($name)) {
+                    throw new ParserException("System variable {$name} cannot be persisted.", $tokenList);
+                }
+            }
+            if ($scope === null || $scope->equalsValue(Scope::SESSION)) {
+                if (MysqlVariable::isSessionReadonly($name)) {
+                    throw new ParserException("System variable {$name} is read-only in session scope.", $tokenList);
+                }
+            }
+        }
+
+        $restrictedToScope = MysqlVariable::getScope($name);
+        if ($write) {
+            if ($scope === null) {
+                $scope = Scope::get(Scope::SESSION);
+            }
+            if (!$this->hasValidScope($restrictedToScope, $scope)) {
+                throw new ParserException("System variable {$name} cannot be set at scope {$scope->getValue()}.", $tokenList);
+            }
+        } else {
+            if ($restrictedToScope !== null && $scope !== null && !$scope->equalsValue($restrictedToScope)) {
+                throw new ParserException("Invalid scope {$scope->getValue()} for system variable {$name}. Only {$restrictedToScope} is allowed.", $tokenList);
+            }
+        }
+
+        return $variable;
+    }
+
+    private function hasValidScope(?string $restrictedScope, Scope $writeScope): bool
+    {
+        if ($restrictedScope === null) {
+            return true;
+        } elseif ($restrictedScope === Scope::SESSION) {
+            return $writeScope->equalsValue(Scope::SESSION);
+        } else {
+            return !$writeScope->equalsValue(Scope::SESSION);
         }
     }
 
@@ -1069,7 +1121,10 @@ class ExpressionParser
         if ($value instanceof UintLiteral) {
             return new TimeIntervalLiteral([$value->asInt()], $unit);
         } elseif ($value instanceof IntLiteral) {
-            return new TimeIntervalLiteral([abs($value->asInt())], $unit, true);
+            /** @var positive-int $v */
+            $v = abs($value->asInt());
+
+            return new TimeIntervalLiteral([$v], $unit, true);
         } elseif ($value instanceof NumericLiteral) {
             return TimeIntervalLiteral::fromString($value->getValue(), $unit); // "INTERVAL 1.5 MINUTE_SECOND" parsed ad 1 minute, 5 seconds!
         } elseif ($value instanceof StringLiteral) {
@@ -1196,7 +1251,7 @@ class ExpressionParser
                 if ($type->equalsValue(BaseType::FLOAT)) {
                     // FLOAT(10.3) is valid :E
                     $length = (int) $tokenList->expect(TokenType::NUMBER)->value;
-                    if ($length <= 0) {
+                    if ($length < 0) {
                         throw new ParserException('Invalid FLOAT precision.', $tokenList);
                     }
                 } else {

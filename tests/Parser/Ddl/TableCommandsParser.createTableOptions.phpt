@@ -109,7 +109,7 @@ Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT) STATS_PERSISTENT DEFAULT");
 Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT) STATS_SAMPLE_PAGES 17");
 
 // TABLESPACE
-Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT) TABLESPACE 'tbs1'");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT) TABLESPACE tbs1");
 
 // UNION
 Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT) UNION (tbl2, tbl3)");

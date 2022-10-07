@@ -22,7 +22,7 @@ Assert::token($tokens[0], T::WHITESPACE, "\t\n\r", 0);
 // PLACEHOLDER
 $tokens = Assert::tokens(' ? ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::PLACEHOLDER, '?', 1);
+Assert::token($tokens[1], T::SYMBOL | T::PLACEHOLDER, '?', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 2);
 
 // DOT

@@ -7,17 +7,20 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-// phpcs:disable Squiz.Arrays.ArrayDeclaration.ValueNoNewline
 // spell-check-ignore: XBA XBB XBC XBD XBE XBF XBG closehandle expecterror mysqld recvresult stmtadmin stmtsql usexxx wildcard
 
 namespace SqlFtw\Tests\Mysql;
 
 use Dogma\StaticClassMixin;
 use Dogma\Str;
+use SqlFtw\Platform\Features\MysqlError;
+use function array_flip;
 use function array_splice;
+use function explode;
 use function implode;
 use function preg_match;
 use function preg_quote;
+use function strpos;
 use function substr;
 
 /**
@@ -28,7 +31,7 @@ class MysqlTestFilter
     use StaticClassMixin;
 
     public const MYSQL_TEST_SUITE_COMMANDS = [
-        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'character_set', 'chdir', 'chmod', 'close', 'closehandle',
+        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'character_set', 'chdir', 'chmod', /*'close',*/ 'close OUT', 'closehandle',
         'connect', 'CONNECT', 'copy_file', 'dec', 'DEC', 'die', 'diff_files', 'dirty_close', 'disable_abort_on_error',
         'disable_async_client', 'disable_connect_log', 'disable_info', 'disable_metadata', 'disable_parsing',
         'disable_ps_protocol', 'disable_query_log', 'disable_reconnect', 'disable_result_log', 'disable_session_track_info',
@@ -37,7 +40,7 @@ class MysqlTestFilter
         'enable_reconnect', 'enable_result_log', 'enable_session_track_info', 'enable_testcase', 'enable_warnings',
         'END_OF_PROCEDURE', 'eof', 'EOF', 'ERROR_LOG', 'eval', 'EVAL', 'exec', 'EXECUTE_STEP', 'exit', 'expecterror',
         'expr', 'file_exists', 'force', 'horizontal_results', 'ibdata2', 'inc', 'INC', 'let', 'LET', 'list_files',
-        'lowercase_result', 'mkdir', 'move_file', 'my', 'mysqlx', 'open', 'output', 'partially_sorted_result', 'perl',
+        'lowercase_result', 'mkdir', 'move_file', 'my', 'mysqlx', /*'open',*/ 'open OUT', 'output', 'partially_sorted_result', 'perl',
         'print', 'PROCEDURE', 'query', 'query_attributes', 'read', 'real_sleep', 'reap', 'REAP', 'REAp', 'recvresult', 'remove_file',
         'remove_files_wildcard', 'replace_column', 'replace_numeric_round', 'replace_regex', 'replace_result',
         'reset_connection', 'result_format', 'rmdir', 'save_master_pos', 'SCRIPT', 'secret', 'send_eval', 'send_quit',
@@ -46,10 +49,20 @@ class MysqlTestFilter
         'wait_for_slave_to_stop', 'write_file',
     ];
 
-    public static function filter(string $text): string
-    {
-        $commands = implode('|', self::MYSQL_TEST_SUITE_COMMANDS);
+    /** @var string */
+    private $commands;
 
+    /** @var array<int, string> */
+    private $errorCodes;
+
+    public function __construct()
+    {
+        $this->commands = implode('|', self::MYSQL_TEST_SUITE_COMMANDS);
+        $this->errorCodes = array_flip(MysqlError::getAllowedValues());
+    }
+
+    public function filter(string $text): string
+    {
         $rows = explode("\n", $text);
         $i = 0;
         $delimiter = ';';
@@ -82,10 +95,10 @@ class MysqlTestFilter
                 $quotedDelimiter = preg_quote($delimiter, '~');
             } elseif (preg_match('~^\s*-- ?error (.*)~i', $row, $m) !== 0) {
                 // error code
-                $rows[$i] = '-- error ' . $m[1] . ' (from "--error")';
+                $rows[$i] = '-- error ' . $this->translateErrorCodes($m[1]);
             } elseif (preg_match('~^\s*error ((?:\d|ER_).*)~i', $row, $m) !== 0) {
                 // error code
-                $rows[$i] = '-- error ' . $m[1] . ' (from "error")';
+                $rows[$i] = '-- error ' . $this->translateErrorCodes($m[1]);
             } elseif (preg_match('~^--disable_abort_on_error~i', $row, $m) !== 0) {
                 // error code
                 $rows[$i] = '-- error DISABLED (from "' . $m[0] . '")';
@@ -155,10 +168,10 @@ class MysqlTestFilter
             ) {
                 // mostly perl
                 array_splice($rows, $i, 1, ['-- XB8 ' . $row]);
-            } elseif (preg_match('~^\s*[{}]\s*(?:#.*)?$~i', $row) !== 0) {
+            } elseif (preg_match('~^\s*[{}]\s*(?:#.*)?$~i', $row) !== 0 && !Str::endsWith($rows[$i - 1], "'")) {
                 // brackets
                 array_splice($rows, $i, 1, ['-- XB9 ' . $row]);
-            } elseif (preg_match('~^\s*\{(?!["a-z])~', $row) !== 0) {
+            } elseif (preg_match('~^\s*\{(?!["a-z])~', $row) !== 0 && !Str::endsWith($rows[$i - 1], "'")) {
                 // brackets
                 array_splice($rows, $i, 1, ['-- XBB ' . $row]);
             } elseif (preg_match('~^\s*(?:}(?!\')|-->(?:end)?sql|use File::|\./binlog|\.[\\\\/]master)~', $row) !== 0) {
@@ -170,20 +183,41 @@ class MysqlTestFilter
             } elseif (preg_match('~/dev/null 2>&1 &$~', $row) !== 0) {
                 // end match
                 array_splice($rows, $i, 1, ['-- XBD ' . $row]);
-            } elseif (preg_match('~^\s*--(?:' . $commands . '|send)~', $row) !== 0) {
+            } elseif (preg_match('~^\s*--(?:' . $this->commands . '|send)~', $row) !== 0) {
                 // perl commands
                 array_splice($rows, $i, 1, ['-- XBE ' . $row]);
-            } elseif (preg_match('~^\s*(?:' . $commands . ')(?:\W+.*|$)~', $row) !== 0) {
+            } elseif (preg_match('~^\s*(?:' . $this->commands . ')(?:[^\w:]+.*|$)~', $row) !== 0) {
                 // perl commands
                 array_splice($rows, $i, 1, ['-- XBF ' . $row]);
             } elseif (preg_match('~\s*send;~i', $row) !== 0) {
                 // lonely send
                 array_splice($rows, $i, 1, ['-- XBG ' . $row]);
             }
+
+            // flip rows
+            if ($rows[$i] === 'DELIMITER // -- XBZ') {
+                if (strpos($rows[$i - 1], '-- error') === 0) {
+                    $rows[$i] = $rows[$i - 1];
+                    $rows[$i - 1] = 'DELIMITER // -- XBY';
+                }
+            }
+
             $i++;
         }
 
         return implode("\n", $rows);
+    }
+
+    private function translateErrorCodes(string $error): string
+    {
+        $codes = explode(',', trim($error, ' ;'));
+        foreach ($codes as $i => $code) {
+            if (isset($this->errorCodes[(int) $code])) {
+                $codes[$i] = $this->errorCodes[(int) $code];
+            }
+        }
+
+        return implode(',', $codes);
     }
 
 }

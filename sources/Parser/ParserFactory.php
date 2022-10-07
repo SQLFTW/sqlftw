@@ -56,6 +56,7 @@ use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
 use SqlFtw\Session\Session;
+use SqlFtw\Session\SessionUpdater;
 
 /**
  * Factory for all specialized parsers
@@ -81,10 +82,10 @@ class ParserFactory
     /** @var RoutineBodyParser */
     private $routineBodyParser;
 
-    public function __construct(Session $session, Parser $parser)
+    public function __construct(Parser $parser, Session $session, SessionUpdater $sessionUpdater)
     {
-        $this->session = $session;
         $this->parser = $parser;
+        $this->session = $session;
 
         $queryParserProxy = function (): QueryParser {
             return $this->queryParser;
@@ -92,7 +93,7 @@ class ParserFactory
         $this->expressionParser = new ExpressionParser($queryParserProxy);
         $this->tableReferenceParser = new TableReferenceParser($this->expressionParser, $queryParserProxy);
         $this->queryParser = new QueryParser($this, $this->expressionParser, $this->tableReferenceParser);
-        $this->routineBodyParser = new RoutineBodyParser($this->parser, $this->expressionParser, $this->queryParser);
+        $this->routineBodyParser = new RoutineBodyParser($this->parser, $this->expressionParser, $this->queryParser, $sessionUpdater);
     }
 
     public function getParser(): Parser

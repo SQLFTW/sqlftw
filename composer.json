@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": "^7.2|^8.0",
-        "dogma/dogma": "^0.2.15"
+        "dogma/dogma": "0.2.17"
     },
     "require-dev": {
         "dogma/dogma-dev": "0.1.29",
@@ -27,9 +27,11 @@
     "scripts": {
         "da": "composer dump-autoload",
         "ag": "@build:doc",
+        "b": "@build:init",
         "c": "@check:all",
         "cf": "@check:fast",
         "t": "@tests:run",
+        "tm": "@tests:mysql",
         "tc": "@tests:coverage",
         "ps": "@phpstan:run",
         "sc": "@spell:check",
@@ -38,13 +40,12 @@
             "@phpcs:tests"
         ],
 
-        "build": [
+        "build:init": [
             "composer install",
             "php -r \"@mkdir('log', 0777, true);\"",
             "php -r \"@mkdir('temp/cache', 0777, true);\"",
             "rm -rf temp/cache/*"
         ],
-
         "build:doc": "php81 ../../tools/apigen/bin/apigen sources --output doc/api",
 
         "check:fast": [
@@ -74,6 +75,7 @@
             "php72 vendor/nette/tester/src/tester tests -C --colors 1"
         ],
         "tests:coverage": "php vendor/nette/tester/src/tester tests -c tests --colors 1 -p phpdbg --coverage tests/coverage.html --coverage-src sources",
+        "tests:mysql": "php tests/Mysql/test.php",
 
         "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
         "phpstan:all": [
@@ -106,20 +108,23 @@
         ]
     },
     "scripts-descriptions": {
-        "ag": "\u001B[0;33m⭐Run ApiGen documentation generator\u001B[0m",
-        "da": "\u001B[0;33m⭐Dump autoloader (shortcut)\u001B[0m",
+        "ag": "\u001B[0;33m⭐Run ApiGen documentation generator (shortcut)\u001B[0m",
+        "b": "\u001B[0;33m⭐Run build script (shortcut)\u001B[0m",
         "c": "\u001B[0;33m⭐Run all checks (shortcut)\u001B[0m",
         "cf": "\u001B[0;33m⭐Run fast checks (shortcut)\u001B[0m",
+        "cs": "\u001B[0;33m⭐Run CS check\u001B[0m",
+        "da": "\u001B[0;33m⭐Dump autoloader (shortcut)\u001B[0m",
         "t": "\u001B[0;33m⭐Run tests (shortcut)\u001B[0m",
         "tc": "\u001B[0;33m⭐Run tests with code coverage (shortcut)\u001B[0m",
-        "cs": "\u001B[0;33m⭐Run CS check\u001B[0m",
-        "build": "\u001B[0;33m⭐Run build script\u001B[0m",
+        "tm": "\u001B[0;33m⭐Run MySQL tests (shortcut)\u001B[0m",
+        "build:init": "\u001B[0;33m⭐Run build script (composer, directories etc.)\u001B[0m",
         "build:doc": "\u001B[0;33m⭐Run Apigen documentation generator\u001B[0m",
         "check:fast": "\u001B[0;33m⭐Run all checks (tests, phpstan, phpcs, phplint, spell-check)\u001B[0m",
         "check:all": "\u001B[0;33m⭐Run all checks on all supported PHP versions (7.2 - 8.2)\u001B[0m",
-        "tests:run": "\u001B[0;33m⭐Run tests\u001B[0m",
-        "tests:all": "\u001B[0;33m⭐Run tests on all supported PHP versions (7.2 - 8.2)\u001B[0m",
-        "tests:coverage": "\u001B[0;33m⭐Run tests with code coverage\u001B[0m",
+        "tests:run": "\u001B[0;33m⭐Run unit tests\u001B[0m",
+        "tests:all": "\u001B[0;33m⭐Run unit tests on all supported PHP versions (7.2 - 8.2)\u001B[0m",
+        "tests:coverage": "\u001B[0;33m⭐Run unit tests with code coverage\u001B[0m",
+        "tests:mysql": "\u001B[0;33m⭐Run MySQL tests\u001B[0m",
         "phpstan:run": "\u001B[0;33m⭐Run PHPStan check\u001B[0m",
         "phpstan:all": "\u001B[0;33m⭐Run PHPStan check on all supported PHP versions (7.2 - 8.2)\u001B[0m",
         "phpcs:all": "\u001B[0;33m⭐Run CS check on /src and /tests\u001B[0m",

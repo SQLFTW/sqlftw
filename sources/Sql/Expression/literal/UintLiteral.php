@@ -12,4 +12,15 @@ namespace SqlFtw\Sql\Expression;
 class UintLiteral extends IntLiteral implements UintValue
 {
 
+    /**
+     * @return positive-int
+     */
+    public function asInt(): int
+    {
+        /** @var positive-int $value */
+        $value = (int) $this->value;
+
+        return $value;
+    }
+
 }

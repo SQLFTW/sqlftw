@@ -188,6 +188,9 @@ class ColumnType implements SqlSerializable
     public function addCollation(Collation $collation): self
     {
         if ($this->collation !== null) {
+            if ($this->collation->equals($collation) && $this->collation->equalsValue(Collation::BINARY)) {
+                return $this;
+            }
             throw new InvalidDefinitionException('Type already has a collation.');
         }
 

@@ -57,6 +57,7 @@ class TypeChecker
     {
         if (is_array($types)) {
             if (!in_array($value, $types, true)) {
+                assert(is_scalar($value));
                 throw new InvalidDefinitionException("Value should be one of '" . Str::join($types, ', ', ' or ') . "', but '$value' received.");
             }
 

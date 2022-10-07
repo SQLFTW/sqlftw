@@ -14,8 +14,11 @@ use Dogma\NotImplementedException;
 use SqlFtw\Platform\Features\FeaturesList;
 use SqlFtw\Platform\Features\MysqlFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
+use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
+use function assert;
 use function in_array;
+use function is_string;
 use function ltrim;
 use function strtoupper;
 use function ucfirst;
@@ -233,9 +236,12 @@ class Platform
     public function getDefaultMode(): SqlMode
     {
         if ($this->name === self::MYSQL || $this->name === self::MARIA) {
-            return SqlMode::getFromString(SqlMode::DEFAULT, $this);
+            $default = MysqlVariable::getDefault(MysqlVariable::SQL_MODE);
+            assert(is_string($default));
+
+            return SqlMode::getFromString($default);
         } else {
-            return SqlMode::getFromString(SqlMode::ANSI, $this);
+            return SqlMode::getFromString(SqlMode::ANSI);
         }
     }
 
@@ -349,12 +355,14 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return class-string[]
      */
     public function getPreparableCommands(): array
     {
         if ($this->preparableCommands === null) {
-            $this->preparableCommands = $this->filterForVersion($this->featuresList->preparableCommands, $this->version->getId());
+            /** @var class-string[] $commands */
+            $commands = $this->filterForVersion($this->featuresList->preparableCommands, $this->version->getId());
+            $this->preparableCommands = $commands;
         }
 
         return $this->preparableCommands;

@@ -8,26 +8,26 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 // SET ...
-Assert::parseSerialize("SET basedir = 1", 'SET @@SESSION.basedir = 1');
-Assert::parseSerialize("SET basedir = 1, datadir = 2", 'SET @@SESSION.basedir = 1, @@SESSION.datadir = 2');
+Assert::parseSerialize("SET lock_wait_timeout = 1", 'SET @@SESSION.lock_wait_timeout = 1');
+Assert::parseSerialize("SET lock_wait_timeout = 1, long_query_time = 2", 'SET @@SESSION.lock_wait_timeout = 1, @@SESSION.long_query_time = 2');
 Assert::parseSerialize("SET @var1 = 1");
-Assert::parseSerialize("SET @@basedir = 1"); // todo: inconsistent serialization
+Assert::parseSerialize("SET @@lock_wait_timeout = 1"); // todo: inconsistent serialization
 
-Assert::parseSerialize("SET @@SESSION.basedir = 1");
-Assert::parseSerialize("SET @@GLOBAL.basedir = 1");
-Assert::parseSerialize("SET @@PERSIST.basedir = 1");
-Assert::parseSerialize("SET @@PERSIST_ONLY.basedir = 1");
+Assert::parseSerialize("SET @@SESSION.lock_wait_timeout = 1");
+Assert::parseSerialize("SET @@GLOBAL.lock_wait_timeout = 1");
+Assert::parseSerialize("SET @@PERSIST.lock_wait_timeout = 1");
+Assert::parseSerialize("SET @@PERSIST_ONLY.lock_wait_timeout = 1");
 
-Assert::parseSerialize("SET @@session.basedir = 1", "SET @@SESSION.basedir = 1");
-Assert::parseSerialize("SET @@global.basedir = 1", "SET @@GLOBAL.basedir = 1");
-Assert::parseSerialize("SET @@persist.basedir = 1", "SET @@PERSIST.basedir = 1");
-Assert::parseSerialize("SET @@persist_only.basedir = 1", "SET @@PERSIST_ONLY.basedir = 1");
+Assert::parseSerialize("SET @@session.lock_wait_timeout = 1", "SET @@SESSION.lock_wait_timeout = 1");
+Assert::parseSerialize("SET @@global.lock_wait_timeout = 1", "SET @@GLOBAL.lock_wait_timeout = 1");
+Assert::parseSerialize("SET @@persist.lock_wait_timeout = 1", "SET @@PERSIST.lock_wait_timeout = 1");
+Assert::parseSerialize("SET @@persist_only.lock_wait_timeout = 1", "SET @@PERSIST_ONLY.lock_wait_timeout = 1");
 
-Assert::parseSerialize("SET SESSION basedir = 1", "SET @@SESSION.basedir = 1");
-Assert::parseSerialize("SET GLOBAL basedir = 1", "SET @@GLOBAL.basedir = 1");
-Assert::parseSerialize("SET PERSIST basedir = 1", "SET @@PERSIST.basedir = 1");
-Assert::parseSerialize("SET PERSIST_ONLY basedir = 1", "SET @@PERSIST_ONLY.basedir = 1");
+Assert::parseSerialize("SET SESSION lock_wait_timeout = 1", "SET @@SESSION.lock_wait_timeout = 1");
+Assert::parseSerialize("SET GLOBAL lock_wait_timeout = 1", "SET @@GLOBAL.lock_wait_timeout = 1");
+Assert::parseSerialize("SET PERSIST lock_wait_timeout = 1", "SET @@PERSIST.lock_wait_timeout = 1");
+Assert::parseSerialize("SET PERSIST_ONLY lock_wait_timeout = 1", "SET @@PERSIST_ONLY.lock_wait_timeout = 1");
 
-Assert::parseSerialize("SET @@LOCAL.basedir = 1", "SET @@SESSION.basedir = 1");
-Assert::parseSerialize("SET @@local.basedir = 1", "SET @@SESSION.basedir = 1");
-Assert::parseSerialize("SET LOCAL basedir = 1", "SET @@SESSION.basedir = 1");
+Assert::parseSerialize("SET @@LOCAL.lock_wait_timeout = 1", "SET @@SESSION.lock_wait_timeout = 1");
+Assert::parseSerialize("SET @@local.lock_wait_timeout = 1", "SET @@SESSION.lock_wait_timeout = 1");
+Assert::parseSerialize("SET LOCAL lock_wait_timeout = 1", "SET @@SESSION.lock_wait_timeout = 1");

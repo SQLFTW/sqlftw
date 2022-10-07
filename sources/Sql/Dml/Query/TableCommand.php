@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
-use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 

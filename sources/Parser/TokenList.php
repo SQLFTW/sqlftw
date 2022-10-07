@@ -10,6 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\InvalidValueException as InvalidEnumValueException;
+use Dogma\Language\Encoding;
 use Dogma\Str;
 use InvalidArgumentException;
 use SqlFtw\Parser\TokenType as T;
@@ -31,7 +32,9 @@ use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\Value;
+use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Routine\RoutineType;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\SubqueryType;
@@ -45,6 +48,8 @@ use function end;
 use function explode;
 use function implode;
 use function in_array;
+use function is_numeric;
+use function is_scalar;
 use function ltrim;
 use function mb_strlen;
 use function preg_match;
@@ -102,7 +107,7 @@ class TokenList
     /** @var int */
     private $position = 0;
 
-    /** @var array<RoutineType::*> Are we inside a function, procedure, trigger or event definition? */
+    /** @var array<string&RoutineType::*> Are we inside a function, procedure, trigger or event definition? */
     private $inRoutine = [];
 
     /** @var array<SubqueryType::*> Are we inside a subquery, and what type? */
@@ -154,13 +159,18 @@ class TokenList
         return $this->invalid;
     }
 
+    public function inDefinition(): bool
+    {
+        return $this->inRoutine() !== null && $this->inPrepared();
+    }
+
     public function inRoutine(): ?string
     {
         return $this->inRoutine !== [] ? end($this->inRoutine) : null;
     }
 
     /**
-     * @param string&RoutineType::* $value
+     * @param string&RoutineType::* $type
      */
     public function startRoutine(string $type): void
     {
@@ -374,15 +384,30 @@ class TokenList
 
     public function serialize(): string
     {
+        static $noSpaceAfter = ['(', '[', '{', '.'];
+        static $noSpaceBefore = [')', ']', '}', '.', ',', ':', ';'];
+
         $result = '';
-        foreach ($this->tokens as $token) {
+        foreach ($this->tokens as $i => $token) {
             $result .= $token->original ?? $token->value;
-            if (($this->autoSkip & T::WHITESPACE) === 0) {
-                $result .= ' ';
+
+            if (($this->autoSkip & T::WHITESPACE) !== 0) {
+                continue;
             }
+            if (($token->type & T::SYMBOL) !== 0 && in_array($token->value, $noSpaceAfter, true)) {
+                continue;
+            }
+            $next = $this->tokens[$i + 1] ?? null;
+            if ($next === null) {
+                break;
+            }
+            if (($next->type & T::SYMBOL) !== 0 && in_array($next->value, $noSpaceBefore, true)) {
+                continue;
+            }
+            $result .= ' ';
         }
 
-        return trim($result);
+        return $result;
     }
 
     // seek ------------------------------------------------------------------------------------------------------------
@@ -830,21 +855,30 @@ class TokenList
         return $token !== null ? $token->value : null;
     }
 
-    public function getNameOrStringEnumValue(string ...$values): ?string
+    /**
+     * @param string|int ...$values
+     * @return string|int|null
+     */
+    public function getVariableEnumValue(...$values)
     {
-        $token = $this->get(T::NAME | T::STRING);
+        $token = $this->get(T::NAME | T::STRING | T::INT);
         if ($token === null) {
             return null;
         }
 
         $value = strtoupper($token->value);
-        if (!in_array($value, $values, true)) {
-            $this->position--;
-
-            return null;
+        if (in_array($value, $values, true)) {
+            return $value;
+        } elseif (is_numeric($value)) {
+            $int = (int) $value;
+            if (($value === (string) $int) && in_array($int, $values, true)) {
+                return $value;
+            }
         }
 
-        return $value;
+        $this->position--;
+
+        return null;
     }
 
     /**
@@ -1050,10 +1084,23 @@ class TokenList
 
     public function validateName(?string $entity, string $name): void
     {
+        // todo: move to platform
         static $trailingWhitespaceNotAllowed = [
             EntityType::SCHEMA, EntityType::TABLE, EntityType::COLUMN, EntityType::PARTITION, EntityType::USER_VARIABLE, EntityType::SRS, EntityType::CHANNEL,
         ];
         static $emptyAllowed = [null, EntityType::TABLESPACE, EntityType::XA_TRANSACTION, EntityType::CHANNEL];
+
+        if ($entity === EntityType::TABLE || $entity === EntityType::SCHEMA) {
+            // might return an int collation id on unknown collations
+            $collationName = $this->session->getSessionVariable(MysqlVariable::COLLATION_CONNECTION);
+            $collation = Collation::tryGet(is_scalar($collationName) ? $collationName : null);
+            if ($collation !== null) {
+                $charset = $collation->getCharsetName();
+                if (Encoding::canCheck($charset) && !Encoding::check($name, $charset)) {
+                    throw new ParserException("Invalid character in table name '$name' for charset '$charset'.", $this);
+                }
+            }
+        }
 
         if ($name === '' && !in_array($entity, $emptyAllowed, true)) {
             throw new ParserException('Name must not be empty.', $this);
@@ -1444,7 +1491,7 @@ class TokenList
     public function expectSqlState(): SqlState
     {
         $value = $this->expectString();
-        if (!preg_match('~^[\dA-Z]{5}$~', $value)) {
+        if (preg_match('~^[\dA-Z]{5}$~', $value) === 0) {
             throw new ParserException("Invalid SQLSTATE value $value.", $this);
         }
 
@@ -1455,7 +1502,11 @@ class TokenList
     {
         $value = $this->expectNonReservedNameOrString();
 
-        return new StorageEngine($value);
+        try {
+            return new StorageEngine($value);
+        } catch (InvalidDefinitionException $e) {
+            throw new ParserException($e->getMessage(), $this, $e);
+        }
     }
 
     // end -------------------------------------------------------------------------------------------------------------

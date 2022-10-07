@@ -12,12 +12,17 @@
 namespace SqlFtw\Parser;
 
 use Generator;
+use SqlFtw\Analyzer\Rules\Variables\SystemVariablesTypeRule;
+use SqlFtw\Analyzer\SimpleAnalyzer;
+use SqlFtw\Analyzer\SimpleContext;
+use SqlFtw\Resolver\ExpressionResolver;
 use SqlFtw\Session\Session;
 use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
 use Throwable;
+use function count;
 use function strtoupper;
 
 /**
@@ -44,6 +49,9 @@ class Parser
     /** @var SessionUpdater */
     private $sessionUpdater;
 
+    /** @var SimpleAnalyzer */
+    private $analyzer;
+
     /** @var Lexer */
     private $lexer;
 
@@ -52,10 +60,18 @@ class Parser
 
     public function __construct(Session $session, ?Lexer $lexer = null)
     {
+        $resolver = new ExpressionResolver($session);
+
         $this->session = $session;
-        $this->sessionUpdater = new SessionUpdater($session);
+        $this->sessionUpdater = new SessionUpdater($session, $resolver);
         $this->lexer = $lexer ?? new Lexer($session);
-        $this->factory = new ParserFactory($session, $this);
+        $this->factory = new ParserFactory($this, $session, $this->sessionUpdater);
+
+        $context = new SimpleContext($session, $resolver);
+        // always executed rules (errors not as obvious as syntax error, but preventing command execution anyway)
+        $this->analyzer = new SimpleAnalyzer($context, [
+            new SystemVariablesTypeRule(),
+        ]);
     }
 
     public function getSession(): Session
@@ -63,8 +79,13 @@ class Parser
         return $this->session;
     }
 
+    public function getParserFactory(): ParserFactory
+    {
+        return $this->factory;
+    }
+
     /**
-     * @return Generator<array{Command&Statement, TokenList, int, int}>
+     * @return Generator<int, array{Command&Statement, TokenList}>
      */
     public function parse(string $sql, bool $prepared = false): Generator
     {
@@ -83,19 +104,29 @@ class Parser
                 continue;
             }
 
+            $results = $this->analyzer->process($command);
+            if (count($results) > 0) {
+                $exception = new AnalyzerException($results, $command, $tokenList);
+                $command = new InvalidCommand($command->getCommentsBefore(), $exception, $command);
+
+                yield [$command, $tokenList->slice($start, $end)];
+
+                continue;
+            }
+
             if ($tokenList->inRoutine() === null && !$tokenList->inPrepared()) {
                 try {
-                    $this->sessionUpdater->update($command, $tokenList);
+                    $this->sessionUpdater->processCommand($command, $tokenList);
                 } catch (ParsingException $e) {
                     $command = new InvalidCommand($command->getCommentsBefore(), $e, $command);
 
-                    yield [$command, $tokenList, $start, $end];
+                    yield [$command, $tokenList->slice($start, $end)];
 
                     continue;
                 }
             }
 
-            yield [$command, $tokenList, $start, $end];
+            yield [$command, $tokenList->slice($start, $end)];
         }
     }
 
@@ -527,8 +558,8 @@ class Parser
                 // INSERT
                 return $this->factory->getInsertCommandParser()->parseInsert($tokenList->rewind($start));
             case Keyword::INSTALL:
-                $second = $tokenList->expectAnyKeyword(Keyword::COMPONENT, Keyword::PLUGIN);
-                if ($second === Keyword::COMPONENT) {
+                $secondInstall = $tokenList->expectAnyKeyword(Keyword::COMPONENT, Keyword::PLUGIN);
+                if ($secondInstall === Keyword::COMPONENT) {
                     // INSTALL COMPONENT
                     return $this->factory->getComponentCommandsParser()->parseInstallComponent($tokenList->rewind($start));
                 } else {
@@ -539,8 +570,8 @@ class Parser
                 // KILL
                 return $this->factory->getKillCommandParser()->parseKill($tokenList->rewind($start));
             case Keyword::LOCK:
-                $second = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES, Keyword::INSTANCE);
-                if ($second === Keyword::INSTANCE) {
+                $secondLock = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES, Keyword::INSTANCE);
+                if ($secondLock === Keyword::INSTANCE) {
                     // LOCK INSTANCE
                     return $this->factory->getTransactionCommandsParser()->parseLockInstance($tokenList->rewind($start));
                 } else {
@@ -548,11 +579,11 @@ class Parser
                     return $this->factory->getTransactionCommandsParser()->parseLockTables($tokenList->rewind($start));
                 }
             case Keyword::LOAD:
-                $second = $tokenList->expectAnyKeyword(Keyword::DATA, Keyword::INDEX, Keyword::XML);
-                if ($second === Keyword::DATA) {
+                $secondLoad = $tokenList->expectAnyKeyword(Keyword::DATA, Keyword::INDEX, Keyword::XML);
+                if ($secondLoad === Keyword::DATA) {
                     // LOAD DATA
                     return $this->factory->getLoadCommandsParser()->parseLoadData($tokenList->rewind($start));
-                } elseif ($second === Keyword::INDEX) {
+                } elseif ($secondLoad === Keyword::INDEX) {
                     // LOAD INDEX INTO CACHE
                     return $this->factory->getCacheCommandsParser()->parseLoadIndexIntoCache($tokenList->rewind($start));
                 } else {
@@ -689,11 +720,11 @@ class Parser
                 // SIGNAL
                 return $this->factory->getErrorCommandsParser()->parseSignalResignal($tokenList->rewind($start));
             case Keyword::START:
-                $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA, Keyword::TRANSACTION);
-                if ($second === Keyword::GROUP_REPLICATION) {
+                $secondStart = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA, Keyword::TRANSACTION);
+                if ($secondStart === Keyword::GROUP_REPLICATION) {
                     // START GROUP_REPLICATION
                     return $this->factory->getReplicationCommandsParser()->parseStartGroupReplication($tokenList->rewind($start));
-                } elseif ($second === Keyword::SLAVE || $second === Keyword::REPLICA) {
+                } elseif ($secondStart === Keyword::SLAVE || $secondStart === Keyword::REPLICA) {
                     // START SLAVE
                     // START REPLICA
                     return $this->factory->getReplicationCommandsParser()->parseStartReplicaOrSlave($tokenList->rewind($start));
@@ -702,11 +733,11 @@ class Parser
                     return $this->factory->getTransactionCommandsParser()->parseStartTransaction($tokenList->rewind($start));
                 }
             case Keyword::STOP:
-                $second = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA);
-                if ($second === Keyword::GROUP_REPLICATION) {
+                $secondStop = $tokenList->expectAnyKeyword(Keyword::GROUP_REPLICATION, Keyword::SLAVE, Keyword::REPLICA);
+                if ($secondStop === Keyword::GROUP_REPLICATION) {
                     // STOP GROUP_REPLICATION
                     return $this->factory->getReplicationCommandsParser()->parseStopGroupReplication($tokenList->rewind($start));
-                } elseif ($second === Keyword::SLAVE) {
+                } elseif ($secondStop === Keyword::SLAVE) {
                     // STOP SLAVE
                     return $this->factory->getReplicationCommandsParser()->parseStopSlave($tokenList->rewind($start));
                 } else {
@@ -720,8 +751,8 @@ class Parser
                 // TRUNCATE [TABLE]
                 return $this->factory->getTableCommandsParser()->parseTruncateTable($tokenList->rewind($start));
             case Keyword::UNINSTALL:
-                $second = $tokenList->expectAnyKeyword(Keyword::COMPONENT, Keyword::PLUGIN);
-                if ($second === Keyword::COMPONENT) {
+                $secondUninstall = $tokenList->expectAnyKeyword(Keyword::COMPONENT, Keyword::PLUGIN);
+                if ($secondUninstall === Keyword::COMPONENT) {
                     // UNINSTALL COMPONENT
                     return $this->factory->getComponentCommandsParser()->parseUninstallComponent($tokenList->rewind($start));
                 } else {
@@ -729,8 +760,8 @@ class Parser
                     return $this->factory->getPluginCommandsParser()->parseUninstallPlugin($tokenList->rewind($start));
                 }
             case Keyword::UNLOCK:
-                $second = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES, Keyword::INSTANCE);
-                if ($second === Keyword::INSTANCE) {
+                $secondUnlock = $tokenList->expectAnyKeyword(Keyword::TABLE, Keyword::TABLES, Keyword::INSTANCE);
+                if ($secondUnlock === Keyword::INSTANCE) {
                     // UNLOCK INSTANCE
                     return $this->factory->getTransactionCommandsParser()->parseUnlockInstance($tokenList->rewind($start));
                 } else {

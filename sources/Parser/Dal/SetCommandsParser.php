@@ -21,6 +21,7 @@ use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
 use SqlFtw\Sql\EntityType;
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\EnumValueLiteral;
 use SqlFtw\Sql\Expression\Operator;
@@ -30,7 +31,6 @@ use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\SystemVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
-use function is_array;
 
 class SetCommandsParser
 {
@@ -50,11 +50,11 @@ class SetCommandsParser
      *     user_var_name = expr
      *   | param_name = expr
      *   | local_var_name = expr
-     *   | {GLOBAL | @@GLOBAL. | global.} system_var_name = expr
-     *   | {PERSIST | @@PERSIST. | persist.} system_var_name = expr
-     *   | {PERSIST_ONLY | @@PERSIST_ONLY. | persist_only.} system_var_name = expr
-     *   | [SESSION | @@SESSION. | session. | @@] system_var_name = expr
-     *   | [LOCAL | @@LOCAL | local. | @@] system_var_name = expr -- alias for SESSION
+     *   | {GLOBAL | @@GLOBAL.} system_var_name = expr
+     *   | {PERSIST | @@PERSIST.} system_var_name = expr
+     *   | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name = expr
+     *   | [SESSION | @@SESSION. | @@] system_var_name = expr
+     *   | [LOCAL | @@LOCAL | @@] system_var_name = expr -- alias for SESSION
      */
     public function parseSet(TokenList $tokenList): SetVariablesCommand
     {
@@ -142,40 +142,56 @@ class SetCommandsParser
      */
     private function parseAssignments(TokenList $tokenList): array
     {
+        $session = $tokenList->getSession();
         $assignments = [];
+        // scope used by last assignment stays valid for other assignments, until changed or overruled by "@@foo." syntax
+        $lastKeywordScope = null;
+        $current = false;
         do {
             if ($tokenList->hasKeyword(Keyword::LOCAL)) {
-                $scope = Scope::get(Scope::SESSION);
+                $lastKeywordScope = Scope::get(Scope::SESSION);
+                $current = true;
             } else {
-                $scope = $tokenList->getKeywordEnum(Scope::class);
+                $s = $tokenList->getKeywordEnum(Scope::class);
+                if ($s !== null) {
+                    $lastKeywordScope = $s;
+                    $current = true;
+                }
             }
-            $tokenList->passSymbol('.');
 
-            if ($scope !== null) {
+            if ($lastKeywordScope !== null && $current === true) {
                 // GLOBAL foo
                 $name = $tokenList->expectNonReservedNameOrString();
                 if ($tokenList->hasSymbol('.')) {
                     $name .= '.' . $tokenList->expectName(null);
                 }
-                $variable = $this->expressionParser->createSystemVariable($tokenList, $name, $scope);
+                $variable = $this->expressionParser->createSystemVariable($tokenList, $name, $lastKeywordScope, true);
             } elseif (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
                 // @foo, @@foo...
-                $variable = $this->expressionParser->parseAtVariable($tokenList, $token->value);
+                $variable = $this->expressionParser->parseAtVariable($tokenList, $token->value, true);
             } else {
                 $name = $tokenList->expectName(null);
                 if ($tokenList->hasSymbol('.')) {
-                    // NEW.foo etc.
                     $name2 = $tokenList->expectName(EntityType::COLUMN);
-                    $variable = new QualifiedName($name2, $name);
-                } elseif (MysqlVariable::validateValue($name)) {
-                    // system variable without scope
-                    $variable = $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION));
+                    $fullName = $name . '.' . $name2;
+                    if (MysqlVariable::validateValue($fullName)) {
+                        // plugin system variable without explicit scope
+                        $scope = $lastKeywordScope ?? Scope::get(Scope::SESSION);
+                        $variable = $this->expressionParser->createSystemVariable($tokenList, $fullName, $scope, true);
+                    } else {
+                        // NEW.foo etc.
+                        $variable = new QualifiedName($name2, $name);
+                    }
+                } elseif (!$session->isLocalVariable($name) && MysqlVariable::validateValue($name)) {
+                    // system variable without explicit scope
+                    $scope = $lastKeywordScope ?? Scope::get(Scope::SESSION);
+                    $variable = $this->expressionParser->createSystemVariable($tokenList, $name, $scope, true);
                 } elseif ($tokenList->inRoutine() !== null) {
                     // local variable
                     $variable = new SimpleName($name);
                 } else {
                     // throws
-                    $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION));
+                    $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION), true);
                     exit;
                 }
             }
@@ -183,11 +199,12 @@ class SetCommandsParser
             $operator = $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
 
             if ($variable instanceof SystemVariable) {
-                $type = MysqlVariable::getType($variable->getName());
-                if (is_array($type)) {
-                    $value = $tokenList->getNameOrStringEnumValue(...$type);
+                $varName = $variable->getName();
+                $type = MysqlVariable::getType($varName);
+                if ($type === BaseType::ENUM || $type === BaseType::SET) {
+                    $value = $tokenList->getVariableEnumValue(...MysqlVariable::getValues($varName));
                     if ($value !== null) {
-                        $expression = new EnumValueLiteral($value);
+                        $expression = new EnumValueLiteral((string) $value);
                     } else {
                         $expression = $this->expressionParser->parseAssignExpression($tokenList);
                     }
@@ -202,6 +219,7 @@ class SetCommandsParser
             }
 
             $assignments[] = new SetAssignment($variable, $expression, $operator);
+            $current = false;
         } while ($tokenList->hasSymbol(','));
 
         return $assignments;

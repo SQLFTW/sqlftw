@@ -25,6 +25,9 @@ class JsonTableColumnsList implements ArgumentNode, ArgumentValue
         $this->columns = $columns;
     }
 
+    /**
+     * @return non-empty-array<JsonTableColumn>
+     */
     public function getColumns(): array
     {
         return $this->columns;

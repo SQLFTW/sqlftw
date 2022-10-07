@@ -164,17 +164,17 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 6);
 
 $tokens = Assert::tokens(' @`var1` ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::NAME | T::AT_VARIABLE, '@var1', 1);
+Assert::token($tokens[1], T::NAME | T::AT_VARIABLE | T::BACKTICK_QUOTED_STRING, '@var1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 $tokens = Assert::tokens(' @\'var1\' ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::NAME | T::AT_VARIABLE, '@var1', 1);
+Assert::token($tokens[1], T::NAME | T::AT_VARIABLE | T::SINGLE_QUOTED_STRING, '@var1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 $tokens = Assert::tokens(' @"var1" ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::NAME | T::AT_VARIABLE, '@var1', 1);
+Assert::token($tokens[1], T::NAME | T::AT_VARIABLE | T::DOUBLE_QUOTED_STRING, '@var1', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 $tokens = Assert::tokens(' name1@name2 ', 4);

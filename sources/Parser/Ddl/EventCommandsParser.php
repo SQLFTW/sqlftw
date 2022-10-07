@@ -20,7 +20,6 @@ use SqlFtw\Sql\Ddl\Event\EventDefinition;
 use SqlFtw\Sql\Ddl\Event\EventSchedule;
 use SqlFtw\Sql\Ddl\Event\EventState;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Subquery;
 use SqlFtw\Sql\Expression\TimeIntervalExpression;
 use SqlFtw\Sql\Expression\TimeIntervalLiteral;

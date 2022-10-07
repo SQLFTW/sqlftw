@@ -18,14 +18,14 @@ Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 VALUES I
 Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 VALUES IN (1, 2))");
 
 // [[STORAGE] ENGINE [=] engine_name]
-Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 ENGINE = 'InnoDB')");
+Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 ENGINE = InnoDB)");
 Assert::parseSerialize(
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 STORAGE ENGINE = 'InnoDB')",
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 ENGINE = 'InnoDB')" // [STORAGE]
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 STORAGE ENGINE = InnoDB)",
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 ENGINE = InnoDB)" // [STORAGE]
 );
 Assert::parseSerialize(
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 ENGINE 'InnoDB')",
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 ENGINE = 'InnoDB')" // [=]
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 ENGINE InnoDB)",
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 ENGINE = InnoDB)" // [=]
 );
 
 // [COMMENT [=] 'comment_text' ]
@@ -64,10 +64,10 @@ Assert::parseSerialize(
 );
 
 // [TABLESPACE [=] tablespace_name]
-Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 TABLESPACE = 'tbs1')");
+Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 TABLESPACE = tbs1)");
 Assert::parseSerialize(
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 TABLESPACE 'tbs1')",
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 TABLESPACE = 'tbs1')" // [=]
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 TABLESPACE tbs1)",
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 TABLESPACE = tbs1)" // [=]
 );
 
 
@@ -76,14 +76,14 @@ Assert::parseSerialize(
 Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1, SUBPARTITION sub2))");
 
 // [[STORAGE] ENGINE [=] engine_name]
-Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 ENGINE = 'InnoDB'))");
+Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 ENGINE = InnoDB))");
 Assert::parseSerialize(
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 STORAGE ENGINE = 'InnoDB'))",
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 ENGINE = 'InnoDB'))" // [STORAGE]
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 STORAGE ENGINE = InnoDB))",
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 ENGINE = InnoDB))" // [STORAGE]
 );
 Assert::parseSerialize(
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 ENGINE 'InnoDB'))",
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 ENGINE = 'InnoDB'))" // [=]
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 ENGINE InnoDB))",
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 ENGINE = InnoDB))" // [=]
 );
 
 // [COMMENT [=] 'comment_text' ]
@@ -122,10 +122,10 @@ Assert::parseSerialize(
 );
 
 // [TABLESPACE [=] tablespace_name]
-Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 TABLESPACE = 'tbs1'))");
+Assert::parseSerialize("ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 TABLESPACE = tbs1))");
 Assert::parseSerialize(
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 TABLESPACE 'tbs1'))",
-    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 TABLESPACE = 'tbs1'))" // [=]
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 TABLESPACE tbs1))",
+    "ALTER TABLE tbl1 ADD PARTITION (PARTITION part1 (SUBPARTITION sub1 TABLESPACE = tbs1))" // [=]
 );
 
 

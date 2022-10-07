@@ -16,6 +16,8 @@ use function array_pad;
 use function array_slice;
 use function array_sum;
 use function count;
+use function explode;
+use function preg_replace;
 use function sprintf;
 use function str_replace;
 use function substr;
@@ -26,7 +28,7 @@ use function substr;
 class TimeIntervalLiteral implements TimeInterval, Value
 {
 
-    /** @var non-empty-array<positive-int> */
+    /** @var non-empty-array<int> */
     private $quantity;
 
     /** @var TimeIntervalUnit */
@@ -36,7 +38,7 @@ class TimeIntervalLiteral implements TimeInterval, Value
     private $negative;
 
     /**
-     * @param non-empty-array<positive-int> $quantity
+     * @param non-empty-array<int> $quantity
      */
     public function __construct(array $quantity, TimeIntervalUnit $unit, bool $negative = false)
     {
@@ -44,6 +46,7 @@ class TimeIntervalLiteral implements TimeInterval, Value
         if (count($quantity) > $parts) {
             throw new InvalidDefinitionException('Count of values should match the unit used.');
         } elseif (count($quantity) < $parts) {
+            /** @var non-empty-array<positive-int> $quantity */
             $quantity = array_pad($quantity, $parts, 0);
         }
 
@@ -78,7 +81,7 @@ class TimeIntervalLiteral implements TimeInterval, Value
     }
 
     /**
-     * @return non-empty-array<positive-int>
+     * @return non-empty-array<int>
      */
     public function getQuantity(): array
     {

@@ -658,7 +658,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         // GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
         self::GET_FORMAT => [Keyword::DATE => TimeTypeLiteral::class, Keyword::TIME => TimeTypeLiteral::class, Keyword::DATETIME => TimeTypeLiteral::class],
         // GROUP_CONCAT([DISTINCT] expr [,expr ...] [ORDER BY {unsigned_integer | col_name | expr} [ASC | DESC] [,col_name ...]] [SEPARATOR str_val])
-        self::GROUP_CONCAT => [Keyword::DISTINCT => RootNode::class, Keyword::ORDER . ' ' . Keyword::BY => OrderByExpression::class, Keyword::SEPARATOR => Literal::class,],
+        self::GROUP_CONCAT => [Keyword::DISTINCT => RootNode::class, Keyword::ORDER . ' ' . Keyword::BY => OrderByListExpression::class, Keyword::SEPARATOR => Literal::class,],
         // JSON_TABLE(expr, path COLUMNS (column_list) [AS] alias)
         // has special handling because of irregular syntax
         self::JSON_TABLE => [Keyword::COLUMNS => '*', Keyword::AS => '*'],

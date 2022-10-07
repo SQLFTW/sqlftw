@@ -29,6 +29,7 @@ use function array_values;
 use function implode;
 use function is_numeric;
 use function is_string;
+use function ltrim;
 use function preg_match;
 use function str_replace;
 use function strpos;
@@ -82,13 +83,16 @@ class Formatter
 
     public function formatName(string $name): string
     {
+        if ($name === '*') {
+            return '*';
+        }
         $quote = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES) ? '"' : '`';
         $name = str_replace($quote, $quote . $quote, $name);
 
         $needsQuoting = $this->quoteAllNames
             || strpos($name, $quote) !== false // contains quote
             || preg_match('~[\pL_]~u', $name) === 0 // does not contain letters
-            || preg_match('~[\pC\pM\pP\pS\pZ]~u', $name) !== 0 // contains control, mark, punctuation, symbols or whitespace
+            || preg_match('~[\pC\pM\pS\pZ\p{Pd}\p{Pe}\p{Pf}\p{Pi}\p{Po}\p{Ps}]~u', ltrim($name, '@')) !== 0 // contains control, mark, symbols, whitespace, punctuation except _
             || $this->session->getPlatform()->isReserved($name);
 
         return $needsQuoting ? $quote . $name . $quote : $name;

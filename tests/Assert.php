@@ -4,7 +4,6 @@ namespace SqlFtw\Tests;
 
 use Dogma\Debug\Callstack;
 use Dogma\Debug\Debugger;
-use Dogma\Debug\Dumper;
 use Dogma\Re;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
@@ -12,13 +11,12 @@ use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserException;
-use SqlFtw\Parser\ParsingException;
-use SqlFtw\Session\Session;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Session\Session;
+use SqlFtw\Sql\Command;
 use function class_exists;
 use function gettype;
 use function implode;
@@ -33,6 +31,9 @@ use function str_replace;
 class Assert extends DogmaAssert
 {
 
+    /**
+     * @return array<Token>
+     */
     public static function tokens(string $sql, int $count, ?string $mode = null): array
     {
         $session = new Session(Platform::get(Platform::MYSQL, '5.7'));
@@ -116,11 +117,11 @@ class Assert extends DogmaAssert
         if (count($results) > 1) {
             self::fail('More than one command found in given SQL code.');
         }
-        [$command, $tokenList, $start, $end] = $results[0];
+        [$command, $tokenList] = $results[0];
 
         if ($command instanceof InvalidCommand) {
             if (class_exists(Debugger::class)) {
-                Debugger::dump($command->getTokenList());
+                Debugger::dump($tokenList);
             }
             throw $command->getException();
         }
@@ -134,22 +135,19 @@ class Assert extends DogmaAssert
         self::same($actual, $expected);
     }
 
-    public static function validCommand(
-        string $query,
-        ?Parser $parser = null
-    ): void {
+    public static function validCommand(string $query, ?Parser $parser = null): void
+    {
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
-
 
         $results = iterator_to_array($parser->parse($query));
         if (count($results) > 1) {
             self::fail('More than one command found in given SQL code.');
         }
-        [$command, $tokenList, $start, $end] = $results[0];
+        [$command, $tokenList] = $results[0];
 
         if ($command instanceof InvalidCommand) {
             if (class_exists(Debugger::class)) {
-                Debugger::dump($command->getTokenList());
+                Debugger::dump($tokenList);
             }
             throw $command->getException();
         }
@@ -157,35 +155,21 @@ class Assert extends DogmaAssert
         self::true(true);
     }
 
-    public static function validCommands(
-        string $sql,
-        ?Parser $parser = null,
-        ?Formatter $formatter = null,
-        ?callable $onError = null
-    ): void {
+    public static function validCommands(string $sql, ?Parser $parser = null): void
+	{
         $parser = $parser ?? ParserHelper::getParserFactory()->getParser();
 
         try {
+            /** @var Command $command */
             /** @var TokenList $tokenList */
-            foreach ($parser->parse($sql) as [$command, $tokenList, $start, $end]) {
+            foreach ($parser->parse($sql) as [$command, $tokenList]) {
                 if ($command instanceof InvalidCommand) {
-                    $fail = $onError !== null ? $onError($sql, $command, $tokenList, $start, $end) : true;
-                    if ($fail) {
-                        throw $command->getException();
-                    }
-                    continue;
+                    throw $command->getException();
                 }
 
                 self::true(true);
             }
         } catch (LexerException $e) {
-            if (class_exists(Debugger::class)) {
-                if ($e->backtrace !== null) {
-                    /** @var PhpBacktraceItem[] $trace */
-                    $trace = $e->getTrace();
-                    Debugger::callstack(100, 1, 5, 100, $trace);
-                }
-            }
             throw $e;
         }
 

@@ -11,6 +11,7 @@ use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Tests\MysqlTestAssert;
 use Tracy\Debugger;
@@ -52,12 +53,10 @@ $tokenFormatter = static function (Token $token, int $depth = 0): string {
 
     $type = implode('|', TokenType::getByValue($token->type)->getConstantNames());
     $orig = $token->original !== null && $token->original !== $token->value ? ' / ' . Dumper::value($token->original) : '';
-    $info = Dumper::$showInfo ? ' ' . Dumper::info('// #' . Dumper::objectHash($token)) : '';
-    $res = Dumper::name(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
-        . Dumper::value2($type) . ' ' . Dumper::info('at row') . ' ' . $token->row
-        . Dumper::bracket(')') . $info;
 
-    return $res;
+    return Dumper::name(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
+        . Dumper::value2($type) . ' ' . Dumper::info('at row') . ' ' . $token->row
+        . Dumper::bracket(')') . Dumper::objectInfo($token);
 };
 Dumper::$objectFormatters[Token::class] = $tokenFormatter;
 Dumper::$shortObjectFormatters[Token::class] = $tokenFormatter;
@@ -73,19 +72,16 @@ Dumper::$shortObjectFormatters[TokenList::class] = static function (TokenList $t
         $contents .= ctype_space($token->value) ? '·' : $token->value;
     }
     $dots = $count > $limit ? '...' : '';
-    $info = Dumper::$showInfo !== true ? ' ' . Dumper::info('// #' . Dumper::objectHash($tokenList)) : '';
 
     return Dumper::name(get_class($tokenList)) . Dumper::bracket('(')
         . Dumper::value($contents . $dots) . ' | ' . Dumper::value2($count . ' tokens, position ' . $tokenList->getPosition())
-        . Dumper::bracket(')') . $info;
+        . Dumper::bracket(')') . Dumper::objectInfo($tokenList);
 };
 
 // Platform
 Dumper::$objectFormatters[Platform::class] = static function (Platform $platform): string {
-    $version = $platform->getVersion();
-
     return Dumper::name(get_class($platform)) . Dumper::bracket('(')
-        . Dumper::value($platform->getName()) . ' ' . Dumper::value2($version->format())
+        . Dumper::value($platform->getName()) . ' ' . Dumper::value2($platform->getVersion()->format())
         . Dumper::bracket(')');
 };
 
@@ -94,4 +90,11 @@ Dumper::$objectFormatters[SimpleName::class] = static function (SimpleName $simp
     return Dumper::name(get_class($simpleName)) . Dumper::bracket('(')
         . Dumper::value($simpleName->getName())
         . Dumper::bracket(')');
+};
+
+// Token
+Dumper::$shortObjectFormatters[FunctionCall::class] = static function (FunctionCall $functionCall): string {
+    return Dumper::name(get_class($functionCall)) . Dumper::bracket('(') . ' '
+        . Dumper::value($functionCall->getFunction()->getFullName()) . ' ' . Dumper::exceptions('...') . ' '
+        . Dumper::bracket(')') . Dumper::objectInfo($functionCall);
 };

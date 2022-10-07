@@ -40,13 +40,14 @@ use SqlFtw\Sql\Dal\Replication\UuidSet;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\NullLiteral;
+use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\Subquery;
-use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
 use function array_shift;
 use function explode;
+use function is_string;
 use function trim;
 use const PHP_INT_MAX;
 
@@ -118,7 +119,6 @@ class ReplicationCommandsParser
             $option = $tokenList->expectKeywordEnum(SlaveOption::class);
             $tokenList->expectOperator(Operator::EQUAL);
             $type = $types[$option->getValue()];
-            $value = '';
             switch ($type) {
                 case [0, 1]:
                     $value = (int) $tokenList->expectUnsignedInt();
@@ -181,7 +181,7 @@ class ReplicationCommandsParser
                     $value = $tokenList->expectKeywordEnum(ReplicationPrimaryKeyCheckOption::class);
                     break;
                 default:
-                    throw new ShouldNotHappenException("Unknown type $type.");
+                    throw new ShouldNotHappenException(is_string($type) ? "Unknown type $type." : "Unknown type.");
             }
             $options[$option->getValue()] = $value;
         } while ($tokenList->hasSymbol(','));
@@ -253,7 +253,6 @@ class ReplicationCommandsParser
             $option = $tokenList->expectKeywordEnum(ReplicaOption::class);
             $tokenList->expectOperator(Operator::EQUAL);
             $type = $types[$option->getValue()];
-            $value = '';
             switch ($type) {
                 case [0, 1]:
                     $value = (int) $tokenList->expectUnsignedInt();
@@ -316,7 +315,7 @@ class ReplicationCommandsParser
                     $value = $tokenList->expectKeywordEnum(ReplicationPrimaryKeyCheckOption::class);
                     break;
                 default:
-                    throw new ShouldNotHappenException("Unknown type $type.");
+                    throw new ShouldNotHappenException(is_string($type) ? "Unknown type $type." : "Unknown type.");
             }
             $options[$option->getValue()] = $value;
         } while ($tokenList->hasSymbol(','));
@@ -450,7 +449,7 @@ class ReplicationCommandsParser
         if ($tokenList->hasKeyword(Keyword::TO)) {
             $position = $tokenList->expectIntLike();
             if ((int) $position->getValue() === PHP_INT_MAX) {
-                throw new ParserException('Log file index number is too large.', $position);
+                throw new ParserException('Log file index number is too large.', $tokenList);
             }
         }
 

@@ -16,7 +16,7 @@ use SqlFtw\Sql\Dml\FileFormat;
 class SelectIntoOutfile implements SelectInto
 {
 
-    /** @var string|null */
+    /** @var string */
     private $fileName;
 
     /** @var Charset|null */
