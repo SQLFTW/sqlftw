@@ -17,7 +17,8 @@
     "require-dev": {
         "dogma/dogma-dev": "0.1.29",
         "phpstan/phpstan": "1.8.2",
-        "phpstan/phpstan-strict-rules": "^1.0"
+        "phpstan/phpstan-strict-rules": "^1.0",
+        "amphp/parallel-functions": "1.0.0"
     },
     "autoload": {
         "classmap": ["sources", "tests", "build"]

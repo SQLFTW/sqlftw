@@ -385,7 +385,7 @@ class TokenList
     public function serialize(): string
     {
         static $noSpaceAfter = ['(', '[', '{', '.'];
-        static $noSpaceBefore = [')', ']', '}', '.', ',', ':', ';'];
+        static $noSpaceBefore = ['(', ')', ']', '}', '.', ',', ':', ';'];
 
         $result = '';
         foreach ($this->tokens as $i => $token) {
@@ -404,6 +404,10 @@ class TokenList
             if (($next->type & T::SYMBOL) !== 0 && in_array($next->value, $noSpaceBefore, true)) {
                 continue;
             }
+            if (($next->type & T::DELIMITER) !== 0) {
+                continue;
+            }
+
             $result .= ' ';
         }
 
