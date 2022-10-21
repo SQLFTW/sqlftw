@@ -18,6 +18,7 @@ use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\AliasExpression;
 use SqlFtw\Sql\Expression\Asterisk;
+use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BoolLiteral;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\CastType;
@@ -38,6 +39,7 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringValue;
+use SqlFtw\Sql\Expression\TimestampLiteral;
 use SqlFtw\Sql\Expression\TimeTypeLiteral;
 use SqlFtw\Sql\Expression\TimeValue;
 use SqlFtw\Sql\Expression\TimeZone;
@@ -100,7 +102,24 @@ trait ExpressionParserFunctions
                         $arguments[$keyword] = $tokenList->expectCharsetName();
                         continue 3;
                     case CastType::class:
-                        $arguments[$keyword] = $this->parseCastType($tokenList);
+                        $arguments[$keyword] = $type = $this->parseCastType($tokenList);
+                        // todo: move to cast rule
+                        if ($name1 === BuiltInFunction::CAST) {
+                            if ($arguments[0] instanceof TimeValue) {
+                                $baseType = $type->getBaseType();
+                                if ($baseType !== null && !$baseType->isTime() && !$baseType->equalsAny(BaseType::YEAR, BaseType::JSON, BaseType::FLOAT, BaseType::DOUBLE, BaseType::BINARY)) {
+                                    throw new ParserException("Cannot cast from temporal type to {$baseType->getValue()}.", $tokenList);
+                                }
+                                if ($arguments[0] instanceof DatetimeLiteral || $arguments[0] instanceof TimestampLiteral) {
+                                    if (isset($arguments['AT TIME ZONE']) && $baseType !== null && !$baseType->equalsAny(BaseType::TIMESTAMP, BaseType::DATETIME)) {
+                                        throw new ParserException("Cannot cast timestamp at timezone to {$baseType->getValue()}.", $tokenList);
+                                    }
+                                    if ($baseType !== null && $baseType->equalsAny(BaseType::DATE, BaseType::TIME)) {
+                                        throw new ParserException("Cannot cast timestamp to {$baseType->getValue()}.", $tokenList);
+                                    }
+                                }
+                            }
+                        }
                         continue 3;
                     case OrderByListExpression::class:
                         $arguments[$keyword] = new OrderByListExpression($this->parseOrderBy($tokenList));

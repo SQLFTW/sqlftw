@@ -69,6 +69,7 @@ use SqlFtw\Sql\Expression\TimeIntervalExpression;
 use SqlFtw\Sql\Expression\TimeIntervalLiteral;
 use SqlFtw\Sql\Expression\TimeIntervalUnit;
 use SqlFtw\Sql\Expression\TimeLiteral;
+use SqlFtw\Sql\Expression\TimestampLiteral;
 use SqlFtw\Sql\Expression\TimeValue;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UnaryOperator;
@@ -946,12 +947,34 @@ class ExpressionParser
             $string = $tokenList->getString();
             if ($string !== null) {
                 if ($keyword === Keyword::DATE) {
-                    return new DateLiteral($string);
+                    $date = new DateLiteral($string);
+                    if ($date->hasZeroDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_DATE)) {
+                        throw new ParserException('Invalid date literal value.', $tokenList);
+                    } elseif ($date->hasZeroInDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_IN_DATE)) {
+                        throw new ParserException('Invalid date literal value.', $tokenList);
+                    }
+
+                    return $date;
                 } elseif ($keyword === Keyword::TIME) {
                     return new TimeLiteral($string);
+                } elseif ($keyword === Keyword::TIMESTAMP) {
+                    $timestamp = new TimestampLiteral($string);
+                    if ($timestamp->hasZeroDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_DATE)) {
+                        throw new ParserException('Invalid date literal value.', $tokenList);
+                    } elseif ($timestamp->hasZeroInDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_IN_DATE)) {
+                        throw new ParserException('Invalid date literal value.', $tokenList);
+                    }
+
+                    return $timestamp;
                 } else {
-                    // todo: is TimestampLiteral needed?
-                    return new DatetimeLiteral($string);
+                    $datetime = new DatetimeLiteral($string);
+                    if ($datetime->hasZeroDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_DATE)) {
+                        throw new ParserException('Invalid date literal value.', $tokenList);
+                    } elseif ($datetime->hasZeroInDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_IN_DATE)) {
+                        throw new ParserException('Invalid date literal value.', $tokenList);
+                    }
+
+                    return $datetime;
                 }
             } else {
                 $tokenList->rewind($position);

@@ -31,6 +31,8 @@ trait Errors
         'ER_WRONG_TYPE_FOR_VAR',
         'ER_SPECIFIC_ACCESS_DENIED_ERROR',
         'ER_WRONG_TABLE_NAME',
+        'ER_TRUNCATED_WRONG_VALUE', // e.g. adding column without default value
+        'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD',
     ];
 
     /** @var string[] */
@@ -119,7 +121,6 @@ trait Errors
         'ER_CANT_REMOVE_ALL_FIELDS',
         'ER_DEPENDENT_BY_GENERATED_COLUMN',
         'ER_UNSUPPORTED_ACTION_ON_GENERATED_COLUMN',
-        'ER_TRUNCATED_WRONG_VALUE', // e.g. adding column without default value
         'ER_INVALID_USE_OF_NULL', // adding non-null column?
         'ER_BAD_NULL_ERROR', // null vs generated columns
         'ER_INVALID_DEFAULT',
