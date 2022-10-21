@@ -21,6 +21,9 @@ class Result
     public $memory;
 
     /** @var int */
+    public $pid;
+
+    /** @var int */
     public $statements;
 
     /** @var int */
@@ -41,6 +44,7 @@ class Result
         int $size,
         float $time,
         int $memory,
+        int $pid,
         int $statements,
         int $tokens,
         array $fails,
@@ -50,6 +54,7 @@ class Result
         $this->size = $size;
         $this->time = $time;
         $this->memory = $memory;
+        $this->pid = $pid;
         $this->statements = $statements;
         $this->tokens = $tokens;
         $this->fails = $fails;
