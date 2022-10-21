@@ -67,19 +67,19 @@
             "@spell:check"
         ],
 
-        "tests:run": "php vendor/nette/tester/src/tester tests -C --colors 1",
+        "tests:run": "php vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
         "tests:all": [
-            "php82 vendor/nette/tester/src/tester tests -C --colors 1",
-            "php81 vendor/nette/tester/src/tester tests -C --colors 1",
-            "php80 vendor/nette/tester/src/tester tests -C --colors 1",
-            "php74 vendor/nette/tester/src/tester tests -C --colors 1",
-            "php73 vendor/nette/tester/src/tester tests -C --colors 1",
-            "php72 vendor/nette/tester/src/tester tests -C --colors 1"
+            "php82 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
+            "php81 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
+            "php80 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
+            "php74 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
+            "php73 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
+            "php72 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver"
         ],
         "tests:coverage": "php vendor/nette/tester/src/tester tests -c tests --colors 1 -p phpdbg --coverage tests/coverage.html --coverage-src sources",
         "tests:mysql": "php tests/Mysql/test.php",
 
-        "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
+        "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M",
         "phpstan:all": [
             "php82 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
             "php81 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
