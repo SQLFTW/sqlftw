@@ -13,6 +13,7 @@ use Dogma\ShouldNotHappenException;
 use Dogma\Str;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\InvalidDefinitionException;
+use function assert;
 use function class_exists;
 use function ctype_digit;
 use function explode;

@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+// spell-check-ignore: 0every BQAAAA DRAUGR DUP FIL TRG VÐƷWİ aaa aaaaaa abcd asd attr4 azundris badvar bbbbbb dat fvar idx ivar loaddata5 maste mv mvi nosuchvar º Æ Ö Γåô Γê Γò Γòí ツ
+
 namespace SqlFtw\Tests\Mysql;
 
 trait NonFailures

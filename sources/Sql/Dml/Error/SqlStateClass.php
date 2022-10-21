@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// spell-check-ignore: DATALINK FDW HV HW OLB UNHANDLED XQUERY
+
 namespace SqlFtw\Sql\Dml\Error;
 
 use SqlFtw\Sql\SqlEnum;

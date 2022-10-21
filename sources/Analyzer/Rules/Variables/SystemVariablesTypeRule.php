@@ -27,6 +27,7 @@ use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;
+use function count;
 use function get_class;
 use function gettype;
 use function implode;

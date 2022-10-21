@@ -15,7 +15,7 @@ parameters:
         - ../../sources/Reflection/*
 
     ignoreErrors:
-        # usually rulled out by isValue()
+        # usually ruled out by isValue()
         - '~Parameter #1 \$expression of class SqlFtw\\Sql\\Expression\\UnresolvedExpression constructor expects~'
         # incorrect type
         - '~Parameter #1 \$items of static method Dogma\\Str::join\(\) expects array<string>, array<int\|string> given~'

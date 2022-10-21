@@ -16,7 +16,6 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BaseType;
-use SqlFtw\Sql\Expression\NumericValue;
 use SqlFtw\Sql\Expression\OnOffLiteral;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -26,9 +25,9 @@ use function class_exists;
 use function count;
 use function explode;
 use function in_array;
+use function interface_exists;
 use function is_array;
 use function is_bool;
-use function is_float;
 use function is_int;
 use function is_numeric;
 use function is_string;
@@ -67,7 +66,7 @@ class CastingTypeChecker
                 case BaseType::UNSIGNED:
                     $value = $cast->toInt($value);
 
-                    return (is_int($value) && $value >= 0);
+                    return is_int($value) && $value >= 0;
                 case BaseType::FLOAT:
                 case BaseType::DECIMAL:
                 case BaseType::NUMERIC:

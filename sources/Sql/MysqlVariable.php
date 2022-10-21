@@ -7,7 +7,7 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-// spell-check-ignore: AWS CMK DSYNC GCS GIPK HASHICORP KEYHASH KICKUP LINHASH LITTLESYNC LOSSY MECAB NOBLOB NODEIDS NOSYNC OCI OKV PRIO RECV RESULTSET SUBGRAPH WRITESET XCOM aws cmk gipk hashicorp kickup mecab nodeids oci okv prio rc recv resultset subgraph
+// spell-check-ignore: DML DSYNC GCS GPL KEYHASH LINHASH LITTLESYNC NOBLOB NOSYNC WRITESET XCOM approle binlogging checkon cmk codumented gipk ib ibdata1 ibtmp1 kickup lowpct mecab mysqld nodeids okv pem prio rc recv
 // phpcs:disable Squiz.WhiteSpace.OperatorSpacing.SpacingBefore
 
 namespace SqlFtw\Sql;

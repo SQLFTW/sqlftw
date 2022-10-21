@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// spell-check-ignore: Fréchet MBR WKB WKT geohash
+
 namespace SqlFtw\Resolver\Functions;
 
 trait FunctionsSpatial
@@ -24,7 +26,7 @@ trait FunctionsSpatial
     // MBROverlaps() - Whether MBRs of two geometries overlap
     // MBRTouches() - Whether MBRs of two geometries touch
     // MBRWithin() - Whether MBR of one geometry is within MBR of another
-    // MultiLineString() - Contruct MultiLineString from LineString values
+    // MultiLineString() - Construct MultiLineString from LineString values
     // MultiPoint() - Construct MultiPoint from Point values
     // MultiPolygon() - Construct MultiPolygon from Polygon values
     // Point() - Construct Point from coordinates

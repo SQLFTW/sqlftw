@@ -15,6 +15,7 @@ use SqlFtw\Resolver\UnresolvableException;
 use SqlFtw\Sql\Expression\Value;
 use function array_reverse;
 use function array_slice;
+use function assert;
 use function base64_decode;
 use function base64_encode;
 use function bin2hex;
@@ -250,6 +251,7 @@ trait FunctionsString
             return 0;
         }
 
+        /** @var int|string $i */
         foreach ($strings as $i => $string) {
             $string = $this->cast->toString($string);
             if ($find === $string) {
@@ -542,14 +544,15 @@ trait FunctionsString
         if ($bits === null) {
             return null;
         }
-        $vals = [];
+        $result = [];
+        /** @var int|string $i */
         foreach ($values as $i => $value) {
             if ($value !== null && ($bits & (2 ** (int) $i)) !== 0) {
-                $vals[] = $this->cast->toString($value);
+                $result[] = $this->cast->toString($value);
             }
         }
 
-        return implode(',', $vals);
+        return implode(',', $result);
     }
 
     /**

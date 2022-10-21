@@ -12,6 +12,7 @@ namespace SqlFtw\Util;
 use Dogma\Re;
 use function bin2hex;
 use function chr;
+use function count;
 use function dechex;
 use function hex2bin;
 use function microtime;
@@ -97,32 +98,17 @@ class Uuid
         $clockSeq = random_int(0, 0x3fff);
 
         static $node;
-        if (null === $node) {
-            $node = sprintf('%06x%06x',
-                random_int(0, 0xffffff) | 0x010000,
-                random_int(0, 0xffffff)
-            );
+        if ($node === null) {
+            $node = sprintf('%06x%06x', random_int(0, 0xffffff) | 0x010000, random_int(0, 0xffffff));
         }
 
-        return sprintf('%08s-%04s-1%03s-%04x-%012s',
-            // 32 bits for "time_low"
-            substr($time, -8),
-
-            // 16 bits for "time_mid"
-            substr($time, -12, 4),
-
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 1
-            substr($time, -15, 3),
-
-            // 16 bits:
-            // * 8 bits for "clk_seq_hi_res",
-            // * 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            $clockSeq | 0x8000,
-
-            // 48 bits for "node"
-            $node
+        return sprintf(
+            '%08s-%04s-1%03s-%04x-%012s',
+            substr($time, -8), // 32 bits for "time_low"
+            substr($time, -12, 4), // 16 bits for "time_mid"
+            substr($time, -15, 3), // 16 bits for "time_hi_and_version", four most significant bits holds version number 1
+            $clockSeq | 0x8000, // 16 bits: 8 bits for "clock_seq_hi_res", 8 bits for "clock_seq_low", two most significant bits holds zero and one for variant DCE1.1
+            $node // 48 bits for "node"
         );
     }
 
@@ -145,7 +131,7 @@ class Uuid
                 }
             }
 
-            $bytes = chr($remainder).$bytes;
+            $bytes = chr($remainder) . $bytes;
             $count = count($digits = $quotient);
         }
 

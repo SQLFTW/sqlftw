@@ -374,7 +374,7 @@ class ExpressionResolver
 
             /** @var scalar|Value|null $left */
             $left = $this->process($expression->getLeft());
-            /** @var scalar|Value|null|array<scalar|Value|null> $right */
+            /** @var scalar|Value|array<(scalar|Value|null)>|null $right */
             $right = $this->process($expression->getRight());
             if (!ExpressionHelper::isValueOrArray($left) || !ExpressionHelper::isValueOrArray($right)) {
                 return $expression;

@@ -15,7 +15,7 @@ use SqlFtw\Resolver\ExpressionResolver;
 use SqlFtw\Session\Session;
 
 /**
- * Basic toolset for rules which do not need knowledge of database schema or previous statements history
+ * Basic tool set for rules which do not need knowledge of database schema or previous statements history
  */
 class SimpleContext
 {
