@@ -40,6 +40,7 @@
             "@phpcs:src",
             "@phpcs:tests"
         ],
+        "csf": "@phpcs:fix",
 
         "build:init": [
             "composer install",
@@ -114,6 +115,7 @@
         "c": "\u001B[0;33m⭐Run all checks (shortcut)\u001B[0m",
         "cf": "\u001B[0;33m⭐Run fast checks (shortcut)\u001B[0m",
         "cs": "\u001B[0;33m⭐Run CS check\u001B[0m",
+        "csf": "\u001B[0;33m⭐Run CS check with fix\u001B[0m",
         "da": "\u001B[0;33m⭐Dump autoloader (shortcut)\u001B[0m",
         "t": "\u001B[0;33m⭐Run tests (shortcut)\u001B[0m",
         "tc": "\u001B[0;33m⭐Run tests with code coverage (shortcut)\u001B[0m",
