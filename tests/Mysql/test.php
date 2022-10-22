@@ -10,4 +10,6 @@ if (class_exists(Dumper::class)) {
     require_once __DIR__ . '/../debugger.php';
 }
 
-MysqlTest::run();
+$singleThread = in_array('--single', $argv, true);
+
+MysqlTest::run($singleThread);

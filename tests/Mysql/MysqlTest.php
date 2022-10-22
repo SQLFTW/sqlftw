@@ -11,13 +11,16 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
+use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
+use SqlFtw\Sql\Command;
 use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
 use function array_map;
 use function array_merge;
 use function array_sum;
+use function assert;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
@@ -26,6 +29,7 @@ use function ini_set;
 use function microtime;
 use function preg_replace;
 use function rd;
+use function re;
 use function rl;
 use function set_time_limit;
 use function str_replace;
@@ -36,7 +40,7 @@ class MysqlTest
 {
     use Skips;
 
-    public static function run(): void
+    public static function run(bool $singleThread): void
     {
         ini_set('memory_limit', '2G');
 
@@ -54,8 +58,26 @@ class MysqlTest
             return MysqlTestJob::run($path);
         };
 
-        /** @var Result[] $results */
-        $results = wait(parallelMap($paths, $runner)); // @phpstan-ignore-line Unable to resolve the template type T in call to function Amp\Promise\wait
+        $platform = Platform::get(Platform::MYSQL, '8.0.29');
+        $session = new Session($platform);
+        $formatter = new Formatter($session);
+
+        if ($singleThread) {
+            $results = [];
+            foreach ($paths as $path) {
+                $result = $runner($path);
+                if ($result->fails !== []) {
+                    self::renderFails([$result->path => $result->fails], $formatter);
+                }
+                if ($result->nonFails !== []) {
+                    self::renderNonFails([$result->path => $result->nonFails], $formatter);
+                }
+                $results[] = $result;
+            }
+        } else {
+            /** @var Result[] $results */
+            $results = wait(parallelMap($paths, $runner)); // @phpstan-ignore-line Unable to resolve the template type T in call to function Amp\Promise\wait
+        }
 
         $size = $time = $statements = $tokens = 0;
         $fails = [];
@@ -73,47 +95,9 @@ class MysqlTest
             }
         }
 
-        $platform = Platform::get(Platform::MYSQL, '8.0.29');
-        $session = new Session($platform);
-        $formatter = new Formatter($session);
-
-        if ($fails !== []) {
-            rl('Should not fail:', null, 'r');
-        }
-        foreach ($fails as $path => $fail) {
-            rl($path, null, 'r');
-            foreach ($fail as [$command, $tokenList]) {
-                $commandSerialized = $formatter->serialize($command);
-                $commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
-                rl($commandSerialized);
-
-                $tokensSerialized = trim($tokenList->serialize());
-                rl($tokensSerialized, null, 'y');
-
-                assert($command instanceof InvalidCommand);
-                if ($command->getCommand() !== null) {
-                    rd($command);
-                }
-                re($command->getException());
-                //rd($tokenList);
-            }
-        }
-        if ($nonFails !== []) {
-            rl('Should fail:', null, 'r');
-        }
-        foreach ($nonFails as $path => $nonFail) {
-            rl($path, null, 'r');
-            foreach ($nonFail as [$command, $tokenList]) {
-                $tokensSerialized = trim($tokenList->serialize());
-                rl($tokensSerialized, null, 'y');
-
-                $commandSerialized = $formatter->serialize($command);
-                $commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
-                rl($commandSerialized);
-
-                rd($command, 4);
-                //rd($tokenList);
-            }
+        if (!$singleThread) {
+            self::renderFails($fails, $formatter);
+            self::renderNonFails($nonFails, $formatter);
         }
         if ($fails !== [] || $nonFails !== []) {
             file_put_contents($lastFailPath, implode("\n", array_merge(array_keys($fails), array_keys($nonFails))));
@@ -179,6 +163,66 @@ class MysqlTest
                 break;
             }
         }
+    }
+
+    private static function renderFails(array $fails, Formatter $formatter): void
+    {
+        if ($fails !== []) {
+            rl('Should not fail:', null, 'r');
+        }
+        foreach ($fails as $path => $fail) {
+            rl($path, null, 'r');
+            foreach ($fail as [$command, $tokenList]) {
+                self::renderFail($command, $tokenList, $formatter);
+            }
+        }
+    }
+
+    private static function renderFail(Command $command, TokenList $tokenList, Formatter $formatter): void
+    {
+        $commandSerialized = $formatter->serialize($command);
+        $commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
+        rl($commandSerialized);
+
+        $tokensSerialized = trim($tokenList->serialize());
+        rl($tokensSerialized, null, 'y');
+
+        if ($command instanceof InvalidCommand) {
+            $parsedCommand = $command->getCommand();
+            if ($parsedCommand !== null) {
+                rd($parsedCommand);
+            }
+            re($command->getException());
+        } else {
+            rd($command);
+        }
+        //rd($tokenList);
+    }
+
+    private static function renderNonFails(array $nonFails, Formatter $formatter): void
+    {
+        if ($nonFails !== []) {
+            rl('Should fail:', null, 'r');
+        }
+        foreach ($nonFails as $path => $nonFail) {
+            rl($path, null, 'r');
+            foreach ($nonFail as [$command, $tokenList]) {
+                self::renderNonFail($command, $tokenList, $formatter);
+            }
+        }
+    }
+
+    private static function renderNonFail(Command $command, TokenList $tokenList, Formatter $formatter): void
+    {
+        $tokensSerialized = trim($tokenList->serialize());
+        rl($tokensSerialized, null, 'y');
+
+        $commandSerialized = $formatter->serialize($command);
+        $commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
+        rl($commandSerialized);
+
+        rd($command, 4);
+        //rd($tokenList);
     }
 
     /**
