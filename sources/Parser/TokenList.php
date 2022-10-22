@@ -130,7 +130,7 @@ class TokenList
         $this->tokens = $tokens;
         $this->session = $session;
         $this->platform = $session->getPlatform();
-        $this->maxLengths = $session->getMaxLengths();
+        $this->maxLengths = $this->platform->getMaxLengths();
         $this->autoSkip = $autoSkip;
         $this->invalid = $invalid;
     }

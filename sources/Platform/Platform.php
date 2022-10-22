@@ -14,6 +14,7 @@ use Dogma\NotImplementedException;
 use SqlFtw\Platform\Features\FeaturesList;
 use SqlFtw\Platform\Features\MysqlFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
 use function assert;
@@ -397,6 +398,14 @@ class Platform
     public function isType(string $word): bool
     {
         return in_array($word, $this->getTypes(), true);
+    }
+
+    /**
+     * @return array<EntityType::*, int>
+     */
+    public function getMaxLengths(): array
+    {
+        return $this->featuresList->maxLengths;
     }
 
 }

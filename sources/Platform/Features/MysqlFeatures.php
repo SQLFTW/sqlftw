@@ -106,6 +106,7 @@ use SqlFtw\Sql\Dml\Transaction\RollbackCommand;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\Utility\DescribeTableCommand;
 use SqlFtw\Sql\Dml\Utility\ExplainStatementCommand;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\Operator;
@@ -2699,6 +2700,32 @@ class MysqlFeatures extends FeaturesList
         [UninstallPluginCommand::class, self::MIN, self::MAX],
         [UpdateCommand::class, self::MIN, self::MAX],
         [ValuesCommand::class, self::MIN, self::MAX],
+    ];
+
+    /** @var array<string, int> */
+    public $maxLengths = [
+        EntityType::SCHEMA => 64,
+        EntityType::TABLE => 64,
+        EntityType::VIEW => 64,
+        EntityType::COLUMN => 64,
+        EntityType::INDEX => 64,
+        EntityType::CONSTRAINT => 64,
+        EntityType::ROUTINE => 64,
+        EntityType::EVENT => 64, // not documented
+        EntityType::TRIGGER => 64, // not documented
+        EntityType::USER_VARIABLE => 64,
+        EntityType::TABLESPACE => 64,
+        EntityType::PARTITION => 64, // not documented
+        EntityType::SERVER => 64,
+        EntityType::LOG_FILE_GROUP => 64,
+        EntityType::RESOURCE_GROUP => 64,
+        EntityType::ALIAS => 256,
+        EntityType::LABEL => 256, // doc says 16, but db parses anything
+        EntityType::USER => 32,
+        EntityType::HOST => 255,
+        EntityType::XA_TRANSACTION => 64,
+        EntityType::CHANNEL => 64,
+        EntityType::SRS => 80,
     ];
 
 }

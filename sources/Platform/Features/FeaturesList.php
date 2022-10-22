@@ -9,6 +9,8 @@
 
 namespace SqlFtw\Platform\Features;
 
+use SqlFtw\Sql\EntityType;
+
 abstract class FeaturesList
 {
 
@@ -38,5 +40,8 @@ abstract class FeaturesList
 
     /** @var array<array{class-string, int, int}> */
     public $preparableCommands = [];
+
+    /** @var array<EntityType::*, int> */
+    public $maxLengths = [];
 
 }

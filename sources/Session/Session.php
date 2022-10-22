@@ -59,32 +59,6 @@ class Session
     /** @var array<string, UnresolvedExpression|scalar|Value|null> */
     private $localVariables = [];
 
-    /** @var array<string, int> */
-    private $maxLengths = [
-        EntityType::SCHEMA => 64,
-        EntityType::TABLE => 64,
-        EntityType::VIEW => 64,
-        EntityType::COLUMN => 64,
-        EntityType::INDEX => 64,
-        EntityType::CONSTRAINT => 64,
-        EntityType::ROUTINE => 64,
-        EntityType::EVENT => 64, // not documented
-        EntityType::TRIGGER => 64, // not documented
-        EntityType::USER_VARIABLE => 64,
-        EntityType::TABLESPACE => 64,
-        EntityType::PARTITION => 64, // not documented
-        EntityType::SERVER => 64,
-        EntityType::LOG_FILE_GROUP => 64,
-        EntityType::RESOURCE_GROUP => 64,
-        EntityType::ALIAS => 256,
-        EntityType::LABEL => 256, // doc says 16, but db parses anything
-        EntityType::USER => 32,
-        EntityType::HOST => 255,
-        EntityType::XA_TRANSACTION => 64,
-        EntityType::CHANNEL => 64,
-        EntityType::SRS => 80,
-    ];
-
     public function __construct(
         Platform $platform,
         ?string $delimiter = null,
@@ -260,14 +234,6 @@ class Session
     public function resetLocalVariables(): void
     {
         $this->localVariables = [];
-    }
-
-    /**
-     * @return array<string, int>
-     */
-    public function getMaxLengths(): array
-    {
-        return $this->maxLengths;
     }
 
 }
