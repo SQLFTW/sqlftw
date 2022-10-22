@@ -918,7 +918,7 @@ class Collation extends SqlEnum
         self::UTF8_UNICODE_CI => Charset::UTF_8,
         self::UTF8_VIETNAMESE_CI => Charset::UTF_8,
 
-        self::UTF8MB3_BIN => Charset::UTF_8,
+        self::UTF8MB3_BIN => Charset::UTF_8_MB3,
         self::UTF8_BENGALI_STANDARD_CI => Charset::UTF_8,
         self::UTF8_BENGALI_TRADITIONAL_CI => Charset::UTF_8,
     ];

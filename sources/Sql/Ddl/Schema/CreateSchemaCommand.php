@@ -36,9 +36,9 @@ class CreateSchemaCommand extends Statement implements SchemaCommand
         return $this->name;
     }
 
-    public function getOptions(): ?SchemaOptions
+    public function getOptions(): SchemaOptions
     {
-        return $this->options;
+        return $this->options ?? new SchemaOptions();
     }
 
     public function ifNotExists(): bool

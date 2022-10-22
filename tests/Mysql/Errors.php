@@ -38,8 +38,6 @@ trait Errors
     /** @var string[] */
     private static $ignoredErrors = [
         // todo: could be thrown by parser (no context needed)
-        'ER_CONFLICTING_DECLARATIONS', // e.g. ALTER TABLE t1 CHARACTER SET utf8, CONVERT TO CHARACTER SET latin1;
-        'ER_COLLATION_CHARSET_MISMATCH',
         'ER_GENERATED_COLUMN_FUNCTION_IS_NOT_ALLOWED',
         'ER_ILLEGAL_VALUE_FOR_TYPE', // set with funny values
         'ER_TABLE_CANT_HANDLE_BLOB', // engine

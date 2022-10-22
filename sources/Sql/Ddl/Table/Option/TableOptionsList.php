@@ -28,11 +28,11 @@ use function is_int;
 class TableOptionsList
 {
 
-    /** @var array<string, TableOptionValue|null> */
+    /** @var array<TableOption::*, TableOptionValue|null> */
     private $options = [];
 
     /**
-     * @param array<string, TableOptionValue> $options
+     * @param array<int|TableOption::*, TableOptionValue> $options
      */
     public function __construct(array $options)
     {
@@ -77,7 +77,7 @@ class TableOptionsList
     }
 
     /**
-     * @return array<string, TableOptionValue|null>
+     * @return array<TableOption::*, TableOptionValue|null>
      */
     public function getOptions(): array
     {
@@ -85,6 +85,7 @@ class TableOptionsList
     }
 
     /**
+     * @param TableOption::* $option
      * @return TableOptionValue|null $option
      */
     public function get(string $option)
@@ -97,6 +98,7 @@ class TableOptionsList
     }
 
     /**
+     * @param TableOption::* $option
      * @param TableOptionValue|null $value
      */
     public function set(string $option, $value): void
@@ -110,6 +112,7 @@ class TableOptionsList
     }
 
     /**
+     * @param TableOption::* $option
      * @param TableOptionValue $value
      */
     public function setDefault(string $option, $value): void

@@ -17,6 +17,7 @@ use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnAction;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AddColumnsAction;
@@ -660,7 +661,7 @@ class TableCommandsParser
                 case null:
                     break;
                 default:
-                    [$option, $value] = $this->parseTableOption($tokenList->rewind($position));
+                    [$option, $value] = $this->parseTableOption($tokenList->rewind($position), $tableOptions);
                     if ($option === null) {
                         $keywords = AlterTableActionType::getAllowedValues() + AlterTableOption::getAllowedValues()
                             + [Keyword::ALGORITHM, Keyword::LOCK, Keyword::WITH, Keyword::WITHOUT];
@@ -670,7 +671,7 @@ class TableCommandsParser
                     $position = $tokenList->getPosition();
                     $trailingComma = $tokenList->hasSymbol(',');
                     do {
-                        [$option, $value] = $this->parseTableOption($tokenList->rewind($position));
+                        [$option, $value] = $this->parseTableOption($tokenList->rewind($position), $tableOptions);
                         if ($option === null) {
                             break;
                         }
@@ -747,7 +748,7 @@ class TableCommandsParser
         $trailingComma = false;
         $position = $tokenList->getPosition();
         do {
-            [$option, $value] = $this->parseTableOption($tokenList);
+            [$option, $value] = $this->parseTableOption($tokenList, $options);
             if ($option === null) {
                 break;
             }
@@ -1303,9 +1304,10 @@ class TableCommandsParser
      *   | TABLESPACE tablespace_name
      *   | UNION [=] (tbl_name[,tbl_name]...)
      *
+     * @param array<TableOption::*, TableOptionValue> $options
      * @return array{string|null, TableOptionValue}
      */
-    private function parseTableOption(TokenList $tokenList): array
+    private function parseTableOption(TokenList $tokenList, array $options): array
     {
         $position = $tokenList->getPosition();
         $keyword = $tokenList->getKeyword();
@@ -1336,7 +1338,17 @@ class TableCommandsParser
             case Keyword::CHARSET:
                 $tokenList->passSymbol('=');
 
-                return [TableOption::CHARACTER_SET, $tokenList->expectCharsetName()];
+                $charset = $tokenList->expectCharsetName();
+                if (isset($options[TableOption::CHARACTER_SET])) {
+                    // charset can be specified twice (not represented in model)
+                    /** @var Charset $previousCharset */
+                    $previousCharset = $options[TableOption::CHARACTER_SET];
+                    if (!$previousCharset->equals($charset)) {
+                        throw new ParserException('Charset declaration conflict.', $tokenList);
+                    }
+                }
+
+                return [TableOption::CHARACTER_SET, $charset];
             case Keyword::CHECKSUM:
                 $tokenList->passSymbol('=');
 

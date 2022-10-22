@@ -94,7 +94,15 @@ class SchemaCommandsParser
                     $tokenList->expectKeyword(Keyword::SET);
                 }
                 $tokenList->passSymbol('=');
-                $charset = $tokenList->expectCharsetName();
+                if ($charset !== null) {
+                    // charset can be specified twice (not represented in model)
+                    $charset2 = $tokenList->expectCharsetName();
+                    if ($charset !== $charset2) {
+                        throw new ParserException('Charset declaration conflict.', $tokenList);
+                    }
+                } else {
+                    $charset = $tokenList->expectCharsetName();
+                }
             } elseif ($keyword === Keyword::COLLATE) {
                 $tokenList->passSymbol('=');
                 $collation = $tokenList->expectCollationName();

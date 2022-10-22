@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
@@ -55,7 +56,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
 
     /**
      * @param non-empty-array<TableItem>|null $items
-     * @param TableOptionsList|array<TableOptionValue>|null $options
+     * @param TableOptionsList|array<int|TableOption::*, TableOptionValue>|null $options
      */
     public function __construct(
         ObjectIdentifier $name,
@@ -96,9 +97,27 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
         return $this->items;
     }
 
-    public function getOptions(): ?TableOptionsList
+    /**
+     * @return ColumnDefinition[]
+     */
+    public function getColumns(): array
     {
-        return $this->options;
+        if ($this->items === null) {
+            return [];
+        }
+        $columns = [];
+        foreach ($this->items as $item) {
+            if ($item instanceof ColumnDefinition) {
+                $columns[] = $item;
+            }
+        }
+
+        return $columns;
+    }
+
+    public function getOptions(): TableOptionsList
+    {
+        return $this->options ?? new TableOptionsList([]);
     }
 
     public function getPartitioning(): ?PartitioningDefinition

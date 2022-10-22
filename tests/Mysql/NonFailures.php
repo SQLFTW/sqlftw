@@ -641,6 +641,11 @@ trait NonFailures
         "-- error ER_WRONG_VALUE_FOR_VAR\nset names ucs2 collate ucs2_bin;",
         "-- error ER_WRONG_VALUE_FOR_VAR\nset character_set_client= ucs2;",
         "-- error ER_WRONG_VALUE_FOR_VAR\nset character_set_client= concat('ucs', substr('2', 1));",
+        // needs table/schema charset context
+        "-- error ER_COLLATION_CHARSET_MISMATCH\nSELECT latin1_f,count(*) FROM t1 GROUP BY latin1_f COLLATE koi8r_general_ci;",
+        "-- error ER_COLLATION_CHARSET_MISMATCH\nSELECT latin1_f COLLATE koi8r_general_ci  AS latin1_f_as FROM t1 ORDER BY latin1_f_as;",
+        "-- error ER_COLLATION_CHARSET_MISMATCH\nSELECT latin1_f FROM t1 ORDER BY latin1_f COLLATE koi8r_general_ci;",
+        "-- error ER_COLLATION_CHARSET_MISMATCH\nALTER TABLE t3 CONVERT TO CHARACTER SET DEFAULT COLLATE cp1251_general_cs;",
         // types in procedures
         "-- error ER_PARSE_ERROR\ncreate function f1(p1 date, p2 date)\n  returns int\nbegin\n  declare a int;\n  set a = (select count(*) from t1 limit p1, p2);\n  return a;\nend|",
         "-- error ER_PARSE_ERROR\ncreate function f1(p1 integer, p2 float)\n  returns int\nbegin\n  declare a int;\n  set a = (select count(*) from t1 limit p1, p2);\n  return a;\nend|",

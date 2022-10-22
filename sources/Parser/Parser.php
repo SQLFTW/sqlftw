@@ -12,6 +12,7 @@
 namespace SqlFtw\Parser;
 
 use Generator;
+use SqlFtw\Analyzer\Rules\Charset\CharsetAndCollationCompatibilityRule;
 use SqlFtw\Analyzer\Rules\Variables\SystemVariablesTypeRule;
 use SqlFtw\Analyzer\SimpleAnalyzer;
 use SqlFtw\Analyzer\SimpleContext;
@@ -71,6 +72,7 @@ class Parser
         // always executed rules (errors not as obvious as syntax error, but preventing command execution anyway)
         $this->analyzer = new SimpleAnalyzer($context, [
             new SystemVariablesTypeRule(),
+            new CharsetAndCollationCompatibilityRule(),
         ]);
     }
 

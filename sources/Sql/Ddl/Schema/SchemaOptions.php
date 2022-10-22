@@ -31,7 +31,7 @@ class SchemaOptions implements SchemaCommand
     private $readOnly;
 
     public function __construct(
-        ?Charset $charset,
+        ?Charset $charset = null,
         ?Collation $collation = null,
         ?bool $encryption = null,
         ?ThreeStateValue $readOnly = null

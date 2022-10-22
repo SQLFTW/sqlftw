@@ -198,4 +198,13 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
         return self::$defaultCollations[$this->getValue()];
     }
 
+    public function supportsCollation(Collation $collation): bool
+    {
+        if ($collation->equalsValue(Collation::BINARY)) {
+            return true;
+        } else {
+            return $this->equalsValue($collation->getCharsetName());
+        }
+    }
+
 }

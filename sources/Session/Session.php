@@ -213,6 +213,14 @@ class Session
     }
 
     /**
+     * @return UnresolvedExpression|scalar|Value|null
+     */
+    public function getSessionOrGlobalVariable(string $name)
+    {
+        return $this->sessionVariables[$name] ?? $this->globalVariables[$name] ?? MysqlVariable::getDefault($name);
+    }
+
+    /**
      * @param UnresolvedExpression|scalar|Value|null $value
      */
     public function setGlobalVariable(string $name, $value): void
