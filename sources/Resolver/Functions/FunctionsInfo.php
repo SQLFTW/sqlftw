@@ -36,7 +36,7 @@ trait FunctionsInfo
      */
     public function charset($string): string
     {
-        return Charset::UTF_8_MB4; // arbitrary
+        return Charset::UTF8MB4; // arbitrary
     }
 
     /**
