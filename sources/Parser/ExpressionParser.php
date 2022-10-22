@@ -1287,6 +1287,13 @@ class ExpressionParser
                     } elseif ($type->equalsValue(BaseType::YEAR) && $length !== 4) {
                         throw new ParserException('Invalid type length.', $tokenList);
                     }
+                    if ($length > 4294967295) {
+                        throw new ParserException('Invalid type length.', $tokenList);
+                    } elseif ($type->isInteger() && $length > 255) {
+                        throw new ParserException('Invalid type length.', $tokenList);
+                    } elseif ($type->equalsValue(BaseType::BIT) && $length > 64) {
+                        throw new ParserException('Invalid type length.', $tokenList);
+                    }
                 }
                 $decimals = null;
                 if ($type->hasDecimals()) {
