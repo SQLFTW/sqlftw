@@ -38,6 +38,9 @@ class EntityType
     public const CHANNEL = 'channel';
     public const SRS = 'srs';
     public const ENUM_VALUE = 'enum value';
+    public const FIELD_COMMENT = 'field comment';
+    public const TABLE_COMMENT = 'table comment';
+    public const INDEX_COMMENT = 'index comment';
 
     // other named objects:
     // - local variable

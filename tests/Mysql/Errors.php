@@ -56,9 +56,6 @@ trait Errors
         'ER_GENERATED_COLUMN_NAMED_FUNCTION_IS_NOT_ALLOWED',
         // lengths & limits
         'ER_TOO_BIG_DISPLAYWIDTH',
-        'ER_TOO_LONG_FIELD_COMMENT',
-        'ER_TOO_LONG_INDEX_COMMENT',
-        'ER_TOO_LONG_TABLE_COMMENT',
         'ER_PATH_LENGTH',
         'ER_TOO_MANY_KEY_PARTS', // e.g. spatial indexes can only have one part
         'ER_TOO_BIG_FIELDLENGTH',

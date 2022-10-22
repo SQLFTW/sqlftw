@@ -25,6 +25,8 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexType;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
+use SqlFtw\Sql\SqlMode;
+use function strlen;
 use function strtoupper;
 
 class IndexCommandsParser
@@ -156,6 +158,10 @@ class IndexCommandsParser
                 $withParser = $tokenList->expectName(null);
             } elseif ($keyword === Keyword::COMMENT) {
                 $commentString = $tokenList->expectString();
+                $limit = $tokenList->getSession()->getPlatform()->getMaxLengths()[EntityType::INDEX_COMMENT];
+                if (strlen($commentString) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
+                    throw new ParserException("Index comment length exceeds limit of {$limit} bytes.", $tokenList);
+                }
                 // parse "COMMENT 'MERGE_THRESHOLD=40';"
                 $match = Re::match($commentString, '/^MERGE_THRESHOLD=([0-9]+)$/');
                 if ($match !== null) {

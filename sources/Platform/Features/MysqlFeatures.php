@@ -2727,6 +2727,9 @@ class MysqlFeatures extends FeaturesList
         EntityType::CHANNEL => 64,
         EntityType::SRS => 80,
         EntityType::ENUM_VALUE => 255,
+        EntityType::FIELD_COMMENT => 1024,
+        EntityType::TABLE_COMMENT => 2048,
+        EntityType::INDEX_COMMENT => 1024,
     ];
 
 }

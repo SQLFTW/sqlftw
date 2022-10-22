@@ -119,6 +119,7 @@ use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\SubqueryType;
 use function array_values;
 use function count;
+use function strlen;
 use function strtoupper;
 
 /**
@@ -981,6 +982,10 @@ class TableCommandsParser
                 case Keyword::COMMENT:
                     // [COMMENT 'string']
                     $comment = $tokenList->expectString();
+                    $limit = $tokenList->getSession()->getPlatform()->getMaxLengths()[EntityType::FIELD_COMMENT];
+                    if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
+                        throw new ParserException("Column comment length exceeds limit of {$limit} bytes.", $tokenList);
+                    }
                     break;
                 case Keyword::COLUMN_FORMAT:
                     // [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
@@ -1112,6 +1117,10 @@ class TableCommandsParser
                 case Keyword::COMMENT:
                     // [COMMENT 'string']
                     $comment = $tokenList->expectString();
+                    $limit = $tokenList->getSession()->getPlatform()->getMaxLengths()[EntityType::FIELD_COMMENT];
+                    if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
+                        throw new ParserException("Column comment length exceeds limit of {$limit} bytes.", $tokenList);
+                    }
                     break;
                 case Keyword::REFERENCES:
                     // [reference_definition]
@@ -1359,8 +1368,13 @@ class TableCommandsParser
                 return [TableOption::COLLATE, $tokenList->expectCollationName()];
             case Keyword::COMMENT:
                 $tokenList->passSymbol('=');
+                $comment = $tokenList->expectString();
+                $limit = $tokenList->getSession()->getPlatform()->getMaxLengths()[EntityType::TABLE_COMMENT];
+                if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
+                    throw new ParserException("Table comment length exceeds limit of {$limit} bytes.", $tokenList);
+                }
 
-                return [TableOption::COMMENT, $tokenList->expectString()];
+                return [TableOption::COMMENT, $comment];
             case Keyword::COMPRESSION:
                 $tokenList->passSymbol('=');
                 $compression = $tokenList->expectString();
