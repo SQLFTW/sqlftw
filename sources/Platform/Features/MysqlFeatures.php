@@ -2726,6 +2726,7 @@ class MysqlFeatures extends FeaturesList
         EntityType::XA_TRANSACTION => 64,
         EntityType::CHANNEL => 64,
         EntityType::SRS => 80,
+        EntityType::ENUM_VALUE => 255,
     ];
 
 }

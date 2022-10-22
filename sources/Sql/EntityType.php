@@ -37,6 +37,7 @@ class EntityType
     public const XA_TRANSACTION = 'xa transaction';
     public const CHANNEL = 'channel';
     public const SRS = 'srs';
+    public const ENUM_VALUE = 'enum value';
 
     // other named objects:
     // - local variable
@@ -49,7 +50,6 @@ class EntityType
     // - CTE
     // - condition
     // - savepoint
-    // - enum value
     // - user lock
 
 }

@@ -55,7 +55,6 @@ trait Errors
         // gen columns
         'ER_GENERATED_COLUMN_NAMED_FUNCTION_IS_NOT_ALLOWED',
         // lengths & limits
-        'ER_TOO_LONG_SET_ENUM_VALUE',
         'ER_TOO_BIG_DISPLAYWIDTH',
         'ER_TOO_LONG_FIELD_COMMENT',
         'ER_TOO_LONG_INDEX_COMMENT',
