@@ -120,6 +120,11 @@ trait Failures
         "set session_track_system_variables=f();",
         "set @@session.autocommit=t1_min(), @@session.autocommit=t1_max(),\n    @@session.autocommit=t1_min(), @@session.autocommit=t1_max(),\n    @@session.autocommit=t1_min(), @@session.autocommit=t1_max();",
 
+        // storage engine dependent
+        "create table t1 (v varchar(65536));",
+        "CREATE TABLE t (a VARCHAR(1000000)) ENGINE = InnoDB;",
+        "-- error ER_ALTER_OPERATION_NOT_SUPPORTED_REASON\nALTER TABLE t2 ALGORITHM=INPLACE, CHANGE COLUMN fk fk VARCHAR(99999);",
+        "-- error ER_BLOB_KEY_WITHOUT_LENGTH\nALTER TABLE t2 ALGORITHM=INPLACE, CHANGE COLUMN fk fk VARCHAR(99999);",
 
         // won't fix - miscellaneous errors not caused by parser implementation ----------------------------------------
 
@@ -159,6 +164,9 @@ trait Failures
         "CREATE TABLESPACE ts1\n  ADD DATAFILE 'ts1_datafile.dat'\n  USE LOGFILE GROUP lg1\n  ENGINE=NDB ENCRYPTION='';", // invalid encryption
         "-- error ER_CHECK_NOT_IMPLEMENTED\nCREATE TABLESPACE ts1\n  ADD DATAFILE 'ts1_datafile.dat'\n  USE LOGFILE GROUP lg1\n  ENGINE=NDB ENCRYPTION='R';", // invalid encryption
         "-- error ER_TABLESPACE_MISSING_WITH_NAME\nDROP TABLESPACE s-- error ER_PARSE_ERROR\nDROP TABLESPACE s@bad;", // invalid test code: s#bad\n;
+
+        // strange engine behavior
+        "CREATE TABLE t2 (a char(255), b varbinary(70000), c varchar(70000000));",
 
         // non-existing algorithms
         "CREATE TABLE t1(c1 INT PRIMARY KEY) COMPRESSION=\"zlibX\";",

@@ -1226,7 +1226,7 @@ class ExpressionParser
     {
         $type = $tokenList->expectMultiKeywordsEnum(BaseType::class);
 
-        [$size, $values, $unsigned, $zerofill, $charset, $collation, $srid] = $this->parseTypeOptions($type, $tokenList);
+        [$size, $values, $unsigned, $zerofill, $charset, $collation, $srid] = $this->parseTypeOptions($type, $tokenList, false);
 
         return new ColumnType($type, $size, $values, $unsigned, $charset, $collation, $srid, $zerofill);
     }
@@ -1247,7 +1247,7 @@ class ExpressionParser
         }
 
         if ($type !== null) {
-            [$size, , , , $charset, $collation, $srid] = $this->parseTypeOptions($type, $tokenList);
+            [$size, , , , $charset, $collation, $srid] = $this->parseTypeOptions($type, $tokenList, true);
         } else {
             $size = $charset = $collation = $srid = null;
         }
@@ -1264,7 +1264,7 @@ class ExpressionParser
     /**
      * @return array{non-empty-array<int>|null, non-empty-array<StringValue>|null, bool, bool, Charset|null, Collation|null, int|null}
      */
-    private function parseTypeOptions(BaseType $type, TokenList $tokenList): array
+    private function parseTypeOptions(BaseType $type, TokenList $tokenList, bool $forCast): array
     {
         $size = $values = $charset = $collation = $srid = null;
         $unsigned = $zerofill = false;
@@ -1291,7 +1291,11 @@ class ExpressionParser
                         throw new ParserException('Invalid type length.', $tokenList);
                     } elseif ($type->isInteger() && $length > 255) {
                         throw new ParserException('Invalid type length.', $tokenList);
-                    } elseif ($type->equalsValue(BaseType::BIT) && $length > 64) {
+                    } elseif ($type->isBit() && $length > 64) {
+                        throw new ParserException('Invalid type length.', $tokenList);
+                    } elseif (!$forCast && $type->isChar() && $length > 255) {
+                        throw new ParserException('Invalid type length.', $tokenList);
+                    } elseif (!$forCast && ($type->isVarchar() || $type->isVarbinary()) && $length > 65535) {
                         throw new ParserException('Invalid type length.', $tokenList);
                     }
                 }

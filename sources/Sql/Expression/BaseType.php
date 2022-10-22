@@ -115,6 +115,11 @@ class BaseType extends SqlEnum
     public const MULTILINESTRING = Keyword::MULTILINESTRING;
     public const MULTIPOLYGON = Keyword::MULTIPOLYGON;
 
+    public function isBit(): bool
+    {
+        return $this->getValue() === self::BIT;
+    }
+
     public function isInteger(): bool
     {
         return in_array($this->getValue(), [
@@ -149,11 +154,32 @@ class BaseType extends SqlEnum
         ], true);
     }
 
+    public function isChar(): bool
+    {
+        return in_array($this->getValue(), [
+            self::CHAR, self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR,
+        ]);
+    }
+
+    public function isVarchar(): bool
+    {
+        return in_array($this->getValue(), [
+            self::VARCHAR, self::CHARACTER_VARYING, self::NVARCHAR, self::NCHAR_VARYING, self::NATIONAL_VARCHAR, self::NATIONAL_CHARACTER_VARYING,
+        ]);
+    }
+
     public function isBinary(): bool
     {
         return in_array($this->getValue(), [
             self::TINYBLOB, self::BLOB, self::MEDIUMBLOB, self::LONGBLOB, self::BINARY, self::VARBINARY, self::LONG_VARBINARY, self::CHAR_BYTE,
         ], true);
+    }
+
+    public function isVarbinary(): bool
+    {
+        return in_array($this->getValue(), [
+            self::VARBINARY,
+        ]);
     }
 
     public function isString(): bool

@@ -19,6 +19,7 @@ trait Errors
         'ER_SP_BAD_VAR_SHADOW',
         'ER_WRONG_COLUMN_NAME',
         'ER_TOO_BIG_PRECISION',
+        'ER_DATA_OUT_OF_RANGE', // many runtime errors
         'ER_TABLENAME_NOT_ALLOWED_HERE',
         'ER_NO_TABLES_USED',
         'ER_SP_LILABEL_MISMATCH',
@@ -57,7 +58,6 @@ trait Errors
         // lengths & limits
         'ER_PATH_LENGTH',
         'ER_TOO_MANY_KEY_PARTS', // e.g. spatial indexes can only have one part
-        'ER_TOO_BIG_FIELDLENGTH',
         'ER_INVALID_ON_UPDATE',
         // names & encoding
         'ER_INVALID_CHARACTER_STRING',
@@ -627,7 +627,6 @@ trait Errors
         // checks & limits
         'ER_OPTION_PREVENTS_STATEMENT',
         'ER_DATA_TOO_LONG',
-        'ER_DATA_OUT_OF_RANGE',
         'ER_CHECK_CONSTRAINT_VIOLATED',
         'WARN_DATA_TRUNCATED',
         'ER_UNDO_RECORD_TOO_BIG',
