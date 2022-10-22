@@ -63,7 +63,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
             $collation = Collation::get($session->getSessionOrGlobalVariable(MysqlVariable::COLLATION_DATABASE));
         }
         if ($charset instanceof Charset && $collation instanceof Collation && !$charset->supportsCollation($collation)) {
-            $results[] = new AnalyzerResult("Mismatch between database charset ({$charset->getValue()}) and collation ({$collation->getValue()}).", $this, $command);
+            $results[] = new AnalyzerResult("Mismatch between database charset ({$charset->getValue()}) and collation ({$collation->getValue()}).");
         }
 
         return $results;
@@ -89,7 +89,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
             $collation = null;
         }
         if ($charset !== null && $collation !== null && !$charset->supportsCollation($collation)) {
-            $results[] = new AnalyzerResult("Mismatch between table charset ({$charset->getValue()}) and collation ({$collation->getValue()}).", $this, $command);
+            $results[] = new AnalyzerResult("Mismatch between table charset ({$charset->getValue()}) and collation ({$collation->getValue()}).");
         }
 
         if ($command instanceof AlterTableCommand) {
@@ -104,15 +104,15 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
                 }
                 if ($convertCharset !== null) {
                     if ($charset !== null && !$convertCharset->equals($charset)) {
-                        $results[] = new AnalyzerResult("Conflict between conversion charset ({$convertCharset->getValue()}) and table charset ({$charset->getValue()}).", $this, $command);
+                        $results[] = new AnalyzerResult("Conflict between conversion charset ({$convertCharset->getValue()}) and table charset ({$charset->getValue()}).");
                     }
                     if ($collation !== null && !$convertCharset->supportsCollation($collation)) {
-                        $results[] = new AnalyzerResult("Mismatch between conversion charset ({$convertCharset->getValue()}) and table collation ({$collation->getValue()}).", $this, $command);
+                        $results[] = new AnalyzerResult("Mismatch between conversion charset ({$convertCharset->getValue()}) and table collation ({$collation->getValue()}).");
                     }
                     $convertCollation = $convertAction->getCollation();
                     //!$convertAction->getCharset() instanceof DefaultLiteral
                     if ($convertCollation !== null && !$convertCharset->supportsCollation($convertCollation)) {
-                        $results[] = new AnalyzerResult("Mismatch between conversion charset ({$convertCharset->getValue()}) and conversion collation ({$convertCollation->getValue()}).", $this, $command);
+                        $results[] = new AnalyzerResult("Mismatch between conversion charset ({$convertCharset->getValue()}) and conversion collation ({$convertCollation->getValue()}).");
                     }
                     if (count($convertActions) > 1) {
                         foreach ($convertActions as $otherAction) {
@@ -122,7 +122,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
                                 $convertCharset = null;
                             }
                             if ($otherConvertCharset !== null && !$convertCharset->equals($otherConvertCharset)) {
-                                $results[] = new AnalyzerResult("Conflict between conversion charset ({$convertCharset->getValue()}) and other conversion charset ({$otherConvertCharset->getValue()}).", $this, $command);
+                                $results[] = new AnalyzerResult("Conflict between conversion charset ({$convertCharset->getValue()}) and other conversion charset ({$otherConvertCharset->getValue()}).");
                             }
                         }
                     }
@@ -134,7 +134,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
                 $columnCharset = $type->getCharset();
                 $columnCollation = $type->getCollation();
                 if ($columnCharset !== null && $columnCollation !== null && !$columnCharset->supportsCollation($columnCollation)) {
-                    $results[] = new AnalyzerResult("Mismatch between charset ({$columnCharset->getValue()}) and collation ({$columnCollation->getValue()}) on column {$column->getName()}.", $this, $command);
+                    $results[] = new AnalyzerResult("Mismatch between charset ({$columnCharset->getValue()}) and collation ({$columnCollation->getValue()}) on column {$column->getName()}.");
                 }
             }
         }

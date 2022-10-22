@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Analyzer;
 
+use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;
 use function spl_object_id;
 
@@ -27,6 +28,9 @@ class AnalyzerResult
     /** @var Statement */
     private $statement;
 
+    /** @var SqlMode */
+    private $mode;
+
     /** @var int */
     private $severity;
 
@@ -41,8 +45,6 @@ class AnalyzerResult
      */
     public function __construct(
         string $message,
-        AnalyzerRule $rule,
-        Statement $statement,
         ?int $severity = null,
         ?bool $autoRepair = AutoRepair::NOT_POSSIBLE,
         ?array $repairStatements = null
@@ -54,11 +56,18 @@ class AnalyzerResult
 
         $this->id = spl_object_id($this);
         $this->message = $message;
-        $this->rule = $rule;
-        $this->statement = $statement;
         $this->severity = $severity;
         $this->autoRepair = $autoRepair;
         $this->repairStatements = $repairStatements;
+    }
+
+    public function setContext(AnalyzerRule $rule, Statement $statement, SqlMode $mode): self
+    {
+        $this->rule = $rule;
+        $this->statement = $statement;
+        $this->mode = $mode;
+
+        return $this;
     }
 
     public function getId(): int
@@ -79,6 +88,11 @@ class AnalyzerResult
     public function getStatement(): Statement
     {
         return $this->statement;
+    }
+
+    public function getMode(): SqlMode
+    {
+        return $this->mode;
     }
 
     public function getSeverity(): int

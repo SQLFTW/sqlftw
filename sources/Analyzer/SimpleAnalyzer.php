@@ -39,7 +39,7 @@ class SimpleAnalyzer
             $ruleResults = $rule->process($statement, $this->context, $flags);
 
             foreach ($ruleResults as $result) {
-                $results[$result->getMessage()] = $result;
+                $results[$result->getMessage()] = $result->setContext($rule, $statement, $this->context->getSession()->getMode());
             }
         }
 

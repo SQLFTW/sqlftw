@@ -106,12 +106,12 @@ class MysqlTestJob
                     // could not be filtered from mysql-server tests
                     continue;
                 }
-                $fails[] = [$command, $tokenList];
+                $fails[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
             } else {
                 if (Str::containsAny($tokensSerialized, self::$partiallyParsedErrors)) {
                     continue;
                 }
-                $nonFails[] = [$command, $tokenList];
+                $nonFails[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
             }
 
             $statements++;

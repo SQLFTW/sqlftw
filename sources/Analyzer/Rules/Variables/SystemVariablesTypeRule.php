@@ -80,19 +80,19 @@ class SystemVariablesTypeRule implements SimpleRule
                     /** @var scalar|ExpressionNode|null $value */
                     $value = $value[0];
                 } else {
-                    $results[] = new AnalyzerResult("System variable {$name} can not be set to non-scalar value.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} can not be set to non-scalar value.");
                     continue;
                 }
             }
             if ($value instanceof DefaultLiteral) {
                 if (!MysqlVariable::hasDefault($name)) {
-                    $results[] = new AnalyzerResult("System variable {$name} can not be set to default value.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} can not be set to default value.");
                 }
                 continue;
             }
             if ($value === null) {
                 if (!$nullable) {
-                    $results[] = new AnalyzerResult("System variable {$name} is not nullable.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} is not nullable.");
                 }
                 continue;
             }
@@ -114,20 +114,20 @@ class SystemVariablesTypeRule implements SimpleRule
                 $expressionString = str_replace("\n", "", $expression->serialize($formatter));
                 $expressionType = get_class($expression);
                 $message = "System variable {$name} assignment with expression \"{$expressionString}\" ({$expressionType}) was not checked.";
-                $results[] = new AnalyzerResult($message, $this, $command, AnalyzerResultSeverity::SKIP_NOTICE);
+                $results[] = new AnalyzerResult($message, AnalyzerResultSeverity::SKIP_NOTICE);
             } else {
                 if ($nonEmpty && $value === '') {
-                    $results[] = new AnalyzerResult("System variable {$name} can not be set to an empty value.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} can not be set to an empty value.");
                 }
                 if ($nonZero && $value === 0) {
-                    $results[] = new AnalyzerResult("System variable {$name} can not be set to zero.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} can not be set to zero.");
                 }
                 if (!$context->getTypeChecker()->canBeCastedTo($value, $type, $values, $context->getResolver()->cast())) {
                     if ($values !== null) {
                         $type .= '(' . implode(',', $values) . ')';
                     }
                     $realType = is_object($value) ? get_class($value) : gettype($value);
-                    $results[] = new AnalyzerResult("System variable {$name} only accepts {$type}, but {$realType} given.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} only accepts {$type}, but {$realType} given.");
                     continue;
                 }
 
@@ -138,14 +138,14 @@ class SystemVariablesTypeRule implements SimpleRule
                 if ($min === null || $max === null) {
                     continue;
                 } elseif ($value < $min && ($strict || (!$clamp && !$clampMin))) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$min} and {$max}.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$min} and {$max}.");
                 } elseif ($value > $max && ($strict || !$clamp)) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$min} and {$max}.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$min} and {$max}.");
                 }
                 if ($increment === null) {
                     continue;
                 } elseif (($strict || !$clamp) && (!is_int($value) || ($value % $increment) !== 0)) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be multiple of {$increment}.", $this, $command);
+                    $results[] = new AnalyzerResult("System variable {$name} value must be multiple of {$increment}.");
                 }
             }
         }

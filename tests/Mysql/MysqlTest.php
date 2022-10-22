@@ -10,11 +10,13 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Parser\AnalyzerException;
 use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\SqlMode;
 use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
 use function array_map;
@@ -172,27 +174,31 @@ class MysqlTest
         }
         foreach ($fails as $path => $fail) {
             rl($path, null, 'r');
-            foreach ($fail as [$command, $tokenList]) {
-                self::renderFail($command, $tokenList, $formatter);
+            foreach ($fail as [$command, $tokenList, $mode]) {
+                self::renderFail($command, $tokenList, $mode, $formatter);
             }
         }
     }
 
-    private static function renderFail(Command $command, TokenList $tokenList, Formatter $formatter): void
+    private static function renderFail(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
-        $commandSerialized = $formatter->serialize($command);
-        $commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
-        rl($commandSerialized);
+        rl($mode->getValue(), 'mode', 'C');
 
         $tokensSerialized = trim($tokenList->serialize());
         rl($tokensSerialized, null, 'y');
 
+        //$commandSerialized = $formatter->serialize($command);
+        //$commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
+        //rl($commandSerialized);
+
         if ($command instanceof InvalidCommand) {
+            rl($mode->getValue(), 'mode', 'C');
+            $exception = $command->getException();
             $parsedCommand = $command->getCommand();
             if ($parsedCommand !== null) {
                 rd($parsedCommand);
             }
-            re($command->getException());
+            re($exception);
         } else {
             rd($command);
         }
@@ -206,20 +212,22 @@ class MysqlTest
         }
         foreach ($nonFails as $path => $nonFail) {
             rl($path, null, 'r');
-            foreach ($nonFail as [$command, $tokenList]) {
-                self::renderNonFail($command, $tokenList, $formatter);
+            foreach ($nonFail as [$command, $tokenList, $mode]) {
+                self::renderNonFail($command, $tokenList, $mode, $formatter);
             }
         }
     }
 
-    private static function renderNonFail(Command $command, TokenList $tokenList, Formatter $formatter): void
+    private static function renderNonFail(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
+        rl($mode->getValue(), 'mode', 'C');
+
         $tokensSerialized = trim($tokenList->serialize());
         rl($tokensSerialized, null, 'y');
 
-        $commandSerialized = $formatter->serialize($command);
-        $commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
-        rl($commandSerialized);
+        //$commandSerialized = $formatter->serialize($command);
+        //$commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
+        //rl($commandSerialized);
 
         rd($command, 4);
         //rd($tokenList);
