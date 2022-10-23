@@ -10,7 +10,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Parser\AnalyzerException;
 use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
@@ -22,14 +21,12 @@ use function Amp\Promise\wait;
 use function array_map;
 use function array_merge;
 use function array_sum;
-use function assert;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
 use function function_exists;
 use function ini_set;
 use function microtime;
-use function preg_replace;
 use function rd;
 use function re;
 use function rl;
@@ -68,11 +65,11 @@ class MysqlTest
             $results = [];
             foreach ($paths as $path) {
                 $result = $runner($path);
-                if ($result->fails !== []) {
-                    self::renderFails([$result->path => $result->fails], $formatter);
+                if ($result->falseNegatives !== []) {
+                    self::renderFalseNegatives([$result->path => $result->falseNegatives], $formatter);
                 }
-                if ($result->nonFails !== []) {
-                    self::renderNonFails([$result->path => $result->nonFails], $formatter);
+                if ($result->falsePositives !== []) {
+                    self::renderFalsePositives([$result->path => $result->falsePositives], $formatter);
                 }
                 $results[] = $result;
             }
@@ -89,17 +86,17 @@ class MysqlTest
             $time += $result->time;
             $statements += $result->statements;
             $tokens += $result->tokens;
-            if ($result->fails !== []) {
-                $fails[$result->path] = $result->fails;
+            if ($result->falseNegatives !== []) {
+                $fails[$result->path] = $result->falseNegatives;
             }
-            if ($result->nonFails !== []) {
-                $nonFails[$result->path] = $result->nonFails;
+            if ($result->falsePositives !== []) {
+                $nonFails[$result->path] = $result->falsePositives;
             }
         }
 
         if (!$singleThread) {
-            self::renderFails($fails, $formatter);
-            self::renderNonFails($nonFails, $formatter);
+            self::renderFalseNegatives($fails, $formatter);
+            self::renderFalsePositives($nonFails, $formatter);
         }
         if ($fails !== [] || $nonFails !== []) {
             file_put_contents($lastFailPath, implode("\n", array_merge(array_keys($fails), array_keys($nonFails))));
@@ -167,7 +164,7 @@ class MysqlTest
         }
     }
 
-    private static function renderFails(array $fails, Formatter $formatter): void
+    private static function renderFalseNegatives(array $fails, Formatter $formatter): void
     {
         if ($fails !== []) {
             rl('Should not fail:', null, 'r');
@@ -175,12 +172,12 @@ class MysqlTest
         foreach ($fails as $path => $fail) {
             rl($path, null, 'r');
             foreach ($fail as [$command, $tokenList, $mode]) {
-                self::renderFail($command, $tokenList, $mode, $formatter);
+                self::renderFalseNegative($command, $tokenList, $mode, $formatter);
             }
         }
     }
 
-    private static function renderFail(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
+    private static function renderFalseNegative(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
         rl($mode->getValue(), 'mode', 'C');
 
@@ -205,7 +202,7 @@ class MysqlTest
         //rd($tokenList);
     }
 
-    private static function renderNonFails(array $nonFails, Formatter $formatter): void
+    private static function renderFalsePositives(array $nonFails, Formatter $formatter): void
     {
         if ($nonFails !== []) {
             rl('Should fail:', null, 'r');
@@ -213,12 +210,12 @@ class MysqlTest
         foreach ($nonFails as $path => $nonFail) {
             rl($path, null, 'r');
             foreach ($nonFail as [$command, $tokenList, $mode]) {
-                self::renderNonFail($command, $tokenList, $mode, $formatter);
+                self::renderFalsePosirive($command, $tokenList, $mode, $formatter);
             }
         }
     }
 
-    private static function renderNonFail(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
+    private static function renderFalsePosirive(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
         rl($mode->getValue(), 'mode', 'C');
 

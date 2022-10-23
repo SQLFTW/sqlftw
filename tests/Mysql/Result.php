@@ -30,14 +30,14 @@ class Result
     public $tokens;
 
     /** @var array<array{Command, TokenList}> */
-    public $fails;
+    public $falseNegatives;
 
     /** @var array<array{Command, TokenList}> */
-    public $nonFails;
+    public $falsePositives;
 
     /**
-     * @param array<array{Command, TokenList}> $fails
-     * @param array<array{Command, TokenList}> $nonFails
+     * @param array<array{Command, TokenList}> $falseNegatives
+     * @param array<array{Command, TokenList}> $falsePositives
      */
     public function __construct(
         string $path,
@@ -47,8 +47,8 @@ class Result
         int $pid,
         int $statements,
         int $tokens,
-        array $fails,
-        array $nonFails
+        array $falseNegatives,
+        array $falsePositives
     ) {
         $this->path = $path;
         $this->size = $size;
@@ -57,8 +57,8 @@ class Result
         $this->pid = $pid;
         $this->statements = $statements;
         $this->tokens = $tokens;
-        $this->fails = $fails;
-        $this->nonFails = $nonFails;
+        $this->falseNegatives = $falseNegatives;
+        $this->falsePositives = $falsePositives;
     }
 
 }

@@ -20,7 +20,6 @@ use SqlFtw\Sql\Statement;
 use function end;
 use function file_get_contents;
 use function getmypid;
-use function in_array;
 use function memory_get_peak_usage;
 use function str_replace;
 use function strlen;
@@ -35,7 +34,6 @@ class MysqlTestJob
     use Aliases;
     use Errors;
     use Failures;
-    use NonFailures;
     use Replacements;
 
     public static function run(string $path): Result
@@ -60,8 +58,8 @@ class MysqlTestJob
         $start = microtime(true);
         $statements = 0;
         $tokens = 0;
-        $fails = [];
-        $nonFails = [];
+        $falseNegatives = [];
+        $falsePositives = [];
 
         /** @var Command&Statement $command */
         /** @var TokenList $tokenList */
@@ -86,43 +84,38 @@ class MysqlTestJob
                     $shouldFail = true;
                 }
             }
-            if (in_array($tokensSerializedWithoutGarbage, self::$knownFailures, true)) {
+            $valid = self::$knownFailures[$tokensSerializedWithoutGarbage] ?? null;
+            if ($valid === Valid::YES) {
                 $shouldFail = true;
-            }
-            if (in_array($tokensSerializedWithoutGarbage, self::$knownNonFailures, true)) {
+            } elseif ($valid === Valid::NO) {
                 $shouldFail = false;
-            }
-            if (in_array($tokensSerializedWithoutGarbage, self::$sometimeFailures, true)) {
+            } elseif ($valid === Valid::SOMETIMES) {
                 continue;
             }
 
-            if (!$command instanceof InvalidCommand && !$shouldFail) {
-                // ok
-            } elseif ($command instanceof InvalidCommand && $shouldFail) {
-                // ok
-            } elseif ($command instanceof InvalidCommand && !$shouldFail) {
+            if ($command instanceof InvalidCommand && !$shouldFail) {
                 // exceptions
                 if ($tokensSerialized[0] === '}' || Str::endsWith($tokensSerialized, '}')) {
                     // could not be filtered from mysql-server tests
                     continue;
                 }
-                $fails[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
-            } else {
+                $falseNegatives[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
+            } elseif (!$command instanceof InvalidCommand && $shouldFail) {
                 if (Str::containsAny($tokensSerialized, self::$partiallyParsedErrors)) {
                     continue;
                 }
-                $nonFails[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
+                $falsePositives[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
             }
 
             $statements++;
             $tokens += count($tokenList->getTokens());
         }
 
-        if ($fails !== [] && $nonFails !== []) {
+        if ($falseNegatives !== [] && $falsePositives !== []) {
             echo 'X';
-        } elseif ($fails !== []) {
+        } elseif ($falseNegatives !== []) {
             echo 'F';
-        } elseif ($nonFails !== []) {
+        } elseif ($falsePositives !== []) {
             echo 'N';
         } else {
             echo '.';
@@ -136,8 +129,8 @@ class MysqlTestJob
             (int) getmypid(),
             $statements,
             $tokens,
-            $fails,
-            $nonFails
+            $falseNegatives,
+            $falsePositives
         );
     }
 
