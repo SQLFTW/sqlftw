@@ -109,6 +109,8 @@ class IndexCommandsParser
         } else {
             $type = IndexType::get(IndexType::INDEX);
         }
+        $isFulltext = $type->equalsValue(IndexType::FULLTEXT);
+        $isSpatial = $type->equalsValue(IndexType::SPATIAL);
 
         if ($inTable) {
             $tokenList->getAnyKeyword(Keyword::INDEX, Keyword::KEY);
@@ -123,7 +125,7 @@ class IndexCommandsParser
         }
 
         $algorithm = null;
-        $canChangeAlgorithm = !$type->equalsValue(IndexType::FULLTEXT) && !$type->equalsValue(IndexType::SPATIAL);
+        $canChangeAlgorithm = !$isFulltext && !$isSpatial;
         if ($canChangeAlgorithm) {
             if ($tokenList->hasAnyKeyword(Keyword::USING, Keyword::TYPE)) {
                 $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);
@@ -137,6 +139,11 @@ class IndexCommandsParser
         }
 
         $parts = $this->parseIndexParts($tokenList);
+        if ($isSpatial && count($parts) > 1) {
+            throw new ParserException('Spatial index can only have one part.', $tokenList);
+        } elseif (count($parts) > 16) {
+            throw new ParserException('Index cannot have more than 16 parts.', $tokenList);
+        }
 
         $keyBlockSize = $withParser = $mergeThreshold = $comment = $visible = $engineAttribute = $secondaryEngineAttribute = null;
         $keywords = [

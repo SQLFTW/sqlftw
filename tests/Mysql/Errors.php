@@ -34,6 +34,7 @@ trait Errors
         'ER_WRONG_TABLE_NAME',
         'ER_TRUNCATED_WRONG_VALUE', // e.g. adding column without default value
         'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD',
+        'ER_TOO_MANY_KEY_PARTS', // to do: detect multi-column index when not explicitly spatial
     ];
 
     /** @var string[] */
@@ -57,7 +58,6 @@ trait Errors
         'ER_GENERATED_COLUMN_NAMED_FUNCTION_IS_NOT_ALLOWED',
         // lengths & limits
         'ER_PATH_LENGTH',
-        'ER_TOO_MANY_KEY_PARTS', // e.g. spatial indexes can only have one part
         'ER_INVALID_ON_UPDATE',
         // names & encoding
         'ER_INVALID_CHARACTER_STRING',
