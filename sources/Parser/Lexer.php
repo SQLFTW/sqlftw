@@ -307,6 +307,12 @@ class Lexer
                 case '*':
                     // /*!12345 ... */
                     if ($position < $length && $this->condition !== null && $string[$position] === '/') {
+                        $afterComment = $string[$position + 1];
+                        if ($this->withWhitespace && $afterComment !== ' ' && $afterComment !== "\t" && $afterComment !== "\n") {
+                            // insert a space in case that optional comment is immediately followed by a non-whitespace token
+                            // (resulting token list would serialize into invalid code)
+                            yield new Token(T::WHITESPACE, $position + 1, $row, ' ', null);
+                        }
                         $this->condition = null;
                         $position++;
                         $column++;
@@ -503,6 +509,7 @@ class Lexer
                         $column++;
 
                         $optional = $string[$position] === '!';
+                        $beforeComment = $string[$position - 3];
                         // todo: Maria
                         $validOptional = true;
                         if ($optional) {
@@ -516,9 +523,15 @@ class Lexer
                             if ($validOptional) {
                                 $versionId = strtoupper(str_replace('!', '', $m[1]));
                                 if ($this->platform->interpretOptionalComment($versionId)) {
+                                    if ($this->withWhitespace && $beforeComment !== ' ' && $beforeComment !== "\t" && $beforeComment !== "\n") {
+                                        // insert a space in case that optional comment was immediately following a non-whitespace token
+                                        // (resulting token list would serialize into invalid code)
+                                        yield new Token(T::WHITESPACE, $position - 3, $row, ' ', null);
+                                    }
                                     $this->condition = $versionId;
                                     $position += strlen($versionId) + 1;
                                     $column += strlen($versionId) + 1;
+
                                     // continue parsing as conditional code
                                     break;
                                 }
