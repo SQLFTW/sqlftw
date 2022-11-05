@@ -523,6 +523,9 @@ class ReplicationCommandsParser
                 $keyword = null;
             }
         }
+        if ($password !== null && $user === null) {
+            throw new ParserException('User is needed, when password is used.', $tokenList);
+        }
 
         return new StartGroupReplicationCommand($user, $password, $defaultAuth);
     }
