@@ -276,7 +276,7 @@ class ColumnDefinition implements TableItem
             if ($this->defaultValue instanceof FunctionCall) {
                 $result .= ' DEFAULT ' . $this->defaultValue->serialize($formatter);
             } elseif ($this->defaultValue instanceof RootNode && !$this->defaultValue instanceof Literal) { // todo: better categorization of expressions nodes
-                $result .= ' DEFAULT (' . $this->defaultValue->serialize($formatter) . ')';
+                $result .= ' DEFAULT ' . $this->defaultValue->serialize($formatter); // todo: no additional () here?
             } elseif ($this->defaultValue !== null) {
                 $result .= ' DEFAULT ' . $formatter->formatValue($this->defaultValue);
             }
@@ -330,10 +330,8 @@ class ColumnDefinition implements TableItem
             if ($this->visible !== null) {
                 $result .= $this->visible ? ' VISIBLE' : ' INVISIBLE';
             }
-            if ($this->indexType === IndexType::get(IndexType::PRIMARY)) {
-                $result .= ' PRIMARY KEY';
-            } elseif ($this->indexType === IndexType::get(IndexType::INDEX)) {
-                $result .= ' KEY';
+            if ($this->indexType !== null) {
+                $result .= ' ' . $this->indexType->serializeIndexAsKey($formatter);
             }
             if ($this->reference !== null) {
                 $result .= ' ' . $this->reference->serialize($formatter);
