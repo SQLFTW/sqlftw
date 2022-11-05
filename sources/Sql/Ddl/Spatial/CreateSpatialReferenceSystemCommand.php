@@ -119,8 +119,7 @@ class CreateSpatialReferenceSystemCommand extends Statement implements ServerCom
             $result .= 'IF NOT EXISTS ';
         }
 
-        $result .= $this->srid . ' NAME ' . $formatter->formatString($this->name)
-            . ' DEFINITION ' . $formatter->formatString($this->definition);
+        $result .= $this->srid . ' NAME ' . $formatter->formatString($this->name);
 
         if ($this->organization !== null) {
             $result .= ' ORGANIZATION ' . $formatter->formatString($this->organization);
@@ -128,6 +127,9 @@ class CreateSpatialReferenceSystemCommand extends Statement implements ServerCom
                 $result .= ' IDENTIFIED BY ' . $this->identifiedBy;
             }
         }
+
+        $result .= ' DEFINITION ' . $formatter->formatString($this->definition);
+
         if ($this->description !== null) {
             $result .= ' DESCRIPTION ' . $formatter->formatString($this->description);
         }
