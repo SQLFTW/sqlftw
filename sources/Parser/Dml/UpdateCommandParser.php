@@ -60,7 +60,7 @@ class UpdateCommandParser
             $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
 
             $value = $this->expressionParser->parseAssignExpression($tokenList);
-            $values[$column->getFullName()] = new Assignment($column, $value);
+            $values[] = new Assignment($column, $value);
         } while ($tokenList->hasSymbol(','));
 
         $where = null;
