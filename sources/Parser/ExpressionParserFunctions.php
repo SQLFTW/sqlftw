@@ -250,7 +250,7 @@ trait ExpressionParserFunctions
             $arguments[] = $type;
         } else {
             $tokenList->expectKeyword(Keyword::USING);
-            $arguments[] = $tokenList->expectCharsetName();
+            $arguments[Keyword::USING] = $tokenList->expectCharsetName();
         }
 
         $tokenList->expectSymbol(')');
