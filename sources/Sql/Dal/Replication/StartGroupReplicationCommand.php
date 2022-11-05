@@ -53,10 +53,10 @@ class StartGroupReplicationCommand extends Statement implements GroupReplication
             $result .= ' USER ' . $formatter->formatString($this->user);
             if ($this->password !== null) {
                 $result .= ', PASSWORD ' . $formatter->formatString($this->password);
-                if ($this->defaultAuth !== null) {
-                    $result .= ', DEFAULT_AUTH ' . $formatter->formatString($this->defaultAuth);
-                }
             }
+        }
+        if ($this->defaultAuth !== null) {
+            $result .= ($this->user !== null ? ',' : '') . ' DEFAULT_AUTH ' . $formatter->formatString($this->defaultAuth);
         }
 
         return $result;
