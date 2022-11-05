@@ -117,7 +117,7 @@ class FunctionCall implements RootNode
                     static $onEmpty = Keyword::ON . ' ' . Keyword::EMPTY;
                     static $onError = Keyword::ON . ' ' . Keyword::ERROR;
                     if ($name === $onEmpty || $name === $onError) {
-                        $arguments .= $argument->serialize($formatter) . ' ' . $name;
+                        $arguments .= ' ' . $argument->serialize($formatter) . ' ' . $name;
                     } elseif ($name === Keyword::RETURNING) {
                         $arguments .= ' RETURNING ' . $argument->serialize($formatter);
                     } else {
