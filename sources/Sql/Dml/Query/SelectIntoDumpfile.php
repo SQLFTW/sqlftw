@@ -11,15 +11,16 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
 
-class SelectIntoDumpfile implements SelectInto
+class SelectIntoDumpfile extends SelectInto
 {
 
     /** @var string */
     private $fileName;
 
-    public function __construct(string $fileName)
+    public function __construct(string $fileName, int $position = self::POSITION_AFTER_LOCKING)
     {
         $this->fileName = $fileName;
+        $this->position = $position;
     }
 
     public function getFileName(): string

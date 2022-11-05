@@ -447,7 +447,7 @@ class QueryParser
         $into = null;
         if ($tokenList->inSubquery() === null) {
             if ($tokenList->hasKeyword(Keyword::INTO)) {
-                $into = $this->parseInto($tokenList);
+                $into = $this->parseInto($tokenList, SelectInto::POSITION_BEFORE_FROM);
             }
         }
 
@@ -530,7 +530,7 @@ class QueryParser
 
         if ($tokenList->inSubquery() === null && !($tokenList->inUnion() && $from !== null)) {
             if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
-                $into = $this->parseInto($tokenList);
+                $into = $this->parseInto($tokenList, $locking !== null ? SelectInto::POSITION_AFTER_LOCKING : SelectInto::POSION_BEFORE_LOCKING);
             }
         }
 
@@ -630,8 +630,10 @@ class QueryParser
      *   | INTO DUMPFILE 'file_name'
      *   | INTO var_name [, var_name] ...
      * }
+     *
+     * @param SelectInto::POSITION_* $position
      */
-    private function parseInto(TokenList $tokenList): SelectInto
+    private function parseInto(TokenList $tokenList, int $position): SelectInto
     {
         if ($tokenList->hasKeyword(Keyword::OUTFILE)) {
             $outFile = $tokenList->expectString();
@@ -641,11 +643,11 @@ class QueryParser
             }
             $format = $this->expressionParser->parseFileFormat($tokenList);
 
-            return new SelectIntoOutfile($outFile, $charset, $format);
+            return new SelectIntoOutfile($outFile, $charset, $format, $position);
         } elseif ($tokenList->hasKeyword(Keyword::DUMPFILE)) {
             $dumpFile = $tokenList->expectString();
 
-            return new SelectIntoDumpfile($dumpFile);
+            return new SelectIntoDumpfile($dumpFile, $position);
         } else {
             $variables = [];
             do {
@@ -659,7 +661,7 @@ class QueryParser
                 $variables[] = $variable;
             } while ($tokenList->hasSymbol(','));
 
-            return new SelectIntoVariables($variables);
+            return new SelectIntoVariables($variables, $position);
         }
     }
 

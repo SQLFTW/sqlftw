@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\UserVariable;
 
-class SelectIntoVariables implements SelectInto
+class SelectIntoVariables extends SelectInto
 {
 
     /** @var non-empty-array<UserVariable|SimpleName> */
@@ -22,9 +22,10 @@ class SelectIntoVariables implements SelectInto
     /**
      * @param non-empty-array<UserVariable|SimpleName> $variables
      */
-    public function __construct(array $variables)
+    public function __construct(array $variables, int $position = self::POSITION_AFTER_LOCKING)
     {
         $this->variables = $variables;
+        $this->position = $position;
     }
 
     /**

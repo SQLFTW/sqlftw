@@ -269,6 +269,9 @@ class SelectCommand extends Statement implements SimpleQuery
 
         $result .= ' ' . $formatter->formatSerializablesList($this->columns);
 
+        if ($this->into !== null && $this->into->getPosition() === SelectInto::POSITION_BEFORE_FROM) {
+            $result .= "\n" . $this->into->serialize($formatter);
+        }
         if ($this->from !== null) {
             $result .= "\nFROM " . $this->from->serialize($formatter);
         }
@@ -304,13 +307,16 @@ class SelectCommand extends Statement implements SimpleQuery
                 $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
-        if ($this->into !== null) {
+        if ($this->into !== null && $this->into->getPosition() === SelectInto::POSION_BEFORE_LOCKING) {
             $result .= "\n" . $this->into->serialize($formatter);
         }
         if ($this->locking !== null) {
             foreach ($this->locking as $locking) {
                 $result .= "\n" . $locking->serialize($formatter);
             }
+        }
+        if ($this->into !== null && $this->into->getPosition() === SelectInto::POSITION_AFTER_LOCKING) {
+            $result .= "\n" . $this->into->serialize($formatter);
         }
 
         return $result;

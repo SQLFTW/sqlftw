@@ -11,7 +11,21 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Sql\SqlSerializable;
 
-interface SelectInto extends SqlSerializable
+abstract class SelectInto implements SqlSerializable
 {
+
+    const POSITION_BEFORE_FROM = 1;
+    const POSION_BEFORE_LOCKING = 2;
+    const POSITION_AFTER_LOCKING = 3;
+
+    protected $position;
+
+    /**
+     * @return self::POSITION_*
+     */
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
 
 }
