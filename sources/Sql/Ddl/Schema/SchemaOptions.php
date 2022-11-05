@@ -13,7 +13,6 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
-use function ltrim;
 
 class SchemaOptions implements SchemaCommand
 {
@@ -65,21 +64,21 @@ class SchemaOptions implements SchemaCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = '';
+        $parts = [];
         if ($this->charset !== null) {
-            $result .= ' CHARACTER SET ' . $this->charset->serialize($formatter);
+            $parts[] = 'CHARACTER SET ' . $this->charset->serialize($formatter);
         }
         if ($this->collation !== null) {
-            $result .= ' COLLATE ' . $this->collation->serialize($formatter);
+            $parts[] = 'COLLATE ' . $this->collation->serialize($formatter);
         }
         if ($this->encryption !== null) {
-            $result .= ' ENCRYPTION ' . ($this->encryption ? "'Y'" : "'N'");
+            $parts[] = 'ENCRYPTION ' . ($this->encryption ? "'Y'" : "'N'");
         }
         if ($this->readOnly !== null) {
-            $result .= ' READ ONLY ' . $this->readOnly->serialize($formatter);
+            $parts[] = 'READ ONLY ' . $this->readOnly->serialize($formatter);
         }
 
-        return ltrim($result);
+        return implode(', ', $parts);
     }
 
 }
