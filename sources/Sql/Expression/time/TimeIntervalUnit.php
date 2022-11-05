@@ -58,17 +58,17 @@ class TimeIntervalUnit extends SqlEnum
 
     /** @var array<string, string> */
     private static $formats = [
-        self::SECOND_MICROSECOND => '%.%',
-        self::MINUTE_SECOND => '%:%',
-        self::HOUR_MINUTE => '%:%',
-        self::DAY_HOUR => '% %',
-        self::YEAR_MONTH => '%-%',
-        self::MINUTE_MICROSECOND => '%:%.%',
-        self::HOUR_SECOND => '%:%:%',
-        self::DAY_MINUTE => '% %:%',
-        self::HOUR_MICROSECOND => '%:%:%.%',
-        self::DAY_SECOND => '% %:%:%',
-        self::DAY_MICROSECOND => '% %:%:%.%',
+        self::SECOND_MICROSECOND => '%d.%d',
+        self::MINUTE_SECOND => '%d:%d',
+        self::HOUR_MINUTE => '%d:%d',
+        self::DAY_HOUR => '%d %d',
+        self::YEAR_MONTH => '%d-%d',
+        self::MINUTE_MICROSECOND => '%d:%d.%d',
+        self::HOUR_SECOND => '%d:%d:%d',
+        self::DAY_MINUTE => '%d %d:%d',
+        self::HOUR_MICROSECOND => '%d:%d:%d.%d',
+        self::DAY_SECOND => '%d %d:%d:%d',
+        self::DAY_MICROSECOND => '%d %d:%d:%d.%d',
     ];
 
     /** @var array<string, string> */

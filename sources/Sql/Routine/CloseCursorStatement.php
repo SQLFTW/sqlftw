@@ -31,7 +31,7 @@ class CloseCursorStatement extends Statement implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return 'CLOSE ' . $formatter->formatName($this->name) . ";\n";
+        return 'CLOSE ' . $formatter->formatName($this->name);
     }
 
 }

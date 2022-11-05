@@ -32,7 +32,7 @@ class ExistsExpression implements RootNode
 
     public function serialize(Formatter $formatter): string
     {
-        return 'EXISTS (' . $this->subquery->serialize($formatter) . ')';
+        return 'EXISTS ' . $this->subquery->serialize($formatter);
     }
 
 }

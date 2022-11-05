@@ -125,7 +125,7 @@ class FunctionCall implements RootNode
                     }
                 } else {
                     // KEYWORD value KEYWORD value...
-                    $arguments .= ($first ? '' : ', ') . $name . ' ' . $argument->serialize($formatter);
+                    $arguments .= ($first ? '' : ' ') . $name . ' ' . $argument->serialize($formatter);
                 }
                 $first = false;
             }

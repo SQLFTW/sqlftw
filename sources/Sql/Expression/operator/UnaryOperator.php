@@ -12,11 +12,12 @@ namespace SqlFtw\Sql\Expression;
 use SqlFtw\Formatter\Formatter;
 
 /**
- * NOT right
- * !right
- * ~right
- * -right
  * +right
+ * -right
+ * ~right
+ * !right
+ * NOT right
+ * BINARY right
  */
 class UnaryOperator implements OperatorExpression
 {
@@ -47,7 +48,8 @@ class UnaryOperator implements OperatorExpression
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->operator->serialize($formatter) . ($this->operator->getValue() === Operator::NOT ? ' ' : '') . $this->right->serialize($formatter);
+        $isSymbol = !$this->operator->equalsAny(Operator::NOT, Operator::BINARY);
+        return $this->operator->serialize($formatter) . ($isSymbol ? '' : ' ') . $this->right->serialize($formatter);
     }
 
 }

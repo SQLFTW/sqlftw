@@ -66,12 +66,12 @@ class CaseStatement extends Statement implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CASE';
+        $result = 'CASE ';
         if ($this->condition !== null) {
-            $result .= ' ' . $this->condition->serialize($formatter) . "\n";
+            $result .= $this->condition->serialize($formatter) . "\n";
         }
         foreach ($this->values as $i => $condition) {
-            $result = 'WHEN ' . $this->values[$i]->serialize($formatter) . " THAN \n";
+            $result .= 'WHEN ' . $this->values[$i]->serialize($formatter) . " THEN \n";
             $statements = $this->statementLists[$i];
             if ($statements !== []) {
                 $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";

@@ -31,7 +31,7 @@ class OpenCursorStatement extends Statement implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return 'OPEN ' . $formatter->formatName($this->name) . ";\n";
+        return 'OPEN ' . $formatter->formatName($this->name);
     }
 
 }

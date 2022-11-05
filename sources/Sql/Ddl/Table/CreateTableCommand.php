@@ -153,7 +153,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
         }
         $result .= 'TABLE ';
         if ($this->ifNotExists) {
-            $result .= 'IF NOT EXISTS';
+            $result .= 'IF NOT EXISTS ';
         }
         $result .= $this->name->serialize($formatter);
 
@@ -166,7 +166,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
         }
 
         if ($this->partitioning !== null) {
-            $result .= $this->partitioning->serialize($formatter);
+            $result .= ' ' . $this->partitioning->serialize($formatter);
         }
 
         if ($this->duplicateOption !== null) {

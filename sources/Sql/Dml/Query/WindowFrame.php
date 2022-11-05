@@ -82,9 +82,9 @@ class WindowFrame implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = $this->units->serialize($formatter) . ' ';
+        $units = $this->units->serialize($formatter) . ' ';
 
-        $result .= $this->startExpression !== null
+        $result = $this->startExpression !== null
             ? $this->startExpression->serialize($formatter) . ' ' . $this->startType->serialize($formatter)
             : $this->startType->serialize($formatter);
 
@@ -95,7 +95,7 @@ class WindowFrame implements SqlSerializable
                 : $this->endType->serialize($formatter);
         }
 
-        return $result;
+        return $units . $result;
     }
 
 }

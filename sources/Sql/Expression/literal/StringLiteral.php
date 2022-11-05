@@ -77,7 +77,7 @@ class StringLiteral implements StringValue, BoolValue
     {
         $result = '';
         if ($this->charset !== null) {
-            $result .= '_' . $this->charset->serialize($formatter) . ' ';
+            $result .= '_' . $this->charset->serialize($formatter);
         }
 
         if (count($this->parts) === 1) {

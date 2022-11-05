@@ -58,7 +58,7 @@ class IfStatement extends Statement
     {
         $result = '';
         foreach ($this->conditions as $i => $condition) {
-            $result = ($i === 0 ? 'IF ' : 'ELSEIF ') . $this->conditions[0]->serialize($formatter) . " THAN \n";
+            $result .= ($i === 0 ? 'IF ' : 'ELSEIF ') . $condition->serialize($formatter) . " THEN \n";
             $statements = $this->statementLists[$i];
             if ($statements !== []) {
                 $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";

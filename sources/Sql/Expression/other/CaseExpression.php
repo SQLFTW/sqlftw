@@ -72,7 +72,7 @@ class CaseExpression extends Statement implements RootNode
             $result .= ' ' . $this->condition->serialize($formatter);
         }
         foreach ($this->values as $i => $condition) {
-            $result = ' WHEN ' . $this->values[$i]->serialize($formatter) . ' THAN ' . $this->results[$i]->serialize($formatter);
+            $result .= ' WHEN ' . $this->values[$i]->serialize($formatter) . ' THEN ' . $this->results[$i]->serialize($formatter);
         }
         if (count($this->values) < count($this->results)) {
             $result .= ' ELSE ' . $this->results[count($this->values)]->serialize($formatter);
