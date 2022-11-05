@@ -690,7 +690,7 @@ class Lexer
                     $numberCanFollow = ($previous->type & T::END) !== 0
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
-                    if ($numberCanFollow && isset(self::$numbersKey[$next11])) {
+                    if ($numberCanFollow && ($next11 === '.' || isset(self::$numbersKey[$next11]))) {
                         $token = $this->parseNumber($string, $position, $column, $row, '+');
                         if ($token !== null) {
                             yield $previous = $token;
@@ -1248,7 +1248,7 @@ class Lexer
         }
 
         $orig = $base . $exp;
-        $value = $base . str_replace(['e+', ' '], ['e', ''], strtolower($exp));
+        $value = $base . str_replace(' ', '', strtolower($exp));
         if (substr($orig, 0, 3) === '-- ') {
             return null;
         }
@@ -1257,26 +1257,19 @@ class Lexer
         $position += $len;
         $column += $len;
 
+        // todo: is "+42" considered uint?
         if (ctype_digit($value)) {
             $type |= T::INT | T::UINT;
 
             return new Token($type, $startAt, $row, $value, $orig);
         }
 
-        // value clean-up: --+.123E+2 => 0.123e2
+        // value clean-up: --+.123E+2 => +0.123e+2
         while ($value[0] === '-' && $value[1] === '-') {
             $value = substr($value, 2);
         }
-        $value = ltrim($value, '+');
-        if (strpos($value, '.') === strlen($value) - 1) {
-            $value .= '0';
-        }
-        if ($value[0] === '.') {
-            $value = '0' . $value;
-        }
-        $value = str_replace('.e', '.0e', $value);
 
-        if (preg_match('~^(?:0|-?[1-9]\\d*)$~', $value) !== 0) {
+        if (preg_match('~^(?:0|[+-]?[1-9]\\d*)$~', $value) !== 0) {
             $type |= TokenType::INT;
         }
 
