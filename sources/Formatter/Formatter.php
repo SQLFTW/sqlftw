@@ -59,16 +59,42 @@ class Formatter
     /** @var bool */
     public $quoteAllNames;
 
+    /** @var bool */
+    public $escapeWhitespace;
+
+    /** @var string[] */
+    private $escapeKeys;
+
+    /** @var string[] */
+    private $escapeValues;
+
+    /** @var string[] */
+    private $escapeWsKeys;
+
+    /** @var string[] */
+    private $escapeWsValues;
+
     public function __construct(
         Session $session,
         string $indent = '  ',
         bool $comments = false,
-        bool $quoteAllNames = false
+        bool $quoteAllNames = false,
+        bool $escapeWhitespace = false
     ) {
         $this->session = $session;
         $this->indent = $indent;
         $this->comments = $comments;
         $this->quoteAllNames = $quoteAllNames;
+        $this->escapeWhitespace = $escapeWhitespace;
+
+        $escapes = self::MYSQL_ESCAPES;
+        $this->escapeWsKeys = array_keys($escapes);
+        $this->escapeWsValues = array_values($escapes);
+        if (!$this->escapeWhitespace) {
+            unset($escapes["\n"], $escapes["\r"], $escapes["\t"]);
+        }
+        $this->escapeKeys = array_keys($escapes);
+        $this->escapeValues = array_values($escapes);
     }
 
     public function getSession(): Session
@@ -149,7 +175,16 @@ class Formatter
     public function formatString(string $string): string
     {
         if (!$this->session->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
-            $string = str_replace(array_keys(self::MYSQL_ESCAPES), array_values(self::MYSQL_ESCAPES), $string);
+            $string = str_replace($this->escapeKeys, $this->escapeValues, $string);
+        }
+
+        return "'" . str_replace("'", "''", $string) . "'";
+    }
+
+    public function formatStringForceEscapeWhitespace(string $string): string
+    {
+        if (!$this->session->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
+            $string = str_replace($this->escapeWsKeys, $this->escapeWsValues, $string);
         }
 
         return "'" . str_replace("'", "''", $string) . "'";
@@ -206,12 +241,10 @@ class Formatter
         return "'" . $dateTime->format(DateTime::DEFAULT_FORMAT) . "'";
     }
 
-    public function serialize(SqlSerializable $serializable): string
+    public function serialize(SqlSerializable $serializable, bool $comments = true): string
     {
         if ($serializable instanceof Statement) {
-            // todo: comments
-
-            return $serializable->serialize($this);
+            return ($comments ? implode('', $serializable->getCommentsBefore()) : '') . $serializable->serialize($this);
         } else {
             return $serializable->serialize($this);
         }

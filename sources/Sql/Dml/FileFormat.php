@@ -85,25 +85,25 @@ class FileFormat implements SqlSerializable
         if ($this->fieldsTerminatedBy !== null || $this->fieldsEnclosedBy !== null || $this->fieldsEscapedBy !== null) {
             $result .= ' FIELDS';
             if ($this->fieldsTerminatedBy !== null) {
-                $result .= ' TERMINATED BY ' . $formatter->formatString($this->fieldsTerminatedBy);
+                $result .= ' TERMINATED BY ' . $formatter->formatStringForceEscapeWhitespace($this->fieldsTerminatedBy);
             }
             if ($this->fieldsEnclosedBy !== null) {
                 if ($this->optionallyEnclosed) {
                     $result .= ' OPTIONALLY';
                 }
-                $result .= ' ENCLOSED BY ' . $formatter->formatString($this->fieldsEnclosedBy);
+                $result .= ' ENCLOSED BY ' . $formatter->formatStringForceEscapeWhitespace($this->fieldsEnclosedBy);
             }
             if ($this->fieldsEscapedBy !== null) {
-                $result .= ' ESCAPED BY ' . $formatter->formatString($this->fieldsEscapedBy);
+                $result .= ' ESCAPED BY ' . $formatter->formatStringForceEscapeWhitespace($this->fieldsEscapedBy);
             }
         }
         if ($this->linesStaringBy !== null || $this->linesTerminatedBy !== null) {
             $result .= ' LINES';
             if ($this->linesStaringBy !== null) {
-                $result .= ' STARTING BY ' . $formatter->formatString($this->linesStaringBy);
+                $result .= ' STARTING BY ' . $formatter->formatStringForceEscapeWhitespace($this->linesStaringBy);
             }
             if ($this->linesTerminatedBy !== null) {
-                $result .= ' TERMINATED BY ' . $formatter->formatString($this->linesTerminatedBy);
+                $result .= ' TERMINATED BY ' . $formatter->formatStringForceEscapeWhitespace($this->linesTerminatedBy);
             }
         }
 
