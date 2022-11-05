@@ -75,13 +75,13 @@ class AlterLogfileGroupCommand extends Statement implements LogfileGroupCommand
     {
         $result = 'ALTER LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ADD UNDOFILE ' . $formatter->formatString($this->undoFile);
         if ($this->initialSize !== null) {
-            $result .= ' INITIAL_SIZE = ' . $this->initialSize->serialize($formatter);
+            $result .= ' INITIAL_SIZE ' . $this->initialSize->serialize($formatter);
         }
         if ($this->wait !== null) {
             $result .= $this->wait ? ' WAIT' : ' NO_WAIT';
         }
         if ($this->engine !== null) {
-            $result .= ' ENGINE = ' . $this->engine->serialize($formatter);
+            $result .= ' ENGINE ' . $this->engine->serialize($formatter);
         }
 
         return $result;

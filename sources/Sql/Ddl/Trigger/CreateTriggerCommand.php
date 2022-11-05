@@ -98,7 +98,7 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
-            $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
+            $result .= ' DEFINER ' . $this->definer->serialize($formatter);
         }
         $result .= ' TRIGGER ';
         if ($this->ifNotExists) {

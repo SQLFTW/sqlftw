@@ -120,11 +120,11 @@ class PartitionDefinition implements SqlSerializable
         if ($this->options !== null) {
             foreach ($this->options as $option => $value) {
                 if ($value instanceof SqlSerializable) {
-                    $result .= ' ' . $option . ' = ' . $value->serialize($formatter);
+                    $result .= ' ' . $option . ' ' . $value->serialize($formatter);
                 } elseif ($option === PartitionOption::TABLESPACE) {
-                    $result .= ' ' . $option . ' = ' . $formatter->formatName((string) $value);
+                    $result .= ' ' . $option . ' ' . $formatter->formatName((string) $value);
                 } else {
-                    $result .= ' ' . $option . ' = ' . $formatter->formatValue($value);
+                    $result .= ' ' . $option . ' ' . $formatter->formatValue($value);
                 }
             }
         }
@@ -134,9 +134,9 @@ class PartitionDefinition implements SqlSerializable
                 if ($options !== null) {
                     foreach ($options as $option => $value) {
                         if ($option === PartitionOption::TABLESPACE) {
-                            $sub .= ' ' . $option . ' = ' . $formatter->formatName($value);
+                            $sub .= ' ' . $option . ' ' . $formatter->formatName($value);
                         } else {
-                            $sub .= ' ' . $option . ' = ' . $formatter->formatValue($value);
+                            $sub .= ' ' . $option . ' ' . $formatter->formatValue($value);
                         }
                     }
                 }
