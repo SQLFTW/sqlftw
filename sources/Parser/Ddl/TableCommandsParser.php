@@ -967,6 +967,7 @@ class TableCommandsParser
                     } else {
                         $onUpdate = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP));
                     }
+                    break;
                 case Keyword::UNIQUE:
                     // [UNIQUE [KEY] | [PRIMARY] KEY]
                     $tokenList->passKeyword(Keyword::KEY);
@@ -1020,13 +1021,13 @@ class TableCommandsParser
                 case Keyword::CHARACTER:
                     $tokenList->expectKeyword(Keyword::SET);
                 case Keyword::CHARSET:
-                    $type->addCharset($tokenList->expectCharsetName());
+                    $type = $type->addCharset($tokenList->expectCharsetName());
                     break;
                 case Keyword::COLLATE:
-                    $type->addCollation($tokenList->expectCollationName());
+                    $type = $type->addCollation($tokenList->expectCollationName());
                     break;
                 case Keyword::SRID:
-                    $type->addSrid((int) $tokenList->expectUnsignedInt());
+                    $type = $type->addSrid((int) $tokenList->expectUnsignedInt());
                     break;
             }
         }
