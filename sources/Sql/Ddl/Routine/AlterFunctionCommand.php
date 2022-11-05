@@ -74,9 +74,6 @@ class AlterFunctionCommand extends Statement implements StoredFunctionCommand, A
     public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER FUNCTION ' . $this->name->serialize($formatter);
-        if ($this->comment !== null) {
-            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
-        }
         if ($this->language !== null) {
             $result .= ' LANGUAGE ' . $this->language;
         }
@@ -85,6 +82,9 @@ class AlterFunctionCommand extends Statement implements StoredFunctionCommand, A
         }
         if ($this->security !== null) {
             $result .= ' SQL SECURITY ' . $this->security->serialize($formatter);
+        }
+        if ($this->comment !== null) {
+            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         }
 
         return $result;

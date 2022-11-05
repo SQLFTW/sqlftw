@@ -146,9 +146,6 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
         }
         $result .= ')';
 
-        if ($this->comment !== null) {
-            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
-        }
         if ($this->language !== null) {
             $result .= ' LANGUAGE ' . $this->language;
         }
@@ -160,6 +157,9 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
         }
         if ($this->security !== null) {
             $result .= ' SQL SECURITY ' . $this->security->serialize($formatter);
+        }
+        if ($this->comment !== null) {
+            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         }
 
         $result .= ' ' . $this->body->serialize($formatter);

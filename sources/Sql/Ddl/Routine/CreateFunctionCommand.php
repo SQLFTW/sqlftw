@@ -158,9 +158,6 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
         })) . ')';
         $result .= ' RETURNS ' . $this->returnType->serialize($formatter);
 
-        if ($this->comment !== null) {
-            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
-        }
         if ($this->language !== null) {
             $result .= ' LANGUAGE ' . $this->language;
         }
@@ -172,6 +169,9 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
         }
         if ($this->security !== null) {
             $result .= ' SQL SECURITY ' . $this->security->serialize($formatter);
+        }
+        if ($this->comment !== null) {
+            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         }
 
         $result .= ' ' . $this->body->serialize($formatter);
