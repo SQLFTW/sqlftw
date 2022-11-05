@@ -19,14 +19,18 @@ class WhileStatement extends Statement implements SqlSerializable
     /** @var string|null */
     private $label;
 
+    /** @var bool */
+    private $endLabel;
+
     /**
      * @param Statement[] $statements
      */
-    public function __construct(array $statements, RootNode $condition, ?string $label)
+    public function __construct(array $statements, RootNode $condition, ?string $label, bool $endLabel = false)
     {
         $this->statements = $statements;
         $this->condition = $condition;
         $this->label = $label;
+        $this->endLabel = $endLabel;
     }
 
     /**
@@ -47,6 +51,11 @@ class WhileStatement extends Statement implements SqlSerializable
         return $this->label;
     }
 
+    public function endLabel(): bool
+    {
+        return $this->endLabel;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';
@@ -58,6 +67,9 @@ class WhileStatement extends Statement implements SqlSerializable
             $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
         }
         $result .= "END WHILE";
+        if ($this->label !== null && $this->endLabel) {
+            $result .= ' ' . $formatter->formatName($this->label);
+        }
 
         return $result;
     }

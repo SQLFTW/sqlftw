@@ -305,6 +305,7 @@ class RoutineBodyParser
         $statements = $this->parseStatementList($tokenList);
         $tokenList->expectKeyword(Keyword::END);
 
+        $endLabel = null;
         if ($label !== null) {
             $endLabel = $tokenList->getName(EntityType::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
@@ -312,7 +313,7 @@ class RoutineBodyParser
             }
         }
 
-        return new CompoundStatement($statements, $label);
+        return new CompoundStatement($statements, $label, $endLabel !== null);
     }
 
     /**
@@ -354,6 +355,7 @@ class RoutineBodyParser
         $statements = $this->parseStatementList($tokenList);
         $tokenList->expectKeywords(Keyword::END, Keyword::LOOP);
 
+        $endLabel = null;
         if ($label !== null) {
             $endLabel = $tokenList->getName(EntityType::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
@@ -361,7 +363,7 @@ class RoutineBodyParser
             }
         }
 
-        return new LoopStatement($statements, $label);
+        return new LoopStatement($statements, $label, $endLabel !== null);
     }
 
     /**
@@ -377,6 +379,7 @@ class RoutineBodyParser
         $condition = $this->expressionParser->parseExpression($tokenList);
         $tokenList->expectKeywords(Keyword::END, Keyword::REPEAT);
 
+        $endLabel = null;
         if ($label !== null) {
             $endLabel = $tokenList->getName(EntityType::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
@@ -384,7 +387,7 @@ class RoutineBodyParser
             }
         }
 
-        return new RepeatStatement($statements, $condition, $label);
+        return new RepeatStatement($statements, $condition, $label, $endLabel !== null);
     }
 
     /**
@@ -399,6 +402,7 @@ class RoutineBodyParser
         $statements = $this->parseStatementList($tokenList);
         $tokenList->expectKeywords(Keyword::END, Keyword::WHILE);
 
+        $endLabel = null;
         if ($label !== null) {
             $endLabel = $tokenList->getName(EntityType::LABEL);
             if ($endLabel !== null && $endLabel !== $label) {
@@ -406,7 +410,7 @@ class RoutineBodyParser
             }
         }
 
-        return new WhileStatement($statements, $condition, $label);
+        return new WhileStatement($statements, $condition, $label, $endLabel !== null);
     }
 
     /**

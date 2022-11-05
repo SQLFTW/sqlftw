@@ -14,13 +14,17 @@ class CompoundStatement extends Statement
     /** @var string|null */
     private $label;
 
+    /** @var bool */
+    private $endLabel;
+
     /**
      * @param Statement[] $statements
      */
-    public function __construct(array $statements, ?string $label)
+    public function __construct(array $statements, ?string $label, bool $endLabel = false)
     {
         $this->statements = $statements;
         $this->label = $label;
+        $this->endLabel = $endLabel;
     }
 
     /**
@@ -36,6 +40,11 @@ class CompoundStatement extends Statement
         return $this->label;
     }
 
+    public function endLabel(): bool
+    {
+        return $this->endLabel;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';
@@ -47,6 +56,9 @@ class CompoundStatement extends Statement
             $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
         }
         $result .= ' END';
+        if ($this->label !== null && $this->endLabel) {
+            $result .= ' ' . $formatter->formatName($this->label);
+        }
 
         return $result;
     }
