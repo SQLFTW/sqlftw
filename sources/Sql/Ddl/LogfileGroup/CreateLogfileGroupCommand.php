@@ -116,25 +116,25 @@ class CreateLogfileGroupCommand extends Statement implements LogfileGroupCommand
     {
         $result = 'CREATE LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ADD UNDOFILE ' . $formatter->formatString($this->undoFile);
         if ($this->initialSize !== null) {
-            $result .= ' INITIAL_SIZE = ' . $this->initialSize->serialize($formatter);
+            $result .= ' INITIAL_SIZE ' . $this->initialSize->serialize($formatter);
         }
         if ($this->undoBufferSize !== null) {
-            $result .= ' UNDO_BUFFER_SIZE = ' . $this->undoBufferSize->serialize($formatter);
+            $result .= ' UNDO_BUFFER_SIZE ' . $this->undoBufferSize->serialize($formatter);
         }
         if ($this->redoBufferSize !== null) {
-            $result .= ' REDO_BUFFER_SIZE = ' . $this->redoBufferSize->serialize($formatter);
+            $result .= ' REDO_BUFFER_SIZE ' . $this->redoBufferSize->serialize($formatter);
         }
         if ($this->nodeGroup !== null) {
-            $result .= ' NODEGROUP = ' . $this->nodeGroup;
+            $result .= ' NODEGROUP ' . $this->nodeGroup;
         }
         if ($this->wait) {
             $result .= ' WAIT';
         }
         if ($this->comment !== null) {
-            $result .= ' COMMENT = ' . $formatter->formatString($this->comment);
+            $result .= ' COMMENT ' . $formatter->formatString($this->comment);
         }
         if ($this->engine !== null) {
-            $result .= ' ENGINE = ' . $this->engine->serialize($formatter);
+            $result .= ' ENGINE ' . $this->engine->serialize($formatter);
         }
 
         return $result;

@@ -42,7 +42,7 @@ class DropLogfileGroupCommand extends Statement implements LogfileGroupCommand
     {
         $result = 'DROP LOGFILE GROUP ' . $formatter->formatName($this->name);
         if ($this->engine !== null) {
-            $result .= ' ENGINE = ' . $this->engine->serialize($formatter);
+            $result .= ' ENGINE ' . $this->engine->serialize($formatter);
         }
 
         return $result;
