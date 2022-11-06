@@ -22,6 +22,7 @@ use SqlFtw\Sql\Dml\Insert\ReplaceCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
+use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ExpressionNode;
@@ -187,6 +188,7 @@ class InsertCommandParser
             $query = $this->queryParser->parseQuery($tokenList->rewind(-1));
             $tokenList->endSubquery();
             $tokenList->expectSymbol(')');
+            $query = new ParenthesizedQueryExpression($query);
 
             return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE)) { // no Keyword::VALUES!
