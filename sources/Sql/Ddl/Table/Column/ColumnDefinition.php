@@ -289,14 +289,14 @@ class ColumnDefinition implements TableItem
             if ($this->onUpdate !== null) {
                 $result .= ' ON UPDATE ' . $this->onUpdate->serialize($formatter);
             }
+            if ($this->columnFormat !== null) {
+                $result .= ' COLUMN_FORMAT ' . $this->columnFormat->serialize($formatter);
+            }
             if ($this->indexType !== null) {
                 $result .= ' ' . $this->indexType->serializeIndexAsKey($formatter);
             }
             if ($this->comment !== null) {
                 $result .= ' COMMENT ' . $formatter->formatString($this->comment);
-            }
-            if ($this->columnFormat !== null) {
-                $result .= ' COLUMN_FORMAT ' . $this->columnFormat->serialize($formatter);
             }
             if ($this->engineAttribute !== null) {
                 $result .= ' ENGINE_ATTRIBUTE ' . $formatter->formatString($this->engineAttribute);
