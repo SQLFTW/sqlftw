@@ -222,6 +222,11 @@ class ColumnType implements SqlSerializable
         return $this->srid;
     }
 
+    public function zerofill(): bool
+    {
+        return $this->zerofill;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
