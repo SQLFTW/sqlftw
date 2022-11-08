@@ -145,7 +145,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
-            $result .= ' DEFINER ' . $this->definer->serialize($formatter);
+            $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
         $result .= ' FUNCTION ';
         if ($this->ifNotExists) {

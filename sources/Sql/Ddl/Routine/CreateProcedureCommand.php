@@ -132,7 +132,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
     {
         $result = 'CREATE';
         if ($this->definer !== null) {
-            $result .= ' DEFINER ' . $this->definer->serialize($formatter);
+            $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
         $result .= ' PROCEDURE ';
         if ($this->ifNotExists) {
