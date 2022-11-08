@@ -245,8 +245,10 @@ class TableCommandsParser
                                 // from tests: ALTER TABLE mysqltest.my_socket_summary ADD COLUMN (n INT AUTO_INCREMENT, PRIMARY KEY(n));
                                 $addColumns = [];
                                 do {
-                                    if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::PRIMARY)) {
-                                        $addColumns[] = $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
+                                    if ($tokenList->hasKeyword(Keyword::INDEX)) {
+                                        $addColumns[] = $this->parseIndex($tokenList);
+                                    } elseif ($tokenList->hasKeyword(Keyword::PRIMARY)) {
+                                        $addColumns[] = $this->parseIndex($tokenList, true);
                                     } else {
                                         $addColumns[] = $this->parseColumn($tokenList);
                                     }
