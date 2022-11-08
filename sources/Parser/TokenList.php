@@ -816,14 +816,20 @@ class TokenList
         // charset introducer
         $charset = null;
         if (($token->type & T::UNQUOTED_NAME) !== 0) {
-            $lower = substr(strtolower($token->value), 1);
-            if ($token->value[0] === '_' && Charset::isValid($lower)) {
-                $charset = Charset::get($lower);
+            $lower = strtolower($token->value);
+            if ($lower === 'n') {
+                // todo: keep?
                 $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
             } else {
-                $this->position = $position;
+                $lower = substr($lower, 1);
+                if ($token->value[0] === '_' && Charset::isValid($lower)) {
+                    $charset = Charset::get($lower);
+                    $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                } else {
+                    $this->position = $position;
 
-                return null;
+                    return null;
+                }
             }
         }
         if ($token === null) {
