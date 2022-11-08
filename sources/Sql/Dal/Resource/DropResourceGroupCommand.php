@@ -30,7 +30,7 @@ class DropResourceGroupCommand extends Statement implements DalCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'CREATE RESOURCE GROUP ' . $formatter->formatName($this->name) . ($this->force ? ' FORCE' : '');
+        return 'DROP RESOURCE GROUP ' . $formatter->formatName($this->name) . ($this->force ? ' FORCE' : '');
     }
 
 }
