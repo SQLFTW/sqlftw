@@ -1339,7 +1339,8 @@ class ExpressionParser
                 if (strlen($value->asString()) > $limit) {
                     throw new ParserException("Enum value '{$value->getValue()}' exceeds limit of {$limit} bytes.", $tokenList);
                 }
-                $values[$value->getValue()] = $value;
+                // todo: collations?
+                $values[strtolower($value->getValue())] = $value;
             } while ($tokenList->hasSymbol(','));
             if (count($values) > 64 && $type->equalsValue(BaseType::SET)) {
                 throw new ParserException('Too many SET values.', $tokenList);
