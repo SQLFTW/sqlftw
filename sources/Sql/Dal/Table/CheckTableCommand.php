@@ -46,7 +46,7 @@ class CheckTableCommand extends Statement implements DalTablesCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CHECK TABLE ' . $formatter->formatSerializablesList($this->names);
+        $result = 'CHECK TABLES ' . $formatter->formatSerializablesList($this->names);
 
         if ($this->option !== null) {
             $result .= ' ' . $this->option->serialize($formatter);
