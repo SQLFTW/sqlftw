@@ -82,12 +82,12 @@ class ColumnDefinition implements TableItem
     private $reference;
 
     /** @var CheckDefinition|ConstraintDefinition|null */
-    private $check;
+    private $checks;
 
     /**
      * @param string|int|float|bool|RootNode|null $defaultValue
      * @param Identifier|FunctionCall|null $onUpdate
-     * @param CheckDefinition|ConstraintDefinition|null $check
+     * @param non-empty-array<CheckDefinition|ConstraintDefinition>|null $checks
      */
     public function __construct(
         string $name,
@@ -104,7 +104,7 @@ class ColumnDefinition implements TableItem
         ?string $secondaryEngineAttribute = null,
         ?StorageType $storage = null,
         ?ReferenceDefinition $reference = null,
-        $check = null
+        ?array $checks = null
     )
     {
         $this->name = $name;
@@ -121,9 +121,12 @@ class ColumnDefinition implements TableItem
         $this->secondaryEngineAttribute = $secondaryEngineAttribute;
         $this->storage = $storage;
         $this->reference = $reference;
-        $this->check = $check;
+        $this->checks = $checks;
     }
 
+    /**
+     * @param non-empty-array<CheckDefinition>|null $checks
+     */
     public static function createGenerated(
         string $name,
         ColumnType $type,
@@ -134,10 +137,10 @@ class ColumnDefinition implements TableItem
         ?string $comment = null,
         ?IndexType $indexType = null,
         ?ReferenceDefinition $reference = null,
-        ?CheckDefinition $check = null
+        ?array $checks = null
     ): self
     {
-        $instance = new self($name, $type, null, $nullable, $visible, false, null, $comment, $indexType, null, null, null, null, $reference, $check);
+        $instance = new self($name, $type, null, $nullable, $visible, false, null, $comment, $indexType, null, null, null, null, $reference, $checks);
 
         $instance->generatedColumnType = $generatedColumnType;
         $instance->expression = $expression;
@@ -256,11 +259,11 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @return CheckDefinition|ConstraintDefinition|null
+     * @return non-empty-array<CheckDefinition|ConstraintDefinition>|null
      */
-    public function getCheck()
+    public function getChecks(): ?array
     {
-        return $this->check;
+        return $this->checks;
     }
 
     public function serialize(Formatter $formatter): string
@@ -310,8 +313,10 @@ class ColumnDefinition implements TableItem
             if ($this->reference !== null) {
                 $result .= ' ' . $this->reference->serialize($formatter);
             }
-            if ($this->check !== null) {
-                $result .= ' ' . $this->check->serialize($formatter);
+            if ($this->checks !== null) {
+                foreach ($this->checks as $check) {
+                    $result .= ' ' . $check->serialize($formatter);
+                }
             }
         } else {
             $result .= ' GENERATED ALWAYS AS (' . $this->expression->serialize($formatter) . ')';
@@ -336,8 +341,10 @@ class ColumnDefinition implements TableItem
             if ($this->reference !== null) {
                 $result .= ' ' . $this->reference->serialize($formatter);
             }
-            if ($this->check !== null) {
-                $result .= ' ' . $this->check->serialize($formatter);
+            if ($this->checks !== null) {
+                foreach ($this->checks as $check) {
+                    $result .= ' ' . $check->serialize($formatter);
+                }
             }
         }
 

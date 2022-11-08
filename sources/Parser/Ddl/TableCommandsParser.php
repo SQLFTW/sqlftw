@@ -891,7 +891,8 @@ class TableCommandsParser
      */
     private function parseOrdinaryColumn(string $name, ColumnType $type, TokenList $tokenList): ColumnDefinition
     {
-        $null = $default = $index = $comment = $columnFormat = $reference = $check = $onUpdate = $visible = null;
+        $checks = [];
+        $null = $default = $index = $comment = $columnFormat = $reference = $onUpdate = $visible = null;
         $engineAttribute = $secondaryEngineAttribute = $storage = null;
         $autoIncrement = false;
         $keywords = [
@@ -1014,11 +1015,11 @@ class TableCommandsParser
                     break;
                 case Keyword::CONSTRAINT:
                     // [check_constraint_definition]
-                    $check = $this->parseConstraint($tokenList->rewind(-1));
+                    $checks[] = $this->parseConstraint($tokenList->rewind(-1));
                     break;
                 case Keyword::CHECK:
                     // [check_constraint_definition]
-                    $check = $this->parseCheck($tokenList);
+                    $checks[] = $this->parseCheck($tokenList);
                     break;
                 case Keyword::CHARACTER:
                     $tokenList->expectKeyword(Keyword::SET);
@@ -1033,6 +1034,9 @@ class TableCommandsParser
                     break;
             }
         }
+        if ($checks === []) {
+            $checks = null;
+        }
 
         $hasDefaultValue = $default !== null && !$default instanceof NullLiteral && !$default instanceof Parentheses;
         if ($hasDefaultValue && $type->getBaseType()->isSpatial()) {
@@ -1046,7 +1050,7 @@ class TableCommandsParser
             throw new ParserException('BLOB columns cannot have a default value.', $tokenList);
         }
 
-        return new ColumnDefinition($name, $type, $default, $null, $visible, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $engineAttribute, $secondaryEngineAttribute, $storage, $reference, $check);
+        return new ColumnDefinition($name, $type, $default, $null, $visible, $autoIncrement, $onUpdate, $comment, $index, $columnFormat, $engineAttribute, $secondaryEngineAttribute, $storage, $reference, $checks);
     }
 
     /**
@@ -1067,7 +1071,8 @@ class TableCommandsParser
         $expression = $this->expressionParser->parseExpression($tokenList);
         $tokenList->expectSymbol(')');
 
-        $null = $index = $comment = $generatedType = $reference = $check = $visible = null;
+        $checks = [];
+        $null = $index = $comment = $generatedType = $reference = $visible = null;
         $keywords = [
             Keyword::CHARACTER, Keyword::CHARSET, Keyword::CHECK, Keyword::COLLATE, Keyword::COMMENT,
             Keyword::INVISIBLE, Keyword::KEY, Keyword::NOT, Keyword::NULL, Keyword::PRIMARY, Keyword::REFERENCES,
@@ -1131,7 +1136,7 @@ class TableCommandsParser
                     break;
                 case Keyword::CHECK:
                     // [check_constraint_definition]
-                    $check = $this->parseCheck($tokenList);
+                    $checks[] = $this->parseCheck($tokenList);
                     break;
                 case Keyword::CHARACTER:
                     $tokenList->expectKeyword(Keyword::SET);
@@ -1149,8 +1154,11 @@ class TableCommandsParser
                     break;
             }
         }
+        if ($checks === []) {
+            $checks = null;
+        }
 
-        return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $visible, $comment, $index, $reference, $check);
+        return ColumnDefinition::createGenerated($name, $type, $expression, $generatedType, $null, $visible, $comment, $index, $reference, $checks);
     }
 
     /**
