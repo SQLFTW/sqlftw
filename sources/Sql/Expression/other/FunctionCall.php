@@ -107,10 +107,14 @@ class FunctionCall implements RootNode
                     $arguments .= ($first ? '' : ', ') . $argument->serialize($formatter);
                 } elseif ($this->function->equalsValue(BuiltInFunction::TRIM)) {
                     // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
-                    if ($name === Keyword::FROM) {
-                        $arguments .= $argument->serialize($formatter) . ' ' . Keyword::FROM;
+                    if ($name === Keyword::BOTH || $name === Keyword::LEADING || $name === Keyword::TRAILING) {
+                        if ($argument === null) {
+                            $arguments .= $name . ' ';
+                        } else {
+                            $arguments .= $name . ' ' . $argument->serialize($formatter) . ' ';
+                        }
                     } else {
-                        $arguments .= $name . ' ' . $argument->serialize($formatter) . ' ' . Keyword::FROM;
+                        $arguments .= ' FROM ' . $argument->serialize($formatter);
                     }
                 } elseif ($this->function->equalsValue(BuiltInFunction::JSON_VALUE)) {
                     // JSON_VALUE(json_doc, path [RETURNING type] [on_empty] [on_error])

@@ -269,19 +269,20 @@ trait ExpressionParserFunctions
             if ($tokenList->hasKeyword(Keyword::FROM)) {
                 // TRIM(FOO FROM str)
                 $second = $this->parseExpression($tokenList);
-                $arguments[$keyword] = $second;
+                $arguments[$keyword] = null;
+                $arguments[Keyword::FROM] = $second;
             } else {
                 // TRIM(FOO remstr FROM str)
                 $arguments[$keyword] = $this->parseExpression($tokenList);
                 $tokenList->expectKeyword(Keyword::FROM);
-                $arguments[] = $this->parseExpression($tokenList);
+                $arguments[Keyword::FROM] = $this->parseExpression($tokenList);
             }
         } else {
             $first = $this->parseExpression($tokenList);
             if ($tokenList->hasKeyword(Keyword::FROM)) {
                 // TRIM(remstr FROM str)
-                $arguments[Keyword::FROM] = $first;
-                $arguments[] = $this->parseExpression($tokenList);
+                $arguments[] = $first;
+                $arguments[Keyword::FROM] = $this->parseExpression($tokenList);
             } else {
                 // TRIM(str)
                 $arguments[] = $first;

@@ -81,7 +81,6 @@ use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
-use function abs;
 use function count;
 use function in_array;
 use function ltrim;
