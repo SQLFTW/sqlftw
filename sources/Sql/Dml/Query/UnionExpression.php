@@ -34,6 +34,9 @@ class UnionExpression extends Statement implements Query
     /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
+    /** @var int|SimpleName|Placeholder|null */
+    private $offset;
+
     /** @var SelectInto|null */
     private $into;
 
@@ -45,6 +48,7 @@ class UnionExpression extends Statement implements Query
      * @param non-empty-array<UnionType> $types
      * @param non-empty-array<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
+     * @param int|SimpleName|Placeholder|null $offset
      * @param non-empty-array<SelectLocking>|null $locking
      */
     public function __construct(
@@ -52,6 +56,7 @@ class UnionExpression extends Statement implements Query
         array $types,
         ?array $orderBy = null,
         $limit = null,
+        $offset = null,
         ?SelectInto $into = null,
         ?array $locking = null
     )
@@ -63,6 +68,7 @@ class UnionExpression extends Statement implements Query
         $this->types = array_values($types);
         $this->orderBy = $orderBy;
         $this->limit = $limit;
+        $this->offset = $offset;
         $this->into = $into;
         $this->locking = $locking;
     }
@@ -121,6 +127,25 @@ class UnionExpression extends Statement implements Query
         return $that;
     }
 
+    /**
+     * @return int|SimpleName|Placeholder|null
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @return static
+     */
+    public function removeOffset(): Query
+    {
+        $that = clone $this;
+        $that->offset = null;
+
+        return $that;
+    }
+
     public function getInto(): ?SelectInto
     {
         return $this->into;
@@ -155,6 +180,9 @@ class UnionExpression extends Statement implements Query
         }
         if ($this->limit !== null) {
             $result .= "\n\tLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
+            if ($this->offset !== null) {
+                $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
+            }
         }
         if ($this->into !== null) {
             $result .= "\n\t" . $formatter->indent($this->into->serialize($formatter));

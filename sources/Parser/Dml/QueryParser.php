@@ -193,7 +193,7 @@ class QueryParser
             return $queries[0];
         }
 
-        [$orderBy, $limit, , $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
+        [$orderBy, $limit, $offset, $into] = $this->parseOrderLimitOffsetInto($tokenList, false);
 
         $locking = $this->parseLocking($tokenList);
 
@@ -230,6 +230,16 @@ class QueryParser
             } else {
                 $limit = $queryLimit;
                 $lastQuery = $lastQuery->removeLimit();
+            }
+        }
+
+        $queryOffset = $lastQuery->getOffset();
+        if ($queryOffset !== null) {
+            if ($offset !== null) {
+                throw new ParserException("Duplicate LIMIT clause in last query and in UNION.", $tokenList);
+            } else {
+                $offset = $queryOffset;
+                $lastQuery = $lastQuery->removeOffset();
             }
         }
 
@@ -270,7 +280,7 @@ class QueryParser
             }
         }
 
-        return new UnionExpression($queries, $types, $orderBy, $limit, $into, $locking);
+        return new UnionExpression($queries, $types, $orderBy, $limit, $offset, $into, $locking);
     }
 
     /**

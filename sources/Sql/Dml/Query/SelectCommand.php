@@ -208,6 +208,17 @@ class SelectCommand extends Statement implements SimpleQuery
         return $this->offset;
     }
 
+    /**
+     * @return static
+     */
+    public function removeOffset(): Query
+    {
+        $that = clone $this;
+        $that->offset = null;
+
+        return $that;
+    }
+
     public function getDistinct(): ?SelectDistinctOption
     {
         return $this->distinct;

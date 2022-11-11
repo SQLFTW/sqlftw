@@ -90,6 +90,14 @@ class ValuesCommand extends Statement implements SimpleQuery
         return $that;
     }
 
+    /**
+     * @return static
+     */
+    public function removeOffset(): Query
+    {
+        return $this;
+    }
+
     public function getInto(): ?SelectInto
     {
         return $this->into;
