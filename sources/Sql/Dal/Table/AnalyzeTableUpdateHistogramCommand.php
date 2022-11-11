@@ -13,11 +13,11 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
-class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTableCommand
+class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $name;
+    /** @var non-empty-list<ObjectIdentifier> */
+    private $names;
 
     /** @var non-empty-array<string> */
     private $columns;
@@ -29,19 +29,23 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTableCo
     private $local;
 
     /**
+     * @param non-empty-list<ObjectIdentifier> $names
      * @param non-empty-array<string> $columns
      */
-    public function __construct(ObjectIdentifier $name, array $columns, ?int $buckets = null, bool $local = false)
+    public function __construct(array $names, array $columns, ?int $buckets = null, bool $local = false)
     {
-        $this->name = $name;
+        $this->names = $names;
         $this->columns = $columns;
         $this->buckets = $buckets;
         $this->local = $local;
     }
 
-    public function getName(): ObjectIdentifier
+    /**
+     * @return non-empty-list<ObjectIdentifier>
+     */
+    public function getNames(): array
     {
-        return $this->name;
+        return $this->names;
     }
 
     /**
@@ -68,7 +72,7 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTableCo
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $this->name->serialize($formatter)
+        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->names)
             . ' UPDATE HISTOGRAM ON ' . $formatter->formatNamesList($this->columns);
         if ($this->buckets !== null) {
             $result .= ' WITH ' . $this->buckets . ' BUCKETS';

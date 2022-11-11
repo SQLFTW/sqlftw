@@ -60,13 +60,13 @@ class TableMaintenanceCommandsParser
                 $tokenList->expectKeyword(Keyword::BUCKETS);
             }
 
-            return new AnalyzeTableUpdateHistogramCommand($tables[0], $columns, $buckets, $local);
+            return new AnalyzeTableUpdateHistogramCommand($tables, $columns, $buckets, $local);
         } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::HISTOGRAM, Keyword::ON)) {
             do {
                 $columns[] = $tokenList->expectName(EntityType::COLUMN);
             } while ($tokenList->hasSymbol(','));
 
-            return new AnalyzeTableDropHistogramCommand($tables[0], $columns, $local);
+            return new AnalyzeTableDropHistogramCommand($tables, $columns, $local);
         }
 
         return new AnalyzeTablesCommand($tables, $local);
