@@ -28,6 +28,9 @@ class DateLiteral implements TimeValue
     /** @var string */
     private $value;
 
+    /** @var string */
+    private $normalized;
+
     public function __construct(string $value)
     {
         if (preg_match('~^\s*(\d{2,4})\D+(\d\d?)\D+(\d\d?)\s*$~', $value, $m, PREG_UNMATCHED_AS_NULL) === 1) {
@@ -40,7 +43,8 @@ class DateLiteral implements TimeValue
             throw new InvalidDefinitionException("Invalid date literal format: '$value'.");
         }
 
-        $this->value = self::checkAndNormalize($year, $month, $day);
+        $this->normalized = self::checkAndNormalize($year, $month, $day);
+        $this->value = $value;
     }
 
     public static function checkAndNormalize(string $year, string $month, string $day): string
@@ -82,6 +86,11 @@ class DateLiteral implements TimeValue
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getNormalizedValue(): string
+    {
+        return $this->normalized;
     }
 
     public function serialize(Formatter $formatter): string

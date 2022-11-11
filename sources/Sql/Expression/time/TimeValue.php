@@ -12,4 +12,6 @@ namespace SqlFtw\Sql\Expression;
 interface TimeValue extends Value
 {
 
+    public function getNormalizedValue(): string;
+
 }

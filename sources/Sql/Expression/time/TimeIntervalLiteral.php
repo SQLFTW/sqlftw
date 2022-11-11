@@ -28,6 +28,9 @@ use function substr;
 class TimeIntervalLiteral implements TimeInterval, Value
 {
 
+    /** @var string */
+    private $value;
+
     /** @var non-empty-array<int> */
     private $quantity;
 
@@ -37,27 +40,9 @@ class TimeIntervalLiteral implements TimeInterval, Value
     /** @var bool */
     private $negative;
 
-    /**
-     * @param non-empty-array<int> $quantity
-     */
-    public function __construct(array $quantity, TimeIntervalUnit $unit, bool $negative = false)
+    public function __construct(string $value, TimeIntervalUnit $unit)
     {
-        $parts = $unit->getParts();
-        if (count($quantity) > $parts) {
-            throw new InvalidDefinitionException('Count of values should match the unit used.');
-        } elseif (count($quantity) < $parts) {
-            /** @var non-empty-array<positive-int> $quantity */
-            $quantity = array_pad($quantity, $parts, 0);
-        }
-
-        $this->quantity = $quantity;
-        $this->unit = $unit;
-        $this->negative = $negative;
-    }
-
-    public static function fromString(string $quantity, TimeIntervalUnit $unit): self
-    {
-        $quantity = str_replace('\\', '', $quantity);
+        $quantity = str_replace('\\', '', $value);
 
         $negative = false;
         if ($quantity[0] === '-') {
@@ -77,7 +62,18 @@ class TimeIntervalLiteral implements TimeInterval, Value
             $quantity = array_slice($quantity, 0, $parts);
         }
 
-        return new self($quantity, $unit, $negative); // @phpstan-ignore-line
+        $parts = $unit->getParts();
+        if (count($quantity) > $parts) {
+            throw new InvalidDefinitionException('Count of values should match the unit used.');
+        } elseif (count($quantity) < $parts) {
+            /** @var non-empty-array<positive-int> $quantity */
+            $quantity = array_pad($quantity, $parts, 0);
+        }
+
+        $this->value = $value;
+        $this->quantity = $quantity;
+        $this->unit = $unit;
+        $this->negative = $negative;
     }
 
     /**
@@ -117,12 +113,12 @@ class TimeIntervalLiteral implements TimeInterval, Value
 
     public function getValue(): string
     {
-        return 'INTERVAL ' . $this->formatQuantity() . ' ' . $this->unit->getValue();
+        return "INTERVAL '{$this->value}' " . $this->unit->getValue();
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'INTERVAL ' . $this->formatQuantity() . ' ' . $this->unit->serialize($formatter);
+        return "INTERVAL '{$this->value}' " . $this->unit->serialize($formatter);
     }
 
 }

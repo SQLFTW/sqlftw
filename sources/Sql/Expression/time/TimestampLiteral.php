@@ -24,6 +24,9 @@ class TimestampLiteral implements TimeValue
     /** @var string */
     private $value;
 
+    /** @var string */
+    private $normalized;
+
     public function __construct(string $value)
     {
         if (preg_match('~^\s*(\d{2,4})\D+(\d\d)\D+(\d\d)[T \r\n\t\f.-]+(\d\d?)(?:\D+(\d\d?)(?:\D+(\d\d?)(?:\.(\d*))?(?:([+-])(\d\d):(\d\d))?)?)?\s*$~', $value, $m, PREG_UNMATCHED_AS_NULL) === 1) {
@@ -36,7 +39,8 @@ class TimestampLiteral implements TimeValue
             throw new InvalidDefinitionException("Invalid timestamp literal format: '$value'.");
         }
 
-        $this->value = DatetimeLiteral::checkAndNormalize($year, $month, $day, $hours, $minutes, $seconds, $fraction, $offsetSign, $offsetHours, $offsetMinutes);
+        $this->normalized = DatetimeLiteral::checkAndNormalize($year, $month, $day, $hours, $minutes, $seconds, $fraction, $offsetSign, $offsetHours, $offsetMinutes);
+        $this->value = $value;
     }
 
     public function hasZeroDate(): bool
@@ -52,6 +56,11 @@ class TimestampLiteral implements TimeValue
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getNormalizedValue(): string
+    {
+        return $this->normalized;
     }
 
     public function serialize(Formatter $formatter): string

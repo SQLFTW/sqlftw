@@ -26,6 +26,9 @@ class TimeLiteral implements TimeValue
     /** @var string */
     private $value;
 
+    /** @var string */
+    private $normalized;
+
     public function __construct(string $value)
     {
         if (preg_match('~^\s*(-)?(\d\d?) +(\d{1,4})(?:[:.](\d\d?)(?:[:.](\d\d?)(?:\.(\d*))?)?)?\s*$~', $value, $m, PREG_UNMATCHED_AS_NULL) === 1) {
@@ -47,7 +50,7 @@ class TimeLiteral implements TimeValue
             throw new InvalidDefinitionException("Invalid time literal format: '$value'");
         }
 
-        self::checkAndNormalize($sign, $days, $hours, $minutes, $seconds, $fraction);
+        $this->normalized = self::checkAndNormalize($sign, $days, $hours, $minutes, $seconds, $fraction);
 
         $this->value = $value;
     }
@@ -82,6 +85,11 @@ class TimeLiteral implements TimeValue
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getNormalizedValue(): string
+    {
+        return $this->normalized;
     }
 
     public function serialize(Formatter $formatter): string

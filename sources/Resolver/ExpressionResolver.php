@@ -259,13 +259,13 @@ class ExpressionResolver
         $value = $this->process($expression->getExpression());
         $unit = $expression->getUnit();
         if (is_int($value)) {
-            return new TimeIntervalLiteral([$value], $unit);
+            return new TimeIntervalLiteral((string) $value, $unit);
         } elseif (is_string($value)) {
-            return TimeIntervalLiteral::fromString($value, $unit);
+            return new TimeIntervalLiteral($value, $unit);
         } elseif (is_float($value)) {
-            return new TimeIntervalLiteral([(int) round($value)], $unit);
+            return new TimeIntervalLiteral((string) round($value), $unit);
         } elseif (is_bool($value)) {
-            return new TimeIntervalLiteral([(int) $value], $unit);
+            return new TimeIntervalLiteral((string) (int) $value, $unit);
         } else {
             return $expression;
         }

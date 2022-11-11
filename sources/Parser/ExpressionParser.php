@@ -1142,16 +1142,13 @@ class ExpressionParser
         $unit = $tokenList->expectKeywordEnum(TimeIntervalUnit::class);
 
         if ($value instanceof UintLiteral) {
-            return new TimeIntervalLiteral([$value->asInt()], $unit);
+            return new TimeIntervalLiteral((string) $value->asInt(), $unit);
         } elseif ($value instanceof IntLiteral) {
-            /** @var positive-int $v */
-            $v = abs($value->asInt());
-
-            return new TimeIntervalLiteral([$v], $unit, true);
+            return new TimeIntervalLiteral((string) $value->asInt(), $unit);
         } elseif ($value instanceof NumericLiteral) {
-            return TimeIntervalLiteral::fromString($value->getValue(), $unit); // "INTERVAL 1.5 MINUTE_SECOND" parsed ad 1 minute, 5 seconds!
+            return new TimeIntervalLiteral($value->getValue(), $unit); // "INTERVAL 1.5 MINUTE_SECOND" parsed ad 1 minute, 5 seconds!
         } elseif ($value instanceof StringLiteral) {
-            return TimeIntervalLiteral::fromString($value->getValue(), $unit);
+            return new TimeIntervalLiteral($value->getValue(), $unit);
         } else {
             return new TimeIntervalExpression($value, $unit);
         }

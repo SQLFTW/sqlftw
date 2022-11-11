@@ -29,6 +29,9 @@ class DatetimeLiteral implements TimeValue
     /** @var string */
     private $value;
 
+    /** @var  */
+    private $normalized;
+
     public function __construct(string $value)
     {
         // !#$%&*+-,./:;<=>^|\~
@@ -42,7 +45,8 @@ class DatetimeLiteral implements TimeValue
             throw new InvalidDefinitionException("Invalid datetime literal format: '$value'.");
         }
 
-        $this->value = self::checkAndNormalize($year, $month, $day, $hours, $minutes, $seconds, $fraction, $offsetSign, $offsetHours, $offsetMinutes);
+        $this->normalized = self::checkAndNormalize($year, $month, $day, $hours, $minutes, $seconds, $fraction, $offsetSign, $offsetHours, $offsetMinutes);
+        $this->value = $value;
     }
 
     public static function checkAndNormalize(
@@ -117,6 +121,11 @@ class DatetimeLiteral implements TimeValue
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getNormalizedValue(): string
+    {
+        return $this->normalized;
     }
 
     public function serialize(Formatter $formatter): string
