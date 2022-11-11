@@ -16,6 +16,8 @@ use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Keyword;
 
 class DeleteCommandParser
@@ -103,8 +105,12 @@ class DeleteCommandParser
         $tables = [];
         do {
             $table = $tokenList->expectObjectIdentifier();
+            // ignore .*
             if ($tokenList->hasSymbol('.')) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
+            }
+            if ($table instanceof QualifiedName && $table->getName() === '*') {
+                $table = new SimpleName($table->getSchema());
             }
             $alias = $this->expressionParser->parseAlias($tokenList);
 
