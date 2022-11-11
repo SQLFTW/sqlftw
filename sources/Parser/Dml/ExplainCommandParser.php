@@ -112,7 +112,6 @@ class ExplainCommandParser
         if ($what === null) {
             $what = $tokenList->hasSymbol('(') ? '(' : null;
         }
-        $statement = null;
         switch ($what) {
             case Keyword::WITH:
                 $statement = $this->queryParser->parseWith($tokenList->rewind($position));

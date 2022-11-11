@@ -414,11 +414,12 @@ class ExpressionParser
         if ($tokenList->hasKeyword(Keyword::INTERVAL)) {
             // `INTERVAL(n+1) YEAR` (interval expression) is indistinguishable from `INTERVAL(n, 1)` (function call)
             // until we try to parse the contents of "(...)" and the following unit.
+            $position = $tokenList->getPosition();
             $interval = $this->tryParseInterval($tokenList);
             if ($interval !== null) {
                 $left = $interval;
             } else {
-                $left = $this->parseSimpleExpression($tokenList);
+                $left = $this->parseSimpleExpression($tokenList->rewind($position - 1));
             }
         } else {
             $left = $this->parseSimpleExpression($tokenList);
