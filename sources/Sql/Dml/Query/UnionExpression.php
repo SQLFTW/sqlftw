@@ -184,11 +184,11 @@ class UnionExpression extends Statement implements Query
                 $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
+        if ($this->locking !== null) {
+            $result .= "\n\t" . $formatter->formatSerializablesList($this->locking);
+        }
         if ($this->into !== null) {
             $result .= "\n\t" . $formatter->indent($this->into->serialize($formatter));
-        }
-        if ($this->locking !== null) {
-            $result .= $formatter->formatSerializablesList($this->locking);
         }
 
         return $result;
