@@ -1434,10 +1434,13 @@ class TableCommandsParser
 
                 return [TableOption::ENCRYPTION, $tokenList->expectBool()];
             case Keyword::ENGINE:
-            case Keyword::SECONDARY_ENGINE:
                 $tokenList->passSymbol('=');
 
                 return [TableOption::ENGINE, $tokenList->expectStorageEngineName()];
+            case Keyword::SECONDARY_ENGINE:
+                $tokenList->passSymbol('=');
+
+                return [TableOption::SECONDARY_ENGINE, $tokenList->expectStorageEngineName()];
             case Keyword::INDEX:
                 $tokenList->expectKeyword(Keyword::DIRECTORY);
                 $tokenList->passSymbol('=');
