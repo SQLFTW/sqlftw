@@ -79,7 +79,7 @@ class Formatter
         string $indent = '  ',
         bool $comments = false,
         bool $quoteAllNames = false,
-        bool $escapeWhitespace = false
+        bool $escapeWhitespace = true
     ) {
         $this->session = $session;
         $this->indent = $indent;
