@@ -100,7 +100,7 @@ class Parser
             }
             $start = $tokenList->getPosition();
             $command = $this->parseTokenList($tokenList);
-            $end = $tokenList->getPosition();
+            $end = $tokenList->getPosition() - 1;
 
             if ($command instanceof EmptyCommand && $command->getCommentsBefore() === []) {
                 continue;
@@ -197,10 +197,22 @@ class Parser
 
             // ensures that the command was parsed completely
             if (!$tokenList->inEmbedded() && !$tokenList->isFinished()) {
+                $trailingDelimiter = $tokenList->getTrailingDelimiter();
                 if ($tokenList->has(TokenType::DELIMITER_DEFINITION)) {
                     $tokenList->pass(TokenType::DELIMITER);
-                } elseif (!$tokenList->has(TokenType::DELIMITER)) {
-                    $tokenList->expectSymbol(';');
+                } else {
+                    $delimiter = $tokenList->get(TokenType::DELIMITER);
+                    if ($delimiter !== null) {
+                        $command->setDelimiter($trailingDelimiter . $delimiter->value);
+                    } {
+                        $delimiter = $tokenList->expectSymbol(';');
+                        $command->setDelimiter($trailingDelimiter . $delimiter->value);
+                    }
+                }
+            } else {
+                $trailingDelimiter = $tokenList->getTrailingDelimiter();
+                if ($trailingDelimiter) {
+                    $command->setDelimiter($trailingDelimiter);
                 }
             }
 

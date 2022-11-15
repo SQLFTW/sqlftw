@@ -36,7 +36,8 @@ class PrepareCommand extends Statement implements PreparedStatementCommand
         $statement = $this->statement->serialize($formatter);
 
         return 'PREPARE ' . $formatter->formatName($this->name) . ' FROM '
-            . ($this->statement instanceof UserVariable ? $statement : $formatter->formatString($statement));
+            . ($this->statement instanceof UserVariable ? $statement : $formatter->formatString($statement))
+            . ($this->statement instanceof Statement ? $this->statement->getDelimiter() : '');
     }
 
 }

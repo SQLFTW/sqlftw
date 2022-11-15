@@ -12,8 +12,21 @@ namespace SqlFtw\Sql;
 abstract class Statement implements SqlSerializable
 {
 
+    /** @var string|null */
+    protected $delimiter;
+
     /** @var string[] */
     protected $commentsBefore = [];
+
+    public function setDelimiter(string $delimiter): void
+    {
+        $this->delimiter = $delimiter;
+    }
+
+    public function getDelimiter(): ?string
+    {
+        return $this->delimiter;
+    }
 
     /**
      * @param string[] $comments

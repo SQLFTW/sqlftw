@@ -17,16 +17,16 @@ class DelimiterCommand extends Statement implements DmlCommand
 {
 
     /** @var string */
-    private $delimiter;
+    private $newDelimiter;
 
-    public function __construct(string $delimiter)
+    public function __construct(string $newDelimiter)
     {
-        $this->delimiter = $delimiter;
+        $this->newDelimiter = $newDelimiter;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DELIMITER ' . $this->delimiter;
+        return 'DELIMITER ' . $this->newDelimiter;
     }
 
 }

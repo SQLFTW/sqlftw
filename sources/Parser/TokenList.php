@@ -122,6 +122,9 @@ class TokenList
     /** @var bool Should we expect a delimiter after the command? (command directly embedded into another command) */
     private $inEmbedded = false;
 
+    /** @var string */
+    private $trailingDelimiter = '';
+
     /**
      * @param non-empty-array<Token> $tokens
      */
@@ -256,22 +259,43 @@ class TokenList
         }
 
         // check that all remaining tokens can be ignored
+        $this->trailingDelimiter = '';
         for ($n = $this->position; $n < count($this->tokens); $n++) {
             $token = $this->tokens[$n];
             if (($token->type & $this->autoSkip) !== 0) {
                 continue;
             } elseif (($token->type & T::SYMBOL) !== 0 && $token->value === ';') {
                 // trailing ;
-                continue;
+                $this->trailingDelimiter .= ';';
             } elseif (($token->type & T::DELIMITER) !== 0) {
                 // trailing delimiter
-                continue;
+                $this->trailingDelimiter .= $token->value;
             } else {
+                $this->trailingDelimiter = '';
+
                 return false;
             }
         }
 
+        // do not reset trailing delimiter on next run
+        $this->position = $n + 1;
+
         return true;
+    }
+
+    public function getTrailingDelimiter(): string
+    {
+        return $this->trailingDelimiter;
+    }
+
+    public function resetTrailingDelimiter(): void
+    {
+        $this->trailingDelimiter = '';
+    }
+
+    public function appendTrailingDelimiter(string $part): void
+    {
+        $this->trailingDelimiter .= $part;
     }
 
     // navigation ------------------------------------------------------------------------------------------------------
@@ -1528,6 +1552,7 @@ class TokenList
         }
         // pass trailing ; when delimiter is something else
         while ($this->hasSymbol(';')) {
+            $this->trailingDelimiter .= ';';
             if ($this->autoSkip !== 0) {
                 $this->doAutoSkip();
             }

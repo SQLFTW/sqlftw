@@ -217,7 +217,7 @@ class RoutineBodyParser
                 $statement = new IterateStatement($tokenList->expectName(EntityType::LABEL));
                 break;
             case Keyword::BEGIN:
-                $statement = $this->parseBlock($tokenList, $label);
+                $statement = $this->parseCompoundStatement($tokenList, $label);
                 break;
             default:
                 $previous = $tokenList->inEmbedded();
@@ -239,12 +239,21 @@ class RoutineBodyParser
                 || ($statement instanceof DeclareHandlerStatement && $statement->getStatement() instanceof CompoundStatement)
             ) {
                 // ; not mandatory after `end`
-                if (!$tokenList->has(TokenType::DELIMITER)) {
-                    $tokenList->passSymbol(';');
+                $delimiter = $tokenList->get(TokenType::DELIMITER);
+                if ($delimiter !== null) {
+                    $tokenList->appendTrailingDelimiter($delimiter->value);
+                } {
+                    if ($tokenList->hasSymbol(';')) {
+                        $tokenList->appendTrailingDelimiter(';');
+                    }
                 }
             } else {
-                if (!$tokenList->has(TokenType::DELIMITER)) {
+                $delimiter = $tokenList->get(TokenType::DELIMITER);
+                if ($delimiter !== null) {
+                    $tokenList->appendTrailingDelimiter($delimiter->value);
+                } else {
                     $tokenList->expectSymbol(';');
+                    $tokenList->appendTrailingDelimiter(';');
                 }
             }
         }
@@ -300,7 +309,7 @@ class RoutineBodyParser
         return $statement;
     }
 
-    private function parseBlock(TokenList $tokenList, ?string $label): CompoundStatement
+    private function parseCompoundStatement(TokenList $tokenList, ?string $label): CompoundStatement
     {
         $statements = $this->parseStatementList($tokenList);
         $tokenList->expectKeyword(Keyword::END);

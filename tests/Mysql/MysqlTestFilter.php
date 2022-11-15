@@ -81,7 +81,7 @@ class MysqlTestFilter
                 //rl($d, null, 'g');
                 // stripping Perl delimiter from SQL delimiter definition
                 $delimiter = Str::endsWith($d, $delimiter) ? substr($d, 0, -strlen($delimiter)) : $d;
-                $rows[$i] = 'DELIMITER ' . $delimiter . ' -- XBZ';
+                $rows[$i] = 'DELIMITER ' . $delimiter . ' -- XBZ DELIMITER ' . $delimiter;
                 //rl($delimiter);
                 $quotedDelimiter = preg_quote($delimiter, '~');
             } elseif (preg_match('~^\s*--delimiter (.*)~i', $row, $m) !== 0) {

@@ -16,6 +16,7 @@ use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
 use SqlFtw\Session\Session;
+use SqlFtw\Sql\Dml\Utility\DelimiterCommand;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
@@ -241,13 +242,18 @@ class Formatter
         return "'" . $dateTime->format(DateTime::DEFAULT_FORMAT) . "'";
     }
 
-    public function serialize(SqlSerializable $serializable, bool $comments = true): string
+    public function serialize(SqlSerializable $serializable, bool $comments = true, string $delimiter = ';'): string
     {
         if ($serializable instanceof Statement) {
-            return ($comments ? implode('', $serializable->getCommentsBefore()) : '') . $serializable->serialize($this);
+            $result = ($comments ? implode('', $serializable->getCommentsBefore()) : '') . $serializable->serialize($this);
+            if (!$serializable instanceof DelimiterCommand) {
+                $result .= $serializable->getDelimiter() ?? $delimiter;
+            }
         } else {
-            return $serializable->serialize($this);
+            $result = $serializable->serialize($this);
         }
+
+        return $result;
     }
 
 }
