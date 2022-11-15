@@ -625,7 +625,7 @@ class QueryParser
 
         if ($tokenList->inSubquery() === null) {
             if ($tokenList->hasKeyword(Keyword::INTO)) {
-                $into = $this->parseInto($tokenList);
+                $into = $this->parseInto($tokenList, SelectInto::POSITION_AFTER_LOCKING);
             }
         }
 
