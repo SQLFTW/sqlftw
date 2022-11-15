@@ -122,6 +122,10 @@ class Formatter
             || preg_match('~[\pC\pM\pS\pZ\p{Pd}\p{Pe}\p{Pf}\p{Pi}\p{Po}\p{Ps}]~u', ltrim($name, '@')) !== 0 // contains control, mark, symbols, whitespace, punctuation except _
             || $this->session->getPlatform()->isReserved($name);
 
+        if ($needsQuoting && !$this->session->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
+            $name = str_replace($this->escapeKeys, $this->escapeValues, $name);
+        }
+
         return $needsQuoting ? $quote . $name . $quote : $name;
     }
 
