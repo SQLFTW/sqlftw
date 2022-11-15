@@ -123,7 +123,7 @@ class ShowCommandsParser
             case Keyword::CHARSET:
             case Keyword::CHARACTER:
                 // SHOW CHARACTER SET [LIKE 'pattern' | WHERE expr]
-                return $this->parseShowCharacterSet($tokenList->rewind(-1));
+                return $this->parseShowCharacterSet($tokenList->rewind($position));
             case Keyword::COLLATION:
                 // SHOW COLLATION [LIKE 'pattern' | WHERE expr]
                 return $this->parseShowCollation($tokenList);
@@ -144,7 +144,7 @@ class ShowCommandsParser
             case Keyword::EXTENDED:
                 if ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::INDEXES, Keyword::KEYS)) {
                     // SHOW [EXTENDED] {INDEX | INDEXES | KEYS}
-                    return $this->parseShowIndexes($tokenList->rewind(-1));
+                    return $this->parseShowIndexes($tokenList->rewind($position));
                 } elseif ($tokenList->hasKeyword(Keyword::TABLES) || $tokenList->hasKeywords(Keyword::FULL, Keyword::TABLES)) {
                     // SHOW [EXTENDED] [FULL] TABLES [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
                     return $this->parseShowTables($tokenList->rewind($position));
@@ -203,7 +203,7 @@ class ShowCommandsParser
             case Keyword::INDEXES:
             case Keyword::KEYS:
                 // SHOW [EXTENDED] {INDEX | INDEXES | KEYS}
-                return $this->parseShowIndexes($tokenList->rewind(-1));
+                return $this->parseShowIndexes($tokenList->rewind($position));
             case Keyword::MASTER:
                 $third = $tokenList->expectAnyKeyword(Keyword::STATUS, Keyword::LOGS);
                 if ($third === Keyword::STATUS) {

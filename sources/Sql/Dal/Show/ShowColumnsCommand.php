@@ -75,6 +75,9 @@ class ShowColumnsCommand extends Statement implements ShowCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'SHOW';
+        if ($this->extended) {
+            $result .= ' EXTENDED';
+        }
         if ($this->full) {
             $result .= ' FULL';
         }
