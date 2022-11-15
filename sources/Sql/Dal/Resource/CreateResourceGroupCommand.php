@@ -61,7 +61,7 @@ class CreateResourceGroupCommand extends Statement implements DalCommand
         }
 
         if ($this->threadPriority !== null) {
-            $result .= ' THREAD PRIORITY ' . $this->threadPriority;
+            $result .= ' THREAD_PRIORITY ' . $this->threadPriority;
         }
 
         if ($this->enable !== null) {
