@@ -74,7 +74,7 @@ class BinaryLiteral implements BoolValue, UintValue, StringValue
             $result .= '_' . $this->charset->serialize($formatter) . ' ';
         }
 
-        return $result . '0b' . $this->value;
+        return $this->value !== '' ? $result . '0b' . $this->value : "b''";
     }
 
 }

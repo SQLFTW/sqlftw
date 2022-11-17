@@ -74,7 +74,7 @@ class HexadecimalLiteral implements BoolValue, StringValue, UintValue
             $result .= '_' . $this->charset->serialize($formatter) . ' ';
         }
 
-        return $result . '0x' . $this->value;
+        return $this->value !== '' ? $result . '0x' . $this->value : "x''";
     }
 
 }
