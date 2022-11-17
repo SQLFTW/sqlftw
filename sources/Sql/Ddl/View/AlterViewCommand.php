@@ -104,10 +104,10 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
     {
         $result = 'ALTER';
         if ($this->algorithm !== null) {
-            $result .= ' ALGORITHM ' . $this->algorithm->serialize($formatter);
+            $result .= ' ALGORITHM = ' . $this->algorithm->serialize($formatter);
         }
         if ($this->definer !== null) {
-            $result .= ' DEFINER ' . $this->definer->serialize($formatter);
+            $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
         if ($this->security !== null) {
             $result .= ' SQL SECURITY ' . $this->security->serialize($formatter);
