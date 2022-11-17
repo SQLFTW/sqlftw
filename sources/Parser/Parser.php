@@ -101,6 +101,9 @@ class Parser
             $start = $tokenList->getPosition();
             $command = $this->parseTokenList($tokenList);
             $end = $tokenList->getPosition() - 1;
+            if ($end <= $start) {
+                $end = $start + 1;
+            }
 
             if ($command instanceof EmptyCommand && $command->getCommentsBefore() === []) {
                 continue;
