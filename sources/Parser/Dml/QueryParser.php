@@ -233,7 +233,7 @@ class QueryParser
             }
         }
 
-        $queryOffset = $lastQuery->getOffset();
+        $queryOffset = $lastQuery instanceof ValuesCommand ? null : $lastQuery->getOffset();
         if ($queryOffset !== null) {
             if ($offset !== null) {
                 throw new ParserException("Duplicate LIMIT clause in last query and in UNION.", $tokenList);
