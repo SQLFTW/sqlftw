@@ -50,9 +50,9 @@ class StartGroupReplicationCommand extends Statement implements GroupReplication
     {
         $result = 'START GROUP_REPLICATION';
         if ($this->user !== null) {
-            $result .= ' USER ' . $formatter->formatString($this->user);
+            $result .= ' USER = ' . $formatter->formatString($this->user);
             if ($this->password !== null) {
-                $result .= ', PASSWORD ' . $formatter->formatString($this->password);
+                $result .= ', PASSWORD = ' . $formatter->formatString($this->password);
             }
         }
         if ($this->defaultAuth !== null) {
