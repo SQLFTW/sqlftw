@@ -31,6 +31,7 @@ use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\StringValue;
+use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
@@ -722,6 +723,8 @@ class TokenList
             return new HexadecimalLiteral($value);
         } elseif (($number->type & T::BINARY_LITERAL) !== 0) {
             return new BinaryLiteral($value);
+        } elseif (($number->type & T::UINT) !== 0) {
+            return new UintLiteral($value);
         } else {
             return new IntLiteral($value);
         }

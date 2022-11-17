@@ -10,6 +10,9 @@
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\HexadecimalLiteral;
+use SqlFtw\Sql\Expression\IntLiteral;
+use SqlFtw\Sql\Expression\IntValue;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\SqlSerializable;
 
@@ -22,10 +25,13 @@ class Xid implements SqlSerializable
     /** @var StringValue|null */
     private $branchQualifier;
 
-    /** @var int|null */
+    /** @var int|HexadecimalLiteral|null */
     private $formatId;
 
-    public function __construct(StringValue $transactionId, ?StringValue $branchQualifier, ?int $formatId)
+    /**
+     * @param IntLiteral|HexadecimalLiteral|null $formatId
+     */
+    public function __construct(StringValue $transactionId, ?StringValue $branchQualifier, ?IntValue $formatId)
     {
         $this->transactionId = $transactionId;
         $this->branchQualifier = $branchQualifier;
@@ -42,7 +48,10 @@ class Xid implements SqlSerializable
         return $this->branchQualifier;
     }
 
-    public function getFormatId(): ?int
+    /**
+     * @return IntLiteral|HexadecimalLiteral|null
+     */
+    public function getFormatId(): ?IntValue
     {
         return $this->formatId;
     }
@@ -53,7 +62,7 @@ class Xid implements SqlSerializable
         if ($this->branchQualifier !== null) {
             $result .= ', ' . $this->branchQualifier->serialize($formatter);
             if ($this->formatId !== null) {
-                $result .= ', ' . $this->formatId;
+                $result .= ', ' . $this->formatId->serialize($formatter);
             }
         }
 

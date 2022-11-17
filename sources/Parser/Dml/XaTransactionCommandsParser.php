@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\XaTransaction\XaCommitCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaEndCommand;
 use SqlFtw\Sql\Dml\XaTransaction\XaPrepareCommand;
@@ -22,12 +21,11 @@ use SqlFtw\Sql\Dml\XaTransaction\XaStartOption;
 use SqlFtw\Sql\Dml\XaTransaction\XaTransactionCommand;
 use SqlFtw\Sql\Dml\XaTransaction\Xid;
 use SqlFtw\Sql\EntityType;
+use SqlFtw\Sql\Expression\HexadecimalLiteral;
+use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Statement;
-use function hex2bin;
-use function str_pad;
 use const PHP_INT_MAX;
-use const STR_PAD_LEFT;
 
 class XaTransactionCommandsParser
 {
@@ -106,15 +104,12 @@ class XaTransactionCommandsParser
         if ($tokenList->hasSymbol(',')) {
             $branch = $tokenList->expectStringValue();
             if ($tokenList->hasSymbol(',')) {
-                $format = $tokenList->get(TokenType::HEXADECIMAL_LITERAL);
-                if ($format !== null) {
-                    // see no reason to keep the literal here. binary literal is not supported
-                    $format = (int) hex2bin(str_pad($format->value, 16, '0', STR_PAD_LEFT));
-                } else {
-                    $format = (int) $tokenList->expectUnsignedInt();
-                    if ($format === PHP_INT_MAX) {
-                        throw new ParserException('Transaction format id is too big.', $tokenList);
-                    }
+                $format = $tokenList->expectIntLike();
+                if (!$format instanceof UintLiteral && !$format instanceof HexadecimalLiteral) {
+                   throw new ParserException('Transaction format id must be unsigned int or hexadecimal literal.', $tokenList);
+                }
+                if ($format instanceof UintLiteral && (float) $format->getValue() >= (float) PHP_INT_MAX) {
+                    throw new ParserException('Transaction format id is too big.', $tokenList);
                 }
             }
         }
