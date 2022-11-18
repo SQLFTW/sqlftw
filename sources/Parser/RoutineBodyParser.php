@@ -242,7 +242,7 @@ class RoutineBodyParser
                 $delimiter = $tokenList->get(TokenType::DELIMITER);
                 if ($delimiter !== null) {
                     $tokenList->appendTrailingDelimiter($delimiter->value);
-                } {
+                } else {
                     if ($tokenList->hasSymbol(';')) {
                         $tokenList->appendTrailingDelimiter(';');
                     }

@@ -106,7 +106,7 @@ class XaTransactionCommandsParser
             if ($tokenList->hasSymbol(',')) {
                 $format = $tokenList->expectIntLike();
                 if (!$format instanceof UintLiteral && !$format instanceof HexadecimalLiteral) {
-                   throw new ParserException('Transaction format id must be unsigned int or hexadecimal literal.', $tokenList);
+                    throw new ParserException('Transaction format id must be unsigned int or hexadecimal literal.', $tokenList);
                 }
                 if ($format instanceof UintLiteral && (float) $format->getValue() >= (float) PHP_INT_MAX) {
                     throw new ParserException('Transaction format id is too big.', $tokenList);

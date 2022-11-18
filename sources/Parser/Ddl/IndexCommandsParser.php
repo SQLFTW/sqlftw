@@ -26,6 +26,7 @@ use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
+use function count;
 use function strlen;
 use function strtoupper;
 

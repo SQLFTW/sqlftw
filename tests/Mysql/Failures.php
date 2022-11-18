@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-// spell-check-ignore: DBACCESS TABLENAME abc abcdefghijklmnopqrstuvwxyz condname1 ctx dat dblwr ddse endswithspace fil haha hehe hoho lsn pri testrole testuser wp xyzzy
+// spell-check-ignore: DBACCESS TABLENAME abc abcdefghijklmnopqrstuvwxyz condname1 ctx dat dblwr ddse endswithspace fil haha hehe hoho lsn pri testrole testuser wp xyzzy 0every BQAAAA DRAUGR DUP FIL TRG VÐƷWİ aaa aaaaaa abcd asd attr4 azundris badvar bbbbbb fvar idx ivar loaddata5 maste mv mvi nosuchvar º Æ Ö Γåô Γê Γò Γòí ツ
 
 namespace SqlFtw\Tests\Mysql;
 
@@ -10,7 +10,7 @@ trait Failures
     /** @var array<string, int> */
     private static $knownFailures = [
         // false negatives -------------------------------------------------------------------------------------------------------------------------------------------------------------
-        
+
         // encoding
         "DROP TABLE IF EXISTS `abc\xFFdef`;" => Valid::YES,
         "CREATE TABLE `abc\xFFdef` (i int);" => Valid::YES,
@@ -118,8 +118,8 @@ trait Failures
 
         // strange engine behavior
         "CREATE TABLE t2 (a char(255), b varbinary(70000), c varchar(70000000));" => Valid::YES,
-        
-        
+
+
         // false positives -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         // test artifacts
@@ -765,10 +765,10 @@ trait Failures
         "-- error ER_PARSE_ERROR\ncreate function f1(p1 varchar(5), p2 char(1))\n  returns int\nbegin\n  declare a int;\n  set a = (select count(*) from t1 limit p1, p2);\n  return a;\nend|" => Valid::NO,
         "-- error ER_PARSE_ERROR\ncreate function f1(p1 decimal, p2 decimal)\n  returns int\nbegin\n  declare a int;\n  set a = (select count(*) from t1 limit p1, p2);\n  return a;\nend|" => Valid::NO,
         "-- error ER_PARSE_ERROR\ncreate function f1(p1 double, p2 double)\n  returns int\nbegin\n  declare a int;\n  set a = (select count(*) from t1 limit p1, p2);\n  return a;\nend|" => Valid::NO,
-        
-        
+
+
         // sometimes fails, depending on context ---------------------------------------------------------------------------------------------------------------------------------------
-        
+
         "SET GLOBAL replica_parallel_type=@save_replica_parallel_type;" => Valid::SOMETIMES,
         "SET GLOBAL replica_parallel_type= @save_replica_parallel_type;" => Valid::SOMETIMES,
         "SET GLOBAL replica_parallel_workers=@save_replica_parallel_workers;" => Valid::SOMETIMES,
@@ -777,8 +777,8 @@ trait Failures
         "SET GLOBAL replica_preserve_commit_order= @save_replica_preserve_commit_order;" => Valid::SOMETIMES,
         "SET GLOBAL binlog_transaction_dependency_tracking=@save_binlog_transaction_dependency_tracking;" => Valid::SOMETIMES,
         "SET @@global.dragnet.log_error_filter_rules= @rules;" => Valid::SOMETIMES,
-        
-        
+
+
         // won't fix - miscellaneous errors not caused by parser implementation --------------------------------------------------------------------------------------------------------
 
         // invalid variable name (differs from MySQL behavior, which is insane)

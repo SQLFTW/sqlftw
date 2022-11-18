@@ -13,6 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\ThreeStateValue;
+use function implode;
 
 class SchemaOptions implements SchemaCommand
 {

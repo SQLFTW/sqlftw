@@ -22,7 +22,6 @@ use SqlFtw\Sql\Ddl\Table\AlterTableCommand;
 use SqlFtw\Sql\Ddl\Table\CreateTableCommand;
 use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Expression\DefaultLiteral;
-use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\TableCommand;
 use function count;
@@ -51,7 +50,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
     private function processSchema(SchemaCommand $command, SimpleContext $context): array
     {
         $results = [];
-        $options =  $command->getOptions();
+        $options = $command->getOptions();
         $charset = $options->getCharset();
         $collation = $options->getCollation();
         if ($charset !== null && $collation !== null && !$charset->supportsCollation($collation)) {
@@ -68,7 +67,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
     private function processTable(TableCommand $command, SimpleContext $context): array
     {
         $results = [];
-        $options =  $command->getOptions();
+        $options = $command->getOptions();
         /** @var Charset|DefaultLiteral $charset */
         $charset = $options->get(TableOption::CHARACTER_SET);
         if ($charset instanceof DefaultLiteral) {

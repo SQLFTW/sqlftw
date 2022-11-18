@@ -10,8 +10,8 @@
 namespace SqlFtw\Parser\Dal;
 
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Dal\Table\AnalyzeTableDropHistogramCommand;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTableDropHistogramCommand;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableUpdateHistogramCommand;
 use SqlFtw\Sql\Dal\Table\ChecksumTableCommand;
 use SqlFtw\Sql\Dal\Table\CheckTableCommand;

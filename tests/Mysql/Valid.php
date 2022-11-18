@@ -5,8 +5,8 @@ namespace SqlFtw\Tests\Mysql;
 class Valid
 {
 
-    const YES = 1;
-    const SOMETIMES = 0;
-    const NO = -1;
+    public const YES = 1;
+    public const SOMETIMES = 0;
+    public const NO = -1;
 
 }

@@ -18,7 +18,6 @@ use function array_sum;
 use function count;
 use function explode;
 use function preg_replace;
-use function sprintf;
 use function str_replace;
 use function substr;
 

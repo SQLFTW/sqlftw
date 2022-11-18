@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+// spell-check-ignore: ahaha algo binaryblafasel2 binaryrpl blafasel2 joe wp
+
 namespace SqlFtw\Tests\Mysql;
 
 trait Aliases
@@ -581,7 +583,7 @@ trait Aliases
         'where engine myisam' => 'where engine=myisam',
         'password=password user=regular_user_p' => 'user=regular_user_p password=password', // order
         'default_auth password=password' => 'password=password default_auth',
-        'max_rows @max_rows' => 'max_rows=@max_rows'
+        'max_rows @max_rows' => 'max_rows=@max_rows',
     ];
 
 }

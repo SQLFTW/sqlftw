@@ -37,10 +37,12 @@ postgresql
 refman
 remstr
 rl
+rdf
 sdi
 sqlftw
 srs
 stm
+subdir
 tagname
 tbl
 termino
@@ -83,6 +85,7 @@ nonpersistible
 subgraph
 unresolvable
 uncastable
+serialisation
 casted
 backticks
 resize

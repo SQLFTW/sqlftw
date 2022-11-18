@@ -12,7 +12,6 @@ namespace SqlFtw\Session;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
-use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\UnresolvedExpression;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\MysqlVariable;
