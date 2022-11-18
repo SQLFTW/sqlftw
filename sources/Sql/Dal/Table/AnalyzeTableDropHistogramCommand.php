@@ -16,8 +16,8 @@ use SqlFtw\Sql\Statement;
 class AnalyzeTableDropHistogramCommand extends Statement implements DalTablesCommand
 {
 
-    /** @var non-empty-list<ObjectIdentifier> */
-    private $names;
+    /** @var non-empty-array<ObjectIdentifier> */
+    private $tables;
 
     /** @var non-empty-array<string> */
     private $columns;
@@ -26,22 +26,22 @@ class AnalyzeTableDropHistogramCommand extends Statement implements DalTablesCom
     private $local;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $names
+     * @param non-empty-array<ObjectIdentifier> $tables
      * @param non-empty-array<string> $columns
      */
-    public function __construct(array $names, array $columns, bool $local = false)
+    public function __construct(array $tables, array $columns, bool $local = false)
     {
-        $this->names = $names;
+        $this->tables = $tables;
         $this->columns = $columns;
         $this->local = $local;
     }
 
     /**
-     * @return non-empty-list<ObjectIdentifier>
+     * @return non-empty-array<ObjectIdentifier>
      */
-    public function getNames(): array
+    public function getTables(): array
     {
-        return $this->names;
+        return $this->tables;
     }
 
     /**
@@ -63,7 +63,7 @@ class AnalyzeTableDropHistogramCommand extends Statement implements DalTablesCom
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->names)
+        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->tables)
             . ' DROP HISTOGRAM ON ' . $formatter->formatNamesList($this->columns);
 
         return $result;

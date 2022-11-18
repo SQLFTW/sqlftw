@@ -19,7 +19,7 @@ Assert::type(TruncateTableCommand::class, $commands[0]);
 /** @var \SqlFtw\Sql\Ddl\Table\TruncateTableCommand $command */
 $command = $commands[0];
 Assert::null($command->getDatabaseName());
-Assert::same('foo', $command->getName());
+Assert::same('foo', $command->getTable());
 
 $commands = $parser->parse('TRUNCATE TABLE bAr.bAz');
 Assert::count(1, $commands);
@@ -27,4 +27,4 @@ Assert::type(TruncateTableCommand::class, $commands[0]);
 /** @var \SqlFtw\Sql\Ddl\Table\TruncateTableCommand $command */
 $command = $commands[0];
 Assert::same('bAr', $command->getDatabaseName());
-Assert::same('bAz', $command->getName());
+Assert::same('bAz', $command->getTable());

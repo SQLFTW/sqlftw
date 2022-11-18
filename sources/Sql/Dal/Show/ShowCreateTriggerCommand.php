@@ -17,21 +17,21 @@ class ShowCreateTriggerCommand extends Statement implements ShowCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $trigger;
 
-    public function __construct(ObjectIdentifier $name)
+    public function __construct(ObjectIdentifier $trigger)
     {
-        $this->name = $name;
+        $this->trigger = $trigger;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getTrigger(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->trigger;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW CREATE TRIGGER ' . $this->name->serialize($formatter);
+        return 'SHOW CREATE TRIGGER ' . $this->trigger->serialize($formatter);
     }
 
 }

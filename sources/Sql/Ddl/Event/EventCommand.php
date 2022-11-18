@@ -15,6 +15,6 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 interface EventCommand extends SchemaObjectCommand
 {
 
-    public function getName(): ObjectIdentifier;
+    public function getEvent(): ObjectIdentifier;
 
 }

@@ -24,7 +24,7 @@ class CreateIndexCommand extends Statement implements IndexCommand, DdlTableComm
 {
 
     /** @var IndexDefinition */
-    private $index;
+    private $definition;
 
     /** @var AlterTableAlgorithm|null */
     private $algorithm;
@@ -33,26 +33,26 @@ class CreateIndexCommand extends Statement implements IndexCommand, DdlTableComm
     private $lock;
 
     public function __construct(
-        IndexDefinition $index,
+        IndexDefinition $definition,
         ?AlterTableAlgorithm $algorithm = null,
         ?AlterTableLock $lock = null
     ) {
-        if ($index->getTable() === null) {
+        if ($definition->getTable() === null) {
             throw new InvalidDefinitionException('Index must have a table.');
         }
-        if ($index->getName() === null) {
+        if ($definition->getName() === null) {
             throw new InvalidDefinitionException('Index must have a name.');
         }
 
-        $this->index = $index;
+        $this->definition = $definition;
         $this->algorithm = $algorithm;
         $this->lock = $lock;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getIndex(): ObjectIdentifier
     {
         /** @var string $name */
-        $name = $this->index->getName();
+        $name = $this->definition->getName();
         $table = $this->getTable();
         $schema = $table instanceof QualifiedName ? $table->getSchema() : null;
 
@@ -62,14 +62,14 @@ class CreateIndexCommand extends Statement implements IndexCommand, DdlTableComm
     public function getTable(): ObjectIdentifier
     {
         /** @var ObjectIdentifier $table */
-        $table = $this->index->getTable();
+        $table = $this->definition->getTable();
 
         return $table;
     }
 
-    public function getIndex(): IndexDefinition
+    public function getIndexDefinition(): IndexDefinition
     {
-        return $this->index;
+        return $this->definition;
     }
 
     public function getAlgorithm(): ?AlterTableAlgorithm
@@ -85,9 +85,9 @@ class CreateIndexCommand extends Statement implements IndexCommand, DdlTableComm
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE ';
-        $result .= $this->index->serializeHead($formatter);
+        $result .= $this->definition->serializeHead($formatter);
         $result .= ' ON ' . $this->getTable()->serialize($formatter);
-        $result .= ' ' . $this->index->serializeTail($formatter);
+        $result .= ' ' . $this->definition->serializeTail($formatter);
 
         if ($this->algorithm !== null) {
             $result .= ' ALGORITHM ' . $this->algorithm->serialize($formatter);

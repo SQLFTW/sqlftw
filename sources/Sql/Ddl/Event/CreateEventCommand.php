@@ -28,9 +28,9 @@ class CreateEventCommand extends Statement implements EventCommand
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getEvent(): ObjectIdentifier
     {
-        return $this->event->getName();
+        return $this->event->getEvent();
     }
 
     public function getDefinition(): EventDefinition
@@ -54,7 +54,7 @@ class CreateEventCommand extends Statement implements EventCommand
         if ($this->ifNotExists) {
             $result .= ' IF NOT EXISTS';
         }
-        $result .= ' ' . $this->event->getName()->serialize($formatter);
+        $result .= ' ' . $this->event->getEvent()->serialize($formatter);
 
         $result .= ' ON SCHEDULE ' . $this->event->getSchedule()->serialize($formatter);
 

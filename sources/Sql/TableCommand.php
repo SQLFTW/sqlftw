@@ -14,6 +14,6 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 interface TableCommand extends Command
 {
 
-    public function getName(): ObjectIdentifier;
+    public function getTable(): ObjectIdentifier;
 
 }

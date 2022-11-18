@@ -17,6 +17,6 @@ interface TablesCommand extends Command
     /**
      * @return ObjectIdentifier[]
      */
-    public function getNames(): array;
+    public function getTables(): array;
 
 }

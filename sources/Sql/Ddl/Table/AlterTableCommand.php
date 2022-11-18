@@ -73,7 +73,7 @@ class AlterTableCommand extends Statement implements DdlTableCommand
         $this->partitioning = $partitioning;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getTable(): ObjectIdentifier
     {
         return $this->name;
     }

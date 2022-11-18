@@ -17,7 +17,7 @@ class AlterServerCommand extends Statement implements ServerCommand
 {
 
     /** @var string */
-    private $name;
+    private $server;
 
     /** @var string|null */
     private $host;
@@ -41,7 +41,7 @@ class AlterServerCommand extends Statement implements ServerCommand
     private $port;
 
     public function __construct(
-        string $name,
+        string $server,
         ?string $host = null,
         ?string $schema = null,
         ?string $user = null,
@@ -50,7 +50,7 @@ class AlterServerCommand extends Statement implements ServerCommand
         ?string $owner = null,
         ?int $port = null
     ) {
-        $this->name = $name;
+        $this->server = $server;
         $this->host = $host;
         $this->schema = $schema;
         $this->user = $user;
@@ -60,9 +60,9 @@ class AlterServerCommand extends Statement implements ServerCommand
         $this->port = $port;
     }
 
-    public function getName(): string
+    public function getServer(): string
     {
-        return $this->name;
+        return $this->server;
     }
 
     public function getHost(): ?string
@@ -102,7 +102,7 @@ class AlterServerCommand extends Statement implements ServerCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER SERVER ' . $formatter->formatName($this->name) . ' OPTIONS (';
+        $result = 'ALTER SERVER ' . $formatter->formatName($this->server) . ' OPTIONS (';
 
         if ($this->host !== null) {
             $result .= 'HOST ' . $formatter->formatString($this->host) . ', ';

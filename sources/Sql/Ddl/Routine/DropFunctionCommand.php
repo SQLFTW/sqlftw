@@ -17,20 +17,20 @@ class DropFunctionCommand extends Statement implements StoredFunctionCommand, Dr
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $function;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(ObjectIdentifier $name, bool $ifExists = false)
+    public function __construct(ObjectIdentifier $function, bool $ifExists = false)
     {
-        $this->name = $name;
+        $this->function = $function;
         $this->ifExists = $ifExists;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getFunction(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->function;
     }
 
     public function ifExists(): bool
@@ -44,7 +44,7 @@ class DropFunctionCommand extends Statement implements StoredFunctionCommand, Dr
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $this->name->serialize($formatter);
+        $result .= $this->function->serialize($formatter);
 
         return $result;
     }

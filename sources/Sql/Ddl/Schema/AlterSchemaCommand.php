@@ -16,20 +16,20 @@ class AlterSchemaCommand extends Statement implements SchemaCommand
 {
 
     /** @var string|null */
-    private $name;
+    private $schema;
 
     /** @var SchemaOptions */
     private $options;
 
-    public function __construct(?string $name, SchemaOptions $options)
+    public function __construct(?string $schema, SchemaOptions $options)
     {
-        $this->name = $name;
+        $this->schema = $schema;
         $this->options = $options;
     }
 
-    public function getName(): ?string
+    public function getSchema(): ?string
     {
-        return $this->name;
+        return $this->schema;
     }
 
     public function getOptions(): SchemaOptions
@@ -40,8 +40,8 @@ class AlterSchemaCommand extends Statement implements SchemaCommand
     public function serialize(Formatter $formatter): string
     {
         $result = 'ALTER SCHEMA';
-        if ($this->name !== null) {
-            $result .= ' ' . $formatter->formatName($this->name);
+        if ($this->schema !== null) {
+            $result .= ' ' . $formatter->formatName($this->schema);
         }
 
         return $result . ' ' . $this->options->serialize($formatter);

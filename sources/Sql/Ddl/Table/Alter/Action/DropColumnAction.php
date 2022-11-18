@@ -15,21 +15,21 @@ class DropColumnAction implements ColumnAction
 {
 
     /** @var string */
-    private $name;
+    private $column;
 
-    public function __construct(string $name)
+    public function __construct(string $column)
     {
-        $this->name = $name;
+        $this->column = $column;
     }
 
-    public function getName(): string
+    public function getColumn(): string
     {
-        return $this->name;
+        return $this->column;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DROP COLUMN ' . $formatter->formatName($this->name);
+        return 'DROP COLUMN ' . $formatter->formatName($this->column);
     }
 
 }

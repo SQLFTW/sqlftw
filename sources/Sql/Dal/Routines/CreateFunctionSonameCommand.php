@@ -19,7 +19,7 @@ class CreateFunctionSonameCommand extends Statement implements DalCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $function;
 
     /** @var string */
     private $libName;
@@ -30,17 +30,17 @@ class CreateFunctionSonameCommand extends Statement implements DalCommand
     /** @var bool */
     private $aggregate;
 
-    public function __construct(ObjectIdentifier $name, string $libName, UdfReturnDataType $returnType, bool $aggregate)
+    public function __construct(ObjectIdentifier $function, string $libName, UdfReturnDataType $returnType, bool $aggregate)
     {
-        $this->name = $name;
+        $this->function = $function;
         $this->libName = $libName;
         $this->returnType = $returnType;
         $this->aggregate = $aggregate;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getFunction(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->function;
     }
 
     public function getLibName(): string
@@ -65,7 +65,7 @@ class CreateFunctionSonameCommand extends Statement implements DalCommand
             $result .= 'AGGREGATE ';
         }
 
-        $result .= 'FUNCTION ' . $this->name->serialize($formatter)
+        $result .= 'FUNCTION ' . $this->function->serialize($formatter)
             . ' RETURNS ' . $this->returnType->serialize($formatter)
             . ' SONAME ' . $formatter->formatString($this->libName);
 

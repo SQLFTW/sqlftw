@@ -15,21 +15,21 @@ class DropForeignKeyAction implements ForeignKeyAction
 {
 
     /** @var string */
-    private $name;
+    private $foreignKey;
 
-    public function __construct(string $name)
+    public function __construct(string $foreignKey)
     {
-        $this->name = $name;
+        $this->foreignKey = $foreignKey;
     }
 
-    public function getName(): string
+    public function getForeignKey(): string
     {
-        return $this->name;
+        return $this->foreignKey;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DROP FOREIGN KEY ' . $formatter->formatName($this->name);
+        return 'DROP FOREIGN KEY ' . $formatter->formatName($this->foreignKey);
     }
 
 }

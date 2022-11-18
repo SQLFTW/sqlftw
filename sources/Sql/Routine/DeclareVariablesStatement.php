@@ -19,7 +19,7 @@ class DeclareVariablesStatement extends Statement implements SqlSerializable
 {
 
     /** @var non-empty-array<string> */
-    private $names;
+    private $variables;
 
     /** @var ColumnType */
     private $type;
@@ -28,11 +28,11 @@ class DeclareVariablesStatement extends Statement implements SqlSerializable
     private $default;
 
     /**
-     * @param non-empty-array<string> $names
+     * @param non-empty-array<string> $variables
      */
-    public function __construct(array $names, ColumnType $type, ?RootNode $default = null)
+    public function __construct(array $variables, ColumnType $type, ?RootNode $default = null)
     {
-        $this->names = $names;
+        $this->variables = $variables;
         $this->type = $type;
         $this->default = $default;
     }
@@ -40,9 +40,9 @@ class DeclareVariablesStatement extends Statement implements SqlSerializable
     /**
      * @return non-empty-array<string>
      */
-    public function getNames(): array
+    public function getVariables(): array
     {
-        return $this->names;
+        return $this->variables;
     }
 
     public function getType(): ColumnType
@@ -57,7 +57,7 @@ class DeclareVariablesStatement extends Statement implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DECLARE ' . $formatter->formatNamesList($this->names) . ' ' . $this->type->serialize($formatter);
+        $result = 'DECLARE ' . $formatter->formatNamesList($this->variables) . ' ' . $this->type->serialize($formatter);
         if ($this->default !== null) {
             $result .= ' DEFAULT ' . $formatter->formatValue($this->default);
         }

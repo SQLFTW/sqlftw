@@ -17,26 +17,26 @@ class AnalyzeTableCommand extends Statement implements DalTablesCommand
 {
 
     /** @var non-empty-array<ObjectIdentifier> */
-    private $names;
+    private $tables;
 
     /** @var bool */
     private $local;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $names
+     * @param non-empty-array<ObjectIdentifier> $tables
      */
-    public function __construct(array $names, bool $local = false)
+    public function __construct(array $tables, bool $local = false)
     {
-        $this->names = $names;
+        $this->tables = $tables;
         $this->local = $local;
     }
 
     /**
      * @return non-empty-array<ObjectIdentifier>
      */
-    public function getNames(): array
+    public function getTables(): array
     {
-        return $this->names;
+        return $this->tables;
     }
 
     public function isLocal(): bool
@@ -50,7 +50,7 @@ class AnalyzeTableCommand extends Statement implements DalTablesCommand
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->names);
+        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->tables);
 
         return $result;
     }

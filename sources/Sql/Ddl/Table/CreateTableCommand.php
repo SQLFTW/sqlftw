@@ -84,7 +84,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
         $this->startTransaction = $startTransaction;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getTable(): ObjectIdentifier
     {
         return $this->name;
     }

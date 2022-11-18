@@ -16,21 +16,21 @@ class ShowCreateSchemaCommand extends Statement implements ShowCommand
 {
 
     /** @var string */
-    private $name;
+    private $schema;
 
-    public function __construct(string $name)
+    public function __construct(string $schema)
     {
-        $this->name = $name;
+        $this->schema = $schema;
     }
 
-    public function getName(): string
+    public function getSchema(): string
     {
-        return $this->name;
+        return $this->schema;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW CREATE DATABASE ' . $formatter->formatName($this->name);
+        return 'SHOW CREATE DATABASE ' . $formatter->formatName($this->schema);
     }
 
 }

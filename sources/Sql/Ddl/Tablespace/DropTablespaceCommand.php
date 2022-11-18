@@ -17,7 +17,7 @@ class DropTablespaceCommand extends Statement implements TablespaceCommand
 {
 
     /** @var string */
-    private $name;
+    private $tablespace;
 
     /** @var StorageEngine|null */
     private $engine;
@@ -25,16 +25,16 @@ class DropTablespaceCommand extends Statement implements TablespaceCommand
     /** @var bool */
     private $undo;
 
-    public function __construct(string $name, ?StorageEngine $engine = null, bool $undo = false)
+    public function __construct(string $tablespace, ?StorageEngine $engine = null, bool $undo = false)
     {
-        $this->name = $name;
+        $this->tablespace = $tablespace;
         $this->engine = $engine;
         $this->undo = $undo;
     }
 
-    public function getName(): string
+    public function getTablespace(): string
     {
-        return $this->name;
+        return $this->tablespace;
     }
 
     public function getEngine(): ?StorageEngine
@@ -48,7 +48,7 @@ class DropTablespaceCommand extends Statement implements TablespaceCommand
         if ($this->undo) {
             $result .= 'UNDO ';
         }
-        $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
+        $result .= 'TABLESPACE ' . $formatter->formatName($this->tablespace);
 
         if ($this->engine !== null) {
             $result .= ' ENGINE ' . $this->engine->serialize($formatter);

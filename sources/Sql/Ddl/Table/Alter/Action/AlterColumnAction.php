@@ -17,7 +17,7 @@ class AlterColumnAction implements ColumnAction
 {
 
     /** @var string */
-    private $name;
+    private $column;
 
     /** @var RootNode|false|null */
     private $setDefault;
@@ -28,16 +28,16 @@ class AlterColumnAction implements ColumnAction
     /**
      * @param RootNode|false|null $setDefault
      */
-    public function __construct(string $name, $setDefault, ?bool $setVisible = null)
+    public function __construct(string $column, $setDefault, ?bool $setVisible = null)
     {
-        $this->name = $name;
+        $this->column = $column;
         $this->setDefault = $setDefault;
         $this->setVisible = $setVisible;
     }
 
-    public function getName(): string
+    public function getColumn(): string
     {
-        return $this->name;
+        return $this->column;
     }
 
     /**
@@ -55,7 +55,7 @@ class AlterColumnAction implements ColumnAction
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER COLUMN ' . $formatter->formatName($this->name);
+        $result = 'ALTER COLUMN ' . $formatter->formatName($this->column);
 
         if ($this->setDefault === false) {
             $result .= ' DROP DEFAULT';

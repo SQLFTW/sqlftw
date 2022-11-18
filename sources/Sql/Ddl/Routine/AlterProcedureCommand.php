@@ -18,7 +18,7 @@ class AlterProcedureCommand extends Statement implements StoredProcedureCommand,
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $procedure;
 
     /** @var SqlSecurity|null */
     private $security;
@@ -33,22 +33,22 @@ class AlterProcedureCommand extends Statement implements StoredProcedureCommand,
     private $language;
 
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $procedure,
         ?SqlSecurity $security,
         ?RoutineSideEffects $sideEffects = null,
         ?string $comment = null,
         ?string $language = null
     ) {
-        $this->name = $name;
+        $this->procedure = $procedure;
         $this->security = $security;
         $this->sideEffects = $sideEffects;
         $this->comment = $comment;
         $this->language = $language;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getProcedure(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->procedure;
     }
 
     public function getSecurity(): ?SqlSecurity
@@ -73,7 +73,7 @@ class AlterProcedureCommand extends Statement implements StoredProcedureCommand,
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER PROCEDURE ' . $this->name->serialize($formatter);
+        $result = 'ALTER PROCEDURE ' . $this->procedure->serialize($formatter);
         if ($this->language !== null) {
             $result .= ' LANGUAGE ' . $this->language;
         }

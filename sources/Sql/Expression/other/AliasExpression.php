@@ -21,12 +21,12 @@ class AliasExpression implements ArgumentNode
     private $expression;
 
     /** @var string */
-    private $name;
+    private $alias;
 
-    public function __construct(ExpressionNode $expression, string $name)
+    public function __construct(ExpressionNode $expression, string $alias)
     {
         $this->expression = $expression;
-        $this->name = $name;
+        $this->alias = $alias;
     }
 
     public function getExpression(): ExpressionNode
@@ -34,14 +34,14 @@ class AliasExpression implements ArgumentNode
         return $this->expression;
     }
 
-    public function getName(): string
+    public function getAlias(): string
     {
-        return $this->name;
+        return $this->alias;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->expression->serialize($formatter) . ' AS ' . $formatter->formatName($this->name);
+        return $this->expression->serialize($formatter) . ' AS ' . $formatter->formatName($this->alias);
     }
 
 }

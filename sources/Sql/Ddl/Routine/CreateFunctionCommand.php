@@ -22,7 +22,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $function;
 
     /** @var Statement */
     private $body;
@@ -58,7 +58,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
      * @param ColumnType[] $params
      */
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $function,
         Statement $body,
         array $params,
         ColumnType $returnType,
@@ -70,7 +70,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
         ?string $language = null,
         bool $ifNotExists = false
     ) {
-        $this->name = $name;
+        $this->function = $function;
         $this->body = $body;
         $this->params = $params;
         $this->returnType = $returnType;
@@ -83,9 +83,9 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getFunction(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->function;
     }
 
     public function getBody(): Statement
@@ -151,7 +151,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
-        $result .= $this->name->serialize($formatter);
+        $result .= $this->function->serialize($formatter);
 
         $result .= '(' . implode(', ', Arr::mapPairs($this->params, static function (string $name, ColumnType $type) use ($formatter) {
             return $formatter->formatName($name) . ' ' . $type->serialize($formatter);

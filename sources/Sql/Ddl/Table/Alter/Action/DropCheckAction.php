@@ -15,21 +15,21 @@ class DropCheckAction implements CheckAction
 {
 
     /** @var string */
-    private $name;
+    private $check;
 
-    public function __construct(string $name)
+    public function __construct(string $check)
     {
-        $this->name = $name;
+        $this->check = $check;
     }
 
-    public function getName(): string
+    public function getCheck(): string
     {
-        return $this->name;
+        return $this->check;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DROP CHECK ' . $formatter->formatName($this->name);
+        return 'DROP CHECK ' . $formatter->formatName($this->check);
     }
 
 }

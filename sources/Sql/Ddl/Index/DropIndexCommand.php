@@ -22,7 +22,7 @@ class DropIndexCommand extends Statement implements IndexCommand, DdlTableComman
 {
 
     /** @var string */
-    private $name;
+    private $index;
 
     /** @var ObjectIdentifier */
     private $table;
@@ -34,22 +34,22 @@ class DropIndexCommand extends Statement implements IndexCommand, DdlTableComman
     private $lock;
 
     public function __construct(
-        string $name,
+        string $index,
         ObjectIdentifier $table,
         ?AlterTableAlgorithm $algorithm = null,
         ?AlterTableLock $lock = null
     ) {
-        $this->name = $name;
+        $this->index = $index;
         $this->table = $table;
         $this->algorithm = $algorithm;
         $this->lock = $lock;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getIndex(): ObjectIdentifier
     {
         $schema = $this->table instanceof QualifiedName ? $this->table->getSchema() : null;
 
-        return $schema !== null ? new QualifiedName($this->name, $schema) : new SimpleName($this->name);
+        return $schema !== null ? new QualifiedName($this->index, $schema) : new SimpleName($this->index);
     }
 
     public function getTable(): ObjectIdentifier
@@ -69,7 +69,7 @@ class DropIndexCommand extends Statement implements IndexCommand, DdlTableComman
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DROP INDEX ' . $formatter->formatName($this->name) . ' ON ' . $this->table->serialize($formatter);
+        $result = 'DROP INDEX ' . $formatter->formatName($this->index) . ' ON ' . $this->table->serialize($formatter);
         if ($this->algorithm !== null) {
             $result .= ' ALGORITHM ' . $this->algorithm->serialize($formatter);
         }

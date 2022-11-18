@@ -23,7 +23,7 @@ class AlterTablespaceCommand extends Statement implements TablespaceCommand
 {
 
     /** @var string */
-    private $name;
+    private $tablespace;
 
     /** @var array<TablespaceOptionValue> */
     private $options;
@@ -34,18 +34,18 @@ class AlterTablespaceCommand extends Statement implements TablespaceCommand
     /**
      * @param array<TablespaceOptionValue> $options
      */
-    public function __construct(string $name, array $options, bool $undo = false)
+    public function __construct(string $tablespace, array $options, bool $undo = false)
     {
         TablespaceOption::validate(Keyword::ALTER, $options);
 
-        $this->name = $name;
+        $this->tablespace = $tablespace;
         $this->options = $options;
         $this->undo = $undo;
     }
 
-    public function getName(): string
+    public function getTablespace(): string
     {
-        return $this->name;
+        return $this->tablespace;
     }
 
     /**
@@ -67,7 +67,7 @@ class AlterTablespaceCommand extends Statement implements TablespaceCommand
         if ($this->undo) {
             $result .= 'UNDO ';
         }
-        $result .= 'TABLESPACE ' . $formatter->formatName($this->name);
+        $result .= 'TABLESPACE ' . $formatter->formatName($this->tablespace);
 
         foreach ($this->options as $name => $value) {
             if (is_bool($value)) {

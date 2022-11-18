@@ -18,7 +18,7 @@ class AlterEventCommand extends Statement implements EventCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $event;
 
     /** @var EventSchedule|null */
     private $schedule;
@@ -42,7 +42,7 @@ class AlterEventCommand extends Statement implements EventCommand
     private $newName;
 
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $event,
         ?EventSchedule $schedule,
         ?Statement $body = null,
         ?UserExpression $definer = null,
@@ -51,7 +51,7 @@ class AlterEventCommand extends Statement implements EventCommand
         ?string $comment = null,
         ?ObjectIdentifier $newName = null
     ) {
-        $this->name = $name;
+        $this->event = $event;
         $this->schedule = $schedule;
         $this->body = $body;
         $this->definer = $definer;
@@ -61,9 +61,9 @@ class AlterEventCommand extends Statement implements EventCommand
         $this->newName = $newName;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getEvent(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->event;
     }
 
     public function getSchedule(): ?EventSchedule
@@ -107,7 +107,7 @@ class AlterEventCommand extends Statement implements EventCommand
         if ($this->definer !== null) {
             $result .= ' DEFINER = ' . $this->definer->serialize($formatter);
         }
-        $result .= ' EVENT ' . $this->name->serialize($formatter);
+        $result .= ' EVENT ' . $this->event->serialize($formatter);
 
         if ($this->schedule !== null) {
             $result .= ' ON SCHEDULE ' . $this->schedule->serialize($formatter);

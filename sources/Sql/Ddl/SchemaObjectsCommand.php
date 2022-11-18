@@ -9,14 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl;
 
-use SqlFtw\Sql\Expression\ObjectIdentifier;
-
 interface SchemaObjectsCommand extends DdlCommand
 {
-
-    /**
-     * @return ObjectIdentifier[]
-     */
-    public function getNames(): array;
 
 }

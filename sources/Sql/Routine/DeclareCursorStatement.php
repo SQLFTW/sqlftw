@@ -18,20 +18,20 @@ class DeclareCursorStatement extends Statement implements SqlSerializable
 {
 
     /** @var string */
-    private $name;
+    private $cursor;
 
     /** @var Query */
     private $query;
 
-    public function __construct(string $name, Query $query)
+    public function __construct(string $cursor, Query $query)
     {
-        $this->name = $name;
+        $this->cursor = $cursor;
         $this->query = $query;
     }
 
-    public function getName(): string
+    public function getCursor(): string
     {
-        return $this->name;
+        return $this->cursor;
     }
 
     public function getQuery(): Query
@@ -41,7 +41,7 @@ class DeclareCursorStatement extends Statement implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DECLARE ' . $formatter->formatName($this->name) . ' CURSOR FOR ' . $this->query->serialize($formatter);
+        return 'DECLARE ' . $formatter->formatName($this->cursor) . ' CURSOR FOR ' . $this->query->serialize($formatter);
     }
 
 }

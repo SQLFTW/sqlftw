@@ -17,21 +17,21 @@ class OpenCursorStatement extends Statement implements SqlSerializable
 {
 
     /** @var string */
-    private $name;
+    private $cursor;
 
-    public function __construct(string $name)
+    public function __construct(string $cursor)
     {
-        $this->name = $name;
+        $this->cursor = $cursor;
     }
 
-    public function getName(): string
+    public function getCursor(): string
     {
-        return $this->name;
+        return $this->cursor;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'OPEN ' . $formatter->formatName($this->name);
+        return 'OPEN ' . $formatter->formatName($this->cursor);
     }
 
 }

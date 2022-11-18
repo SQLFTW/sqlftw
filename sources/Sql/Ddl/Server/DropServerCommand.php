@@ -16,20 +16,20 @@ class DropServerCommand extends Statement implements ServerCommand
 {
 
     /** @var string */
-    private $name;
+    private $server;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(string $name, bool $ifExists = false)
+    public function __construct(string $server, bool $ifExists = false)
     {
-        $this->name = $name;
+        $this->server = $server;
         $this->ifExists = $ifExists;
     }
 
-    public function getName(): string
+    public function getServer(): string
     {
-        return $this->name;
+        return $this->server;
     }
 
     public function getIfExists(): bool
@@ -39,7 +39,7 @@ class DropServerCommand extends Statement implements ServerCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DROP SERVER ' . ($this->ifExists ? 'IF EXISTS ' : '') . $formatter->formatName($this->name);
+        return 'DROP SERVER ' . ($this->ifExists ? 'IF EXISTS ' : '') . $formatter->formatName($this->server);
     }
 
 }

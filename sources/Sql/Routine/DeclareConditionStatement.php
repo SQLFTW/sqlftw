@@ -18,7 +18,7 @@ class DeclareConditionStatement extends Statement implements SqlSerializable
 {
 
     /** @var string */
-    private $name;
+    private $condition;
 
     /** @var int|SqlState */
     private $value;
@@ -26,15 +26,15 @@ class DeclareConditionStatement extends Statement implements SqlSerializable
     /**
      * @param int|SqlState $value
      */
-    public function __construct(string $name, $value)
+    public function __construct(string $condition, $value)
     {
-        $this->name = $name;
+        $this->condition = $condition;
         $this->value = $value;
     }
 
-    public function getName(): string
+    public function getCondition(): string
     {
-        return $this->name;
+        return $this->condition;
     }
 
     /**
@@ -47,7 +47,7 @@ class DeclareConditionStatement extends Statement implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DECLARE ' . $formatter->formatName($this->name) . ' CONDITION FOR ';
+        $result = 'DECLARE ' . $formatter->formatName($this->condition) . ' CONDITION FOR ';
         if ($this->value instanceof SqlState) {
             $result .= 'SQLSTATE ' . $this->value->serialize($formatter);
         } else {

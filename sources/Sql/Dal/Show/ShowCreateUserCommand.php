@@ -17,21 +17,21 @@ class ShowCreateUserCommand extends Statement implements ShowCommand
 {
 
     /** @var UserName */
-    private $name;
+    private $user;
 
-    public function __construct(UserName $name)
+    public function __construct(UserName $user)
     {
-        $this->name = $name;
+        $this->user = $user;
     }
 
-    public function getName(): UserName
+    public function getUser(): UserName
     {
-        return $this->name;
+        return $this->user;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW CREATE USER ' . $this->name->serialize($formatter);
+        return 'SHOW CREATE USER ' . $this->user->serialize($formatter);
     }
 
 }

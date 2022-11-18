@@ -16,20 +16,20 @@ class DropSchemaCommand extends Statement implements SchemaCommand
 {
 
     /** @var string */
-    private $name;
+    private $schema;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(string $name, bool $ifExists = false)
+    public function __construct(string $schema, bool $ifExists = false)
     {
-        $this->name = $name;
+        $this->schema = $schema;
         $this->ifExists = $ifExists;
     }
 
-    public function getName(): string
+    public function getSchema(): string
     {
-        return $this->name;
+        return $this->schema;
     }
 
     public function ifExists(): bool
@@ -43,7 +43,7 @@ class DropSchemaCommand extends Statement implements SchemaCommand
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $formatter->formatName($this->name);
+        $result .= $formatter->formatName($this->schema);
 
         return $result;
     }

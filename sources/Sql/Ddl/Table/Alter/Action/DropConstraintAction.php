@@ -15,21 +15,21 @@ class DropConstraintAction implements ConstraintAction
 {
 
     /** @var string */
-    private $name;
+    private $constraint;
 
-    public function __construct(string $name)
+    public function __construct(string $constraint)
     {
-        $this->name = $name;
+        $this->constraint = $constraint;
     }
 
-    public function getName(): string
+    public function getConstraint(): string
     {
-        return $this->name;
+        return $this->constraint;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DROP CONSTRAINT ' . $formatter->formatName($this->name);
+        return 'DROP CONSTRAINT ' . $formatter->formatName($this->constraint);
     }
 
 }

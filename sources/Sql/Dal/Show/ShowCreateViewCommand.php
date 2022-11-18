@@ -17,21 +17,21 @@ class ShowCreateViewCommand extends Statement implements ShowCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $view;
 
-    public function __construct(ObjectIdentifier $name)
+    public function __construct(ObjectIdentifier $view)
     {
-        $this->name = $name;
+        $this->view = $view;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getView(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->view;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW CREATE VIEW ' . $this->name->serialize($formatter);
+        return 'SHOW CREATE VIEW ' . $this->view->serialize($formatter);
     }
 
 }

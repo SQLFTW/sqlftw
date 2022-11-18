@@ -15,20 +15,20 @@ class AlterCheckAction implements CheckAction
 {
 
     /** @var string */
-    private $name;
+    private $check;
 
     /** @var bool */
     private $enforced;
 
-    public function __construct(string $name, bool $enforced)
+    public function __construct(string $check, bool $enforced)
     {
-        $this->name = $name;
+        $this->check = $check;
         $this->enforced = $enforced;
     }
 
-    public function getName(): string
+    public function getCheck(): string
     {
-        return $this->name;
+        return $this->check;
     }
 
     public function isEnforced(): bool
@@ -38,7 +38,7 @@ class AlterCheckAction implements CheckAction
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER CHECK ' . $formatter->formatName($this->name);
+        $result = 'ALTER CHECK ' . $formatter->formatName($this->check);
         $result .= $this->enforced ? ' ENFORCED' : ' NOT ENFORCED';
 
         return $result;

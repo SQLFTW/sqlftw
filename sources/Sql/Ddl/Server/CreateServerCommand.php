@@ -17,7 +17,7 @@ class CreateServerCommand extends Statement implements ServerCommand
 {
 
     /** @var string */
-    private $name;
+    private $server;
 
     /** @var string */
     private $wrapper;
@@ -44,7 +44,7 @@ class CreateServerCommand extends Statement implements ServerCommand
     private $port;
 
     public function __construct(
-        string $name,
+        string $server,
         string $wrapper,
         ?string $host = null,
         ?string $schema = null,
@@ -54,7 +54,7 @@ class CreateServerCommand extends Statement implements ServerCommand
         ?string $owner = null,
         ?int $port = null
     ) {
-        $this->name = $name;
+        $this->server = $server;
         $this->wrapper = $wrapper;
         $this->host = $host;
         $this->schema = $schema;
@@ -65,9 +65,9 @@ class CreateServerCommand extends Statement implements ServerCommand
         $this->port = $port;
     }
 
-    public function getName(): string
+    public function getServer(): string
     {
-        return $this->name;
+        return $this->server;
     }
 
     public function getWrapper(): string
@@ -112,7 +112,7 @@ class CreateServerCommand extends Statement implements ServerCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CREATE SERVER ' . $formatter->formatName($this->name)
+        $result = 'CREATE SERVER ' . $formatter->formatName($this->server)
             . ' FOREIGN DATA WRAPPER ' . $formatter->formatString($this->wrapper)
             . ' OPTIONS (';
 

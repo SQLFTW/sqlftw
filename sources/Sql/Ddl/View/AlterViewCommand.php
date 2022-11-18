@@ -21,7 +21,7 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $view;
 
     /** @var Query */
     private $query;
@@ -45,7 +45,7 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
      * @param non-empty-array<string>|null $columns
      */
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $view,
         Query $query,
         ?array $columns = null,
         ?UserExpression $definer = null,
@@ -53,7 +53,7 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
         ?ViewAlgorithm $algorithm = null,
         ?ViewCheckOption $checkOption = null
     ) {
-        $this->name = $name;
+        $this->view = $view;
         $this->query = $query;
         $this->columns = $columns;
         $this->definer = $definer;
@@ -62,9 +62,9 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
         $this->checkOption = $checkOption;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getView(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->view;
     }
 
     public function getQuery(): Query
@@ -113,7 +113,7 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
             $result .= ' SQL SECURITY ' . $this->security->serialize($formatter);
         }
 
-        $result .= ' VIEW ' . $this->name->serialize($formatter);
+        $result .= ' VIEW ' . $this->view->serialize($formatter);
         if ($this->columns !== null) {
             $result .= ' (' . $formatter->formatNamesList($this->columns) . ')';
         }

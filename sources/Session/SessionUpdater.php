@@ -77,7 +77,7 @@ class SessionUpdater
     public function processStatement(Statement $statement): void
     {
         if ($statement instanceof DeclareVariablesStatement) {
-            foreach ($statement->getNames() as $name) {
+            foreach ($statement->getVariables() as $name) {
                 $this->session->setLocalVariable($name, null);
             }
         }

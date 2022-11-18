@@ -28,7 +28,7 @@ Assert::count(1, $commands);
 Assert::type(AlterTableCommand::class, $commands[0]);
 /** @var \SqlFtw\Sql\Ddl\Table\AlterTableCommand $command */
 $command = $commands[0];
-Assert::same('test', $command->getName());
+Assert::same('test', $command->getTable());
 Assert::null($command->getEngine());
 Assert::null($command->getCharset());
 Assert::null($command->getCollation());

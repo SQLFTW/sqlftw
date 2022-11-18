@@ -17,20 +17,20 @@ class DropLogfileGroupCommand extends Statement implements LogfileGroupCommand
 {
 
     /** @var string */
-    private $name;
+    private $logFileGroup;
 
     /** @var StorageEngine|null */
     private $engine;
 
-    public function __construct(string $name, ?StorageEngine $engine)
+    public function __construct(string $logFileGroup, ?StorageEngine $engine)
     {
-        $this->name = $name;
+        $this->logFileGroup = $logFileGroup;
         $this->engine = $engine;
     }
 
-    public function getName(): string
+    public function getLogFileGroup(): string
     {
-        return $this->name;
+        return $this->logFileGroup;
     }
 
     public function getEngine(): ?StorageEngine
@@ -40,7 +40,7 @@ class DropLogfileGroupCommand extends Statement implements LogfileGroupCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'DROP LOGFILE GROUP ' . $formatter->formatName($this->name);
+        $result = 'DROP LOGFILE GROUP ' . $formatter->formatName($this->logFileGroup);
         if ($this->engine !== null) {
             $result .= ' ENGINE ' . $this->engine->serialize($formatter);
         }

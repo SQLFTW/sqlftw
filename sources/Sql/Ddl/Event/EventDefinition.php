@@ -17,7 +17,7 @@ class EventDefinition
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $event;
 
     /** @var EventSchedule */
     private $schedule;
@@ -38,7 +38,7 @@ class EventDefinition
     private $comment;
 
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $event,
         EventSchedule $schedule,
         Statement $body,
         ?UserExpression $definer = null,
@@ -46,7 +46,7 @@ class EventDefinition
         ?bool $preserve = null,
         ?string $comment = null
     ) {
-        $this->name = $name;
+        $this->event = $event;
         $this->schedule = $schedule;
         $this->body = $body;
         $this->definer = $definer;
@@ -65,14 +65,14 @@ class EventDefinition
         $that->state = $alter->getState() ?? $that->state;
         $that->preserve = $alter->preserve() ?? $that->preserve;
         $that->comment = $alter->getComment() ?? $that->comment;
-        $that->name = $alter->getNewName() ?? $that->name;
+        $that->event = $alter->getNewName() ?? $that->event;
 
         return $that;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getEvent(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->event;
     }
 
     public function getSchedule(): EventSchedule

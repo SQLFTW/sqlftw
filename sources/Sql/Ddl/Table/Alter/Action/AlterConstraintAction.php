@@ -15,20 +15,20 @@ class AlterConstraintAction implements ConstraintAction
 {
 
     /** @var string */
-    private $name;
+    private $constraint;
 
     /** @var bool */
     private $enforced;
 
-    public function __construct(string $name, bool $enforced)
+    public function __construct(string $constraint, bool $enforced)
     {
-        $this->name = $name;
+        $this->constraint = $constraint;
         $this->enforced = $enforced;
     }
 
-    public function getName(): string
+    public function getConstraint(): string
     {
-        return $this->name;
+        return $this->constraint;
     }
 
     public function isEnforced(): bool
@@ -38,7 +38,7 @@ class AlterConstraintAction implements ConstraintAction
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER CONSTRAINT ' . $formatter->formatName($this->name);
+        $result = 'ALTER CONSTRAINT ' . $formatter->formatName($this->constraint);
         $result .= $this->enforced ? ' ENFORCED' : ' NOT ENFORCED';
 
         return $result;

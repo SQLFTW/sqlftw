@@ -19,7 +19,7 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $trigger;
 
     /** @var TriggerEvent */
     private $event;
@@ -40,7 +40,7 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
     private $ifNotExists;
 
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $trigger,
         TriggerEvent $event,
         ObjectIdentifier $table,
         Statement $body,
@@ -48,7 +48,7 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
         ?TriggerPosition $position = null,
         bool $ifNotExists = false
     ) {
-        $this->name = $name;
+        $this->trigger = $trigger;
         $this->event = $event;
         $this->table = $table;
         $this->body = $body;
@@ -57,11 +57,11 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getTrigger(): ObjectIdentifier
     {
         $schema = $this->table instanceof QualifiedName ? $this->table->getSchema() : null;
 
-        return $schema !== null ? new QualifiedName($this->name->getName(), $schema) : $this->name;
+        return $schema !== null ? new QualifiedName($this->trigger->getName(), $schema) : $this->trigger;
     }
 
     public function getEvent(): TriggerEvent
@@ -104,7 +104,7 @@ class CreateTriggerCommand extends Statement implements TriggerCommand
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
-        $result .= $this->name->serialize($formatter) . ' ' . $this->event->serialize($formatter);
+        $result .= $this->trigger->serialize($formatter) . ' ' . $this->event->serialize($formatter);
         $result .= ' ON ' . $this->table->serialize($formatter) . ' FOR EACH ROW';
         if ($this->position !== null) {
             $result .= ' ' . $this->position->serialize($formatter);

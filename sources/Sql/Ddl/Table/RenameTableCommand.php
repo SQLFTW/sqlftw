@@ -46,7 +46,7 @@ class RenameTableCommand extends Statement implements DdlTablesCommand
     /**
      * @return non-empty-array<ObjectIdentifier>
      */
-    public function getNames(): array
+    public function getTables(): array
     {
         return $this->names;
     }

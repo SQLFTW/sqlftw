@@ -15,20 +15,20 @@ class AlterIndexAction implements IndexAction
 {
 
     /** @var string */
-    private $name;
+    private $index;
 
     /** @var bool */
     private $visible;
 
-    public function __construct(string $name, bool $visible)
+    public function __construct(string $index, bool $visible)
     {
-        $this->name = $name;
+        $this->index = $index;
         $this->visible = $visible;
     }
 
-    public function getName(): string
+    public function getIndex(): string
     {
-        return $this->name;
+        return $this->index;
     }
 
     public function visible(): bool
@@ -38,7 +38,7 @@ class AlterIndexAction implements IndexAction
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ALTER INDEX ' . $formatter->formatName($this->name) . ($this->visible ? ' VISIBLE' : ' INVISIBLE');
+        return 'ALTER INDEX ' . $formatter->formatName($this->index) . ($this->visible ? ' VISIBLE' : ' INVISIBLE');
     }
 
 }

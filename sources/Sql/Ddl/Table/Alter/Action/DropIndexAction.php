@@ -15,21 +15,21 @@ class DropIndexAction implements IndexAction
 {
 
     /** @var string */
-    private $name;
+    private $index;
 
-    public function __construct(string $name)
+    public function __construct(string $index)
     {
-        $this->name = $name;
+        $this->index = $index;
     }
 
-    public function getName(): string
+    public function getIndex(): string
     {
-        return $this->name;
+        return $this->index;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DROP INDEX ' . $formatter->formatName($this->name);
+        return 'DROP INDEX ' . $formatter->formatName($this->index);
     }
 
 }

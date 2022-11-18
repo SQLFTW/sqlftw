@@ -17,21 +17,21 @@ class ShowProcedureCodeCommand extends Statement implements ShowCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $procedure;
 
-    public function __construct(ObjectIdentifier $name)
+    public function __construct(ObjectIdentifier $procedure)
     {
-        $this->name = $name;
+        $this->procedure = $procedure;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getProcedure(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->procedure;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW PROCEDURE CODE ' . $this->name->serialize($formatter);
+        return 'SHOW PROCEDURE CODE ' . $this->procedure->serialize($formatter);
     }
 
 }

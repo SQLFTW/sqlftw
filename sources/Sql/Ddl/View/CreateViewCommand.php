@@ -21,7 +21,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $view;
 
     /** @var Query */
     private $query;
@@ -48,7 +48,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
      * @param non-empty-array<string>|null $columns
      */
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $view,
         Query $query,
         ?array $columns = null,
         ?UserExpression $definer = null,
@@ -57,7 +57,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
         ?ViewCheckOption $checkOption = null,
         bool $orReplace = false
     ) {
-        $this->name = $name;
+        $this->view = $view;
         $this->query = $query;
         $this->columns = $columns;
         $this->definer = $definer;
@@ -67,9 +67,9 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
         $this->orReplace = $orReplace;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getView(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->view;
     }
 
     public function getQuery(): Query
@@ -126,7 +126,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
             $result .= ' SQL SECURITY ' . $this->security->serialize($formatter);
         }
 
-        $result .= ' VIEW ' . $this->name->serialize($formatter);
+        $result .= ' VIEW ' . $this->view->serialize($formatter);
         if ($this->columns !== null) {
             $result .= ' (' . $formatter->formatNamesList($this->columns) . ')';
         }

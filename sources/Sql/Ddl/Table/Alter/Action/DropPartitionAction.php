@@ -15,27 +15,27 @@ class DropPartitionAction implements PartitioningAction
 {
 
     /** @var non-empty-array<string> */
-    private $names;
+    private $partitions;
 
     /**
-     * @param non-empty-array<string> $names
+     * @param non-empty-array<string> $partitions
      */
-    public function __construct(array $names)
+    public function __construct(array $partitions)
     {
-        $this->names = $names;
+        $this->partitions = $partitions;
     }
 
     /**
      * @return non-empty-array<string>
      */
-    public function getNames(): array
+    public function getPartitions(): array
     {
-        return $this->names;
+        return $this->partitions;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DROP PARTITION ' . $formatter->formatNamesList($this->names);
+        return 'DROP PARTITION ' . $formatter->formatNamesList($this->partitions);
     }
 
 }

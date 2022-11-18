@@ -17,20 +17,20 @@ class DropEventCommand extends Statement implements EventCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $event;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(ObjectIdentifier $name, bool $ifExists = false)
+    public function __construct(ObjectIdentifier $event, bool $ifExists = false)
     {
-        $this->name = $name;
+        $this->event = $event;
         $this->ifExists = $ifExists;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getEvent(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->event;
     }
 
     public function ifExists(): bool
@@ -44,7 +44,7 @@ class DropEventCommand extends Statement implements EventCommand
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $this->name->serialize($formatter);
+        $result .= $this->event->serialize($formatter);
 
         return $result;
     }

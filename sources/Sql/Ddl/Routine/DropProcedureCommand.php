@@ -17,20 +17,20 @@ class DropProcedureCommand extends Statement implements StoredProcedureCommand, 
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $procedure;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(ObjectIdentifier $name, bool $ifExists = false)
+    public function __construct(ObjectIdentifier $procedure, bool $ifExists = false)
     {
-        $this->name = $name;
+        $this->procedure = $procedure;
         $this->ifExists = $ifExists;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getFunction(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->procedure;
     }
 
     public function ifExists(): bool
@@ -44,7 +44,7 @@ class DropProcedureCommand extends Statement implements StoredProcedureCommand, 
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $this->name->serialize($formatter);
+        $result .= $this->procedure->serialize($formatter);
 
         return $result;
     }

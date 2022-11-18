@@ -18,7 +18,7 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
 {
 
     /** @var non-empty-array<ObjectIdentifier> */
-    private $names;
+    private $views;
 
     /** @var bool */
     private $ifExists;
@@ -27,11 +27,11 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
     private $option;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $names
+     * @param non-empty-array<ObjectIdentifier> $views
      */
-    public function __construct(array $names, bool $ifExists = false, ?DropViewOption $option = null)
+    public function __construct(array $views, bool $ifExists = false, ?DropViewOption $option = null)
     {
-        $this->names = $names;
+        $this->views = $views;
         $this->ifExists = $ifExists;
         $this->option = $option;
     }
@@ -39,9 +39,9 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
     /**
      * @return non-empty-array<ObjectIdentifier>
      */
-    public function getNames(): array
+    public function getViews(): array
     {
-        return $this->names;
+        return $this->views;
     }
 
     public function ifExists(): bool
@@ -60,7 +60,7 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $formatter->formatSerializablesList($this->names);
+        $result .= $formatter->formatSerializablesList($this->views);
         if ($this->option !== null) {
             $result .= ' ' . $this->option->serialize($formatter);
         }

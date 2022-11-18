@@ -17,7 +17,7 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $names;
+    private $tables;
 
     /** @var non-empty-array<string> */
     private $columns;
@@ -29,12 +29,12 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
     private $local;
 
     /**
-     * @param non-empty-list<ObjectIdentifier> $names
+     * @param non-empty-list<ObjectIdentifier> $tables
      * @param non-empty-array<string> $columns
      */
-    public function __construct(array $names, array $columns, ?int $buckets = null, bool $local = false)
+    public function __construct(array $tables, array $columns, ?int $buckets = null, bool $local = false)
     {
-        $this->names = $names;
+        $this->tables = $tables;
         $this->columns = $columns;
         $this->buckets = $buckets;
         $this->local = $local;
@@ -43,9 +43,9 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
     /**
      * @return non-empty-list<ObjectIdentifier>
      */
-    public function getNames(): array
+    public function getTables(): array
     {
-        return $this->names;
+        return $this->tables;
     }
 
     /**
@@ -72,7 +72,7 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->names)
+        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->tables)
             . ' UPDATE HISTOGRAM ON ' . $formatter->formatNamesList($this->columns);
         if ($this->buckets !== null) {
             $result .= ' WITH ' . $this->buckets . ' BUCKETS';

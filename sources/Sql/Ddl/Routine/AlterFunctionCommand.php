@@ -18,7 +18,7 @@ class AlterFunctionCommand extends Statement implements StoredFunctionCommand, A
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $function;
 
     /** @var SqlSecurity|null */
     private $security;
@@ -33,22 +33,22 @@ class AlterFunctionCommand extends Statement implements StoredFunctionCommand, A
     private $language;
 
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $function,
         ?SqlSecurity $security,
         ?RoutineSideEffects $sideEffects = null,
         ?string $comment = null,
         ?string $language = null
     ) {
-        $this->name = $name;
+        $this->function = $function;
         $this->security = $security;
         $this->sideEffects = $sideEffects;
         $this->comment = $comment;
         $this->language = $language;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getFunction(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->function;
     }
 
     public function getSecurity(): ?SqlSecurity
@@ -73,7 +73,7 @@ class AlterFunctionCommand extends Statement implements StoredFunctionCommand, A
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'ALTER FUNCTION ' . $this->name->serialize($formatter);
+        $result = 'ALTER FUNCTION ' . $this->function->serialize($formatter);
         if ($this->language !== null) {
             $result .= ' LANGUAGE ' . $this->language;
         }

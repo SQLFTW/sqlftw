@@ -17,21 +17,21 @@ class ShowCreateEventCommand extends Statement implements ShowCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $event;
 
-    public function __construct(ObjectIdentifier $name)
+    public function __construct(ObjectIdentifier $event)
     {
-        $this->name = $name;
+        $this->event = $event;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getEvent(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->event;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW CREATE EVENT ' . $this->name->serialize($formatter);
+        return 'SHOW CREATE EVENT ' . $this->event->serialize($formatter);
     }
 
 }

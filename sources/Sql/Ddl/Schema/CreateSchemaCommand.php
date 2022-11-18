@@ -16,7 +16,7 @@ class CreateSchemaCommand extends Statement implements SchemaCommand
 {
 
     /** @var string */
-    private $name;
+    private $schema;
 
     /** @var SchemaOptions|null */
     private $options;
@@ -24,16 +24,16 @@ class CreateSchemaCommand extends Statement implements SchemaCommand
     /** @var bool */
     private $ifNotExists;
 
-    public function __construct(string $name, ?SchemaOptions $options, bool $ifNotExists = false)
+    public function __construct(string $schema, ?SchemaOptions $options, bool $ifNotExists = false)
     {
-        $this->name = $name;
+        $this->schema = $schema;
         $this->options = $options;
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): string
+    public function getSchema(): string
     {
-        return $this->name;
+        return $this->schema;
     }
 
     public function getOptions(): SchemaOptions
@@ -53,7 +53,7 @@ class CreateSchemaCommand extends Statement implements SchemaCommand
             $result .= 'IF NOT EXISTS ';
         }
 
-        $result .= $formatter->formatName($this->name);
+        $result .= $formatter->formatName($this->schema);
 
         if ($this->options !== null) {
             $result .= ' ' . $this->options->serialize($formatter);

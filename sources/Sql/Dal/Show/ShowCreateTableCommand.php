@@ -17,21 +17,21 @@ class ShowCreateTableCommand extends Statement implements ShowCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $table;
 
-    public function __construct(ObjectIdentifier $name)
+    public function __construct(ObjectIdentifier $table)
     {
-        $this->name = $name;
+        $this->table = $table;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getTable(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->table;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW CREATE TABLE ' . $this->name->serialize($formatter);
+        return 'SHOW CREATE TABLE ' . $this->table->serialize($formatter);
     }
 
 }

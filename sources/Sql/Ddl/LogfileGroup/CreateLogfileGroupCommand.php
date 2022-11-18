@@ -18,7 +18,7 @@ class CreateLogfileGroupCommand extends Statement implements LogfileGroupCommand
 {
 
     /** @var string */
-    private $name;
+    private $logFileGroup;
 
     /** @var StorageEngine|null */
     private $engine;
@@ -45,7 +45,7 @@ class CreateLogfileGroupCommand extends Statement implements LogfileGroupCommand
     private $comment;
 
     public function __construct(
-        string $name,
+        string $logFileGroup,
         ?StorageEngine $engine,
         string $undoFile,
         ?SizeLiteral $initialSize = null,
@@ -56,7 +56,7 @@ class CreateLogfileGroupCommand extends Statement implements LogfileGroupCommand
         ?string $comment = null
     )
     {
-        $this->name = $name;
+        $this->logFileGroup = $logFileGroup;
         $this->engine = $engine;
         $this->undoFile = $undoFile;
         $this->initialSize = $initialSize;
@@ -67,9 +67,9 @@ class CreateLogfileGroupCommand extends Statement implements LogfileGroupCommand
         $this->comment = $comment;
     }
 
-    public function getName(): string
+    public function getLogFileGroup(): string
     {
-        return $this->name;
+        return $this->logFileGroup;
     }
 
     public function getEngine(): ?StorageEngine
@@ -114,7 +114,7 @@ class CreateLogfileGroupCommand extends Statement implements LogfileGroupCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CREATE LOGFILE GROUP ' . $formatter->formatName($this->name) . ' ADD UNDOFILE ' . $formatter->formatString($this->undoFile);
+        $result = 'CREATE LOGFILE GROUP ' . $formatter->formatName($this->logFileGroup) . ' ADD UNDOFILE ' . $formatter->formatString($this->undoFile);
         if ($this->initialSize !== null) {
             $result .= ' INITIAL_SIZE ' . $this->initialSize->serialize($formatter);
         }

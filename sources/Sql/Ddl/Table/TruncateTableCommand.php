@@ -24,7 +24,7 @@ class TruncateTableCommand extends Statement implements DdlTableCommand
         $this->name = $name;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getTable(): ObjectIdentifier
     {
         return $this->name;
     }

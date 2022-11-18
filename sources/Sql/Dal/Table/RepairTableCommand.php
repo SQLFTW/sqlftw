@@ -51,7 +51,7 @@ class RepairTableCommand extends Statement implements DalTablesCommand
     /**
      * @return non-empty-array<ObjectIdentifier>
      */
-    public function getNames(): array
+    public function getTables(): array
     {
         return $this->names;
     }

@@ -19,7 +19,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $procedure;
 
     /** @var Statement */
     private $body;
@@ -52,7 +52,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
      * @param ProcedureParam[] $params
      */
     public function __construct(
-        ObjectIdentifier $name,
+        ObjectIdentifier $procedure,
         Statement $body,
         array $params,
         ?UserExpression $definer = null,
@@ -63,7 +63,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
         ?string $language = null,
         bool $ifNotExists = false
     ) {
-        $this->name = $name;
+        $this->procedure = $procedure;
         $this->body = $body;
         $this->params = $params;
         $this->definer = $definer;
@@ -75,9 +75,9 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getProcedure(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->procedure;
     }
 
     public function getBody(): Statement
@@ -138,7 +138,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
-        $result .= $this->name->serialize($formatter);
+        $result .= $this->procedure->serialize($formatter);
 
         $result .= '(';
         if ($this->params !== []) {

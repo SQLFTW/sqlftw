@@ -17,20 +17,20 @@ class DropTriggerCommand extends Statement implements TriggerCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $trigger;
 
     /** @var bool */
     private $ifExists;
 
-    public function __construct(ObjectIdentifier $name, bool $ifExists = false)
+    public function __construct(ObjectIdentifier $trigger, bool $ifExists = false)
     {
-        $this->name = $name;
+        $this->trigger = $trigger;
         $this->ifExists = $ifExists;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getTrigger(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->trigger;
     }
 
     public function ifExists(): bool
@@ -44,7 +44,7 @@ class DropTriggerCommand extends Statement implements TriggerCommand
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $this->name->serialize($formatter);
+        $result .= $this->trigger->serialize($formatter);
 
         return $result;
     }

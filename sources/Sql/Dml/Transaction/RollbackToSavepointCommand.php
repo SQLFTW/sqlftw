@@ -16,21 +16,21 @@ class RollbackToSavepointCommand extends Statement implements TransactionCommand
 {
 
     /** @var string */
-    private $name;
+    private $savepoint;
 
-    public function __construct(string $name)
+    public function __construct(string $savepoint)
     {
-        $this->name = $name;
+        $this->savepoint = $savepoint;
     }
 
-    public function getName(): string
+    public function getSavepoint(): string
     {
-        return $this->name;
+        return $this->savepoint;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ROLLBACK TO SAVEPOINT ' . $formatter->formatName($this->name);
+        return 'ROLLBACK TO SAVEPOINT ' . $formatter->formatName($this->savepoint);
     }
 
 }

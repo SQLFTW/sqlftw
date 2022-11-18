@@ -17,21 +17,21 @@ class ShowFunctionCodeCommand extends Statement implements ShowCommand
 {
 
     /** @var ObjectIdentifier */
-    private $name;
+    private $function;
 
-    public function __construct(ObjectIdentifier $name)
+    public function __construct(ObjectIdentifier $function)
     {
-        $this->name = $name;
+        $this->function = $function;
     }
 
-    public function getName(): ObjectIdentifier
+    public function getFunction(): ObjectIdentifier
     {
-        return $this->name;
+        return $this->function;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW FUNCTION CODE ' . $this->name->serialize($formatter);
+        return 'SHOW FUNCTION CODE ' . $this->function->serialize($formatter);
     }
 
 }
