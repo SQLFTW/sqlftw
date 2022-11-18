@@ -372,6 +372,9 @@ class TokenList
         return new self($tokens, $this->session, $this->autoSkip);
     }
 
+    /**
+     * @param callable(Token $token): bool $filter
+     */
     public function filter(callable $filter): self
     {
         /** @var non-empty-array<Token> $tokens */
@@ -380,6 +383,20 @@ class TokenList
             if (!$filter($token)) {
                 $tokens[] = $token;
             }
+        }
+
+        return new self($tokens, $this->session, $this->autoSkip);
+    }
+
+    /**
+     * @param callable(Token $token): Token $mapper
+     */
+    public function map(callable $mapper): self
+    {
+        /** @var non-empty-array<Token> $tokens */
+        $tokens = [];
+        foreach ($this->tokens as $token) {
+            $tokens[] = $mapper($token);
         }
 
         return new self($tokens, $this->session, $this->autoSkip);

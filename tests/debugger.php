@@ -5,16 +5,24 @@ namespace Test;
 use Dogma\Debug\Ansi;
 use Dogma\Debug\Dumper;
 use Dogma\Debug\FormattersDogma;
+use Dogma\Debug\Str;
 use SqlFtw\Parser\InvalidTokenException;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\IntLiteral;
+use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
+use SqlFtw\Sql\Expression\StringLiteral;
+use SqlFtw\Sql\Expression\UintLiteral;
+use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Tests\Assert;
 use Tracy\Debugger;
+use function count;
 use function get_class;
 use function implode;
 
@@ -89,6 +97,61 @@ Dumper::$objectFormatters[Platform::class] = static function (Platform $platform
 Dumper::$objectFormatters[SimpleName::class] = static function (SimpleName $simpleName): string {
     return Dumper::name(get_class($simpleName)) . Dumper::bracket('(')
         . Dumper::value($simpleName->getName())
+        . Dumper::bracket(')');
+};
+
+// QualifiedName
+Dumper::$objectFormatters[QualifiedName::class] = static function (QualifiedName $qualifiedName): string {
+    $name = $qualifiedName->getSchema() . '.' . $qualifiedName->getName();
+    if (Str::isBinary($name)) {
+        $name = Dumper::string($name);
+    } else {
+        $name = Dumper::value($name);
+    }
+
+    return Dumper::name(get_class($qualifiedName)) . Dumper::bracket('(') . $name . Dumper::bracket(')');
+};
+
+// UserVariable
+Dumper::$objectFormatters[UserVariable::class] = static function (UserVariable $userVariable): string {
+    return Dumper::name(get_class($userVariable)) . Dumper::bracket('(')
+        . Dumper::value($userVariable->getName())
+        . Dumper::bracket(')');
+};
+
+// UintLiteral
+Dumper::$objectFormatters[UintLiteral::class] = static function (UintLiteral $uintLiteral): string {
+    return Dumper::name(get_class($uintLiteral)) . Dumper::bracket('(')
+        . Dumper::value($uintLiteral->getValue())
+        . Dumper::bracket(')');
+};
+
+// IntLiteral
+Dumper::$objectFormatters[IntLiteral::class] = static function (IntLiteral $intLiteral): string {
+    return Dumper::name(get_class($intLiteral)) . Dumper::bracket('(')
+        . Dumper::value($intLiteral->getValue())
+        . Dumper::bracket(')');
+};
+
+// StringLiteral
+Dumper::$objectFormatters[StringLiteral::class] = static function (StringLiteral $stringLiteral): string {
+    if ($stringLiteral->getCharset() !== null || count($stringLiteral->getParts()) > 1) {
+        return '';
+    }
+    return Dumper::name(get_class($stringLiteral)) . Dumper::bracket('(')
+        . Dumper::string($stringLiteral->getParts()[0])
+        . Dumper::bracket(')');
+};
+
+// ColumnType
+Dumper::$objectFormatters[ColumnType::class] = static function (ColumnType $columnType): string {
+    if ($columnType->isUnsigned() !== false || $columnType->zerofill() !== false || $columnType->getSize() !== null || $columnType->getValues() !== null
+        || $columnType->getCharset() !== null || $columnType->getCollation() !== null || $columnType->getSrid() !== null
+    ) {
+        return '';
+    }
+    return Dumper::name(get_class($columnType)) . Dumper::bracket('(')
+        . Dumper::value($columnType->getBaseType()->getValue())
         . Dumper::bracket(')');
 };
 

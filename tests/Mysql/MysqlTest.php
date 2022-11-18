@@ -39,22 +39,29 @@ class MysqlTest
 {
     use Skips;
 
+    /** @var string */
+    public static $lastFailPath;
+
     public static function run(bool $singleThread): void
     {
         ini_set('memory_limit', '2G');
 
-        $lastFailPath = str_replace('\\', '/', __DIR__ . '/last-fail.txt');
-        $testsPath = str_replace('\\', '/', dirname(__DIR__, 3) . '/mysql-server/mysql-test');
-        $paths = self::getPaths($testsPath, $lastFailPath);
+        self::$lastFailPath = str_replace('\\', '/', __DIR__ . '/last-fail.txt');
 
-        $runner = static function (string $path): Result {
+        $subdir = '';
+        //$subdir = '/t';
+        $testsPath = str_replace('\\', '/', dirname(__DIR__, 3) . '/mysql-server/mysql-test' . $subdir);
+        $paths = self::getPaths($testsPath, self::$lastFailPath);
+        file_put_contents(self::$lastFailPath, '');
+
+        $runner = static function (string $path) use ($singleThread): Result {
             ini_set('memory_limit', '3G');
-            set_time_limit(15);
+            set_time_limit(25);
             if (function_exists('memory_reset_peak_usage')) {
                 memory_reset_peak_usage(); // 8.2
             }
 
-            return MysqlTestJob::run($path);
+            return MysqlTestJob::run($path, $singleThread);
         };
 
         $platform = Platform::get(Platform::MYSQL, '8.0.29');
@@ -99,9 +106,7 @@ class MysqlTest
             self::renderFalsePositives($nonFails, $formatter);
         }
         if ($fails !== [] || $nonFails !== []) {
-            file_put_contents($lastFailPath, implode("\n", array_merge(array_keys($fails), array_keys($nonFails))));
-        } else {
-            file_put_contents($lastFailPath, '');
+            self::repeatPaths(array_merge(array_keys($fails), array_keys($nonFails)));
         }
 
         echo "\n\n";
@@ -162,6 +167,10 @@ class MysqlTest
                 break;
             }
         }
+
+        if ($singleThread) {
+            MysqlTestJob::checkExceptions();
+        }
     }
 
     private static function renderFalseNegatives(array $fails, Formatter $formatter): void
@@ -210,12 +219,12 @@ class MysqlTest
         foreach ($nonFails as $path => $nonFail) {
             rl($path, null, 'r');
             foreach ($nonFail as [$command, $tokenList, $mode]) {
-                self::renderFalsePosirive($command, $tokenList, $mode, $formatter);
+                self::renderFalsePositive($command, $tokenList, $mode, $formatter);
             }
         }
     }
 
-    private static function renderFalsePosirive(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
+    private static function renderFalsePositive(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
         rl($mode->getValue(), 'mode', 'C');
 
@@ -228,6 +237,11 @@ class MysqlTest
 
         rd($command, 4);
         //rd($tokenList);
+    }
+
+    public static function repeatPaths(array $paths): void
+    {
+        file_put_contents(self::$lastFailPath, implode("\n", $paths));
     }
 
     /**
@@ -267,7 +281,7 @@ class MysqlTest
         }
 
         $count = count($paths);
-        echo "Running all tests ({$count})\n";
+        echo "Running all tests in {$testsPath} ({$count})\n";
 
         return $paths;
     }

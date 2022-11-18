@@ -195,10 +195,10 @@ class MysqlTestFilter
             }
 
             // flip rows
-            if ($rows[$i] === 'DELIMITER // -- XBZ') {
+            if ($rows[$i] === 'DELIMITER // -- XBZ DELIMITER //') {
                 if (strpos($rows[$i - 1], '-- error') === 0) {
                     $rows[$i] = $rows[$i - 1];
-                    $rows[$i - 1] = 'DELIMITER // -- XBY';
+                    $rows[$i - 1] = 'DELIMITER // -- XBY DELIMITER //';
                 }
             }
 
