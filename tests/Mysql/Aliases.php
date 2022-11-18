@@ -106,7 +106,7 @@ trait Aliases
         'kill connection' => 'kill',
         'kill query' => 'kill',
         'revoke all privileges' => 'revoke all',
-        'show storage engines' => 'show engines',
+        'show engines' => 'show storage engines',
         'xa begin' => 'xa start',
         'type btree' => 'using btree',
         'sqlstate value' => 'sqlstate',

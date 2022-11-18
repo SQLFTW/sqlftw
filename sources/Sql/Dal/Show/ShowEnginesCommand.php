@@ -17,7 +17,7 @@ class ShowEnginesCommand extends Statement implements ShowCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SHOW ENGINES';
+        return 'SHOW STORAGE ENGINES';
     }
 
 }

@@ -77,8 +77,8 @@ Assert::parseSerialize("SHOW ENGINE InnoDB MUTEX");
 
 
 // SHOW [STORAGE] ENGINES
-Assert::parseSerialize("SHOW ENGINES");
-Assert::parseSerialize("SHOW STORAGE ENGINES", "SHOW ENGINES"); // [STORAGE]
+Assert::parseSerialize("SHOW STORAGE ENGINES");
+Assert::parseSerialize("SHOW ENGINES", "SHOW STORAGE ENGINES"); // [STORAGE]
 
 
 // SHOW ERRORS [LIMIT [offset,] row_count]
