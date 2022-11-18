@@ -60,7 +60,7 @@ class TableOptionsList
                         $this->options[TableOption::INSERT_METHOD] = $value;
                         break;
                     case $value instanceof TableRowFormat:
-                        $this->options[TableRowFormat::class] = $value;
+                        $this->options[TableOption::ROW_FORMAT] = $value;
                         break;
                 }
             } elseif ($option === TableOption::UNION) {

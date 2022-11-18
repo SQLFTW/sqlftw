@@ -12,6 +12,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\ShouldNotHappenException;
+use Sql\Expression\other\NoValue;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
@@ -269,7 +270,7 @@ trait ExpressionParserFunctions
             if ($tokenList->hasKeyword(Keyword::FROM)) {
                 // TRIM(FOO FROM str)
                 $second = $this->parseExpression($tokenList);
-                $arguments[$keyword] = null;
+                $arguments[$keyword] = new NoValue();
                 $arguments[Keyword::FROM] = $second;
             } else {
                 // TRIM(FOO remstr FROM str)

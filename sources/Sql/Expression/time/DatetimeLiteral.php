@@ -29,7 +29,7 @@ class DatetimeLiteral implements TimeValue
     /** @var string */
     private $value;
 
-    /** @var  */
+    /** @var string */
     private $normalized;
 
     public function __construct(string $value)

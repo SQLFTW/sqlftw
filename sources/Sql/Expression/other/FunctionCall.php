@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use Sql\Expression\other\NoValue;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -24,7 +25,7 @@ class FunctionCall implements RootNode
     /** @var FunctionIdentifier */
     private $function;
 
-    /** @var ArgumentNode[] */
+    /** @var array<int|string, ArgumentNode> */
     private $arguments;
 
     /** @var WindowSpecification|string|null */
@@ -37,7 +38,7 @@ class FunctionCall implements RootNode
     private $fromFirst;
 
     /**
-     * @param ArgumentNode[] $arguments
+     * @param array<int|string, ArgumentNode> $arguments
      * @param WindowSpecification|string $over
      */
     public function __construct(
@@ -71,7 +72,7 @@ class FunctionCall implements RootNode
     }
 
     /**
-     * @return ArgumentNode[]
+     * @return array<int|string, ArgumentNode>
      */
     public function getArguments(): array
     {
@@ -108,7 +109,7 @@ class FunctionCall implements RootNode
                 } elseif ($this->function->equalsValue(BuiltInFunction::TRIM)) {
                     // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
                     if ($name === Keyword::BOTH || $name === Keyword::LEADING || $name === Keyword::TRAILING) {
-                        if ($argument === null) {
+                        if ($argument instanceof NoValue) {
                             $arguments .= $name . ' ';
                         } else {
                             $arguments .= $name . ' ' . $argument->serialize($formatter) . ' ';

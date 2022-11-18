@@ -50,19 +50,11 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
      */
     private function processSchema(SchemaCommand $command, SimpleContext $context): array
     {
-        $session = $context->getSession();
-
         $results = [];
         $options =  $command->getOptions();
         $charset = $options->getCharset();
-        if ($charset instanceof DefaultLiteral) {
-            $charset = Charset::get($session->getSessionOrGlobalVariable(MysqlVariable::CHARACTER_SET_DATABASE));
-        }
         $collation = $options->getCollation();
-        if ($collation instanceof DefaultLiteral) {
-            $collation = Collation::get($session->getSessionOrGlobalVariable(MysqlVariable::COLLATION_DATABASE));
-        }
-        if ($charset instanceof Charset && $collation instanceof Collation && !$charset->supportsCollation($collation)) {
+        if ($charset !== null && $collation !== null && !$charset->supportsCollation($collation)) {
             $results[] = new AnalyzerResult("Mismatch between database charset ({$charset->getValue()}) and collation ({$collation->getValue()}).");
         }
 
@@ -77,12 +69,13 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
     {
         $results = [];
         $options =  $command->getOptions();
-        /** @var Charset $charset */
+        /** @var Charset|DefaultLiteral $charset */
         $charset = $options->get(TableOption::CHARACTER_SET);
         if ($charset instanceof DefaultLiteral) {
             // todo: should take from schema
             $charset = null;
         }
+        /** @var Collation|DefaultLiteral $collation */
         $collation = $options->get(TableOption::COLLATE);
         if ($collation instanceof DefaultLiteral) {
             // todo: should take from schema
@@ -94,7 +87,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
 
         if ($command instanceof AlterTableCommand) {
             /** @var ConvertToCharsetAction[] $convertActions */
-            $convertActions = $command->getActions()->filter(ConvertToCharsetAction::class) ?? [];
+            $convertActions = $command->getActions()->filter(ConvertToCharsetAction::class);
             $convertAction = $convertActions[0] ?? null;
             if ($convertAction !== null) {
                 $convertCharset = $convertAction->getCharset();
@@ -117,9 +110,9 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
                     if (count($convertActions) > 1) {
                         foreach ($convertActions as $otherAction) {
                             $otherConvertCharset = $otherAction->getCharset();
-                            if ($convertCharset instanceof DefaultLiteral) {
+                            if ($otherConvertCharset instanceof DefaultLiteral) {
                                 // todo: should take from schema
-                                $convertCharset = null;
+                                $otherConvertCharset = null;
                             }
                             if ($otherConvertCharset !== null && !$convertCharset->equals($otherConvertCharset)) {
                                 $results[] = new AnalyzerResult("Conflict between conversion charset ({$convertCharset->getValue()}) and other conversion charset ({$otherConvertCharset->getValue()}).");

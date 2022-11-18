@@ -16,7 +16,7 @@ $query = 'CREATE TABLE test (
   col3 CHAR(20),
   PRIMARY KEY (col1),
   UNIQUE INDEX key2 (col2(5), col3(10)),
-  INDEX key3 USING HASH (col3)
+  INDEX key3 (col3) USING HASH
 )';
 Assert::parseSerialize($query);
 
@@ -26,10 +26,10 @@ Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, CONSTRAINT PRIMARY KEY (col
 Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, CONSTRAINT con1 PRIMARY KEY (col1))");
 
 // type & options
-Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY USING BTREE (col1))");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) USING BTREE)");
 Assert::parseSerialize(
-    "CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) USING BTREE)",
-    "CREATE TABLE tbl1 (col1 INT, PRIMARY KEY USING BTREE (col1))"
+    "CREATE TABLE tbl1 (col1 INT, PRIMARY KEY USING BTREE (col1))",
+    "CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) USING BTREE)"
 );
 Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) KEY_BLOCK_SIZE 10)");
 Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) WITH PARSER par1)");

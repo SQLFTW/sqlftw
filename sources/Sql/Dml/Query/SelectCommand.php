@@ -318,7 +318,7 @@ class SelectCommand extends Statement implements SimpleQuery
                 $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
-        if ($this->into !== null && $this->into->getPosition() === SelectInto::POSION_BEFORE_LOCKING) {
+        if ($this->into !== null && $this->into->getPosition() === SelectInto::POSITION_BEFORE_LOCKING) {
             $result .= "\n" . $this->into->serialize($formatter);
         }
         if ($this->locking !== null) {

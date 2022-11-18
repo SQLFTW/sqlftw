@@ -279,7 +279,7 @@ class TokenList
         }
 
         // do not reset trailing delimiter on next run
-        $this->position = $n + 1;
+        $this->position = $n + 1; // @phpstan-ignore-line $n is always defined
 
         return true;
     }

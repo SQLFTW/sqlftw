@@ -56,11 +56,10 @@ class ShowBinlogEventsCommand extends Statement implements ShowCommand
             $result .= ' FROM ' . $this->offset;
         }
         if ($this->limit !== null) {
-            $result .= ' LIMIT ';
+            $result .= ' LIMIT ' . $this->limit;
             if ($this->offset !== null) {
-                $result .= $this->offset . ', ';
+                $result .= ' OFFSET ' . $this->offset;
             }
-            $result .= $this->limit;
         }
 
         return $result;

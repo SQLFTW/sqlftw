@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
 
-class AnalyzeTablesCommand extends Statement implements DalTablesCommand
+class AnalyzeTableCommand extends Statement implements DalTablesCommand
 {
 
     /** @var non-empty-array<ObjectIdentifier> */

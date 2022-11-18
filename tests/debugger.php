@@ -103,7 +103,7 @@ Dumper::$objectFormatters[SimpleName::class] = static function (SimpleName $simp
 // QualifiedName
 Dumper::$objectFormatters[QualifiedName::class] = static function (QualifiedName $qualifiedName): string {
     $name = $qualifiedName->getSchema() . '.' . $qualifiedName->getName();
-    if (Str::isBinary($name)) {
+    if (Str::isBinary($name) !== null) {
         $name = Dumper::string($name);
     } else {
         $name = Dumper::value($name);

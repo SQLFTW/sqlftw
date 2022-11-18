@@ -8,7 +8,6 @@ use Dogma\Debug\Callstack;
 use Dogma\Debug\Dumper;
 use Dogma\Re;
 use Dogma\Str;
-use Mysql\Exceptions;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\EmptyCommand;
 use SqlFtw\Parser\InvalidCommand;
@@ -28,7 +27,6 @@ use function end;
 use function file_get_contents;
 use function getmypid;
 use function memory_get_peak_usage;
-use function preg_replace;
 use function rd;
 use function str_replace;
 use function strlen;
@@ -156,7 +154,7 @@ class MysqlTestJob
             $tokens += count($tokenList->getTokens());
         }
 
-        $types = ($falseNegatives !== []) + ($falsePositives !== []) + ($serialisationErrors !== []);
+        $types = (int) ($falseNegatives !== []) + (int) ($falsePositives !== []) + (int) ($serialisationErrors !== []);
         if ($types > 1) {
             echo 'X';
         } elseif ($falseNegatives !== []) {
@@ -201,7 +199,8 @@ class MysqlTestJob
                 : $token;
         })->serialize();
         $before = strtolower($beforeOrig);
-        $before = trim(preg_replace('~[\n\s]+~', ' ', $before));
+        $before = Re::replace($before, '~[\n\s]+~', ' ');
+        $before = trim($before);
         $before = str_replace($keys, $values, $before);
         foreach (self::$reAliases as $find => $replace) {
             $before = Re::replace($before, $find, $replace);
@@ -209,7 +208,7 @@ class MysqlTestJob
 
         $afterOrig = $formatter->serialize($command, false, $session->getDelimiter());
         $after = strtolower($afterOrig);
-        $after = preg_replace('~[\n\s]+~', ' ', $after);
+        $after = Re::replace($after, '~[\n\s]+~', ' ');
 
         $before = Str::replaceKeys($before, self::$normalize);
         $after = Str::replaceKeys($after, self::$normalize);

@@ -91,6 +91,14 @@ class ValuesCommand extends Statement implements SimpleQuery
     }
 
     /**
+     * @return int|SimpleName|Placeholder|null
+     */
+    public function getOffset()
+    {
+        return null;
+    }
+
+    /**
      * @return static
      */
     public function removeOffset(): Query

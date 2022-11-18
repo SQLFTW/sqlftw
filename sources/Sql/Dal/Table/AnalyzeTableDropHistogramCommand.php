@@ -26,7 +26,7 @@ class AnalyzeTableDropHistogramCommand extends Statement implements DalTablesCom
     private $local;
 
     /**
-     * @param non-empty-list<ObjectIdentifier>
+     * @param non-empty-array<ObjectIdentifier> $names
      * @param non-empty-array<string> $columns
      */
     public function __construct(array $names, array $columns, bool $local = false)

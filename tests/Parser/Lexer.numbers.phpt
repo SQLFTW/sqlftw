@@ -20,7 +20,7 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 4);
 
 $tokens = Assert::tokens(' +123 ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '123', 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '+123', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = Assert::tokens(' -123 ', 3);
@@ -50,12 +50,12 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 $tokens = Assert::tokens(' 123. ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER, '123.0', 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '123.', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = Assert::tokens(' .456 ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER, '0.456', 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '.456', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = Assert::tokens(' 1.23e4 ', 3);
@@ -70,7 +70,7 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
 $tokens = Assert::tokens(' 1.23e+4 ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER, '1.23e4', 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '1.23e+4', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 $tokens = Assert::tokens(' 1.23e-4 ', 3);
@@ -80,7 +80,7 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 8);
 
 $tokens = Assert::tokens(' 123.e4 ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER, '123.0e4', 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '123.e4', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
 $tokens = Assert::tokens(' 1.23e', 2);

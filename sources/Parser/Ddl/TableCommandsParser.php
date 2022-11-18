@@ -1325,7 +1325,7 @@ class TableCommandsParser
      *   | UNION [=] (tbl_name[,tbl_name]...)
      *
      * @param array<TableOption::*, TableOptionValue> $options
-     * @return array{string|null, TableOptionValue}
+     * @return array{TableOption::*|null, TableOptionValue}
      */
     private function parseTableOption(TokenList $tokenList, array $options): array
     {

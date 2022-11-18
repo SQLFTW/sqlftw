@@ -11,7 +11,7 @@ namespace SqlFtw\Parser\Dal;
 
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableDropHistogramCommand;
-use SqlFtw\Sql\Dal\Table\AnalyzeTablesCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTableCommand;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableUpdateHistogramCommand;
 use SqlFtw\Sql\Dal\Table\ChecksumTableCommand;
 use SqlFtw\Sql\Dal\Table\CheckTableCommand;
@@ -37,7 +37,7 @@ class TableMaintenanceCommandsParser
      *     TABLE tbl_name
      *     DROP HISTOGRAM ON col_name [, col_name] ...
      *
-     * @return AnalyzeTablesCommand|AnalyzeTableUpdateHistogramCommand|AnalyzeTableDropHistogramCommand
+     * @return AnalyzeTableCommand|AnalyzeTableUpdateHistogramCommand|AnalyzeTableDropHistogramCommand
      */
     public function parseAnalyzeTable(TokenList $tokenList)
     {
@@ -69,7 +69,7 @@ class TableMaintenanceCommandsParser
             return new AnalyzeTableDropHistogramCommand($tables, $columns, $local);
         }
 
-        return new AnalyzeTablesCommand($tables, $local);
+        return new AnalyzeTableCommand($tables, $local);
     }
 
     /**

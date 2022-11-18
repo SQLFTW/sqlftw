@@ -52,13 +52,16 @@ class TimeIntervalLiteral implements TimeInterval, Value
 
         $quantity = (string) preg_replace('~\\D+~', '-', $quantity);
         $quantity = explode('-', $quantity);
+        /** @var non-empty-array<int> $quantity */
         $quantity = array_map('intval', $quantity);
         $parts = $unit->getParts();
         if (count($quantity) < $parts) {
+            /** @var non-empty-array<int> $quantity */
             $quantity = array_pad($quantity, $parts, 0);
         }
         // todo: check for too many items ("Warning (Code 1441): Datetime function: date_add_interval field overflow")
         if (count($quantity) > $parts) {
+            /** @var non-empty-array<int> $quantity */
             $quantity = array_slice($quantity, 0, $parts);
         }
 
@@ -97,18 +100,6 @@ class TimeIntervalLiteral implements TimeInterval, Value
     public function isNegative(): bool
     {
         return $this->negative;
-    }
-
-    private function formatQuantity(): string
-    {
-        $sign = $this->negative ? '-' : '';
-
-        if (count($this->quantity) === 1) {
-            return $sign . $this->quantity[0];
-        } else {
-            $format = $this->unit->getFormat();
-            return "'" . $sign . sprintf($format, ...$this->quantity) . "'";
-        }
     }
 
     public function getValue(): string

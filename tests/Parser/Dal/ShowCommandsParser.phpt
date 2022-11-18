@@ -17,7 +17,8 @@ Assert::parseSerialize("SHOW COUNT(*) WARNINGS");
 
 // SHOW BINLOG EVENTS [IN 'log_name'] [FROM pos] [LIMIT [offset,] row_count]
 Assert::parseSerialize("SHOW BINLOG EVENTS IN 'log1' FROM 123");
-Assert::parseSerialize("SHOW BINLOG EVENTS IN 'log1' LIMIT 123, 456");
+Assert::parseSerialize("SHOW BINLOG EVENTS IN 'log1' LIMIT 456, 123", "SHOW BINLOG EVENTS IN 'log1' LIMIT 123 OFFSET 456");
+Assert::parseSerialize("SHOW BINLOG EVENTS IN 'log1' LIMIT 123 OFFSET 456");
 
 
 // SHOW CHARACTER SET [LIKE 'pattern' | WHERE expr]
@@ -83,7 +84,8 @@ Assert::parseSerialize("SHOW STORAGE ENGINES", "SHOW ENGINES"); // [STORAGE]
 // SHOW ERRORS [LIMIT [offset,] row_count]
 Assert::parseSerialize("SHOW ERRORS");
 Assert::parseSerialize("SHOW ERRORS LIMIT 10");
-Assert::parseSerialize("SHOW ERRORS LIMIT 10, 20");
+Assert::parseSerialize("SHOW ERRORS LIMIT 20, 10", "SHOW ERRORS LIMIT 10 OFFSET 20");
+Assert::parseSerialize("SHOW ERRORS LIMIT 10 OFFSET 20");
 
 
 // SHOW EVENTS [{FROM | IN} schema_name] [LIKE 'pattern' | WHERE expr]
@@ -170,8 +172,9 @@ Assert::parseSerialize("SHOW RELAYLOG EVENTS");
 Assert::parseSerialize("SHOW RELAYLOG EVENTS IN 'log1'");
 Assert::parseSerialize("SHOW RELAYLOG EVENTS FROM 10");
 Assert::parseSerialize("SHOW RELAYLOG EVENTS LIMIT 10");
-Assert::parseSerialize("SHOW RELAYLOG EVENTS LIMIT 10, 20");
-Assert::parseSerialize("SHOW RELAYLOG EVENTS IN 'log1' FROM 10 LIMIT 10, 20");
+Assert::parseSerialize("SHOW RELAYLOG EVENTS LIMIT 20, 10", "SHOW RELAYLOG EVENTS LIMIT 10 OFFSET 20");
+Assert::parseSerialize("SHOW RELAYLOG EVENTS LIMIT 10 OFFSET 20");
+Assert::parseSerialize("SHOW RELAYLOG EVENTS IN 'log1' FROM 10 LIMIT 10 OFFSET 20");
 
 
 // SHOW SLAVE HOSTS
@@ -206,7 +209,8 @@ Assert::parseSerialize("SHOW TRIGGERS FROM db1 WHERE col1 = 1");
 // SHOW WARNINGS [LIMIT [offset,] row_count]
 Assert::parseSerialize("SHOW WARNINGS");
 Assert::parseSerialize("SHOW WARNINGS LIMIT 10");
-Assert::parseSerialize("SHOW WARNINGS LIMIT 10, 20");
+Assert::parseSerialize("SHOW WARNINGS LIMIT 20, 10", "SHOW WARNINGS LIMIT 10 OFFSET 20");
+Assert::parseSerialize("SHOW WARNINGS LIMIT 10 OFFSET 20");
 
 
 // SHOW MASTER STATUS

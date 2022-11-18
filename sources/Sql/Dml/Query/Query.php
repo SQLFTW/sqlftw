@@ -40,6 +40,16 @@ interface Query extends DmlCommand
      */
     public function removeLimit(): self;
 
+    /**
+     * @return int|SimpleName|Placeholder|null
+     */
+    public function getOffset();
+
+    /**
+     * @return static
+     */
+    public function removeOffset(): self;
+
     public function getInto(): ?SelectInto;
 
     /**

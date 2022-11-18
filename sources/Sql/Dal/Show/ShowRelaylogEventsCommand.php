@@ -74,11 +74,10 @@ class ShowRelaylogEventsCommand extends Statement implements ShowCommand
             $result .= ' FROM ' . $this->from;
         }
         if ($this->limit !== null) {
-            $result .= ' LIMIT ';
+            $result .= ' LIMIT ' . $this->limit;
             if ($this->offset !== null) {
-                $result .= $this->offset . ', ';
+                $result .= ' OFFSET ' . $this->offset;
             }
-            $result .= $this->limit;
         }
         if ($this->channel !== null) {
             $result .= ' FOR CHANNEL ' . $formatter->formatString($this->channel);

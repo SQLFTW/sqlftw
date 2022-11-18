@@ -61,11 +61,10 @@ class ShowErrorsCommand extends Statement implements ShowCommand
 
         $result = 'SHOW ERRORS';
         if ($this->limit !== null) {
-            $result .= ' LIMIT ';
+            $result .= ' LIMIT ' . $this->limit;
             if ($this->offset !== null) {
-                $result .= $this->offset . ', ';
+                $result .= ' OFFSET ' . $this->offset;
             }
-            $result .= $this->limit;
         }
 
         return $result;

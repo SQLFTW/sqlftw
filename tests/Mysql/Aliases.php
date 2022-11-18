@@ -44,12 +44,12 @@ trait Aliases
         'unlock table ' => 'unlock tables ',
         'flush table ' => 'flush tables ',
         'flush table;' => 'flush tables;',
-        'analyze tables ' => 'analyze table ', // todo: flip?
-        'optimize tables ' => 'optimize table ', // todo: flip?
-        'rename tables ' => 'rename table ', // todo: flip?
-        'drop tables ' => 'drop table ', // todo: flip?
-        'drop temporary tables ' => 'drop temporary table ', // todo: flip?
-        'check table ' => 'check tables ',
+        'analyze tables ' => 'analyze table ',
+        'optimize tables ' => 'optimize table ',
+        'rename tables ' => 'rename table ',
+        'drop tables ' => 'drop table ',
+        'drop temporary tables ' => 'drop temporary table ',
+        'check tables ' => 'check table ',
         'show index ' => 'show indexes ',
 
         // FIELDS -> COLUMNS
@@ -288,7 +288,7 @@ trait Aliases
         '(key(' => '(index(',
     ];
 
-    private static $keyParts = '\(([a-z\d_]+(?:\(\d+\))?(?:, [a-z\d_]+(?:\(\d+\))?)*)\)';
+    /** @var array<string, string> */
     private static $reAliases = [
         // delete .*
         '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3, $4, $5',
@@ -379,6 +379,7 @@ trait Aliases
         '~storage default column_format default~' => 'column_format default storage default',
     ];
 
+    /** @var array<string, string> */
     private static $normalize = [
         // use short versions everywhere
         'set @@session.' => 'set ',

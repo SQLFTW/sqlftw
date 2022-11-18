@@ -17,8 +17,8 @@ Assert::parseSerialize("ALTER FUNCTION func1 MODIFIES SQL DATA");
 Assert::parseSerialize("ALTER FUNCTION func1 SQL SECURITY DEFINER");
 Assert::parseSerialize("ALTER FUNCTION func1 SQL SECURITY INVOKER");
 
-Assert::parseSerialize("ALTER FUNCTION func1 COMMENT 'com1' LANGUAGE SQL");
-Assert::parseSerialize("ALTER FUNCTION func1 LANGUAGE SQL COMMENT 'com1'", "ALTER FUNCTION func1 COMMENT 'com1' LANGUAGE SQL"); // LANG <-> COM
+Assert::parseSerialize("ALTER FUNCTION func1 LANGUAGE SQL COMMENT 'com1'");
+Assert::parseSerialize("ALTER FUNCTION func1 COMMENT 'com1' LANGUAGE SQL", "ALTER FUNCTION func1 LANGUAGE SQL COMMENT 'com1'"); // LANG <-> COM
 
 
 // ALTER PROCEDURE proc_name [characteristic ...]
@@ -32,8 +32,8 @@ Assert::parseSerialize("ALTER PROCEDURE proc1 MODIFIES SQL DATA");
 Assert::parseSerialize("ALTER PROCEDURE proc1 SQL SECURITY DEFINER");
 Assert::parseSerialize("ALTER PROCEDURE proc1 SQL SECURITY INVOKER");
 
-Assert::parseSerialize("ALTER PROCEDURE proc1 COMMENT 'com1' LANGUAGE SQL");
-Assert::parseSerialize("ALTER PROCEDURE proc1 LANGUAGE SQL COMMENT 'com1'", "ALTER PROCEDURE proc1 COMMENT 'com1' LANGUAGE SQL"); // LANG <-> COM
+Assert::parseSerialize("ALTER PROCEDURE proc1 LANGUAGE SQL COMMENT 'com1'");
+Assert::parseSerialize("ALTER PROCEDURE proc1 COMMENT 'com1' LANGUAGE SQL", "ALTER PROCEDURE proc1 LANGUAGE SQL COMMENT 'com1'"); // LANG <-> COM
 
 
 // CREATE [DEFINER = { user | CURRENT_USER }] FUNCTION sp_name ([func_parameter[, ...]]) RETURNS type [characteristic ...] routine_body
@@ -52,10 +52,10 @@ Assert::parseSerialize("CREATE FUNCTION func1() RETURNS INT MODIFIES SQL DATA BE
 Assert::parseSerialize("CREATE FUNCTION func1() RETURNS INT SQL SECURITY DEFINER BEGIN RETURN 1; END", null, null, ';;');
 Assert::parseSerialize("CREATE FUNCTION func1() RETURNS INT SQL SECURITY INVOKER BEGIN RETURN 1; END", null, null, ';;');
 
-Assert::parseSerialize("CREATE FUNCTION func1() RETURNS INT COMMENT 'com1' LANGUAGE SQL BEGIN RETURN 1; END", null, null, ';;');
+Assert::parseSerialize("CREATE FUNCTION func1() RETURNS INT LANGUAGE SQL COMMENT 'com1' BEGIN RETURN 1; END", null, null, ';;');
 Assert::parseSerialize(
-    "CREATE FUNCTION func1() RETURNS INT LANGUAGE SQL COMMENT 'com1' BEGIN RETURN 1; END",
-    "CREATE FUNCTION func1() RETURNS INT COMMENT 'com1' LANGUAGE SQL BEGIN RETURN 1; END", // LANG <-> COM
+    "CREATE FUNCTION func1() RETURNS INT COMMENT 'com1' LANGUAGE SQL BEGIN RETURN 1; END",
+    "CREATE FUNCTION func1() RETURNS INT LANGUAGE SQL COMMENT 'com1' BEGIN RETURN 1; END", // LANG <-> COM
     null,
     ';;'
 );
@@ -77,10 +77,10 @@ Assert::parseSerialize("CREATE PROCEDURE proc1() MODIFIES SQL DATA BEGIN SELECT 
 Assert::parseSerialize("CREATE PROCEDURE proc1() SQL SECURITY DEFINER BEGIN SELECT 1; END", null, null, ';;');
 Assert::parseSerialize("CREATE PROCEDURE proc1() SQL SECURITY INVOKER BEGIN SELECT 1; END", null, null, ';;');
 
-Assert::parseSerialize("CREATE PROCEDURE proc1() COMMENT 'com1' LANGUAGE SQL BEGIN SELECT 1; END", null, null, ';;');
+Assert::parseSerialize("CREATE PROCEDURE proc1() LANGUAGE SQL COMMENT 'com1' BEGIN SELECT 1; END", null, null, ';;');
 Assert::parseSerialize(
-    "CREATE PROCEDURE proc1() LANGUAGE SQL COMMENT 'com1' BEGIN SELECT 1; END",
-    "CREATE PROCEDURE proc1() COMMENT 'com1' LANGUAGE SQL BEGIN SELECT 1; END", // LANG <-> COM
+    "CREATE PROCEDURE proc1() COMMENT 'com1' LANGUAGE SQL BEGIN SELECT 1; END",
+    "CREATE PROCEDURE proc1() LANGUAGE SQL COMMENT 'com1' BEGIN SELECT 1; END", // LANG <-> COM
     null,
     ';;'
 );

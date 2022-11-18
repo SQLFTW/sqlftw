@@ -58,7 +58,7 @@ use SqlFtw\Sql\Dal\Show\ShowTableStatusCommand;
 use SqlFtw\Sql\Dal\Show\ShowTriggersCommand;
 use SqlFtw\Sql\Dal\Show\ShowVariablesCommand;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableDropHistogramCommand;
-use SqlFtw\Sql\Dal\Table\AnalyzeTablesCommand;
+use SqlFtw\Sql\Dal\Table\AnalyzeTableCommand;
 use SqlFtw\Sql\Dal\Table\AnalyzeTableUpdateHistogramCommand;
 use SqlFtw\Sql\Dal\Table\ChecksumTableCommand;
 use SqlFtw\Sql\Dal\Table\OptimizeTableCommand;
@@ -2605,7 +2605,7 @@ class MysqlFeatures extends FeaturesList
         // https://dev.mysql.com/doc/refman/8.0/en/sql-prepared-statements.html (terribly incomplete)
         [AlterTableCommand::class, self::MIN, self::MAX],
         [AlterUserCommand::class, self::MIN, self::MAX],
-        [AnalyzeTablesCommand::class, self::MIN, self::MAX],
+        [AnalyzeTableCommand::class, self::MIN, self::MAX],
         [AnalyzeTableDropHistogramCommand::class, self::MIN, self::MAX],
         [AnalyzeTableUpdateHistogramCommand::class, self::MIN, self::MAX],
         [CacheIndexCommand::class, self::MIN, self::MAX],
@@ -2702,7 +2702,7 @@ class MysqlFeatures extends FeaturesList
         [ValuesCommand::class, self::MIN, self::MAX],
     ];
 
-    /** @var array<string, int> */
+    /** @var array<EntityType::*, int> */
     public $maxLengths = [
         EntityType::SCHEMA => 64,
         EntityType::TABLE => 64,

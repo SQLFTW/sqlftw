@@ -17,8 +17,8 @@ Assert::parseSerialize("CREATE FULLTEXT INDEX idx1 ON tbl1 (col1)");
 Assert::parseSerialize("CREATE SPATIAL INDEX idx1 ON tbl1 (col1)");
 
 // type
-Assert::parseSerialize("CREATE INDEX idx1 USING BTREE ON tbl1 (col1)");
-Assert::parseSerialize("CREATE INDEX idx1 USING HASH ON tbl1 (col1)");
+Assert::parseSerialize("CREATE INDEX idx1 ON tbl1 (col1) USING BTREE");
+Assert::parseSerialize("CREATE INDEX idx1 ON tbl1 (col1) USING HASH");
 
 // options
 Assert::parseSerialize("CREATE INDEX idx1 ON tbl1 (col1) KEY_BLOCK_SIZE 10");

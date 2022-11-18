@@ -78,7 +78,7 @@ class SchemaOptions implements SchemaCommand
             $parts[] = 'READ ONLY ' . $this->readOnly->serialize($formatter);
         }
 
-        return implode(', ', $parts);
+        return implode(' ', $parts);
     }
 
 }

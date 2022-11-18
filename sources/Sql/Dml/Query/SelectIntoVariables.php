@@ -21,6 +21,7 @@ class SelectIntoVariables extends SelectInto
 
     /**
      * @param non-empty-array<UserVariable|SimpleName> $variables
+     * @param SelectInto::POSITION_* $position
      */
     public function __construct(array $variables, int $position = self::POSITION_AFTER_LOCKING)
     {

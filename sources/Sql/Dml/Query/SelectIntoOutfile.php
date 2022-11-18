@@ -25,6 +25,9 @@ class SelectIntoOutfile extends SelectInto
     /** @var FileFormat|null */
     private $format;
 
+    /**
+     * @param SelectInto::POSITION_* $position
+     */
     public function __construct(string $fileName, ?Charset $charset = null, ?FileFormat $format = null, int $position = self::POSITION_AFTER_LOCKING)
     {
         $this->fileName = $fileName;

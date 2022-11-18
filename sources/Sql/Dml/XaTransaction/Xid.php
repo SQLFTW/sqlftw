@@ -25,7 +25,7 @@ class Xid implements SqlSerializable
     /** @var StringValue|null */
     private $branchQualifier;
 
-    /** @var int|HexadecimalLiteral|null */
+    /** @var IntLiteral|HexadecimalLiteral|null */
     private $formatId;
 
     /**

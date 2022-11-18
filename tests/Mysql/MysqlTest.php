@@ -86,46 +86,46 @@ class MysqlTest
         }
 
         $size = $time = $statements = $tokens = 0;
-        $fails = [];
-        $nonFails = [];
+        $falseNegatives = [];
+        $falsePositives = [];
         foreach ($results as $result) {
             $size += $result->size;
             $time += $result->time;
             $statements += $result->statements;
             $tokens += $result->tokens;
             if ($result->falseNegatives !== []) {
-                $fails[$result->path] = $result->falseNegatives;
+                $falseNegatives[$result->path] = $result->falseNegatives;
             }
             if ($result->falsePositives !== []) {
-                $nonFails[$result->path] = $result->falsePositives;
+                $falsePositives[$result->path] = $result->falsePositives;
             }
         }
 
         if (!$singleThread) {
-            self::renderFalseNegatives($fails, $formatter);
-            self::renderFalsePositives($nonFails, $formatter);
+            self::renderFalseNegatives($falseNegatives, $formatter);
+            self::renderFalsePositives($falsePositives, $formatter);
         }
-        if ($fails !== [] || $nonFails !== []) {
-            self::repeatPaths(array_merge(array_keys($fails), array_keys($nonFails)));
+        if ($falseNegatives !== [] || $falsePositives !== []) {
+            self::repeatPaths(array_merge(array_keys($falseNegatives), array_keys($falsePositives)));
         }
 
         echo "\n\n";
-        if ($fails !== [] || $nonFails !== []) {
-            $errors = count($fails) + count($nonFails);
+        if ($falseNegatives !== [] || $falsePositives !== []) {
+            $errors = count($falseNegatives) + count($falsePositives);
             echo Colors::white(" $errors failing test" . ($errors > 1 ? 's ' : ' '), Colors::RED) . "\n\n";
         } else {
             echo Colors::white(" No errors ", Colors::GREEN) . "\n\n";
         }
 
-        if ($fails !== []) {
+        if ($falseNegatives !== []) {
             echo 'False negatives: ' . array_sum(array_map(static function ($a): int {
                 return count($a);
-            }, $fails)) . "\n";
+            }, $falseNegatives)) . "\n";
         }
-        if ($nonFails !== []) {
+        if ($falsePositives !== []) {
             echo 'False positives: ' . array_sum(array_map(static function ($a): int {
                 return count($a);
-            }, $nonFails)) . "\n";
+            }, $falsePositives)) . "\n";
         }
 
         echo 'Running time: ' . Units::time(microtime(true) - Debugger::getStart()) . "\n";
@@ -173,14 +173,17 @@ class MysqlTest
         }
     }
 
-    private static function renderFalseNegatives(array $fails, Formatter $formatter): void
+    /**
+     * @param array<string, non-empty-array<array{Command, TokenList, SqlMode}>> $falseNegatives
+     */
+    private static function renderFalseNegatives(array $falseNegatives, Formatter $formatter): void
     {
-        if ($fails !== []) {
+        if ($falseNegatives !== []) {
             rl('Should not fail:', null, 'r');
         }
-        foreach ($fails as $path => $fail) {
+        foreach ($falseNegatives as $path => $falseNegative) {
             rl($path, null, 'r');
-            foreach ($fail as [$command, $tokenList, $mode]) {
+            foreach ($falseNegative as [$command, $tokenList, $mode]) {
                 self::renderFalseNegative($command, $tokenList, $mode, $formatter);
             }
         }
@@ -211,14 +214,17 @@ class MysqlTest
         //rd($tokenList);
     }
 
-    private static function renderFalsePositives(array $nonFails, Formatter $formatter): void
+    /**
+     * @param array<string, non-empty-array<array{Command, TokenList, SqlMode}>> $falsePositives
+     */
+    private static function renderFalsePositives(array $falsePositives, Formatter $formatter): void
     {
-        if ($nonFails !== []) {
+        if ($falsePositives !== []) {
             rl('Should fail:', null, 'r');
         }
-        foreach ($nonFails as $path => $nonFail) {
+        foreach ($falsePositives as $path => $falsePositive) {
             rl($path, null, 'r');
-            foreach ($nonFail as [$command, $tokenList, $mode]) {
+            foreach ($falsePositive as [$command, $tokenList, $mode]) {
                 self::renderFalsePositive($command, $tokenList, $mode, $formatter);
             }
         }
@@ -239,6 +245,9 @@ class MysqlTest
         //rd($tokenList);
     }
 
+    /**
+     * @param string[] $paths
+     */
     public static function repeatPaths(array $paths): void
     {
         file_put_contents(self::$lastFailPath, implode("\n", $paths));

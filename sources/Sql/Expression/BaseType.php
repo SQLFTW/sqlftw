@@ -158,14 +158,14 @@ class BaseType extends SqlEnum
     {
         return in_array($this->getValue(), [
             self::CHAR, self::CHARACTER, self::NCHAR, self::NATIONAL_CHAR,
-        ]);
+        ], true);
     }
 
     public function isVarchar(): bool
     {
         return in_array($this->getValue(), [
             self::VARCHAR, self::CHARACTER_VARYING, self::NVARCHAR, self::NCHAR_VARYING, self::NATIONAL_VARCHAR, self::NATIONAL_CHARACTER_VARYING,
-        ]);
+        ], true);
     }
 
     public function isBinary(): bool
@@ -179,7 +179,7 @@ class BaseType extends SqlEnum
     {
         return in_array($this->getValue(), [
             self::VARBINARY,
-        ]);
+        ], true);
     }
 
     public function isString(): bool

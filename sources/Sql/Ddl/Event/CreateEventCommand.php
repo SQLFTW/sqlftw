@@ -48,7 +48,7 @@ class CreateEventCommand extends Statement implements EventCommand
         $result = 'CREATE';
         $definer = $this->event->getDefiner();
         if ($definer !== null) {
-            $result .= ' DEFINER ' . $definer->serialize($formatter);
+            $result .= ' DEFINER = ' . $definer->serialize($formatter);
         }
         $result .= ' EVENT';
         if ($this->ifNotExists) {

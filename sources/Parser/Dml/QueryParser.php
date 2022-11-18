@@ -540,7 +540,7 @@ class QueryParser
 
         if ($tokenList->inSubquery() === null && !($tokenList->inUnion() && $from !== null)) {
             if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
-                $into = $this->parseInto($tokenList, $locking !== null ? SelectInto::POSITION_AFTER_LOCKING : SelectInto::POSION_BEFORE_LOCKING);
+                $into = $this->parseInto($tokenList, $locking !== null ? SelectInto::POSITION_AFTER_LOCKING : SelectInto::POSITION_BEFORE_LOCKING);
             }
         }
 

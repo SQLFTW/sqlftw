@@ -33,7 +33,7 @@ class AnalyzerException extends ParsingException
     {
         $count = count($results);
         parent::__construct("Static analysis failed with $count errors.", $previous);
-
+rd($results);
         $this->results = $results;
         $this->command = $command;
         $this->tokenList = $tokenList;

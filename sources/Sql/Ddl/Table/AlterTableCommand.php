@@ -91,9 +91,9 @@ class AlterTableCommand extends Statement implements DdlTableCommand
         return $this->alterOptions;
     }
 
-    public function getOptions(): ?TableOptionsList
+    public function getOptions(): TableOptionsList
     {
-        return $this->tableOptions;
+        return $this->tableOptions ?? new TableOptionsList([]);
     }
 
     public function getRenameAction(): ?RenameToAction

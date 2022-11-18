@@ -214,7 +214,7 @@ class Parser
                 }
             } else {
                 $trailingDelimiter = $tokenList->getTrailingDelimiter();
-                if ($trailingDelimiter) {
+                if ($trailingDelimiter !== '') {
                     $command->setDelimiter($trailingDelimiter);
                 }
             }

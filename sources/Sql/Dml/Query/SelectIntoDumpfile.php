@@ -17,6 +17,9 @@ class SelectIntoDumpfile extends SelectInto
     /** @var string */
     private $fileName;
 
+    /**
+     * @param SelectInto::POSITION_* $position
+     */
     public function __construct(string $fileName, int $position = self::POSITION_AFTER_LOCKING)
     {
         $this->fileName = $fileName;

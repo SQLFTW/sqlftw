@@ -81,7 +81,7 @@ class ColumnDefinition implements TableItem
     /** @var ReferenceDefinition|null */
     private $reference;
 
-    /** @var CheckDefinition|ConstraintDefinition|null */
+    /** @var non-empty-array<CheckDefinition|ConstraintDefinition>|null */
     private $checks;
 
     /**

@@ -24,8 +24,8 @@ Assert::parseSerialize("SELECT MAX(k COLLATE latin1_german2_ci) FROM t1");
 Assert::parseSerialize("SELECT DISTINCT k COLLATE latin1_german2_ci FROM t1");
 
 // With WHERE
-Assert::parseSerialize("SELECT * FROM t1 WHERE _latin1 'Müller' COLLATE latin1_german2_ci = k");
-Assert::parseSerialize("SELECT * FROM t1 WHERE k LIKE _latin1 'Müller' COLLATE latin1_german2_ci");
+Assert::parseSerialize("SELECT * FROM t1 WHERE _latin1'Müller' COLLATE latin1_german2_ci = k");
+Assert::parseSerialize("SELECT * FROM t1 WHERE k LIKE _latin1'Müller' COLLATE latin1_german2_ci");
 
 // With HAVING
-Assert::parseSerialize("SELECT k FROM t1 GROUP BY k HAVING k = _latin1 'Müller' COLLATE latin1_german2_ci");
+Assert::parseSerialize("SELECT k FROM t1 GROUP BY k HAVING k = _latin1'Müller' COLLATE latin1_german2_ci");
