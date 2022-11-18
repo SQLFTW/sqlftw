@@ -145,9 +145,6 @@ class MysqlTestJob
             }
             if (!$match) {
                 $serialisationErrors[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
-                //MysqlTest::repeatPaths([$path]);
-                //echo "\nstopped after " . self::$count . "\n";
-                //exit;
             }
 
             $statements++;
@@ -217,6 +214,7 @@ class MysqlTestJob
             if (isset(self::$exceptions[$before]) && self::$exceptions[$before] === $after) {
                 self::$exceptionsUsed[] = $before;
             } else {
+                /*
                 $after_ = $after;
                 $afterOrig_ = $afterOrig;
                 rdf($before, $after);
@@ -227,8 +225,8 @@ class MysqlTestJob
                 rd($afterOrig_);
                 Dumper::$escapeWhiteSpace = true;
                 rd($command, 20);
-                //Dumper::$arrayMaxLength = 1000;
                 rd($tokenList);
+                */
                 return false;
             }
         }

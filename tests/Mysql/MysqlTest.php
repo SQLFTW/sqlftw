@@ -4,6 +4,7 @@ namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Application\Colors;
 use Dogma\Debug\Debugger;
+use Dogma\Debug\Dumper;
 use Dogma\Debug\Units;
 use Dogma\Str;
 use RecursiveDirectoryIterator;
@@ -11,13 +12,16 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
+use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\SqlMode;
 use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
+use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_sum;
@@ -88,6 +92,7 @@ class MysqlTest
         $size = $time = $statements = $tokens = 0;
         $falseNegatives = [];
         $falsePositives = [];
+        $serialisationErrors = [];
         foreach ($results as $result) {
             $size += $result->size;
             $time += $result->time;
@@ -99,19 +104,23 @@ class MysqlTest
             if ($result->falsePositives !== []) {
                 $falsePositives[$result->path] = $result->falsePositives;
             }
+            if ($result->serialisationErrors !== []) {
+                $serialisationErrors[$result->path] = $result->serialisationErrors;
+            }
         }
 
         if (!$singleThread) {
             self::renderFalseNegatives($falseNegatives, $formatter);
             self::renderFalsePositives($falsePositives, $formatter);
+            self::renderSerialisationErrors($serialisationErrors, $formatter);
         }
-        if ($falseNegatives !== [] || $falsePositives !== []) {
-            self::repeatPaths(array_merge(array_keys($falseNegatives), array_keys($falsePositives)));
+        if ($falseNegatives !== [] || $falsePositives !== [] || $serialisationErrors !== []) {
+            self::repeatPaths(array_merge(array_keys($falseNegatives), array_keys($falsePositives), array_keys($serialisationErrors)));
         }
 
         echo "\n\n";
-        if ($falseNegatives !== [] || $falsePositives !== []) {
-            $errors = count($falseNegatives) + count($falsePositives);
+        if ($falseNegatives !== [] || $falsePositives !== [] || $serialisationErrors !== []) {
+            $errors = count($falseNegatives) + count($falsePositives) + count($serialisationErrors);
             echo Colors::white(" $errors failing test" . ($errors > 1 ? 's ' : ' '), Colors::RED) . "\n\n";
         } else {
             echo Colors::white(" No errors ", Colors::GREEN) . "\n\n";
@@ -126,6 +135,11 @@ class MysqlTest
             echo 'False positives: ' . array_sum(array_map(static function ($a): int {
                 return count($a);
             }, $falsePositives)) . "\n";
+        }
+        if ($serialisationErrors !== []) {
+            echo 'Serialisation errors: ' . array_sum(array_map(static function ($a): int {
+                return count($a);
+            }, $serialisationErrors)) . "\n";
         }
 
         echo 'Running time: ' . Units::time(microtime(true) - Debugger::getStart()) . "\n";
@@ -243,6 +257,40 @@ class MysqlTest
 
         rd($command, 4);
         //rd($tokenList);
+    }
+
+    /**
+     * @param array<string, non-empty-array<array{Command, TokenList, SqlMode}>> $serialisationErrors
+     */
+    public static function renderSerialisationErrors(array $serialisationErrors, Formatter $formatter): void
+    {
+        if ($serialisationErrors !== []) {
+            rl('Serialisation errors:', null, 'r');
+        }
+        foreach ($serialisationErrors as $path => $serialisationError) {
+            rl($path, null, 'r');
+            foreach ($serialisationError as [$command, $tokenList, $mode]) {
+                self::renderSerialisationError($command, $tokenList, $mode, $formatter);
+            }
+        }
+    }
+
+    public static function renderSerialisationError(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
+    {
+        $beforeOrig = $tokenList->map(static function (Token $token): Token {
+            return ($token->type & TokenType::COMMENT) !== 0
+                ? new Token(TokenType::WHITESPACE, $token->position, $token->row, ' ')
+                : $token;
+        })->serialize();
+        $afterOrig = $formatter->serialize($command, false, $command->getDelimiter());
+
+        Dumper::$escapeWhiteSpace = false;
+        rd($beforeOrig);
+        rd($afterOrig);
+        Dumper::$escapeWhiteSpace = true;
+        rd($command, 20);
+        //Dumper::$arrayMaxLength = 1000;
+        rd($tokenList);
     }
 
     /**
