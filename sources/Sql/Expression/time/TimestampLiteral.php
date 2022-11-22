@@ -39,7 +39,7 @@ class TimestampLiteral implements TimeValue
             throw new InvalidDefinitionException("Invalid timestamp literal format: '$value'.");
         }
 
-        $this->normalized = DatetimeLiteral::checkAndNormalize($year, $month, $day, $hours, $minutes, $seconds, $fraction, $offsetSign, $offsetHours, $offsetMinutes);
+        $this->normalized = DatetimeLiteral::checkAndNormalize((string) $year, (string) $month, (string) $day, (string) $hours, $minutes, $seconds, $fraction, $offsetSign, $offsetHours, $offsetMinutes);
         $this->value = $value;
     }
 

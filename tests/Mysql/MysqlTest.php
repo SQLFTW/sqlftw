@@ -19,6 +19,7 @@ use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\SqlMode;
+use SqlFtw\Sql\Statement;
 use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
 use function array_keys;
@@ -282,7 +283,12 @@ class MysqlTest
                 ? new Token(TokenType::WHITESPACE, $token->position, $token->row, ' ')
                 : $token;
         })->serialize();
-        $afterOrig = $formatter->serialize($command, false, $command->getDelimiter());
+
+        $delimiter = ';';
+        if ($command instanceof Statement) {
+            $delimiter = $command->getDelimiter() ?? ';';
+        }
+        $afterOrig = $formatter->serialize($command, false, $delimiter);
 
         Dumper::$escapeWhiteSpace = false;
         rd($beforeOrig);

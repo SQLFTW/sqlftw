@@ -10,6 +10,7 @@
 namespace SqlFtw\Analyzer\Types;
 
 use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Resolver\Cast;
 use SqlFtw\Resolver\UncastableTypeException;
 use SqlFtw\Sql\Charset;
@@ -37,14 +38,18 @@ class CastingTypeChecker
 {
 
     /**
-     * @param int|float|bool|string|Value|null $value
+     * @param scalar|Value|scalar[]|null $value
      * @param array<int|string>|null $values
      */
     public function canBeCastedTo($value, string $type, ?array $values, Cast $cast): bool
     {
         // hack for "SET foo = (SELECT ...)"
-        if (is_array($value) && count($value) === 1) {
-            $value = $value[0];
+        if (is_array($value)) {
+            if (count($value) === 1) {
+                $value = $value[0];
+            } else {
+                throw new LogicException('Array types are not supported in CastingTypeChecker.');
+            }
         }
 
         try {

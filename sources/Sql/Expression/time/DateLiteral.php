@@ -16,7 +16,6 @@ use function preg_match;
 use function str_pad;
 use function strlen;
 use function substr;
-use const PREG_UNMATCHED_AS_NULL;
 use const STR_PAD_LEFT;
 
 /**
@@ -33,10 +32,10 @@ class DateLiteral implements TimeValue
 
     public function __construct(string $value)
     {
-        if (preg_match('~^\s*(\d{2,4})\D+(\d\d?)\D+(\d\d?)\s*$~', $value, $m, PREG_UNMATCHED_AS_NULL) === 1) {
+        if (preg_match('~^\s*(\d{2,4})\D+(\d\d?)\D+(\d\d?)\s*$~', $value, $m) === 1) {
             // [YY]YY-MM-DD
             [, $year, $month, $day] = $m;
-        } elseif (preg_match('~^\s*(\d{2,4})(\d\d)(\d\d)\s*$~', $value, $m, PREG_UNMATCHED_AS_NULL) === 1) {
+        } elseif (preg_match('~^\s*(\d{2,4})(\d\d)(\d\d)\s*$~', $value, $m) === 1) {
             // [YY]YYMMDD
             [, $year, $month, $day] = $m;
         } else {
