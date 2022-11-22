@@ -83,7 +83,7 @@ where we are now:
 - ☑ tested against several thousands of tables and migrations
 - ☑ parses almost everything from MySQL test suite (no false negatives)
 - ☑ fails on almost all error tests from MySQL test suite (no false positives)
-- ☐ serialisation testing on MySQL test suite (all SQL features represented as expected)
+- ☑ serialisation testing on MySQL test suite (all SQL features represented as expected)
 - ☐ parallelized and automated tests against multiple versions of MySQL test suite
 - ☐ mutation testing (handling mutated SQL same as a real DB; extending range beyond MySQL test suite)
 - ☐ distinguishing platform versions (parsing for exact patch version of the DB server)

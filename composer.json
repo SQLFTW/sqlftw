@@ -1,7 +1,7 @@
 {
     "name": "sqlftw/sqlftw",
     "type": "library",
-    "description": "Complete MySQL SQL dialect lexer, parser, syntax representation and database reflection in PHP",
+    "description": "Complete MySQL SQL dialect lexer, parser, AST and SQL serialisation",
     "homepage": "https://github.com/sqlftw/sqlftw",
     "license": ["proprietary"],
     "authors": [
