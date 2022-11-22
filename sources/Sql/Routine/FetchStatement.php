@@ -18,11 +18,11 @@ class FetchStatement extends Statement
     /** @var string */
     private $cursor;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $variables;
 
     /**
-     * @param non-empty-array<string> $variables
+     * @param non-empty-list<string> $variables
      */
     public function __construct(string $cursor, array $variables)
     {
@@ -36,7 +36,7 @@ class FetchStatement extends Statement
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     public function getVariables(): array
     {

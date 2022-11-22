@@ -12,11 +12,11 @@ namespace SqlFtw\Sql\Ddl\Table\Column;
 class ColumnList
 {
 
-    /** @var ColumnDefinition[] (string $name => $column) */
+    /** @var array<string, ColumnDefinition> ($name => $column) */
     private $columns = [];
 
     /**
-     * @param ColumnDefinition[] $columns
+     * @param array<string, ColumnDefinition> $columns
      */
     public function __construct(array $columns)
     {
@@ -32,7 +32,7 @@ class ColumnList
 
     /**
      * All column actions except DROP
-     * @return ColumnDefinition[]
+     * @return array<string, ColumnDefinition>
      */
     public function getColumns(): array
     {

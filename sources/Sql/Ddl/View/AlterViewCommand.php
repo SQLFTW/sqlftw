@@ -26,7 +26,7 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
     /** @var Query */
     private $query;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $columns;
 
     /** @var UserExpression|null */
@@ -42,7 +42,7 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
     private $checkOption;
 
     /**
-     * @param non-empty-array<string>|null $columns
+     * @param non-empty-list<string>|null $columns
      */
     public function __construct(
         ObjectIdentifier $view,
@@ -73,7 +73,7 @@ class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCom
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getColumns(): ?array
     {

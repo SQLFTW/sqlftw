@@ -23,7 +23,7 @@ class TableCommand extends Statement implements SimpleQuery
     /** @var ObjectIdentifier */
     private $table;
 
-    /** @var non-empty-array<OrderByExpression>|null */
+    /** @var non-empty-list<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
@@ -36,7 +36,7 @@ class TableCommand extends Statement implements SimpleQuery
     private $into;
 
     /**
-     * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      * @param int|SimpleName|Placeholder|null $offset
      */
@@ -60,7 +60,7 @@ class TableCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

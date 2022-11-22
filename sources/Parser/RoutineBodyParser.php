@@ -326,7 +326,7 @@ class RoutineBodyParser
     }
 
     /**
-     * @return array<Statement>
+     * @return list<Statement>
      */
     private function parseStatementList(TokenList $tokenList): array
     {
@@ -444,7 +444,7 @@ class RoutineBodyParser
         }
         $formatter = new Formatter($tokenList->getSession());
         $values = [];
-        /** @var non-empty-array<array<Statement>> $statementLists */
+        /** @var non-empty-list<list<Statement>> $statementLists */
         $statementLists = [];
         do {
             $expression = $this->expressionParser->parseExpression($tokenList);
@@ -474,7 +474,7 @@ class RoutineBodyParser
     private function parseIf(TokenList $tokenList): IfStatement
     {
         $conditions = [];
-        /** @var non-empty-array<array<Statement>> $statementLists */
+        /** @var non-empty-list<list<Statement>> $statementLists */
         $statementLists = [];
         $conditions[] = $this->expressionParser->parseExpression($tokenList);
         $tokenList->expectKeyword(Keyword::THEN);
@@ -602,7 +602,7 @@ class RoutineBodyParser
             return new DeclareConditionStatement($name, $value);
         }
 
-        /** @var non-empty-array<string> $names */
+        /** @var non-empty-list<string> $names */
         $names = [$name];
         while ($tokenList->hasSymbol(',')) {
             $names[] = $tokenList->expectNonReservedName(null, null, TokenType::AT_VARIABLE);

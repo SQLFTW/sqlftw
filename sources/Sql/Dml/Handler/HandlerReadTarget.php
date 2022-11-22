@@ -29,7 +29,7 @@ class HandlerReadTarget extends SqlEnum
     public const GREATER = Operator::GREATER;
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public static function getKeywords(): array
     {
@@ -37,7 +37,7 @@ class HandlerReadTarget extends SqlEnum
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public static function getOperators(): array
     {

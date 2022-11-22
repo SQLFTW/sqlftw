@@ -98,7 +98,7 @@ class DeleteCommandParser
     }
 
     /**
-     * @return non-empty-array<array{ObjectIdentifier, string|null}>
+     * @return non-empty-list<array{ObjectIdentifier, string|null}>
      */
     private function parseTablesList(TokenList $tokenList): array
     {

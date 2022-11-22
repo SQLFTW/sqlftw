@@ -13,16 +13,17 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterTableAction;
 use SqlFtw\Sql\SqlSerializable;
 use function array_filter;
+use function array_values;
 use function rtrim;
 
 class AlterActionsList implements SqlSerializable
 {
 
-    /** @var AlterTableAction[] */
+    /** @var list<AlterTableAction> */
     private $actions;
 
     /**
-     * @param AlterTableAction[] $actions
+     * @param list<AlterTableAction> $actions
      */
     public function __construct(array $actions)
     {
@@ -30,7 +31,7 @@ class AlterActionsList implements SqlSerializable
     }
 
     /**
-     * @return AlterTableAction[]
+     * @return list<AlterTableAction>
      */
     public function getActions(): array
     {
@@ -38,13 +39,13 @@ class AlterActionsList implements SqlSerializable
     }
 
     /**
-     * @return AlterTableAction[]
+     * @return list<AlterTableAction>
      */
     public function filter(string $class): array
     {
-        return array_filter($this->actions, static function (AlterTableAction $action) use ($class) {
+        return array_values(array_filter($this->actions, static function (AlterTableAction $action) use ($class) {
             return $action instanceof $class;
-        });
+        }));
     }
 
     public function isEmpty(): bool

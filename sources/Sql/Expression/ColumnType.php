@@ -26,10 +26,10 @@ class ColumnType implements SqlSerializable
     /** @var BaseType */
     private $type;
 
-    /** @var non-empty-array<int>|null */
+    /** @var non-empty-list<int>|null */
     private $size;
 
-    /** @var non-empty-array<StringValue>|null */
+    /** @var non-empty-list<StringValue>|null */
     private $values;
 
     /** @var bool */
@@ -48,8 +48,8 @@ class ColumnType implements SqlSerializable
     private $zerofill;
 
     /**
-     * @param non-empty-array<int>|null $size
-     * @param non-empty-array<StringValue>|null $values
+     * @param non-empty-list<int>|null $size
+     * @param non-empty-list<StringValue>|null $values
      */
     public function __construct(
         BaseType $type,
@@ -94,7 +94,7 @@ class ColumnType implements SqlSerializable
     }
 
     /**
-     * @param non-empty-array<int>|null $size
+     * @param non-empty-list<int>|null $size
      */
     private function checkSize(BaseType $type, ?array $size): void
     {
@@ -134,7 +134,7 @@ class ColumnType implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<int>|null
+     * @return non-empty-list<int>|null
      */
     public function getSize(): ?array
     {
@@ -142,7 +142,7 @@ class ColumnType implements SqlSerializable
     }
 
     /**
-     * @param non-empty-array<int>|null $size
+     * @param non-empty-list<int>|null $size
      */
     public function setSize(?array $size): void
     {
@@ -151,7 +151,7 @@ class ColumnType implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<StringValue>|null
+     * @return non-empty-list<StringValue>|null
      */
     public function getValues(): ?array
     {

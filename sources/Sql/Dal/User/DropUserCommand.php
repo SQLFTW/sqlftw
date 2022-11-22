@@ -17,14 +17,14 @@ use SqlFtw\Sql\UserName;
 class DropUserCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<UserName|FunctionCall> */
+    /** @var non-empty-list<UserName|FunctionCall> */
     private $users;
 
     /** @var bool */
     private $ifExists;
 
     /**
-     * @param non-empty-array<UserName|FunctionCall> $users
+     * @param non-empty-list<UserName|FunctionCall> $users
      */
     public function __construct(array $users, bool $ifExists = false)
     {
@@ -33,7 +33,7 @@ class DropUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName|FunctionCall>
+     * @return non-empty-list<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

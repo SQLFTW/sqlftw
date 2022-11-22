@@ -8,7 +8,7 @@ use SqlFtw\Sql\Statement;
 class CompoundStatement extends Statement
 {
 
-    /** @var Statement[] */
+    /** @var list<Statement> */
     private $statements;
 
     /** @var string|null */
@@ -18,7 +18,7 @@ class CompoundStatement extends Statement
     private $endLabel;
 
     /**
-     * @param Statement[] $statements
+     * @param list<Statement> $statements
      */
     public function __construct(array $statements, ?string $label, bool $endLabel = false)
     {
@@ -28,7 +28,7 @@ class CompoundStatement extends Statement
     }
 
     /**
-     * @return Statement[]
+     * @return list<Statement>
      */
     public function getStatements(): array
     {

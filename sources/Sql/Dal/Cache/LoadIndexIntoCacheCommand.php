@@ -18,11 +18,11 @@ use SqlFtw\Sql\Statement;
 class LoadIndexIntoCacheCommand extends Statement implements CacheCommand
 {
 
-    /** @var non-empty-array<TableIndexList> */
+    /** @var non-empty-list<TableIndexList> */
     private $tableIndexLists;
 
     /**
-     * @param non-empty-array<TableIndexList> $tableIndexLists
+     * @param non-empty-list<TableIndexList> $tableIndexLists
      */
     public function __construct(array $tableIndexLists)
     {
@@ -30,7 +30,7 @@ class LoadIndexIntoCacheCommand extends Statement implements CacheCommand
     }
 
     /**
-     * @return non-empty-array<TableIndexList>
+     * @return non-empty-list<TableIndexList>
      */
     public function getTableIndexLists(): array
     {

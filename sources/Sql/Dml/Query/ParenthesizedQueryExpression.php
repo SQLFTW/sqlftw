@@ -26,7 +26,7 @@ class ParenthesizedQueryExpression extends Statement implements Query
     /** @var WithClause|null */
     private $with;
 
-    /** @var non-empty-array<OrderByExpression>|null */
+    /** @var non-empty-list<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
@@ -39,7 +39,7 @@ class ParenthesizedQueryExpression extends Statement implements Query
     private $into;
 
     /**
-     * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      * @param int|SimpleName|Placeholder|null $offset
      */
@@ -66,7 +66,7 @@ class ParenthesizedQueryExpression extends Statement implements Query
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

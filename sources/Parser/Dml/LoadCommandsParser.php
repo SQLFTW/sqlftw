@@ -92,7 +92,7 @@ class LoadCommandsParser
     }
 
     /**
-     * @return array{LoadPriority|null, bool, string, DuplicateOption|null, ObjectIdentifier, non-empty-array<string>|null, Charset|null}
+     * @return array{LoadPriority|null, bool, string, DuplicateOption|null, ObjectIdentifier, non-empty-list<string>|null, Charset|null}
      */
     private function parseOptions(TokenList $tokenList, bool $parsePartitions): array
     {
@@ -126,7 +126,7 @@ class LoadCommandsParser
     }
 
     /**
-     * @return array{int|null, non-empty-array<string>|null, non-empty-array<string, RootNode>|null}
+     * @return array{int|null, non-empty-list<string>|null, non-empty-array<string, RootNode>|null}
      */
     private function parseRowsAndFields(TokenList $tokenList): array
     {
@@ -138,7 +138,7 @@ class LoadCommandsParser
 
         $fields = null;
         if ($tokenList->hasSymbol('(')) {
-            /** @var non-empty-array<string> $fields */
+            /** @var non-empty-list<string> $fields */
             $fields = [];
             if (!$tokenList->hasSymbol(')')) {
                 do {

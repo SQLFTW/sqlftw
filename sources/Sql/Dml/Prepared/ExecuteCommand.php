@@ -19,11 +19,11 @@ class ExecuteCommand extends Statement implements PreparedStatementCommand
     /** @var string */
     private $name;
 
-    /** @var string[]|null */
+    /** @var non-empty-list<string>|null */
     private $variables;
 
     /**
-     * @param string[]|null $variables
+     * @param non-empty-list<string>|null $variables
      */
     public function __construct(string $name, ?array $variables = null)
     {

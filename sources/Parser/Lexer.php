@@ -106,10 +106,10 @@ class Lexer
     /** @var array<string, int> */
     private $operatorsKey;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $escapeKeys;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $escapeValues;
 
     public function __construct(

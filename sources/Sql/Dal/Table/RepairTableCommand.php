@@ -16,7 +16,7 @@ use SqlFtw\Sql\Statement;
 class RepairTableCommand extends Statement implements DalTablesCommand
 {
 
-    /** @var non-empty-array<ObjectIdentifier> */
+    /** @var non-empty-list<ObjectIdentifier> */
     private $names;
 
     /** @var bool */
@@ -32,7 +32,7 @@ class RepairTableCommand extends Statement implements DalTablesCommand
     private $useFrm;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $names
+     * @param non-empty-list<ObjectIdentifier> $names
      */
     public function __construct(
         array $names,
@@ -49,7 +49,7 @@ class RepairTableCommand extends Statement implements DalTablesCommand
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getTables(): array
     {

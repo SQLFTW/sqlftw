@@ -14,11 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class JsonTableColumnsList implements ArgumentNode, ArgumentValue
 {
 
-    /** @var non-empty-array<JsonTableColumn> */
+    /** @var non-empty-list<JsonTableColumn> */
     private $columns;
 
     /**
-     * @param non-empty-array<JsonTableColumn> $columns
+     * @param non-empty-list<JsonTableColumn> $columns
      */
     public function __construct(array $columns)
     {
@@ -26,7 +26,7 @@ class JsonTableColumnsList implements ArgumentNode, ArgumentValue
     }
 
     /**
-     * @return non-empty-array<JsonTableColumn>
+     * @return non-empty-list<JsonTableColumn>
      */
     public function getColumns(): array
     {

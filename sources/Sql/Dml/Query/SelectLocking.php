@@ -22,11 +22,11 @@ class SelectLocking implements SqlSerializable
     /** @var SelectLockWaitOption|null */
     private $wait;
 
-    /** @var non-empty-array<ObjectIdentifier>|null */
+    /** @var non-empty-list<ObjectIdentifier>|null */
     private $tables;
 
     /**
-     * @param non-empty-array<ObjectIdentifier>|null $tables
+     * @param non-empty-list<ObjectIdentifier>|null $tables
      */
     public function __construct(SelectLockOption $for, ?SelectLockWaitOption $wait = null, ?array $tables = null)
     {
@@ -46,7 +46,7 @@ class SelectLocking implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>|null
+     * @return non-empty-list<ObjectIdentifier>|null
      */
     public function getTables(): ?array
     {

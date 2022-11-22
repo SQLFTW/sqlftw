@@ -564,7 +564,7 @@ class ReplicationCommandsParser
         $threadTypes = null;
         $threadType = $tokenList->getKeywordEnum(ReplicationThreadType::class);
         if ($threadType !== null) {
-            /** @var non-empty-array<ReplicationThreadType> $threadTypes */
+            /** @var non-empty-list<ReplicationThreadType> $threadTypes */
             $threadTypes = [$threadType];
             while ($tokenList->hasSymbol(',')) {
                 $threadTypes[] = $tokenList->expectKeywordEnum(ReplicationThreadType::class);
@@ -658,7 +658,7 @@ class ReplicationCommandsParser
      *
      *     (n >= 1)
      *
-     * @return non-empty-array<UuidSet>|string
+     * @return non-empty-list<UuidSet>|string
      */
     private function parseGtidSet(TokenList $tokenList)
     {

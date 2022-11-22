@@ -22,14 +22,14 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
     /** @var string|null */
     private $alias;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $columnList;
 
     /** @var bool */
     private $lateral;
 
     /**
-     * @param non-empty-array<string>|null $columnList
+     * @param non-empty-list<string>|null $columnList
      */
     public function __construct(
         Query $query,
@@ -59,7 +59,7 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getColumnList(): ?array
     {

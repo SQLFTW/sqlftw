@@ -16,8 +16,8 @@ class NamingStrategyMysql implements NamingStrategy
 {
 
     /**
-     * @param string[] $columns
-     * @param string[] $existingIndexes
+     * @param non-empty-list<string> $columns
+     * @param list<string> $existingIndexes
      */
     public function createIndexName(QualifiedName $table, array $columns, array $existingIndexes = []): string
     {
@@ -36,8 +36,8 @@ class NamingStrategyMysql implements NamingStrategy
     }
 
     /**
-     * @param string[] $columns
-     * @param string[] $existingKeys
+     * @param non-empty-list<string> $columns
+     * @param list<string> $existingKeys
      */
     public function createForeignKeyName(QualifiedName $table, array $columns, array $existingKeys = []): string
     {
@@ -51,8 +51,8 @@ class NamingStrategyMysql implements NamingStrategy
     }
 
     /**
-     * @param string[] $columns
-     * @param string[] $existingChecks
+     * @param non-empty-list<string> $columns
+     * @param list<string> $existingChecks
      */
     public function createCheckName(QualifiedName $table, array $columns, array $existingChecks = []): string
     {

@@ -23,11 +23,11 @@ class IndexHint implements SqlSerializable
     /** @var IndexHintTarget|null */
     private $target;
 
-    /** @var array<string|PrimaryLiteral> */
+    /** @var list<string|PrimaryLiteral> */
     private $indexes;
 
     /**
-     * @param array<string|PrimaryLiteral> $indexes
+     * @param list<string|PrimaryLiteral> $indexes
      */
     public function __construct(IndexHintAction $action, ?IndexHintTarget $target, array $indexes)
     {
@@ -50,7 +50,7 @@ class IndexHint implements SqlSerializable
     }
 
     /**
-     * @return array<string|PrimaryLiteral>
+     * @return list<string|PrimaryLiteral>
      */
     public function getIndexes(): array
     {

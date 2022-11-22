@@ -104,7 +104,7 @@ class SqlMode extends StringSet
         // self::NO_TABLE_OPTIONS ?
     ];
 
-    /** @var string[][] */
+    /** @var array<string, list<string>> */
     private static $groups = [
         self::TRADITIONAL => [
             self::STRICT_TRANS_TABLES,
@@ -186,7 +186,7 @@ class SqlMode extends StringSet
     public static function getFromString(string $string): self
     {
         $string = trim($string);
-        /** @var string[] $parts */
+        /** @var list<string> $parts */
         $parts = explode(',', strtoupper($string));
         $parts = array_filter($parts);
         try {

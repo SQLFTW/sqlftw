@@ -43,7 +43,7 @@ class TablespaceOption extends SqlEnum
     public const SET = Keyword::SET;
     public const WAIT = Keyword::WAIT;
 
-    /** @var string[]|string[][] */
+    /** @var array<string, string|list<string>> */
     private static $values = [
         self::ENGINE => StorageEngine::class,
         self::ENGINE_ATTRIBUTE => BaseType::CHAR,
@@ -63,7 +63,7 @@ class TablespaceOption extends SqlEnum
         self::WAIT => BaseType::BOOL,
     ];
 
-    /** @var string[][] */
+    /** @var array<string, list<string>> */
     private static $usage = [
         Keyword::CREATE => [
             self::ADD_DATAFILE,
@@ -95,7 +95,7 @@ class TablespaceOption extends SqlEnum
     ];
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public static function getUsage(string $case): array
     {
@@ -103,7 +103,7 @@ class TablespaceOption extends SqlEnum
     }
 
     /**
-     * @param array<TablespaceOptionValue> $values
+     * @param array<TablespaceOption::*, TablespaceOptionValue> $values
      */
     public static function validate(string $for, array &$values): void
     {

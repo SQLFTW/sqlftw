@@ -9,7 +9,7 @@ use SqlFtw\Sql\Statement;
 class LoopStatement extends Statement implements SqlSerializable
 {
 
-    /** @var Statement[] */
+    /** @var list<Statement> */
     private $statements;
 
     /** @var string|null */
@@ -19,7 +19,7 @@ class LoopStatement extends Statement implements SqlSerializable
     private $endLabel;
 
     /**
-     * @param Statement[] $statements
+     * @param list<Statement> $statements
      */
     public function __construct(array $statements, ?string $label, bool $endLabel = false)
     {
@@ -29,7 +29,7 @@ class LoopStatement extends Statement implements SqlSerializable
     }
 
     /**
-     * @return Statement[]
+     * @return list<Statement>
      */
     public function getStatements(): array
     {

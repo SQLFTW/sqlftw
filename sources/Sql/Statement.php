@@ -15,7 +15,7 @@ abstract class Statement implements SqlSerializable
     /** @var string|null */
     protected $delimiter;
 
-    /** @var string[] */
+    /** @var list<string> */
     protected $commentsBefore = [];
 
     public function setDelimiter(string $delimiter): void
@@ -29,7 +29,7 @@ abstract class Statement implements SqlSerializable
     }
 
     /**
-     * @param string[] $comments
+     * @param list<string> $comments
      */
     public function setCommentsBefore(array $comments): void
     {
@@ -37,7 +37,7 @@ abstract class Statement implements SqlSerializable
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getCommentsBefore(): array
     {

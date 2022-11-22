@@ -16,11 +16,11 @@ use SqlFtw\Sql\SqlSerializable;
 class OnDuplicateKeyActions implements SqlSerializable
 {
 
-    /** @var non-empty-array<Assignment> */
+    /** @var non-empty-list<Assignment> */
     private $assignments;
 
     /**
-     * @param non-empty-array<Assignment> $assignments
+     * @param non-empty-list<Assignment> $assignments
      */
     public function __construct(array $assignments)
     {
@@ -28,7 +28,7 @@ class OnDuplicateKeyActions implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<Assignment>
+     * @return non-empty-list<Assignment>
      */
     public function getAssignments(): array
     {

@@ -18,7 +18,7 @@ class PartitioningDefinition implements SqlSerializable
     /** @var PartitioningCondition */
     private $condition;
 
-    /** @var non-empty-array<PartitionDefinition>|null */
+    /** @var non-empty-list<PartitionDefinition>|null */
     private $partitions;
 
     /** @var int|null */
@@ -31,7 +31,7 @@ class PartitioningDefinition implements SqlSerializable
     private $subpartitionsNumber;
 
     /**
-     * @param non-empty-array<PartitionDefinition>|null $partitions
+     * @param non-empty-list<PartitionDefinition>|null $partitions
      */
     public function __construct(
         PartitioningCondition $condition,
@@ -53,7 +53,7 @@ class PartitioningDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<PartitionDefinition>|null
+     * @return non-empty-list<PartitionDefinition>|null
      */
     public function getPartitions(): ?array
     {

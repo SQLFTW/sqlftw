@@ -59,7 +59,7 @@ class SlaveOption extends SqlEnum
     public const IGNORE_SERVER_IDS = Keyword::IGNORE_SERVER_IDS;
     public const GTID_ONLY = Keyword::GTID_ONLY;
 
-    /** @var array<string, string|int[]> */
+    /** @var array<string, string|list<int>> */
     private static $types = [
         self::MASTER_BIND => BaseType::CHAR,
         self::MASTER_HOST => BaseType::CHAR,
@@ -101,7 +101,7 @@ class SlaveOption extends SqlEnum
     ];
 
     /**
-     * @return array<string, string|int[]>
+     * @return array<string, string|list<int>>
      */
     public static function getTypes(): array
     {

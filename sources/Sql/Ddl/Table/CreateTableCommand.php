@@ -30,7 +30,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
     /** @var ObjectIdentifier */
     private $name;
 
-    /** @var non-empty-array<TableItem>|null */
+    /** @var non-empty-list<TableItem>|null */
     private $items;
 
     /** @var TableOptionsList|null */
@@ -55,8 +55,8 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
     private $startTransaction;
 
     /**
-     * @param non-empty-array<TableItem>|null $items
-     * @param TableOptionsList|array<int|TableOption::*, TableOptionValue>|null $options
+     * @param non-empty-list<TableItem>|null $items
+     * @param TableOptionsList|array<TableOption::*, TableOptionValue>|null $options
      */
     public function __construct(
         ObjectIdentifier $name,
@@ -90,7 +90,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
     }
 
     /**
-     * @return non-empty-array<TableItem>|null
+     * @return non-empty-list<TableItem>|null
      */
     public function getItems(): ?array
     {
@@ -98,7 +98,7 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
     }
 
     /**
-     * @return ColumnDefinition[]
+     * @return list<ColumnDefinition>
      */
     public function getColumns(): array
     {

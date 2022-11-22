@@ -23,15 +23,15 @@ class CaseExpression extends Statement implements RootNode
     /** @var RootNode|null */
     private $condition;
 
-    /** @var non-empty-array<RootNode> */
+    /** @var non-empty-list<RootNode> */
     private $values;
 
-    /** @var non-empty-array<RootNode> */
+    /** @var non-empty-list<RootNode> */
     private $results;
 
     /**
-     * @param non-empty-array<RootNode> $values
-     * @param non-empty-array<RootNode> $results
+     * @param non-empty-list<RootNode> $values
+     * @param non-empty-list<RootNode> $results
      */
     public function __construct(?RootNode $condition, array $values, array $results)
     {
@@ -50,7 +50,7 @@ class CaseExpression extends Statement implements RootNode
     }
 
     /**
-     * @return non-empty-array<RootNode>
+     * @return non-empty-list<RootNode>
      */
     public function getValues(): array
     {
@@ -58,7 +58,7 @@ class CaseExpression extends Statement implements RootNode
     }
 
     /**
-     * @return non-empty-array<RootNode>
+     * @return non-empty-list<RootNode>
      */
     public function getResults(): array
     {

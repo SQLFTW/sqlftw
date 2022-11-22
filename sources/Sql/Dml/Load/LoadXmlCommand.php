@@ -22,8 +22,8 @@ class LoadXmlCommand extends LoadCommand
     private $rowsTag;
 
     /**
-     * @param non-empty-array<string>|null $fields
-     * @param non-empty-array<RootNode>|null $setters
+     * @param non-empty-list<string>|null $fields
+     * @param non-empty-array<string, RootNode>|null $setters
      */
     public function __construct(
         string $file,

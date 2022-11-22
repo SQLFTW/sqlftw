@@ -49,9 +49,9 @@ class AlterTableCommand extends Statement implements DdlTableCommand
     private $partitioning;
 
     /**
-     * @param AlterActionsList|AlterTableAction[] $actions
+     * @param AlterActionsList|list<AlterTableAction> $actions
      * @param array<string, bool|AlterTableLock|AlterTableAlgorithm> $alterOptions
-     * @param TableOptionsList|array<TableOptionValue>|null $tableOptions
+     * @param TableOptionsList|array<string, TableOptionValue>|null $tableOptions
      */
     public function __construct(
         ObjectIdentifier $name,

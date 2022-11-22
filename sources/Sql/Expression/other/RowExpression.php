@@ -19,11 +19,11 @@ use SqlFtw\Formatter\Formatter;
 class RowExpression implements RootNode
 {
 
-    /** @var non-empty-array<RootNode> */
+    /** @var non-empty-list<RootNode> */
     private $contents;
 
     /**
-     * @param non-empty-array<RootNode> $contents
+     * @param non-empty-list<RootNode> $contents
      */
     public function __construct(array $contents)
     {
@@ -31,7 +31,7 @@ class RowExpression implements RootNode
     }
 
     /**
-     * @return non-empty-array<RootNode>
+     * @return non-empty-list<RootNode>
      */
     public function getContents(): array
     {

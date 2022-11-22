@@ -22,18 +22,18 @@ class WindowSpecification implements SqlSerializable
     /** @var string|null */
     private $name;
 
-    /** @var RootNode[]|null */
+    /** @var non-empty-list<RootNode>|null */
     private $partitionBy;
 
-    /** @var OrderByExpression[]|null */
+    /** @var non-empty-list<OrderByExpression>|null */
     private $orderBy;
 
     /** @var WindowFrame|null */
     private $frame;
 
     /**
-     * @param RootNode[]|null $partitionBy
-     * @param OrderByExpression[]|null $orderBy
+     * @param non-empty-list<RootNode>|null $partitionBy
+     * @param non-empty-list<OrderByExpression>|null $orderBy
      */
     public function __construct(?string $name, ?array $partitionBy, ?array $orderBy, ?WindowFrame $frame)
     {
@@ -49,7 +49,7 @@ class WindowSpecification implements SqlSerializable
     }
 
     /**
-     * @return RootNode[]|null
+     * @return non-empty-list<RootNode>|null
      */
     public function getPartitionBy(): ?array
     {
@@ -57,7 +57,7 @@ class WindowSpecification implements SqlSerializable
     }
 
     /**
-     * @return OrderByExpression[]|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

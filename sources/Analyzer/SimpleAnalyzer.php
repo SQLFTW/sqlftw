@@ -17,11 +17,11 @@ class SimpleAnalyzer
     /** @var SimpleContext */
     private $context;
 
-    /** @var SimpleRule[] */
+    /** @var non-empty-list<SimpleRule> */
     private $rules;
 
     /**
-     * @param SimpleRule[] $rules
+     * @param non-empty-list<SimpleRule> $rules
      */
     public function __construct(SimpleContext $context, array $rules)
     {
@@ -30,7 +30,7 @@ class SimpleAnalyzer
     }
 
     /**
-     * @return AnalyzerResult[]
+     * @return array<string, AnalyzerResult>
      */
     public function process(Statement $statement, int $flags = 0): array
     {

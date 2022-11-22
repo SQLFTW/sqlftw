@@ -30,7 +30,7 @@ class UpdateCommand extends Statement implements DmlCommand
     /** @var TableReferenceNode */
     private $tableReferences;
 
-    /** @var non-empty-array<Assignment> */
+    /** @var non-empty-list<Assignment> */
     private $values;
 
     /** @var RootNode|null */
@@ -39,7 +39,7 @@ class UpdateCommand extends Statement implements DmlCommand
     /** @var WithClause|null */
     private $with;
 
-    /** @var non-empty-array<OrderByExpression>|null */
+    /** @var non-empty-list<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
@@ -52,8 +52,8 @@ class UpdateCommand extends Statement implements DmlCommand
     private $lowPriority;
 
     /**
-     * @param non-empty-array<Assignment> $values
-     * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param non-empty-list<Assignment> $values
+     * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      */
     public function __construct(
@@ -86,7 +86,7 @@ class UpdateCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<Assignment>
+     * @return non-empty-list<Assignment>
      */
     public function getValues(): array
     {
@@ -104,7 +104,7 @@ class UpdateCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

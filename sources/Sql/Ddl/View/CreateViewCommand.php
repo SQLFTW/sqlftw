@@ -26,7 +26,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
     /** @var Query */
     private $query;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $columns;
 
     /** @var UserExpression|null */
@@ -45,7 +45,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
     private $orReplace;
 
     /**
-     * @param non-empty-array<string>|null $columns
+     * @param non-empty-list<string>|null $columns
      */
     public function __construct(
         ObjectIdentifier $view,
@@ -78,7 +78,7 @@ class CreateViewCommand extends Statement implements ViewCommand, SchemaObjectCo
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getColumns(): ?array
     {

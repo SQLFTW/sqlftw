@@ -30,19 +30,19 @@ class Result
     /** @var int */
     public $tokens;
 
-    /** @var array<array{Command, TokenList, SqlMode}> */
+    /** @var list<array{Command, TokenList, SqlMode}> */
     public $falseNegatives;
 
-    /** @var array<array{Command, TokenList, SqlMode}> */
+    /** @var list<array{Command, TokenList, SqlMode}> */
     public $falsePositives;
 
-    /** @var array<array{Command, TokenList, SqlMode}> */
+    /** @var list<array{Command, TokenList, SqlMode}> */
     public $serialisationErrors;
 
     /**
-     * @param array<array{Command, TokenList, SqlMode}> $falseNegatives
-     * @param array<array{Command, TokenList, SqlMode}> $falsePositives
-     * @param array<array{Command, TokenList, SqlMode}> $serialisationErrors
+     * @param list<array{Command, TokenList, SqlMode}> $falseNegatives
+     * @param list<array{Command, TokenList, SqlMode}> $falsePositives
+     * @param list<array{Command, TokenList, SqlMode}> $serialisationErrors
      */
     public function __construct(
         string $path,

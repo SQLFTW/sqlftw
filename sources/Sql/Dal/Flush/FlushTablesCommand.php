@@ -17,7 +17,7 @@ use SqlFtw\Sql\Statement;
 class FlushTablesCommand extends Statement implements DalCommand
 {
 
-    /** @var non-empty-array<ObjectIdentifier>|null */
+    /** @var non-empty-list<ObjectIdentifier>|null */
     private $tables;
 
     /** @var bool */
@@ -30,7 +30,7 @@ class FlushTablesCommand extends Statement implements DalCommand
     private $local;
 
     /**
-     * @param non-empty-array<ObjectIdentifier>|null $tables
+     * @param non-empty-list<ObjectIdentifier>|null $tables
      */
     public function __construct(
         ?array $tables = null,
@@ -45,7 +45,7 @@ class FlushTablesCommand extends Statement implements DalCommand
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>|null
+     * @return non-empty-list<ObjectIdentifier>|null
      */
     public function getTables(): ?array
     {

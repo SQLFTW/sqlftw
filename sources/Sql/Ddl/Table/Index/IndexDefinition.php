@@ -26,7 +26,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     /** @var IndexType */
     private $type;
 
-    /** @var non-empty-array<IndexPart> */
+    /** @var non-empty-list<IndexPart> */
     private $parts;
 
     /** @var IndexAlgorithm|null */
@@ -39,7 +39,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     private $table;
 
     /**
-     * @param non-empty-array<IndexPart> $parts
+     * @param non-empty-list<IndexPart> $parts
      */
     public function __construct(
         ?string $name,
@@ -112,7 +112,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @return non-empty-array<IndexPart>
+     * @return non-empty-list<IndexPart>
      */
     public function getParts(): array
     {

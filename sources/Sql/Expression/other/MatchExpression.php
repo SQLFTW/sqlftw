@@ -17,7 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class MatchExpression implements RootNode
 {
 
-    /** @var non-empty-array<ColumnIdentifier> */
+    /** @var non-empty-list<ColumnIdentifier> */
     private $columns;
 
     /** @var RootNode */
@@ -30,7 +30,7 @@ class MatchExpression implements RootNode
     private $queryExpansion;
 
     /**
-     * @param non-empty-array<ColumnIdentifier> $columns
+     * @param non-empty-list<ColumnIdentifier> $columns
      */
     public function __construct(array $columns, RootNode $query, ?MatchMode $mode, bool $queryExpansion = false)
     {
@@ -41,7 +41,7 @@ class MatchExpression implements RootNode
     }
 
     /**
-     * @return non-empty-array<ColumnIdentifier>
+     * @return non-empty-list<ColumnIdentifier>
      */
     public function getColumns(): array
     {

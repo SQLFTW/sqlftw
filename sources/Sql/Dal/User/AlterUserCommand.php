@@ -16,16 +16,16 @@ use SqlFtw\Sql\Statement;
 class AlterUserCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<AlteredUser> */
+    /** @var non-empty-list<AlteredUser> */
     private $users;
 
-    /** @var array<UserTlsOption>|null */
+    /** @var list<UserTlsOption>|null */
     private $tlsOptions;
 
-    /** @var non-empty-array<UserResourceOption>|null */
+    /** @var non-empty-list<UserResourceOption>|null */
     private $resourceOptions;
 
-    /** @var non-empty-array<UserPasswordLockOption>|null */
+    /** @var non-empty-list<UserPasswordLockOption>|null */
     private $passwordLockOptions;
 
     /** @var string|null */
@@ -38,10 +38,10 @@ class AlterUserCommand extends Statement implements UserCommand
     private $ifExists;
 
     /**
-     * @param non-empty-array<AlteredUser> $users
-     * @param array<UserTlsOption>|null $tlsOptions
-     * @param non-empty-array<UserResourceOption>|null $resourceOptions
-     * @param non-empty-array<UserPasswordLockOption>|null $passwordLockOptions
+     * @param non-empty-list<AlteredUser> $users
+     * @param list<UserTlsOption>|null $tlsOptions
+     * @param non-empty-list<UserResourceOption>|null $resourceOptions
+     * @param non-empty-list<UserPasswordLockOption>|null $passwordLockOptions
      */
     public function __construct(
         array $users,
@@ -67,7 +67,7 @@ class AlterUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<AlteredUser>
+     * @return non-empty-list<AlteredUser>
      */
     public function getUsers(): array
     {
@@ -75,7 +75,7 @@ class AlterUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return array<UserTlsOption>|null
+     * @return list<UserTlsOption>|null
      */
     public function getTlsOptions(): ?array
     {
@@ -83,7 +83,7 @@ class AlterUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserResourceOption>|null
+     * @return non-empty-list<UserResourceOption>|null
      */
     public function getResourceOptions(): ?array
     {
@@ -91,7 +91,7 @@ class AlterUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserPasswordLockOption>|null
+     * @return non-empty-list<UserPasswordLockOption>|null
      */
     public function getPasswordLockOptions(): ?array
     {

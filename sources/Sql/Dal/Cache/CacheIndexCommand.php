@@ -22,15 +22,15 @@ class CacheIndexCommand extends Statement implements CacheCommand
     /** @var string */
     private $keyCache;
 
-    /** @var non-empty-array<TableIndexList> */
+    /** @var non-empty-list<TableIndexList> */
     private $tableIndexLists;
 
-    /** @var non-empty-array<string>|bool|null */
+    /** @var non-empty-list<string>|bool|null */
     private $partitions;
 
     /**
-     * @param non-empty-array<TableIndexList> $tableIndexLists
-     * @param non-empty-array<string>|bool|null $partitions
+     * @param non-empty-list<TableIndexList> $tableIndexLists
+     * @param non-empty-list<string>|bool|null $partitions
      */
     public function __construct(string $keyCache, array $tableIndexLists, $partitions = null)
     {
@@ -45,7 +45,7 @@ class CacheIndexCommand extends Statement implements CacheCommand
     }
 
     /**
-     * @return non-empty-array<TableIndexList>
+     * @return non-empty-list<TableIndexList>
      */
     public function getTableIndexLists(): array
     {
@@ -53,7 +53,7 @@ class CacheIndexCommand extends Statement implements CacheCommand
     }
 
     /**
-     * @return non-empty-array<string>|bool|null
+     * @return non-empty-list<string>|bool|null
      */
     public function getPartitions()
     {

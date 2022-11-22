@@ -1145,7 +1145,7 @@ class MysqlVariable extends SqlEnum
     public const NEW_CACHE__KEY_BUFFER_SIZE = 'new_cache.key_buffer_size';
     public const SECOND_CACHE__KEY_BUFFER_SIZE = 'second_cache.key_buffer_size';
 
-    /** @var array<string, array{0:string|null, 1:bool, 2:string, 3:scalar|null, 4?:int, 5?:int|float|array<int|string>, 6?:int|float, 7?:int}> */
+    /** @var array<string, array{0:string|null, 1:bool, 2:string, 3:scalar|null, 4?:int, 5?:int|float|list<int|string>, 6?:int|float, 7?:int}> */
     public static $properties = [
         // https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html
         // scope: variable is restricted to SESSION or GLOBAL scope (GLOBAL includes PERSIST and PERSIST_ONLY); null = exists in both scopes
@@ -2194,13 +2194,13 @@ class MysqlVariable extends SqlEnum
     }
 
     /**
-     * @return array<int|string>
+     * @return list<int|string>
      */
     public static function getValues(string $variable): array
     {
         $type = self::$properties[$variable][2] ?? null;
         if ($type === T::ENUM || $type === T::SET) {
-            /** @var array<int|string> $values */
+            /** @var list<int|string> $values */
             $values = self::$properties[$variable][5] ?? [];
 
             return $values;
@@ -2226,7 +2226,7 @@ class MysqlVariable extends SqlEnum
     }
 
     /**
-     * @return array{string, bool, bool, bool, array<int|string>|null, int|float|null, int|float|null, int|null, bool, bool}
+     * @return array{string, bool, bool, bool, list<int|string>|null, int|float|null, int|float|null, int|null, bool, bool}
      */
     public static function getTypeInfo(string $variable): array
     {
@@ -2234,7 +2234,7 @@ class MysqlVariable extends SqlEnum
         $type = $properties[2] ?? T::CHAR;
         $enum = $type === T::ENUM || $type === T::SET;
         $flags = $properties[4] ?? 0;
-        /** @var array<int|string>|null $values */
+        /** @var list<int|string>|null $values */
         $values = $enum ? $properties[5] ?? null : null;
         /** @var int|float|null $min */
         $min = !$enum ? $properties[5] ?? null : null;

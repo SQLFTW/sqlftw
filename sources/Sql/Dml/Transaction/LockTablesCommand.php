@@ -15,11 +15,11 @@ use SqlFtw\Sql\Statement;
 class LockTablesCommand extends Statement implements TransactionCommand
 {
 
-    /** @var non-empty-array<LockTablesItem> */
+    /** @var non-empty-list<LockTablesItem> */
     private $items;
 
     /**
-     * @param non-empty-array<LockTablesItem> $items
+     * @param non-empty-list<LockTablesItem> $items
      */
     public function __construct(array $items)
     {
@@ -27,7 +27,7 @@ class LockTablesCommand extends Statement implements TransactionCommand
     }
 
     /**
-     * @return non-empty-array<LockTablesItem>
+     * @return non-empty-list<LockTablesItem>
      */
     public function getItems(): array
     {

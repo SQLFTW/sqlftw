@@ -18,11 +18,11 @@ class AddColumnsAction implements ColumnAction
 
     public const FIRST = true;
 
-    /** @var non-empty-array<ColumnDefinition|IndexDefinition> */
+    /** @var non-empty-list<ColumnDefinition|IndexDefinition> */
     private $columns;
 
     /**
-     * @param non-empty-array<ColumnDefinition|IndexDefinition> $columns
+     * @param non-empty-list<ColumnDefinition|IndexDefinition> $columns
      */
     public function __construct(array $columns)
     {
@@ -30,7 +30,7 @@ class AddColumnsAction implements ColumnAction
     }
 
     /**
-     * @return non-empty-array<ColumnDefinition|IndexDefinition>
+     * @return non-empty-list<ColumnDefinition|IndexDefinition>
      */
     public function getColumns(): array
     {

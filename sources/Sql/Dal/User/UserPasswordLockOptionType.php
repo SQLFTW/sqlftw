@@ -31,7 +31,7 @@ class UserPasswordLockOptionType extends SqlEnum
 
     public const PASSWORD_LOCK_TIME = Keyword::PASSWORD_LOCK_TIME;
 
-    /** @var string[][]|int[][]|null[][] */
+    /** @var array<string, list<int|string|null>> */
     private static $values = [
         self::PASSWORD_EXPIRE => [Keyword::DEFAULT, Keyword::NEVER, 1, null],
         self::PASSWORD_HISTORY => [Keyword::DEFAULT, 1],

@@ -7,7 +7,7 @@ namespace SqlFtw\Tests\Mysql;
 trait Skips
 {
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $skips = [
         // todo: problems with �\' in shift-jis encoding. need to tokenize strings per-character not per-byte
         'jp_alter_sjis.test',

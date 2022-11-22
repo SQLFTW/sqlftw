@@ -16,7 +16,7 @@ use SqlFtw\Sql\Statement;
 class DropTableCommand extends Statement implements DdlTablesCommand
 {
 
-    /** @var non-empty-array<ObjectIdentifier> */
+    /** @var non-empty-list<ObjectIdentifier> */
     private $names;
 
     /** @var bool */
@@ -29,7 +29,7 @@ class DropTableCommand extends Statement implements DdlTablesCommand
     private $cascadeRestrict;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $names
+     * @param non-empty-list<ObjectIdentifier> $names
      */
     public function __construct(
         array $names,
@@ -44,7 +44,7 @@ class DropTableCommand extends Statement implements DdlTablesCommand
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getTables(): array
     {

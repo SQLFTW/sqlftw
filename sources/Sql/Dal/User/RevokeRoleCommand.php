@@ -17,15 +17,15 @@ use SqlFtw\Sql\UserName;
 class RevokeRoleCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-list<UserName> */
     private $roles;
 
-    /** @var non-empty-array<UserName|FunctionCall> */
+    /** @var non-empty-list<UserName|FunctionCall> */
     private $users;
 
     /**
-     * @param non-empty-array<UserName> $roles
-     * @param non-empty-array<UserName|FunctionCall> $users
+     * @param non-empty-list<UserName> $roles
+     * @param non-empty-list<UserName|FunctionCall> $users
      */
     public function __construct(array $roles, array $users)
     {
@@ -34,7 +34,7 @@ class RevokeRoleCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-list<UserName>
      */
     public function getRoles(): array
     {
@@ -42,7 +42,7 @@ class RevokeRoleCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName|FunctionCall>
+     * @return non-empty-list<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

@@ -24,8 +24,8 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
     private $onDuplicateKeyActions;
 
     /**
-     * @param array<ColumnIdentifier>|null $columns
-     * @param non-empty-array<string>|null $partitions
+     * @param list<ColumnIdentifier>|null $columns
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(
         ObjectIdentifier $table,

@@ -208,7 +208,7 @@ class IndexCommandsParser
     }
 
     /**
-     * @return non-empty-array<IndexPart>
+     * @return non-empty-list<IndexPart>
      */
     private function parseIndexParts(TokenList $tokenList): array
     {

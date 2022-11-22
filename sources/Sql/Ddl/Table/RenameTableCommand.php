@@ -23,15 +23,15 @@ use function rtrim;
 class RenameTableCommand extends Statement implements DdlTablesCommand
 {
 
-    /** @var non-empty-array<ObjectIdentifier> */
+    /** @var non-empty-list<ObjectIdentifier> */
     protected $names;
 
-    /** @var non-empty-array<ObjectIdentifier> */
+    /** @var non-empty-list<ObjectIdentifier> */
     private $newNames;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $names
-     * @param non-empty-array<ObjectIdentifier> $newNames
+     * @param non-empty-list<ObjectIdentifier> $names
+     * @param non-empty-list<ObjectIdentifier> $newNames
      */
     public function __construct(array $names, array $newNames)
     {
@@ -44,7 +44,7 @@ class RenameTableCommand extends Statement implements DdlTablesCommand
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getTables(): array
     {
@@ -52,7 +52,7 @@ class RenameTableCommand extends Statement implements DdlTablesCommand
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getNewNames(): array
     {

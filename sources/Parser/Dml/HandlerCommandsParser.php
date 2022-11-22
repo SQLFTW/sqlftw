@@ -94,7 +94,7 @@ class HandlerCommandsParser
      * limit:
      *     [LIMIT {[offset,] row_count | row_count OFFSET offset}]
      *
-     * @return int[]|null[]|array{int, int|null} ($limit, $offset)
+     * @return array{int, int|null} ($limit, $offset)
      */
     private function parseLimitAndOffset(TokenList $tokenList): array
     {

@@ -25,14 +25,14 @@ class AlterTablespaceCommand extends Statement implements TablespaceCommand
     /** @var string */
     private $tablespace;
 
-    /** @var array<TablespaceOptionValue> */
+    /** @var array<TablespaceOption::*, TablespaceOptionValue> */
     private $options;
 
     /** @var bool */
     private $undo;
 
     /**
-     * @param array<TablespaceOptionValue> $options
+     * @param array<TablespaceOption::*, TablespaceOptionValue> $options
      */
     public function __construct(string $tablespace, array $options, bool $undo = false)
     {
@@ -49,7 +49,7 @@ class AlterTablespaceCommand extends Statement implements TablespaceCommand
     }
 
     /**
-     * @return array<TablespaceOptionValue>
+     * @return array<TablespaceOption::*, TablespaceOptionValue>
      */
     public function getOptions(): array
     {

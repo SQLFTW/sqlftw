@@ -17,11 +17,11 @@ use SqlFtw\Formatter\Formatter;
 class OrderByListExpression implements ArgumentNode
 {
 
-    /** @var non-empty-array<OrderByExpression> */
+    /** @var non-empty-list<OrderByExpression> */
     private $items;
 
     /**
-     * @param non-empty-array<OrderByExpression> $items
+     * @param non-empty-list<OrderByExpression> $items
      */
     public function __construct(array $items)
     {
@@ -29,7 +29,7 @@ class OrderByListExpression implements ArgumentNode
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>
+     * @return non-empty-list<OrderByExpression>
      */
     public function getItems(): array
     {

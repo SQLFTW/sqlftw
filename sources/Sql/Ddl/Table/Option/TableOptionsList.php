@@ -32,7 +32,7 @@ class TableOptionsList
     private $options = [];
 
     /**
-     * @param array<int|TableOption::*, TableOptionValue> $options
+     * @param array<string|TableOption::*, TableOptionValue> $options
      */
     public function __construct(array $options)
     {
@@ -71,6 +71,9 @@ class TableOptionsList
                     throw new InvalidDefinitionException("Invalid table option '$option'.");
                 }
                 TypeChecker::check($value, $types[$option]);
+
+                // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
+                /** @var TableOption::* $option */
                 $this->options[$option] = $value;
             }
         }

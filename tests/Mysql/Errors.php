@@ -7,7 +7,7 @@ namespace SqlFtw\Tests\Mysql;
 trait Errors
 {
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $partiallyParsedErrors = [
         'ER_WRONG_USAGE', // various alter issues
         'ER_PARTITION_COLUMN_LIST_ERROR',
@@ -37,7 +37,7 @@ trait Errors
         'ER_TOO_MANY_KEY_PARTS', // to do: detect multi-column index when not explicitly spatial
     ];
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $ignoredErrors = [
         // todo: could be thrown by parser (no context needed)
         'ER_GENERATED_COLUMN_FUNCTION_IS_NOT_ALLOWED',

@@ -17,11 +17,11 @@ use SqlFtw\Sql\Statement;
 class DoCommand extends Statement implements DmlCommand
 {
 
-    /** @var non-empty-array<ExpressionNode> */
+    /** @var non-empty-list<ExpressionNode> */
     private $expressions;
 
     /**
-     * @param non-empty-array<ExpressionNode> $expressions
+     * @param non-empty-list<ExpressionNode> $expressions
      */
     public function __construct(array $expressions)
     {
@@ -29,7 +29,7 @@ class DoCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<ExpressionNode>
+     * @return non-empty-list<ExpressionNode>
      */
     public function getExpressions(): array
     {

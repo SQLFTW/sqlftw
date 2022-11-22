@@ -16,18 +16,18 @@ use SqlFtw\Sql\Statement;
 class AnalyzeTableDropHistogramCommand extends Statement implements DalTablesCommand
 {
 
-    /** @var non-empty-array<ObjectIdentifier> */
+    /** @var non-empty-list<ObjectIdentifier> */
     private $tables;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $columns;
 
     /** @var bool */
     private $local;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $tables
-     * @param non-empty-array<string> $columns
+     * @param non-empty-list<ObjectIdentifier> $tables
+     * @param non-empty-list<string> $columns
      */
     public function __construct(array $tables, array $columns, bool $local = false)
     {
@@ -37,7 +37,7 @@ class AnalyzeTableDropHistogramCommand extends Statement implements DalTablesCom
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getTables(): array
     {
@@ -45,7 +45,7 @@ class AnalyzeTableDropHistogramCommand extends Statement implements DalTablesCom
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     public function getColumns(): array
     {

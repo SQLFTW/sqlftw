@@ -30,14 +30,14 @@ use function implode;
 class StringLiteral implements StringValue, BoolValue
 {
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $parts;
 
     /** @var Charset|null */
     private $charset;
 
     /**
-     * @param non-empty-array<string> $parts
+     * @param non-empty-list<string> $parts
      */
     public function __construct(array $parts, ?Charset $charset = null)
     {
@@ -46,7 +46,7 @@ class StringLiteral implements StringValue, BoolValue
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     public function getParts(): array
     {

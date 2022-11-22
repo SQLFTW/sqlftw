@@ -28,8 +28,8 @@ trait FunctionsComparison
     /**
      * > - Greater than operator
      *
-     * @param scalar|Value|null|array<scalar|Value|null> $left
-     * @param scalar|Value|null|array<scalar|Value|null> $right
+     * @param scalar|Value|null|list<scalar|Value|null> $left
+     * @param scalar|Value|null|list<scalar|Value|null> $right
      */
     public function _greater($left, $right): ?bool
     {
@@ -40,8 +40,8 @@ trait FunctionsComparison
     /**
      * >= - Greater than or equal operator
      *
-     * @param scalar|Value|null|array<scalar|Value|null> $left
-     * @param scalar|Value|null|array<scalar|Value|null> $right
+     * @param scalar|Value|null|list<scalar|Value|null> $left
+     * @param scalar|Value|null|list<scalar|Value|null> $right
      */
     public function _greater_or_equal($left, $right): ?bool
     {
@@ -52,8 +52,8 @@ trait FunctionsComparison
     /**
      * < - Less than operator
      *
-     * @param scalar|Value|null|array<scalar|Value|null> $left
-     * @param scalar|Value|null|array<scalar|Value|null> $right
+     * @param scalar|Value|null|list<scalar|Value|null> $left
+     * @param scalar|Value|null|list<scalar|Value|null> $right
      */
     public function _less($left, $right): ?bool
     {
@@ -64,8 +64,8 @@ trait FunctionsComparison
     /**
      * <= - Less than or equal operator
      *
-     * @param scalar|Value|null|array<scalar|Value|null> $left
-     * @param scalar|Value|null|array<scalar|Value|null> $right
+     * @param scalar|Value|null|list<scalar|Value|null> $left
+     * @param scalar|Value|null|list<scalar|Value|null> $right
      */
     public function _less_or_equal($left, $right): ?bool
     {
@@ -76,8 +76,8 @@ trait FunctionsComparison
     /**
      * = - Equal operator
      *
-     * @param scalar|Value|null|array<scalar|Value|null> $left
-     * @param scalar|Value|null|array<scalar|Value|null> $right
+     * @param scalar|Value|null|list<scalar|Value|null> $left
+     * @param scalar|Value|null|list<scalar|Value|null> $right
      */
     public function _equal($left, $right): ?bool
     {
@@ -88,8 +88,8 @@ trait FunctionsComparison
     /**
      * <>, != - Not equal operator
      *
-     * @param scalar|Value|null|array<scalar|Value|null> $left
-     * @param scalar|Value|null|array<scalar|Value|null> $right
+     * @param scalar|Value|null|list<scalar|Value|null> $left
+     * @param scalar|Value|null|list<scalar|Value|null> $right
      */
     public function _not_equal($left, $right): ?bool
     {
@@ -100,8 +100,8 @@ trait FunctionsComparison
     /**
      * <=> - NULL-safe equal to operator
      *
-     * @param scalar|Value|null|array<scalar|Value|null> $left
-     * @param scalar|Value|null|array<scalar|Value|null> $right
+     * @param scalar|Value|null|list<scalar|Value|null> $left
+     * @param scalar|Value|null|list<scalar|Value|null> $right
      */
     public function _safe_equal($left, $right): ?bool
     {
@@ -167,8 +167,8 @@ trait FunctionsComparison
     /**
      * IN () - Whether a value is within a set of values
      *
-     * @param scalar|Value|null|array<scalar|Value|null> $left
-     * @param array<scalar|Value|null|array<scalar|Value|null>> $right
+     * @param scalar|Value|null|list<scalar|Value|null> $left
+     * @param list<scalar|Value|null|list<scalar|Value|null>> $right
      */
     public function _in($left, array $right): bool
     {
@@ -180,7 +180,7 @@ trait FunctionsComparison
      * NOT IN () - Whether a value is not within a set of values
      *
      * @param scalar|Value|null $left
-     * @param array<scalar|Value|null|array<scalar|Value|null>> $right
+     * @param list<scalar|Value|null|list<scalar|Value|null>> $right
      */
     public function _not_in($left, array $right): bool
     {

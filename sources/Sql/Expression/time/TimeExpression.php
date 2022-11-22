@@ -18,11 +18,11 @@ class TimeExpression implements SqlSerializable
     /** @var RootNode */
     private $initial;
 
-    /** @var TimeInterval[] */
+    /** @var list<TimeInterval> */
     private $intervals;
 
     /**
-     * @param TimeInterval[] $intervals
+     * @param list<TimeInterval> $intervals
      */
     public function __construct(RootNode $initial, array $intervals = [])
     {
@@ -36,7 +36,7 @@ class TimeExpression implements SqlSerializable
     }
 
     /**
-     * @return TimeInterval[]
+     * @return list<TimeInterval>
      */
     public function getIntervals(): array
     {

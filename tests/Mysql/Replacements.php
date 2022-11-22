@@ -7,7 +7,7 @@ namespace SqlFtw\Tests\Mysql;
 trait Replacements
 {
 
-    /** @var string[][] */
+    /** @var array<string, array<string, string>> */
     private static $replacements = [
         // some test fixtures
         '_alter.test' => ['#DET#' => ''],

@@ -210,7 +210,7 @@ class InsertCommandParser
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     private function parsePartitionsList(TokenList $tokenList): ?array
     {
@@ -228,7 +228,7 @@ class InsertCommandParser
     }
 
     /**
-     * @return ColumnIdentifier[]|null
+     * @return list<ColumnIdentifier>|null
      */
     private function parseColumnList(TokenList $tokenList): ?array
     {
@@ -265,7 +265,7 @@ class InsertCommandParser
     }
 
     /**
-     * @return non-empty-array<Assignment>
+     * @return non-empty-list<Assignment>
      */
     private function parseAssignments(TokenList $tokenList): array
     {
@@ -280,7 +280,7 @@ class InsertCommandParser
     }
 
     /**
-     * @return non-empty-array<array<ExpressionNode>>
+     * @return non-empty-list<list<ExpressionNode>>
      */
     private function parseRows(TokenList $tokenList): array
     {

@@ -17,11 +17,11 @@ use function array_values;
 class Row implements SqlSerializable
 {
 
-    /** @var array<RootNode> */
+    /** @var list<RootNode> */
     private $values;
 
     /**
-     * @param array<RootNode> $values
+     * @param list<RootNode> $values
      */
     public function __construct(array $values)
     {
@@ -29,7 +29,7 @@ class Row implements SqlSerializable
     }
 
     /**
-     * @return array<RootNode>
+     * @return list<RootNode>
      */
     public function getValues(): array
     {

@@ -17,18 +17,18 @@ use SqlFtw\Sql\UserName;
 class SetDefaultRoleCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<UserName|FunctionCall> */
+    /** @var non-empty-list<UserName|FunctionCall> */
     private $users;
 
     /** @var UserDefaultRolesSpecification|null */
     private $roles;
 
-    /** @var non-empty-array<UserName>|null */
+    /** @var non-empty-list<UserName>|null */
     private $rolesList;
 
     /**
-     * @param non-empty-array<UserName|FunctionCall> $users
-     * @param non-empty-array<UserName>|null $rolesList
+     * @param non-empty-list<UserName|FunctionCall> $users
+     * @param non-empty-list<UserName>|null $rolesList
      */
     public function __construct(array $users, ?UserDefaultRolesSpecification $roles, ?array $rolesList = null)
     {
@@ -38,7 +38,7 @@ class SetDefaultRoleCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName|FunctionCall>
+     * @return non-empty-list<UserName|FunctionCall>
      */
     public function getUsers(): array
     {
@@ -51,7 +51,7 @@ class SetDefaultRoleCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>|null
+     * @return non-empty-list<UserName>|null
      */
     public function getRolesList(): ?array
     {

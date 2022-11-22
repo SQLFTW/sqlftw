@@ -15,14 +15,14 @@ use SqlFtw\Sql\SqlSerializable;
 class WithClause implements SqlSerializable
 {
 
-    /** @var non-empty-array<WithExpression> */
+    /** @var non-empty-list<WithExpression> */
     private $expressions;
 
     /** @var bool */
     private $recursive;
 
     /**
-     * @param non-empty-array<WithExpression> $expressions
+     * @param non-empty-list<WithExpression> $expressions
      */
     public function __construct(array $expressions, bool $recursive = false)
     {
@@ -31,7 +31,7 @@ class WithClause implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<WithExpression>
+     * @return non-empty-list<WithExpression>
      */
     public function getExpressions(): array
     {

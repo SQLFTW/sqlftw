@@ -20,11 +20,11 @@ class ShowGrantsCommand extends Statement implements ShowCommand
     /** @var UserExpression|null */
     private $user;
 
-    /** @var non-empty-array<UserName>|null */
+    /** @var non-empty-list<UserName>|null */
     private $roles;
 
     /**
-     * @param non-empty-array<UserName> $roles
+     * @param non-empty-list<UserName> $roles
      */
     public function __construct(?UserExpression $user = null, ?array $roles = null)
     {
@@ -38,7 +38,7 @@ class ShowGrantsCommand extends Statement implements ShowCommand
     }
 
     /**
-     * @return non-empty-array<UserName>|null
+     * @return non-empty-list<UserName>|null
      */
     public function getRoles(): ?array
     {

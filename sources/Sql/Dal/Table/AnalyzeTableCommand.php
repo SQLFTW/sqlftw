@@ -16,14 +16,14 @@ use SqlFtw\Sql\Statement;
 class AnalyzeTableCommand extends Statement implements DalTablesCommand
 {
 
-    /** @var non-empty-array<ObjectIdentifier> */
+    /** @var non-empty-list<ObjectIdentifier> */
     private $tables;
 
     /** @var bool */
     private $local;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $tables
+     * @param non-empty-list<ObjectIdentifier> $tables
      */
     public function __construct(array $tables, bool $local = false)
     {
@@ -32,7 +32,7 @@ class AnalyzeTableCommand extends Statement implements DalTablesCommand
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getTables(): array
     {

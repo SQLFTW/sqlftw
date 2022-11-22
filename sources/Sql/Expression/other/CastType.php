@@ -28,7 +28,7 @@ class CastType implements ArgumentNode, ArgumentValue
     /** @var BaseType|null */
     private $type;
 
-    /** @var non-empty-array<int>|null */
+    /** @var non-empty-list<int>|null */
     private $size;
 
     /** @var bool|null */
@@ -47,7 +47,7 @@ class CastType implements ArgumentNode, ArgumentValue
     private $srid;
 
     /**
-     * @param non-empty-array<int>|null $size
+     * @param non-empty-list<int>|null $size
      */
     public function __construct(
         ?BaseType $type,
@@ -92,7 +92,7 @@ class CastType implements ArgumentNode, ArgumentValue
     }
 
     /**
-     * @param non-empty-array<int>|null $size
+     * @param non-empty-list<int>|null $size
      */
     private function checkSize(BaseType $type, ?array $size): void
     {
@@ -132,7 +132,7 @@ class CastType implements ArgumentNode, ArgumentValue
     }
 
     /**
-     * @return non-empty-array<int>|null
+     * @return non-empty-list<int>|null
      */
     public function getSize(): ?array
     {

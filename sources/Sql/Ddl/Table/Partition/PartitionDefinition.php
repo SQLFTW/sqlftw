@@ -24,10 +24,10 @@ class PartitionDefinition implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var non-empty-array<RootNode>|MaxValueLiteral|null */
+    /** @var non-empty-list<RootNode>|MaxValueLiteral|null */
     private $lessThan;
 
-    /** @var non-empty-array<RootNode>|null */
+    /** @var non-empty-list<RootNode>|null */
     private $values;
 
     /** @var non-empty-array<string, int|string|StorageEngine>|null */
@@ -37,8 +37,8 @@ class PartitionDefinition implements SqlSerializable
     private $subpartitions;
 
     /**
-     * @param non-empty-array<RootNode>|MaxValueLiteral|null $lessThan
-     * @param non-empty-array<RootNode>|null $values
+     * @param non-empty-list<RootNode>|MaxValueLiteral|null $lessThan
+     * @param non-empty-list<RootNode>|null $values
      * @param non-empty-array<string, int|string|StorageEngine>|null $options
      * @param non-empty-array<string, non-empty-array<int|string|StorageEngine>|null>|null $subpartitions
      */
@@ -72,7 +72,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<RootNode>|MaxValueLiteral|null
+     * @return non-empty-list<RootNode>|MaxValueLiteral|null
      */
     public function getLessThan()
     {
@@ -80,7 +80,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<RootNode>|null
+     * @return non-empty-list<RootNode>|null
      */
     public function getValues(): ?array
     {

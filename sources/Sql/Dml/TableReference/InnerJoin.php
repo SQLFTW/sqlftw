@@ -22,11 +22,11 @@ class InnerJoin extends Join
     /** @var RootNode|null */
     private $condition;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $using;
 
     /**
-     * @param non-empty-array<string>|null $using
+     * @param non-empty-list<string>|null $using
      */
     public function __construct(
         TableReferenceNode $left,
@@ -57,7 +57,7 @@ class InnerJoin extends Join
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getUsing(): ?array
     {

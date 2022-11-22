@@ -68,7 +68,7 @@ class FlushCommandParser
         $tables = null;
         $table = $tokenList->getObjectIdentifier();
         if ($table !== null) {
-            /** @var non-empty-array<ObjectIdentifier> $tables */
+            /** @var non-empty-list<ObjectIdentifier> $tables */
             $tables = [$table];
             while ($tokenList->hasSymbol(',')) {
                 $tables[] = $tokenList->expectObjectIdentifier();

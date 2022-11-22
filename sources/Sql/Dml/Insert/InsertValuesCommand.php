@@ -19,23 +19,23 @@ use function implode;
 class InsertValuesCommand extends InsertOrReplaceCommand implements InsertCommand
 {
 
-    /** @var non-empty-array<array<ExpressionNode>> */
+    /** @var non-empty-list<list<ExpressionNode>> */
     private $rows;
 
     /** @var string|null */
     private $alias;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $columnAliases;
 
     /** @var OnDuplicateKeyActions|null */
     private $onDuplicateKeyActions;
 
     /**
-     * @param non-empty-array<array<ExpressionNode>> $rows
-     * @param array<ColumnIdentifier>|null $columns
-     * @param non-empty-array<string>|null $columnAliases
-     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-list<list<ExpressionNode>> $rows
+     * @param list<ColumnIdentifier>|null $columns
+     * @param non-empty-list<string>|null $columnAliases
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(
         ObjectIdentifier $table,
@@ -57,7 +57,7 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
     }
 
     /**
-     * @return non-empty-array<array<ExpressionNode>>
+     * @return non-empty-list<list<ExpressionNode>>
      */
     public function getRows(): array
     {
@@ -70,7 +70,7 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getColumnAliases(): ?array
     {

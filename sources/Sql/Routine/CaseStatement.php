@@ -22,15 +22,15 @@ class CaseStatement extends Statement implements SqlSerializable
     /** @var RootNode|null */
     private $condition;
 
-    /** @var non-empty-array<RootNode> */
+    /** @var non-empty-list<RootNode> */
     private $values;
 
-    /** @var non-empty-array<array<Statement>> */
+    /** @var non-empty-list<list<Statement>> */
     private $statementLists;
 
     /**
-     * @param non-empty-array<RootNode> $values
-     * @param non-empty-array<array<Statement>> $statementLists
+     * @param non-empty-list<RootNode> $values
+     * @param non-empty-list<list<Statement>> $statementLists
      */
     public function __construct(?RootNode $condition, array $values, array $statementLists)
     {
@@ -49,7 +49,7 @@ class CaseStatement extends Statement implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<RootNode>
+     * @return non-empty-list<RootNode>
      */
     public function getValues(): array
     {
@@ -57,7 +57,7 @@ class CaseStatement extends Statement implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<array<Statement>>
+     * @return non-empty-list<list<Statement>>
      */
     public function getStatementLists(): array
     {

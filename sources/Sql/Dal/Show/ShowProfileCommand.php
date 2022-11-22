@@ -15,7 +15,7 @@ use SqlFtw\Sql\Statement;
 class ShowProfileCommand extends Statement implements ShowCommand
 {
 
-    /** @var ShowProfileType[] */
+    /** @var list<ShowProfileType> */
     private $types;
 
     /** @var int|null */
@@ -28,7 +28,7 @@ class ShowProfileCommand extends Statement implements ShowCommand
     private $offset;
 
     /**
-     * @param ShowProfileType[] $types
+     * @param list<ShowProfileType> $types
      */
     public function __construct(array $types, ?int $queryId, ?int $limit, ?int $offset)
     {
@@ -39,7 +39,7 @@ class ShowProfileCommand extends Statement implements ShowCommand
     }
 
     /**
-     * @return ShowProfileType[]
+     * @return list<ShowProfileType>
      */
     public function getTypes(): array
     {

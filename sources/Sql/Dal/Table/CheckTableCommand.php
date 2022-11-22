@@ -16,14 +16,14 @@ use SqlFtw\Sql\Statement;
 class CheckTableCommand extends Statement implements DalTablesCommand
 {
 
-    /** @var non-empty-array<ObjectIdentifier> */
+    /** @var non-empty-list<ObjectIdentifier> */
     private $names;
 
     /** @var CheckTableOption|null */
     private $option;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $names
+     * @param non-empty-list<ObjectIdentifier> $names
      */
     public function __construct(array $names, ?CheckTableOption $option = null)
     {
@@ -32,7 +32,7 @@ class CheckTableCommand extends Statement implements DalTablesCommand
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getTables(): array
     {

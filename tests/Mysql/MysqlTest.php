@@ -86,7 +86,7 @@ class MysqlTest
                 $results[] = $result;
             }
         } else {
-            /** @var Result[] $results */
+            /** @var list<Result> $results */
             $results = wait(parallelMap($paths, $runner)); // @phpstan-ignore-line Unable to resolve the template type T in call to function Amp\Promise\wait
         }
 
@@ -189,7 +189,7 @@ class MysqlTest
     }
 
     /**
-     * @param array<string, non-empty-array<array{Command, TokenList, SqlMode}>> $falseNegatives
+     * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $falseNegatives
      */
     private static function renderFalseNegatives(array $falseNegatives, Formatter $formatter): void
     {
@@ -230,7 +230,7 @@ class MysqlTest
     }
 
     /**
-     * @param array<string, non-empty-array<array{Command, TokenList, SqlMode}>> $falsePositives
+     * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $falsePositives
      */
     private static function renderFalsePositives(array $falsePositives, Formatter $formatter): void
     {
@@ -261,7 +261,7 @@ class MysqlTest
     }
 
     /**
-     * @param array<string, non-empty-array<array{Command, TokenList, SqlMode}>> $serialisationErrors
+     * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $serialisationErrors
      */
     public static function renderSerialisationErrors(array $serialisationErrors, Formatter $formatter): void
     {
@@ -300,7 +300,7 @@ class MysqlTest
     }
 
     /**
-     * @param string[] $paths
+     * @param list<string> $paths
      */
     public static function repeatPaths(array $paths): void
     {
@@ -308,7 +308,7 @@ class MysqlTest
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public static function getPaths(string $testsPath, string $lastFailPath): array
     {

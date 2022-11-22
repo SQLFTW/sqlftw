@@ -17,11 +17,11 @@ use SqlFtw\Sql\UserName;
 class RevokeAllCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<UserName|FunctionCall> */
+    /** @var non-empty-list<UserName|FunctionCall> */
     private $users;
 
     /**
-     * @param non-empty-array<UserName|FunctionCall> $users
+     * @param non-empty-list<UserName|FunctionCall> $users
      */
     public function __construct(array $users)
     {
@@ -29,7 +29,7 @@ class RevokeAllCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName|FunctionCall>
+     * @return non-empty-list<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

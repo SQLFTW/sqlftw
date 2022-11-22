@@ -24,12 +24,12 @@ class SetNamesCommand extends Statement implements SetCommand
     /** @var Collation|null */
     private $collation;
 
-    /** @var array<SetAssignment> */
+    /** @var list<SetAssignment> */
     private $assignments;
 
     /**
      * @param Charset|DefaultLiteral $charset
-     * @param array<SetAssignment> $assignments
+     * @param list<SetAssignment> $assignments
      */
     public function __construct($charset, ?Collation $collation, array $assignments = [])
     {
@@ -52,7 +52,7 @@ class SetNamesCommand extends Statement implements SetCommand
     }
 
     /**
-     * @return array<SetAssignment>
+     * @return list<SetAssignment>
      */
     public function getAssignments(): array
     {

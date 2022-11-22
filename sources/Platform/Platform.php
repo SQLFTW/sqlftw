@@ -31,21 +31,21 @@ class Platform
     public const MYSQL = 'mysql';
     public const MARIA = 'maria';
 
-    /** @var string[][] */
+    /** @var array<string, non-empty-list<string>> */
     private static $versions = [
         self::SQL => ['92', '99', '2003', '2008', '2011', '2016', '2019'],
         self::MYSQL => ['5.1', '5.5', '5.6', '5.7', '8.0'],
         self::MARIA => ['5.1', '5.2', '5.3', '5.5', '10.0', '10.1', '10.2', '10.3', '10.4', '10.5', '10.6', '10.7', '10.8'],
     ];
 
-    /** @var string[] */
+    /** @var array<string, string> */
     private static $defaultVersions = [
         self::SQL => '2011',
         self::MYSQL => '8.0',
         self::MARIA => '10.8',
     ];
 
-    /** @var array<string, string[]> */
+    /** @var array<string, list<string>> */
     public static $defaultSqlModes = [
         'mysql-5.6' => [
             SqlMode::NO_ENGINE_SUBSTITUTION,
@@ -79,7 +79,7 @@ class Platform
         ],
     ];
 
-    /** @var self[] */
+    /** @var array<string, self> */
     private static $instances = [];
 
     /** @var string */
@@ -91,28 +91,28 @@ class Platform
     /** @var FeaturesList */
     private $featuresList;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $features;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $reserved;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $nonReserved;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $operators;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $types;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $functions;
 
-    /** @var string[] */
+    /** @var list<string> */
     private $variables;
 
-    /** @var class-string[] */
+    /** @var list<class-string> */
     private $preparableCommands;
 
     final private function __construct(string $name, Version $version)
@@ -155,7 +155,7 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return non-empty-list<string>
      */
     public function getVersions(): array
     {
@@ -247,7 +247,7 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getDefaultModes(): array
     {
@@ -272,7 +272,7 @@ class Platform
     // features --------------------------------------------------------------------------------------------------------
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getFeatures(): array
     {
@@ -284,7 +284,7 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getReserved(): array
     {
@@ -296,7 +296,7 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getNonReserved(): array
     {
@@ -308,7 +308,7 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getOperators(): array
     {
@@ -320,7 +320,7 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getTypes(): array
     {
@@ -332,7 +332,7 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getBuiltInFunctions(): array
     {
@@ -344,7 +344,7 @@ class Platform
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getSystemVariables(): array
     {
@@ -356,12 +356,12 @@ class Platform
     }
 
     /**
-     * @return class-string[]
+     * @return list<class-string>
      */
     public function getPreparableCommands(): array
     {
         if ($this->preparableCommands === null) {
-            /** @var class-string[] $commands */
+            /** @var list<class-string> $commands */
             $commands = $this->filterForVersion($this->featuresList->preparableCommands, $this->version->getId());
             $this->preparableCommands = $commands;
         }
@@ -370,8 +370,8 @@ class Platform
     }
 
     /**
-     * @param array<array{string, int, int}> $values
-     * @return array<string>
+     * @param list<array{string, int, int}> $values
+     * @return list<string>
      */
     private function filterForVersion(array $values, int $version): array
     {

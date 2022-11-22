@@ -20,7 +20,7 @@ class EmptyCommand extends Statement implements Command
 {
 
     /**
-     * @param string[] $commentsBefore
+     * @param list<string> $commentsBefore
      */
     public function __construct(array $commentsBefore)
     {

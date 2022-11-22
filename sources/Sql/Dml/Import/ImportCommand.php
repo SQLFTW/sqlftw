@@ -16,11 +16,11 @@ use SqlFtw\Sql\Statement;
 class ImportCommand extends Statement implements DmlCommand
 {
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $files;
 
     /**
-     * @param non-empty-array<string> $files
+     * @param non-empty-list<string> $files
      */
     public function __construct(array $files)
     {

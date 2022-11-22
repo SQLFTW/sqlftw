@@ -15,7 +15,7 @@ interface TablesCommand extends Command
 {
 
     /**
-     * @return ObjectIdentifier[]
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getTables(): array;
 

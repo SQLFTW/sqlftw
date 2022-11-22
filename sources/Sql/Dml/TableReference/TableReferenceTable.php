@@ -21,15 +21,15 @@ class TableReferenceTable implements TableReferenceNode
     /** @var string|null */
     private $alias;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $partitions;
 
-    /** @var non-empty-array<IndexHint>|null */
+    /** @var non-empty-list<IndexHint>|null */
     private $indexHints;
 
     /**
-     * @param non-empty-array<string>|null $partitions
-     * @param non-empty-array<IndexHint>|null $indexHints
+     * @param non-empty-list<string>|null $partitions
+     * @param non-empty-list<IndexHint>|null $indexHints
      */
     public function __construct(ObjectIdentifier $table, ?string $alias = null, ?array $partitions = null, ?array $indexHints = null)
     {
@@ -50,7 +50,7 @@ class TableReferenceTable implements TableReferenceNode
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getPartitions(): ?array
     {
@@ -58,7 +58,7 @@ class TableReferenceTable implements TableReferenceNode
     }
 
     /**
-     * @return non-empty-array<IndexHint>|null
+     * @return non-empty-list<IndexHint>|null
      */
     public function getIndexHints(): ?array
     {

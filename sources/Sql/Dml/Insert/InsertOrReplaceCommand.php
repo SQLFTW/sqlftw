@@ -21,10 +21,10 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
     /** @var ObjectIdentifier */
     protected $table;
 
-    /** @var array<ColumnIdentifier>|null */
+    /** @var list<ColumnIdentifier>|null */
     protected $columns;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     protected $partitions;
 
     /** @var InsertPriority|null */
@@ -34,8 +34,8 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
     protected $ignore;
 
     /**
-     * @param array<ColumnIdentifier>|null $columns
-     * @param non-empty-array<string>|null $partitions
+     * @param list<ColumnIdentifier>|null $columns
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(
         ObjectIdentifier $table,
@@ -58,7 +58,7 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return array<ColumnIdentifier>|null
+     * @return list<ColumnIdentifier>|null
      */
     public function getColumns(): ?array
     {
@@ -66,7 +66,7 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getPartitions(): ?array
     {

@@ -17,18 +17,18 @@ use SqlFtw\Sql\UserName;
 class RevokeCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<UserPrivilege> */
+    /** @var non-empty-list<UserPrivilege> */
     private $privileges;
 
     /** @var UserPrivilegeResource */
     private $resource;
 
-    /** @var non-empty-array<UserName|FunctionCall> */
+    /** @var non-empty-list<UserName|FunctionCall> */
     private $users;
 
     /**
-     * @param non-empty-array<UserPrivilege> $privileges
-     * @param non-empty-array<UserName|FunctionCall> $users
+     * @param non-empty-list<UserPrivilege> $privileges
+     * @param non-empty-list<UserName|FunctionCall> $users
      */
     public function __construct(array $privileges, UserPrivilegeResource $resource, array $users)
     {
@@ -38,7 +38,7 @@ class RevokeCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserPrivilege>
+     * @return non-empty-list<UserPrivilege>
      */
     public function getPrivileges(): array
     {
@@ -51,7 +51,7 @@ class RevokeCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName|FunctionCall>
+     * @return non-empty-list<UserName|FunctionCall>
      */
     public function getUsers(): array
     {

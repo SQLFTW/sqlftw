@@ -116,12 +116,12 @@ use SqlFtw\Sql\MysqlVariable;
 class MysqlFeatures extends FeaturesList
 {
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $features = [
         // todo:
     ];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $reserved = [
         // https://dev.mysql.com/doc/refman/8.0/en/keywords.html
         [Keyword::ACCESSIBLE, 50106, self::MAX],
@@ -407,7 +407,7 @@ class MysqlFeatures extends FeaturesList
         [Keyword::ZEROFILL, self::MIN, self::MAX],
     ];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $nonReserved = [
         [Keyword::ACCOUNT, 50706, self::MAX],
         [Keyword::ACTION, self::MIN, self::MAX],
@@ -943,7 +943,7 @@ class MysqlFeatures extends FeaturesList
         [Keyword::ZONE, 80022, self::MAX],
     ];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $operators = [
         // assign
         [Operator::ASSIGN, self::MIN, self::MAX],
@@ -1022,7 +1022,7 @@ class MysqlFeatures extends FeaturesList
         [Operator::MEMBER_OF, 80017, self::MAX],
     ];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $types = [
         // bitwise
         [BaseType::BIT, self::MIN, self::MAX],
@@ -1108,7 +1108,7 @@ class MysqlFeatures extends FeaturesList
         [BaseType::MULTIPOLYGON, self::MIN, self::MAX],
     ];
 
-    /** @var array<array{string, int, int, 3?: int}> */
+    /** @var list<array{string, int, int, 3?: int}> */
     public $functions = [
         // comparison
         [BuiltInFunction::COALESCE, self::MIN, self::MAX],
@@ -1619,7 +1619,7 @@ class MysqlFeatures extends FeaturesList
         [BuiltInFunction::Y, self::MIN, 80000, 50700],
     ];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $variables = [
         // https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html
         [MysqlVariable::ACTIVATE_ALL_ROLES_ON_LOGIN, self::MIN, self::MAX],
@@ -2600,7 +2600,7 @@ class MysqlFeatures extends FeaturesList
         [MysqlVariable::MYSQLX_ZSTD_MAX_CLIENT_COMPRESSION_LEVEL, 80020, self::MAX],
     ];
 
-    /** @var array<array{class-string, int, int}> */
+    /** @var list<array{class-string, int, int}> */
     public $preparableCommands = [
         // https://dev.mysql.com/doc/refman/8.0/en/sql-prepared-statements.html (terribly incomplete)
         [AlterTableCommand::class, self::MIN, self::MAX],

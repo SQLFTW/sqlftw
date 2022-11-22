@@ -14,17 +14,17 @@ use function is_string;
 class IndexList
 {
 
-    /** @var IndexDefinition[] (string|int $name => $index) */
+    /** @var array<string|int, IndexDefinition> ($name => $index) */
     private $indexes = [];
 
-    /** @var IndexDefinition[] (string|int $name => $index) */
+    /** @var array<string|int, IndexDefinition> ($name => $index) */
     private $renamedIndexes = [];
 
-    /** @var IndexDefinition[] (string|int $name => $index) */
+    /** @var array<string|int, IndexDefinition> ($name => $index) */
     private $droppedIndexes = [];
 
     /**
-     * @param IndexDefinition[] $indexes
+     * @param array<string|int, IndexDefinition> $indexes
      */
     public function __construct(array $indexes)
     {
@@ -57,7 +57,7 @@ class IndexList
     }
 
     /**
-     * @return IndexDefinition[]
+     * @return array<string|int, IndexDefinition>
      */
     public function getIndexes(): array
     {
@@ -87,7 +87,7 @@ class IndexList
     }
 
     /**
-     * @return IndexDefinition[]
+     * @return array<string|int, IndexDefinition>
      */
     public function getUniqueKeys(): array
     {
@@ -106,7 +106,7 @@ class IndexList
     }
 
     /**
-     * @return IndexDefinition[]
+     * @return array<string|int, IndexDefinition>
      */
     public function getRenamedIndexes(): array
     {
@@ -114,7 +114,7 @@ class IndexList
     }
 
     /**
-     * @return IndexDefinition[]
+     * @return array<string|int, IndexDefinition>
      */
     public function getDroppedIndexes(): array
     {

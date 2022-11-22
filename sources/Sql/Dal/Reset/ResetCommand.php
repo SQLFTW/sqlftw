@@ -16,11 +16,11 @@ use SqlFtw\Sql\Statement;
 class ResetCommand extends Statement implements DalCommand
 {
 
-    /** @var non-empty-array<ResetOption> */
+    /** @var non-empty-list<ResetOption> */
     private $options;
 
     /**
-     * @param non-empty-array<ResetOption> $options
+     * @param non-empty-list<ResetOption> $options
      */
     public function __construct(array $options)
     {
@@ -28,7 +28,7 @@ class ResetCommand extends Statement implements DalCommand
     }
 
     /**
-     * @return non-empty-array<ResetOption>
+     * @return non-empty-list<ResetOption>
      */
     public function getOptions(): array
     {

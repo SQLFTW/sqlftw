@@ -18,19 +18,20 @@ use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
+use function array_values;
 use function implode;
 
 class ChangeReplicationFilterCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var non-empty-array<string, array<string>|array<ObjectIdentifier>> */
+    /** @var non-empty-array<string, array<string, string>|list<string|ObjectIdentifier>> */
     private $filters;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param non-empty-array<string, array<string>|array<ObjectIdentifier>> $filters
+     * @param non-empty-array<string, array<string, string>|list<string|ObjectIdentifier>> $filters
      */
     public function __construct(array $filters, ?string $channel = null)
     {
@@ -46,7 +47,7 @@ class ChangeReplicationFilterCommand extends Statement implements ReplicationCom
     }
 
     /**
-     * @return non-empty-array<string, array<string>|array<ObjectIdentifier>>
+     * @return non-empty-array<string, array<string, string>|list<string|ObjectIdentifier>>
      */
     public function getFilters(): array
     {
@@ -71,13 +72,13 @@ class ChangeReplicationFilterCommand extends Statement implements ReplicationCom
                     switch ($types[$filter]) {
                         case BaseType::CHAR . '[]':
                             if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
-                                return $filter . ' = (' . $formatter->formatNamesList($values) . ')';
+                                return $filter . ' = (' . $formatter->formatNamesList(array_values($values)) . ')';
                             } else {
-                                return $filter . ' = (' . $formatter->formatStringList($values) . ')';
+                                return $filter . ' = (' . $formatter->formatStringList(array_values($values)) . ')';
                             }
                         case ObjectIdentifier::class . '[]':
                             // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
-                            /** @var non-empty-array<QualifiedName> $values */
+                            /** @var non-empty-list<QualifiedName> $values */
                             return $filter . ' = (' . $formatter->formatSerializablesList($values) . ')';
                         case BaseType::CHAR . '{}':
                             return $filter . ' = (' . implode(', ', Arr::mapPairs($values, static function (string $key, string $value) use ($formatter) {

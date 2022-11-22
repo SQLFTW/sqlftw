@@ -22,15 +22,15 @@ use function rtrim;
 class RenameUserCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<UserName|FunctionCall> */
+    /** @var non-empty-list<UserName|FunctionCall> */
     protected $users;
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-list<UserName> */
     private $newUsers;
 
     /**
-     * @param non-empty-array<UserName|FunctionCall> $users
-     * @param non-empty-array<UserName> $newUsers
+     * @param non-empty-list<UserName|FunctionCall> $users
+     * @param non-empty-list<UserName> $newUsers
      */
     public function __construct(array $users, array $newUsers)
     {
@@ -43,7 +43,7 @@ class RenameUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName|FunctionCall>
+     * @return non-empty-list<UserName|FunctionCall>
      */
     public function getUsers(): array
     {
@@ -51,7 +51,7 @@ class RenameUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-list<UserName>
      */
     public function getNewUsers(): array
     {

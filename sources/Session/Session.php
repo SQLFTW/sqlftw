@@ -43,7 +43,7 @@ class Session
     /** @var Charset|null */
     private $charset;
 
-    /** @var array<Collation> */
+    /** @var list<Collation> */
     private $collation = [];
 
     /** @var array<string, UnresolvedExpression|scalar|Value|null> */

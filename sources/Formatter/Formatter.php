@@ -130,7 +130,7 @@ class Formatter
     }
 
     /**
-     * @param non-empty-array<string|AllLiteral|PrimaryLiteral> $names
+     * @param non-empty-list<string|AllLiteral|PrimaryLiteral> $names
      */
     public function formatNamesList(array $names, string $separator = ', '): string
     {
@@ -168,7 +168,7 @@ class Formatter
     }
 
     /**
-     * @param non-empty-array<int|float|bool|string|Date|Time|DateTimeInterface|SqlSerializable|null> $values
+     * @param non-empty-list<int|float|bool|string|Date|Time|DateTimeInterface|SqlSerializable|null> $values
      */
     public function formatValuesList(array $values, string $separator = ', '): string
     {
@@ -196,7 +196,7 @@ class Formatter
     }
 
     /**
-     * @param non-empty-array<string> $strings
+     * @param non-empty-list<string> $strings
      */
     public function formatStringList(array $strings, string $separator = ', '): string
     {
@@ -206,7 +206,7 @@ class Formatter
     }
 
     /**
-     * @param non-empty-array<SqlSerializable> $serializables
+     * @param non-empty-list<SqlSerializable> $serializables
      */
     public function formatSerializablesList(array $serializables, string $separator = ', '): string
     {
@@ -216,7 +216,7 @@ class Formatter
     }
 
     /**
-     * @param non-empty-array<SqlSerializable> $serializables
+     * @param non-empty-array<string, SqlSerializable> $serializables
      */
     public function formatSerializablesMap(array $serializables, string $separator = ', ', string $keyValueSeparator = ' = '): string
     {

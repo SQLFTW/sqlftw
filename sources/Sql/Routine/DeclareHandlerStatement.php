@@ -19,14 +19,14 @@ class DeclareHandlerStatement extends Statement implements SqlSerializable
     /** @var HandlerAction */
     private $action;
 
-    /** @var non-empty-array<Condition> */
+    /** @var non-empty-list<Condition> */
     private $conditions;
 
     /** @var Statement */
     private $statement;
 
     /**
-     * @param non-empty-array<Condition> $conditions
+     * @param non-empty-list<Condition> $conditions
      */
     public function __construct(HandlerAction $action, array $conditions, Statement $statement)
     {
@@ -41,7 +41,7 @@ class DeclareHandlerStatement extends Statement implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<Condition>
+     * @return non-empty-list<Condition>
      */
     public function getConditions(): array
     {

@@ -261,7 +261,7 @@ class TableReferenceParser
                 $partitions = [];
                 do {
                     // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
-                    /** @var non-empty-array<string> $partitions */
+                    /** @var non-empty-list<string> $partitions */
                     $partitions[] = $tokenList->expectName(EntityType::PARTITION);
                 } while ($tokenList->hasSymbol(','));
                 $tokenList->expectSymbol(')');
@@ -290,7 +290,7 @@ class TableReferenceParser
     }
 
     /**
-     * @return array{string|null, non-empty-array<string>|null}
+     * @return array{string|null, non-empty-list<string>|null}
      */
     private function parseAliasAndColumns(TokenList $tokenList): array
     {
@@ -309,7 +309,7 @@ class TableReferenceParser
     }
 
     /**
-     * @return array{RootNode|null, non-empty-array<string>|null}
+     * @return array{RootNode|null, non-empty-list<string>|null}
      */
     private function parseJoinCondition(TokenList $tokenList): array
     {
@@ -340,7 +340,7 @@ class TableReferenceParser
      * index_list:
      *     index_name [, index_name] ...
      *
-     * @return non-empty-array<IndexHint>
+     * @return non-empty-list<IndexHint>
      */
     private function parseIndexHints(TokenList $tokenList): array
     {

@@ -23,18 +23,18 @@ class GetDiagnosticsCommand extends Statement implements Command
     /** @var DiagnosticsArea|null */
     private $area;
 
-    /** @var non-empty-array<DiagnosticsItem>|null */
+    /** @var non-empty-list<DiagnosticsItem>|null */
     private $statementItems;
 
     /** @var RootNode|null */
     private $conditionNumber;
 
-    /** @var non-empty-array<DiagnosticsItem>|null */
+    /** @var non-empty-list<DiagnosticsItem>|null */
     private $conditionItems;
 
     /**
-     * @param non-empty-array<DiagnosticsItem>|null $statementItems
-     * @param non-empty-array<DiagnosticsItem>|null $conditionItems
+     * @param non-empty-list<DiagnosticsItem>|null $statementItems
+     * @param non-empty-list<DiagnosticsItem>|null $conditionItems
      */
     public function __construct(
         ?DiagnosticsArea $area,
@@ -73,7 +73,7 @@ class GetDiagnosticsCommand extends Statement implements Command
     }
 
     /**
-     * @return non-empty-array<DiagnosticsItem>
+     * @return non-empty-list<DiagnosticsItem>
      */
     public function getStatementItems(): ?array
     {
@@ -86,7 +86,7 @@ class GetDiagnosticsCommand extends Statement implements Command
     }
 
     /**
-     * @return non-empty-array<DiagnosticsItem>
+     * @return non-empty-list<DiagnosticsItem>
      */
     public function getConditionItems(): ?array
     {

@@ -85,7 +85,7 @@ use function ucfirst;
 class TokenList
 {
 
-    /** @var non-empty-array<Token> */
+    /** @var non-empty-list<Token> */
     private $tokens;
 
     /** @var Session */
@@ -108,10 +108,10 @@ class TokenList
     /** @var int */
     private $position = 0;
 
-    /** @var array<string&RoutineType::*> Are we inside a function, procedure, trigger or event definition? */
+    /** @var list<RoutineType::*> Are we inside a function, procedure, trigger or event definition? */
     private $inRoutine = [];
 
-    /** @var array<SubqueryType::*> Are we inside a subquery, and what type? */
+    /** @var list<SubqueryType::*> Are we inside a subquery, and what type? */
     private $inSubquery = [];
 
     /** @var bool Are we inside a UNION expression? */
@@ -127,7 +127,7 @@ class TokenList
     private $trailingDelimiter = '';
 
     /**
-     * @param non-empty-array<Token> $tokens
+     * @param non-empty-list<Token> $tokens
      */
     public function __construct(array $tokens, Session $session, int $autoSkip = 0, bool $invalid = false)
     {
@@ -341,7 +341,7 @@ class TokenList
     // contents --------------------------------------------------------------------------------------------------------
 
     /**
-     * @return Token[]
+     * @return non-empty-list<Token>
      */
     public function getTokens(): array
     {
@@ -366,7 +366,7 @@ class TokenList
         if ($startOffset >= $endOffset) {
             throw new InvalidArgumentException('Start offset should be smaller than end offset');
         }
-        /** @var non-empty-array<Token> $tokens */
+        /** @var non-empty-list<Token> $tokens */
         $tokens = array_slice($this->tokens, $startOffset, $endOffset - $startOffset + 1);
 
         return new self($tokens, $this->session, $this->autoSkip);
@@ -377,7 +377,7 @@ class TokenList
      */
     public function filter(callable $filter): self
     {
-        /** @var non-empty-array<Token> $tokens */
+        /** @var non-empty-list<Token> $tokens */
         $tokens = [];
         foreach ($this->tokens as $token) {
             if (!$filter($token)) {
@@ -393,7 +393,7 @@ class TokenList
      */
     public function map(callable $mapper): self
     {
-        /** @var non-empty-array<Token> $tokens */
+        /** @var non-empty-list<Token> $tokens */
         $tokens = [];
         foreach ($this->tokens as $token) {
             $tokens[] = $mapper($token);
@@ -686,7 +686,7 @@ class TokenList
         if (!in_array($upper, $operators, true)) {
             $this->position--;
 
-            throw InvalidTokenException::tokens(T::OPERATOR, 0, $operators, $token, $this);
+            throw InvalidTokenException::tokens(T::OPERATOR, 0, array_values($operators), $token, $this);
         }
 
         return $token->value;
@@ -839,7 +839,7 @@ class TokenList
         } elseif (($token->type & T::BINARY_LITERAL) !== 0) {
             return new BinaryLiteral($token->value, $charset);
         } else {
-            /** @var non-empty-array<string> $values */
+            /** @var non-empty-list<string> $values */
             $values = [$token->value];
             while (($next = $this->getString()) !== null) {
                 $values[] = $next;
@@ -887,7 +887,7 @@ class TokenList
         } elseif (($token->type & T::BINARY_LITERAL) !== 0) {
             return new BinaryLiteral($token->value, $charset);
         } else {
-            /** @var non-empty-array<string> $values */
+            /** @var non-empty-list<string> $values */
             $values = [$token->value];
             while (($next = $this->getString()) !== null) {
                 $values[] = $next;
@@ -951,7 +951,7 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            /** @var string[] $values */
+            /** @var list<string> $values */
             $values = call_user_func([$className, 'getAllowedValues']);
 
             throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
@@ -969,7 +969,7 @@ class TokenList
             $this->doAutoSkip();
         }
         $start = $this->position;
-        /** @var string[] $values */
+        /** @var list<string> $values */
         $values = call_user_func([$className, 'getAllowedValues']);
         foreach ($values as $value) {
             $this->position = $start;
@@ -1185,7 +1185,7 @@ class TokenList
     {
         $token = $this->get(T::KEYWORD);
 
-        throw InvalidTokenException::tokens(T::KEYWORD, 0, $keywords, $token, $this);
+        throw InvalidTokenException::tokens(T::KEYWORD, 0, array_values($keywords), $token, $this);
     }
 
     public function expectKeyword(?string $keyword = null): string
@@ -1370,7 +1370,7 @@ class TokenList
             $this->doAutoSkip();
         }
         $start = $this->position;
-        /** @var string[] $values */
+        /** @var list<string> $values */
         $values = call_user_func([$className, 'getAllowedValues']);
         foreach ($values as $value) {
             $this->position = $start;
@@ -1503,7 +1503,7 @@ class TokenList
                 $charset = $this->expectName(null);
             }
             if (!Charset::validateValue($charset)) {
-                $values = Charset::getAllowedValues();
+                $values = array_values(Charset::getAllowedValues());
 
                 throw InvalidTokenException::tokens(T::STRING | T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
             }

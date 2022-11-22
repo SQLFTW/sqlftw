@@ -30,18 +30,18 @@ class StartSlaveCommand extends Statement implements ReplicationCommand
     /** @var string|null */
     private $pluginDir;
 
-    /** @var non-empty-array<string, string|int|bool|non-empty-array<UuidSet>>|null */
+    /** @var non-empty-array<string, string|int|bool|non-empty-list<UuidSet>>|null */
     private $until;
 
-    /** @var non-empty-array<ReplicationThreadType>|null */
+    /** @var non-empty-list<ReplicationThreadType>|null */
     private $threadTypes;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param non-empty-array<string, string|int|bool|non-empty-array<UuidSet>>|null $until
-     * @param non-empty-array<ReplicationThreadType>|null $threadTypes
+     * @param non-empty-array<string, string|int|bool|non-empty-list<UuidSet>>|null $until
+     * @param non-empty-list<ReplicationThreadType>|null $threadTypes
      */
     public function __construct(
         ?string $user,
@@ -82,7 +82,7 @@ class StartSlaveCommand extends Statement implements ReplicationCommand
     }
 
     /**
-     * @return non-empty-array<string, string|int|bool|non-empty-array<UuidSet>>|null
+     * @return non-empty-array<string, string|int|bool|non-empty-list<UuidSet>>|null
      */
     public function getUntil(): ?array
     {
@@ -90,7 +90,7 @@ class StartSlaveCommand extends Statement implements ReplicationCommand
     }
 
     /**
-     * @return non-empty-array<ReplicationThreadType>|null
+     * @return non-empty-list<ReplicationThreadType>|null
      */
     public function getThreadTypes(): ?array
     {
@@ -116,7 +116,7 @@ class StartSlaveCommand extends Statement implements ReplicationCommand
                     return $name;
                 } elseif (is_array($value)) {
                     // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
-                    /** @var non-empty-array<UuidSet> $value */
+                    /** @var non-empty-list<UuidSet> $value */
                     return $name . ' = ' . $formatter->formatSerializablesList($value);
                 } else {
                     return $name . ' = ' . $formatter->formatValue($value);

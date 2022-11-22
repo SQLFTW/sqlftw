@@ -18,15 +18,15 @@ use function count;
 class IfStatement extends Statement
 {
 
-    /** @var non-empty-array<RootNode> */
+    /** @var non-empty-list<RootNode> */
     private $conditions;
 
-    /** @var non-empty-array<array<Statement>> */
+    /** @var non-empty-list<list<Statement>> */
     private $statementLists;
 
     /**
-     * @param non-empty-array<RootNode> $conditions
-     * @param non-empty-array<array<Statement>> $statementLists
+     * @param non-empty-list<RootNode> $conditions
+     * @param non-empty-list<list<Statement>> $statementLists
      */
     public function __construct(array $conditions, array $statementLists)
     {
@@ -39,7 +39,7 @@ class IfStatement extends Statement
     }
 
     /**
-     * @return non-empty-array<RootNode>
+     * @return non-empty-list<RootNode>
      */
     public function getConditions(): array
     {
@@ -47,7 +47,7 @@ class IfStatement extends Statement
     }
 
     /**
-     * @return non-empty-array<array<Statement>>
+     * @return non-empty-list<list<Statement>>
      */
     public function getStatementLists(): array
     {

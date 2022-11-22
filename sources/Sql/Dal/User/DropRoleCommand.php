@@ -16,14 +16,14 @@ use SqlFtw\Sql\UserName;
 class DropRoleCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<UserName> */
+    /** @var non-empty-list<UserName> */
     private $roles;
 
     /** @var bool */
     private $ifExists;
 
     /**
-     * @param non-empty-array<UserName> $roles
+     * @param non-empty-list<UserName> $roles
      */
     public function __construct(array $roles, bool $ifExists = false)
     {
@@ -32,7 +32,7 @@ class DropRoleCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-list<UserName>
      */
     public function getRoles(): array
     {

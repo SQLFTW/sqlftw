@@ -461,7 +461,7 @@ class UserCommandsParser
      *   | SUBJECT 'subject'
      * }
      *
-     * @return UserTlsOption[]|null
+     * @return list<UserTlsOption>|null
      */
     private function parseTlsOptions(TokenList $tokenList): ?array
     {
@@ -500,7 +500,7 @@ class UserCommandsParser
      *   | MAX_USER_CONNECTIONS count
      * }
      *
-     * @return non-empty-array<UserResourceOption>|null
+     * @return non-empty-list<UserResourceOption>|null
      */
     private function parseResourceOptions(TokenList $tokenList): ?array
     {
@@ -534,7 +534,7 @@ class UserCommandsParser
      *   | ACCOUNT UNLOCK
      * }
      *
-     * @return non-empty-array<UserPasswordLockOption>|null
+     * @return non-empty-list<UserPasswordLockOption>|null
      */
     private function parsePasswordLockOptions(TokenList $tokenList): ?array
     {
@@ -736,7 +736,7 @@ class UserCommandsParser
     /**
      * priv_type [(column_list)] [, priv_type [(column_list)]] ...
      *
-     * @return non-empty-array<UserPrivilege>
+     * @return non-empty-list<UserPrivilege>
      */
     private function parsePrivilegesList(TokenList $tokenList): array
     {
@@ -822,7 +822,7 @@ class UserCommandsParser
     }
 
     /**
-     * @param non-empty-array<UserPrivilege> $privileges
+     * @param non-empty-list<UserPrivilege> $privileges
      */
     private function checkPrivilegeAndResource(TokenList $tokenList, UserPrivilegeResource $resource, array $privileges): void
     {
@@ -1046,7 +1046,7 @@ class UserCommandsParser
     }
 
     /**
-     * @return non-empty-array<UserName|FunctionCall>
+     * @return non-empty-list<UserName|FunctionCall>
      */
     private function parseUsersList(TokenList $tokenList): array
     {
@@ -1059,7 +1059,7 @@ class UserCommandsParser
     }
 
     /**
-     * @return non-empty-array<UserName>
+     * @return non-empty-list<UserName>
      */
     private function parseRolesList(TokenList $tokenList): array
     {

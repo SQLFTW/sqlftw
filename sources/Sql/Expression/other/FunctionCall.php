@@ -135,7 +135,9 @@ class FunctionCall implements RootNode
                 $first = false;
             }
         } elseif ($this->arguments !== []) {
-            $arguments = $formatter->formatSerializablesList($this->arguments);
+            /** @var non-empty-list<ArgumentNode> $values */
+            $values = $this->arguments;
+            $arguments = $formatter->formatSerializablesList($values);
         }
 
         $result = $this->function->serialize($formatter) . '(' . $arguments . ')';

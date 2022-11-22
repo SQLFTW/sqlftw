@@ -23,7 +23,7 @@ use SqlFtw\Sql\Statement;
 class SelectCommand extends Statement implements SimpleQuery
 {
 
-    /** @var non-empty-array<SelectExpression> */
+    /** @var non-empty-list<SelectExpression> */
     private $columns;
 
     /** @var TableReferenceNode|null */
@@ -32,7 +32,7 @@ class SelectCommand extends Statement implements SimpleQuery
     /** @var ExpressionNode|null */
     private $where;
 
-    /** @var non-empty-array<GroupByExpression>|null */
+    /** @var non-empty-list<GroupByExpression>|null */
     private $groupBy;
 
     /** @var ExpressionNode|null */
@@ -41,10 +41,10 @@ class SelectCommand extends Statement implements SimpleQuery
     /** @var WithClause|null */
     private $with;
 
-    /** @var non-empty-array<WindowSpecification>|null */
+    /** @var non-empty-array<string, WindowSpecification>|null */
     private $windows;
 
-    /** @var non-empty-array<OrderByExpression>|null */
+    /** @var non-empty-list<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
@@ -56,27 +56,27 @@ class SelectCommand extends Statement implements SimpleQuery
     /** @var SelectDistinctOption|null */
     private $distinct;
 
-    /** @var bool[] */
+    /** @var array<string, bool> */
     private $options;
 
     /** @var SelectInto|null */
     private $into;
 
-    /** @var non-empty-array<SelectLocking>|null */
+    /** @var non-empty-list<SelectLocking>|null */
     private $locking;
 
     /** @var bool */
     private $withRollup;
 
     /**
-     * @param non-empty-array<SelectExpression> $columns
-     * @param non-empty-array<GroupByExpression>|null $groupBy
-     * @param non-empty-array<WindowSpecification>|null $windows ($name => $spec)
-     * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param non-empty-list<SelectExpression> $columns
+     * @param non-empty-list<GroupByExpression>|null $groupBy
+     * @param non-empty-array<string, WindowSpecification>|null $windows ($name => $spec)
+     * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      * @param int|SimpleName|Placeholder|null $offset
      * @param array<string, bool> $options
-     * @param non-empty-array<SelectLocking>|null $locking
+     * @param non-empty-list<SelectLocking>|null $locking
      */
     public function __construct(
         array $columns,
@@ -120,7 +120,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return non-empty-array<SelectExpression>
+     * @return non-empty-list<SelectExpression>
      */
     public function getColumns(): array
     {
@@ -138,7 +138,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return non-empty-array<GroupByExpression>|null
+     * @return non-empty-list<GroupByExpression>|null
      */
     public function getGroupBy(): ?array
     {
@@ -161,7 +161,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return non-empty-array<WindowSpecification>|null
+     * @return non-empty-array<string, WindowSpecification>|null
      */
     public function getWindows(): ?array
     {
@@ -169,7 +169,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {
@@ -225,7 +225,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return bool[]
+     * @return array<string, bool>
      */
     public function getOptions(): array
     {
@@ -246,7 +246,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return non-empty-array<SelectLocking>|null
+     * @return non-empty-list<SelectLocking>|null
      */
     public function getLocking(): ?array
     {

@@ -15,7 +15,7 @@ interface SimpleRule extends AnalyzerRule
 {
 
     /**
-     * @return AnalyzerResult[]
+     * @return list<AnalyzerResult>
      */
     public function process(Statement $statement, SimpleContext $context, int $flags): array;
 

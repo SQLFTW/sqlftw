@@ -22,14 +22,14 @@ class PartitioningCondition implements SqlSerializable
     /** @var RootNode|null */
     private $expression;
 
-    /** @var array<string>|null */
+    /** @var list<string>|null */
     private $columns;
 
     /** @var int|null */
     private $algorithm;
 
     /**
-     * @param array<string>|null $columns
+     * @param list<string>|null $columns
      */
     public function __construct(
         PartitioningConditionType $type,
@@ -54,7 +54,7 @@ class PartitioningCondition implements SqlSerializable
     }
 
     /**
-     * @return array<string>|null
+     * @return list<string>|null
      */
     public function getColumns(): ?array
     {

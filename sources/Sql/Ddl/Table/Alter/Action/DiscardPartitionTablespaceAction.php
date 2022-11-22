@@ -14,11 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class DiscardPartitionTablespaceAction implements PartitioningAction, TablespaceAction
 {
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $partitions;
 
     /**
-     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(?array $partitions = null)
     {
@@ -26,7 +26,7 @@ class DiscardPartitionTablespaceAction implements PartitioningAction, Tablespace
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getPartitions(): ?array
     {

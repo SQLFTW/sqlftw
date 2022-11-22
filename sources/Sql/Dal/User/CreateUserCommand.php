@@ -17,19 +17,19 @@ use SqlFtw\Sql\UserName;
 class CreateUserCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<IdentifiedUser> */
+    /** @var non-empty-list<IdentifiedUser> */
     private $users;
 
-    /** @var non-empty-array<UserName>|null */
+    /** @var non-empty-list<UserName>|null */
     private $defaultRoles;
 
-    /** @var array<UserTlsOption>|null */
+    /** @var list<UserTlsOption>|null */
     private $tlsOptions;
 
-    /** @var non-empty-array<UserResourceOption>|null */
+    /** @var non-empty-list<UserResourceOption>|null */
     private $resourceOptions;
 
-    /** @var non-empty-array<UserPasswordLockOption>|null */
+    /** @var non-empty-list<UserPasswordLockOption>|null */
     private $passwordLockOptions;
 
     /** @var string|null */
@@ -42,11 +42,11 @@ class CreateUserCommand extends Statement implements UserCommand
     private $ifNotExists;
 
     /**
-     * @param non-empty-array<IdentifiedUser> $users
-     * @param non-empty-array<UserName>|null $defaultRoles
-     * @param array<UserTlsOption>|null $tlsOptions
-     * @param non-empty-array<UserResourceOption>|null $resourceOptions
-     * @param non-empty-array<UserPasswordLockOption>|null $passwordLockOptions
+     * @param non-empty-list<IdentifiedUser> $users
+     * @param non-empty-list<UserName>|null $defaultRoles
+     * @param list<UserTlsOption>|null $tlsOptions
+     * @param non-empty-list<UserResourceOption>|null $resourceOptions
+     * @param non-empty-list<UserPasswordLockOption>|null $passwordLockOptions
      */
     public function __construct(
         array $users,
@@ -74,7 +74,7 @@ class CreateUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<IdentifiedUser>
+     * @return non-empty-list<IdentifiedUser>
      */
     public function getUsers(): array
     {
@@ -82,7 +82,7 @@ class CreateUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserName>|null
+     * @return non-empty-list<UserName>|null
      */
     public function getDefaultRoles(): ?array
     {
@@ -90,7 +90,7 @@ class CreateUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return array<UserTlsOption>|null
+     * @return list<UserTlsOption>|null
      */
     public function getTlsOptions(): ?array
     {
@@ -98,7 +98,7 @@ class CreateUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserResourceOption>|null
+     * @return non-empty-list<UserResourceOption>|null
      */
     public function getResourceOptions(): ?array
     {
@@ -106,7 +106,7 @@ class CreateUserCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserPasswordLockOption>|null
+     * @return non-empty-list<UserPasswordLockOption>|null
      */
     public function getPasswordLockOptions(): ?array
     {

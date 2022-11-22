@@ -44,9 +44,12 @@ class TablespaceCommandsParser
 
         $options = [];
         $keyword = $tokenList->getAnyKeyword(Keyword::ADD, Keyword::DROP);
-        if ($keyword !== null) {
+        if ($keyword === Keyword::ADD) {
             $tokenList->expectKeyword(Keyword::DATAFILE);
-            $options[$keyword . ' ' . Keyword::DATAFILE] = $tokenList->expectString();
+            $options[TablespaceOption::ADD_DATAFILE] = $tokenList->expectString();
+        } elseif ($keyword === Keyword::DROP) {
+            $tokenList->expectKeyword(Keyword::DATAFILE);
+            $options[TablespaceOption::DROP_DATAFILE] = $tokenList->expectString();
         }
         if ($tokenList->hasKeyword(Keyword::INITIAL_SIZE)) {
             $tokenList->passSymbol('=');

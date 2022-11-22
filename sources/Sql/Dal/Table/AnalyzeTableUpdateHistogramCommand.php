@@ -19,7 +19,7 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
     /** @var non-empty-list<ObjectIdentifier> */
     private $tables;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $columns;
 
     /** @var int|null */
@@ -30,7 +30,7 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
 
     /**
      * @param non-empty-list<ObjectIdentifier> $tables
-     * @param non-empty-array<string> $columns
+     * @param non-empty-list<string> $columns
      */
     public function __construct(array $tables, array $columns, ?int $buckets = null, bool $local = false)
     {
@@ -49,7 +49,7 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     public function getColumns(): array
     {

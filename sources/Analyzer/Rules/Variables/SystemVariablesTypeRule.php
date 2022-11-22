@@ -41,7 +41,7 @@ class SystemVariablesTypeRule implements SimpleRule
 {
 
     /**
-     * @return AnalyzerResult[]
+     * @return list<AnalyzerResult>
      */
     public function process(Statement $statement, SimpleContext $context, int $flags): array
     {
@@ -53,7 +53,7 @@ class SystemVariablesTypeRule implements SimpleRule
     }
 
     /**
-     * @return AnalyzerResult[]
+     * @return list<AnalyzerResult>
      */
     private function processSet(SetVariablesCommand $command, SimpleContext $context): array
     {

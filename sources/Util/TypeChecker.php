@@ -51,7 +51,7 @@ class TypeChecker
 {
 
     /**
-     * @param string|string[]|int[] $types
+     * @param string|list<string|int> $types
      * @param mixed $value
      */
     public static function check($value, $types, ?string $field = null): void

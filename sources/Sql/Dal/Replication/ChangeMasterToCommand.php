@@ -41,7 +41,9 @@ class ChangeMasterToCommand extends Statement implements ReplicationCommand
             }
             TypeChecker::check($value, SlaveOption::getTypes()[$option], $option);
 
-            $options[(string) $option] = $value;
+            // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
+            /** @var non-empty-array<string, SlaveOptionValue> $options */
+            $options[$option] = $value;
         }
 
         $this->options = $options;

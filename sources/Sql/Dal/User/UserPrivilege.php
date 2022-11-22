@@ -18,11 +18,11 @@ class UserPrivilege implements SqlSerializable
     /** @var UserPrivilegeType */
     private $type;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $columns;
 
     /**
-     * @param non-empty-array<string>|null $columns
+     * @param non-empty-list<string>|null $columns
      */
     public function __construct(UserPrivilegeType $type, ?array $columns)
     {
@@ -36,7 +36,7 @@ class UserPrivilege implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getColumns(): ?array
     {

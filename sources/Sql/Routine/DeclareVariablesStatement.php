@@ -18,7 +18,7 @@ use SqlFtw\Sql\Statement;
 class DeclareVariablesStatement extends Statement implements SqlSerializable
 {
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $variables;
 
     /** @var ColumnType */
@@ -28,7 +28,7 @@ class DeclareVariablesStatement extends Statement implements SqlSerializable
     private $default;
 
     /**
-     * @param non-empty-array<string> $variables
+     * @param non-empty-list<string> $variables
      */
     public function __construct(array $variables, ColumnType $type, ?RootNode $default = null)
     {
@@ -38,7 +38,7 @@ class DeclareVariablesStatement extends Statement implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     public function getVariables(): array
     {

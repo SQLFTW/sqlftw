@@ -25,7 +25,7 @@ class ReplicationFilter extends SqlEnum
     public const REPLICATE_WILD_IGNORE_TABLE = Keyword::REPLICATE_WILD_IGNORE_TABLE;
     public const REPLICATE_REWRITE_DB = Keyword::REPLICATE_REWRITE_DB;
 
-    /** @var string[] */
+    /** @var array<string, string> */
     private static $types = [
         self::REPLICATE_DO_DB => BaseType::CHAR . '[]',
         self::REPLICATE_IGNORE_DB => BaseType::CHAR . '[]',
@@ -37,7 +37,7 @@ class ReplicationFilter extends SqlEnum
     ];
 
     /**
-     * @return string[]
+     * @return array<string, string>
      */
     public static function getTypes(): array
     {

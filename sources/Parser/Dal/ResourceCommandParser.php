@@ -63,7 +63,7 @@ class ResourceCommandParser
     }
 
     /**
-     * @return array{non-empty-array<array{0: int, 1?: int}>|null, int|null, bool|null, bool}
+     * @return array{non-empty-list<array{0: int, 1?: int}>|null, int|null, bool|null, bool}
      */
     private function parseResourceGroupOptions(TokenList $tokenList): array
     {

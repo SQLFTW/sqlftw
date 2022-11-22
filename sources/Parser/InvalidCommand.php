@@ -27,7 +27,7 @@ class InvalidCommand extends Statement implements Command
     private $command;
 
     /**
-     * @param string[] $commentsBefore
+     * @param list<string> $commentsBefore
      */
     public function __construct(array $commentsBefore, Throwable $exception, ?Command $command = null)
     {

@@ -21,11 +21,11 @@ class CallCommand extends Statement implements DmlCommand
     /** @var ObjectIdentifier */
     private $procedure;
 
-    /** @var array<RootNode>|null */
+    /** @var list<RootNode>|null */
     private $params;
 
     /**
-     * @param array<RootNode>|null $params
+     * @param list<RootNode>|null $params
      */
     public function __construct(ObjectIdentifier $procedure, ?array $params = null)
     {
@@ -39,7 +39,7 @@ class CallCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return array<RootNode>|null
+     * @return list<RootNode>|null
      */
     public function getParams(): ?array
     {

@@ -17,7 +17,7 @@ use SqlFtw\Sql\Statement;
 class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCommand
 {
 
-    /** @var non-empty-array<ObjectIdentifier> */
+    /** @var non-empty-list<ObjectIdentifier> */
     private $views;
 
     /** @var bool */
@@ -27,7 +27,7 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
     private $option;
 
     /**
-     * @param non-empty-array<ObjectIdentifier> $views
+     * @param non-empty-list<ObjectIdentifier> $views
      */
     public function __construct(array $views, bool $ifExists = false, ?DropViewOption $option = null)
     {
@@ -37,7 +37,7 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
     }
 
     /**
-     * @return non-empty-array<ObjectIdentifier>
+     * @return non-empty-list<ObjectIdentifier>
      */
     public function getViews(): array
     {

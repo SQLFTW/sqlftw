@@ -31,10 +31,10 @@ abstract class LoadCommand extends Statement implements DmlCommand
     /** @var Charset|null */
     private $charset;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $fields;
 
-    /** @var non-empty-array<RootNode>|null */
+    /** @var non-empty-array<string, RootNode>|null */
     private $setters;
 
     /** @var int|null */
@@ -49,13 +49,13 @@ abstract class LoadCommand extends Statement implements DmlCommand
     /** @var DuplicateOption|null */
     private $duplicateOption;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $partitions;
 
     /**
-     * @param non-empty-array<string>|null $fields
-     * @param non-empty-array<RootNode>|null $setters
-     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-list<string>|null $fields
+     * @param non-empty-array<string, RootNode>|null $setters
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(
         string $file,

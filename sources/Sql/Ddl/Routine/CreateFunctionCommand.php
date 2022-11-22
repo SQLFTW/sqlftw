@@ -27,7 +27,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
     /** @var Statement */
     private $body;
 
-    /** @var ColumnType[] ($name => $type) */
+    /** @var array<string, ColumnType> ($name => $type) */
     private $params;
 
     /** @var ColumnType */
@@ -55,7 +55,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
     private $ifNotExists;
 
     /**
-     * @param ColumnType[] $params
+     * @param array<string, ColumnType> $params ($name => $type)
      */
     public function __construct(
         ObjectIdentifier $function,
@@ -94,7 +94,7 @@ class CreateFunctionCommand extends Statement implements StoredFunctionCommand, 
     }
 
     /**
-     * @return ColumnType[] ($name => $type)
+     * @return array<string, ColumnType> ($name => $type)
      */
     public function getParams(): array
     {

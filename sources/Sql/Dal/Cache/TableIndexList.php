@@ -20,18 +20,18 @@ class TableIndexList implements SqlSerializable
     /** @var ObjectIdentifier */
     private $table;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $indexes;
 
-    /** @var non-empty-array<string>|bool|null */
+    /** @var non-empty-list<string>|bool|null */
     private $partitions;
 
     /** @var bool */
     private $ignoreLeaves;
 
     /**
-     * @param non-empty-array<string>|null $indexes
-     * @param non-empty-array<string>|true|null $partitions
+     * @param non-empty-list<string>|null $indexes
+     * @param non-empty-list<string>|true|null $partitions
      */
     public function __construct(
         ObjectIdentifier $table,
@@ -51,7 +51,7 @@ class TableIndexList implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getIndexes(): ?array
     {
@@ -59,7 +59,7 @@ class TableIndexList implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>|bool|null
+     * @return non-empty-list<string>|bool|null
      */
     public function getPartitions()
     {

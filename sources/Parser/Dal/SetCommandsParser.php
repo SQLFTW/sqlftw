@@ -138,7 +138,7 @@ class SetCommandsParser
     }
 
     /**
-     * @return non-empty-array<SetAssignment>
+     * @return non-empty-list<SetAssignment>
      */
     private function parseAssignments(TokenList $tokenList): array
     {

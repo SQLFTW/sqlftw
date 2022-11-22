@@ -14,6 +14,7 @@ use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
+use function array_values;
 
 class CreateProcedureCommand extends Statement implements StoredProcedureCommand, CreateRoutineCommand
 {
@@ -24,7 +25,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
     /** @var Statement */
     private $body;
 
-    /** @var ProcedureParam[] */
+    /** @var array<string, ProcedureParam> */
     private $params;
 
     /** @var UserExpression|null */
@@ -49,7 +50,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
     private $ifNotExists;
 
     /**
-     * @param ProcedureParam[] $params
+     * @param array<string, ProcedureParam> $params
      */
     public function __construct(
         ObjectIdentifier $procedure,
@@ -86,7 +87,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
     }
 
     /**
-     * @return ProcedureParam[]
+     * @return array<string, ProcedureParam>
      */
     public function getParams(): array
     {
@@ -142,7 +143,7 @@ class CreateProcedureCommand extends Statement implements StoredProcedureCommand
 
         $result .= '(';
         if ($this->params !== []) {
-             $result .= $formatter->formatSerializablesList($this->params);
+             $result .= $formatter->formatSerializablesList(array_values($this->params));
         }
         $result .= ')';
 

@@ -37,11 +37,11 @@ class AnalyzerResult
     /** @var bool|null */
     private $autoRepair;
 
-    /** @var Statement[]|null */
+    /** @var non-empty-list<Statement>|null */
     private $repairStatements;
 
     /**
-     * @param Statement[]|null $repairStatements
+     * @param non-empty-list<Statement>|null $repairStatements
      */
     public function __construct(
         string $message,
@@ -111,7 +111,7 @@ class AnalyzerResult
     }
 
     /**
-     * @return Statement[]
+     * @return list<Statement>
      */
     public function getRepairStatements(): array
     {

@@ -15,11 +15,11 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 class OrderByAction implements TableAction
 {
 
-    /** @var non-empty-array<OrderByExpression> */
+    /** @var non-empty-list<OrderByExpression> */
     private $columns;
 
     /**
-     * @param non-empty-array<OrderByExpression> $columns
+     * @param non-empty-list<OrderByExpression> $columns
      */
     public function __construct(array $columns)
     {
@@ -27,7 +27,7 @@ class OrderByAction implements TableAction
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>
+     * @return non-empty-list<OrderByExpression>
      */
     public function getColumns(): array
     {

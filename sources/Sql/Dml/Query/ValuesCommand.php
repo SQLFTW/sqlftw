@@ -20,10 +20,10 @@ use function array_values;
 class ValuesCommand extends Statement implements SimpleQuery
 {
 
-    /** @var non-empty-array<Row> */
+    /** @var non-empty-list<Row> */
     private $rows;
 
-    /** @var non-empty-array<OrderByExpression>|null */
+    /** @var non-empty-list<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
@@ -33,8 +33,8 @@ class ValuesCommand extends Statement implements SimpleQuery
     private $into;
 
     /**
-     * @param non-empty-array<Row> $rows
-     * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param non-empty-list<Row> $rows
+     * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      */
     public function __construct(
@@ -51,7 +51,7 @@ class ValuesCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return non-empty-array<Row>
+     * @return non-empty-list<Row>
      */
     public function getRows(): array
     {
@@ -59,7 +59,7 @@ class ValuesCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

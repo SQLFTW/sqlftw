@@ -81,13 +81,13 @@ class ColumnDefinition implements TableItem
     /** @var ReferenceDefinition|null */
     private $reference;
 
-    /** @var non-empty-array<CheckDefinition|ConstraintDefinition>|null */
+    /** @var non-empty-list<CheckDefinition|ConstraintDefinition>|null */
     private $checks;
 
     /**
      * @param string|int|float|bool|RootNode|null $defaultValue
      * @param Identifier|FunctionCall|null $onUpdate
-     * @param non-empty-array<CheckDefinition|ConstraintDefinition>|null $checks
+     * @param non-empty-list<CheckDefinition|ConstraintDefinition>|null $checks
      */
     public function __construct(
         string $name,
@@ -125,7 +125,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @param non-empty-array<CheckDefinition>|null $checks
+     * @param non-empty-list<CheckDefinition>|null $checks
      */
     public static function createGenerated(
         string $name,
@@ -259,7 +259,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @return non-empty-array<CheckDefinition|ConstraintDefinition>|null
+     * @return non-empty-list<CheckDefinition|ConstraintDefinition>|null
      */
     public function getChecks(): ?array
     {

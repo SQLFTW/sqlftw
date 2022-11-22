@@ -17,28 +17,28 @@ abstract class FeaturesList
     protected const MIN = 10000;
     protected const MAX = 999999;
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $features = [];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $reserved = [];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $nonReserved = [];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $operators = [];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $types = [];
 
-    /** @var array<array{string, int, int, 3?: int}> */
+    /** @var list<array{string, int, int, 3?: int}> */
     public $functions = [];
 
-    /** @var array<array{string, int, int}> */
+    /** @var list<array{string, int, int}> */
     public $variables = [];
 
-    /** @var array<array{class-string, int, int}> */
+    /** @var list<array{class-string, int, int}> */
     public $preparableCommands = [];
 
     /** @var array<EntityType::*, int> */

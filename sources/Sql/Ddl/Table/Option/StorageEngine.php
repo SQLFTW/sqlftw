@@ -109,7 +109,7 @@ class StorageEngine implements SqlSerializable
         'xtradb' => self::XTRADB,
     ];
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $transactional = [
         self::BERKELEYDB,
         self::FALCON,

@@ -22,13 +22,13 @@ use function count;
 class UnionExpression extends Statement implements Query
 {
 
-    /** @var non-empty-array<Query> */
+    /** @var non-empty-list<Query> */
     private $queries;
 
-    /** @var non-empty-array<UnionType> */
+    /** @var non-empty-list<UnionType> */
     private $types;
 
-    /** @var non-empty-array<OrderByExpression>|null */
+    /** @var non-empty-list<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
@@ -40,16 +40,16 @@ class UnionExpression extends Statement implements Query
     /** @var SelectInto|null */
     private $into;
 
-    /** @var non-empty-array<SelectLocking>|null */
+    /** @var non-empty-list<SelectLocking>|null */
     private $locking;
 
     /**
-     * @param non-empty-array<Query> $queries
-     * @param non-empty-array<UnionType> $types
-     * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param non-empty-list<Query> $queries
+     * @param non-empty-list<UnionType> $types
+     * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      * @param int|SimpleName|Placeholder|null $offset
-     * @param non-empty-array<SelectLocking>|null $locking
+     * @param non-empty-list<SelectLocking>|null $locking
      */
     public function __construct(
         array $queries,
@@ -74,7 +74,7 @@ class UnionExpression extends Statement implements Query
     }
 
     /**
-     * @return non-empty-array<Query>
+     * @return non-empty-list<Query>
      */
     public function getQueries(): array
     {
@@ -82,7 +82,7 @@ class UnionExpression extends Statement implements Query
     }
 
     /**
-     * @return non-empty-array<UnionType>
+     * @return non-empty-list<UnionType>
      */
     public function getTypes(): array
     {
@@ -90,7 +90,7 @@ class UnionExpression extends Statement implements Query
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {
@@ -160,7 +160,7 @@ class UnionExpression extends Statement implements Query
     }
 
     /**
-     * @return non-empty-array<SelectLocking>|null
+     * @return non-empty-list<SelectLocking>|null
      */
     public function getLocking(): ?array
     {

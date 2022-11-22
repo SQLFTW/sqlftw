@@ -5,7 +5,6 @@
 namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Debug\Callstack;
-use Dogma\Debug\Dumper;
 use Dogma\Re;
 use Dogma\Str;
 use SqlFtw\Formatter\Formatter;
@@ -48,7 +47,7 @@ class MysqlTestJob
     /** @var int */
     public static $count = 0;
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $exceptionsUsed = [];
 
     public static function run(string $path, bool $singleThread): Result

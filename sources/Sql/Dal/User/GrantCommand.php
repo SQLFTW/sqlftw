@@ -17,13 +17,13 @@ use SqlFtw\Sql\UserName;
 class GrantCommand extends Statement implements UserCommand
 {
 
-    /** @var non-empty-array<UserPrivilege> */
+    /** @var non-empty-list<UserPrivilege> */
     private $privileges;
 
     /** @var UserPrivilegeResource */
     private $resource;
 
-    /** @var non-empty-array<IdentifiedUser> */
+    /** @var non-empty-list<IdentifiedUser> */
     private $users;
 
     /** @var UserName|FunctionCall|null */
@@ -32,21 +32,21 @@ class GrantCommand extends Statement implements UserCommand
     /** @var RolesSpecification|null */
     private $withRole;
 
-    /** @var array<UserTlsOption>|null */
+    /** @var list<UserTlsOption>|null */
     private $tlsOptions;
 
-    /** @var non-empty-array<UserResourceOption>|null */
+    /** @var non-empty-list<UserResourceOption>|null */
     private $resourceOptions;
 
     /** @var bool */
     private $withGrantOption;
 
     /**
-     * @param non-empty-array<UserPrivilege> $privileges
-     * @param non-empty-array<IdentifiedUser> $users
+     * @param non-empty-list<UserPrivilege> $privileges
+     * @param non-empty-list<IdentifiedUser> $users
      * @param UserName|FunctionCall|null $asUser
-     * @param array<UserTlsOption>|null $tlsOptions
-     * @param non-empty-array<UserResourceOption>|null $resourceOptions
+     * @param list<UserTlsOption>|null $tlsOptions
+     * @param non-empty-list<UserResourceOption>|null $resourceOptions
      */
     public function __construct(
         array $privileges,
@@ -69,7 +69,7 @@ class GrantCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserPrivilege>
+     * @return non-empty-list<UserPrivilege>
      */
     public function getPrivileges(): array
     {
@@ -82,7 +82,7 @@ class GrantCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<IdentifiedUser>
+     * @return non-empty-list<IdentifiedUser>
      */
     public function getUsers(): array
     {
@@ -103,7 +103,7 @@ class GrantCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return array<UserTlsOption>|null
+     * @return list<UserTlsOption>|null
      */
     public function getTlsOptions(): ?array
     {
@@ -111,7 +111,7 @@ class GrantCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<UserResourceOption>|null
+     * @return non-empty-list<UserResourceOption>|null
      */
     public function getResourceOptions(): ?array
     {

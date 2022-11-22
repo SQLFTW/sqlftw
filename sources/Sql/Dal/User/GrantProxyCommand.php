@@ -20,7 +20,7 @@ class GrantProxyCommand extends Statement implements UserCommand
     /** @var UserName|FunctionCall */
     private $proxy;
 
-    /** @var non-empty-array<IdentifiedUser|FunctionCall> */
+    /** @var non-empty-list<IdentifiedUser|FunctionCall> */
     private $users;
 
     /** @var bool */
@@ -28,7 +28,7 @@ class GrantProxyCommand extends Statement implements UserCommand
 
     /**
      * @param UserName|FunctionCall $proxy
-     * @param non-empty-array<IdentifiedUser|FunctionCall> $users
+     * @param non-empty-list<IdentifiedUser|FunctionCall> $users
      */
     public function __construct($proxy, array $users, bool $withGrantOption = false)
     {
@@ -46,7 +46,7 @@ class GrantProxyCommand extends Statement implements UserCommand
     }
 
     /**
-     * @return non-empty-array<IdentifiedUser|FunctionCall>
+     * @return non-empty-list<IdentifiedUser|FunctionCall>
      */
     public function getUsers(): array
     {

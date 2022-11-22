@@ -30,7 +30,7 @@ class TimeIntervalLiteral implements TimeInterval, Value
     /** @var string */
     private $value;
 
-    /** @var non-empty-array<int> */
+    /** @var non-empty-list<int> */
     private $quantity;
 
     /** @var TimeIntervalUnit */
@@ -51,16 +51,16 @@ class TimeIntervalLiteral implements TimeInterval, Value
 
         $quantity = (string) preg_replace('~\\D+~', '-', $quantity);
         $quantity = explode('-', $quantity);
-        /** @var non-empty-array<int> $quantity */
+        /** @var non-empty-list<int> $quantity */
         $quantity = array_map('intval', $quantity);
         $parts = $unit->getParts();
         if (count($quantity) < $parts) {
-            /** @var non-empty-array<int> $quantity */
+            /** @var non-empty-list<int> $quantity */
             $quantity = array_pad($quantity, $parts, 0);
         }
         // todo: check for too many items ("Warning (Code 1441): Datetime function: date_add_interval field overflow")
         if (count($quantity) > $parts) {
-            /** @var non-empty-array<int> $quantity */
+            /** @var non-empty-list<int> $quantity */
             $quantity = array_slice($quantity, 0, $parts);
         }
 
@@ -68,7 +68,7 @@ class TimeIntervalLiteral implements TimeInterval, Value
         if (count($quantity) > $parts) {
             throw new InvalidDefinitionException('Count of values should match the unit used.');
         } elseif (count($quantity) < $parts) {
-            /** @var non-empty-array<positive-int> $quantity */
+            /** @var non-empty-list<positive-int> $quantity */
             $quantity = array_pad($quantity, $parts, 0);
         }
 
@@ -79,7 +79,7 @@ class TimeIntervalLiteral implements TimeInterval, Value
     }
 
     /**
-     * @return non-empty-array<int>
+     * @return non-empty-list<int>
      */
     public function getQuantity(): array
     {

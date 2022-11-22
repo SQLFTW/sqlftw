@@ -81,6 +81,7 @@ use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
+use function array_values;
 use function count;
 use function in_array;
 use function ltrim;
@@ -193,7 +194,7 @@ class ExpressionParser
     }
 
     /**
-     * @return non-empty-array<RootNode>
+     * @return non-empty-list<RootNode>
      */
     private function parseExpressionList(TokenList $tokenList): array
     {
@@ -988,7 +989,7 @@ class ExpressionParser
      * order_by:
      *     [ORDER BY {col_name | expr | position} [ASC | DESC], ...]
      *
-     * @return non-empty-array<OrderByExpression>
+     * @return non-empty-list<OrderByExpression>
      */
     public function parseOrderBy(TokenList $tokenList, bool $nameOnly = false): array
     {
@@ -1259,7 +1260,7 @@ class ExpressionParser
     }
 
     /**
-     * @return array{non-empty-array<int>|null, non-empty-array<StringValue>|null, bool, bool, Charset|null, Collation|null, int|null}
+     * @return array{non-empty-list<int>|null, non-empty-list<StringValue>|null, bool, bool, Charset|null, Collation|null, int|null}
      */
     private function parseTypeOptions(BaseType $type, TokenList $tokenList, bool $forCast): array
     {
@@ -1392,6 +1393,8 @@ class ExpressionParser
                 $srid = (int) $tokenList->expectUnsignedInt();
             }
         }
+
+        $values = $values === null ? null : array_values($values);
 
         return [$size, $values, $unsigned, $zerofill, $charset, $collation, $srid];
     }

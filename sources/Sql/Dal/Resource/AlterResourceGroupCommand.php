@@ -22,7 +22,7 @@ class AlterResourceGroupCommand extends Statement implements DalCommand
     /** @var string */
     private $name;
 
-    /** @var non-empty-array<array{0: int, 1?: int}>|null */
+    /** @var non-empty-list<array{0: int, 1?: int}>|null */
     private $vcpus;
 
     /** @var int|null */
@@ -35,7 +35,7 @@ class AlterResourceGroupCommand extends Statement implements DalCommand
     private $force;
 
     /**
-     * @param non-empty-array<array{0: int, 1?: int}>|null $vcpus
+     * @param non-empty-list<array{0: int, 1?: int}>|null $vcpus
      */
     public function __construct(string $name, ?array $vcpus, ?int $threadPriority, ?bool $enable, bool $force = false)
     {

@@ -22,11 +22,11 @@ class WithExpression implements SqlSerializable
     /** @var string */
     private $name;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $columns;
 
     /**
-     * @param non-empty-array<string>|null $columns
+     * @param non-empty-list<string>|null $columns
      */
     public function __construct(Query $query, string $name, ?array $columns = null)
     {
@@ -46,7 +46,7 @@ class WithExpression implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getColumns(): ?array
     {

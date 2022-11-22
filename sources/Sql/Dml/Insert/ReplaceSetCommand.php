@@ -17,13 +17,13 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
 
-    /** @var non-empty-array<Assignment> */
+    /** @var non-empty-list<Assignment> */
     private $assignments;
 
     /**
-     * @param non-empty-array<Assignment> $assignments
-     * @param array<ColumnIdentifier>|null $columns
-     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-list<Assignment> $assignments
+     * @param list<ColumnIdentifier>|null $columns
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(
         ObjectIdentifier $table,
@@ -39,7 +39,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
     }
 
     /**
-     * @return non-empty-array<Assignment>
+     * @return non-empty-list<Assignment>
      */
     public function getAssignments(): array
     {

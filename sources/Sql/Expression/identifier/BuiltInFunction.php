@@ -527,7 +527,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     public const RANK = 'RANK';
     public const ROW_NUMBER = 'ROW_NUMBER';
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $aggregate = [
         self::ANY_VALUE,
         self::AVG,
@@ -552,7 +552,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::VARIANCE,
     ];
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $window = [
         self::CUME_DIST,
         self::DENSE_RANK,
@@ -567,7 +567,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::ROW_NUMBER,
     ];
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $nullTreatment = [
         self::FIRST_VALUE,
         self::LAG,
@@ -576,7 +576,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::NTH_VALUE,
     ];
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $bare = [
         self::CURRENT_TIME,
         self::CURRENT_DATE,
@@ -589,7 +589,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::UTC_TIMESTAMP,
     ];
 
-    /** @var string[] */
+    /** @var list<string> */
     private static $timeProviders = [
         self::CURDATE,
         self::CURRENT_TIME,
@@ -732,7 +732,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public static function getTimeProviders(): array
     {

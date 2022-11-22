@@ -19,13 +19,13 @@ use function implode;
 class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
 
-    /** @var non-empty-array<array<ExpressionNode>> */
+    /** @var non-empty-list<list<ExpressionNode>> */
     private $rows;
 
     /**
-     * @param non-empty-array<array<ExpressionNode>> $rows
-     * @param array<ColumnIdentifier>|null $columns
-     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-list<list<ExpressionNode>> $rows
+     * @param list<ColumnIdentifier>|null $columns
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(
         ObjectIdentifier $table,
@@ -41,7 +41,7 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
     }
 
     /**
-     * @return non-empty-array<array<ExpressionNode>>
+     * @return non-empty-list<list<ExpressionNode>>
      */
     public function getRows(): array
     {

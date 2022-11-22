@@ -16,11 +16,11 @@ use SqlFtw\Sql\Expression\UserVariable;
 class SelectIntoVariables extends SelectInto
 {
 
-    /** @var non-empty-array<UserVariable|SimpleName> */
+    /** @var non-empty-list<UserVariable|SimpleName> */
     private $variables;
 
     /**
-     * @param non-empty-array<UserVariable|SimpleName> $variables
+     * @param non-empty-list<UserVariable|SimpleName> $variables
      * @param SelectInto::POSITION_* $position
      */
     public function __construct(array $variables, int $position = self::POSITION_AFTER_LOCKING)
@@ -30,7 +30,7 @@ class SelectIntoVariables extends SelectInto
     }
 
     /**
-     * @return non-empty-array<UserVariable|SimpleName>
+     * @return non-empty-list<UserVariable|SimpleName>
      */
     public function getVariables(): array
     {

@@ -7,7 +7,7 @@ namespace SqlFtw\Tests\Mysql;
 trait Aliases
 {
 
-    /** @var string[] */
+    /** @var array<string, string> */
     private static $aliases = [
         // scopes
         '@@local.' => '@@session.',

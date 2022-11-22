@@ -14,14 +14,14 @@ use function array_filter;
 class ConstraintList
 {
 
-    /** @var ConstraintDefinition[] (string|int $name => $constraint) */
+    /** @var array<string|int, ConstraintDefinition> ($name => $constraint) */
     private $constraints = [];
 
-    /** @var ConstraintDefinition[] (string|int $name => $constraint) */
+    /** @var array<string|int, ConstraintDefinition> ($name => $constraint) */
     private $droppedConstraints = [];
 
     /**
-     * @param ConstraintDefinition[] $constraints
+     * @param list<ConstraintDefinition> $constraints
      */
     public function __construct(array $constraints)
     {
@@ -54,7 +54,7 @@ class ConstraintList
     }
 
     /**
-     * @return ConstraintDefinition[]
+     * @return array<string|int, ConstraintDefinition>
      */
     public function getConstraints(): array
     {
@@ -62,7 +62,7 @@ class ConstraintList
     }
 
     /**
-     * @return ConstraintDefinition[]
+     * @return array<string|int, ConstraintDefinition>
      */
     public function getDroppedConstraints(): array
     {
@@ -70,11 +70,11 @@ class ConstraintList
     }
 
     /**
-     * @return ForeignKeyDefinition[]
+     * @return array<string|int, ForeignKeyDefinition>
      */
     public function getForeignKeys(): array
     {
-        /** @var ForeignKeyDefinition[] $result */
+        /** @var list<ForeignKeyDefinition> $result */
         $result = array_filter($this->constraints, static function (ConstraintDefinition $constraint) {
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });
@@ -83,11 +83,11 @@ class ConstraintList
     }
 
     /**
-     * @return ForeignKeyDefinition[]
+     * @return array<string|int, ForeignKeyDefinition>
      */
     public function getDroppedForeignKeys(): array
     {
-        /** @var ForeignKeyDefinition[] $result */
+        /** @var list<ForeignKeyDefinition> $result */
         $result = array_filter($this->droppedConstraints, static function (ConstraintDefinition $constraint) {
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });

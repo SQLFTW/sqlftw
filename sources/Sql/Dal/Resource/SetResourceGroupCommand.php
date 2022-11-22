@@ -19,11 +19,11 @@ class SetResourceGroupCommand extends Statement implements DalCommand
     /** @var string */
     private $name;
 
-    /** @var non-empty-array<int>|null */
+    /** @var non-empty-list<int>|null */
     private $threadIds;
 
     /**
-     * @param non-empty-array<int>|null $threadIds
+     * @param non-empty-list<int>|null $threadIds
      */
     public function __construct(string $name, ?array $threadIds = null)
     {

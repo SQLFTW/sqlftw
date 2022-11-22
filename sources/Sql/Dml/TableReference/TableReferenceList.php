@@ -16,11 +16,11 @@ use function count;
 class TableReferenceList implements TableReferenceNode, Countable
 {
 
-    /** @var non-empty-array<TableReferenceNode> */
+    /** @var non-empty-list<TableReferenceNode> */
     private $references;
 
     /**
-     * @param non-empty-array<TableReferenceNode> $references
+     * @param non-empty-list<TableReferenceNode> $references
      */
     public function __construct(array $references)
     {
@@ -33,7 +33,7 @@ class TableReferenceList implements TableReferenceNode, Countable
     }
 
     /**
-     * @return non-empty-array<TableReferenceNode>
+     * @return non-empty-list<TableReferenceNode>
      */
     public function getReferences(): array
     {

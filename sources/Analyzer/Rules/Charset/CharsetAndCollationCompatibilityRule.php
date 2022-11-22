@@ -30,7 +30,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
 {
 
     /**
-     * @return AnalyzerResult[]
+     * @return list<AnalyzerResult>
      */
     public function process(Statement $statement, SimpleContext $context, int $flags): array
     {
@@ -45,7 +45,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
 
     /**
      * @param CreateSchemaCommand|AlterSchemaCommand $command
-     * @return AnalyzerResult[]
+     * @return list<AnalyzerResult>
      */
     private function processSchema(SchemaCommand $command, SimpleContext $context): array
     {
@@ -62,7 +62,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
 
     /**
      * @param CreateTableCommand|AlterTableCommand $command
-     * @return AnalyzerResult[]
+     * @return list<AnalyzerResult>
      */
     private function processTable(TableCommand $command, SimpleContext $context): array
     {

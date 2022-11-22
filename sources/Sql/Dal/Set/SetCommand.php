@@ -15,7 +15,7 @@ interface SetCommand extends DalCommand
 {
 
     /**
-     * @return array<SetAssignment>
+     * @return list<SetAssignment>
      */
     public function getAssignments(): array;
 

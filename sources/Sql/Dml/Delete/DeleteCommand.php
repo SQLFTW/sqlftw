@@ -27,13 +27,13 @@ use function implode;
 class DeleteCommand extends Statement implements DmlCommand
 {
 
-    /** @var non-empty-array<array{ObjectIdentifier, string|null}> */
+    /** @var non-empty-list<array{ObjectIdentifier, string|null}> */
     private $tables;
 
     /** @var TableReferenceNode|null */
     private $references;
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $partitions;
 
     /** @var ExpressionNode|null */
@@ -42,7 +42,7 @@ class DeleteCommand extends Statement implements DmlCommand
     /** @var WithClause|null */
     private $with;
 
-    /** @var non-empty-array<OrderByExpression>|null */
+    /** @var non-empty-list<OrderByExpression>|null */
     private $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
@@ -58,10 +58,10 @@ class DeleteCommand extends Statement implements DmlCommand
     private $ignore;
 
     /**
-     * @param non-empty-array<array{ObjectIdentifier, string|null}> $tables
-     * @param non-empty-array<OrderByExpression>|null $orderBy
+     * @param non-empty-list<array{ObjectIdentifier, string|null}> $tables
+     * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
-     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(
         array $tables,
@@ -96,7 +96,7 @@ class DeleteCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<array{ObjectIdentifier, string|null}>
+     * @return non-empty-list<array{ObjectIdentifier, string|null}>
      */
     public function getTables(): array
     {
@@ -109,7 +109,7 @@ class DeleteCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getPartitions(): ?array
     {
@@ -127,7 +127,7 @@ class DeleteCommand extends Statement implements DmlCommand
     }
 
     /**
-     * @return non-empty-array<OrderByExpression>|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array
     {

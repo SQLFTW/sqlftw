@@ -16,15 +16,15 @@ use SqlFtw\Sql\InvalidDefinitionException;
 class ReorganizePartitionAction implements PartitioningAction
 {
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $partitions;
 
-    /** @var non-empty-array<PartitionDefinition>|null */
+    /** @var non-empty-list<PartitionDefinition>|null */
     private $newPartitions;
 
     /**
-     * @param non-empty-array<string>|null $partitions
-     * @param non-empty-array<PartitionDefinition>|null $newPartitions
+     * @param non-empty-list<string>|null $partitions
+     * @param non-empty-list<PartitionDefinition>|null $newPartitions
      */
     public function __construct(?array $partitions, ?array $newPartitions)
     {
@@ -37,7 +37,7 @@ class ReorganizePartitionAction implements PartitioningAction
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getPartitions(): ?array
     {
@@ -45,7 +45,7 @@ class ReorganizePartitionAction implements PartitioningAction
     }
 
     /**
-     * @return non-empty-array<PartitionDefinition>|null
+     * @return non-empty-list<PartitionDefinition>|null
      */
     public function getNewPartitions(): ?array
     {

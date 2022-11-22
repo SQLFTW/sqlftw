@@ -14,11 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class TruncatePartitionAction implements PartitioningAction
 {
 
-    /** @var non-empty-array<string>|null */
+    /** @var non-empty-list<string>|null */
     private $partitions;
 
     /**
-     * @param non-empty-array<string>|null $partitions
+     * @param non-empty-list<string>|null $partitions
      */
     public function __construct(?array $partitions = null)
     {
@@ -26,7 +26,7 @@ class TruncatePartitionAction implements PartitioningAction
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     public function getPartitions(): ?array
     {

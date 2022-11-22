@@ -15,11 +15,11 @@ use SqlFtw\Sql\Statement;
 class SetVariablesCommand extends Statement implements SetCommand
 {
 
-    /** @var non-empty-array<SetAssignment> */
+    /** @var non-empty-list<SetAssignment> */
     private $assignments;
 
     /**
-     * @param non-empty-array<SetAssignment> $assignments
+     * @param non-empty-list<SetAssignment> $assignments
      */
     public function __construct(array $assignments)
     {
@@ -27,7 +27,7 @@ class SetVariablesCommand extends Statement implements SetCommand
     }
 
     /**
-     * @return non-empty-array<SetAssignment>
+     * @return non-empty-list<SetAssignment>
      */
     public function getAssignments(): array
     {

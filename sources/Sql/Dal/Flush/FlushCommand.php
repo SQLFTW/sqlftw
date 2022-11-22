@@ -18,7 +18,7 @@ use function implode;
 class FlushCommand extends Statement implements DalCommand
 {
 
-    /** @var non-empty-array<FlushOption> */
+    /** @var non-empty-list<FlushOption> */
     private $options;
 
     /** @var string|null */
@@ -28,7 +28,7 @@ class FlushCommand extends Statement implements DalCommand
     private $local;
 
     /**
-     * @param non-empty-array<FlushOption> $options
+     * @param non-empty-list<FlushOption> $options
      */
     public function __construct(array $options, ?string $channel = null, bool $local = false)
     {
@@ -38,7 +38,7 @@ class FlushCommand extends Statement implements DalCommand
     }
 
     /**
-     * @return non-empty-array<FlushOption>
+     * @return non-empty-list<FlushOption>
      */
     public function getOptions(): array
     {

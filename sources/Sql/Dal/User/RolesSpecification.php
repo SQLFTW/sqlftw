@@ -19,11 +19,11 @@ class RolesSpecification implements SqlSerializable
     /** @var RolesSpecificationType */
     private $type;
 
-    /** @var non-empty-array<UserName>|null */
+    /** @var non-empty-list<UserName>|null */
     private $roles;
 
     /**
-     * @param non-empty-array<UserName>|null $roles
+     * @param non-empty-list<UserName>|null $roles
      */
     public function __construct(RolesSpecificationType $type, ?array $roles = null)
     {
@@ -37,7 +37,7 @@ class RolesSpecification implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<UserName>|null
+     * @return non-empty-list<UserName>|null
      */
     public function getRoles(): ?array
     {

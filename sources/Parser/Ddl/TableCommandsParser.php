@@ -815,7 +815,7 @@ class TableCommandsParser
      *   | [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (index_col_name, ...) reference_definition
      *   | check_constraint_definition
      *
-     * @return non-empty-array<TableItem>
+     * @return non-empty-list<TableItem>
      */
     private function parseCreateTableBody(TokenList $tokenList): array
     {
@@ -1870,7 +1870,7 @@ class TableCommandsParser
     }
 
     /**
-     * @return non-empty-array<string>|null
+     * @return non-empty-list<string>|null
      */
     private function parsePartitionNames(TokenList $tokenList): ?array
     {
@@ -1886,7 +1886,7 @@ class TableCommandsParser
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     private function parseColumnList(TokenList $tokenList): array
     {
@@ -1905,7 +1905,7 @@ class TableCommandsParser
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     private function parseNonEmptyColumnList(TokenList $tokenList): array
     {

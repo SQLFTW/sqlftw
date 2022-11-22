@@ -21,7 +21,7 @@ interface Query extends DmlCommand
 {
 
     /**
-     * @return non-empty-array<OrderByExpression>|null
+     * @return non-empty-list<OrderByExpression>|null
      */
     public function getOrderBy(): ?array;
 

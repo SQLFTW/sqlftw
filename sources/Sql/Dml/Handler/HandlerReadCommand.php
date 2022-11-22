@@ -27,7 +27,7 @@ class HandlerReadCommand extends Statement implements HandlerCommand
     /** @var string|null */
     private $index;
 
-    /** @var non-empty-array<string|int|float|bool|Literal>|null */
+    /** @var non-empty-list<scalar|Literal>|null */
     private $values;
 
     /** @var RootNode|null */
@@ -40,7 +40,7 @@ class HandlerReadCommand extends Statement implements HandlerCommand
     private $offset;
 
     /**
-     * @param non-empty-array<string|int|float|bool|Literal>|null $values
+     * @param non-empty-list<scalar|Literal>|null $values
      */
     public function __construct(
         ObjectIdentifier $table,
@@ -76,7 +76,7 @@ class HandlerReadCommand extends Statement implements HandlerCommand
     }
 
     /**
-     * @return non-empty-array<string|int|float|bool|Literal>|null
+     * @return non-empty-list<scalar|Literal>|null
      */
     public function getValues(): ?array
     {

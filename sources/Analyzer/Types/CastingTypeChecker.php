@@ -38,8 +38,8 @@ class CastingTypeChecker
 {
 
     /**
-     * @param scalar|Value|scalar[]|null $value
-     * @param array<int|string>|null $values
+     * @param scalar|Value|list<scalar>|null $value
+     * @param list<int|string>|null $values
      */
     public function canBeCastedTo($value, string $type, ?array $values, Cast $cast): bool
     {
@@ -138,7 +138,7 @@ class CastingTypeChecker
 
     /**
      * @param int|float|bool|string|Value|null $value
-     * @param array<int|string> $values
+     * @param list<int|string> $values
      */
     public function validateEnum($value, array $values, Cast $cast): bool
     {
@@ -169,7 +169,7 @@ class CastingTypeChecker
 
     /**
      * @param int|float|bool|string|Value|null $value
-     * @param array<int|string> $values
+     * @param list<int|string> $values
      */
     public function validateSet($value, array $values, Cast $cast): bool
     {

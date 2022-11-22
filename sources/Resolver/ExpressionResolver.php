@@ -103,7 +103,7 @@ class ExpressionResolver
     }
 
     /**
-     * @return scalar|Value|ExpressionNode|array<scalar|Value|ExpressionNode|array<scalar|Value|ExpressionNode|null>|null>|null
+     * @return scalar|Value|ExpressionNode|list<scalar|Value|ExpressionNode|list<scalar|Value|ExpressionNode|null>|null>|null
      */
     public function resolve(ExpressionNode $expression)
     {
@@ -111,7 +111,7 @@ class ExpressionResolver
     }
 
     /**
-     * @return scalar|Value|ExpressionNode|array<scalar|Value|ExpressionNode|array<scalar|Value|ExpressionNode|null>|null>|null
+     * @return scalar|Value|ExpressionNode|list<scalar|Value|ExpressionNode|list<scalar|Value|ExpressionNode|null>|null>|null
      */
     public function process(ExpressionNode $expression)
     {
@@ -374,7 +374,7 @@ class ExpressionResolver
 
             /** @var scalar|Value|null $left */
             $left = $this->process($expression->getLeft());
-            /** @var scalar|Value|array<(scalar|Value|null)>|null $right */
+            /** @var scalar|Value|list<scalar|Value|null>|null $right */
             $right = $this->process($expression->getRight());
             if (!ExpressionHelper::isValueOrArray($left) || !ExpressionHelper::isValueOrArray($right)) {
                 return $expression;
@@ -459,7 +459,7 @@ class ExpressionResolver
     }
 
     /**
-     * @return array<scalar|Value|UnresolvedExpression|null>|Subquery
+     * @return list<scalar|Value|UnresolvedExpression|null>|Subquery
      */
     private function processSubquery(Subquery $expression)
     {
@@ -518,7 +518,7 @@ class ExpressionResolver
     // lists -----------------------------------------------------------------------------------------------------------
 
     /**
-     * @return array<scalar|Value|UnresolvedExpression|null>|SelectCommand
+     * @return list<scalar|Value|UnresolvedExpression|null>|SelectCommand
      */
     public function processSelect(SelectCommand $query, bool $allowUnresolved = false)
     {
@@ -532,7 +532,7 @@ class ExpressionResolver
     }
 
     /**
-     * @return array<scalar|Value|UnresolvedExpression|null>|ValuesCommand
+     * @return list<scalar|Value|UnresolvedExpression|null>|ValuesCommand
      */
     private function processValues(ValuesCommand $query)
     {
@@ -544,7 +544,7 @@ class ExpressionResolver
     }
 
     /**
-     * @return array<scalar|Value|UnresolvedExpression|null>|ListExpression
+     * @return list<scalar|Value|UnresolvedExpression|null>|ListExpression
      */
     private function processList(ListExpression $list)
     {
@@ -554,8 +554,8 @@ class ExpressionResolver
     }
 
     /**
-     * @param RootNode[]|Asterisk[] $expressions
-     * @return array<scalar|Value|UnresolvedExpression|null>|null
+     * @param list<RootNode|Asterisk> $expressions
+     * @return list<scalar|Value|UnresolvedExpression|null>|null
      */
     private function processExpressions(array $expressions, bool $allowUnresolved = false): ?array
     {

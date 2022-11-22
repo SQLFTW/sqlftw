@@ -15,11 +15,11 @@ use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
 class AddPartitionAction implements PartitioningAction
 {
 
-    /** @var non-empty-array<PartitionDefinition> */
+    /** @var non-empty-list<PartitionDefinition> */
     private $partitions;
 
     /**
-     * @param non-empty-array<PartitionDefinition> $partition
+     * @param non-empty-list<PartitionDefinition> $partition
      */
     public function __construct(array $partition)
     {
@@ -27,7 +27,7 @@ class AddPartitionAction implements PartitioningAction
     }
 
     /**
-     * @return non-empty-array<PartitionDefinition>
+     * @return non-empty-list<PartitionDefinition>
      */
     public function getPartitions(): array
     {

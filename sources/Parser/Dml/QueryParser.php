@@ -608,7 +608,7 @@ class QueryParser
     }
 
     /**
-     * @return array{non-empty-array<OrderByExpression>|null, int|SimpleName|Placeholder|null, int|SimpleName|Placeholder|null, SelectInto|null}
+     * @return array{non-empty-list<OrderByExpression>|null, int|SimpleName|Placeholder|null, int|SimpleName|Placeholder|null, SelectInto|null}
      */
     private function parseOrderLimitOffsetInto(TokenList $tokenList, bool $parseOffset = true): array
     {
@@ -676,7 +676,7 @@ class QueryParser
     }
 
     /**
-     * @return non-empty-array<SelectLocking>|null
+     * @return non-empty-list<SelectLocking>|null
      */
     private function parseLocking(TokenList $tokenList): ?array
     {

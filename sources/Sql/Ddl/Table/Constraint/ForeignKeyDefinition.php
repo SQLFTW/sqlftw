@@ -17,7 +17,7 @@ use function count;
 class ForeignKeyDefinition implements TableItem, ConstraintBody
 {
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $columns;
 
     /** @var ReferenceDefinition */
@@ -27,7 +27,7 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
     private $indexName;
 
     /**
-     * @param non-empty-array<string> $columns
+     * @param non-empty-list<string> $columns
      */
     public function __construct(
         array $columns,
@@ -44,7 +44,7 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     public function getColumns(): array
     {

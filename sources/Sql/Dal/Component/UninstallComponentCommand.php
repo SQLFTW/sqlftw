@@ -15,11 +15,11 @@ use SqlFtw\Sql\Statement;
 class UninstallComponentCommand extends Statement implements ComponentCommand
 {
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $components;
 
     /**
-     * @param non-empty-array<string> $components
+     * @param non-empty-list<string> $components
      */
     public function __construct(array $components)
     {
@@ -27,7 +27,7 @@ class UninstallComponentCommand extends Statement implements ComponentCommand
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     public function getComponents(): array
     {

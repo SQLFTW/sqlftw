@@ -19,7 +19,7 @@ class ReferenceDefinition implements SqlSerializable
     /** @var ObjectIdentifier */
     private $sourceTable;
 
-    /** @var non-empty-array<string> */
+    /** @var non-empty-list<string> */
     private $sourceColumns;
 
     /** @var ForeignKeyAction|null */
@@ -32,7 +32,7 @@ class ReferenceDefinition implements SqlSerializable
     private $matchType;
 
     /**
-     * @param non-empty-array<string> $sourceColumns
+     * @param non-empty-list<string> $sourceColumns
      */
     public function __construct(
         ObjectIdentifier $sourceTable,
@@ -54,7 +54,7 @@ class ReferenceDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     public function getSourceColumns(): array
     {

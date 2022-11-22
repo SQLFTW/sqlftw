@@ -20,7 +20,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
 /**
- * @phpstan-type TableOptionValue int|bool|string|Collation|Charset|DefaultLiteral|SizeLiteral|StorageEngine|StorageType|TableCompression|TableInsertMethod|TableRowFormat|ThreeStateValue|ObjectIdentifier[]
+ * @phpstan-type TableOptionValue int|bool|string|Collation|Charset|DefaultLiteral|SizeLiteral|StorageEngine|StorageType|TableCompression|TableInsertMethod|TableRowFormat|ThreeStateValue|list<ObjectIdentifier>
  */
 class TableOption extends SqlEnum
 {
@@ -54,7 +54,7 @@ class TableOption extends SqlEnum
     public const TABLESPACE = Keyword::TABLESPACE;
     public const UNION = Keyword::UNION;
 
-    /** @var string[] */
+    /** @var array<string, string|class-string> */
     private static $types = [
         self::AUTOEXTEND_SIZE => SizeLiteral::class,
         self::AUTO_INCREMENT => BaseType::UNSIGNED,
@@ -87,7 +87,7 @@ class TableOption extends SqlEnum
     ];
 
     /**
-     * @return string[]
+     * @return array<string, string|class-string>
      */
     public static function getTypes(): array
     {

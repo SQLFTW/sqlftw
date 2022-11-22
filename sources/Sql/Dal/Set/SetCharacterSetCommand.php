@@ -19,11 +19,11 @@ class SetCharacterSetCommand extends Statement implements SetCommand
     /** @var Charset|null */
     private $charset;
 
-    /** @var array<SetAssignment> */
+    /** @var list<SetAssignment> */
     private $assignments;
 
     /**
-     * @param array<SetAssignment> $assignments
+     * @param list<SetAssignment> $assignments
      */
     public function __construct(?Charset $charset, array $assignments = [])
     {
@@ -37,7 +37,7 @@ class SetCharacterSetCommand extends Statement implements SetCommand
     }
 
     /**
-     * @return array<SetAssignment>
+     * @return list<SetAssignment>
      */
     public function getAssignments(): array
     {
