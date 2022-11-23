@@ -1815,7 +1815,7 @@ class TableCommandsParser
      *     [TABLESPACE [=] tablespace_name]
      *     [NODEGROUP [=] number]             // NDB only
      *
-     * @return non-empty-array<string, int|string|StorageEngine>|null
+     * @return non-empty-array<PartitionOption::*, int|string|StorageEngine>|null
      */
     private function parsePartitionOptions(TokenList $tokenList): ?array
     {

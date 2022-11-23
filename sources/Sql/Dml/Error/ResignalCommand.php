@@ -20,12 +20,12 @@ class ResignalCommand extends Statement implements Command
     /** @var SqlState|string|null */
     private $condition;
 
-    /** @var array<string, RootNode> */
+    /** @var array<ConditionInformationItem::*, RootNode> */
     private $items;
 
     /**
      * @param SqlState|string|null $condition
-     * @param array<string, RootNode> $items
+     * @param array<ConditionInformationItem::*, RootNode> $items
      */
     public function __construct($condition, array $items)
     {
@@ -45,7 +45,7 @@ class ResignalCommand extends Statement implements Command
     }
 
     /**
-     * @return array<string, RootNode>
+     * @return array<ConditionInformationItem::*, RootNode>
      */
     public function getItems(): array
     {

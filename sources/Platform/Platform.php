@@ -31,21 +31,21 @@ class Platform
     public const MYSQL = 'mysql';
     public const MARIA = 'maria';
 
-    /** @var array<string, non-empty-list<string>> */
+    /** @var array<string, non-empty-list<string>> ($platform => $versions) */
     private static $versions = [
         self::SQL => ['92', '99', '2003', '2008', '2011', '2016', '2019'],
         self::MYSQL => ['5.1', '5.5', '5.6', '5.7', '8.0'],
         self::MARIA => ['5.1', '5.2', '5.3', '5.5', '10.0', '10.1', '10.2', '10.3', '10.4', '10.5', '10.6', '10.7', '10.8'],
     ];
 
-    /** @var array<string, string> */
+    /** @var array<string, string> ($platform => $version) */
     private static $defaultVersions = [
         self::SQL => '2011',
         self::MYSQL => '8.0',
         self::MARIA => '10.8',
     ];
 
-    /** @var array<string, list<string>> */
+    /** @var array<string, list<string>> ($version => $modes) */
     public static $defaultSqlModes = [
         'mysql-5.6' => [
             SqlMode::NO_ENGINE_SUBSTITUTION,
@@ -79,7 +79,7 @@ class Platform
         ],
     ];
 
-    /** @var array<string, self> */
+    /** @var array<string, self> ($version => $instance) */
     private static $instances = [];
 
     /** @var string */

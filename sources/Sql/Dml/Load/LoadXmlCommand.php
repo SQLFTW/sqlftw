@@ -23,7 +23,7 @@ class LoadXmlCommand extends LoadCommand
 
     /**
      * @param non-empty-list<string>|null $fields
-     * @param non-empty-array<string, RootNode>|null $setters
+     * @param non-empty-array<string, RootNode>|null $setters ($column => $expression)
      */
     public function __construct(
         string $file,

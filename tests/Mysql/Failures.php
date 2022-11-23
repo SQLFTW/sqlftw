@@ -7,7 +7,7 @@ namespace SqlFtw\Tests\Mysql;
 trait Failures
 {
 
-    /** @var array<string, int> */
+    /** @var array<string, Valid::*> */
     private static $knownFailures = [
         // false negatives -------------------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -41,7 +41,7 @@ class TimeIntervalUnit extends SqlEnum
 
     public const DAY_MICROSECOND = Keyword::DAY_MICROSECOND; // 0 0:0:0.0
 
-    /** @var array<string, int> */
+    /** @var array<self::*, int> */
     private static $parts = [
         self::SECOND_MICROSECOND => 2,
         self::MINUTE_SECOND => 2,
@@ -56,7 +56,7 @@ class TimeIntervalUnit extends SqlEnum
         self::DAY_MICROSECOND => 5,
     ];
 
-    /** @var array<string, string> */
+    /** @var array<self::*, string> */
     private static $formats = [
         self::SECOND_MICROSECOND => '%d.%d',
         self::MINUTE_SECOND => '%d:%d',

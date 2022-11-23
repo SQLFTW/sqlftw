@@ -54,7 +54,7 @@ class TableOption extends SqlEnum
     public const TABLESPACE = Keyword::TABLESPACE;
     public const UNION = Keyword::UNION;
 
-    /** @var array<string, string|class-string> */
+    /** @var array<self::*, string|class-string> */
     private static $types = [
         self::AUTOEXTEND_SIZE => SizeLiteral::class,
         self::AUTO_INCREMENT => BaseType::UNSIGNED,
@@ -87,7 +87,7 @@ class TableOption extends SqlEnum
     ];
 
     /**
-     * @return array<string, string|class-string>
+     * @return array<self::*, string|class-string>
      */
     public static function getTypes(): array
     {

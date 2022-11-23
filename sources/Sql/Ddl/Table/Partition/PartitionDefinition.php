@@ -30,17 +30,17 @@ class PartitionDefinition implements SqlSerializable
     /** @var non-empty-list<RootNode>|null */
     private $values;
 
-    /** @var non-empty-array<string, int|string|StorageEngine>|null */
+    /** @var non-empty-array<PartitionOption::*, int|string|StorageEngine>|null */
     private $options;
 
-    /** @var non-empty-array<string, non-empty-array<int|string|StorageEngine>|null>|null */
+    /** @var non-empty-array<string, non-empty-array<PartitionOption::*, int|string|StorageEngine>|null>|null */
     private $subpartitions;
 
     /**
      * @param non-empty-list<RootNode>|MaxValueLiteral|null $lessThan
      * @param non-empty-list<RootNode>|null $values
-     * @param non-empty-array<string, int|string|StorageEngine>|null $options
-     * @param non-empty-array<string, non-empty-array<int|string|StorageEngine>|null>|null $subpartitions
+     * @param non-empty-array<PartitionOption::*, int|string|StorageEngine>|null $options
+     * @param non-empty-array<string, non-empty-array<PartitionOption::*, int|string|StorageEngine>|null>|null $subpartitions
      */
     public function __construct(string $name, $lessThan, ?array $values = null, ?array $options = null, ?array $subpartitions = null)
     {
@@ -88,7 +88,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string, int|string|StorageEngine>|null
+     * @return non-empty-array<PartitionOption::*, int|string|StorageEngine>|null
      */
     public function getOptions(): ?array
     {
@@ -96,7 +96,7 @@ class PartitionDefinition implements SqlSerializable
     }
 
     /**
-     * @return non-empty-array<string, non-empty-array<int|string|StorageEngine>|null>|null
+     * @return non-empty-array<string, non-empty-array<PartitionOption::*, int|string|StorageEngine>|null>|null
      */
     public function getSubpartitions(): ?array
     {

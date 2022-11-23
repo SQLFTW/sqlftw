@@ -9,45 +9,29 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
-use Dogma\Arr;
-use Dogma\ShouldNotHappenException;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\BaseType;
-use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\Expression\QualifiedName;
-use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Util\TypeChecker;
-use function array_values;
-use function implode;
 
 class ChangeReplicationFilterCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var non-empty-array<string, array<string, string>|list<string|ObjectIdentifier>> */
+    /** @var non-empty-list<ReplicationFilter> */
     private $filters;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param non-empty-array<string, array<string, string>|list<string|ObjectIdentifier>> $filters
+     * @param non-empty-list<ReplicationFilter> $filters
      */
     public function __construct(array $filters, ?string $channel = null)
     {
-        $types = ReplicationFilter::getTypes();
-        foreach ($filters as $filter => $values) {
-            if (!ReplicationFilter::isValid($filter)) {
-                throw new InvalidDefinitionException("Unknown filter '$filter' for CHANGE REPLICATION FILTER.");
-            }
-            TypeChecker::check($values, $types[$filter]);
-        }
         $this->filters = $filters;
         $this->channel = $channel;
     }
 
     /**
-     * @return non-empty-array<string, array<string, string>|list<string|ObjectIdentifier>>
+     * @return non-empty-list<ReplicationFilter>
      */
     public function getFilters(): array
     {
@@ -61,35 +45,7 @@ class ChangeReplicationFilterCommand extends Statement implements ReplicationCom
 
     public function serialize(Formatter $formatter): string
     {
-        $types = ReplicationFilter::getTypes();
-
-        $result = "CHANGE REPLICATION FILTER\n  " . implode(",\n  ", Arr::mapPairs(
-            $this->filters,
-            static function (string $filter, array $values) use ($formatter, $types): string {
-                if ($values === []) {
-                    return $filter . ' = ()';
-                } else {
-                    switch ($types[$filter]) {
-                        case BaseType::CHAR . '[]':
-                            if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
-                                return $filter . ' = (' . $formatter->formatNamesList(array_values($values)) . ')';
-                            } else {
-                                return $filter . ' = (' . $formatter->formatStringList(array_values($values)) . ')';
-                            }
-                        case ObjectIdentifier::class . '[]':
-                            // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
-                            /** @var non-empty-list<QualifiedName> $values */
-                            return $filter . ' = (' . $formatter->formatSerializablesList($values) . ')';
-                        case BaseType::CHAR . '{}':
-                            return $filter . ' = (' . implode(', ', Arr::mapPairs($values, static function (string $key, string $value) use ($formatter) {
-                                return '(' . $formatter->formatName($key) . ', ' . $formatter->formatName($value) . ')';
-                            })) . ')';
-                        default:
-                            throw new ShouldNotHappenException('');
-                    }
-                }
-            }
-        ));
+        $result = "CHANGE REPLICATION FILTER\n  " . $formatter->formatSerializablesList($this->filters);
 
         if ($this->channel !== null) {
             $result .= "\n  FOR CHANNEL " . $formatter->formatName($this->channel);

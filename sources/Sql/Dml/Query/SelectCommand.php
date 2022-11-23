@@ -56,7 +56,7 @@ class SelectCommand extends Statement implements SimpleQuery
     /** @var SelectDistinctOption|null */
     private $distinct;
 
-    /** @var array<string, bool> */
+    /** @var array<SelectOption::*, bool> */
     private $options;
 
     /** @var SelectInto|null */
@@ -75,7 +75,7 @@ class SelectCommand extends Statement implements SimpleQuery
      * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      * @param int|SimpleName|Placeholder|null $offset
-     * @param array<string, bool> $options
+     * @param array<SelectOption::*, bool> $options
      * @param non-empty-list<SelectLocking>|null $locking
      */
     public function __construct(
@@ -225,7 +225,7 @@ class SelectCommand extends Statement implements SimpleQuery
     }
 
     /**
-     * @return array<string, bool>
+     * @return array<SelectOption::*, bool>
      */
     public function getOptions(): array
     {

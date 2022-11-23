@@ -200,6 +200,7 @@ class ErrorCommandsParser
         $items = [];
         if ($tokenList->hasKeyword(Keyword::SET)) {
             do {
+                /** @var ConditionInformationItem::* $item */
                 $item = $tokenList->expectKeywordEnum(ConditionInformationItem::class)->getValue();
                 if (isset($items[$item])) {
                     throw new ParserException("Duplicit condition $item.", $tokenList);

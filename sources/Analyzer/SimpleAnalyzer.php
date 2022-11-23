@@ -30,7 +30,7 @@ class SimpleAnalyzer
     }
 
     /**
-     * @return array<string, AnalyzerResult>
+     * @return array<string, AnalyzerResult> ($message => $result)
      */
     public function process(Statement $statement, int $flags = 0): array
     {

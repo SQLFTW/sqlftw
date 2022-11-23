@@ -39,7 +39,7 @@ class AlterTableCommand extends Statement implements DdlTableCommand
     /** @var AlterActionsList */
     private $actions;
 
-    /** @var array<string, bool|AlterTableLock|AlterTableAlgorithm> */
+    /** @var array<AlterTableOption::*, bool|AlterTableLock|AlterTableAlgorithm> */
     private $alterOptions;
 
     /** @var TableOptionsList|null */
@@ -50,8 +50,8 @@ class AlterTableCommand extends Statement implements DdlTableCommand
 
     /**
      * @param AlterActionsList|list<AlterTableAction> $actions
-     * @param array<string, bool|AlterTableLock|AlterTableAlgorithm> $alterOptions
-     * @param TableOptionsList|array<string, TableOptionValue>|null $tableOptions
+     * @param array<AlterTableOption::*, bool|AlterTableLock|AlterTableAlgorithm> $alterOptions
+     * @param TableOptionsList|array<TableOption::*, TableOptionValue>|null $tableOptions
      */
     public function __construct(
         ObjectIdentifier $name,
@@ -84,7 +84,7 @@ class AlterTableCommand extends Statement implements DdlTableCommand
     }
 
     /**
-     * @return array<string, bool|AlterTableLock|AlterTableAlgorithm>
+     * @return array<AlterTableOption::*, bool|AlterTableLock|AlterTableAlgorithm>
      */
     public function getAlterOptions(): array
     {

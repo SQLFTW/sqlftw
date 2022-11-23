@@ -12,7 +12,6 @@ namespace SqlFtw\Sql\Dal\Replication;
 use Dogma\Arr;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\TimeIntervalExpression;
-use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
 use function array_filter;
@@ -24,26 +23,21 @@ use function implode;
 class ChangeReplicationSourceToCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var non-empty-array<string, ReplicaOptionValue|null> */
+    /** @var non-empty-array<ReplicaOption::*, ReplicaOptionValue|null> */
     private $options;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param non-empty-array<string, ReplicaOptionValue> $options
+     * @param non-empty-array<ReplicaOption::*, ReplicaOptionValue|null> $options
      */
     public function __construct(array $options, ?string $channel = null)
     {
         $types = ReplicaOption::getTypes();
 
         foreach ($options as $option => $value) {
-            if (!ReplicaOption::validateValue($option)) {
-                throw new InvalidDefinitionException("Unknown option '$option' for CHANGE REPLICATION SOURCE.");
-            }
             TypeChecker::check($value, $types[$option], $option);
-
-            $options[(string) $option] = $value;
         }
 
         $this->options = $options;
@@ -51,7 +45,7 @@ class ChangeReplicationSourceToCommand extends Statement implements ReplicationC
     }
 
     /**
-     * @return non-empty-array<string, ReplicaOptionValue|null>
+     * @return non-empty-array<ReplicaOption::*, ReplicaOptionValue|null>
      */
     public function getOptions(): array
     {
@@ -59,21 +53,20 @@ class ChangeReplicationSourceToCommand extends Statement implements ReplicationC
     }
 
     /**
+     * @param ReplicaOption::* $option
      * @return ReplicaOptionValue|null $option
      */
     public function getOption(string $option)
     {
-        ReplicaOption::get($option);
-
         return $this->options[$option] ?? null;
     }
 
     /**
+     * @param ReplicaOption::* $option
      * @param ReplicaOptionValue|null $value
      */
     public function setOption(string $option, $value): void
     {
-        ReplicaOption::get($option);
         TypeChecker::check($value, ReplicaOption::getTypes()[$option], $option);
 
         $this->options[$option] = $value;

@@ -24,14 +24,14 @@ use function implode;
 class ChangeMasterToCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var non-empty-array<string, SlaveOptionValue|null> */
+    /** @var non-empty-array<SlaveOption::*, SlaveOptionValue|null> */
     private $options;
 
     /** @var string|null */
     private $channel;
 
     /**
-     * @param non-empty-array<string, SlaveOptionValue> $options
+     * @param non-empty-array<SlaveOption::*, SlaveOptionValue> $options
      */
     public function __construct(array $options, ?string $channel = null)
     {
@@ -42,7 +42,7 @@ class ChangeMasterToCommand extends Statement implements ReplicationCommand
             TypeChecker::check($value, SlaveOption::getTypes()[$option], $option);
 
             // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
-            /** @var non-empty-array<string, SlaveOptionValue> $options */
+            /** @var non-empty-array<SlaveOption::*, SlaveOptionValue> $options */
             $options[$option] = $value;
         }
 
@@ -51,7 +51,7 @@ class ChangeMasterToCommand extends Statement implements ReplicationCommand
     }
 
     /**
-     * @return non-empty-array<string, SlaveOptionValue|null>
+     * @return non-empty-array<SlaveOption::*, SlaveOptionValue|null>
      */
     public function getOptions(): array
     {
@@ -59,21 +59,20 @@ class ChangeMasterToCommand extends Statement implements ReplicationCommand
     }
 
     /**
+     * @param SlaveOption::* $option
      * @return SlaveOptionValue|null $option
      */
     public function getOption(string $option)
     {
-        SlaveOption::get($option);
-
         return $this->options[$option] ?? null;
     }
 
     /**
+     * @param SlaveOption::* $option
      * @param SlaveOptionValue|null $value
      */
     public function setOption(string $option, $value): void
     {
-        SlaveOption::get($option);
         TypeChecker::check($value, SlaveOption::getTypes()[$option], $option);
 
         $this->options[$option] = $value;

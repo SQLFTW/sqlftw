@@ -17,7 +17,7 @@ use function count;
 class AnalyzerException extends ParsingException
 {
 
-    /** @var non-empty-array<string, AnalyzerResult> */
+    /** @var non-empty-array<string, AnalyzerResult> ($message => $result) */
     private $results;
 
     /** @var Command */
@@ -27,7 +27,7 @@ class AnalyzerException extends ParsingException
     private $tokenList;
 
     /**
-     * @param non-empty-array<string, AnalyzerResult> $results
+     * @param non-empty-array<string, AnalyzerResult> $results ($message => $result)
      */
     public function __construct(array $results, Command $command, TokenList $tokenList, ?Throwable $previous = null)
     {
@@ -40,7 +40,7 @@ class AnalyzerException extends ParsingException
     }
 
     /**
-     * @return non-empty-array<string, AnalyzerResult>
+     * @return non-empty-array<string, AnalyzerResult> ($message => $result)
      */
     public function getResults(): array
     {

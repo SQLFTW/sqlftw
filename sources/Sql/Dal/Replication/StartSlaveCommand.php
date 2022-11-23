@@ -15,6 +15,9 @@ use SqlFtw\Sql\Statement;
 use function implode;
 use function is_array;
 
+/**
+ * @phpstan-type UntilKeyword 'SQL_AFTER_MTS_GAPS'|'SQL_BEFORE_GTIDS'|'SQL_AFTER_GTIDS'|'MASTER_LOG_FILE'|'MASTER_LOG_POS'|'SOURCE_LOG_FILE'|'SOURCE_LOG_POS'|'RELAY_LOG_FILE'|'RELAY_LOG_POS'
+ */
 class StartSlaveCommand extends Statement implements ReplicationCommand
 {
 
@@ -30,7 +33,7 @@ class StartSlaveCommand extends Statement implements ReplicationCommand
     /** @var string|null */
     private $pluginDir;
 
-    /** @var non-empty-array<string, string|int|bool|non-empty-list<UuidSet>>|null */
+    /** @var non-empty-array<UntilKeyword, string|int|bool|non-empty-list<UuidSet>>|null */
     private $until;
 
     /** @var non-empty-list<ReplicationThreadType>|null */
@@ -40,7 +43,7 @@ class StartSlaveCommand extends Statement implements ReplicationCommand
     private $channel;
 
     /**
-     * @param non-empty-array<string, string|int|bool|non-empty-list<UuidSet>>|null $until
+     * @param non-empty-array<UntilKeyword, string|int|bool|non-empty-list<UuidSet>>|null $until
      * @param non-empty-list<ReplicationThreadType>|null $threadTypes
      */
     public function __construct(
@@ -82,7 +85,7 @@ class StartSlaveCommand extends Statement implements ReplicationCommand
     }
 
     /**
-     * @return non-empty-array<string, string|int|bool|non-empty-list<UuidSet>>|null
+     * @return non-empty-array<UntilKeyword, string|int|bool|non-empty-list<UuidSet>>|null
      */
     public function getUntil(): ?array
     {

@@ -612,7 +612,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
      * - when no value follows the keyword (indicated by null), the keyword is parsed as a Literal - e.g. GET_FORMAT(DATE ISO) -> [new Literal('DATE'), 'ISO']
      * - parameters of some functions need special parsing (indicated by false) - CONVERT(), JSON_TABLE(), TRIM()
      *
-     * @var array<string, array<string, class-string|string>>
+     * @var array<self::*, array<Keyword::*|'AT TIME ZONE'|'ORDER BY'|'ON EMPTY'|'ON ERROR', class-string|string>>
      */
     private static $namedParams = [
         // AVG([DISTINCT | ALL] expr)
@@ -740,7 +740,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     }
 
     /**
-     * @return array<string, class-string|string>
+     * @return array<Keyword::*|'AT TIME ZONE'|'ORDER BY'|'ON EMPTY'|'ON ERROR', class-string|string>
      */
     public function getNamedParams(): array
     {

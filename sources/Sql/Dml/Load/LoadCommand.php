@@ -34,7 +34,7 @@ abstract class LoadCommand extends Statement implements DmlCommand
     /** @var non-empty-list<string>|null */
     private $fields;
 
-    /** @var non-empty-array<string, RootNode>|null */
+    /** @var non-empty-array<string, RootNode>|null ($column => $expression) */
     private $setters;
 
     /** @var int|null */
@@ -54,7 +54,7 @@ abstract class LoadCommand extends Statement implements DmlCommand
 
     /**
      * @param non-empty-list<string>|null $fields
-     * @param non-empty-array<string, RootNode>|null $setters
+     * @param non-empty-array<string, RootNode>|null $setters ($column => $expression)
      * @param non-empty-list<string>|null $partitions
      */
     public function __construct(

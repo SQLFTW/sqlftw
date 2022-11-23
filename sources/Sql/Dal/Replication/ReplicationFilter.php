@@ -9,39 +9,81 @@
 
 namespace SqlFtw\Sql\Dal\Replication;
 
+use Dogma\Arr;
+use Dogma\ShouldNotHappenException;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlEnum;
+use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Util\TypeChecker;
+use function implode;
 
-class ReplicationFilter extends SqlEnum
+class ReplicationFilter implements SqlSerializable
 {
 
-    public const REPLICATE_DO_DB = Keyword::REPLICATE_DO_DB;
-    public const REPLICATE_IGNORE_DB = Keyword::REPLICATE_IGNORE_DB;
-    public const REPLICATE_DO_TABLE = Keyword::REPLICATE_DO_TABLE;
-    public const REPLICATE_IGNORE_TABLE = Keyword::REPLICATE_IGNORE_TABLE;
-    public const REPLICATE_WILD_DO_TABLE = Keyword::REPLICATE_WILD_DO_TABLE;
-    public const REPLICATE_WILD_IGNORE_TABLE = Keyword::REPLICATE_WILD_IGNORE_TABLE;
-    public const REPLICATE_REWRITE_DB = Keyword::REPLICATE_REWRITE_DB;
+    /** @var ReplicationFilterType::* */
+    private $type;
 
-    /** @var array<string, string> */
-    private static $types = [
-        self::REPLICATE_DO_DB => BaseType::CHAR . '[]',
-        self::REPLICATE_IGNORE_DB => BaseType::CHAR . '[]',
-        self::REPLICATE_DO_TABLE => ObjectIdentifier::class . '[]',
-        self::REPLICATE_IGNORE_TABLE => ObjectIdentifier::class . '[]',
-        self::REPLICATE_WILD_DO_TABLE => BaseType::CHAR . '[]',
-        self::REPLICATE_WILD_IGNORE_TABLE => BaseType::CHAR . '[]',
-        self::REPLICATE_REWRITE_DB => BaseType::CHAR . '{}',
-    ];
+    /** @var array<string, string>|list<string|ObjectIdentifier> */
+    private $items;
 
     /**
-     * @return array<string, string>
+     * @param ReplicationFilterType::* $type
+     * @param array<string, string>|list<string|ObjectIdentifier> $items
      */
-    public static function getTypes(): array
+    public function __construct(string $type, array $items)
     {
-        return self::$types;
+        TypeChecker::check($items, ReplicationFilterType::getItemType($type));
+
+        $this->type = $type;
+        $this->items = $items;
+    }
+
+    /**
+     * @return ReplicationFilterType::*
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return array<string, string>|list<string|ObjectIdentifier>
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        if ($this->items === []) {
+            return $this->type . ' = ()';
+        } else {
+            switch (ReplicationFilterType::getItemType($this->type)) {
+                case BaseType::CHAR . '[]':
+                    /** @var non-empty-list<string> $items */
+                    $items = $this->items;
+                    if ($this->type === ReplicationFilterType::REPLICATE_DO_DB || $this->type === ReplicationFilterType::REPLICATE_IGNORE_DB) {
+                        return $this->type . ' = (' . $formatter->formatNamesList($items) . ')';
+                    } else {
+                        return $this->type . ' = (' . $formatter->formatStringList($items) . ')';
+                    }
+                case ObjectIdentifier::class . '[]':
+                    // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
+                    /** @var non-empty-list<QualifiedName> $items2 */
+                    $items2 = $this->items;
+
+                    return $this->type . ' = (' . $formatter->formatSerializablesList($items2) . ')';
+                case BaseType::CHAR . '{}':
+                    return $this->type . ' = (' . implode(', ', Arr::mapPairs($this->items, static function (string $key, string $value) use ($formatter) {
+                        return '(' . $formatter->formatName($key) . ', ' . $formatter->formatName($value) . ')';
+                    })) . ')';
+                default:
+                    throw new ShouldNotHappenException('');
+            }
+        }
     }
 
 }

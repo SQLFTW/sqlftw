@@ -23,6 +23,7 @@ use SqlFtw\Sql\Dal\Replication\PurgeBinaryLogsCommand;
 use SqlFtw\Sql\Dal\Replication\ReplicaOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\ReplicationFilter;
+use SqlFtw\Sql\Dal\Replication\ReplicationFilterType;
 use SqlFtw\Sql\Dal\Replication\ReplicationGtidAssignOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationPrimaryKeyCheckOption;
 use SqlFtw\Sql\Dal\Replication\ReplicationThreadType;
@@ -116,9 +117,10 @@ class ReplicationCommandsParser
         $types = SlaveOption::getTypes();
         $options = [];
         do {
-            $option = $tokenList->expectKeywordEnum(SlaveOption::class);
+            /** @var SlaveOption::* $option */
+            $option = $tokenList->expectKeywordEnum(SlaveOption::class)->getValue();
             $tokenList->expectOperator(Operator::EQUAL);
-            $type = $types[$option->getValue()];
+            $type = $types[$option];
             switch ($type) {
                 case [0, 1]:
                     $value = (int) $tokenList->expectUnsignedInt();
@@ -138,7 +140,7 @@ class ReplicationCommandsParser
                     break;
                 case BaseType::UNSIGNED:
                     $value = (int) $tokenList->expectUnsignedInt();
-                    if ($option->equalsValue(SlaveOption::MASTER_DELAY) && $value >= PowersOfTwo::_2G) {
+                    if ($option === SlaveOption::MASTER_DELAY && $value >= PowersOfTwo::_2G) {
                         throw new InvalidValueException('0 to 2147483647', $tokenList);
                     }
                     break;
@@ -183,7 +185,7 @@ class ReplicationCommandsParser
                 default:
                     throw new ShouldNotHappenException(is_string($type) ? "Unknown type $type." : "Unknown type.");
             }
-            $options[$option->getValue()] = $value;
+            $options[$option] = $value;
         } while ($tokenList->hasSymbol(','));
 
         $channel = null;
@@ -250,9 +252,10 @@ class ReplicationCommandsParser
         $types = ReplicaOption::getTypes();
         $options = [];
         do {
-            $option = $tokenList->expectKeywordEnum(ReplicaOption::class);
+            /** @var ReplicaOption::* $option */
+            $option = $tokenList->expectKeywordEnum(ReplicaOption::class)->getValue();
             $tokenList->expectOperator(Operator::EQUAL);
-            $type = $types[$option->getValue()];
+            $type = $types[$option];
             switch ($type) {
                 case [0, 1]:
                     $value = (int) $tokenList->expectUnsignedInt();
@@ -272,7 +275,7 @@ class ReplicationCommandsParser
                     break;
                 case BaseType::UNSIGNED:
                     $value = (int) $tokenList->expectUnsignedInt();
-                    if ($option->equalsValue(ReplicaOption::SOURCE_DELAY) && $value >= PowersOfTwo::_2G) {
+                    if ($option === ReplicaOption::SOURCE_DELAY && $value >= PowersOfTwo::_2G) {
                         throw new InvalidValueException('0 to 2147483647', $tokenList);
                     }
                     break;
@@ -317,7 +320,7 @@ class ReplicationCommandsParser
                 default:
                     throw new ShouldNotHappenException(is_string($type) ? "Unknown type $type." : "Unknown type.");
             }
-            $options[$option->getValue()] = $value;
+            $options[$option] = $value;
         } while ($tokenList->hasSymbol(','));
 
         $channel = null;
@@ -361,10 +364,11 @@ class ReplicationCommandsParser
     {
         $tokenList->expectKeywords(Keyword::CHANGE, Keyword::REPLICATION, Keyword::FILTER);
 
-        $types = ReplicationFilter::getTypes();
+        $types = ReplicationFilterType::getItemTypes();
         $filters = [];
         do {
-            $filter = $tokenList->expectKeywordEnum(ReplicationFilter::class)->getValue();
+            /** @var ReplicationFilterType::* $filter */
+            $filter = $tokenList->expectKeywordEnum(ReplicationFilterType::class)->getValue();
             $tokenList->expectOperator(Operator::EQUAL);
             $tokenList->expectSymbol('(');
             if ($tokenList->hasSymbol(')')) {
@@ -374,7 +378,7 @@ class ReplicationCommandsParser
                     case BaseType::CHAR . '[]':
                         $values = [];
                         do {
-                            if ($filter === ReplicationFilter::REPLICATE_DO_DB || $filter === ReplicationFilter::REPLICATE_IGNORE_DB) {
+                            if ($filter === ReplicationFilterType::REPLICATE_DO_DB || $filter === ReplicationFilterType::REPLICATE_IGNORE_DB) {
                                 $values[] = $tokenList->expectName(EntityType::SCHEMA);
                             } else {
                                 $values[] = $tokenList->expectString();
@@ -403,7 +407,7 @@ class ReplicationCommandsParser
                 }
                 $tokenList->expectSymbol(')');
             }
-            $filters[$filter] = $values;
+            $filters[] = new ReplicationFilter($filter, $values);
         } while ($tokenList->hasSymbol(','));
 
         $channel = null;
