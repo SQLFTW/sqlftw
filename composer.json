@@ -18,7 +18,8 @@
         "dogma/dogma-dev": "0.1.29",
         "phpstan/phpstan": "1.9.2",
         "phpstan/phpstan-strict-rules": "^1.0",
-        "amphp/parallel-functions": "1.0.0"
+        "amphp/parallel-functions": "1.0.0",
+        "rector/rector": "0.14.8"
     },
     "autoload": {
         "classmap": ["sources", "tests", "build"]
@@ -31,6 +32,7 @@
         "b": "@build:init",
         "c": "@check:all",
         "cf": "@check:fast",
+        "r": "@build:rector",
         "t": "@tests:run",
         "tm": "@tests:mysql",
         "tms": "@tests:mysql-s",
@@ -50,6 +52,8 @@
             "rm -rf temp/cache/*"
         ],
         "build:doc": "php81 ../../tools/apigen/bin/apigen sources --output doc/api",
+        "build:rector": "php74 vendor/bin/rector process --dry-run",
+        "build:rector-write": "php74 vendor/bin/rector process",
 
         "check:fast": [
             "@tests:run",
