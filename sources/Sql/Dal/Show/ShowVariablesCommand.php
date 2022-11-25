@@ -17,14 +17,11 @@ use SqlFtw\Sql\Statement;
 class ShowVariablesCommand extends Statement implements ShowCommand
 {
 
-    /** @var Scope|null */
-    private $scope;
+    private ?Scope $scope;
 
-    /** @var string|null */
-    private $like;
+    private ?string $like;
 
-    /** @var RootNode|null */
-    private $where;
+    private ?RootNode $where;
 
     public function __construct(?Scope $scope = null, ?string $like = null, ?RootNode $where = null)
     {

@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class DropAuthFactor implements AlterUserAction
 {
 
-    /** @var int */
-    private $factor1;
+    private int $factor1;
 
-    /** @var int|null */
-    private $factor2;
+    private ?int $factor2;
 
     public function __construct(int $factor1, ?int $factor2 = null)
     {

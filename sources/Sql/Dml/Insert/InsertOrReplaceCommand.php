@@ -18,20 +18,17 @@ use SqlFtw\Sql\Statement;
 abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
 {
 
-    /** @var ObjectIdentifier */
-    protected $table;
+    protected ObjectIdentifier $table;
 
     /** @var list<ColumnIdentifier>|null */
-    protected $columns;
+    protected ?array $columns;
 
     /** @var non-empty-list<string>|null */
-    protected $partitions;
+    protected ?array $partitions;
 
-    /** @var InsertPriority|null */
-    protected $priority;
+    protected ?InsertPriority $priority;
 
-    /** @var bool */
-    protected $ignore;
+    protected bool $ignore;
 
     /**
      * @param list<ColumnIdentifier>|null $columns

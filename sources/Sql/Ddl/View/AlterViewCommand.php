@@ -20,26 +20,20 @@ use SqlFtw\Sql\Statement;
 class AlterViewCommand extends Statement implements ViewCommand, SchemaObjectCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $view;
+    private ObjectIdentifier $view;
 
-    /** @var Query */
-    private $query;
+    private Query $query;
 
     /** @var non-empty-list<string>|null */
-    private $columns;
+    private ?array $columns;
 
-    /** @var UserExpression|null */
-    private $definer;
+    private ?UserExpression $definer;
 
-    /** @var SqlSecurity|null */
-    private $security;
+    private ?SqlSecurity $security;
 
-    /** @var ViewAlgorithm|null */
-    private $algorithm;
+    private ?ViewAlgorithm $algorithm;
 
-    /** @var ViewCheckOption|null */
-    private $checkOption;
+    private ?ViewCheckOption $checkOption;
 
     /**
      * @param non-empty-list<string>|null $columns

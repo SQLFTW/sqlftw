@@ -128,14 +128,11 @@ use function strtoupper;
 class TableCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
-    /** @var IndexCommandsParser */
-    private $indexCommandsParser;
+    private IndexCommandsParser $indexCommandsParser;
 
-    /** @var QueryParser */
-    private $queryParser;
+    private QueryParser $queryParser;
 
     public function __construct(
         ExpressionParser $expressionParser,

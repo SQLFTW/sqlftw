@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class ExplainForConnectionCommand extends Statement implements DmlCommand
 {
 
-    /** @var int */
-    private $connectionId;
+    private int $connectionId;
 
-    /** @var ExplainType|null */
-    private $type;
+    private ?ExplainType $type;
 
     public function __construct(int $connectionId, ?ExplainType $type = null)
     {

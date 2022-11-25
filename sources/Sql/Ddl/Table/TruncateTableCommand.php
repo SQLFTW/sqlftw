@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class TruncateTableCommand extends Statement implements DdlTableCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $name;
+    private ObjectIdentifier $name;
 
     public function __construct(ObjectIdentifier $name)
     {

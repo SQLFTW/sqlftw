@@ -20,23 +20,18 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public const PRIMARY_KEY_NAME = null;
 
-    /** @var string|null */
-    private $name;
+    private ?string $name;
 
-    /** @var IndexType */
-    private $type;
+    private IndexType $type;
 
     /** @var non-empty-list<IndexPart> */
-    private $parts;
+    private array $parts;
 
-    /** @var IndexAlgorithm|null */
-    private $algorithm;
+    private ?IndexAlgorithm $algorithm;
 
-    /** @var IndexOptions|null */
-    private $options;
+    private ?IndexOptions $options;
 
-    /** @var ObjectIdentifier|null */
-    private $table;
+    private ?ObjectIdentifier $table;
 
     /**
      * @param non-empty-list<IndexPart> $parts

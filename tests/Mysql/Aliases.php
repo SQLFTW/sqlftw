@@ -8,7 +8,7 @@ trait Aliases
 {
 
     /** @var array<string, string> */
-    private static $aliases = [
+    private static array $aliases = [
         // scopes
         '@@local.' => '@@session.',
         'set local ' => 'set @@session.',
@@ -291,7 +291,7 @@ trait Aliases
     ];
 
     /** @var array<string, string> */
-    private static $reAliases = [
+    private static array $reAliases = [
         // delete .*
         '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3, $4, $5',
         '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3, $4',
@@ -382,7 +382,7 @@ trait Aliases
     ];
 
     /** @var array<string, string> */
-    private static $normalize = [
+    private static array $normalize = [
         // use short versions everywhere
         'set @@session.' => 'set ',
         'set session ' => 'set ',

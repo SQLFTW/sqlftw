@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class BoolLiteral implements BoolValue, KeywordLiteral
 {
 
-    /** @var bool */
-    private $value;
+    private bool $value;
 
     public function __construct(bool $value)
     {

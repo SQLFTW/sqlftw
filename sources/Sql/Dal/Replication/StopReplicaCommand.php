@@ -15,14 +15,11 @@ use SqlFtw\Sql\Statement;
 class StopReplicaCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var bool */
-    private $ioThread;
+    private bool $ioThread;
 
-    /** @var bool */
-    private $sqlThread;
+    private bool $sqlThread;
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     public function __construct(bool $ioThread = false, bool $sqlThread = false, ?string $channel = null)
     {

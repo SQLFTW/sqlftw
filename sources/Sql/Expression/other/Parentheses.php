@@ -17,8 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class Parentheses implements RootNode
 {
 
-    /** @var ExpressionNode */
-    private $contents;
+    private ExpressionNode $contents;
 
     public function __construct(ExpressionNode $contents)
     {

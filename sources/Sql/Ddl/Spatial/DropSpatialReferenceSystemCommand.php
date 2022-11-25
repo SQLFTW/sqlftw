@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class DropSpatialReferenceSystemCommand extends Statement implements ServerCommand
 {
 
-    /** @var int */
-    private $srid;
+    private int $srid;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(int $srid, bool $ifExists = false)
     {

@@ -18,11 +18,9 @@ use SqlFtw\Sql\Collation;
 class CollateExpression implements RootNode
 {
 
-    /** @var RootNode */
-    private $expression;
+    private RootNode $expression;
 
-    /** @var Collation */
-    private $collation;
+    private Collation $collation;
 
     public function __construct(RootNode $expression, Collation $collation)
     {

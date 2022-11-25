@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class DropIndexAction implements IndexAction
 {
 
-    /** @var string */
-    private $index;
+    private string $index;
 
     public function __construct(string $index)
     {

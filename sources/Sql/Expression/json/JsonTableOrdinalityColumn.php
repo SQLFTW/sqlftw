@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class JsonTableOrdinalityColumn implements JsonTableColumn
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     public function __construct(string $name)
     {

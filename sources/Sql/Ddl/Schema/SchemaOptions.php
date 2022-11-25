@@ -18,17 +18,13 @@ use function implode;
 class SchemaOptions implements SchemaCommand
 {
 
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
-    /** @var Collation|null */
-    private $collation;
+    private ?Collation $collation;
 
-    /** @var bool|null */
-    private $encryption;
+    private ?bool $encryption;
 
-    /** @var ThreeStateValue|null */
-    private $readOnly;
+    private ?ThreeStateValue $readOnly;
 
     public function __construct(
         ?Charset $charset = null,

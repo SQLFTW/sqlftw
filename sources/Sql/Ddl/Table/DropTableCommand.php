@@ -17,16 +17,13 @@ class DropTableCommand extends Statement implements DdlTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $names;
+    private array $names;
 
-    /** @var bool */
-    private $temporary;
+    private bool $temporary;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
-    /** @var bool|null */
-    private $cascadeRestrict;
+    private ?bool $cascadeRestrict;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names

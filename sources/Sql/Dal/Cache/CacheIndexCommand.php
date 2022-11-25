@@ -19,11 +19,10 @@ use function is_array;
 class CacheIndexCommand extends Statement implements CacheCommand
 {
 
-    /** @var string */
-    private $keyCache;
+    private string $keyCache;
 
     /** @var non-empty-list<TableIndexList> */
-    private $tableIndexLists;
+    private array $tableIndexLists;
 
     /** @var non-empty-list<string>|bool|null */
     private $partitions;

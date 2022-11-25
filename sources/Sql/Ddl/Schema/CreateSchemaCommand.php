@@ -15,14 +15,11 @@ use SqlFtw\Sql\Statement;
 class CreateSchemaCommand extends Statement implements SchemaCommand
 {
 
-    /** @var string */
-    private $schema;
+    private string $schema;
 
-    /** @var SchemaOptions|null */
-    private $options;
+    private ?SchemaOptions $options;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
     public function __construct(string $schema, ?SchemaOptions $options, bool $ifNotExists = false)
     {

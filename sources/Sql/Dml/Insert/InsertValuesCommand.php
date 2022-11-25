@@ -20,16 +20,14 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
 {
 
     /** @var non-empty-list<list<ExpressionNode>> */
-    private $rows;
+    private array $rows;
 
-    /** @var string|null */
-    private $alias;
+    private ?string $alias;
 
     /** @var non-empty-list<string>|null */
-    private $columnAliases;
+    private ?array $columnAliases;
 
-    /** @var OnDuplicateKeyActions|null */
-    private $onDuplicateKeyActions;
+    private ?OnDuplicateKeyActions $onDuplicateKeyActions;
 
     /**
      * @param non-empty-list<list<ExpressionNode>> $rows

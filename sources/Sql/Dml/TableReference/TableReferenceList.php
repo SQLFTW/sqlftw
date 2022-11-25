@@ -17,7 +17,7 @@ class TableReferenceList implements TableReferenceNode, Countable
 {
 
     /** @var non-empty-list<TableReferenceNode> */
-    private $references;
+    private array $references;
 
     /**
      * @param non-empty-list<TableReferenceNode> $references

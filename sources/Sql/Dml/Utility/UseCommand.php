@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class UseCommand extends Statement implements DmlCommand
 {
 
-    /** @var string */
-    private $schema;
+    private string $schema;
 
     public function __construct(string $schema)
     {

@@ -15,8 +15,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 class UserVariable implements Identifier
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     public function __construct(string $name)
     {

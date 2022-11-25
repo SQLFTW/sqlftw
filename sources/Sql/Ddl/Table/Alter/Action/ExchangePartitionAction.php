@@ -15,14 +15,11 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class ExchangePartitionAction implements PartitioningAction
 {
 
-    /** @var string */
-    private $partition;
+    private string $partition;
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var bool|null */
-    private $validation;
+    private ?bool $validation;
 
     public function __construct(string $partition, ObjectIdentifier $table, ?bool $validation)
     {

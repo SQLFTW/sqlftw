@@ -18,7 +18,7 @@ class OrderByListExpression implements ArgumentNode
 {
 
     /** @var non-empty-list<OrderByExpression> */
-    private $items;
+    private array $items;
 
     /**
      * @param non-empty-list<OrderByExpression> $items

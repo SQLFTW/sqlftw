@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class SetRoleCommand extends Statement implements UserCommand
 {
 
-    /** @var RolesSpecification */
-    private $role;
+    private RolesSpecification $role;
 
     public function __construct(RolesSpecification $role)
     {

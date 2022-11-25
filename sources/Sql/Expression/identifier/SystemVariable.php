@@ -19,11 +19,9 @@ use function implode;
 class SystemVariable implements Identifier
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var Scope|null */
-    private $scope;
+    private ?Scope $scope;
 
     public function __construct(string $name, ?Scope $scope = null)
     {

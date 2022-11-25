@@ -23,14 +23,13 @@ use function ucfirst;
 class Assignment implements SqlSerializable
 {
 
-    /** @var ColumnIdentifier */
-    private $variable;
+    private ColumnIdentifier $variable;
 
-    /** @var bool|int|float|string|RootNode */
+    /** @var scalar|RootNode */
     private $expression;
 
     /**
-     * @param bool|int|float|string|RootNode $expression
+     * @param scalar|RootNode $expression
      */
     public function __construct(ColumnIdentifier $variable, $expression)
     {
@@ -48,7 +47,7 @@ class Assignment implements SqlSerializable
     }
 
     /**
-     * @return bool|int|float|string|RootNode
+     * @return scalar|RootNode
      */
     public function getExpression()
     {

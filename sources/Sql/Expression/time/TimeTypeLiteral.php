@@ -18,7 +18,7 @@ class TimeTypeLiteral implements KeywordLiteral
 {
 
     /** @var 'DATE'|'TIME'|'DATETIME' */
-    private $value;
+    private string $value;
 
     /**
      * @param 'DATE'|'TIME'|'DATETIME' $value

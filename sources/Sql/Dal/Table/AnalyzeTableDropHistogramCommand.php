@@ -17,13 +17,12 @@ class AnalyzeTableDropHistogramCommand extends Statement implements DalTablesCom
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $tables;
+    private array $tables;
 
     /** @var non-empty-list<string> */
-    private $columns;
+    private array $columns;
 
-    /** @var bool */
-    private $local;
+    private bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $tables

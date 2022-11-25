@@ -15,17 +15,15 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class TableReferenceTable implements TableReferenceNode
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var string|null */
-    private $alias;
+    private ?string $alias;
 
     /** @var non-empty-list<string>|null */
-    private $partitions;
+    private ?array $partitions;
 
     /** @var non-empty-list<IndexHint>|null */
-    private $indexHints;
+    private ?array $indexHints;
 
     /**
      * @param non-empty-list<string>|null $partitions

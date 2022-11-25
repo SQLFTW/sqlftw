@@ -72,7 +72,7 @@ class SqlMode extends StringSet
     public const NOT_USED = 'NOT_USED';
 
     /** @var array<int, string> */
-    private static $numeric = [
+    private static array $numeric = [
         PowersOfTwo::_1 => self::REAL_AS_FLOAT,
         PowersOfTwo::_2 => self::PIPES_AS_CONCAT,
         PowersOfTwo::_4 => self::ANSI_QUOTES,
@@ -105,7 +105,7 @@ class SqlMode extends StringSet
     ];
 
     /** @var array<string, list<string>> */
-    private static $groups = [
+    private static array $groups = [
         self::TRADITIONAL => [
             self::STRICT_TRANS_TABLES,
             self::STRICT_ALL_TABLES,

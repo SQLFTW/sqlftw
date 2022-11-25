@@ -528,7 +528,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     public const ROW_NUMBER = 'ROW_NUMBER';
 
     /** @var list<string> */
-    private static $aggregate = [
+    private static array $aggregate = [
         self::ANY_VALUE,
         self::AVG,
         self::BIT_AND,
@@ -553,7 +553,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     ];
 
     /** @var list<string> */
-    private static $window = [
+    private static array $window = [
         self::CUME_DIST,
         self::DENSE_RANK,
         self::FIRST_VALUE,
@@ -568,7 +568,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     ];
 
     /** @var list<string> */
-    private static $nullTreatment = [
+    private static array $nullTreatment = [
         self::FIRST_VALUE,
         self::LAG,
         self::LAST_VALUE,
@@ -577,7 +577,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     ];
 
     /** @var list<string> */
-    private static $bare = [
+    private static array $bare = [
         self::CURRENT_TIME,
         self::CURRENT_DATE,
         self::CURRENT_TIMESTAMP,
@@ -590,7 +590,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     ];
 
     /** @var list<string> */
-    private static $timeProviders = [
+    private static array $timeProviders = [
         self::CURDATE,
         self::CURRENT_TIME,
         self::CURRENT_DATE,
@@ -614,7 +614,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
      *
      * @var array<self::*, array<Keyword::*|'AT TIME ZONE'|'ORDER BY'|'ON EMPTY'|'ON ERROR', class-string|string>>
      */
-    private static $namedParams = [
+    private static array $namedParams = [
         // AVG([DISTINCT | ALL] expr)
         self::AVG => [Keyword::DISTINCT => RootNode::class, Keyword::ALL => RootNode::class],
         // BIT_OR([ALL] expr)

@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class HandlerOpenCommand extends Statement implements HandlerCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var string|null */
-    private $alias;
+    private ?string $alias;
 
     public function __construct(ObjectIdentifier $table, ?string $alias = null)
     {

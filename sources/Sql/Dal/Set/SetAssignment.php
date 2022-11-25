@@ -18,14 +18,11 @@ use SqlFtw\Sql\SqlSerializable;
 class SetAssignment implements SqlSerializable
 {
 
-    /** @var Identifier */
-    private $variable;
+    private Identifier $variable;
 
-    /** @var RootNode */
-    private $expression;
+    private RootNode $expression;
 
-    /** @var string */
-    private $operator;
+    private string $operator;
 
     public function __construct(Identifier $variable, RootNode $expression, string $operator = Operator::EQUAL)
     {

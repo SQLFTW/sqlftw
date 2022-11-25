@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class JsonTableNestedColumns implements JsonTableColumn
 {
 
-    /** @var StringValue */
-    private $path;
+    private StringValue $path;
 
-    /** @var JsonTableColumnsList */
-    private $columns;
+    private JsonTableColumnsList $columns;
 
     public function __construct(StringValue $path, JsonTableColumnsList $columns)
     {

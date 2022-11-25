@@ -17,10 +17,9 @@ class OptimizeTableCommand extends Statement implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $names;
+    private array $names;
 
-    /** @var bool */
-    private $local;
+    private bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names

@@ -19,35 +19,26 @@ use function array_values;
 class CreateProcedureCommand extends Statement implements StoredProcedureCommand, CreateRoutineCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $procedure;
+    private ObjectIdentifier $procedure;
 
-    /** @var Statement */
-    private $body;
+    private Statement $body;
 
     /** @var array<string, ProcedureParam> */
-    private $params;
+    private array $params;
 
-    /** @var UserExpression|null */
-    private $definer;
+    private ?UserExpression $definer;
 
-    /** @var bool|null */
-    private $deterministic;
+    private ?bool $deterministic;
 
-    /** @var SqlSecurity|null */
-    private $security;
+    private ?SqlSecurity $security;
 
-    /** @var RoutineSideEffects|null */
-    private $sideEffects;
+    private ?RoutineSideEffects $sideEffects;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var string|null */
-    private $language;
+    private ?string $language;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
     /**
      * @param array<string, ProcedureParam> $params

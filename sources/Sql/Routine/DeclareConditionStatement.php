@@ -17,8 +17,7 @@ use SqlFtw\Sql\Statement;
 class DeclareConditionStatement extends Statement implements SqlSerializable
 {
 
-    /** @var string */
-    private $condition;
+    private string $condition;
 
     /** @var int|SqlState */
     private $value;

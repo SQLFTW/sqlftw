@@ -21,11 +21,9 @@ class ReplicationGtidAssignOption implements SqlSerializable
     public const LOCAL = Keyword::LOCAL;
     public const UUID = 'UUID';
 
-    /** @var string */
-    private $type;
+    private string $type;
 
-    /** @var string|null */
-    private $uuid;
+    private ?string $uuid;
 
     public function __construct(string $type, ?string $uuid = null)
     {

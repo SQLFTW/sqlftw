@@ -17,20 +17,15 @@ use SqlFtw\Sql\SqlSerializable;
 class WindowFrame implements SqlSerializable
 {
 
-    /** @var WindowFrameUnits */
-    public $units;
+    public WindowFrameUnits $units;
 
-    /** @var WindowFrameType */
-    public $startType;
+    public WindowFrameType $startType;
 
-    /** @var WindowFrameType|null */
-    public $endType;
+    public ?WindowFrameType $endType;
 
-    /** @var RootNode|null */
-    public $startExpression;
+    public ?RootNode $startExpression;
 
-    /** @var RootNode|null */
-    public $endExpression;
+    public ?RootNode $endExpression;
 
     public function __construct(
         WindowFrameUnits $units,

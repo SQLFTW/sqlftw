@@ -15,11 +15,9 @@ use SqlFtw\Sql\Expression\StringValue;
 class AlterAuthOption extends AuthOption implements AlterUserAction
 {
 
-    /** @var string|null */
-    private $replace;
+    private ?string $replace;
 
-    /** @var bool */
-    private $retainCurrentPassword;
+    private bool $retainCurrentPassword;
 
     /**
      * @param StringValue|false|null $password

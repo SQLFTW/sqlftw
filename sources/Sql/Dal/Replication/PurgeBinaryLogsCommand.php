@@ -17,11 +17,9 @@ use SqlFtw\Sql\Statement;
 class PurgeBinaryLogsCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var string|null */
-    private $toLog;
+    private ?string $toLog;
 
-    /** @var RootNode|null */
-    private $before;
+    private ?RootNode $before;
 
     public function __construct(?string $toLog, ?RootNode $before)
     {

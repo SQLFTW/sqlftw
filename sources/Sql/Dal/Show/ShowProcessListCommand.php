@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class ShowProcessListCommand extends Statement implements ShowCommand
 {
 
-    /** @var bool */
-    private $full;
+    private bool $full;
 
     public function __construct(bool $full = false)
     {

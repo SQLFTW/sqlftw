@@ -41,8 +41,7 @@ use function count;
 class TableReferenceParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     /** @var callable(): QueryParser */
     private $queryParserProxy;

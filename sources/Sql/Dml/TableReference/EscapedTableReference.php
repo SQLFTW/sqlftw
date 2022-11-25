@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class EscapedTableReference implements TableReferenceNode
 {
 
-    /** @var TableReferenceNode */
-    private $node;
+    private TableReferenceNode $node;
 
     public function __construct(TableReferenceNode $node)
     {

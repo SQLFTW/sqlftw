@@ -16,17 +16,14 @@ use SqlFtw\Sql\SqlSerializable;
 class PartitioningCondition implements SqlSerializable
 {
 
-    /** @var PartitioningConditionType */
-    private $type;
+    private PartitioningConditionType $type;
 
-    /** @var RootNode|null */
-    private $expression;
+    private ?RootNode $expression;
 
     /** @var list<string>|null */
-    private $columns;
+    private ?array $columns;
 
-    /** @var int|null */
-    private $algorithm;
+    private ?int $algorithm;
 
     /**
      * @param list<string>|null $columns

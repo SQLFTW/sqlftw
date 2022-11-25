@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class AlterSchemaCommand extends Statement implements SchemaCommand
 {
 
-    /** @var string|null */
-    private $schema;
+    private ?string $schema;
 
-    /** @var SchemaOptions */
-    private $options;
+    private SchemaOptions $options;
 
     public function __construct(?string $schema, SchemaOptions $options)
     {

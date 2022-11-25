@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class ShowCreateTriggerCommand extends Statement implements ShowCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $trigger;
+    private ObjectIdentifier $trigger;
 
     public function __construct(ObjectIdentifier $trigger)
     {

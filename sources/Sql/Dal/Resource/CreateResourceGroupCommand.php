@@ -19,23 +19,18 @@ use function implode;
 class CreateResourceGroupCommand extends Statement implements DalCommand
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var ResourceGroupType */
-    private $type;
+    private ResourceGroupType $type;
 
     /** @var non-empty-list<array{0: int, 1?: int}>|null */
-    private $vcpus;
+    private ?array $vcpus;
 
-    /** @var int|null */
-    private $threadPriority;
+    private ?int $threadPriority;
 
-    /** @var bool|null */
-    private $enable;
+    private ?bool $enable;
 
-    /** @var bool */
-    private $force;
+    private bool $force;
 
     /**
      * @param non-empty-list<array{0: int, 1?: int}>|null $vcpus

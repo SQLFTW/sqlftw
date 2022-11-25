@@ -15,14 +15,11 @@ use SqlFtw\Sql\Statement;
 class XaEndCommand extends Statement implements XaTransactionCommand
 {
 
-    /** @var Xid */
-    private $xid;
+    private Xid $xid;
 
-    /** @var bool */
-    private $suspend;
+    private bool $suspend;
 
-    /** @var bool */
-    private $forMigrate;
+    private bool $forMigrate;
 
     public function __construct(Xid $xid, bool $suspend = false, bool $forMigrate = false)
     {

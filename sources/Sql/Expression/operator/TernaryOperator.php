@@ -18,20 +18,15 @@ use SqlFtw\Formatter\Formatter;
 class TernaryOperator implements OperatorExpression
 {
 
-    /** @var ExpressionNode */
-    private $left;
+    private ExpressionNode $left;
 
-    /** @var Operator */
-    private $leftOperator;
+    private Operator $leftOperator;
 
-    /** @var ExpressionNode */
-    private $middle;
+    private ExpressionNode $middle;
 
-    /** @var Operator */
-    private $rightOperator;
+    private Operator $rightOperator;
 
-    /** @var ExpressionNode */
-    private $right;
+    private ExpressionNode $right;
 
     public function __construct(
         ExpressionNode $left,

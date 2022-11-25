@@ -24,10 +24,10 @@ class RenameTableCommand extends Statement implements DdlTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    protected $names;
+    protected array $names;
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $newNames;
+    private array $newNames;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names

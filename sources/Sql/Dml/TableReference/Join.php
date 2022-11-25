@@ -12,11 +12,9 @@ namespace SqlFtw\Sql\Dml\TableReference;
 abstract class Join implements TableReferenceNode
 {
 
-    /** @var TableReferenceNode */
-    protected $left;
+    protected TableReferenceNode $left;
 
-    /** @var TableReferenceNode */
-    protected $right;
+    protected TableReferenceNode $right;
 
     public function __construct(TableReferenceNode $left, TableReferenceNode $right)
     {

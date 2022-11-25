@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class AddPartitionNumberAction implements PartitioningAction
 {
 
-    /** @var int */
-    private $partitions;
+    private int $partitions;
 
     public function __construct(int $partition)
     {

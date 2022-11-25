@@ -16,14 +16,11 @@ use SqlFtw\Sql\SqlSerializable;
 class ProcedureParam implements SqlSerializable
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var ColumnType */
-    private $type;
+    private ColumnType $type;
 
-    /** @var InOutParamFlag|null */
-    private $inOutFlag;
+    private ?InOutParamFlag $inOutFlag;
 
     public function __construct(string $name, ColumnType $type, ?InOutParamFlag $inOutFlag = null)
     {

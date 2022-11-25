@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class AlterIndexAction implements IndexAction
 {
 
-    /** @var string */
-    private $index;
+    private string $index;
 
-    /** @var bool */
-    private $visible;
+    private bool $visible;
 
     public function __construct(string $index, bool $visible)
     {

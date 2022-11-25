@@ -27,29 +27,24 @@ use function count;
 class UpdateCommand extends Statement implements DmlCommand
 {
 
-    /** @var TableReferenceNode */
-    private $tableReferences;
+    private TableReferenceNode $tableReferences;
 
     /** @var non-empty-list<Assignment> */
-    private $values;
+    private array $values;
 
-    /** @var RootNode|null */
-    private $where;
+    private ?RootNode $where;
 
-    /** @var WithClause|null */
-    private $with;
+    private ?WithClause $with;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private $orderBy;
+    private ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
-    /** @var bool */
-    private $ignore;
+    private bool $ignore;
 
-    /** @var bool */
-    private $lowPriority;
+    private bool $lowPriority;
 
     /**
      * @param non-empty-list<Assignment> $values

@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class DropProcedureCommand extends Statement implements StoredProcedureCommand, DropRoutineCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $procedure;
+    private ObjectIdentifier $procedure;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(ObjectIdentifier $procedure, bool $ifExists = false)
     {

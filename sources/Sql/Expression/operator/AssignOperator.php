@@ -17,11 +17,9 @@ use SqlFtw\Formatter\Formatter;
 class AssignOperator implements OperatorExpression
 {
 
-    /** @var UserVariable */
-    private $variable;
+    private UserVariable $variable;
 
-    /** @var RootNode */
-    private $expression;
+    private RootNode $expression;
 
     public function __construct(UserVariable $variable, RootNode $expression)
     {

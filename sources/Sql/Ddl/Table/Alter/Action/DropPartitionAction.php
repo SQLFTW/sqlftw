@@ -15,7 +15,7 @@ class DropPartitionAction implements PartitioningAction
 {
 
     /** @var non-empty-list<string> */
-    private $partitions;
+    private array $partitions;
 
     /**
      * @param non-empty-list<string> $partitions

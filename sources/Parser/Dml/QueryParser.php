@@ -73,14 +73,11 @@ use function in_array;
 class QueryParser
 {
 
-    /** @var ParserFactory */
-    private $parserFactory;
+    private ParserFactory $parserFactory;
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
-    /** @var TableReferenceParser */
-    private $tableReferenceParser;
+    private TableReferenceParser $tableReferenceParser;
 
     public function __construct(
         ParserFactory $parserFactory,

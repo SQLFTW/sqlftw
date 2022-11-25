@@ -18,13 +18,12 @@ class GrantRoleCommand extends Statement implements UserCommand
 {
 
     /** @var non-empty-list<UserName> */
-    private $roles;
+    private array $roles;
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private $users;
+    private array $users;
 
-    /** @var bool */
-    private $withAdminOption;
+    private bool $withAdminOption;
 
     /**
      * @param non-empty-list<UserName> $roles

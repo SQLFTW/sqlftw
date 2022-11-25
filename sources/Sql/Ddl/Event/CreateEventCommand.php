@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class CreateEventCommand extends Statement implements EventCommand
 {
 
-    /** @var EventDefinition */
-    private $event;
+    private EventDefinition $event;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
     public function __construct(EventDefinition $event, bool $ifNotExists = false)
     {

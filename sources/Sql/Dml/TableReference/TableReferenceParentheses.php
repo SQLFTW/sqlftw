@@ -15,8 +15,7 @@ use SqlFtw\Formatter\Formatter;
 class TableReferenceParentheses implements TableReferenceNode, Countable
 {
 
-    /** @var TableReferenceNode */
-    private $content;
+    private TableReferenceNode $content;
 
     public function __construct(TableReferenceNode $content)
     {

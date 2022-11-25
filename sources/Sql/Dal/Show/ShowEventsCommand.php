@@ -16,14 +16,11 @@ use SqlFtw\Sql\Statement;
 class ShowEventsCommand extends Statement implements ShowCommand
 {
 
-    /** @var string|null */
-    private $schema;
+    private ?string $schema;
 
-    /** @var string|null */
-    private $like;
+    private ?string $like;
 
-    /** @var RootNode|null */
-    private $where;
+    private ?RootNode $where;
 
     public function __construct(?string $schema = null, ?string $like = null, ?RootNode $where = null)
     {

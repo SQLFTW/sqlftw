@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class ShowEngineCommand extends Statement implements ShowCommand
 {
 
-    /** @var StorageEngine */
-    private $engine;
+    private StorageEngine $engine;
 
-    /** @var ShowEngineOption */
-    private $option;
+    private ShowEngineOption $option;
 
     public function __construct(StorageEngine $engine, ShowEngineOption $option)
     {

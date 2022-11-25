@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class DropForeignKeyAction implements ForeignKeyAction
 {
 
-    /** @var string */
-    private $foreignKey;
+    private string $foreignKey;
 
     public function __construct(string $foreignKey)
     {

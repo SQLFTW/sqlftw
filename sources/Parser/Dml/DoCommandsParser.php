@@ -18,8 +18,7 @@ use SqlFtw\Sql\Keyword;
 class DoCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
     {

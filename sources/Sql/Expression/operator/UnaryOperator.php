@@ -22,11 +22,9 @@ use SqlFtw\Formatter\Formatter;
 class UnaryOperator implements OperatorExpression
 {
 
-    /** @var Operator */
-    private $operator;
+    private Operator $operator;
 
-    /** @var RootNode */
-    private $right;
+    private RootNode $right;
 
     public function __construct(Operator $operator, RootNode $right)
     {

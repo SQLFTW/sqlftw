@@ -18,34 +18,27 @@ class AnalyzerResultList
 {
 
     /** @var AnalyzerResult[][] */
-    private $results = [];
+    private array $results = [];
 
-    /** @var int */
-    private $parserErrorsCount = 0;
+    private int $parserErrorsCount = 0;
 
-    /** @var int */
-    private $parserWarningsCount = 0;
+    private int $parserWarningsCount = 0;
 
-    /** @var int */
-    private $errorsCount = 0;
+    private int $errorsCount = 0;
 
-    /** @var int */
-    private $warningsCount = 0;
+    private int $warningsCount = 0;
 
-    /** @var int */
-    private $noticesCount = 0;
+    private int $noticesCount = 0;
 
-    /** @var int */
-    private $repairedCount = 0;
+    private int $repairedCount = 0;
 
-    /** @var int */
-    private $repairableCount = 0;
+    private int $repairableCount = 0;
 
     /** @var AnalyzerResult[][][] */
-    private $index = [];
+    private array $index = [];
 
     /** @var Statement[] */
-    private $repairStatements = [];
+    private array $repairStatements = [];
 
     /**
      * @param AnalyzerResult[] $results

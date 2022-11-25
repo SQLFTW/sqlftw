@@ -1146,7 +1146,7 @@ class MysqlVariable extends SqlEnum
     public const SECOND_CACHE__KEY_BUFFER_SIZE = 'second_cache.key_buffer_size';
 
     /** @var array<string, array{0:string|null, 1:bool, 2:string, 3:scalar|null, 4?:int, 5?:int|float|list<int|string>, 6?:int|float, 7?:int}> */
-    public static $properties = [
+    public static array $properties = [
         // https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html
         // scope: variable is restricted to SESSION or GLOBAL scope (GLOBAL includes PERSIST and PERSIST_ONLY); null = exists in both scopes
         // dynamic: variable can be set in runtime (PERSIST_ONLY can be set anyway, unless NO_PERSIST flag is set)

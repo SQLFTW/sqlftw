@@ -18,13 +18,11 @@ class AnalyzerException extends ParsingException
 {
 
     /** @var non-empty-array<string, AnalyzerResult> ($message => $result) */
-    private $results;
+    private array $results;
 
-    /** @var Command */
-    private $command;
+    private Command $command;
 
-    /** @var TokenList */
-    private $tokenList;
+    private TokenList $tokenList;
 
     /**
      * @param non-empty-array<string, AnalyzerResult> $results ($message => $result)

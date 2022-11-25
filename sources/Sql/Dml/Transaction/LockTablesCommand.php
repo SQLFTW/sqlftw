@@ -16,7 +16,7 @@ class LockTablesCommand extends Statement implements TransactionCommand
 {
 
     /** @var non-empty-list<LockTablesItem> */
-    private $items;
+    private array $items;
 
     /**
      * @param non-empty-list<LockTablesItem> $items

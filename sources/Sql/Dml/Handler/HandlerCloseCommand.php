@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class HandlerCloseCommand extends Statement implements HandlerCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
     public function __construct(ObjectIdentifier $table)
     {

@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
@@ -18,28 +19,25 @@ class GrantCommand extends Statement implements UserCommand
 {
 
     /** @var non-empty-list<UserPrivilege> */
-    private $privileges;
+    private array $privileges;
 
-    /** @var UserPrivilegeResource */
-    private $resource;
+    private UserPrivilegeResource $resource;
 
     /** @var non-empty-list<IdentifiedUser> */
-    private $users;
+    private array $users;
 
     /** @var UserName|FunctionCall|null */
-    private $asUser;
+    private ?SqlSerializable $asUser;
 
-    /** @var RolesSpecification|null */
-    private $withRole;
+    private ?RolesSpecification $withRole;
 
     /** @var list<UserTlsOption>|null */
-    private $tlsOptions;
+    private ?array $tlsOptions;
 
     /** @var non-empty-list<UserResourceOption>|null */
-    private $resourceOptions;
+    private ?array $resourceOptions;
 
-    /** @var bool */
-    private $withGrantOption;
+    private bool $withGrantOption;
 
     /**
      * @param non-empty-list<UserPrivilege> $privileges
@@ -52,7 +50,7 @@ class GrantCommand extends Statement implements UserCommand
         array $privileges,
         UserPrivilegeResource $resource,
         array $users,
-        $asUser = null,
+        ?SqlSerializable $asUser = null,
         ?RolesSpecification $withRole = null,
         ?array $tlsOptions = null,
         ?array $resourceOptions = null,
@@ -92,7 +90,7 @@ class GrantCommand extends Statement implements UserCommand
     /**
      * @return UserName|FunctionCall|null
      */
-    public function getAsUser()
+    public function getAsUser(): ?SqlSerializable
     {
         return $this->asUser;
     }

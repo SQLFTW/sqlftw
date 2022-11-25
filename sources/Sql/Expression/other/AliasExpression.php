@@ -17,11 +17,9 @@ use SqlFtw\Formatter\Formatter;
 class AliasExpression implements ArgumentNode
 {
 
-    /** @var ExpressionNode */
-    private $expression;
+    private ExpressionNode $expression;
 
-    /** @var string */
-    private $alias;
+    private string $alias;
 
     public function __construct(ExpressionNode $expression, string $alias)
     {

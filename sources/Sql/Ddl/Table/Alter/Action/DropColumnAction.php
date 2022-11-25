@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class DropColumnAction implements ColumnAction
 {
 
-    /** @var string */
-    private $column;
+    private string $column;
 
     public function __construct(string $column)
     {

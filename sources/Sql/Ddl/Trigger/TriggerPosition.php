@@ -15,11 +15,9 @@ use SqlFtw\Sql\SqlSerializable;
 class TriggerPosition implements SqlSerializable
 {
 
-    /** @var TriggerOrder */
-    private $order;
+    private TriggerOrder $order;
 
-    /** @var string */
-    private $otherTrigger;
+    private string $otherTrigger;
 
     public function __construct(TriggerOrder $order, string $otherTrigger)
     {

@@ -17,11 +17,9 @@ use function is_string;
 class UserTlsOption implements SqlSerializable
 {
 
-    /** @var UserTlsOptionType */
-    private $type;
+    private UserTlsOptionType $type;
 
-    /** @var string|null */
-    private $value;
+    private ?string $value;
 
     public function __construct(UserTlsOptionType $type, ?string $value = null)
     {

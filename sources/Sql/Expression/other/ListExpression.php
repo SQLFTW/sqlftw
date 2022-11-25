@@ -18,7 +18,7 @@ class ListExpression implements ArgumentNode
 {
 
     /** @var non-empty-list<RootNode> */
-    private $items;
+    private array $items;
 
     /**
      * @param non-empty-list<RootNode> $items

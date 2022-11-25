@@ -20,7 +20,7 @@ class RowExpression implements RootNode
 {
 
     /** @var non-empty-list<RootNode> */
-    private $contents;
+    private array $contents;
 
     /**
      * @param non-empty-list<RootNode> $contents

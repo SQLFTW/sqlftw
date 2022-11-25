@@ -16,7 +16,7 @@ class InstallComponentCommand extends Statement implements ComponentCommand
 {
 
     /** @var non-empty-list<string> */
-    private $components;
+    private array $components;
 
     /**
      * @param non-empty-list<string> $components

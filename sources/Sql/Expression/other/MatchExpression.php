@@ -18,16 +18,13 @@ class MatchExpression implements RootNode
 {
 
     /** @var non-empty-list<ColumnIdentifier> */
-    private $columns;
+    private array $columns;
 
-    /** @var RootNode */
-    private $query;
+    private RootNode $query;
 
-    /** @var MatchMode|null */
-    private $mode;
+    private ?MatchMode $mode;
 
-    /** @var bool */
-    private $queryExpansion;
+    private bool $queryExpansion;
 
     /**
      * @param non-empty-list<ColumnIdentifier> $columns

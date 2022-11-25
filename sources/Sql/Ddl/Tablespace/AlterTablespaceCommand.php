@@ -22,14 +22,12 @@ use function is_int;
 class AlterTablespaceCommand extends Statement implements TablespaceCommand
 {
 
-    /** @var string */
-    private $tablespace;
+    private string $tablespace;
 
     /** @var array<TablespaceOption::*, TablespaceOptionValue> */
     private $options;
 
-    /** @var bool */
-    private $undo;
+    private bool $undo;
 
     /**
      * @param array<TablespaceOption::*, TablespaceOptionValue> $options

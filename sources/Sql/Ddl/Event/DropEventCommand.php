@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class DropEventCommand extends Statement implements EventCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $event;
+    private ObjectIdentifier $event;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(ObjectIdentifier $event, bool $ifExists = false)
     {

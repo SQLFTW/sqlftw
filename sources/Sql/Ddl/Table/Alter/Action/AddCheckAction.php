@@ -15,8 +15,7 @@ use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 class AddCheckAction implements CheckAction
 {
 
-    /** @var CheckDefinition */
-    private $check;
+    private CheckDefinition $check;
 
     public function __construct(CheckDefinition $check)
     {

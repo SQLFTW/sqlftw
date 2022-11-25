@@ -17,11 +17,9 @@ use SqlFtw\Sql\SqlSerializable;
 class GroupByExpression implements SqlSerializable
 {
 
-    /** @var ExpressionNode */
-    private $expression;
+    private ExpressionNode $expression;
 
-    /** @var Order|null */
-    private $order;
+    private ?Order $order;
 
     public function __construct(ExpressionNode $expression, ?Order $order = null)
     {

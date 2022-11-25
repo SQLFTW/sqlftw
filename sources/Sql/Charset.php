@@ -66,7 +66,7 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
     public const UTF8MB4 = 'utf8mb4';
 
     /** @var array<string, int> */
-    private static $ids = [
+    private static array $ids = [
         self::BIG5 => 1,
         self::DEC8 => 3,
         self::CP850 => 4,
@@ -113,7 +113,7 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
     ];
 
     /** @var array<string, string> */
-    private static $defaultCollations = [
+    private static array $defaultCollations = [
         self::ARMSCII8 => Collation::ARMSCII8_GENERAL_CI,
         self::ASCII => Collation::ASCII_GENERAL_CI,
         self::BIG5 => Collation::BIG5_CHINESE_CI,

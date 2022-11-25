@@ -17,20 +17,15 @@ use SqlFtw\Sql\Statement;
 class AlterLogfileGroupCommand extends Statement implements LogfileGroupCommand
 {
 
-    /** @var string */
-    private $logFilegroup;
+    private string $logFilegroup;
 
-    /** @var StorageEngine|null */
-    private $engine;
+    private ?StorageEngine $engine;
 
-    /** @var string */
-    private $undoFile;
+    private string $undoFile;
 
-    /** @var SizeLiteral|null */
-    private $initialSize;
+    private ?SizeLiteral $initialSize;
 
-    /** @var bool|null */
-    private $wait;
+    private ?bool $wait;
 
     public function __construct(
         string $logFilegroup,

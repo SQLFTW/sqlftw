@@ -16,14 +16,12 @@ use SqlFtw\Sql\Statement;
 class DeclareHandlerStatement extends Statement implements SqlSerializable
 {
 
-    /** @var HandlerAction */
-    private $action;
+    private HandlerAction $action;
 
     /** @var non-empty-list<Condition> */
-    private $conditions;
+    private array $conditions;
 
-    /** @var Statement */
-    private $statement;
+    private Statement $statement;
 
     /**
      * @param non-empty-list<Condition> $conditions

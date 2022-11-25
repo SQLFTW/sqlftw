@@ -18,28 +18,25 @@ class CreateUserCommand extends Statement implements UserCommand
 {
 
     /** @var non-empty-list<IdentifiedUser> */
-    private $users;
+    private array $users;
 
     /** @var non-empty-list<UserName>|null */
-    private $defaultRoles;
+    private ?array $defaultRoles;
 
     /** @var list<UserTlsOption>|null */
-    private $tlsOptions;
+    private ?array $tlsOptions;
 
     /** @var non-empty-list<UserResourceOption>|null */
-    private $resourceOptions;
+    private ?array $resourceOptions;
 
     /** @var non-empty-list<UserPasswordLockOption>|null */
-    private $passwordLockOptions;
+    private ?array $passwordLockOptions;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var string|null */
-    private $attribute;
+    private ?string $attribute;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
     /**
      * @param non-empty-list<IdentifiedUser> $users

@@ -16,7 +16,7 @@ class OrderByAction implements TableAction
 {
 
     /** @var non-empty-list<OrderByExpression> */
-    private $columns;
+    private array $columns;
 
     /**
      * @param non-empty-list<OrderByExpression> $columns

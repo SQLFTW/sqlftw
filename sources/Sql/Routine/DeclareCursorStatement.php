@@ -17,11 +17,9 @@ use SqlFtw\Sql\Statement;
 class DeclareCursorStatement extends Statement implements SqlSerializable
 {
 
-    /** @var string */
-    private $cursor;
+    private string $cursor;
 
-    /** @var Query */
-    private $query;
+    private Query $query;
 
     public function __construct(string $cursor, Query $query)
     {

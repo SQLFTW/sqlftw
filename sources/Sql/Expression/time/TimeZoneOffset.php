@@ -16,8 +16,7 @@ use function preg_match;
 class TimeZoneOffset implements TimeZone
 {
 
-    /** @var string */
-    private $value;
+    private string $value;
 
     public function __construct(string $value)
     {

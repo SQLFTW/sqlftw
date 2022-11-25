@@ -15,8 +15,7 @@ use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 class AddConstraintAction implements ConstraintAction
 {
 
-    /** @var ConstraintDefinition */
-    private $constraint;
+    private ConstraintDefinition $constraint;
 
     public function __construct(ConstraintDefinition $constraint)
     {

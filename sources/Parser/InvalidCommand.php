@@ -20,11 +20,9 @@ use Throwable;
 class InvalidCommand extends Statement implements Command
 {
 
-    /** @var Throwable */
-    private $exception;
+    private Throwable $exception;
 
-    /** @var Command|null */
-    private $command;
+    private ?Command $command;
 
     /**
      * @param list<string> $commentsBefore

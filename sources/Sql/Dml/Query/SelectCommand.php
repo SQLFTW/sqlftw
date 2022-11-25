@@ -24,28 +24,24 @@ class SelectCommand extends Statement implements SimpleQuery
 {
 
     /** @var non-empty-list<SelectExpression> */
-    private $columns;
+    private array $columns;
 
-    /** @var TableReferenceNode|null */
-    private $from;
+    private ?TableReferenceNode $from;
 
-    /** @var ExpressionNode|null */
-    private $where;
+    private ?ExpressionNode $where;
 
     /** @var non-empty-list<GroupByExpression>|null */
-    private $groupBy;
+    private ?array $groupBy;
 
-    /** @var ExpressionNode|null */
-    private $having;
+    private ?ExpressionNode $having;
 
-    /** @var WithClause|null */
-    private $with;
+    private ?WithClause $with;
 
     /** @var non-empty-array<string, WindowSpecification>|null */
-    private $windows;
+    private ?array $windows;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private $orderBy;
+    private ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
     private $limit;
@@ -53,20 +49,17 @@ class SelectCommand extends Statement implements SimpleQuery
     /** @var int|SimpleName|Placeholder|null */
     private $offset;
 
-    /** @var SelectDistinctOption|null */
-    private $distinct;
+    private ?SelectDistinctOption $distinct;
 
     /** @var array<SelectOption::*, bool> */
-    private $options;
+    private array $options;
 
-    /** @var SelectInto|null */
-    private $into;
+    private ?SelectInto $into;
 
     /** @var non-empty-list<SelectLocking>|null */
-    private $locking;
+    private ?array $locking;
 
-    /** @var bool */
-    private $withRollup;
+    private bool $withRollup;
 
     /**
      * @param non-empty-list<SelectExpression> $columns

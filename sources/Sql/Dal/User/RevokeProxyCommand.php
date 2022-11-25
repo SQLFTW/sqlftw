@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
@@ -18,16 +19,16 @@ class RevokeProxyCommand extends Statement implements UserCommand
 {
 
     /** @var UserName|FunctionCall */
-    private $proxy;
+    private SqlSerializable $proxy;
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private $users;
+    private array $users;
 
     /**
      * @param UserName|FunctionCall $proxy
      * @param non-empty-list<UserName|FunctionCall> $users
      */
-    public function __construct($proxy, array $users)
+    public function __construct(SqlSerializable $proxy, array $users)
     {
         $this->proxy = $proxy;
         $this->users = $users;
@@ -36,7 +37,7 @@ class RevokeProxyCommand extends Statement implements UserCommand
     /**
      * @return UserName|FunctionCall
      */
-    public function getProxy()
+    public function getProxy(): SqlSerializable
     {
         return $this->proxy;
     }

@@ -74,17 +74,13 @@ use function in_array;
 class RoutineBodyParser
 {
 
-    /** @var Parser */
-    private $parser;
+    private Parser $parser;
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
-    /** @var QueryParser */
-    private $queryParser;
+    private QueryParser $queryParser;
 
-    /** @var SessionUpdater */
-    private $sessionUpdater;
+    private SessionUpdater $sessionUpdater;
 
     public function __construct(
         Parser $parser,

@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class DropFunctionCommand extends Statement implements StoredFunctionCommand, DropRoutineCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $function;
+    private ObjectIdentifier $function;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(ObjectIdentifier $function, bool $ifExists = false)
     {

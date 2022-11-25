@@ -16,11 +16,9 @@ use function is_int;
 class UserPasswordLockOption implements SqlSerializable
 {
 
-    /** @var UserPasswordLockOptionType */
-    private $type;
+    private UserPasswordLockOptionType $type;
 
-    /** @var int|null */
-    private $value;
+    private ?int $value;
 
     /**
      * @param string|int|null $value

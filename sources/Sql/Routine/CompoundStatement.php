@@ -9,13 +9,11 @@ class CompoundStatement extends Statement
 {
 
     /** @var list<Statement> */
-    private $statements;
+    private array $statements;
 
-    /** @var string|null */
-    private $label;
+    private ?string $label;
 
-    /** @var bool */
-    private $endLabel;
+    private bool $endLabel;
 
     /**
      * @param list<Statement> $statements

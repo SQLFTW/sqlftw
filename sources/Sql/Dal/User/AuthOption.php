@@ -17,20 +17,16 @@ use SqlFtw\Sql\SqlSerializable;
 class AuthOption implements SqlSerializable
 {
 
-    /** @var string|null */
-    private $authPlugin;
+    private ?string $authPlugin;
 
     /** @var StringValue|false|null */
     private $password;
 
-    /** @var StringValue|null */
-    private $as;
+    private ?StringValue $as;
 
-    /** @var AuthOption|null */
-    private $initial;
+    private ?AuthOption $initial;
 
-    /** @var bool */
-    private $oldHashedPassword;
+    private bool $oldHashedPassword;
 
     /**
      * @param StringValue|false|null $password

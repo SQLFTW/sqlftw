@@ -19,17 +19,15 @@ use function implode;
 class WindowSpecification implements SqlSerializable
 {
 
-    /** @var string|null */
-    private $name;
+    private ?string $name;
 
     /** @var non-empty-list<RootNode>|null */
-    private $partitionBy;
+    private ?array $partitionBy;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private $orderBy;
+    private ?array $orderBy;
 
-    /** @var WindowFrame|null */
-    private $frame;
+    private ?WindowFrame $frame;
 
     /**
      * @param non-empty-list<RootNode>|null $partitionBy

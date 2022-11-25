@@ -20,14 +20,13 @@ use function count;
 class CaseExpression extends Statement implements RootNode
 {
 
-    /** @var RootNode|null */
-    private $condition;
+    private ?RootNode $condition;
 
     /** @var non-empty-list<RootNode> */
-    private $values;
+    private array $values;
 
     /** @var non-empty-list<RootNode> */
-    private $results;
+    private array $results;
 
     /**
      * @param non-empty-list<RootNode> $values

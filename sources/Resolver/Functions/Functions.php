@@ -37,11 +37,9 @@ class Functions
     use FunctionsSys; // todo
     use FunctionsXml; // todo
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var Cast */
-    private $cast;
+    private Cast $cast;
 
     public function __construct(Session $session, Cast $cast)
     {

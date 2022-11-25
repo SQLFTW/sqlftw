@@ -16,10 +16,9 @@ class WithClause implements SqlSerializable
 {
 
     /** @var non-empty-list<WithExpression> */
-    private $expressions;
+    private array $expressions;
 
-    /** @var bool */
-    private $recursive;
+    private bool $recursive;
 
     /**
      * @param non-empty-list<WithExpression> $expressions

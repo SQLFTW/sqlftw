@@ -44,11 +44,10 @@ class MysqlTestJob
     use Aliases;
     use Exceptions;
 
-    /** @var int */
-    public static $count = 0;
+    public static int $count = 0;
 
     /** @var list<string> */
-    private static $exceptionsUsed = [];
+    private static array $exceptionsUsed = [];
 
     public static function run(string $path, bool $singleThread): Result
     {

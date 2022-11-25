@@ -19,7 +19,7 @@ class LoadIndexIntoCacheCommand extends Statement implements CacheCommand
 {
 
     /** @var non-empty-list<TableIndexList> */
-    private $tableIndexLists;
+    private array $tableIndexLists;
 
     /**
      * @param non-empty-list<TableIndexList> $tableIndexLists

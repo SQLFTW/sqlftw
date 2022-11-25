@@ -25,11 +25,9 @@ use SqlFtw\Sql\Routine\RoutineType;
 class TriggerCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
-    /** @var RoutineBodyParser */
-    private $routineBodyParser;
+    private RoutineBodyParser $routineBodyParser;
 
     public function __construct(ExpressionParser $expressionParser, RoutineBodyParser $routineBodyParser)
     {

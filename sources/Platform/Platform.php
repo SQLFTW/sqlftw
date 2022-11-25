@@ -32,21 +32,21 @@ class Platform
     public const MARIA = 'maria';
 
     /** @var array<string, non-empty-list<string>> ($platform => $versions) */
-    private static $versions = [
+    private static array $versions = [
         self::SQL => ['92', '99', '2003', '2008', '2011', '2016', '2019'],
         self::MYSQL => ['5.1', '5.5', '5.6', '5.7', '8.0'],
         self::MARIA => ['5.1', '5.2', '5.3', '5.5', '10.0', '10.1', '10.2', '10.3', '10.4', '10.5', '10.6', '10.7', '10.8'],
     ];
 
     /** @var array<string, string> ($platform => $version) */
-    private static $defaultVersions = [
+    private static array $defaultVersions = [
         self::SQL => '2011',
         self::MYSQL => '8.0',
         self::MARIA => '10.8',
     ];
 
     /** @var array<string, list<string>> ($version => $modes) */
-    public static $defaultSqlModes = [
+    public static array $defaultSqlModes = [
         'mysql-5.6' => [
             SqlMode::NO_ENGINE_SUBSTITUTION,
         ],
@@ -80,40 +80,37 @@ class Platform
     ];
 
     /** @var array<string, self> ($version => $instance) */
-    private static $instances = [];
+    private static array $instances = [];
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var Version */
-    private $version;
+    private Version $version;
 
-    /** @var FeaturesList */
-    private $featuresList;
+    private FeaturesList $featuresList;
 
     /** @var list<string> */
-    private $features;
+    private ?array $features = null;
 
     /** @var list<string> */
-    private $reserved;
+    private ?array $reserved = null;
 
     /** @var list<string> */
-    private $nonReserved;
+    private ?array $nonReserved = null;
 
     /** @var list<string> */
-    private $operators;
+    private ?array $operators = null;
 
     /** @var list<string> */
-    private $types;
+    private ?array $types = null;
 
     /** @var list<string> */
-    private $functions;
+    private ?array $functions = null;
 
     /** @var list<string> */
-    private $variables;
+    private ?array $variables = null;
 
     /** @var list<class-string> */
-    private $preparableCommands;
+    private ?array $preparableCommands = null;
 
     final private function __construct(string $name, Version $version)
     {

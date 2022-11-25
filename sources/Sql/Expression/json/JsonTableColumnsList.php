@@ -15,7 +15,7 @@ class JsonTableColumnsList implements ArgumentNode, ArgumentValue
 {
 
     /** @var non-empty-list<JsonTableColumn> */
-    private $columns;
+    private array $columns;
 
     /**
      * @param non-empty-list<JsonTableColumn> $columns

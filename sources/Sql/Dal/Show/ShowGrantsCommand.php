@@ -17,11 +17,10 @@ use SqlFtw\Sql\UserName;
 class ShowGrantsCommand extends Statement implements ShowCommand
 {
 
-    /** @var UserExpression|null */
-    private $user;
+    private ?UserExpression $user;
 
     /** @var non-empty-list<UserName>|null */
-    private $roles;
+    private ?array $roles;
 
     /**
      * @param non-empty-list<UserName> $roles

@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class ResetMasterCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var ExpressionNode|null */
-    private $binlogPosition;
+    private ?ExpressionNode $binlogPosition;
 
     public function __construct(?ExpressionNode $binlogPosition)
     {

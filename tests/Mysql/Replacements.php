@@ -8,7 +8,7 @@ trait Replacements
 {
 
     /** @var array<string, array<string, string>> */
-    private static $replacements = [
+    private static array $replacements = [
         // some test fixtures
         '_alter.test' => ['#DET#' => ''],
         'gr_xplugin_global_variables.test' => ['%XCOM_PORT%' => '1234'],

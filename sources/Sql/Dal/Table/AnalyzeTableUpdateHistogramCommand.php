@@ -17,16 +17,14 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $tables;
+    private array $tables;
 
     /** @var non-empty-list<string> */
-    private $columns;
+    private array $columns;
 
-    /** @var int|null */
-    private $buckets;
+    private ?int $buckets;
 
-    /** @var bool */
-    private $local;
+    private bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $tables

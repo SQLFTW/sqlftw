@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class CloseCursorStatement extends Statement implements SqlSerializable
 {
 
-    /** @var string */
-    private $cursor;
+    private string $cursor;
 
     public function __construct(string $cursor)
     {

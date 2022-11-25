@@ -15,20 +15,16 @@ use SqlFtw\Sql\SqlSerializable;
 class PartitioningDefinition implements SqlSerializable
 {
 
-    /** @var PartitioningCondition */
-    private $condition;
+    private PartitioningCondition $condition;
 
     /** @var non-empty-list<PartitionDefinition>|null */
-    private $partitions;
+    private ?array $partitions;
 
-    /** @var int|null */
-    private $partitionsNumber;
+    private ?int $partitionsNumber;
 
-    /** @var PartitioningCondition|null */
-    private $subpartitionsCondition;
+    private ?PartitioningCondition $subpartitionsCondition;
 
-    /** @var int|null */
-    private $subpartitionsNumber;
+    private ?int $subpartitionsNumber;
 
     /**
      * @param non-empty-list<PartitionDefinition>|null $partitions

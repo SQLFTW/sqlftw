@@ -18,10 +18,9 @@ class DropUserCommand extends Statement implements UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private $users;
+    private array $users;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     /**
      * @param non-empty-list<UserName|FunctionCall> $users

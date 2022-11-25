@@ -16,16 +16,13 @@ class ShowProfileCommand extends Statement implements ShowCommand
 {
 
     /** @var list<ShowProfileType> */
-    private $types;
+    private array $types;
 
-    /** @var int|null */
-    private $queryId;
+    private ?int $queryId;
 
-    /** @var int|null */
-    private $limit;
+    private ?int $limit;
 
-    /** @var int|null */
-    private $offset;
+    private ?int $offset;
 
     /**
      * @param list<ShowProfileType> $types

@@ -18,10 +18,9 @@ class SetDefaultRoleCommand extends Statement implements UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private $users;
+    private array $users;
 
-    /** @var UserDefaultRolesSpecification|null */
-    private $roles;
+    private ?UserDefaultRolesSpecification $roles;
 
     /** @var non-empty-list<UserName>|null */
     private $rolesList;

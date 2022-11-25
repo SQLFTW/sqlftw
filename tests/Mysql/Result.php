@@ -9,35 +9,28 @@ use SqlFtw\Sql\SqlMode;
 class Result
 {
 
-    /** @var string */
-    public $path;
+    public string $path;
 
-    /** @var int */
-    public $size;
+    public int $size;
 
-    /** @var float */
-    public $time;
+    public float $time;
 
-    /** @var int */
-    public $memory;
+    public int $memory;
 
-    /** @var int */
-    public $pid;
+    public int $pid;
 
-    /** @var int */
-    public $statements;
+    public int $statements;
 
-    /** @var int */
-    public $tokens;
+    public int $tokens;
 
     /** @var list<array{Command, TokenList, SqlMode}> */
-    public $falseNegatives;
+    public array $falseNegatives;
 
     /** @var list<array{Command, TokenList, SqlMode}> */
-    public $falsePositives;
+    public array $falsePositives;
 
     /** @var list<array{Command, TokenList, SqlMode}> */
-    public $serialisationErrors;
+    public array $serialisationErrors;
 
     /**
      * @param list<array{Command, TokenList, SqlMode}> $falseNegatives

@@ -17,17 +17,15 @@ use function is_array;
 class TableIndexList implements SqlSerializable
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
     /** @var non-empty-list<string>|null */
-    private $indexes;
+    private ?array $indexes;
 
     /** @var non-empty-list<string>|bool|null */
     private $partitions;
 
-    /** @var bool */
-    private $ignoreLeaves;
+    private bool $ignoreLeaves;
 
     /**
      * @param non-empty-list<string>|null $indexes

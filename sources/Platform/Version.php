@@ -16,14 +16,11 @@ use function is_int;
 class Version
 {
 
-    /** @var int */
-    private $major;
+    private int $major;
 
-    /** @var int */
-    private $minor;
+    private int $minor;
 
-    /** @var int */
-    private $patch;
+    private int $patch;
 
     /**
      * @param string|int $version
@@ -33,7 +30,7 @@ class Version
         if (is_int($version)) {
             $this->major = (int) floor($version / 10000);
             $this->minor = (int) floor(($version % 10000) / 100);
-            $this->patch = ($version % 100) ?: null; // @phpstan-ignore-line ?:
+            $this->patch = ($version % 100) ?: 99; // @phpstan-ignore-line ?:
         } else {
             $parts = explode('.', $version);
             $this->major = (int) $parts[0];
@@ -68,12 +65,12 @@ class Version
 
     public function getMajorMinor(): string
     {
-        return $this->major . ($this->minor !== null ? '.' . $this->minor : '');
+        return $this->major . '.' . $this->minor;
     }
 
     public function format(): string
     {
-        return $this->major . ($this->minor !== null ? '.' . $this->minor . ($this->patch !== null ? '.' . $this->patch : '') : '');
+        return $this->major . '.' . $this->minor . '.' . $this->patch;
     }
 
 }

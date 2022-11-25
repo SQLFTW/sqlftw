@@ -17,19 +17,15 @@ class RepairTableCommand extends Statement implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $names;
+    private array $names;
 
-    /** @var bool */
-    private $local;
+    private bool $local;
 
-    /** @var bool */
-    private $quick;
+    private bool $quick;
 
-    /** @var bool */
-    private $extended;
+    private bool $extended;
 
-    /** @var bool */
-    private $useFrm;
+    private bool $useFrm;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names

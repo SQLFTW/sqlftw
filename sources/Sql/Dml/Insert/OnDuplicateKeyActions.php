@@ -17,7 +17,7 @@ class OnDuplicateKeyActions implements SqlSerializable
 {
 
     /** @var non-empty-list<Assignment> */
-    private $assignments;
+    private array $assignments;
 
     /**
      * @param non-empty-list<Assignment> $assignments

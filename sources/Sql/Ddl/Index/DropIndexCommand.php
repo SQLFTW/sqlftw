@@ -21,17 +21,13 @@ use SqlFtw\Sql\Statement;
 class DropIndexCommand extends Statement implements IndexCommand, DdlTableCommand
 {
 
-    /** @var string */
-    private $index;
+    private string $index;
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var AlterTableAlgorithm|null */
-    private $algorithm;
+    private ?AlterTableAlgorithm $algorithm;
 
-    /** @var AlterTableLock|null */
-    private $lock;
+    private ?AlterTableLock $lock;
 
     public function __construct(
         string $index,

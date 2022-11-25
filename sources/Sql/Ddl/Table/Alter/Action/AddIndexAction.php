@@ -15,8 +15,7 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 class AddIndexAction implements IndexAction
 {
 
-    /** @var IndexDefinition */
-    private $index;
+    private IndexDefinition $index;
 
     public function __construct(IndexDefinition $index)
     {

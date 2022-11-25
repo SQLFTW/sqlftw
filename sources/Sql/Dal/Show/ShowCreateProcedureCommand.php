@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class ShowCreateProcedureCommand extends Statement implements ShowCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $procedure;
+    private ObjectIdentifier $procedure;
 
     public function __construct(ObjectIdentifier $procedure)
     {

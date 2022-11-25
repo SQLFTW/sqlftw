@@ -81,14 +81,11 @@ use function strtoupper;
 class ExpressionResolver
 {
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var Cast */
-    private $cast;
+    private Cast $cast;
 
-    /** @var Functions */
-    private $functions;
+    private Functions $functions;
 
     public function __construct(Session $session)
     {

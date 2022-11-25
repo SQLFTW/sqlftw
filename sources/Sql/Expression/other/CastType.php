@@ -25,26 +25,20 @@ class CastType implements ArgumentNode, ArgumentValue
 
     public const UNSIGNED = true;
 
-    /** @var BaseType|null */
-    private $type;
+    private ?BaseType $type;
 
     /** @var non-empty-list<int>|null */
-    private $size;
+    private ?array $size;
 
-    /** @var bool|null */
-    private $sign;
+    private ?bool $sign;
 
-    /** @var bool */
-    private $array;
+    private bool $array;
 
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
-    /** @var Collation|null */
-    private $collation;
+    private ?Collation $collation;
 
-    /** @var int|null */
-    private $srid;
+    private ?int $srid;
 
     /**
      * @param non-empty-list<int>|null $size

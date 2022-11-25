@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class XaPrepareCommand extends Statement implements XaTransactionCommand
 {
 
-    /** @var Xid */
-    private $xid;
+    private Xid $xid;
 
     public function __construct(Xid $xid)
     {

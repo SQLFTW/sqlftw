@@ -86,45 +86,39 @@ class TokenList
 {
 
     /** @var non-empty-list<Token> */
-    private $tokens;
+    private array $tokens;
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var Platform */
-    private $platform;
+    private Platform $platform;
 
     /** @var array<string, int> */
-    private $maxLengths;
+    private array $maxLengths;
 
-    /** @var bool */
-    private $invalid;
+    private bool $invalid;
 
     // parser state ----------------------------------------------------------------------------------------------------
 
-    /** @var int */
-    private $autoSkip;
+    private int $autoSkip;
 
-    /** @var int */
-    private $position = 0;
+    private int $position = 0;
 
     /** @var list<RoutineType::*> Are we inside a function, procedure, trigger or event definition? */
-    private $inRoutine = [];
+    private array $inRoutine = [];
 
     /** @var list<SubqueryType::*> Are we inside a subquery, and what type? */
-    private $inSubquery = [];
+    private array $inSubquery = [];
 
     /** @var bool Are we inside a UNION expression? */
-    private $inUnion = false;
+    private bool $inUnion = false;
 
     /** @var bool Are we inside a prepared statement declaration? */
-    private $inPrepared = false;
+    private bool $inPrepared = false;
 
     /** @var bool Should we expect a delimiter after the command? (command directly embedded into another command) */
-    private $inEmbedded = false;
+    private bool $inEmbedded = false;
 
-    /** @var string */
-    private $trailingDelimiter = '';
+    private string $trailingDelimiter = '';
 
     /**
      * @param non-empty-list<Token> $tokens

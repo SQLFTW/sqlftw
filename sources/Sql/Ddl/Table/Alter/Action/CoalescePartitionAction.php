@@ -15,8 +15,7 @@ use function strval;
 class CoalescePartitionAction implements PartitioningAction
 {
 
-    /** @var int */
-    private $value;
+    private int $value;
 
     public function __construct(int $value)
     {

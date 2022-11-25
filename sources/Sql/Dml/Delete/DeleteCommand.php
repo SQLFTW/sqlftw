@@ -28,34 +28,28 @@ class DeleteCommand extends Statement implements DmlCommand
 {
 
     /** @var non-empty-list<array{ObjectIdentifier, string|null}> */
-    private $tables;
+    private array $tables;
 
-    /** @var TableReferenceNode|null */
-    private $references;
+    private ?TableReferenceNode $references;
 
     /** @var non-empty-list<string>|null */
-    private $partitions;
+    private ?array $partitions;
 
-    /** @var ExpressionNode|null */
-    private $where;
+    private ?ExpressionNode $where;
 
-    /** @var WithClause|null */
-    private $with;
+    private ?WithClause $with;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private $orderBy;
+    private ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
-    /** @var bool */
-    private $lowPriority;
+    private bool $lowPriority;
 
-    /** @var bool */
-    private $quick;
+    private bool $quick;
 
-    /** @var bool */
-    private $ignore;
+    private bool $ignore;
 
     /**
      * @param non-empty-list<array{ObjectIdentifier, string|null}> $tables

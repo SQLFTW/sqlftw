@@ -26,37 +26,30 @@ use function end;
 class Session
 {
 
-    /** @var Platform */
-    private $platform;
+    private Platform $platform;
 
-    // state -----------------------------------------------------------------------------------------------------------
+    private string $delimiter;
 
-    /** @var string */
-    private $delimiter;
+    private ?SqlMode $mode = null;
 
-    /** @var SqlMode */
-    private $mode;
+    private ?string $schema = null;
 
-    /** @var string */
-    private $schema;
-
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
     /** @var list<Collation> */
-    private $collation = [];
+    private array $collation = [];
 
     /** @var array<string, UnresolvedExpression|scalar|Value|null> */
-    private $userVariables = [];
+    private array $userVariables = [];
 
     /** @var array<string, UnresolvedExpression|scalar|Value|null> */
-    private $sessionVariables = [];
+    private array $sessionVariables = [];
 
     /** @var array<string, UnresolvedExpression|scalar|Value|null> */
-    private $globalVariables = [];
+    private array $globalVariables = [];
 
     /** @var array<string, UnresolvedExpression|scalar|Value|null> */
-    private $localVariables = [];
+    private array $localVariables = [];
 
     public function __construct(
         Platform $platform,

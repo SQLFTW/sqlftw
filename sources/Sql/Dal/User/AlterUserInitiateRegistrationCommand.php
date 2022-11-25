@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
@@ -18,18 +19,16 @@ class AlterUserInitiateRegistrationCommand extends Statement implements AlterUse
 {
 
     /** @var UserName|FunctionCall */
-    private $user;
+    private SqlSerializable $user;
 
-    /** @var int */
-    private $factor;
+    private int $factor;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     /**
      * @param UserName|FunctionCall $user
      */
-    public function __construct($user, int $factor, bool $ifExists = false)
+    public function __construct(SqlSerializable $user, int $factor, bool $ifExists = false)
     {
         $this->user = $user;
         $this->factor = $factor;
@@ -39,7 +38,7 @@ class AlterUserInitiateRegistrationCommand extends Statement implements AlterUse
     /**
      * @return UserName|FunctionCall
      */
-    public function getUser()
+    public function getUser(): SqlSerializable
     {
         return $this->user;
     }

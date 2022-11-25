@@ -17,11 +17,9 @@ use SqlFtw\Sql\Statement;
 class ResetPersistCommand extends Statement implements DalCommand
 {
 
-    /** @var MysqlVariable|null */
-    private $variable;
+    private ?MysqlVariable $variable;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(?MysqlVariable $variable, bool $ifExists = false)
     {

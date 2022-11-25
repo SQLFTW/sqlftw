@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class TimeIntervalExpression implements TimeInterval
 {
 
-    /** @var RootNode */
-    private $expression;
+    private RootNode $expression;
 
-    /** @var TimeIntervalUnit */
-    private $unit;
+    private TimeIntervalUnit $unit;
 
     public function __construct(RootNode $expression, TimeIntervalUnit $unit)
     {

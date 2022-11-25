@@ -17,10 +17,9 @@ class AnalyzeTableCommand extends Statement implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $tables;
+    private array $tables;
 
-    /** @var bool */
-    private $local;
+    private bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $tables

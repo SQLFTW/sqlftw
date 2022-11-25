@@ -15,11 +15,9 @@ use SqlFtw\Sql\Expression\FunctionCall;
 class TableReferenceJsonTable implements TableReferenceNode
 {
 
-    /** @var FunctionCall */
-    private $table;
+    private FunctionCall $table;
 
-    /** @var string|null */
-    private $alias;
+    private ?string $alias;
 
     public function __construct(FunctionCall $table, ?string $alias)
     {

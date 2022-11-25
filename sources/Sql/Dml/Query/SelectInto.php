@@ -19,7 +19,7 @@ abstract class SelectInto implements SqlSerializable
     public const POSITION_AFTER_LOCKING = 3;
 
     /** @var self::POSITION_* */
-    protected $position;
+    protected int $position;
 
     /**
      * @return self::POSITION_*

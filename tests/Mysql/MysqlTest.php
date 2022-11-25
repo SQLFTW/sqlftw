@@ -44,8 +44,7 @@ class MysqlTest
 {
     use Skips;
 
-    /** @var string */
-    public static $lastFailPath;
+    public static string $lastFailPath;
 
     public static function run(bool $singleThread): void
     {

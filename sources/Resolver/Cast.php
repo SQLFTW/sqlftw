@@ -218,7 +218,7 @@ class Cast
 
     /**
      * @param scalar|Value|null $value
-     * @return int|string|float|bool|null
+     * @return scalar|null
      */
     public function toScalar($value)
     {

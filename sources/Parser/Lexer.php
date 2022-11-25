@@ -68,49 +68,44 @@ class Lexer
     public const IP_V4_REGEXP = '~^((?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))~';
 
     /** @var array<string, int> (this is in fact array<int, int>, but PHPStan is unable to cope with the auto-casting of numeric string keys) */
-    private static $numbersKey;
+    private static array $numbersKey;
 
     /** @var array<string|int, int> */
-    private static $hexadecKey;
+    private static array $hexadecKey;
 
     /** @var array<string|int, int> */
-    private static $nameCharsKey;
+    private static array $nameCharsKey;
 
     /** @var array<string|int, int> */
-    private static $userVariableNameCharsKey;
+    private static array $userVariableNameCharsKey;
 
     /** @var array<string, int> */
-    private static $operatorSymbolsKey;
+    private static array $operatorSymbolsKey;
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var Platform */
-    private $platform;
+    private Platform $platform;
 
-    /** @var bool */
-    private $withComments;
+    private bool $withComments;
 
-    /** @var bool */
-    private $withWhitespace;
+    private bool $withWhitespace;
 
-    /** @var string|null */
-    private $condition;
+    private ?string $condition = null;
 
     /** @var array<string, int> */
-    private $reservedKey;
+    private array $reservedKey;
 
     /** @var array<string, int> */
-    private $keywordsKey;
+    private array $keywordsKey;
 
     /** @var array<string, int> */
-    private $operatorsKey;
+    private array $operatorsKey;
 
     /** @var list<string> */
-    private $escapeKeys;
+    private array $escapeKeys;
 
     /** @var list<string> */
-    private $escapeValues;
+    private array $escapeValues;
 
     public function __construct(
         Session $session,

@@ -21,20 +21,16 @@ use function is_string;
 class OrderByExpression implements ArgumentNode, ArgumentValue
 {
 
-    /** @var Order|null */
-    private $order;
+    private ?Order $order;
 
     /** @var string|ColumnIdentifier|null */
     private $column;
 
-    /** @var RootNode|null */
-    private $expression;
+    private ?RootNode $expression;
 
-    /** @var int|null */
-    private $position;
+    private ?int $position;
 
-    /** @var Collation|null */
-    private $collation;
+    private ?Collation $collation;
 
     /**
      * @param string|ColumnIdentifier|null $column

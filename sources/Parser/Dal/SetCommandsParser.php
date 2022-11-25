@@ -35,8 +35,7 @@ use SqlFtw\Sql\MysqlVariable;
 class SetCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
     {

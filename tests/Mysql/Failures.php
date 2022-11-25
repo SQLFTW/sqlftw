@@ -8,7 +8,7 @@ trait Failures
 {
 
     /** @var array<string, Valid::*> */
-    private static $knownFailures = [
+    private static array $knownFailures = [
         // false negatives -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         // encoding

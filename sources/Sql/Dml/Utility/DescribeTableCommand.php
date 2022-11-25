@@ -18,11 +18,9 @@ use function strtr;
 class DescribeTableCommand extends Statement implements DmlCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var string|null */
-    private $column;
+    private ?string $column;
 
     public function __construct(ObjectIdentifier $table, ?string $column)
     {

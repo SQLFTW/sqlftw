@@ -21,7 +21,7 @@ abstract class SqlEnum extends StringEnum implements SqlSerializable
 {
 
     /** @var array<class-string, array<string, string>> */
-    private static $lowerValues = [];
+    private static array $lowerValues = [];
 
     public static function validateValue(string &$value): bool
     {

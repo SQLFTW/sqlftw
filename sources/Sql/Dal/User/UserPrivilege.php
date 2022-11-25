@@ -15,11 +15,10 @@ use SqlFtw\Sql\SqlSerializable;
 class UserPrivilege implements SqlSerializable
 {
 
-    /** @var UserPrivilegeType */
-    private $type;
+    private UserPrivilegeType $type;
 
     /** @var non-empty-list<string>|null */
-    private $columns;
+    private ?array $columns;
 
     /**
      * @param non-empty-list<string>|null $columns

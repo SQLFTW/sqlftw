@@ -17,10 +17,10 @@ class ReorganizePartitionAction implements PartitioningAction
 {
 
     /** @var non-empty-list<string>|null */
-    private $partitions;
+    private ?array $partitions;
 
     /** @var non-empty-list<PartitionDefinition>|null */
-    private $newPartitions;
+    private ?array $newPartitions;
 
     /**
      * @param non-empty-list<string>|null $partitions

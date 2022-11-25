@@ -16,11 +16,10 @@ use SqlFtw\Sql\Statement;
 class SetResourceGroupCommand extends Statement implements DalCommand
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     /** @var non-empty-list<int>|null */
-    private $threadIds;
+    private ?array $threadIds;
 
     /**
      * @param non-empty-list<int>|null $threadIds

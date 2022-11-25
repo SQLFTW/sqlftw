@@ -15,11 +15,10 @@ use SqlFtw\Sql\Expression\RootNode;
 class StraightJoin extends Join
 {
 
-    /** @var RootNode|null */
-    private $condition;
+    private ?RootNode $condition;
 
     /** @var non-empty-list<string>|null */
-    private $using;
+    private ?array $using;
 
     /**
      * @param non-empty-list<string>|null $using

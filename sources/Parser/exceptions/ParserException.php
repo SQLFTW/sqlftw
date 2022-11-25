@@ -19,8 +19,7 @@ use function min;
 class ParserException extends ParsingException
 {
 
-    /** @var TokenList */
-    private $tokenList;
+    private TokenList $tokenList;
 
     public function __construct(string $message, TokenList $tokenList, ?Throwable $previous = null)
     {

@@ -25,17 +25,14 @@ use SqlFtw\Formatter\Formatter;
 class ComparisonOperator implements OperatorExpression
 {
 
-    /** @var RootNode */
-    private $left;
+    private RootNode $left;
 
-    /** @var Operator */
-    private $operator;
+    private Operator $operator;
 
     /** @var 'ALL'|'ANY'|'SOME'|null */
-    private $quantifier;
+    private ?string $quantifier;
 
-    /** @var RootNode */
-    private $right;
+    private RootNode $right;
 
     /**
      * @param 'ALL'|'ANY'|'SOME'|null $quantifier

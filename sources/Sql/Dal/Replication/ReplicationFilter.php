@@ -23,10 +23,10 @@ class ReplicationFilter implements SqlSerializable
 {
 
     /** @var ReplicationFilterType::* */
-    private $type;
+    private string $type;
 
     /** @var array<string, string>|list<string|ObjectIdentifier> */
-    private $items;
+    private array $items;
 
     /**
      * @param ReplicationFilterType::* $type

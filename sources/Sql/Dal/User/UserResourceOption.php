@@ -15,11 +15,9 @@ use SqlFtw\Sql\SqlSerializable;
 class UserResourceOption implements SqlSerializable
 {
 
-    /** @var UserResourceOptionType */
-    private $type;
+    private UserResourceOptionType $type;
 
-    /** @var int */
-    private $value;
+    private int $value;
 
     public function __construct(UserResourceOptionType $type, int $value)
     {

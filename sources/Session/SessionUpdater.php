@@ -51,11 +51,9 @@ use function trim;
 class SessionUpdater
 {
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var ExpressionResolver */
-    private $resolver;
+    private ExpressionResolver $resolver;
 
     public function __construct(Session $session, ExpressionResolver $resolver)
     {

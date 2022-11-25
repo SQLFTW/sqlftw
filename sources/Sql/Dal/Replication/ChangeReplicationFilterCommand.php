@@ -16,10 +16,9 @@ class ChangeReplicationFilterCommand extends Statement implements ReplicationCom
 {
 
     /** @var non-empty-list<ReplicationFilter> */
-    private $filters;
+    private array $filters;
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     /**
      * @param non-empty-list<ReplicationFilter> $filters

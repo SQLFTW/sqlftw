@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class ShowCreateEventCommand extends Statement implements ShowCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $event;
+    private ObjectIdentifier $event;
 
     public function __construct(ObjectIdentifier $event)
     {

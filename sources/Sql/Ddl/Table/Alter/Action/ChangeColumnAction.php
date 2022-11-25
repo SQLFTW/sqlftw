@@ -19,11 +19,9 @@ class ChangeColumnAction implements ColumnAction
 
     public const FIRST = true;
 
-    /** @var string */
-    private $oldName;
+    private string $oldName;
 
-    /** @var ColumnDefinition */
-    private $column;
+    private ColumnDefinition $column;
 
     /** @var string|bool|null */
     private $after;

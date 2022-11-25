@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class DeallocatePrepareCommand extends Statement implements PreparedStatementCommand
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     public function __construct(string $name)
     {

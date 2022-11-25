@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class SelectIntoDumpfile extends SelectInto
 {
 
-    /** @var string */
-    private $fileName;
+    private string $fileName;
 
     /**
      * @param SelectInto::POSITION_* $position

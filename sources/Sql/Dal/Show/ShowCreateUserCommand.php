@@ -16,8 +16,7 @@ use SqlFtw\Sql\UserName;
 class ShowCreateUserCommand extends Statement implements ShowCommand
 {
 
-    /** @var UserName */
-    private $user;
+    private UserName $user;
 
     public function __construct(UserName $user)
     {

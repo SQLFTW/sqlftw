@@ -21,8 +21,7 @@ use SqlFtw\Sql\Keyword;
 class HandlerCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
     {

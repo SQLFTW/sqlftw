@@ -20,7 +20,7 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
 {
 
     /** @var non-empty-list<list<ExpressionNode>> */
-    private $rows;
+    private array $rows;
 
     /**
      * @param non-empty-list<list<ExpressionNode>> $rows

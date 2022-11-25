@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class AlterConstraintAction implements ConstraintAction
 {
 
-    /** @var string */
-    private $constraint;
+    private string $constraint;
 
-    /** @var bool */
-    private $enforced;
+    private bool $enforced;
 
     public function __construct(string $constraint, bool $enforced)
     {

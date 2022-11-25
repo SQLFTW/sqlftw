@@ -18,11 +18,10 @@ use SqlFtw\Sql\Statement;
 class CallCommand extends Statement implements DmlCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $procedure;
+    private ObjectIdentifier $procedure;
 
     /** @var list<RootNode>|null */
-    private $params;
+    private ?array $params;
 
     /**
      * @param list<RootNode>|null $params

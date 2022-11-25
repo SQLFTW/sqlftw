@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class UninstallPluginCommand extends Statement implements PluginCommand
 {
 
-    /** @var string */
-    private $pluginName;
+    private string $pluginName;
 
     public function __construct(string $pluginName)
     {

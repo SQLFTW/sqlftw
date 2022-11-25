@@ -19,14 +19,12 @@ use SqlFtw\Sql\SqlSerializable;
 class Xid implements SqlSerializable
 {
 
-    /** @var StringValue */
-    private $transactionId;
+    private StringValue $transactionId;
 
-    /** @var StringValue|null */
-    private $branchQualifier;
+    private ?StringValue $branchQualifier;
 
     /** @var IntLiteral|HexadecimalLiteral|null */
-    private $formatId;
+    private ?IntValue $formatId;
 
     /**
      * @param IntLiteral|HexadecimalLiteral|null $formatId

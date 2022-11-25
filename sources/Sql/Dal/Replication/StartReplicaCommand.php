@@ -21,26 +21,21 @@ use function is_array;
 class StartReplicaCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var string|null */
-    private $user;
+    private ?string $user;
 
-    /** @var string|null */
-    private $password;
+    private ?string $password;
 
-    /** @var string|null */
-    private $defaultAuth;
+    private ?string $defaultAuth;
 
-    /** @var string|null */
-    private $pluginDir;
+    private ?string $pluginDir;
 
     /** @var non-empty-array<UntilKeyword, string|int|bool|non-empty-list<UuidSet>>|null */
-    private $until;
+    private ?array $until;
 
     /** @var non-empty-list<ReplicationThreadType>|null */
-    private $threadTypes;
+    private ?array $threadTypes;
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     /**
      * @param non-empty-array<UntilKeyword, string|int|bool|non-empty-list<UuidSet>>|null $until

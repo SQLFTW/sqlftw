@@ -18,26 +18,20 @@ use SqlFtw\Sql\Statement;
 class HandlerReadCommand extends Statement implements HandlerCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var HandlerReadTarget */
-    private $what;
+    private HandlerReadTarget $what;
 
-    /** @var string|null */
-    private $index;
+    private ?string $index;
 
     /** @var non-empty-list<scalar|Literal>|null */
-    private $values;
+    private ?array $values;
 
-    /** @var RootNode|null */
-    private $where;
+    private ?RootNode $where;
 
-    /** @var int|null */
-    private $limit;
+    private ?int $limit;
 
-    /** @var int|null */
-    private $offset;
+    private ?int $offset;
 
     /**
      * @param non-empty-list<scalar|Literal>|null $values

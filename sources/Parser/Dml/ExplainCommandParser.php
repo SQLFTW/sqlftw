@@ -25,17 +25,13 @@ use function strtoupper;
 class ExplainCommandParser
 {
 
-    /** @var QueryParser */
-    private $queryParser;
+    private QueryParser $queryParser;
 
-    /** @var InsertCommandParser */
-    private $insertCommandParser;
+    private InsertCommandParser $insertCommandParser;
 
-    /** @var UpdateCommandParser */
-    private $updateCommandParser;
+    private UpdateCommandParser $updateCommandParser;
 
-    /** @var DeleteCommandParser */
-    private $deleteCommandParser;
+    private DeleteCommandParser $deleteCommandParser;
 
     public function __construct(
         QueryParser $queryParser,

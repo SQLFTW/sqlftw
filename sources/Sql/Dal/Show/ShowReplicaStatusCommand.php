@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class ShowReplicaStatusCommand extends Statement implements ShowCommand
 {
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     public function __construct(?string $channel)
     {

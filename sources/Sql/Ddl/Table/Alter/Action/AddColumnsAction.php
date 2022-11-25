@@ -19,7 +19,7 @@ class AddColumnsAction implements ColumnAction
     public const FIRST = true;
 
     /** @var non-empty-list<ColumnDefinition|IndexDefinition> */
-    private $columns;
+    private array $columns;
 
     /**
      * @param non-empty-list<ColumnDefinition|IndexDefinition> $columns

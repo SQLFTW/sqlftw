@@ -17,7 +17,7 @@ class ImportCommand extends Statement implements DmlCommand
 {
 
     /** @var non-empty-list<string> */
-    private $files;
+    private array $files;
 
     /**
      * @param non-empty-list<string> $files

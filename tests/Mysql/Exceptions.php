@@ -8,7 +8,7 @@ trait Exceptions
 {
 
     /** @var array<string, string> */
-    private static $exceptions = [
+    private static array $exceptions = [
         "explain t1;" => "describe t1;",
         "explain v1;" => "describe v1;",
         "explain t2;" => "describe t2;",

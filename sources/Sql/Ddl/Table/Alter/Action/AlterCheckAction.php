@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class AlterCheckAction implements CheckAction
 {
 
-    /** @var string */
-    private $check;
+    private string $check;
 
-    /** @var bool */
-    private $enforced;
+    private bool $enforced;
 
     public function __construct(string $check, bool $enforced)
     {

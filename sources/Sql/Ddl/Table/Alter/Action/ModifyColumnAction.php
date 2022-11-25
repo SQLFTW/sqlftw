@@ -19,8 +19,7 @@ class ModifyColumnAction implements ColumnAction
 
     public const FIRST = true;
 
-    /** @var ColumnDefinition */
-    private $column;
+    private ColumnDefinition $column;
 
     /** @var string|bool|null */
     private $after;

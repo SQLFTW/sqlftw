@@ -25,10 +25,9 @@ class ChangeMasterToCommand extends Statement implements ReplicationCommand
 {
 
     /** @var non-empty-array<SlaveOption::*, SlaveOptionValue|null> */
-    private $options;
+    private array $options;
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     /**
      * @param non-empty-array<SlaveOption::*, SlaveOptionValue> $options

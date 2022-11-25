@@ -17,20 +17,15 @@ use SqlFtw\Sql\Statement;
 class AlterProcedureCommand extends Statement implements StoredProcedureCommand, AlterRoutineCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $procedure;
+    private ObjectIdentifier $procedure;
 
-    /** @var SqlSecurity|null */
-    private $security;
+    private ?SqlSecurity $security;
 
-    /** @var RoutineSideEffects|null */
-    private $sideEffects;
+    private ?RoutineSideEffects $sideEffects;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var string|null */
-    private $language;
+    private ?string $language;
 
     public function __construct(
         ObjectIdentifier $procedure,

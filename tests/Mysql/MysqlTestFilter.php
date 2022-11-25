@@ -49,11 +49,10 @@ class MysqlTestFilter
         'wait_for_slave_to_stop', 'write_file',
     ];
 
-    /** @var string */
-    private $commands;
+    private string $commands;
 
     /** @var array<int, string> */
-    private $errorCodes;
+    private array $errorCodes;
 
     public function __construct()
     {

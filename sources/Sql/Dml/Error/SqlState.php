@@ -311,8 +311,7 @@ class SqlState implements SqlSerializable
     public const S_HY108_INVALID_CURSOR_POSITION = 'HY108';
     public const S_HYC00_OPTIONAL_FEATURE_NOT_IMPLEMENTED = 'HYC00';
 
-    /** @var string */
-    private $value;
+    private string $value;
 
     public function __construct(string $value)
     {

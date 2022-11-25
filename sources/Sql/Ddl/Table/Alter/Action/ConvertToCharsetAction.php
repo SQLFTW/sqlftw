@@ -13,15 +13,15 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\SqlSerializable;
 
 class ConvertToCharsetAction implements TableAction
 {
 
     /** @var Charset|DefaultLiteral */
-    private $charset;
+    private SqlSerializable $charset;
 
-    /** @var Collation|null */
-    private $collation;
+    private ?Collation $collation;
 
     /**
      * @param Charset|DefaultLiteral $charset

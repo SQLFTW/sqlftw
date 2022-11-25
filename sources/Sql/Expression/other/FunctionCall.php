@@ -22,20 +22,17 @@ use function is_int;
 class FunctionCall implements RootNode
 {
 
-    /** @var FunctionIdentifier */
-    private $function;
+    private FunctionIdentifier $function;
 
     /** @var array<int|string, ArgumentNode> */
-    private $arguments;
+    private array $arguments;
 
     /** @var WindowSpecification|string|null */
     private $over;
 
-    /** @var bool|null */
-    private $respectNulls;
+    private ?bool $respectNulls;
 
-    /** @var bool|null */
-    private $fromFirst;
+    private ?bool $fromFirst;
 
     /**
      * @param array<int|string, ArgumentNode> $arguments

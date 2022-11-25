@@ -64,23 +64,17 @@ use SqlFtw\Session\SessionUpdater;
 class ParserFactory
 {
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var Parser */
-    private $parser;
+    private Parser $parser;
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
-    /** @var TableReferenceParser */
-    private $tableReferenceParser;
+    private TableReferenceParser $tableReferenceParser;
 
-    /** @var QueryParser */
-    private $queryParser;
+    private QueryParser $queryParser;
 
-    /** @var RoutineBodyParser */
-    private $routineBodyParser;
+    private RoutineBodyParser $routineBodyParser;
 
     public function __construct(Parser $parser, Session $session, SessionUpdater $sessionUpdater)
     {

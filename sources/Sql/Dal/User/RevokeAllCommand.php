@@ -18,7 +18,7 @@ class RevokeAllCommand extends Statement implements UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private $users;
+    private array $users;
 
     /**
      * @param non-empty-list<UserName|FunctionCall> $users

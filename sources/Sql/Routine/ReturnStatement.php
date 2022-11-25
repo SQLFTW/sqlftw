@@ -17,8 +17,7 @@ use SqlFtw\Sql\Statement;
 class ReturnStatement extends Statement implements SqlSerializable
 {
 
-    /** @var RootNode */
-    private $expression;
+    private RootNode $expression;
 
     public function __construct(RootNode $expression)
     {

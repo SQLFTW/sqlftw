@@ -21,20 +21,19 @@ use function is_array;
 class PartitionDefinition implements SqlSerializable
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     /** @var non-empty-list<RootNode>|MaxValueLiteral|null */
     private $lessThan;
 
     /** @var non-empty-list<RootNode>|null */
-    private $values;
+    private ?array $values;
 
     /** @var non-empty-array<PartitionOption::*, int|string|StorageEngine>|null */
-    private $options;
+    private ?array $options;
 
     /** @var non-empty-array<string, non-empty-array<PartitionOption::*, int|string|StorageEngine>|null>|null */
-    private $subpartitions;
+    private ?array $subpartitions;
 
     /**
      * @param non-empty-list<RootNode>|MaxValueLiteral|null $lessThan

@@ -29,11 +29,9 @@ use SqlFtw\Sql\Routine\RoutineType;
 class EventCommandsParser
 {
 
-    /** @var RoutineBodyParser */
-    private $routineBodyParser;
+    private RoutineBodyParser $routineBodyParser;
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     public function __construct(RoutineBodyParser $routineBodyParser, ExpressionParser $expressionParser)
     {

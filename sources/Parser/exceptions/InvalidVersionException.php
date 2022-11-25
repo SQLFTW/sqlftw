@@ -14,8 +14,7 @@ use Throwable;
 class InvalidVersionException extends ParserException
 {
 
-    /** @var string */
-    private $feature;
+    private string $feature;
 
     public function __construct(string $feature, TokenList $tokenList, ?Throwable $previous = null)
     {

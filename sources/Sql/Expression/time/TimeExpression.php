@@ -15,11 +15,10 @@ use SqlFtw\Sql\SqlSerializable;
 class TimeExpression implements SqlSerializable
 {
 
-    /** @var RootNode */
-    private $initial;
+    private RootNode $initial;
 
     /** @var list<TimeInterval> */
-    private $intervals;
+    private array $intervals;
 
     /**
      * @param list<TimeInterval> $intervals

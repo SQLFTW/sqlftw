@@ -19,13 +19,11 @@ class FlushCommand extends Statement implements DalCommand
 {
 
     /** @var non-empty-list<FlushOption> */
-    private $options;
+    private array $options;
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
-    /** @var bool */
-    private $local;
+    private bool $local;
 
     /**
      * @param non-empty-list<FlushOption> $options

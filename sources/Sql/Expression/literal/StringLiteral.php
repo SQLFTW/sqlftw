@@ -31,10 +31,9 @@ class StringLiteral implements StringValue, BoolValue
 {
 
     /** @var non-empty-list<string> */
-    private $parts;
+    private array $parts;
 
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
     /**
      * @param non-empty-list<string> $parts

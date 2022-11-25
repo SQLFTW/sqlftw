@@ -18,16 +18,13 @@ class FlushTablesCommand extends Statement implements DalCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier>|null */
-    private $tables;
+    private ?array $tables;
 
-    /** @var bool */
-    private $withReadLock;
+    private bool $withReadLock;
 
-    /** @var bool */
-    private $forExport;
+    private bool $forExport;
 
-    /** @var bool */
-    private $local;
+    private bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier>|null $tables

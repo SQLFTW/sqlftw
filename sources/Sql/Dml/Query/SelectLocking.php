@@ -16,14 +16,12 @@ use SqlFtw\Sql\SqlSerializable;
 class SelectLocking implements SqlSerializable
 {
 
-    /** @var SelectLockOption */
-    private $for;
+    private SelectLockOption $for;
 
-    /** @var SelectLockWaitOption|null */
-    private $wait;
+    private ?SelectLockWaitOption $wait;
 
     /** @var non-empty-list<ObjectIdentifier>|null */
-    private $tables;
+    private ?array $tables;
 
     /**
      * @param non-empty-list<ObjectIdentifier>|null $tables

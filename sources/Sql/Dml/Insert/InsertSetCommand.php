@@ -18,13 +18,11 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
 {
 
     /** @var non-empty-list<Assignment> */
-    private $assignments;
+    private array $assignments;
 
-    /** @var string|null */
-    private $alias;
+    private ?string $alias;
 
-    /** @var OnDuplicateKeyActions|null */
-    private $onDuplicateKeyActions;
+    private ?OnDuplicateKeyActions $onDuplicateKeyActions;
 
     /**
      * @param non-empty-list<Assignment> $assignments

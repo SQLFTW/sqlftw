@@ -18,8 +18,7 @@ use SqlFtw\Sql\Dml\Query\Query;
 class Subquery implements RootNode
 {
 
-    /** @var Query */
-    private $query;
+    private Query $query;
 
     public function __construct(Query $query)
     {

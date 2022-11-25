@@ -16,14 +16,11 @@ use SqlFtw\Sql\Statement;
 class AlterInstanceCommand extends Statement implements DdlCommand
 {
 
-    /** @var AlterInstanceAction */
-    private $action;
+    private AlterInstanceAction $action;
 
-    /** @var string|null */
-    private $forChannel;
+    private ?string $forChannel;
 
-    /** @var bool */
-    private $noRollbackOnError;
+    private bool $noRollbackOnError;
 
     public function __construct(
         AlterInstanceAction $action,

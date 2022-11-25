@@ -16,17 +16,14 @@ use SqlFtw\Sql\Dml\Query\Query;
 class TableReferenceSubquery implements TableReferenceNode, Countable
 {
 
-    /** @var Query */
-    private $query;
+    private Query $query;
 
-    /** @var string|null */
-    private $alias;
+    private ?string $alias;
 
     /** @var non-empty-list<string>|null */
-    private $columnList;
+    private ?array $columnList;
 
-    /** @var bool */
-    private $lateral;
+    private bool $lateral;
 
     /**
      * @param non-empty-list<string>|null $columnList

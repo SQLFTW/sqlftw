@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class DropConstraintAction implements ConstraintAction
 {
 
-    /** @var string */
-    private $constraint;
+    private string $constraint;
 
     public function __construct(string $constraint)
     {

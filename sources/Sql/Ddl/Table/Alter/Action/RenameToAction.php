@@ -15,8 +15,7 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class RenameToAction implements TableAction
 {
 
-    /** @var ObjectIdentifier */
-    private $newName;
+    private ObjectIdentifier $newName;
 
     public function __construct(ObjectIdentifier $newName)
     {

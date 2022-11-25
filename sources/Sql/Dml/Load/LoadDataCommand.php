@@ -19,8 +19,7 @@ use SqlFtw\Sql\Expression\RootNode;
 class LoadDataCommand extends LoadCommand
 {
 
-    /** @var FileFormat|null */
-    private $format;
+    private ?FileFormat $format;
 
     /**
      * @param non-empty-list<string>|null $fields

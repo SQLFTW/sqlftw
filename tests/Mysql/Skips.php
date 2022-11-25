@@ -8,7 +8,7 @@ trait Skips
 {
 
     /** @var list<string> */
-    private static $skips = [
+    private static array $skips = [
         // todo: problems with �\' in shift-jis encoding. need to tokenize strings per-character not per-byte
         'jp_alter_sjis.test',
         'jp_charlength_sjis.test',

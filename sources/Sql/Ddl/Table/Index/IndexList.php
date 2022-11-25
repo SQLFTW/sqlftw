@@ -15,13 +15,13 @@ class IndexList
 {
 
     /** @var array<string|int, IndexDefinition> ($name => $index) */
-    private $indexes = [];
+    private array $indexes = [];
 
     /** @var array<string|int, IndexDefinition> ($name => $index) */
-    private $renamedIndexes = [];
+    private array $renamedIndexes = [];
 
     /** @var array<string|int, IndexDefinition> ($name => $index) */
-    private $droppedIndexes = [];
+    private array $droppedIndexes = [];
 
     /**
      * @param array<string|int, IndexDefinition> $indexes

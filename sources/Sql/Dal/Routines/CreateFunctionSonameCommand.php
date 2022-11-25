@@ -18,17 +18,13 @@ use SqlFtw\Sql\Statement;
 class CreateFunctionSonameCommand extends Statement implements DalCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $function;
+    private ObjectIdentifier $function;
 
-    /** @var string */
-    private $libName;
+    private string $libName;
 
-    /** @var UdfReturnDataType */
-    private $returnType;
+    private UdfReturnDataType $returnType;
 
-    /** @var bool */
-    private $aggregate;
+    private bool $aggregate;
 
     public function __construct(ObjectIdentifier $function, string $libName, UdfReturnDataType $returnType, bool $aggregate)
     {

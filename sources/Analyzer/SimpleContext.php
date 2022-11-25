@@ -20,17 +20,13 @@ use SqlFtw\Session\Session;
 class SimpleContext
 {
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var Platform */
-    private $platform;
+    private Platform $platform;
 
-    /** @var ExpressionResolver */
-    private $resolver;
+    private ExpressionResolver $resolver;
 
-    /** @var CastingTypeChecker */
-    private $typeChecker;
+    private CastingTypeChecker $typeChecker;
 
     public function __construct(Session $session, ExpressionResolver $resolver)
     {

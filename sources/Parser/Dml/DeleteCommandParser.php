@@ -23,11 +23,9 @@ use SqlFtw\Sql\Keyword;
 class DeleteCommandParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
-    /** @var TableReferenceParser */
-    private $tableReferenceParser;
+    private TableReferenceParser $tableReferenceParser;
 
     public function __construct(ExpressionParser $expressionParser, TableReferenceParser $tableReferenceParser)
     {

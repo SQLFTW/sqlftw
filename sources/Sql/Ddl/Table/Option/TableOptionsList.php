@@ -29,7 +29,7 @@ class TableOptionsList
 {
 
     /** @var array<TableOption::*, TableOptionValue|null> */
-    private $options = [];
+    private array $options = [];
 
     /**
      * @param array<string|TableOption::*, TableOptionValue> $options

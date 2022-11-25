@@ -18,7 +18,7 @@ class Row implements SqlSerializable
 {
 
     /** @var list<RootNode> */
-    private $values;
+    private array $values;
 
     /**
      * @param list<RootNode> $values

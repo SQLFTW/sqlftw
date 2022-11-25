@@ -23,11 +23,9 @@ use function substr;
 class BinaryLiteral implements BoolValue, UintValue, StringValue
 {
 
-    /** @var string */
-    private $value;
+    private string $value;
 
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
     public function __construct(string $value, ?Charset $charset = null)
     {

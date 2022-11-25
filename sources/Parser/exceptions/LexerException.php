@@ -14,11 +14,9 @@ use Throwable;
 class LexerException extends ParsingException
 {
 
-    /** @var int */
-    private $position;
+    private int $position;
 
-    /** @var string */
-    private $input;
+    private string $input;
 
     public function __construct(string $message, int $position, string $input, ?Throwable $previous = null)
     {

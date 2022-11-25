@@ -21,6 +21,7 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\RootNode;
+use SqlFtw\Sql\SqlSerializable;
 
 class ColumnDefinition implements TableItem
 {
@@ -33,59 +34,45 @@ class ColumnDefinition implements TableItem
 
     public const FIRST = false;
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var ColumnType */
-    private $type;
+    private ColumnType $type;
 
-    /** @var bool|null */
-    private $nullable;
+    private ?bool $nullable;
 
-    /** @var bool|null */
-    private $visible;
+    private ?bool $visible;
 
-    /** @var string|int|float|bool|RootNode|null */
+    /** @var scalar|RootNode|null */
     private $defaultValue;
 
-    /** @var bool */
-    private $autoincrement;
+    private bool $autoincrement;
 
     /** @var Identifier|FunctionCall|null */
-    private $onUpdate;
+    private ?RootNode $onUpdate;
 
-    /** @var GeneratedColumnType|null */
-    private $generatedColumnType;
+    private ?GeneratedColumnType $generatedColumnType = null;
 
-    /** @var RootNode */
-    private $expression;
+    private ?RootNode $expression = null;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var IndexType|null */
-    private $indexType;
+    private ?IndexType $indexType;
 
-    /** @var ColumnFormat|null */
-    private $columnFormat;
+    private ?ColumnFormat $columnFormat;
 
-    /** @var string|null */
-    private $engineAttribute;
+    private ?string $engineAttribute;
 
-    /** @var string|null */
-    private $secondaryEngineAttribute;
+    private ?string $secondaryEngineAttribute;
 
-    /** @var StorageType|null */
-    private $storage;
+    private ?StorageType $storage;
 
-    /** @var ReferenceDefinition|null */
-    private $reference;
+    private ?ReferenceDefinition $reference;
 
     /** @var non-empty-list<CheckDefinition|ConstraintDefinition>|null */
-    private $checks;
+    private ?array $checks;
 
     /**
-     * @param string|int|float|bool|RootNode|null $defaultValue
+     * @param scalar|RootNode|null $defaultValue
      * @param Identifier|FunctionCall|null $onUpdate
      * @param non-empty-list<CheckDefinition|ConstraintDefinition>|null $checks
      */
@@ -149,7 +136,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @param string|int|float|bool|RootNode|null $defaultValue
+     * @param scalar|RootNode|null $defaultValue
      */
     public function duplicateWithDefaultValue($defaultValue): self
     {
@@ -201,7 +188,7 @@ class ColumnDefinition implements TableItem
     }
 
     /**
-     * @return string|int|float|bool|RootNode|null
+     * @return scalar|RootNode|null
      */
     public function getDefaultValue()
     {

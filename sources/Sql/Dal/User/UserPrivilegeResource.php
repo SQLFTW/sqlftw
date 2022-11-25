@@ -17,14 +17,11 @@ class UserPrivilegeResource implements SqlSerializable
 
     public const ALL = '*';
 
-    /** @var string|null */
-    private $schema;
+    private ?string $schema;
 
-    /** @var string|null */
-    private $objectName;
+    private ?string $objectName;
 
-    /** @var UserPrivilegeResourceType|null */
-    private $objectType;
+    private ?UserPrivilegeResourceType $objectType;
 
     public function __construct(?string $schema, ?string $objectName, ?UserPrivilegeResourceType $objectType)
     {

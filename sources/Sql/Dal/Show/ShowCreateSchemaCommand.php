@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class ShowCreateSchemaCommand extends Statement implements ShowCommand
 {
 
-    /** @var string */
-    private $schema;
+    private string $schema;
 
     public function __construct(string $schema)
     {

@@ -17,10 +17,9 @@ class DropRoleCommand extends Statement implements UserCommand
 {
 
     /** @var non-empty-list<UserName> */
-    private $roles;
+    private array $roles;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     /**
      * @param non-empty-list<UserName> $roles

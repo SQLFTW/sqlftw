@@ -137,7 +137,7 @@ class CastingTypeChecker
     }
 
     /**
-     * @param int|float|bool|string|Value|null $value
+     * @param scalar|Value|null $value
      * @param list<int|string> $values
      */
     public function validateEnum($value, array $values, Cast $cast): bool
@@ -168,7 +168,7 @@ class CastingTypeChecker
     }
 
     /**
-     * @param int|float|bool|string|Value|null $value
+     * @param scalar|Value|null $value
      * @param list<int|string> $values
      */
     public function validateSet($value, array $values, Cast $cast): bool

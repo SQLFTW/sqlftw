@@ -17,8 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class ExistsExpression implements RootNode
 {
 
-    /** @var Subquery */
-    private $subquery;
+    private Subquery $subquery;
 
     public function __construct(Subquery $subquery)
     {

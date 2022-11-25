@@ -70,8 +70,7 @@ use SqlFtw\Sql\Statement;
 class ShowCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
     {

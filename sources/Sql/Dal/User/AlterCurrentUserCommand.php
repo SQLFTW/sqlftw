@@ -15,20 +15,15 @@ use SqlFtw\Sql\Statement;
 class AlterCurrentUserCommand extends Statement implements UserCommand
 {
 
-    /** @var AuthOption|null */
-    private $option;
+    private ?AuthOption $option;
 
-    /** @var string|null */
-    private $replace;
+    private ?string $replace;
 
-    /** @var bool */
-    private $retainCurrentPassword;
+    private bool $retainCurrentPassword;
 
-    /** @var bool */
-    private $discardOldPassword;
+    private bool $discardOldPassword;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(
         ?AuthOption $option,

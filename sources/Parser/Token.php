@@ -15,23 +15,17 @@ namespace SqlFtw\Parser;
 final class Token
 {
 
-    /** @var int */
-    public $type;
+    public int $type;
 
-    /** @var int */
-    public $position;
+    public int $position;
 
-    /** @var int */
-    public $row;
+    public int $row;
 
-    /** @var string */
-    public $value;
+    public string $value;
 
-    /** @var string|null */
-    public $original;
+    public ?string $original;
 
-    /** @var LexerException|null */
-    public $exception;
+    public ?LexerException $exception;
 
     public function __construct(
         int $type,

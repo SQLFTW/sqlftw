@@ -16,29 +16,21 @@ use SqlFtw\Sql\Statement;
 class CreateSpatialReferenceSystemCommand extends Statement implements ServerCommand
 {
 
-    /** @var int */
-    private $srid;
+    private int $srid;
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var string */
-    private $definition;
+    private string $definition;
 
-    /** @var string|null */
-    private $organization;
+    private ?string $organization;
 
-    /** @var int|null */
-    private $identifiedBy;
+    private ?int $identifiedBy;
 
-    /** @var string|null */
-    private $description;
+    private ?string $description;
 
-    /** @var bool */
-    private $orReplace;
+    private bool $orReplace;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
     public function __construct(
         int $srid,

@@ -17,20 +17,15 @@ use SqlFtw\Sql\Statement;
 class AlterFunctionCommand extends Statement implements StoredFunctionCommand, AlterRoutineCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $function;
+    private ObjectIdentifier $function;
 
-    /** @var SqlSecurity|null */
-    private $security;
+    private ?SqlSecurity $security;
 
-    /** @var RoutineSideEffects|null */
-    private $sideEffects;
+    private ?RoutineSideEffects $sideEffects;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var string|null */
-    private $language;
+    private ?string $language;
 
     public function __construct(
         ObjectIdentifier $function,

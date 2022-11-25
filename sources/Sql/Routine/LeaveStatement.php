@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class LeaveStatement extends Statement implements SqlSerializable
 {
 
-    /** @var string */
-    private $label;
+    private string $label;
 
     public function __construct(string $label)
     {

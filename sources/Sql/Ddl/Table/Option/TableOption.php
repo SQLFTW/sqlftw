@@ -55,7 +55,7 @@ class TableOption extends SqlEnum
     public const UNION = Keyword::UNION;
 
     /** @var array<self::*, string|class-string> */
-    private static $types = [
+    private static array $types = [
         self::AUTOEXTEND_SIZE => SizeLiteral::class,
         self::AUTO_INCREMENT => BaseType::UNSIGNED,
         self::AVG_ROW_LENGTH => BaseType::UNSIGNED,

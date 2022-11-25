@@ -8,7 +8,7 @@ trait Errors
 {
 
     /** @var list<string> */
-    private static $partiallyParsedErrors = [
+    private static array $partiallyParsedErrors = [
         'ER_WRONG_USAGE', // various alter issues
         'ER_PARTITION_COLUMN_LIST_ERROR',
         'ER_SUBPARTITION_ERROR',
@@ -38,7 +38,7 @@ trait Errors
     ];
 
     /** @var list<string> */
-    private static $ignoredErrors = [
+    private static array $ignoredErrors = [
         // todo: could be thrown by parser (no context needed)
         'ER_GENERATED_COLUMN_FUNCTION_IS_NOT_ALLOWED',
         'ER_ILLEGAL_VALUE_FOR_TYPE', // set with funny values

@@ -40,14 +40,11 @@ use SqlFtw\Formatter\Formatter;
 class BinaryOperator implements OperatorExpression
 {
 
-    /** @var RootNode */
-    private $left;
+    private RootNode $left;
 
-    /** @var Operator */
-    private $operator;
+    private Operator $operator;
 
-    /** @var RootNode */
-    private $right;
+    private RootNode $right;
 
     public function __construct(RootNode $left, Operator $operator, RootNode $right)
     {

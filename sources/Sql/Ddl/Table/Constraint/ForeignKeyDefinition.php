@@ -18,13 +18,11 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
 {
 
     /** @var non-empty-list<string> */
-    private $columns;
+    private array $columns;
 
-    /** @var ReferenceDefinition */
-    private $reference;
+    private ReferenceDefinition $reference;
 
-    /** @var string|null */
-    private $indexName;
+    private ?string $indexName;
 
     /**
      * @param non-empty-list<string> $columns

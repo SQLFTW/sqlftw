@@ -15,8 +15,7 @@ use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
 class AddForeignKeyAction implements ForeignKeyAction
 {
 
-    /** @var ForeignKeyDefinition */
-    private $foreignKey;
+    private ForeignKeyDefinition $foreignKey;
 
     public function __construct(ForeignKeyDefinition $foreignKey)
     {

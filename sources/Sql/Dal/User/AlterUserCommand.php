@@ -20,22 +20,19 @@ class AlterUserCommand extends Statement implements UserCommand
     private $users;
 
     /** @var list<UserTlsOption>|null */
-    private $tlsOptions;
+    private ?array $tlsOptions;
 
     /** @var non-empty-list<UserResourceOption>|null */
-    private $resourceOptions;
+    private ?array $resourceOptions;
 
     /** @var non-empty-list<UserPasswordLockOption>|null */
-    private $passwordLockOptions;
+    private ?array $passwordLockOptions;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var string|null */
-    private $attribute;
+    private ?string $attribute;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     /**
      * @param non-empty-list<AlteredUser> $users

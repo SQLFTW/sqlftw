@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class SimpleName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     public function __construct(string $name)
     {

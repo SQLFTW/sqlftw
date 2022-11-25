@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class RenameColumnAction implements ColumnAction
 {
 
-    /** @var string */
-    private $oldName;
+    private string $oldName;
 
-    /** @var string */
-    private $newName;
+    private string $newName;
 
     public function __construct(string $oldName, string $newName)
     {

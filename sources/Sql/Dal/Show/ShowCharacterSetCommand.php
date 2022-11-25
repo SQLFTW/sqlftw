@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class ShowCharacterSetCommand extends Statement implements ShowCommand
 {
 
-    /** @var string|null */
-    private $like;
+    private ?string $like;
 
-    /** @var RootNode|null */
-    private $where;
+    private ?RootNode $where;
 
     public function __construct(?string $like = null, ?RootNode $where = null)
     {

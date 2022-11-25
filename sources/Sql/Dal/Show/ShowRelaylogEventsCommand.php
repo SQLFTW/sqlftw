@@ -15,20 +15,15 @@ use SqlFtw\Sql\Statement;
 class ShowRelaylogEventsCommand extends Statement implements ShowCommand
 {
 
-    /** @var string|null */
-    private $logName;
+    private ?string $logName;
 
-    /** @var int|null */
-    private $from;
+    private ?int $from;
 
-    /** @var int|null */
-    private $limit;
+    private ?int $limit;
 
-    /** @var int|null */
-    private $offset;
+    private ?int $offset;
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     public function __construct(?string $logName, ?int $from, ?int $limit, ?int $offset, ?string $channel)
     {

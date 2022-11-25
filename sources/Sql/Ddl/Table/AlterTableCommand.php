@@ -33,20 +33,16 @@ use function trim;
 class AlterTableCommand extends Statement implements DdlTableCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $name;
+    private ObjectIdentifier $name;
 
-    /** @var AlterActionsList */
-    private $actions;
+    private AlterActionsList $actions;
 
     /** @var array<AlterTableOption::*, bool|AlterTableLock|AlterTableAlgorithm> */
-    private $alterOptions;
+    private array $alterOptions;
 
-    /** @var TableOptionsList|null */
-    private $tableOptions;
+    private ?TableOptionsList $tableOptions;
 
-    /** @var PartitioningDefinition|null */
-    private $partitioning;
+    private ?PartitioningDefinition $partitioning;
 
     /**
      * @param AlterActionsList|list<AlterTableAction> $actions

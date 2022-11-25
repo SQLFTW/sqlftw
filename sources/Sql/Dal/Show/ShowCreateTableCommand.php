@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class ShowCreateTableCommand extends Statement implements ShowCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
     public function __construct(ObjectIdentifier $table)
     {

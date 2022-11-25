@@ -23,29 +23,23 @@ class ColumnType implements SqlSerializable
 
     public const UNSIGNED = true;
 
-    /** @var BaseType */
-    private $type;
+    private BaseType $type;
 
     /** @var non-empty-list<int>|null */
-    private $size;
+    private ?array $size;
 
     /** @var non-empty-list<StringValue>|null */
-    private $values;
+    private ?array $values;
 
-    /** @var bool */
-    private $unsigned;
+    private bool $unsigned;
 
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
-    /** @var Collation|null */
-    private $collation;
+    private ?Collation $collation;
 
-    /** @var int|null */
-    private $srid;
+    private ?int $srid;
 
-    /** @var bool */
-    private $zerofill;
+    private bool $zerofill;
 
     /**
      * @param non-empty-list<int>|null $size

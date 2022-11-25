@@ -13,25 +13,25 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
 class SetNamesCommand extends Statement implements SetCommand
 {
 
     /** @var Charset|DefaultLiteral */
-    private $charset;
+    private SqlSerializable $charset;
 
-    /** @var Collation|null */
-    private $collation;
+    private ?Collation $collation;
 
     /** @var list<SetAssignment> */
-    private $assignments;
+    private array $assignments;
 
     /**
      * @param Charset|DefaultLiteral $charset
      * @param list<SetAssignment> $assignments
      */
-    public function __construct($charset, ?Collation $collation, array $assignments = [])
+    public function __construct(SqlSerializable $charset, ?Collation $collation, array $assignments = [])
     {
         $this->charset = $charset;
         $this->collation = $collation;
@@ -41,7 +41,7 @@ class SetNamesCommand extends Statement implements SetCommand
     /**
      * @return Charset|DefaultLiteral
      */
-    public function getCharset()
+    public function getCharset(): SqlSerializable
     {
         return $this->charset;
     }

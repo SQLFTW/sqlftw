@@ -16,29 +16,22 @@ use function spl_object_id;
 class AnalyzerResult
 {
 
-    /** @var int */
-    private $id;
+    private int $id;
 
-    /** @var string */
-    private $message;
+    private string $message;
 
-    /** @var AnalyzerRule */
-    private $rule;
+    private ?AnalyzerRule $rule = null;
 
-    /** @var Statement */
-    private $statement;
+    private ?Statement $statement = null;
 
-    /** @var SqlMode */
-    private $mode;
+    private ?SqlMode $mode = null;
 
-    /** @var int */
-    private $severity;
+    private int $severity;
 
-    /** @var bool|null */
-    private $autoRepair;
+    private ?bool $autoRepair;
 
     /** @var non-empty-list<Statement>|null */
-    private $repairStatements;
+    private ?array $repairStatements;
 
     /**
      * @param non-empty-list<Statement>|null $repairStatements

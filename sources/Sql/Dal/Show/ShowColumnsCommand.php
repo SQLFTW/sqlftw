@@ -17,20 +17,15 @@ use SqlFtw\Sql\Statement;
 class ShowColumnsCommand extends Statement implements ShowCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var string|null */
-    private $like;
+    private ?string $like;
 
-    /** @var RootNode|null */
-    private $where;
+    private ?RootNode $where;
 
-    /** @var bool */
-    private $full;
+    private bool $full;
 
-    /** @var bool */
-    private $extended;
+    private bool $extended;
 
     public function __construct(
         ObjectIdentifier $table,

@@ -17,13 +17,11 @@ class ChecksumTableCommand extends Statement implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $names;
+    private array $names;
 
-    /** @var bool */
-    private $quick;
+    private bool $quick;
 
-    /** @var bool */
-    private $extended;
+    private bool $extended;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names

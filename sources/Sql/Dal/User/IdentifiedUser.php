@@ -18,22 +18,19 @@ class IdentifiedUser implements SqlSerializable
 {
 
     /** @var UserName|FunctionCall */
-    private $user;
+    private SqlSerializable $user;
 
-    /** @var AuthOption|null */
-    private $option1;
+    private ?AuthOption $option1;
 
-    /** @var AuthOption|null */
-    private $option2;
+    private ?AuthOption $option2;
 
-    /** @var AuthOption|null */
-    private $option3;
+    private ?AuthOption $option3;
 
     /**
      * @param UserName|FunctionCall $user
      */
     public function __construct(
-        $user,
+        SqlSerializable $user,
         ?AuthOption $option1 = null,
         ?AuthOption $option2 = null,
         ?AuthOption $option3 = null
@@ -47,7 +44,7 @@ class IdentifiedUser implements SqlSerializable
     /**
      * @return UserName|FunctionCall
      */
-    public function getUser()
+    public function getUser(): SqlSerializable
     {
         return $this->user;
     }

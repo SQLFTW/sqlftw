@@ -20,17 +20,13 @@ use function substr;
 class EventSchedule implements SqlSerializable
 {
 
-    /** @var RootNode|null */
-    private $time;
+    private ?RootNode $time;
 
-    /** @var TimeInterval|null */
-    private $interval;
+    private ?TimeInterval $interval;
 
-    /** @var RootNode|null */
-    private $startTime;
+    private ?RootNode $startTime;
 
-    /** @var RootNode|null */
-    private $endTime;
+    private ?RootNode $endTime;
 
     public function __construct(
         ?RootNode $time,

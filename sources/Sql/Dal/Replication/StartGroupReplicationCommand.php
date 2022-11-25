@@ -15,14 +15,11 @@ use SqlFtw\Sql\Statement;
 class StartGroupReplicationCommand extends Statement implements GroupReplicationCommand
 {
 
-    /** @var string|null */
-    private $user;
+    private ?string $user;
 
-    /** @var string|null */
-    private $password;
+    private ?string $password;
 
-    /** @var string|null */
-    private $defaultAuth;
+    private ?string $defaultAuth;
 
     public function __construct(?string $user = null, ?string $password = null, ?string $defaultAuth = null)
     {

@@ -22,35 +22,28 @@ use function implode;
 abstract class LoadCommand extends Statement implements DmlCommand
 {
 
-    /** @var string */
-    private $file;
+    private string $file;
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
     /** @var non-empty-list<string>|null */
-    private $fields;
+    private ?array $fields;
 
     /** @var non-empty-array<string, RootNode>|null ($column => $expression) */
-    private $setters;
+    private ?array $setters;
 
-    /** @var int|null */
-    private $ignoreRows;
+    private ?int $ignoreRows;
 
-    /** @var LoadPriority|null */
-    private $priority;
+    private ?LoadPriority $priority;
 
-    /** @var bool */
-    private $local;
+    private bool $local;
 
-    /** @var DuplicateOption|null */
-    private $duplicateOption;
+    private ?DuplicateOption $duplicateOption;
 
     /** @var non-empty-list<string>|null */
-    private $partitions;
+    private ?array $partitions;
 
     /**
      * @param non-empty-list<string>|null $fields

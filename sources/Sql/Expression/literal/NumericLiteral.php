@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class NumericLiteral implements NumericValue
 {
 
-    /** @var string */
-    protected $value;
+    protected string $value;
 
     public function __construct(string $value)
     {

@@ -11,16 +11,13 @@ class WhileStatement extends Statement implements SqlSerializable
 {
 
     /** @var list<Statement> */
-    private $statements;
+    private array $statements;
 
-    /** @var RootNode */
-    private $condition;
+    private RootNode $condition;
 
-    /** @var string|null */
-    private $label;
+    private ?string $label;
 
-    /** @var bool */
-    private $endLabel;
+    private bool $endLabel;
 
     /**
      * @param list<Statement> $statements

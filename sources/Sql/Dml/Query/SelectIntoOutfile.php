@@ -16,14 +16,11 @@ use SqlFtw\Sql\Dml\FileFormat;
 class SelectIntoOutfile extends SelectInto
 {
 
-    /** @var string */
-    private $fileName;
+    private string $fileName;
 
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
-    /** @var FileFormat|null */
-    private $format;
+    private ?FileFormat $format;
 
     /**
      * @param SelectInto::POSITION_* $position

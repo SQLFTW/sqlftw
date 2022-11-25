@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class CommitCommand extends Statement implements TransactionCommand
 {
 
-    /** @var bool|null */
-    private $chain;
+    private ?bool $chain;
 
-    /** @var bool|null */
-    private $release;
+    private ?bool $release;
 
     public function __construct(?bool $chain, ?bool $release)
     {

@@ -17,14 +17,11 @@ use SqlFtw\Sql\Ddl\Table\TableItem;
 class ConstraintDefinition implements TableItem
 {
 
-    /** @var ConstraintType */
-    private $type;
+    private ConstraintType $type;
 
-    /** @var string|null */
-    private $name;
+    private ?string $name;
 
-    /** @var ConstraintBody */
-    private $body;
+    private ConstraintBody $body;
 
     public function __construct(ConstraintType $type, ?string $name, ConstraintBody $body)
     {

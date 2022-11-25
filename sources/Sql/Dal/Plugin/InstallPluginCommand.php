@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class InstallPluginCommand extends Statement implements PluginCommand
 {
 
-    /** @var string */
-    private $pluginName;
+    private string $pluginName;
 
-    /** @var string */
-    private $libName;
+    private string $libName;
 
     public function __construct(string $pluginName, string $libName)
     {

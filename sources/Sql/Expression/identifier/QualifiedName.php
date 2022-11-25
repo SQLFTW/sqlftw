@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class QualifiedName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var string */
-    private $schema;
+    private string $schema;
 
     public function __construct(string $name, string $schema)
     {

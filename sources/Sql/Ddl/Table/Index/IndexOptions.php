@@ -16,26 +16,19 @@ use function ltrim;
 class IndexOptions implements SqlSerializable
 {
 
-    /** @var int|null */
-    private $keyBlockSize;
+    private ?int $keyBlockSize;
 
-    /** @var string|null */
-    private $withParser;
+    private ?string $withParser;
 
-    /** @var int|null */
-    private $mergeThreshold;
+    private ?int $mergeThreshold;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var bool|null */
-    private $visible;
+    private ?bool $visible;
 
-    /** @var string|null */
-    private $engineAttribute;
+    private ?string $engineAttribute;
 
-    /** @var string|null */
-    private $secondaryEngineAttribute;
+    private ?string $secondaryEngineAttribute;
 
     public function __construct(
         ?int $keyBlockSize,

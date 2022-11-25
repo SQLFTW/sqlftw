@@ -22,11 +22,9 @@ class IndexPart implements SqlSerializable
     /** @var string|RootNode */
     private $expression;
 
-    /** @var int|null */
-    private $length;
+    private ?int $length;
 
-    /** @var Order|null */
-    private $order;
+    private ?Order $order;
 
     /**
      * @param string|RootNode $expression

@@ -16,14 +16,11 @@ use SqlFtw\Sql\Statement;
 class DropTablespaceCommand extends Statement implements TablespaceCommand
 {
 
-    /** @var string */
-    private $tablespace;
+    private string $tablespace;
 
-    /** @var StorageEngine|null */
-    private $engine;
+    private ?StorageEngine $engine;
 
-    /** @var bool */
-    private $undo;
+    private bool $undo;
 
     public function __construct(string $tablespace, ?StorageEngine $engine = null, bool $undo = false)
     {

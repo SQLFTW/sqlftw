@@ -21,7 +21,7 @@ class ResignalCommand extends Statement implements Command
     private $condition;
 
     /** @var array<ConditionInformationItem::*, RootNode> */
-    private $items;
+    private array $items;
 
     /**
      * @param SqlState|string|null $condition

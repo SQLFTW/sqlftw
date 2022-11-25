@@ -15,8 +15,7 @@ use function sprintf;
 class InvalidValueException extends ParserException
 {
 
-    /** @var string */
-    public $expectedType;
+    public string $expectedType;
 
     public function __construct(string $expectedType, TokenList $tokenList, ?Throwable $previous = null)
     {

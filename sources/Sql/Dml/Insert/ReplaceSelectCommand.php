@@ -17,8 +17,7 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
 
-    /** @var Query */
-    private $query;
+    private Query $query;
 
     /**
      * @param list<ColumnIdentifier>|null $columns

@@ -16,20 +16,16 @@ use SqlFtw\Sql\SqlSerializable;
 class ReferenceDefinition implements SqlSerializable
 {
 
-    /** @var ObjectIdentifier */
-    private $sourceTable;
+    private ObjectIdentifier $sourceTable;
 
     /** @var non-empty-list<string> */
-    private $sourceColumns;
+    private array $sourceColumns;
 
-    /** @var ForeignKeyAction|null */
-    private $onUpdate;
+    private ?ForeignKeyAction $onUpdate;
 
-    /** @var ForeignKeyAction|null */
-    private $onDelete;
+    private ?ForeignKeyAction $onDelete;
 
-    /** @var ForeignKeyMatchType|null */
-    private $matchType;
+    private ?ForeignKeyMatchType $matchType;
 
     /**
      * @param non-empty-list<string> $sourceColumns

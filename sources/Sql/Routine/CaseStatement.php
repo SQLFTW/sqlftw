@@ -19,14 +19,13 @@ use function count;
 class CaseStatement extends Statement implements SqlSerializable
 {
 
-    /** @var RootNode|null */
-    private $condition;
+    private ?RootNode $condition;
 
     /** @var non-empty-list<RootNode> */
-    private $values;
+    private array $values;
 
     /** @var non-empty-list<list<Statement>> */
-    private $statementLists;
+    private array $statementLists;
 
     /**
      * @param non-empty-list<RootNode> $values

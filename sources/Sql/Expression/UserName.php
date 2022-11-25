@@ -14,11 +14,9 @@ use SqlFtw\Formatter\Formatter;
 class UserName implements SqlSerializable
 {
 
-    /** @var string */
-    protected $user;
+    protected string $user;
 
-    /** @var string|null */
-    protected $host;
+    protected ?string $host;
 
     public function __construct(string $user, ?string $host)
     {

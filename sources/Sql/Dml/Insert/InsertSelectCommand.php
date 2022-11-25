@@ -17,11 +17,9 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class InsertSelectCommand extends InsertOrReplaceCommand implements InsertCommand
 {
 
-    /** @var Query */
-    private $query;
+    private Query $query;
 
-    /** @var OnDuplicateKeyActions|null */
-    private $onDuplicateKeyActions;
+    private ?OnDuplicateKeyActions $onDuplicateKeyActions;
 
     /**
      * @param list<ColumnIdentifier>|null $columns

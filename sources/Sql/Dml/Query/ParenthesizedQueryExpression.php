@@ -20,14 +20,12 @@ use SqlFtw\Sql\Statement;
 class ParenthesizedQueryExpression extends Statement implements Query
 {
 
-    /** @var Query */
-    private $query;
+    private Query $query;
 
-    /** @var WithClause|null */
-    private $with;
+    private ?WithClause $with;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private $orderBy;
+    private ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
     private $limit;
@@ -35,8 +33,7 @@ class ParenthesizedQueryExpression extends Statement implements Query
     /** @var int|SimpleName|Placeholder|null */
     private $offset;
 
-    /** @var SelectInto|null */
-    private $into;
+    private ?SelectInto $into;
 
     /**
      * @param non-empty-list<OrderByExpression>|null $orderBy

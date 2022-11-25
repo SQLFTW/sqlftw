@@ -20,11 +20,10 @@ use SqlFtw\Sql\Statement;
 class TableCommand extends Statement implements SimpleQuery
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private $orderBy;
+    private ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
     private $limit;
@@ -32,8 +31,7 @@ class TableCommand extends Statement implements SimpleQuery
     /** @var int|SimpleName|Placeholder|null */
     private $offset;
 
-    /** @var SelectInto|null */
-    private $into;
+    private ?SelectInto $into;
 
     /**
      * @param non-empty-list<OrderByExpression>|null $orderBy

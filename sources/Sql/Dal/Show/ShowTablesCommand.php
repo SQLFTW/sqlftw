@@ -16,20 +16,15 @@ use SqlFtw\Sql\Statement;
 class ShowTablesCommand extends Statement implements ShowCommand
 {
 
-    /** @var string|null */
-    private $schema;
+    private ?string $schema;
 
-    /** @var string|null */
-    private $like;
+    private ?string $like;
 
-    /** @var RootNode|null */
-    private $where;
+    private ?RootNode $where;
 
-    /** @var bool */
-    private $full;
+    private bool $full;
 
-    /** @var bool */
-    private $extended;
+    private bool $extended;
 
     public function __construct(
         ?string $schema = null,

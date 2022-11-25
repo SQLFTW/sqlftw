@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Expression\ArgumentNode;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\SqlSerializable;
@@ -19,10 +20,9 @@ class SelectExpression implements SqlSerializable
 {
 
     /** @var RootNode|Asterisk */
-    private $expression;
+    private ArgumentNode $expression;
 
-    /** @var string|null */
-    private $alias;
+    private ?string $alias;
 
     /** @var WindowSpecification|string|null */
     private $window;
@@ -32,7 +32,7 @@ class SelectExpression implements SqlSerializable
      * @param WindowSpecification|string|null $window
      */
     public function __construct(
-        $expression,
+        ArgumentNode $expression,
         ?string $alias = null,
         $window = null
     ) {
@@ -44,7 +44,7 @@ class SelectExpression implements SqlSerializable
     /**
      * @return RootNode|Asterisk
      */
-    public function getExpression()
+    public function getExpression(): ArgumentNode
     {
         return $this->expression;
     }

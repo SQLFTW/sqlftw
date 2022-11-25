@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
@@ -18,25 +19,21 @@ class SetPasswordCommand extends Statement implements UserCommand
 {
 
     /** @var UserName|FunctionCall|null */
-    private $user;
+    private ?SqlSerializable $user;
 
-    /** @var string|null */
-    private $passwordFunction;
+    private ?string $passwordFunction;
 
-    /** @var string|null */
-    private $password;
+    private ?string $password;
 
-    /** @var string|null */
-    private $replace;
+    private ?string $replace;
 
-    /** @var bool */
-    private $retainCurrent;
+    private bool $retainCurrent;
 
     /**
      * @param UserName|FunctionCall|null $user
      */
     public function __construct(
-        $user,
+        ?SqlSerializable $user,
         ?string $passwordFunction,
         ?string $password,
         ?string $replace,
@@ -53,7 +50,7 @@ class SetPasswordCommand extends Statement implements UserCommand
     /**
      * @return UserName|FunctionCall|null
      */
-    public function getUser()
+    public function getUser(): ?SqlSerializable
     {
         return $this->user;
     }

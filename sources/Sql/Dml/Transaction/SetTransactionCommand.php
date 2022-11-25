@@ -16,14 +16,11 @@ use SqlFtw\Sql\Statement;
 class SetTransactionCommand extends Statement implements TransactionCommand
 {
 
-    /** @var Scope|null */
-    private $scope;
+    private ?Scope $scope;
 
-    /** @var TransactionIsolationLevel|null */
-    private $isolationLevel;
+    private ?TransactionIsolationLevel $isolationLevel;
 
-    /** @var bool|null */
-    private $write;
+    private ?bool $write;
 
     public function __construct(?Scope $scope, ?TransactionIsolationLevel $isolationLevel, ?bool $write = null)
     {

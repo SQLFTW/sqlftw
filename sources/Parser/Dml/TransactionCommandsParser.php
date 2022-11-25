@@ -32,8 +32,7 @@ use SqlFtw\Sql\Keyword;
 class TransactionCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
     {

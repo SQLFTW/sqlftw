@@ -17,11 +17,9 @@ use SqlFtw\Sql\Statement;
 class ExplainStatementCommand extends Statement implements DmlCommand
 {
 
-    /** @var Command */
-    private $statement;
+    private Command $statement;
 
-    /** @var ExplainType|null */
-    private $type;
+    private ?ExplainType $type;
 
     public function __construct(Command $statement, ?ExplainType $type = null)
     {

@@ -18,13 +18,11 @@ class DropViewCommand extends Statement implements ViewCommand, SchemaObjectsCom
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $views;
+    private array $views;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
-    /** @var DropViewOption|null */
-    private $option;
+    private ?DropViewOption $option;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $views

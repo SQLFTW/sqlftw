@@ -15,23 +15,17 @@ use SqlFtw\Sql\SqlSerializable;
 class FileFormat implements SqlSerializable
 {
 
-    /** @var string|null */
-    private $fieldsTerminatedBy;
+    private ?string $fieldsTerminatedBy;
 
-    /** @var string|null */
-    private $fieldsEnclosedBy;
+    private ?string $fieldsEnclosedBy;
 
-    /** @var string|null */
-    private $fieldsEscapedBy;
+    private ?string $fieldsEscapedBy;
 
-    /** @var bool */
-    private $optionallyEnclosed;
+    private bool $optionallyEnclosed;
 
-    /** @var string|null */
-    private $linesStaringBy;
+    private ?string $linesStaringBy;
 
-    /** @var string|null */
-    private $linesTerminatedBy;
+    private ?string $linesTerminatedBy;
 
     public function __construct(
         ?string $fieldsTerminatedBy = null,

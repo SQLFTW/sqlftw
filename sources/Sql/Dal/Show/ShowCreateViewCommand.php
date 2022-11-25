@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class ShowCreateViewCommand extends Statement implements ShowCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $view;
+    private ObjectIdentifier $view;
 
     public function __construct(ObjectIdentifier $view)
     {

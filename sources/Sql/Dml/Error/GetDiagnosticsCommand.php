@@ -20,17 +20,15 @@ use SqlFtw\Util\TypeChecker;
 class GetDiagnosticsCommand extends Statement implements Command
 {
 
-    /** @var DiagnosticsArea|null */
-    private $area;
+    private ?DiagnosticsArea $area;
 
     /** @var non-empty-list<DiagnosticsItem>|null */
-    private $statementItems;
+    private ?array $statementItems;
 
-    /** @var RootNode|null */
-    private $conditionNumber;
+    private ?RootNode $conditionNumber;
 
     /** @var non-empty-list<DiagnosticsItem>|null */
-    private $conditionItems;
+    private ?array $conditionItems;
 
     /**
      * @param non-empty-list<DiagnosticsItem>|null $statementItems

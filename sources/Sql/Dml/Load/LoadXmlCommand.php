@@ -18,8 +18,7 @@ use SqlFtw\Sql\Expression\RootNode;
 class LoadXmlCommand extends LoadCommand
 {
 
-    /** @var string|null */
-    private $rowsTag;
+    private ?string $rowsTag;
 
     /**
      * @param non-empty-list<string>|null $fields

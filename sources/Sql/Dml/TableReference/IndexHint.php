@@ -17,14 +17,12 @@ use SqlFtw\Sql\SqlSerializable;
 class IndexHint implements SqlSerializable
 {
 
-    /** @var IndexHintAction */
-    private $action;
+    private IndexHintAction $action;
 
-    /** @var IndexHintTarget|null */
-    private $target;
+    private ?IndexHintTarget $target;
 
     /** @var list<string|PrimaryLiteral> */
-    private $indexes;
+    private array $indexes;
 
     /**
      * @param list<string|PrimaryLiteral> $indexes

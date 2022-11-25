@@ -16,17 +16,13 @@ use SqlFtw\Sql\Statement;
 class CreateTableLikeCommand extends Statement implements AnyCreateTableCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $name;
+    private ObjectIdentifier $name;
 
-    /** @var ObjectIdentifier */
-    private $templateTable;
+    private ObjectIdentifier $templateTable;
 
-    /** @var bool */
-    private $temporary;
+    private bool $temporary;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
     public function __construct(
         ObjectIdentifier $name,

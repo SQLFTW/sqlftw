@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class ShowFunctionCodeCommand extends Statement implements ShowCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $function;
+    private ObjectIdentifier $function;
 
     public function __construct(ObjectIdentifier $function)
     {

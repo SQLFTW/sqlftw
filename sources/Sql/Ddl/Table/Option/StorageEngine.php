@@ -23,8 +23,7 @@ use function strtolower;
 class StorageEngine implements SqlSerializable
 {
 
-    /** @var string */
-    private $value;
+    private string $value;
 
     public function __construct(string $value)
     {
@@ -76,7 +75,7 @@ class StorageEngine implements SqlSerializable
     public const HEAP = 'HEAP'; // old alias for Memory
 
     /** @var array<string, string> */
-    private static $map = [
+    private static array $map = [
         'archive' => self::ARCHIVE,
         'aria' => self::ARIA,
         'berkeleydb' => self::BERKELEYDB,
@@ -110,7 +109,7 @@ class StorageEngine implements SqlSerializable
     ];
 
     /** @var list<string> */
-    private static $transactional = [
+    private static array $transactional = [
         self::BERKELEYDB,
         self::FALCON,
         self::FEDERATED_X,

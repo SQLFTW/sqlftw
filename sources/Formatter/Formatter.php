@@ -48,32 +48,27 @@ class Formatter
         "\x1a" => '\Z', // 1a (legacy Win EOF)
     ];
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var string */
-    public $indent;
+    public string $indent;
 
-    /** @var bool */
-    public $comments;
+    public bool $comments;
 
-    /** @var bool */
-    public $quoteAllNames;
+    public bool $quoteAllNames;
 
-    /** @var bool */
-    public $escapeWhitespace;
+    public bool $escapeWhitespace;
 
     /** @var string[] */
-    private $escapeKeys;
+    private array $escapeKeys;
 
     /** @var string[] */
-    private $escapeValues;
+    private array $escapeValues;
 
     /** @var string[] */
-    private $escapeWsKeys;
+    private array $escapeWsKeys;
 
     /** @var string[] */
-    private $escapeWsValues;
+    private array $escapeWsValues;
 
     public function __construct(
         Session $session,
@@ -140,7 +135,7 @@ class Formatter
     }
 
     /**
-     * @param int|float|bool|string|Date|Time|DateTimeInterface|SqlSerializable|null $value
+     * @param scalar|Date|Time|DateTimeInterface|SqlSerializable|null $value
      */
     public function formatValue($value): string
     {
@@ -168,7 +163,7 @@ class Formatter
     }
 
     /**
-     * @param non-empty-list<int|float|bool|string|Date|Time|DateTimeInterface|SqlSerializable|null> $values
+     * @param non-empty-list<scalar|Date|Time|DateTimeInterface|SqlSerializable|null> $values
      */
     public function formatValuesList(array $values, string $separator = ', '): string
     {

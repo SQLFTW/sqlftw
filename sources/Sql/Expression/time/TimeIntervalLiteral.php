@@ -27,17 +27,14 @@ use function substr;
 class TimeIntervalLiteral implements TimeInterval, Value
 {
 
-    /** @var string */
-    private $value;
+    private string $value;
 
     /** @var non-empty-list<int> */
-    private $quantity;
+    private array $quantity;
 
-    /** @var TimeIntervalUnit */
-    private $unit;
+    private TimeIntervalUnit $unit;
 
-    /** @var bool */
-    private $negative;
+    private bool $negative;
 
     public function __construct(string $value, TimeIntervalUnit $unit)
     {

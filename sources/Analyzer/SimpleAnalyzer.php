@@ -14,11 +14,10 @@ use SqlFtw\Sql\Statement;
 class SimpleAnalyzer
 {
 
-    /** @var SimpleContext */
-    private $context;
+    private SimpleContext $context;
 
     /** @var non-empty-list<SimpleRule> */
-    private $rules;
+    private array $rules;
 
     /**
      * @param non-empty-list<SimpleRule> $rules

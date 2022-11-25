@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class DropCheckAction implements CheckAction
 {
 
-    /** @var string */
-    private $check;
+    private string $check;
 
     public function __construct(string $check)
     {

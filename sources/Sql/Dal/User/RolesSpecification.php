@@ -16,11 +16,10 @@ use SqlFtw\Sql\UserName;
 class RolesSpecification implements SqlSerializable
 {
 
-    /** @var RolesSpecificationType */
-    private $type;
+    private RolesSpecificationType $type;
 
     /** @var non-empty-list<UserName>|null */
-    private $roles;
+    private array $roles;
 
     /**
      * @param non-empty-list<UserName>|null $roles

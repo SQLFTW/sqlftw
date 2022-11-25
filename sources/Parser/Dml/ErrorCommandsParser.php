@@ -35,8 +35,7 @@ use SqlFtw\Sql\Keyword;
 class ErrorCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
     {

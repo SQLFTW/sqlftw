@@ -14,8 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class NaturalJoin extends Join
 {
 
-    /** @var JoinSide|null */
-    private $joinSide;
+    private ?JoinSide $joinSide;
 
     public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?JoinSide $joinSide)
     {

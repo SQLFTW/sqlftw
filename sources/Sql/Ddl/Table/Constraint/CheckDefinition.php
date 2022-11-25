@@ -16,11 +16,9 @@ use SqlFtw\Sql\Expression\RootNode;
 class CheckDefinition implements TableItem, ConstraintBody
 {
 
-    /** @var RootNode */
-    private $expression;
+    private RootNode $expression;
 
-    /** @var bool|null */
-    private $enforced;
+    private ?bool $enforced;
 
     public function __construct(RootNode $expression, ?bool $enforced = null)
     {

@@ -17,10 +17,9 @@ class CheckTableCommand extends Statement implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private $names;
+    private array $names;
 
-    /** @var CheckTableOption|null */
-    private $option;
+    private ?CheckTableOption $option;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names

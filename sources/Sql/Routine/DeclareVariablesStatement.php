@@ -19,13 +19,11 @@ class DeclareVariablesStatement extends Statement implements SqlSerializable
 {
 
     /** @var non-empty-list<string> */
-    private $variables;
+    private array $variables;
 
-    /** @var ColumnType */
-    private $type;
+    private ColumnType $type;
 
-    /** @var RootNode|null */
-    private $default;
+    private ?RootNode $default;
 
     /**
      * @param non-empty-list<string> $variables

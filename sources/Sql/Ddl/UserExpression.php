@@ -19,12 +19,12 @@ class UserExpression implements SqlSerializable
 {
 
     /** @var UserName|BuiltInFunction */
-    private $user;
+    private SqlSerializable $user;
 
     /**
      * @param UserName|BuiltInFunction $user
      */
-    public function __construct($user)
+    public function __construct(SqlSerializable $user)
     {
         if ($user instanceof BuiltInFunction && !$user->equalsValue(BuiltInFunction::CURRENT_USER)) {
             throw new InvalidDefinitionException('Only CURRENT_USER function is accepted in place of user name.');
@@ -36,7 +36,7 @@ class UserExpression implements SqlSerializable
     /**
      * @return UserName|BuiltInFunction
      */
-    public function getUser()
+    public function getUser(): SqlSerializable
     {
         return $this->user;
     }

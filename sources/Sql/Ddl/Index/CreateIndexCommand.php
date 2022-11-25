@@ -23,14 +23,11 @@ use SqlFtw\Sql\Statement;
 class CreateIndexCommand extends Statement implements IndexCommand, DdlTableCommand
 {
 
-    /** @var IndexDefinition */
-    private $definition;
+    private IndexDefinition $definition;
 
-    /** @var AlterTableAlgorithm|null */
-    private $algorithm;
+    private ?AlterTableAlgorithm $algorithm;
 
-    /** @var AlterTableLock|null */
-    private $lock;
+    private ?AlterTableLock $lock;
 
     public function __construct(
         IndexDefinition $definition,

@@ -17,14 +17,11 @@ use SqlFtw\Sql\Statement;
 class ShowIndexesCommand extends Statement implements ShowCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var RootNode|null */
-    private $where;
+    private ?RootNode $where;
 
-    /** @var bool */
-    private $extended;
+    private bool $extended;
 
     public function __construct(ObjectIdentifier $table, ?RootNode $where = null, bool $extended = false)
     {

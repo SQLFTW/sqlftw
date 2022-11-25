@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class DropServerCommand extends Statement implements ServerCommand
 {
 
-    /** @var string */
-    private $server;
+    private string $server;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(string $server, bool $ifExists = false)
     {

@@ -17,32 +17,23 @@ use SqlFtw\Sql\Statement;
 class CreateLogfileGroupCommand extends Statement implements LogfileGroupCommand
 {
 
-    /** @var string */
-    private $logFileGroup;
+    private string $logFileGroup;
 
-    /** @var StorageEngine|null */
-    private $engine;
+    private ?StorageEngine $engine;
 
-    /** @var string */
-    private $undoFile;
+    private string $undoFile;
 
-    /** @var SizeLiteral|null */
-    private $initialSize;
+    private ?SizeLiteral $initialSize;
 
-    /** @var SizeLiteral|null */
-    private $undoBufferSize;
+    private ?SizeLiteral $undoBufferSize;
 
-    /** @var SizeLiteral|null */
-    private $redoBufferSize;
+    private ?SizeLiteral $redoBufferSize;
 
-    /** @var int|null */
-    private $nodeGroup;
+    private ?int $nodeGroup;
 
-    /** @var bool */
-    private $wait;
+    private bool $wait;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
     public function __construct(
         string $logFileGroup,

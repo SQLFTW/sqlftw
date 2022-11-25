@@ -24,11 +24,9 @@ use const STR_PAD_LEFT;
 class DateLiteral implements TimeValue
 {
 
-    /** @var string */
-    private $value;
+    private string $value;
 
-    /** @var string */
-    private $normalized;
+    private string $normalized;
 
     public function __construct(string $value)
     {

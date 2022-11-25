@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class DropResourceGroupCommand extends Statement implements DalCommand
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var bool */
-    private $force;
+    private bool $force;
 
     public function __construct(string $name, bool $force = false)
     {

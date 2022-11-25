@@ -15,17 +15,13 @@ use SqlFtw\Sql\InvalidDefinitionException;
 class AddAuthFactor implements AlterUserAction
 {
 
-    /** @var int */
-    private $factor1;
+    private int $factor1;
 
-    /** @var AuthOption */
-    private $option1;
+    private AuthOption $option1;
 
-    /** @var int|null */
-    private $factor2;
+    private ?int $factor2;
 
-    /** @var AuthOption|null */
-    private $option2;
+    private ?AuthOption $option2;
 
     public function __construct(
         int $factor1,

@@ -44,7 +44,7 @@ class TablespaceOption extends SqlEnum
     public const WAIT = Keyword::WAIT;
 
     /** @var array<self::*, string|list<string>> */
-    private static $values = [
+    private static array $values = [
         self::ENGINE => StorageEngine::class,
         self::ENGINE_ATTRIBUTE => BaseType::CHAR,
         self::ENCRYPTION => BaseType::BOOL,
@@ -64,7 +64,7 @@ class TablespaceOption extends SqlEnum
     ];
 
     /** @var array<'CREATE'|'ALTER', list<self::*>> */
-    private static $usage = [
+    private static array $usage = [
         Keyword::CREATE => [
             self::ADD_DATAFILE,
             self::FILE_BLOCK_SIZE,

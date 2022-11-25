@@ -17,7 +17,7 @@ class SelectIntoVariables extends SelectInto
 {
 
     /** @var non-empty-list<UserVariable|SimpleName> */
-    private $variables;
+    private array $variables;
 
     /**
      * @param non-empty-list<UserVariable|SimpleName> $variables

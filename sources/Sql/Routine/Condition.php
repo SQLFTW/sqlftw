@@ -21,8 +21,7 @@ use function is_string;
 class Condition implements SqlSerializable
 {
 
-    /** @var ConditionType */
-    private $type;
+    private ConditionType $type;
 
     /** @var int|string|SqlState|null */
     private $value;

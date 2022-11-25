@@ -107,8 +107,7 @@ class ExpressionParser
     /** @var callable(): QueryParser */
     private $queryParserProxy;
 
-    /** @var bool */
-    private $assignAllowed = false;
+    private bool $assignAllowed = false;
 
     /**
      * @param callable(): QueryParser $queryParserProxy

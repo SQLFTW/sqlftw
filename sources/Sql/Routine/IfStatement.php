@@ -19,10 +19,10 @@ class IfStatement extends Statement
 {
 
     /** @var non-empty-list<RootNode> */
-    private $conditions;
+    private array $conditions;
 
     /** @var non-empty-list<list<Statement>> */
-    private $statementLists;
+    private array $statementLists;
 
     /**
      * @param non-empty-list<RootNode> $conditions

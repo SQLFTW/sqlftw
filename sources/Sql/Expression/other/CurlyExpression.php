@@ -17,11 +17,9 @@ use SqlFtw\Formatter\Formatter;
 class CurlyExpression implements RootNode
 {
 
-    /** @var string */
-    private $type;
+    private string $type;
 
-    /** @var RootNode */
-    private $expression;
+    private RootNode $expression;
 
     public function __construct(string $type, RootNode $expression)
     {

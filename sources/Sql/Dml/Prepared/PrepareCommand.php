@@ -11,16 +11,16 @@ namespace SqlFtw\Sql\Dml\Prepared;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\UserVariable;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 
 class PrepareCommand extends Statement implements PreparedStatementCommand
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     /** @var UserVariable|Statement */
-    private $statement;
+    private SqlSerializable $statement;
 
     /**
      * @param UserVariable|Statement $statement

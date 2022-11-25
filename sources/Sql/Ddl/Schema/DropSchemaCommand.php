@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class DropSchemaCommand extends Statement implements SchemaCommand
 {
 
-    /** @var string */
-    private $schema;
+    private string $schema;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(string $schema, bool $ifExists = false)
     {

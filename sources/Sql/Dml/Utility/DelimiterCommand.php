@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class DelimiterCommand extends Statement implements DmlCommand
 {
 
-    /** @var string */
-    private $newDelimiter;
+    private string $newDelimiter;
 
     public function __construct(string $newDelimiter)
     {

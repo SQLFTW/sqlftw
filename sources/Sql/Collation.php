@@ -366,7 +366,7 @@ class Collation extends SqlEnum
     public const UTF8_5624_5 = 'utf8_5624_5';
 
     /** @var array<string, int> */
-    private static $ids = [
+    private static array $ids = [
         self::ARMSCII8_BIN => 64,
         self::ARMSCII8_GENERAL_CI => 32,
         self::ASCII_BIN => 65,
@@ -642,7 +642,7 @@ class Collation extends SqlEnum
     ];
 
     /** @var array<string, string> */
-    private static $charsets = [
+    private static array $charsets = [
         self::ARMSCII8_BIN => Charset::ARMSCII8,
         self::ARMSCII8_GENERAL_CI => Charset::ARMSCII8,
         self::ASCII_BIN => Charset::ASCII,

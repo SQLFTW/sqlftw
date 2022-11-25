@@ -15,10 +15,10 @@ class ConstraintList
 {
 
     /** @var array<string|int, ConstraintDefinition> ($name => $constraint) */
-    private $constraints = [];
+    private array $constraints = [];
 
     /** @var array<string|int, ConstraintDefinition> ($name => $constraint) */
-    private $droppedConstraints = [];
+    private array $droppedConstraints = [];
 
     /**
      * @param list<ConstraintDefinition> $constraints

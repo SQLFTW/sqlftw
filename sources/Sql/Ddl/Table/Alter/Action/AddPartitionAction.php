@@ -16,7 +16,7 @@ class AddPartitionAction implements PartitioningAction
 {
 
     /** @var non-empty-list<PartitionDefinition> */
-    private $partitions;
+    private array $partitions;
 
     /**
      * @param non-empty-list<PartitionDefinition> $partition

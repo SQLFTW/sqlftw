@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class XaRecoverCommand extends Statement implements XaTransactionCommand
 {
 
-    /** @var bool */
-    private $convertXid;
+    private bool $convertXid;
 
     public function __construct(bool $convertXid = false)
     {

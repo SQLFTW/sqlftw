@@ -18,7 +18,7 @@ class DoCommand extends Statement implements DmlCommand
 {
 
     /** @var non-empty-list<ExpressionNode> */
-    private $expressions;
+    private array $expressions;
 
     /**
      * @param non-empty-list<ExpressionNode> $expressions

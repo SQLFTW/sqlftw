@@ -17,8 +17,7 @@ use SqlFtw\Sql\Statement;
 class KillCommand extends Statement implements DalCommand
 {
 
-    /** @var RootNode */
-    private $processId;
+    private RootNode $processId;
 
     public function __construct(RootNode $processId)
     {

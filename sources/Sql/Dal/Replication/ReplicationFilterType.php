@@ -26,7 +26,7 @@ class ReplicationFilterType extends SqlEnum
     public const REPLICATE_REWRITE_DB = Keyword::REPLICATE_REWRITE_DB;
 
     /** @var array<self::*, string> */
-    private static $itemTypes = [
+    private static array $itemTypes = [
         self::REPLICATE_DO_DB => BaseType::CHAR . '[]',
         self::REPLICATE_IGNORE_DB => BaseType::CHAR . '[]',
         self::REPLICATE_DO_TABLE => ObjectIdentifier::class . '[]',

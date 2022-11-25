@@ -21,16 +21,15 @@ class ValuesCommand extends Statement implements SimpleQuery
 {
 
     /** @var non-empty-list<Row> */
-    private $rows;
+    private array $rows;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private $orderBy;
+    private ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
     private $limit;
 
-    /** @var SelectInto|null */
-    private $into;
+    private ?SelectInto $into;
 
     /**
      * @param non-empty-list<Row> $rows

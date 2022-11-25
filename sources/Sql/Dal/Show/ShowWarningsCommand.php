@@ -15,14 +15,11 @@ use SqlFtw\Sql\Statement;
 class ShowWarningsCommand extends Statement implements ShowCommand
 {
 
-    /** @var int|null */
-    private $limit;
+    private ?int $limit;
 
-    /** @var int|null */
-    private $offset;
+    private ?int $offset;
 
-    /** @var bool */
-    private $count = false;
+    private bool $count = false;
 
     public function __construct(?int $limit = null, ?int $offset = null)
     {

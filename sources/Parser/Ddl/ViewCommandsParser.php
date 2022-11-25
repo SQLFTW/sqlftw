@@ -30,11 +30,9 @@ use SqlFtw\Sql\SubqueryType;
 class ViewCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
-    /** @var QueryParser */
-    private $queryParser;
+    private QueryParser $queryParser;
 
     public function __construct(ExpressionParser $expressionParser, QueryParser $queryParser)
     {

@@ -18,13 +18,12 @@ class RevokeCommand extends Statement implements UserCommand
 {
 
     /** @var non-empty-list<UserPrivilege> */
-    private $privileges;
+    private array $privileges;
 
-    /** @var UserPrivilegeResource */
-    private $resource;
+    private UserPrivilegeResource $resource;
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private $users;
+    private array $users;
 
     /**
      * @param non-empty-list<UserPrivilege> $privileges

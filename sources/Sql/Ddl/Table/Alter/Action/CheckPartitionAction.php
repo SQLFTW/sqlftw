@@ -15,7 +15,7 @@ class CheckPartitionAction implements PartitioningAction
 {
 
     /** @var non-empty-list<string>|null */
-    private $partitions;
+    private ?array $partitions;
 
     /**
      * @param non-empty-list<string>|null $partitions

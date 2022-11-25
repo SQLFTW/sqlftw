@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class XaStartCommand extends Statement implements XaTransactionCommand
 {
 
-    /** @var Xid */
-    private $xid;
+    private Xid $xid;
 
-    /** @var XaStartOption|null */
-    private $option;
+    private ?XaStartOption $option;
 
     public function __construct(Xid $xid, ?XaStartOption $option = null)
     {

@@ -16,11 +16,9 @@ use SqlFtw\Sql\SqlSerializable;
 class DiagnosticsItem implements SqlSerializable
 {
 
-    /** @var Identifier */
-    private $target;
+    private Identifier $target;
 
-    /** @var InformationItem */
-    private $item;
+    private InformationItem $item;
 
     public function __construct(Identifier $target, InformationItem $item)
     {

@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\UserName;
 
@@ -18,19 +19,18 @@ class GrantProxyCommand extends Statement implements UserCommand
 {
 
     /** @var UserName|FunctionCall */
-    private $proxy;
+    private SqlSerializable $proxy;
 
     /** @var non-empty-list<IdentifiedUser|FunctionCall> */
-    private $users;
+    private array $users;
 
-    /** @var bool */
-    private $withGrantOption;
+    private bool $withGrantOption;
 
     /**
      * @param UserName|FunctionCall $proxy
      * @param non-empty-list<IdentifiedUser|FunctionCall> $users
      */
-    public function __construct($proxy, array $users, bool $withGrantOption = false)
+    public function __construct(SqlSerializable $proxy, array $users, bool $withGrantOption = false)
     {
         $this->proxy = $proxy;
         $this->users = $users;
@@ -40,7 +40,7 @@ class GrantProxyCommand extends Statement implements UserCommand
     /**
      * @return UserName|FunctionCall
      */
-    public function getProxy()
+    public function getProxy(): SqlSerializable
     {
         return $this->proxy;
     }

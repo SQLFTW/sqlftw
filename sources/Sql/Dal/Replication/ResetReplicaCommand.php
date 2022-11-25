@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class ResetReplicaCommand extends Statement implements ReplicationCommand
 {
 
-    /** @var bool */
-    private $all;
+    private bool $all;
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     public function __construct(bool $all, ?string $channel = null)
     {

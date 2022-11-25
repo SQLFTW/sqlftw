@@ -23,13 +23,13 @@ class UnionExpression extends Statement implements Query
 {
 
     /** @var non-empty-list<Query> */
-    private $queries;
+    private array $queries;
 
     /** @var non-empty-list<UnionType> */
-    private $types;
+    private array $types;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private $orderBy;
+    private ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
     private $limit;
@@ -37,11 +37,10 @@ class UnionExpression extends Statement implements Query
     /** @var int|SimpleName|Placeholder|null */
     private $offset;
 
-    /** @var SelectInto|null */
-    private $into;
+    private ?SelectInto $into;
 
     /** @var non-empty-list<SelectLocking>|null */
-    private $locking;
+    private ?array $locking;
 
     /**
      * @param non-empty-list<Query> $queries

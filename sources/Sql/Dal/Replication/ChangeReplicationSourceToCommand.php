@@ -24,10 +24,9 @@ class ChangeReplicationSourceToCommand extends Statement implements ReplicationC
 {
 
     /** @var non-empty-array<ReplicaOption::*, ReplicaOptionValue|null> */
-    private $options;
+    private array $options;
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     /**
      * @param non-empty-array<ReplicaOption::*, ReplicaOptionValue|null> $options

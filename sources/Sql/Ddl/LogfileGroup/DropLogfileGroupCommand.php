@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class DropLogfileGroupCommand extends Statement implements LogfileGroupCommand
 {
 
-    /** @var string */
-    private $logFileGroup;
+    private string $logFileGroup;
 
-    /** @var StorageEngine|null */
-    private $engine;
+    private ?StorageEngine $engine;
 
     public function __construct(string $logFileGroup, ?StorageEngine $engine)
     {

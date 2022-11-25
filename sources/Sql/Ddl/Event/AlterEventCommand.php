@@ -17,29 +17,21 @@ use SqlFtw\Sql\Statement;
 class AlterEventCommand extends Statement implements EventCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $event;
+    private ObjectIdentifier $event;
 
-    /** @var EventSchedule|null */
-    private $schedule;
+    private ?EventSchedule $schedule;
 
-    /** @var Statement|null */
-    private $body;
+    private ?Statement $body;
 
-    /** @var UserExpression|null */
-    private $definer;
+    private ?UserExpression $definer;
 
-    /** @var EventState|null */
-    private $state;
+    private ?EventState $state;
 
-    /** @var bool|null */
-    private $preserve;
+    private ?bool $preserve;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var ObjectIdentifier|null */
-    private $newName;
+    private ?ObjectIdentifier $newName;
 
     public function __construct(
         ObjectIdentifier $event,

@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class StartTransactionCommand extends Statement implements TransactionCommand
 {
 
-    /** @var bool|null */
-    private $consistent;
+    private ?bool $consistent;
 
-    /** @var bool|null */
-    private $write;
+    private ?bool $write;
 
     public function __construct(?bool $consistent = null, ?bool $write = null)
     {

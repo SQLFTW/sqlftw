@@ -18,26 +18,19 @@ use SqlFtw\Sql\Statement;
 class CreateTriggerCommand extends Statement implements TriggerCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $trigger;
+    private ObjectIdentifier $trigger;
 
-    /** @var TriggerEvent */
-    private $event;
+    private TriggerEvent $event;
 
-    /** @var ObjectIdentifier */
-    private $table;
+    private ObjectIdentifier $table;
 
-    /** @var Statement */
-    private $body;
+    private Statement $body;
 
-    /** @var UserExpression|null */
-    private $definer;
+    private ?UserExpression $definer;
 
-    /** @var TriggerPosition|null */
-    private $position;
+    private ?TriggerPosition $position;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
     public function __construct(
         ObjectIdentifier $trigger,

@@ -55,8 +55,7 @@ use const PHP_INT_MAX;
 class ReplicationCommandsParser
 {
 
-    /** @var ExpressionParser */
-    private $expressionParser;
+    private ExpressionParser $expressionParser;
 
     public function __construct(ExpressionParser $expressionParser)
     {

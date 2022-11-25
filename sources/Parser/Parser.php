@@ -44,20 +44,15 @@ class Parser
         Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA,
     ];
 
-    /** @var Session */
-    private $session;
+    private Session $session;
 
-    /** @var SessionUpdater */
-    private $sessionUpdater;
+    private SessionUpdater $sessionUpdater;
 
-    /** @var SimpleAnalyzer */
-    private $analyzer;
+    private SimpleAnalyzer $analyzer;
 
-    /** @var Lexer */
-    private $lexer;
+    private Lexer $lexer;
 
-    /** @var ParserFactory */
-    private $factory;
+    private ParserFactory $factory;
 
     public function __construct(Session $session, ?Lexer $lexer = null)
     {

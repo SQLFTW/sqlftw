@@ -16,8 +16,7 @@ use SqlFtw\Sql\Statement;
 class HelpCommand extends Statement implements DmlCommand
 {
 
-    /** @var string */
-    private $term;
+    private string $term;
 
     public function __construct(string $term)
     {

@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class ShowSlaveStatusCommand extends Statement implements ShowCommand
 {
 
-    /** @var string|null */
-    private $channel;
+    private ?string $channel;
 
     public function __construct(?string $channel)
     {

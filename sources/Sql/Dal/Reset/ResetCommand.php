@@ -17,7 +17,7 @@ class ResetCommand extends Statement implements DalCommand
 {
 
     /** @var non-empty-list<ResetOption> */
-    private $options;
+    private array $options;
 
     /**
      * @param non-empty-list<ResetOption> $options

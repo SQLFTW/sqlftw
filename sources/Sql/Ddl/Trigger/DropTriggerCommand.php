@@ -16,11 +16,9 @@ use SqlFtw\Sql\Statement;
 class DropTriggerCommand extends Statement implements TriggerCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $trigger;
+    private ObjectIdentifier $trigger;
 
-    /** @var bool */
-    private $ifExists;
+    private bool $ifExists;
 
     public function __construct(ObjectIdentifier $trigger, bool $ifExists = false)
     {

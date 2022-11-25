@@ -15,11 +15,10 @@ use SqlFtw\Sql\Statement;
 class FetchStatement extends Statement
 {
 
-    /** @var string */
-    private $cursor;
+    private string $cursor;
 
     /** @var non-empty-list<string> */
-    private $variables;
+    private array $variables;
 
     /**
      * @param non-empty-list<string> $variables

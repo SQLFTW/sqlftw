@@ -16,14 +16,12 @@ use SqlFtw\Sql\SqlSerializable;
 class WithExpression implements SqlSerializable
 {
 
-    /** @var Query */
-    private $query;
+    private Query $query;
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     /** @var non-empty-list<string>|null */
-    private $columns;
+    private ?array $columns;
 
     /**
      * @param non-empty-list<string>|null $columns

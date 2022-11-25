@@ -16,11 +16,10 @@ use function implode;
 class ExecuteCommand extends Statement implements PreparedStatementCommand
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
     /** @var non-empty-list<string>|null */
-    private $variables;
+    private ?array $variables;
 
     /**
      * @param non-empty-list<string>|null $variables

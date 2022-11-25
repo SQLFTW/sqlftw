@@ -27,32 +27,24 @@ use function is_array;
 class CreateTableCommand extends Statement implements AnyCreateTableCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $name;
+    private ObjectIdentifier $name;
 
     /** @var non-empty-list<TableItem>|null */
-    private $items;
+    private ?array $items;
 
-    /** @var TableOptionsList|null */
-    private $options;
+    private ?TableOptionsList $options;
 
-    /** @var PartitioningDefinition|null */
-    private $partitioning;
+    private ?PartitioningDefinition $partitioning;
 
-    /** @var bool */
-    private $temporary;
+    private bool $temporary;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
-    /** @var DuplicateOption|null */
-    private $duplicateOption;
+    private ?DuplicateOption $duplicateOption;
 
-    /** @var Query|null */
-    private $query;
+    private ?Query $query;
 
-    /** @var bool */
-    private $startTransaction;
+    private bool $startTransaction;
 
     /**
      * @param non-empty-list<TableItem>|null $items

@@ -16,11 +16,10 @@ use SqlFtw\Sql\Statement;
 class SetCharacterSetCommand extends Statement implements SetCommand
 {
 
-    /** @var Charset|null */
-    private $charset;
+    private ?Charset $charset;
 
     /** @var list<SetAssignment> */
-    private $assignments;
+    private array $assignments;
 
     /**
      * @param list<SetAssignment> $assignments

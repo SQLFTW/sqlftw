@@ -16,14 +16,12 @@ use SqlFtw\Sql\Expression\RootNode;
 class AlterColumnAction implements ColumnAction
 {
 
-    /** @var string */
-    private $column;
+    private string $column;
 
     /** @var RootNode|false|null */
     private $setDefault;
 
-    /** @var bool|null */
-    private $setVisible;
+    private ?bool $setVisible;
 
     /**
      * @param RootNode|false|null $setDefault

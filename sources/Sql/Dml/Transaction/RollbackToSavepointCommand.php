@@ -15,8 +15,7 @@ use SqlFtw\Sql\Statement;
 class RollbackToSavepointCommand extends Statement implements TransactionCommand
 {
 
-    /** @var string */
-    private $savepoint;
+    private string $savepoint;
 
     public function __construct(string $savepoint)
     {

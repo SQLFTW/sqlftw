@@ -21,38 +21,28 @@ use function implode;
 class CreateFunctionCommand extends Statement implements StoredFunctionCommand, CreateRoutineCommand
 {
 
-    /** @var ObjectIdentifier */
-    private $function;
+    private ObjectIdentifier $function;
 
-    /** @var Statement */
-    private $body;
+    private Statement $body;
 
     /** @var array<string, ColumnType> ($name => $type) */
-    private $params;
+    private array $params;
 
-    /** @var ColumnType */
-    private $returnType;
+    private ColumnType $returnType;
 
-    /** @var UserExpression|null */
-    private $definer;
+    private ?UserExpression $definer;
 
-    /** @var bool|null */
-    private $deterministic;
+    private ?bool $deterministic;
 
-    /** @var SqlSecurity|null */
-    private $security;
+    private ?SqlSecurity $security;
 
-    /** @var RoutineSideEffects|null */
-    private $sideEffects;
+    private ?RoutineSideEffects $sideEffects;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment;
 
-    /** @var string|null */
-    private $language;
+    private ?string $language;
 
-    /** @var bool */
-    private $ifNotExists;
+    private bool $ifNotExists;
 
     /**
      * @param array<string, ColumnType> $params ($name => $type)

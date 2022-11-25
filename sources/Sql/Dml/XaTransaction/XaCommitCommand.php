@@ -15,11 +15,9 @@ use SqlFtw\Sql\Statement;
 class XaCommitCommand extends Statement implements XaTransactionCommand
 {
 
-    /** @var Xid */
-    private $xid;
+    private Xid $xid;
 
-    /** @var bool */
-    private $onePhase;
+    private bool $onePhase;
 
     public function __construct(Xid $xid, bool $onePhase = false)
     {

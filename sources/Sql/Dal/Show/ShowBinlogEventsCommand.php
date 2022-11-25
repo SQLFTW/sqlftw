@@ -15,14 +15,11 @@ use SqlFtw\Sql\Statement;
 class ShowBinlogEventsCommand extends Statement implements ShowCommand
 {
 
-    /** @var string|null */
-    private $logName;
+    private ?string $logName;
 
-    /** @var int|null */
-    private $limit;
+    private ?int $limit;
 
-    /** @var int|null */
-    private $offset;
+    private ?int $offset;
 
     public function __construct(?string $logName, ?int $limit, ?int $offset)
     {

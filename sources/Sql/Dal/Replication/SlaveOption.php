@@ -16,7 +16,7 @@ use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 
 /**
- * @phpstan-type SlaveOptionValue int|float|bool|string|UserName|NullLiteral|ReplicationPrimaryKeyCheckOption|ReplicationGtidAssignOption|int[]
+ * @phpstan-type SlaveOptionValue scalar|UserName|NullLiteral|ReplicationPrimaryKeyCheckOption|ReplicationGtidAssignOption|int[]
  */
 class SlaveOption extends SqlEnum
 {
@@ -60,7 +60,7 @@ class SlaveOption extends SqlEnum
     public const GTID_ONLY = Keyword::GTID_ONLY;
 
     /** @var array<self::*, string|list<int>> */
-    private static $types = [
+    private static array $types = [
         self::MASTER_BIND => BaseType::CHAR,
         self::MASTER_HOST => BaseType::CHAR,
         self::MASTER_USER => BaseType::CHAR,

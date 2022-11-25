@@ -14,14 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class ColumnName implements Identifier, ColumnIdentifier
 {
 
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var string */
-    private $table;
+    private string $table;
 
-    /** @var string */
-    private $schema;
+    private string $schema;
 
     public function __construct(string $name, string $table, string $schema)
     {

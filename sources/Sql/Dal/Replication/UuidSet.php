@@ -21,11 +21,10 @@ use function strtolower;
 class UuidSet implements SqlSerializable
 {
 
-    /** @var string */
-    private $uuid;
+    private string $uuid;
 
     /** @var array<array<int, int|null>> */
-    private $intervals;
+    private array $intervals;
 
     /**
      * @param array<array<int, int|null>> $intervals

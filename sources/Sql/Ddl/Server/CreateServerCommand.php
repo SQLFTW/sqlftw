@@ -16,32 +16,23 @@ use function rtrim;
 class CreateServerCommand extends Statement implements ServerCommand
 {
 
-    /** @var string */
-    private $server;
+    private string $server;
 
-    /** @var string */
-    private $wrapper;
+    private string $wrapper;
 
-    /** @var string|null */
-    private $host;
+    private ?string $host;
 
-    /** @var string|null */
-    private $schema;
+    private ?string $schema;
 
-    /** @var string|null */
-    private $user;
+    private ?string $user;
 
-    /** @var string|null */
-    private $password;
+    private ?string $password;
 
-    /** @var string|null */
-    private $socket;
+    private ?string $socket;
 
-    /** @var string|null */
-    private $owner;
+    private ?string $owner;
 
-    /** @var int|null */
-    private $port;
+    private ?int $port;
 
     public function __construct(
         string $server,
