@@ -16,7 +16,7 @@ use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 
 /**
- * @phpstan-type ReplicaOptionValue scalar|UserName|NullLiteral|ReplicationPrimaryKeyCheckOption|ReplicationGtidAssignOption|int[]
+ * @phpstan-type ReplicaOptionValue scalar|UserName|NullLiteral|ReplicationPrimaryKeyCheckOption|ReplicationGtidAssignOption|list<int>
  */
 class ReplicaOption extends SqlEnum
 {

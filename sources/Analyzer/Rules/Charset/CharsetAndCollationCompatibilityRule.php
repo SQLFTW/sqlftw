@@ -85,7 +85,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
         }
 
         if ($command instanceof AlterTableCommand) {
-            /** @var ConvertToCharsetAction[] $convertActions */
+            /** @var list<ConvertToCharsetAction> $convertActions */
             $convertActions = $command->getActions()->filter(ConvertToCharsetAction::class);
             $convertAction = $convertActions[0] ?? null;
             if ($convertAction !== null) {

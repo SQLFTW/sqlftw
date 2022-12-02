@@ -58,16 +58,16 @@ class Formatter
 
     public bool $escapeWhitespace;
 
-    /** @var string[] */
+    /** @var list<string> */
     private array $escapeKeys;
 
-    /** @var string[] */
+    /** @var list<string> */
     private array $escapeValues;
 
-    /** @var string[] */
+    /** @var list<string> */
     private array $escapeWsKeys;
 
-    /** @var string[] */
+    /** @var list<string> */
     private array $escapeWsValues;
 
     public function __construct(

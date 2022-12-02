@@ -992,7 +992,7 @@ class TokenList
     public function getMultiNameEnum(string $className): ?SqlEnum
     {
         $start = $this->position;
-        /** @var string[] $values */
+        /** @var array<string, string> $values */
         $values = call_user_func([$className, 'getAllowedValues']);
         foreach ($values as $value) {
             $this->position = $start;
@@ -1324,7 +1324,7 @@ class TokenList
      */
     public function expectKeywordEnum(string $className): SqlEnum
     {
-        /** @var string[] $values */
+        /** @var array<string, string> $values */
         $values = call_user_func([$className, 'getAllowedValues']);
 
         /** @var T $enum */
@@ -1340,7 +1340,7 @@ class TokenList
      */
     public function getKeywordEnum(string $className): ?SqlEnum
     {
-        /** @var string[] $values */
+        /** @var array<string, string> $values */
         $values = call_user_func([$className, 'getAllowedValues']);
         $token = $this->getAnyKeyword(...array_values($values));
         if ($token === null) {
@@ -1393,7 +1393,7 @@ class TokenList
     public function getMultiKeywordsEnum(string $className): ?SqlEnum
     {
         $start = $this->position;
-        /** @var string[] $values */
+        /** @var array<string, string> $values */
         $values = call_user_func([$className, 'getAllowedValues']);
         foreach ($values as $value) {
             $this->position = $start;

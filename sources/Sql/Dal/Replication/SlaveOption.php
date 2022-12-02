@@ -16,7 +16,7 @@ use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\UserName;
 
 /**
- * @phpstan-type SlaveOptionValue scalar|UserName|NullLiteral|ReplicationPrimaryKeyCheckOption|ReplicationGtidAssignOption|int[]
+ * @phpstan-type SlaveOptionValue scalar|UserName|NullLiteral|ReplicationPrimaryKeyCheckOption|ReplicationGtidAssignOption|list<int>
  */
 class SlaveOption extends SqlEnum
 {
