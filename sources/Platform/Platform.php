@@ -112,6 +112,9 @@ class Platform
     /** @var list<class-string> */
     private ?array $preparableCommands = null;
 
+    /**
+     * @param self::* $name
+     */
     final private function __construct(string $name, Version $version)
     {
         $this->name = $name;
@@ -126,6 +129,7 @@ class Platform
     }
 
     /**
+     * @param self::* $name
      * @param int|string|null $version
      */
     public static function get(string $name, $version = null): self
@@ -146,6 +150,19 @@ class Platform
         return self::$instances[$key];
     }
 
+    /**
+     * @param self::* $name
+     */
+    public static function fromTag(string $name, string $tag): self
+    {
+        $parts = explode('-', $tag);
+
+        return self::get($name, end($parts));
+    }
+
+    /**
+     * @return self::*
+     */
     public function getName(): string
     {
         return $this->name;

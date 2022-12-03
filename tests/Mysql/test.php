@@ -12,4 +12,7 @@ if (class_exists(Dumper::class)) {
 
 $singleThread = in_array('--single', $argv, true);
 
-MysqlTest::run($singleThread);
+$test = new MysqlTest();
+$test->run($singleThread);
+
+//MysqlTest::run($singleThread);

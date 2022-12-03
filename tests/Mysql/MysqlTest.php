@@ -26,37 +26,120 @@ use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_sum;
+use function chdir;
 use function dirname;
+use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
 use function function_exists;
+use function implode;
 use function ini_set;
+use function is_dir;
 use function microtime;
+use function mkdir;
 use function rd;
 use function re;
 use function rl;
 use function set_time_limit;
 use function str_replace;
+use function system;
 use function trim;
 use function usort;
 
 class MysqlTest
 {
     use Skips;
+    use Tags;
 
-    public static string $lastFailPath;
+    private const MYSQL_REPO_LINK = 'git@github.com:mysql/mysql-server.git';
+    private const DEFAULT_TAG = 'mysql-8.0.29';
 
-    public static function run(bool $singleThread): void
+    public string $tempDir;
+    public string $tempTestsDir;
+    public string $mysqlRepoDir;
+    public string $mysqlTestsDir;
+    public string $lastFailPath;
+    public string $currentTagPath;
+
+    public function __construct()
     {
+        $this->tempDir = str_replace('\\', '/', dirname(__DIR__, 2)) . '/temp';
+        $this->tempTestsDir = $this->tempDir . '/tests';
+        $this->mysqlRepoDir = $this->tempTestsDir . '/mysql-server';
+        $this->mysqlTestsDir = $this->mysqlRepoDir . '/mysql-test';
+        $this->lastFailPath = $this->tempTestsDir . '/last-fail.txt';
+        $this->currentTagPath = $this->tempTestsDir . '/current-tag.txt';
+    }
+
+    public function initMysqlRepo(): void
+    {
+        if (!is_dir($this->tempDir)) {
+            if (!mkdir($this->tempDir)) {
+                echo "Cannot create directory {$this->tempDir}.\n";
+                exit(1);
+            }
+        }
+        if (!is_dir($this->tempTestsDir)) {
+            if (!mkdir($this->tempTestsDir)) {
+                echo "Cannot create directory {$this->tempTestsDir}.\n";
+                exit(1);
+            }
+        }
+        if (is_dir($this->mysqlRepoDir)) {
+            // already initiated
+            return;
+        }
+
+        chdir($this->tempTestsDir);
+
+        // sparse checkout setup (~4.5 GB -> ~270 MB)
+        // todo: there is still some space to optimize, because sparse checkout of branch '8.0' has only ~70 MB. tags suck
+        echo Colors::lyellow("git clone --depth 1 --filter=blob:none --sparse " . self::MYSQL_REPO_LINK) . "\n";
+        system("git clone --depth 1 --filter=blob:none --sparse " . self::MYSQL_REPO_LINK);
+        chdir($this->mysqlRepoDir);
+        exec("git config core.sparseCheckout true");
+        exec("git config core.sparseCheckoutCone false");
+        file_put_contents($this->mysqlRepoDir . '/.git/info/sparse-checkout', '*.test');
+    }
+
+    public function checkoutTag(string $tag): void
+    {
+        chdir($this->mysqlRepoDir);
+
+        exec("git rev-parse {$tag}", $out, $result);
+        if ($result !== 0) {
+            //echo Colors::lyellow("git fetch --tags") . "\n"; // slightly bigger (~290 MB)
+            //system("git fetch --tags");
+            echo Colors::lyellow("git fetch origin refs/tags/{$tag}:refs/tags/{$tag}") . "\n";
+            system("git fetch origin refs/tags/{$tag}:refs/tags/{$tag}");
+        }
+
+        $currentTag = null;
+        if (file_exists($this->currentTagPath)) {
+            $currentTag = file_get_contents($this->currentTagPath);
+        }
+        if ($tag !== $currentTag) {
+            echo Colors::lyellow("git checkout {$tag}") . "\n";
+            system("git checkout {$tag}");
+        }
+
+        file_put_contents($this->currentTagPath, $tag);
+    }
+
+    public function run(
+        bool $singleThread,
+        string $tag = self::DEFAULT_TAG,
+        string $suite = ''
+    ): void
+    {
+        $this->initMysqlRepo();
+        $this->checkoutTag($tag);
+
         ini_set('memory_limit', '2G');
 
-        self::$lastFailPath = str_replace('\\', '/', __DIR__ . '/last-fail.txt');
-
-        $subdir = '';
-        //$subdir = '/t';
-        $testsPath = str_replace('\\', '/', dirname(__DIR__, 3) . '/mysql-server/mysql-test' . $subdir);
-        $paths = self::getPaths($testsPath, self::$lastFailPath);
-        file_put_contents(self::$lastFailPath, '');
+        $testsPath = $suite ? $this->mysqlTestsDir . '/' . $suite : $this->mysqlTestsDir;
+        $paths = $this->getPaths($testsPath);
+        file_put_contents($this->lastFailPath, '');
 
         $runner = static function (string $path) use ($singleThread): Result {
             ini_set('memory_limit', '3G');
@@ -68,7 +151,7 @@ class MysqlTest
             return MysqlTestJob::run($path, $singleThread);
         };
 
-        $platform = Platform::get(Platform::MYSQL, '8.0.29');
+        $platform = Platform::fromTag(Platform::MYSQL, $tag);
         $session = new Session($platform);
         $formatter = new Formatter($session);
 
@@ -77,10 +160,13 @@ class MysqlTest
             foreach ($paths as $path) {
                 $result = $runner($path);
                 if ($result->falseNegatives !== []) {
-                    self::renderFalseNegatives([$result->path => $result->falseNegatives], $formatter);
+                    $this->renderFalseNegatives([$result->path => $result->falseNegatives], $formatter);
                 }
                 if ($result->falsePositives !== []) {
-                    self::renderFalsePositives([$result->path => $result->falsePositives], $formatter);
+                    $this->renderFalsePositives([$result->path => $result->falsePositives], $formatter);
+                }
+                if ($result->serialisationErrors !== []) {
+                    $this->renderSerialisationErrors([$result->path => $result->serialisationErrors], $formatter);
                 }
                 $results[] = $result;
             }
@@ -89,6 +175,15 @@ class MysqlTest
             $results = wait(parallelMap($paths, $runner)); // @phpstan-ignore-line Unable to resolve the template type T in call to function Amp\Promise\wait
         }
 
+        $this->displayResults($results, $formatter, $singleThread);
+
+        if ($singleThread) {
+            MysqlTestJob::checkExceptions();
+        }
+    }
+
+    private function displayResults(array $results, Formatter $formatter, bool $singleThread): void
+    {
         $size = $time = $statements = $tokens = 0;
         $falseNegatives = [];
         $falsePositives = [];
@@ -110,12 +205,12 @@ class MysqlTest
         }
 
         if (!$singleThread) {
-            self::renderFalseNegatives($falseNegatives, $formatter);
-            self::renderFalsePositives($falsePositives, $formatter);
-            self::renderSerialisationErrors($serialisationErrors, $formatter);
+            $this->renderFalseNegatives($falseNegatives, $formatter);
+            $this->renderFalsePositives($falsePositives, $formatter);
+            $this->renderSerialisationErrors($serialisationErrors, $formatter);
         }
         if ($falseNegatives !== [] || $falsePositives !== [] || $serialisationErrors !== []) {
-            self::repeatPaths(array_merge(array_keys($falseNegatives), array_keys($falsePositives), array_keys($serialisationErrors)));
+            $this->repeatPaths(array_merge(array_keys($falseNegatives), array_keys($falsePositives), array_keys($serialisationErrors)));
         }
 
         echo "\n\n";
@@ -157,7 +252,7 @@ class MysqlTest
             $time = Units::time($result->time);
             $memory = Units::memory($result->memory);
             $size = Units::memory($result->size);
-            $path = Str::after($result->path, $testsPath);
+            $path = Str::after($result->path, $this->mysqlTestsDir);
             echo "  {$time}, {$memory}, pid: {$result->pid}, {$result->statements} st ({$path} - {$size})\n";
             $n++;
             if ($n >= 10) {
@@ -174,23 +269,19 @@ class MysqlTest
             $time = Units::time($result->time);
             $memory = Units::memory($result->memory);
             $size = Units::memory($result->size);
-            $path = Str::after($result->path, $testsPath);
+            $path = Str::after($result->path, $this->mysqlTestsDir);
             echo "  {$time}, {$memory}, pid: {$result->pid}, {$result->statements} st ({$path} - {$size})\n";
             $n++;
             if ($n >= 10) {
                 break;
             }
         }
-
-        if ($singleThread) {
-            MysqlTestJob::checkExceptions();
-        }
     }
 
     /**
      * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $falseNegatives
      */
-    private static function renderFalseNegatives(array $falseNegatives, Formatter $formatter): void
+    private function renderFalseNegatives(array $falseNegatives, Formatter $formatter): void
     {
         if ($falseNegatives !== []) {
             rl('Should not fail:', null, 'r');
@@ -198,12 +289,12 @@ class MysqlTest
         foreach ($falseNegatives as $path => $falseNegative) {
             rl($path, null, 'r');
             foreach ($falseNegative as [$command, $tokenList, $mode]) {
-                self::renderFalseNegative($command, $tokenList, $mode, $formatter);
+                $this->renderFalseNegative($command, $tokenList, $mode, $formatter);
             }
         }
     }
 
-    private static function renderFalseNegative(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
+    private function renderFalseNegative(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
         rl($mode->getValue(), 'mode', 'C');
 
@@ -231,7 +322,7 @@ class MysqlTest
     /**
      * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $falsePositives
      */
-    private static function renderFalsePositives(array $falsePositives, Formatter $formatter): void
+    private function renderFalsePositives(array $falsePositives, Formatter $formatter): void
     {
         if ($falsePositives !== []) {
             rl('Should fail:', null, 'r');
@@ -239,12 +330,12 @@ class MysqlTest
         foreach ($falsePositives as $path => $falsePositive) {
             rl($path, null, 'r');
             foreach ($falsePositive as [$command, $tokenList, $mode]) {
-                self::renderFalsePositive($command, $tokenList, $mode, $formatter);
+                $this->renderFalsePositive($command, $tokenList, $mode, $formatter);
             }
         }
     }
 
-    private static function renderFalsePositive(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
+    private function renderFalsePositive(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
         rl($mode->getValue(), 'mode', 'C');
 
@@ -262,7 +353,7 @@ class MysqlTest
     /**
      * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $serialisationErrors
      */
-    public static function renderSerialisationErrors(array $serialisationErrors, Formatter $formatter): void
+    public function renderSerialisationErrors(array $serialisationErrors, Formatter $formatter): void
     {
         if ($serialisationErrors !== []) {
             rl('Serialisation errors:', null, 'r');
@@ -270,12 +361,12 @@ class MysqlTest
         foreach ($serialisationErrors as $path => $serialisationError) {
             rl($path, null, 'r');
             foreach ($serialisationError as [$command, $tokenList, $mode]) {
-                self::renderSerialisationError($command, $tokenList, $mode, $formatter);
+                $this->renderSerialisationError($command, $tokenList, $mode, $formatter);
             }
         }
     }
 
-    public static function renderSerialisationError(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
+    public function renderSerialisationError(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
         $beforeOrig = $tokenList->map(static function (Token $token): Token {
             return ($token->type & TokenType::COMMENT) !== 0
@@ -301,18 +392,18 @@ class MysqlTest
     /**
      * @param list<string> $paths
      */
-    public static function repeatPaths(array $paths): void
+    public function repeatPaths(array $paths): void
     {
-        file_put_contents(self::$lastFailPath, implode("\n", $paths));
+        file_put_contents($this->lastFailPath, implode("\n", $paths));
     }
 
     /**
      * @return list<string>
      */
-    public static function getPaths(string $testsPath, string $lastFailPath): array
+    public function getPaths(string $testsPath): array
     {
-        if (file_exists($lastFailPath)) {
-            $paths = file_get_contents($lastFailPath);
+        if (file_exists($this->lastFailPath)) {
+            $paths = file_get_contents($this->lastFailPath);
 
             if ($paths !== '' && $paths !== false) {
                 $paths = explode("\n", $paths);
