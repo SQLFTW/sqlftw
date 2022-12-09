@@ -25,15 +25,26 @@ class RevokeCommand extends Statement implements UserCommand
     /** @var non-empty-list<UserName|FunctionCall> */
     private array $users;
 
+    private bool $ifExists;
+
+    private bool $ignoreUnknownUser;
+
     /**
      * @param non-empty-list<UserPrivilege> $privileges
      * @param non-empty-list<UserName|FunctionCall> $users
      */
-    public function __construct(array $privileges, UserPrivilegeResource $resource, array $users)
-    {
+    public function __construct(
+        array $privileges,
+        UserPrivilegeResource $resource,
+        array $users,
+        bool $ifExists = false,
+        bool $ignoreUnknownUser = false
+    ) {
         $this->privileges = $privileges;
         $this->resource = $resource;
         $this->users = $users;
+        $this->ifExists = $ifExists;
+        $this->ignoreUnknownUser = $ignoreUnknownUser;
     }
 
     /**
@@ -57,11 +68,23 @@ class RevokeCommand extends Statement implements UserCommand
         return $this->users;
     }
 
+    public function ifExists(): bool
+    {
+        return $this->ifExists;
+    }
+
+    public function ignoreUnknownUser(): bool
+    {
+        return $this->ignoreUnknownUser;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'REVOKE ' . $formatter->formatSerializablesList($this->privileges)
+        return 'REVOKE ' . ($this->ifExists ? 'IF EXISTS ' : '')
+            . $formatter->formatSerializablesList($this->privileges)
             . ' ON ' . $this->resource->serialize($formatter)
-            . ' FROM ' . $formatter->formatSerializablesList($this->users);
+            . ' FROM ' . $formatter->formatSerializablesList($this->users)
+            . ($this->ignoreUnknownUser ? ' IGNORE UNKNOWN USER' : '');
     }
 
 }

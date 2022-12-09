@@ -23,14 +23,24 @@ class RevokeRoleCommand extends Statement implements UserCommand
     /** @var non-empty-list<UserName|FunctionCall> */
     private array $users;
 
+    private bool $ifExists;
+
+    private bool $ignoreUnknownUser;
+
     /**
      * @param non-empty-list<UserName> $roles
      * @param non-empty-list<UserName|FunctionCall> $users
      */
-    public function __construct(array $roles, array $users)
-    {
+    public function __construct(
+        array $roles,
+        array $users,
+        bool $ifExists = false,
+        bool $ignoreUnknownUser = false
+    ) {
         $this->roles = $roles;
         $this->users = $users;
+        $this->ifExists = $ifExists;
+        $this->ignoreUnknownUser = $ignoreUnknownUser;
     }
 
     /**
@@ -49,10 +59,22 @@ class RevokeRoleCommand extends Statement implements UserCommand
         return $this->users;
     }
 
+    public function ifExists(): bool
+    {
+        return $this->ifExists;
+    }
+
+    public function ignoreUnknownUser(): bool
+    {
+        return $this->ignoreUnknownUser;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'REVOKE ' . $formatter->formatSerializablesList($this->roles)
-            . ' FROM ' . $formatter->formatSerializablesList($this->users);
+        return 'REVOKE ' . ($this->ifExists ? 'IF EXISTS ' : '')
+            . $formatter->formatSerializablesList($this->roles)
+            . ' FROM ' . $formatter->formatSerializablesList($this->users)
+            . ($this->ignoreUnknownUser ? ' IGNORE UNKNOWN USER' : '');
     }
 
 }

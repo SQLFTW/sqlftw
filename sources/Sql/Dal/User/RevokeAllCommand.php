@@ -20,12 +20,21 @@ class RevokeAllCommand extends Statement implements UserCommand
     /** @var non-empty-list<UserName|FunctionCall> */
     private array $users;
 
+    private bool $ifExists;
+
+    private bool $ignoreUnknownUser;
+
     /**
      * @param non-empty-list<UserName|FunctionCall> $users
      */
-    public function __construct(array $users)
-    {
+    public function __construct(
+        array $users,
+        bool $ifExists = false,
+        bool $ignoreUnknownUser = false
+    ) {
         $this->users = $users;
+        $this->ifExists = $ifExists;
+        $this->ignoreUnknownUser = $ignoreUnknownUser;
     }
 
     /**
@@ -36,9 +45,21 @@ class RevokeAllCommand extends Statement implements UserCommand
         return $this->users;
     }
 
+    public function ifExists(): bool
+    {
+        return $this->ifExists;
+    }
+
+    public function ignoreUnknownUser(): bool
+    {
+        return $this->ignoreUnknownUser;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return 'REVOKE ALL, GRANT OPTION FROM ' . $formatter->formatSerializablesList($this->users);
+        return 'REVOKE ' . ($this->ifExists ? 'IF EXISTS ' : '')
+            . ' ALL, GRANT OPTION FROM ' . $formatter->formatSerializablesList($this->users)
+            . ($this->ignoreUnknownUser ? ' IGNORE UNKNOWN USER' : '');
     }
 
 }

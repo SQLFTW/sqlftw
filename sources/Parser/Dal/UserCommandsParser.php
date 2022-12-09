@@ -861,26 +861,30 @@ class UserCommandsParser
     }
 
     /**
-     * REVOKE ALL [PRIVILEGES], GRANT OPTION
-     *     FROM user [, user] ...
-     *
-     * REVOKE PROXY ON user
-     *     FROM user [, user] ...
-     *
-     * REVOKE
-     *     priv_type [(column_list)]
-     *       [, priv_type [(column_list)]] ...
+     * REVOKE [IF EXISTS]
+     *     priv_type [(column_list)] [, priv_type [(column_list)]] ...
      *     ON [object_type] priv_level
-     *     FROM user [, user] ...
+     *     FROM user_or_role [, user_or_role] ...
+     *     [IGNORE UNKNOWN USER]
      *
-     * REVOKE role [, role ] ...
-     *     FROM user [, user ] ...
+     * REVOKE [IF EXISTS] ALL [PRIVILEGES], GRANT OPTION
+     *     FROM user_or_role [, user_or_role] ...
+     *     [IGNORE UNKNOWN USER]
+     *
+     * REVOKE [IF EXISTS] PROXY ON user_or_role
+     *     FROM user_or_role [, user_or_role] ...
+     *     [IGNORE UNKNOWN USER]
+     *
+     * REVOKE [IF EXISTS] role [, role ] ...
+     *     FROM user_or_role [, user_or_role ] ...
+     *     [IGNORE UNKNOWN USER]
      *
      * @return UserCommand&Statement
      */
     public function parseRevoke(TokenList $tokenList): UserCommand
     {
         $tokenList->expectKeyword(Keyword::REVOKE);
+        $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
 
         if ($tokenList->hasKeyword(Keyword::ALL)) {
             // REVOKE ALL
@@ -889,8 +893,9 @@ class UserCommandsParser
                 $tokenList->expectSymbol(',');
                 $tokenList->expectKeywords(Keyword::GRANT, Keyword::OPTION, Keyword::FROM);
                 $users = $this->parseUsersList($tokenList);
+                $ignoreUnknownUser = $tokenList->hasKeywords(Keyword::IGNORE, Keyword::UNKNOWN, Keyword::USER);
 
-                return new RevokeAllCommand($users);
+                return new RevokeAllCommand($users, $ifExists, $ignoreUnknownUser);
             } else {
                 $tokenList->rewind(-1);
             }
@@ -901,8 +906,9 @@ class UserCommandsParser
             $proxy = $this->parseUser($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUsersList($tokenList);
+            $ignoreUnknownUser = $tokenList->hasKeywords(Keyword::IGNORE, Keyword::UNKNOWN, Keyword::USER);
 
-            return new RevokeProxyCommand($proxy, $users);
+            return new RevokeProxyCommand($proxy, $users, $ifExists, $ignoreUnknownUser);
         } elseif ($tokenList->seekKeywordBefore(Keyword::ON, Keyword::FROM)) {
             // REVOKE ... ON ... FROM
             $privileges = $this->parsePrivilegesList($tokenList);
@@ -911,15 +917,17 @@ class UserCommandsParser
 
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUsersList($tokenList);
+            $ignoreUnknownUser = $tokenList->hasKeywords(Keyword::IGNORE, Keyword::UNKNOWN, Keyword::USER);
 
-            return new RevokeCommand($privileges, $resource, $users);
+            return new RevokeCommand($privileges, $resource, $users, $ifExists, $ignoreUnknownUser);
         } else {
             // REVOKE ... FROM
             $roles = $this->parseRolesList($tokenList);
             $tokenList->expectKeyword(Keyword::FROM);
             $users = $this->parseUsersList($tokenList);
+            $ignoreUnknownUser = $tokenList->hasKeywords(Keyword::IGNORE, Keyword::UNKNOWN, Keyword::USER);
 
-            return new RevokeRoleCommand($roles, $users);
+            return new RevokeRoleCommand($roles, $users, $ifExists, $ignoreUnknownUser);
         }
     }
 
