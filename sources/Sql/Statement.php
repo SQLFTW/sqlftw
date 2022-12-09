@@ -12,7 +12,7 @@ namespace SqlFtw\Sql;
 abstract class Statement implements SqlSerializable
 {
 
-    protected ?string $delimiter;
+    protected ?string $delimiter = null;
 
     /** @var list<string> */
     protected array $commentsBefore = [];

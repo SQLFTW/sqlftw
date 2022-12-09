@@ -68,7 +68,7 @@ class Lexer
     public const IP_V4_REGEXP = '~^((?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))~';
 
     /** @var array<string, int> (this is in fact array<int, int>, but PHPStan is unable to cope with the auto-casting of numeric string keys) */
-    private static array $numbersKey;
+    private static array $numbersKey = [];
 
     /** @var array<string|int, int> */
     private static array $hexadecKey;
@@ -112,7 +112,7 @@ class Lexer
         bool $withComments = true,
         bool $withWhitespace = false
     ) {
-        if (self::$numbersKey === null) {
+        if (self::$numbersKey === []) {
             self::$numbersKey = array_flip(self::NUMBERS); // @phpstan-ignore-line
             self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
             self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
