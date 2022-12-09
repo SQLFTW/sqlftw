@@ -18,7 +18,8 @@ class UserPasswordLockOption implements SqlSerializable
 
     private UserPasswordLockOptionType $type;
 
-    private ?int $value;
+    /** @var int|string|null */
+    private $value;
 
     /**
      * @param string|int|null $value
@@ -36,7 +37,10 @@ class UserPasswordLockOption implements SqlSerializable
         return $this->type;
     }
 
-    public function getValue(): ?int
+    /**
+     * @return int|string|null
+     */
+    public function getValue()
     {
         return $this->value;
     }

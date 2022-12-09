@@ -19,7 +19,7 @@ class RolesSpecification implements SqlSerializable
     private RolesSpecificationType $type;
 
     /** @var non-empty-list<UserName>|null */
-    private array $roles;
+    private ?array $roles;
 
     /**
      * @param non-empty-list<UserName>|null $roles
