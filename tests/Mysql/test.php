@@ -14,5 +14,3 @@ $singleThread = in_array('--single', $argv, true);
 
 $test = new MysqlTest();
 $test->run($singleThread);
-
-//MysqlTest::run($singleThread);

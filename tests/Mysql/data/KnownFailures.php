@@ -4,7 +4,7 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-trait Failures
+trait KnownFailures
 {
 
     /** @var array<string, Valid::*> */
@@ -162,6 +162,8 @@ trait Failures
         "-- error 0,ER_WRONG_VALUE_FOR_VAR\nSET @@global.mysqlx_zstd_max_client_compression_level=2;" => Valid::NO,
         "-- error 0,ER_WRONG_VALUE_FOR_VAR\nSET GLOBAL mysqlx_zstd_max_client_compression_level=-1;" => Valid::NO,
         "-- error 0,ER_WRONG_VALUE_FOR_VAR\nSET @@global.mysqlx_zstd_max_client_compression_level=-2;" => Valid::NO,
+        "-- error ER_UNKNOWN_SYSTEM_VARIABLE\nSELECT @@global.dragnet.log_error_filter_rules;" => Valid::NO,
+        "-- error ER_UNKNOWN_SYSTEM_VARIABLE\nSET @@global.dragnet.log_error_filter_rules='IF err_symbol==\"ER_STARTUP\" THEN drop.';" => Valid::NO,
         // sql_mode vs escaping
         "INSERT INTO t1 VALUES (\"1\\\"\"), (\"\\\"2\");" => Valid::NO,
         // no info on charset/engine ids. this is runtime error

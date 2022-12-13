@@ -5,6 +5,7 @@
 namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Debug\Callstack;
+use Dogma\Debug\Dumper;
 use Dogma\Re;
 use Dogma\Str;
 use SqlFtw\Formatter\Formatter;
@@ -38,20 +39,32 @@ use function trim;
  */
 class MysqlTestJob
 {
-    use Errors;
-    use Failures;
-    use Replacements;
-    use Aliases;
-    use Exceptions;
+    use IgnoredErrors;
+    use KnownFailures;
+    use TestReplacements;
+    use SeriaisationAliases;
+    use SerialisationExceptions;
 
-    public static int $count = 0;
+    public int $count = 0;
 
     /** @var list<string> */
-    private static array $exceptionsUsed = [];
+    private array $usedExceptions = [];
 
-    public static function run(string $path, bool $singleThread): Result
+    /** @var list<string> */
+    private array $aliasKeys;
+
+    /** @var list<string> */
+    private array $aliasValues;
+
+    public function __construct()
     {
-        self::$count++;
+        $this->aliasKeys = array_keys(self::$aliases);
+        $this->aliasValues = array_values(self::$aliases);
+    }
+
+    public function run(string $path, bool $singleThread, bool $fullRun): Result
+    {
+        $this->count++;
         if ($singleThread) {
             rl($path, null, 'g');
         }
@@ -139,7 +152,7 @@ class MysqlTestJob
             ) {
                 $match = true;
             } else {
-                $match = self::checkSerialisation($tokenList, $command, $formatter, $session);
+                $match = $this->checkSerialisation($tokenList, $command, $formatter, $session);
             }
             if (!$match) {
                 $serialisationErrors[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
@@ -172,45 +185,23 @@ class MysqlTestJob
             $tokens,
             $falseNegatives,
             $falsePositives,
-            $serialisationErrors
+            $serialisationErrors,
+            $fullRun ? $this->usedExceptions : []
         );
     }
 
-    private static function checkSerialisation(TokenList $tokenList, Command $command, Formatter $formatter, Session $session): bool
+    private function checkSerialisation(TokenList $tokenList, Command $command, Formatter $formatter, Session $session): bool
     {
-        static $keys, $values;
-        if ($keys === null) {
-            $keys = array_keys(self::$aliases);
-            $values = array_values(self::$aliases);
-        }
-
         if ($command instanceof EmptyCommand || $command instanceof InvalidCommand) {
             return true;
         }
 
-        $beforeOrig = $tokenList->map(static function (Token $token): Token {
-            return ($token->type & TokenType::COMMENT) !== 0
-                ? new Token(TokenType::WHITESPACE, $token->position, $token->row, ' ')
-                : $token;
-        })->serialize();
-        $before = strtolower($beforeOrig);
-        $before = Re::replace($before, '~[\n\s]+~', ' ');
-        $before = trim($before);
-        $before = str_replace($keys, $values, $before);
-        foreach (self::$reAliases as $find => $replace) {
-            $before = Re::replace($before, $find, $replace);
-        }
-
-        $afterOrig = $formatter->serialize($command, false, $session->getDelimiter());
-        $after = strtolower($afterOrig);
-        $after = Re::replace($after, '~[\n\s]+~', ' ');
-
-        $before = Str::replaceKeys($before, self::$normalize);
-        $after = Str::replaceKeys($after, self::$normalize);
+        [$beforeOrig, $before] = $this->normalizeSqlBefore($tokenList);
+        [$afterOrig, $after] = $this->normalizeSqlAfter($command, $formatter, $session);
 
         if ($before !== $after) {
             if (isset(self::$exceptions[$before]) && self::$exceptions[$before] === $after) {
-                self::$exceptionsUsed[] = $before;
+                $this->usedExceptions[] = $before;
             } else {
                 /*
                 $after_ = $after;
@@ -232,20 +223,52 @@ class MysqlTestJob
         return true;
     }
 
-    public static function checkExceptions(): void
+    /**
+     * @return array{string, string}
+     */
+    public function normalizeSqlBefore(TokenList $tokenList): array
+    {
+        $beforeOrig = $tokenList->map(static function (Token $token): Token {
+            return ($token->type & TokenType::COMMENT) !== 0
+                ? new Token(TokenType::WHITESPACE, $token->position, $token->row, ' ')
+                : $token;
+        })->serialize();
+        $before = strtolower($beforeOrig);
+        $before = Re::replace($before, '~[\n\s]+~', ' ');
+        $before = trim($before);
+        $before = str_replace($this->aliasKeys, $this->aliasValues, $before);
+        foreach (self::$reAliases as $find => $replace) {
+            $before = Re::replace($before, $find, $replace);
+        }
+        $before = Str::replaceKeys($before, self::$normalize);
+
+        return [$beforeOrig, $before];
+    }
+
+    /**
+     * @return array{string, string}
+     */
+    public function normalizeSqlAfter(Command $command, Formatter $formatter, Session $session): array
+    {
+        $afterOrig = $formatter->serialize($command, false, $session->getDelimiter());
+        $after = strtolower($afterOrig);
+        $after = Re::replace($after, '~[\n\s]+~', ' ');
+        $after = Str::replaceKeys($after, self::$normalize);
+
+        return [$afterOrig, $after];
+    }
+
+    /**
+     * @param list<string> $usedExceptions
+     * @return list<string>
+     */
+    public static function getUnusedExceptions(array $usedExceptions): array
     {
         $exceptions = array_keys(self::$exceptions);
         sort($exceptions);
-        sort(self::$exceptionsUsed);
+        sort($usedExceptions);
 
-        $exceptionsUnused = array_diff($exceptions, self::$exceptionsUsed);
-
-        if ($exceptionsUnused !== []) {
-            rl("Unused serialisation exceptions:");
-            foreach ($exceptionsUnused as $exception) {
-                rd($exception);
-            }
-        }
+        return array_diff($exceptions, $usedExceptions);
     }
 
 }

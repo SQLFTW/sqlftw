@@ -48,11 +48,11 @@ use function usort;
 
 class MysqlTest
 {
-    use Skips;
+    use TestSkips;
     use Tags;
 
     private const MYSQL_REPO_LINK = 'git@github.com:mysql/mysql-server.git';
-    private const DEFAULT_TAG = 'mysql-8.0.29';
+    private const DEFAULT_TAG = 'mysql-8.0.30';
 
     public string $tempDir;
     public string $tempTestsDir;
@@ -137,18 +137,16 @@ class MysqlTest
 
         ini_set('memory_limit', '2G');
 
-        $testsPath = $suite ? $this->mysqlTestsDir . '/' . $suite : $this->mysqlTestsDir;
-        $paths = $this->getPaths($testsPath);
-        file_put_contents($this->lastFailPath, '');
+        [$paths, $fullRun] = $this->getPaths($suite);
 
-        $runner = static function (string $path) use ($singleThread): Result {
+        $runner = static function (string $path) use ($singleThread, $fullRun): Result {
             ini_set('memory_limit', '3G');
             set_time_limit(25);
             if (function_exists('memory_reset_peak_usage')) {
                 memory_reset_peak_usage(); // 8.2
             }
 
-            return MysqlTestJob::run($path, $singleThread);
+            return (new MysqlTestJob())->run($path, $singleThread, $fullRun);
         };
 
         $platform = Platform::fromTag(Platform::MYSQL, $tag);
@@ -158,6 +156,7 @@ class MysqlTest
         if ($singleThread) {
             $results = [];
             foreach ($paths as $path) {
+                /** @var Result $result */
                 $result = $runner($path);
                 if ($result->falseNegatives !== []) {
                     $this->renderFalseNegatives([$result->path => $result->falseNegatives], $formatter);
@@ -175,19 +174,19 @@ class MysqlTest
             $results = wait(parallelMap($paths, $runner)); // @phpstan-ignore-line Unable to resolve the template type T in call to function Amp\Promise\wait
         }
 
-        $this->displayResults($results, $formatter, $singleThread);
-
-        if ($singleThread) {
-            MysqlTestJob::checkExceptions();
-        }
+        $this->displayResults($results, $formatter, $singleThread, $fullRun);
     }
 
-    private function displayResults(array $results, Formatter $formatter, bool $singleThread): void
+    /**
+     * @param list<Result> $results
+     */
+    private function displayResults(array $results, Formatter $formatter, bool $singleThread, bool $fullRun): void
     {
         $size = $time = $statements = $tokens = 0;
         $falseNegatives = [];
         $falsePositives = [];
         $serialisationErrors = [];
+        $usedExceptions = [];
         foreach ($results as $result) {
             $size += $result->size;
             $time += $result->time;
@@ -202,6 +201,9 @@ class MysqlTest
             if ($result->serialisationErrors !== []) {
                 $serialisationErrors[$result->path] = $result->serialisationErrors;
             }
+            if ($fullRun) {
+                $usedExceptions = array_merge($result->usedSerialisationExceptions);
+            }
         }
 
         if (!$singleThread) {
@@ -209,6 +211,11 @@ class MysqlTest
             $this->renderFalsePositives($falsePositives, $formatter);
             $this->renderSerialisationErrors($serialisationErrors, $formatter);
         }
+        if ($fullRun) {
+            $unusedExceptions = MysqlTestJob::getUnusedExceptions($usedExceptions);
+            $this->renderUnusedSerialisationExceptions($unusedExceptions);
+        }
+
         if ($falseNegatives !== [] || $falsePositives !== [] || $serialisationErrors !== []) {
             $this->repeatPaths(array_merge(array_keys($falseNegatives), array_keys($falsePositives), array_keys($serialisationErrors)));
         }
@@ -235,6 +242,9 @@ class MysqlTest
             echo 'Serialisation errors: ' . array_sum(array_map(static function ($a): int {
                 return count($a);
             }, $serialisationErrors)) . "\n";
+        }
+        if ($fullRun && $unusedExceptions !== []) {
+            echo "Unused serialisation exceptions: " . count($unusedExceptions) . "\n";
         }
 
         echo 'Running time: ' . Units::time(microtime(true) - Debugger::getStart()) . "\n";
@@ -283,11 +293,8 @@ class MysqlTest
      */
     private function renderFalseNegatives(array $falseNegatives, Formatter $formatter): void
     {
-        if ($falseNegatives !== []) {
-            rl('Should not fail:', null, 'r');
-        }
         foreach ($falseNegatives as $path => $falseNegative) {
-            rl($path, null, 'r');
+            rl($path, null, 'g');
             foreach ($falseNegative as [$command, $tokenList, $mode]) {
                 $this->renderFalseNegative($command, $tokenList, $mode, $formatter);
             }
@@ -296,6 +303,7 @@ class MysqlTest
 
     private function renderFalseNegative(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
+        rl('Should not fail:', null, 'r');
         rl($mode->getValue(), 'mode', 'C');
 
         $tokensSerialized = trim($tokenList->serialize());
@@ -324,11 +332,8 @@ class MysqlTest
      */
     private function renderFalsePositives(array $falsePositives, Formatter $formatter): void
     {
-        if ($falsePositives !== []) {
-            rl('Should fail:', null, 'r');
-        }
         foreach ($falsePositives as $path => $falsePositive) {
-            rl($path, null, 'r');
+            rl($path, null, 'g');
             foreach ($falsePositive as [$command, $tokenList, $mode]) {
                 $this->renderFalsePositive($command, $tokenList, $mode, $formatter);
             }
@@ -337,6 +342,7 @@ class MysqlTest
 
     private function renderFalsePositive(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
     {
+        rl('Should fail:', null, 'r');
         rl($mode->getValue(), 'mode', 'C');
 
         $tokensSerialized = trim($tokenList->serialize());
@@ -355,38 +361,44 @@ class MysqlTest
      */
     public function renderSerialisationErrors(array $serialisationErrors, Formatter $formatter): void
     {
-        if ($serialisationErrors !== []) {
-            rl('Serialisation errors:', null, 'r');
-        }
+        $job = new MysqlTestJob();
         foreach ($serialisationErrors as $path => $serialisationError) {
-            rl($path, null, 'r');
+            rl($path, null, 'g');
             foreach ($serialisationError as [$command, $tokenList, $mode]) {
-                $this->renderSerialisationError($command, $tokenList, $mode, $formatter);
+                $this->renderSerialisationError($command, $tokenList, $mode, $formatter, $job);
             }
         }
     }
 
-    public function renderSerialisationError(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter): void
+    public function renderSerialisationError(Command $command, TokenList $tokenList, SqlMode $mode, Formatter $formatter, MysqlTestJob $job): void
     {
-        $beforeOrig = $tokenList->map(static function (Token $token): Token {
-            return ($token->type & TokenType::COMMENT) !== 0
-                ? new Token(TokenType::WHITESPACE, $token->position, $token->row, ' ')
-                : $token;
-        })->serialize();
+        rl('Serialisation error:', null, 'r');
 
-        $delimiter = ';';
-        if ($command instanceof Statement) {
-            $delimiter = $command->getDelimiter() ?? ';';
-        }
-        $afterOrig = $formatter->serialize($command, false, $delimiter);
+        [$beforeOrig, $before] = $job->normalizeSqlBefore($tokenList);
+        [$afterOrig, $after] = $job->normalizeSqlAfter($command, $formatter, $tokenList->getSession());
 
+        $after_ = $after;
+        $afterOrig_ = $afterOrig;
+        rdf($before, $after);
+        rd($before);
+        rd($after_);
         Dumper::$escapeWhiteSpace = false;
         rd($beforeOrig);
-        rd($afterOrig);
+        rd($afterOrig_);
         Dumper::$escapeWhiteSpace = true;
         rd($command, 20);
-        //Dumper::$arrayMaxLength = 1000;
         rd($tokenList);
+    }
+
+    /**
+     * @param list<string> $exceptions
+     */
+    public function renderUnusedSerialisationExceptions(array $exceptions): void
+    {
+        rl('Unused serialisation exceptions:', null, 'r');
+        foreach ($exceptions as $exception) {
+            rl($exception);
+        }
     }
 
     /**
@@ -398,10 +410,12 @@ class MysqlTest
     }
 
     /**
-     * @return list<string>
+     * @return array{list<string>, bool} ($paths, $fullRun)
      */
-    public function getPaths(string $testsPath): array
+    public function getPaths(string $suite): array
     {
+        $testsPath = $suite ? $this->mysqlTestsDir . '/' . $suite : $this->mysqlTestsDir;
+
         if (file_exists($this->lastFailPath)) {
             $paths = file_get_contents($this->lastFailPath);
 
@@ -409,8 +423,9 @@ class MysqlTest
                 $paths = explode("\n", $paths);
                 $count = count($paths);
                 echo "Running only last time failed tests ({$count})\n\n";
+                file_put_contents($this->lastFailPath, '');
 
-                return $paths;
+                return [$paths, false];
             }
         }
 
@@ -435,8 +450,9 @@ class MysqlTest
 
         $count = count($paths);
         echo "Running all tests in {$testsPath} ({$count})\n";
+        file_put_contents($this->lastFailPath, '');
 
-        return $paths;
+        return [$paths, $suite === ''];
     }
 
 }

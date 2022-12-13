@@ -4,7 +4,7 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-trait Errors
+trait IgnoredErrors
 {
 
     /** @var list<string> */
@@ -483,6 +483,7 @@ trait Errors
         // wtf
         'ER_WRONG_OBJECT',
         'ER_ILLEGAL_PRIVILEGE_LEVEL',
+        'ER_DA_EXPIRE_LOGS_DAYS_IGNORED',
 
         // runtime errors - cannot resolve in parse neither by static analysis -----------------------------------------
         // debug

@@ -4,7 +4,7 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-trait Exceptions
+trait SerialisationExceptions
 {
 
     /** @var array<string, string> */
@@ -320,6 +320,10 @@ trait Exceptions
             => "call mtr.add_suppression(error running internal sql query: set persist_only group_replication_single_primary_mode=on.internal failure.);",
         "call mtr.add_suppression(internal query: set @@persist_only.group_replication_single_primary_mode=on result in error.error number:-2);"
             => "call mtr.add_suppression(internal query: set persist_only group_replication_single_primary_mode=on result in error.error number:-2);",
+        "set @@persist_only.innodb_redo_log_capacity=8388608 ft_query_expansion_limit=80;"
+            => "set @@persist_only.innodb_redo_log_capacity=8388608 @@persist_only.ft_query_expansion_limit=80;",
+        "set @@global.innodb_strict_mode=default innodb_lock_wait_timeout=default myisam_stats_method=default;"
+            => "set @@global.innodb_strict_mode=default @@global.innodb_lock_wait_timeout=default @@global.myisam_stats_method=default;",
 
         // reordered server options
         "create server s1 foreign data wrapper mysql options(user=user1 host 192.168.1.106 database test);"

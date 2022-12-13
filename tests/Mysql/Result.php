@@ -32,10 +32,14 @@ class Result
     /** @var list<array{Command, TokenList, SqlMode}> */
     public array $serialisationErrors;
 
+    /** @var list<string> */
+    public array $usedSerialisationExceptions;
+
     /**
      * @param list<array{Command, TokenList, SqlMode}> $falseNegatives
      * @param list<array{Command, TokenList, SqlMode}> $falsePositives
      * @param list<array{Command, TokenList, SqlMode}> $serialisationErrors
+     * @param list<string> $usedSerialisationExceptions
      */
     public function __construct(
         string $path,
@@ -47,7 +51,8 @@ class Result
         int $tokens,
         array $falseNegatives,
         array $falsePositives,
-        array $serialisationErrors
+        array $serialisationErrors,
+        array $usedSerialisationExceptions
     ) {
         $this->path = $path;
         $this->size = $size;
@@ -59,6 +64,7 @@ class Result
         $this->falseNegatives = $falseNegatives;
         $this->falsePositives = $falsePositives;
         $this->serialisationErrors = $serialisationErrors;
+        $this->usedSerialisationExceptions = $usedSerialisationExceptions;
     }
 
 }

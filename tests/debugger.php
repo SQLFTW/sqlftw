@@ -39,6 +39,8 @@ Dumper::$namespaceReplacements['~SqlFtw\\\\Parser\\\\(.*)~'] = '..\1';
 Dumper::$namespaceReplacements['~SqlFtw\\\\Formatter\\\\(.*)~'] = '..\1';
 Dumper::$namespaceReplacements['~SqlFtw\\\\Sql\\\\(.*)~'] = '..\1';
 Dumper::$namespaceReplacements['~SqlFtw\\\\Platform\\\\(.*)~'] = '..\1';
+Dumper::$traceFilters[] = '~^Amp\\\\~';
+Dumper::$traceFilters[] = '~^Opis\\\\Closure~';
 
 // TokenType value
 Dumper::$intFormatters = [

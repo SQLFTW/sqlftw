@@ -2,9 +2,10 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-trait Suites
+trait TestSuites
 {
 
+    /** @var list<string> */
     private static $suites = [
         't',
         'extra/binlog_tests',

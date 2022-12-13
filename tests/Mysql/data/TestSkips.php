@@ -4,7 +4,7 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-trait Skips
+trait TestSkips
 {
 
     /** @var list<string> */

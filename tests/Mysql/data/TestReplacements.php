@@ -4,7 +4,7 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-trait Replacements
+trait TestReplacements
 {
 
     /** @var array<string, array<string, string>> */
@@ -19,6 +19,7 @@ trait Replacements
             "set @@sql_mode = 'ansi, error_for_division_by_zero';" => "--error ER_\nset @@sql_mode = 'ansi, error_for_division_by_zero';",
             "DROP PROCEDURE IF EXISTSsp1;" => "DROP PROCEDURE IF EXISTS sp1;",
         ],
+        // missing \n
         'events_2.test' => [
             'end|                                                                                                                                                    --error ER_EVENT_RECURSION_FORBIDDEN' => "end|\n--error ER_EVENT_RECURSION_FORBIDDEN",
         ],

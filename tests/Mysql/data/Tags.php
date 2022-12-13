@@ -5,6 +5,7 @@ namespace SqlFtw\Tests\Mysql;
 trait Tags
 {
 
+    /** @var list<string> */
     private static $tags = [
         'mysql-8.0.0',
         'mysql-8.0.1',
