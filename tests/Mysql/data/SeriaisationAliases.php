@@ -172,6 +172,7 @@ trait SeriaisationAliases
         'no sql deterministic' => 'deterministic no sql',
         'sql_calc_found_rows distinct' => 'distinct sql_calc_found_rows',
         'sql_big_result distinct' => 'distinct sql_big_result',
+        'sql_small_result distinct' => 'distinct sql_small_result',
         'sql security definer deterministic' => 'deterministic sql security definer',
         'modifies sql data not deterministic' => 'not deterministic modifies sql data',
         'read only, with consistent snapshot' => 'with consistent snapshot, read only',
@@ -285,6 +286,7 @@ trait SeriaisationAliases
         ' stats_auto_recalc=' => ' stats_auto_recalc ',
         ',stats_auto_recalc=' => ',stats_auto_recalc ',
         ' stats_sample_pages=' => ' stats_sample_pages ',
+        ' stats_persistent =' => ' stats_persistent ',
         ' vcpu=' => ' vcpu ',
         ' thread_priority=' => ' thread_priority ',
         '(key(' => '(index(',
@@ -303,8 +305,8 @@ trait SeriaisationAliases
         '~default ([^,;(]+) not null~' => 'not null default $1',
         '~default ?\(([^)]+)\) not null~' => 'not null default ($1)',
         '~auto_increment default ?\(([^)]+)\)~' => 'default ($1) auto_increment',
-        '~invisible default ([^ ]+)~' => 'default $1 invisible',
-        '~invisible default\(([^)]+)\)~' => 'default($1)invisible',
+        '~invisible default ([^ );]+)~' => 'default $1 invisible',
+        '~invisible default\(([^);]+)\)~' => 'default($1)invisible',
         '~primary key default\(([^)]+)\)invisible~' => 'default($1)invisible primary key',
         // LIMIT OFFSET
         '~limit (\d+)[, ]+(\d+)~' => 'limit $2 offset $1',
@@ -362,7 +364,7 @@ trait SeriaisationAliases
         '~engine innodb, rename to ([a-z\d_]+)~' => 'rename $1, engine innodb',
         '~check ?(\([^)]+\)(?: ?(?:not )?enforced)?) ?(not null|unique|primary key)~' => '$2 check $1',
         '~default ([^ ]+) collate ([a-z\d_]+)~' => 'collate $2 default $1',
-        '~alter table ([a-z\d_]+) engine (innodb|myisam)([^;]+);~' => 'alter table $1 $3 engine $2;',
+        '~alter table ([a-z\d_]+) engine[ =]\'?(innodb|myisam)\'?([^;]+);~' => 'alter table $1 $3 engine $2;',
         // match
         '~match ([a-z][^()]*) against~' => 'match ($1) against',
         // desc

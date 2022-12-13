@@ -1699,7 +1699,7 @@ class MysqlVariable extends SqlEnum
         self::INNODB_DEFAULT_ROW_FORMAT                 => [S::GLOBAL,  true,  T::ENUM,     'DYNAMIC',  F::NONE, ['REDUNDANT', 'COMPACT', 'DYNAMIC']],
         self::INNODB_DIRECTORIES                        => [S::GLOBAL,  false, T::CHAR,     null], // dir
         self::INNODB_DISABLE_SORT_FILE_CACHE            => [S::GLOBAL,  true,  T::BOOL,     false],
-        self::INNODB_DOUBLEWRITE                        => [S::GLOBAL,  true,  T::ENUM,     'ON',       F::NONE, ['ON', 'OFF', 'DETECT_AND_RECOVER', 'DETECT_ONLY']],
+        self::INNODB_DOUBLEWRITE                        => [S::GLOBAL,  true,  T::ENUM,     'ON',       F::NO_PERSIST, ['ON', 'OFF', 'DETECT_AND_RECOVER', 'DETECT_ONLY']],
         self::INNODB_DOUBLEWRITE_BATCH_SIZE             => [S::GLOBAL,  false, T::UNSIGNED, 0,          F::NONE, 0, 256],
         self::INNODB_DOUBLEWRITE_DIR                    => [S::GLOBAL,  false, T::CHAR,     null], // dir
         self::INNODB_DOUBLEWRITE_FILES                  => [S::GLOBAL,  false, T::UNSIGNED, 16,         F::NONE, 2, 256],
@@ -1933,8 +1933,8 @@ class MysqlVariable extends SqlEnum
         self::NDB_READ_BACKUP                       => [S::GLOBAL,  true,  T::BOOL,     true],
         self::NDB_RECV_THREAD_ACTIVATION_THRESHOLD  => [S::GLOBAL,  true,  T::UNSIGNED, 8,          F::NONE, 0, 16],
         self::NDB_RECV_THREAD_CPU_MASK              => [S::GLOBAL,  true,  T::CHAR,     ''],
-        self::NDB_REPLICA_BATCH_SIZE                => [S::GLOBAL,  true,  T::UNSIGNED, 2097152,    F::NONE, 0, 2097152],
-        self::NDB_REPLICA_BLOB_WRITE_BATCH_BYTES    => [S::GLOBAL,  true,  T::UNSIGNED, 2097152,    F::NONE, 0, 2097152],
+        self::NDB_REPLICA_BATCH_SIZE                => [S::GLOBAL,  true,  T::UNSIGNED, 2097152,    F::CLAMP, 0, 2097152],
+        self::NDB_REPLICA_BLOB_WRITE_BATCH_BYTES    => [S::GLOBAL,  true,  T::UNSIGNED, 2097152,    F::CLAMP, 0, 2097152],
         self::NDB_REPORT_THRESH_BINLOG_EPOCH_SLIP   => [S::GLOBAL,  true,  T::UNSIGNED, 10,         F::NONE, 0, 256],
         self::NDB_REPORT_THRESH_BINLOG_MEM_USAGE    => [S::GLOBAL,  true,  T::UNSIGNED, 10,         F::NONE, 0, 10],
         self::NDB_ROW_CHECKSUM                      => [null,       true,  T::UNSIGNED, 1,          F::NONE, 0, 1],

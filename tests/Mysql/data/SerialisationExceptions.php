@@ -320,9 +320,9 @@ trait SerialisationExceptions
             => "call mtr.add_suppression(error running internal sql query: set persist_only group_replication_single_primary_mode=on.internal failure.);",
         "call mtr.add_suppression(internal query: set @@persist_only.group_replication_single_primary_mode=on result in error.error number:-2);"
             => "call mtr.add_suppression(internal query: set persist_only group_replication_single_primary_mode=on result in error.error number:-2);",
-        "set @@persist_only.innodb_redo_log_capacity=8388608 ft_query_expansion_limit=80;"
+        "set @@persist_only.innodb_redo_log_capacity=8388608 ft_query_expansion_limit=80;" // 8.0.30
             => "set @@persist_only.innodb_redo_log_capacity=8388608 @@persist_only.ft_query_expansion_limit=80;",
-        "set @@global.innodb_strict_mode=default innodb_lock_wait_timeout=default myisam_stats_method=default;"
+        "set @@global.innodb_strict_mode=default innodb_lock_wait_timeout=default myisam_stats_method=default;" // 8.0.30
             => "set @@global.innodb_strict_mode=default @@global.innodb_lock_wait_timeout=default @@global.myisam_stats_method=default;",
 
         // reordered server options
@@ -464,6 +464,7 @@ trait SerialisationExceptions
         "set @s:=concat(create table t(w int a int(repeat(0 1024*1024))stored)engine innodb;);"
             => "set @s:=concat(create table t(w int a int generated always as(repeat(0 1024*1024))stored)engine innodb;);",
         "prepare stmt from create table t1 select*from t0;" => "prepare stmt from create table t1 as select*from t0;",
+        "prepare stmt2 from create table t2 select*from t;" => "prepare stmt2 from create table t2 as select*from t;", // 8.0.30
 
         // removed "=" after engine, user etc.
         "select transactions from information_schema.engines where engine federated;" => "select transactions from information_schema.engines where engine=federated;",

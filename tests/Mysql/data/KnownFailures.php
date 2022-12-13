@@ -48,6 +48,8 @@ trait KnownFailures
         "-- error ER_BAD_FIELD_ERROR\nSET @@collation_database = latin7_general_ci + latin7_general_cs;" => Valid::YES,
         "-- error ER_BAD_FIELD_ERROR\nSET @@collation_server = latin7_general_ci + latin7_general_cs;" => Valid::YES,
         "-- error ER_BAD_FIELD_ERROR\nSET @@lc_time_names = en_US | en_GB ;" => Valid::YES,
+        "-- error ER_ILLEGAL_PRIVILEGE_LEVEL\nREVOKE DYNAMIC_PRIV1, DYNAMIC_PRIV2 ON wl14690.* FROM unknown_user IGNORE UNKNOWN USER;" => Valid::YES,
+        "-- error ER_ILLEGAL_PRIVILEGE_LEVEL\nREVOKE DYNAMIC_PRIV1, DYNAMIC_PRIV2 ON wl14690.* FROM u1;" => Valid::YES,
         // collides with ignored "ER_INVALID_DEFAULT"
         "-- error ER_INVALID_DEFAULT_UTF8MB4_COLLATION\nSET @@default_collation_for_utf8mb4 = latin2_general_ci;" => Valid::YES,
         // depends on "SELECT ... INTO @space_id;"
@@ -118,6 +120,12 @@ trait KnownFailures
 
         // strange engine behavior
         "CREATE TABLE t2 (a char(255), b varbinary(70000), c varchar(70000000));" => Valid::YES,
+
+        // WTF double_write
+        "-- error ER_WRONG_ARGUMENTS\nSET @@GLOBAL.innodb_doublewrite=4;" => Valid::YES,
+        "-- error ER_WRONG_ARGUMENTS\nSET @@GLOBAL.innodb_doublewrite=5;" => Valid::YES,
+        "SET @@GLOBAL.innodb_doublewrite=4;" => Valid::YES,
+        "SET @@GLOBAL.innodb_doublewrite=5;" => Valid::YES,
 
 
         // false positives -------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -229,6 +237,7 @@ trait KnownFailures
         "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create= _binary x'5452c39c45';" => Valid::NO,
         "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create= _utf8 x'5452c39c45';" => Valid::NO,
         "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create=_latin1 x'5452dc45';" => Valid::NO,
+        "-- error ER_WRONG_VALUE\nWITH cte1 AS\n(SELECT(replace(md5(0x9025c5c7),\n                    convert((1) using utf8),\n                    (!(cast((555) AS char(20)))))) AS a1 FROM t0022)\nSELECT cte1.a1\nFROM cte1 WHERE cte1.a1 = from_unixtime(1537000917);" => Valid::NO,
         // special format
         "-- error ER_WRONG_VALUE_FOR_VAR\nset global innodb_ft_aux_table='Salmon';" => Valid::NO,
         "-- error ER_WRONG_VALUE_FOR_VAR\nset global innodb_ft_aux_table =@a;" => Valid::NO,
@@ -653,6 +662,17 @@ trait KnownFailures
         "-- error ER_VAR_DOES_NOT_EXIST\nRESET PERSIST sort_buffer_size;" => Valid::NO,
         // NDB
         "-- error ER_NOT_SUPPORTED_YET\nALTER TABLE t1\n  ADD COLUMN c INT,\n  RENAME TO t1_renamed;" => Valid::NO,
+        // generated PK vs things
+        "-- error ER_NOT_SUPPORTED_YET\nALTER TABLE t1 PARTITION BY KEY(my_row_id) PARTITIONS 10;" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nALTER TABLE t1 DROP COLUMN my_row_id;" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nALTER TABLE t1 DROP PRIMARY KEY, DROP COLUMN my_row_id, ADD UNIQUE KEY(f1);" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nALTER TABLE t2 DROP PRIMARY KEY, DROP COLUMN my_row_id, ADD UNIQUE KEY(f1);" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nALTER TABLE t4 DROP PRIMARY KEY;" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nDROP INDEX `PRIMARY` ON t3;" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nALTER TABLE t2 DROP PRIMARY KEY;" => Valid::NO,
+        // partitions on unsupported types
+        "-- error ER_NOT_SUPPORTED_YET\nCREATE TABLE t1 (f1 INT, f2 DATE) PARTITION BY KEY(f2) PARTITIONS 2;" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nCREATE TABLE t1 (f1 INT, f2 INT NOT NULL UNIQUE) PARTITION BY RANGE (f2)\n                   (PARTITION p0 VALUES LESS THAN (2011),\n                    PARTITION p1 VALUES LESS THAN (2022));" => Valid::NO,
         // whitespace dependent function name parsing
         "-- error ER_PARSE_ERROR\ncreate table BIT_AND(a int);" => Valid::NO,
         "-- error ER_PARSE_ERROR\ncreate table BIT_OR(a int);" => Valid::NO,

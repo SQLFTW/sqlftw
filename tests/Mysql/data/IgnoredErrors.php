@@ -64,6 +64,11 @@ trait IgnoredErrors
         'ER_DEFINITION_CONTAINS_INVALID_STRING',
         // variables
         'ER_UNKNOWN_TIME_ZONE',
+        // params
+        'ER_AES_INVALID_KDF_NAME',
+        'ER_AES_INVALID_KDF_OPTION_SIZE',
+        'ER_AES_INVALID_KDF_ITERATIONS',
+        'ER_AES_INVALID_KDF_NAME',
 
         // for static analysis (context needed) ------------------------------------------------------------------------
         // schema
@@ -480,6 +485,12 @@ trait IgnoredErrors
         'ER_MALFORMED_GTID_SPECIFICATION',
         'ER_VARIABLE_NOT_SETTABLE_IN_SF_OR_TRIGGER',
         'ER_CHANGE_RPL_SRC_WRONG_COMPRESSION_ALGORITHM_SIZE',
+        // GIPK things
+        'ER_GIPK_COLUMN_ALTER_NOT_ALLOWED',
+        'ER_DROP_PK_COLUMN_TO_DROP_GIPK',
+        'ER_GIPK_COLUMN_EXISTS',
+        'ER_GIPK_FAILED_AUTOINC_COLUMN_EXISTS',
+        'ER_CREATE_SELECT_WITH_GIPK_DISALLOWED_IN_SBR',
         // wtf
         'ER_WRONG_OBJECT',
         'ER_ILLEGAL_PRIVILEGE_LEVEL',
@@ -593,6 +604,9 @@ trait IgnoredErrors
         'ER_CANT_CREATE_GEOMETRY_OBJECT',
         'ER_GIS_DIFFERENT_SRIDS',
         'ER_SRS_NOT_FOUND',
+        'ER_SRS_UNUSED_PROJ_PARAMETER_PRESENT',
+        'ER_SRS_INVALID_LONGITUDE_OF_ORIGIN',
+        'ER_SRS_INVALID_LATITUDE_OF_ORIGIN',
         'ER_INVALID_GEOJSON_UNSPECIFIED',
         'ER_GIS_MAX_POINTS_IN_GEOMETRY_OVERFLOWED',
         'ER_GIS_DATA_WRONG_ENDIANESS',
