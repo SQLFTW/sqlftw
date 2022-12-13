@@ -47,6 +47,7 @@ use SqlFtw\Sql\Dal\User\SetDefaultRoleCommand;
 use SqlFtw\Sql\Dal\User\SetPasswordCommand;
 use SqlFtw\Sql\Dal\User\SetRoleCommand;
 use SqlFtw\Sql\Dal\User\StaticUserPrivilege;
+use SqlFtw\Sql\Dal\User\UnknownDynamicUserPrivilege;
 use SqlFtw\Sql\Dal\User\UserCommand;
 use SqlFtw\Sql\Dal\User\UserDefaultRolesSpecification;
 use SqlFtw\Sql\Dal\User\UserPasswordLockOption;
@@ -738,7 +739,7 @@ class UserCommandsParser
      *
      * @return non-empty-list<UserPrivilege>
      */
-    private function parsePrivilegesList(TokenList $tokenList): array
+    private function parsePrivilegesList(TokenList $tokenList, bool $ifExists = false): array
     {
         $privileges = [];
         do {
@@ -751,10 +752,13 @@ class UserCommandsParser
                 $name = $tokenList->getNonReservedNameOrString();
                 if ($name !== null) {
                     // dynamic (names)
-                    if (!DynamicUserPrivilege::validateValue($name)) {
+                    if (DynamicUserPrivilege::validateValue($name)) {
+                        $type = DynamicUserPrivilege::get($name);
+                    } elseif ($ifExists) {
+                        $type = new UnknownDynamicUserPrivilege($name);
+                    } else {
                         $tokenList->missingAnyKeyword(...array_values(StaticUserPrivilege::getAllowedValues()), ...array_values(DynamicUserPrivilege::getAllowedValues()));
                     }
-                    $type = DynamicUserPrivilege::get($name);
                 }
             }
             /** @var UserPrivilegeType $type */
@@ -911,7 +915,7 @@ class UserCommandsParser
             return new RevokeProxyCommand($proxy, $users, $ifExists, $ignoreUnknownUser);
         } elseif ($tokenList->seekKeywordBefore(Keyword::ON, Keyword::FROM)) {
             // REVOKE ... ON ... FROM
-            $privileges = $this->parsePrivilegesList($tokenList);
+            $privileges = $this->parsePrivilegesList($tokenList, $ifExists);
             $resource = $this->parseResource($tokenList);
             $this->checkPrivilegeAndResource($tokenList, $resource, $privileges);
 
