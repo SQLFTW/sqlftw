@@ -32,6 +32,7 @@ trait Tags
         'mysql-8.0.28',
         'mysql-8.0.29',
         'mysql-8.0.30',
+        'mysql-8.0.31',
     ];
 
 }

@@ -5,7 +5,6 @@
 namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Debug\Callstack;
-use Dogma\Debug\Dumper;
 use Dogma\Re;
 use Dogma\Str;
 use SqlFtw\Formatter\Formatter;
@@ -20,14 +19,17 @@ use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Statement;
+use SqlFtw\Tests\ResultRenderer;
 use function array_diff;
 use function array_keys;
 use function array_values;
 use function end;
 use function file_get_contents;
+use function function_exists;
 use function getmypid;
 use function memory_get_peak_usage;
-use function rd;
+use function memory_reset_peak_usage;
+use function microtime;
 use function str_replace;
 use function strlen;
 use function strpos;
@@ -62,11 +64,15 @@ class MysqlTestJob
         $this->aliasValues = array_values(self::$aliases);
     }
 
-    public function run(string $path, bool $singleThread, bool $fullRun): Result
+    public function run(string $path, string $version, bool $singleThread, bool $fullRun, ResultRenderer $renderer): Result
     {
+        if (function_exists('memory_reset_peak_usage')) {
+            memory_reset_peak_usage(); // 8.2
+        }
+
         $this->count++;
         if ($singleThread) {
-            rl($path, null, 'g');
+            $renderer->renderTestPath($path);
         }
 
         $sql = (string) file_get_contents($path);
@@ -81,7 +87,7 @@ class MysqlTestJob
         $filter = new MysqlTestFilter();
         $sql = $filter->filter($sql);
 
-        $platform = Platform::get(Platform::MYSQL, '8.0.29');
+        $platform = Platform::get(Platform::MYSQL, $version);
         $session = new Session($platform);
         $lexer = new Lexer($session, true, true);
         $parser = new Parser($session, $lexer);
@@ -127,18 +133,26 @@ class MysqlTestJob
                 continue;
             }
 
+            $sqlMode = $tokenList->getSession()->getMode();
+
             if ($command instanceof InvalidCommand && !$shouldFail) {
                 // exceptions
                 if ($tokensSerialized[0] === '}' || Str::endsWith($tokensSerialized, '}')) {
                     // could not be filtered from mysql-server tests
                     continue;
                 }
-                $falseNegatives[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
+                $falseNegatives[] = [$command, $tokenList, $sqlMode];
+                if ($singleThread) {
+                    $renderer->renderFalseNegative($command, $tokenList, $sqlMode);
+                }
             } elseif (!$command instanceof InvalidCommand && $shouldFail) {
                 if (Str::containsAny($tokensSerialized, self::$partiallyParsedErrors)) {
                     continue;
                 }
-                $falsePositives[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
+                $falsePositives[] = [$command, $tokenList, $sqlMode];
+                if ($singleThread) {
+                    $renderer->renderFalsePositive($command, $tokenList, $sqlMode);
+                }
             }
 
             if ($hasErrorComment
@@ -155,7 +169,10 @@ class MysqlTestJob
                 $match = $this->checkSerialisation($tokenList, $command, $formatter, $session);
             }
             if (!$match) {
-                $serialisationErrors[] = [$command, $tokenList, $tokenList->getSession()->getMode()];
+                $serialisationErrors[] = [$command, $tokenList, $sqlMode];
+                if ($singleThread) {
+                    $renderer->renderSerialisationError($command, $tokenList, $sqlMode, $this);
+                }
             }
 
             $statements++;
@@ -196,26 +213,13 @@ class MysqlTestJob
             return true;
         }
 
-        [$beforeOrig, $before] = $this->normalizeSqlBefore($tokenList);
-        [$afterOrig, $after] = $this->normalizeSqlAfter($command, $formatter, $session);
+        [, $before] = $this->normalizeSqlBefore($tokenList);
+        [, $after] = $this->normalizeSqlAfter($command, $formatter, $session);
 
         if ($before !== $after) {
             if (isset(self::$exceptions[$before]) && self::$exceptions[$before] === $after) {
                 $this->usedExceptions[] = $before;
             } else {
-                /*
-                $after_ = $after;
-                $afterOrig_ = $afterOrig;
-                rdf($before, $after);
-                rd($before);
-                rd($after_);
-                Dumper::$escapeWhiteSpace = false;
-                rd($beforeOrig);
-                rd($afterOrig_);
-                Dumper::$escapeWhiteSpace = true;
-                rd($command, 20);
-                rd($tokenList);
-                */
                 return false;
             }
         }

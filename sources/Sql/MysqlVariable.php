@@ -1489,7 +1489,7 @@ class MysqlVariable extends SqlEnum
         self::UNIQUE_CHECKS                             => [null,       true,  T::BOOL,     true,       F::SET_VAR],
         self::UPDATABLE_VIEWS_WITH_LIMIT                => [null,       true,  T::ENUM,     true,       F::SET_VAR, ['YES', 'NO']],
         self::USE_SECONDARY_ENGINE                      => [S::SESSION, true,  T::ENUM,     'ON',       F::SET_VAR, ['OFF', 'ON', 'FORCED']],
-        self::VERSION                                   => [S::GLOBAL,  false, T::CHAR,     '8.0.29',   F::NO_PERSIST],
+        self::VERSION                                   => [S::GLOBAL,  false, T::CHAR,     'x.y.z',    F::NO_PERSIST], // initialized in Session::__construct()
         self::VERSION_COMMENT                           => [S::GLOBAL,  false, T::CHAR,     '',         F::NO_PERSIST],
         self::VERSION_COMPILE_MACHINE                   => [S::GLOBAL,  false, T::CHAR,     '',         F::NO_PERSIST],
         self::VERSION_COMPILE_OS                        => [S::GLOBAL,  false, T::CHAR,     '',         F::NO_PERSIST],

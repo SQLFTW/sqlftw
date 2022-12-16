@@ -70,6 +70,8 @@ class Session
 
         $this->delimiter = $delimiter ?? ';';
         $this->charset = $charset;
+
+        $this->setGlobalVariable(MysqlVariable::VERSION, $this->platform->getVersion()->format());
         if ($mode !== null) {
             $this->setMode($mode);
         } else {
