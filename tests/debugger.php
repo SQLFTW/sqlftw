@@ -12,6 +12,7 @@ use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\IntLiteral;
@@ -157,9 +158,20 @@ Dumper::$objectFormatters[ColumnType::class] = static function (ColumnType $colu
         . Dumper::bracket(')');
 };
 
-// Token
+// FunctionCall
 Dumper::$shortObjectFormatters[FunctionCall::class] = static function (FunctionCall $functionCall): string {
     return Dumper::name(get_class($functionCall)) . Dumper::bracket('(') . ' '
         . Dumper::value($functionCall->getFunction()->getFullName()) . ' ' . Dumper::exceptions('...') . ' '
         . Dumper::bracket(')') . Dumper::objectInfo($functionCall);
+};
+
+// TableReferenceTable
+Dumper::$shortObjectFormatters[TableReferenceTable::class] = static function (TableReferenceTable $reference): string {
+    if ($reference->getPartitions() !== null || $reference->getIndexHints() !== null) {
+        return '';
+    }
+    return Dumper::name(get_class($reference)) . Dumper::bracket('(')
+        . Dumper::value($reference->getTable()->getFullName())
+        . ($reference->getAlias() !== null ? ' AS ' . Dumper::value2($reference->getAlias()) : '')
+        . Dumper::bracket(')') . Dumper::objectInfo($reference);
 };
