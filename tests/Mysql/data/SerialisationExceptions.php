@@ -36,6 +36,8 @@ trait SerialisationExceptions
         "create table t1(russian enum(e f e\xfff f\xffe)not null defaulte);" => "create table t1(russian enum(e f e\xfff f\xffe)not null default e);",
         "create table t1(denormal enum(e f e f f e)not null defaulte);" => "create table t1(denormal enum(e f e f f e)not null default e);",
         "create table t1(russian_deviant enum(e f e\xfff f e)not null defaulte);" => "create table t1(russian_deviant enum(e f e\xfff f e)not null default e);",
+        "select regexp_instr(char(313:50:35.199734using utf16le)cast(uuid()char character set utf16le));" // 8.0.31
+            => "select regexp_instr(char(313:50:35.199734 using utf16le)cast(uuid()char character set utf16le));",
 
         // useless whitespace
         "grant all on*.*to x_root @10.0.2.1 with grant option;" => "grant all on*.*to x_root@10.0.2.1 with grant option;",
@@ -186,6 +188,8 @@ trait SerialisationExceptions
             => "create function fn1(f1 enum(value1))returns decimal(63 30)language sql not deterministic sql security invoker comment this is simple begin return f1;end//",
         "create function fn1(f1 set(value1 value1))returns decimal(63 30)language sql not deterministic sql security invoker comment this is simple begin return f1;end//"
             => "create function fn1(f1 set(value1))returns decimal(63 30)language sql not deterministic sql security invoker comment this is simple begin return f1;end//",
+        "create table t1(a enum(\u{fffd} \u{fffd} \u{fffd})character set utf8 not null default \u{fffd} b enum(one two)character set utf8 c enum(one two));" // 8.0.31
+            => "create table t1(a enum(\u{fffd})character set utf8 not null default \u{fffd} b enum(one two)character set utf8 c enum(one two));",
 
         // set limit
         "create table t1(f1 set(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 1));"
@@ -523,6 +527,8 @@ trait SerialisationExceptions
         "delete from from query_rewrite.rewrite_rules where pattern=select c1 using test.t1 where c2=?;"
             => "delete from query_rewrite.rewrite_rules where pattern=select c1 from test.t1 where c2=?;",
         "delete from from query_rewrite.rewrite_rules where pattern<>select c1 using test.t1;" => "delete from query_rewrite.rewrite_rules where pattern<>select c1 from test.t1;",
+        "insert query_rewrite.rewrite_rules(pattern replacement)values(delete from from test.t1 where a=? delete using test.t1);" // 8.0.31
+            => "insert query_rewrite.rewrite_rules(pattern replacement)values(delete from test.t1 where a=? delete from test.t1);",
         "select statement_digest(lock tables t1 read)is null;" => "select statement_digest(lock table t1 read)is null;",
         "insert proc values(test downgrade_alter_proc procedure downgrade_alter_proc sql contains_sql no invoker begin select c1 english french from t1 join t2 on t1.c3=t2.col2;end root@localhost 1988-04-25 20:45:00 1988-04-25 20:45:00 no_zero_date latin1 latin1_swedish_ci latin1_swedish_ci begin select c1 english french from t1 join t2 on t1.c3=t2.col2;end)(test my_test_func function myfunc sql contains_sql no definer varchar(20)character set latin1 begin return \xe3\xa5;end root@localhost 2017-03-08 09:07:36 2017-03-08 09:07:36 only_full_group_by strict_trans_tables no_zero_in_date no_zero_date error_for_division_by_zero no_auto_create_user no_engine_substitution latin1 latin1_swedish_ci latin1_swedish_ci begin return \xe3\x83\xe2\xa5;end);"
             => "insert proc values(test downgrade_alter_proc procedure downgrade_alter_proc sql contains_sql no invoker begin select c1 english french from t1 join t2 on t1.c3=t2.col2;end root@localhost 1988-04-25 20:45:00 1988-04-25 20:45:00 no_zero_date latin1 latin1_swedish_ci latin1_swedish_ci begin select c1 english french from t1 join t2 on t1.c3=t2.col2;end)(test my_test_func function myfunc sql contains_sql no definer varchar(20)charset latin1 begin return \xe3\xa5;end root@localhost 2017-03-08 09:07:36 2017-03-08 09:07:36 only_full_group_by strict_trans_tables no_zero_in_date no_zero_date error_for_division_by_zero no_auto_create_user no_engine_substitution latin1 latin1_swedish_ci latin1_swedish_ci begin return \xe3\x83\xe2\xa5;end);",

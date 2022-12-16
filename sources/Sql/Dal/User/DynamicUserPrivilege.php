@@ -48,6 +48,7 @@ class DynamicUserPrivilege extends SqlEnum implements UserPrivilegeType
     public const SESSION_VARIABLES_ADMIN = 'SESSION_VARIABLES_ADMIN';
     public const SET_USER_ID = 'SET_USER_ID';
     public const SHOW_ROUTINE = 'SHOW_ROUTINE';
+    public const SKIP_QUERY_REWRITE = 'SKIP_QUERY_REWRITE';
     public const SYSTEM_USER = 'SYSTEM_USER';
     public const SYSTEM_VARIABLES_ADMIN = 'SYSTEM_VARIABLES_ADMIN';
     public const TABLE_ENCRYPTION_ADMIN = 'TABLE_ENCRYPTION_ADMIN';

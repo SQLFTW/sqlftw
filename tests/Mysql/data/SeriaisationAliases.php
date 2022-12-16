@@ -357,7 +357,7 @@ trait SeriaisationAliases
         '~unique default ([^ ,;]+)~' => 'default $1 unique',
         '~primary key default ([^ ,;]+)~' => 'default $1 primary key',
         // space after collation
-        '~(?<![a-z\d])_(utf8|utf8mb4|utf16(?:be|le)?|utf32|latin1|binary|koi8r|cp1251|eucjpms|ujis) (?!0)~' => '_$1',
+        '~(?<![a-z\d])_(utf8|utf8mb3|utf8mb4|utf16(?:be|le)?|utf32|latin1|binary|koi8r|cp1251|eucjpms|ujis) (?!0)~' => '_$1',
         '~(?<!charset |character set )default collate~' => 'collate',
         // order...
         '~not null collate ([a-z\d_]+)~' => 'collate $1 not null',
@@ -426,6 +426,7 @@ trait SeriaisationAliases
         'generated always as(' => 'as (',
         'generated always as' => 'as',
         'member of' => 'member',
+        'analyze format=tree' => 'analyze',
         ' and subject ' => ' subject ',
         ' and issuer ' => ' issuer ',
         ' and cipher ' => ' cipher ',

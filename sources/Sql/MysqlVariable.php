@@ -7,7 +7,7 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-// spell-check-ignore: DML DSYNC GCS GPL KEYHASH LINHASH LITTLESYNC NOBLOB NOSYNC WRITESET XCOM approle binlogging checkon cmk codumented gipk ib ibdata1 ibtmp1 kickup lowpct mecab mysqld nodeids okv pem prio rc recv
+// spell-check-ignore: DML DSYNC GCS GPL KEYHASH LINHASH LITTLESYNC NOBLOB NOSYNC WRITESET XCOM approle binlogging checkon cmk gipk ib ibdata1 ibtmp1 kickup lowpct mecab mysqld nodeids okv pem prio rc recv
 // phpcs:disable Squiz.WhiteSpace.OperatorSpacing.SpacingBefore
 
 namespace SqlFtw\Sql;
@@ -921,6 +921,7 @@ class MysqlVariable extends SqlEnum
     public const RESULTSET_METADATA = 'resultset_metadata';
 
     public const REWRITER_ENABLED = 'rewriter_enabled';
+    public const REWRITER_ENABLED_FOR_THREADS_WITHOUT_PRIVILEGE_CHECKS = 'rewriter_enabled_for_threads_without_privilege_checks';
     public const REWRITER_VERBOSE = 'rewriter_verbose';
 
     public const RPL_READ_SIZE = 'rpl_read_size';
@@ -1887,7 +1888,7 @@ class MysqlVariable extends SqlEnum
         self::NDBINFO_TABLE_PREFIX                  => [S::GLOBAL,  false, T::CHAR,     'ndb$'],
         self::NDBINFO_VERSION                       => [S::GLOBAL,  false, T::CHAR,     '8.0.30'],
         self::NDB_ALLOW_COPYING_ALTER_TABLE         => [null,       true,  T::CHAR,     true],
-        self::NDB_APPLIER_ALLOW_SKIP_EPOCH          => [S::GLOBAL,  true,  T::BOOL,     null], // codumented as non-dynamic
+        self::NDB_APPLIER_ALLOW_SKIP_EPOCH          => [S::GLOBAL,  true,  T::BOOL,     null], // documented as non-dynamic
         self::NDB_AUTOINCREMENT_PREFETCH_SZ         => [null,       true,  T::UNSIGNED, 512,        F::NONE, 1, 65536],
         self::NDB_BATCH_SIZE                        => [null,       true,  T::UNSIGNED, 32768,      F::NONE, 0, I::INT32_MAX], // documented as non-dynamic, global
         self::NDB_BLOB_READ_BATCH_BYTES             => [null,       true,  T::UNSIGNED, 65536,      F::NONE, 0, I::UINT32_MAX],
@@ -1920,7 +1921,7 @@ class MysqlVariable extends SqlEnum
         self::NDB_LOG_ORIG                          => [S::GLOBAL,  false, T::BOOL,     false],
         self::NDB_LOG_TRANSACTION_COMPRESSION       => [S::GLOBAL,  true,  T::BOOL,     false],
         self::NDB_LOG_TRANSACTION_COMPRESSION_LEVEL_ZSTD
-                                                    => [S::GLOBAL,  true,  T::UNSIGNED, 3,          F::NONE, 1, 22],
+                                                    => [S::GLOBAL,  true,  T::UNSIGNED, 3,          F::CLAMP, 1, 22],
         self::NDB_LOG_TRANSACTION_ID                => [S::GLOBAL,  false, T::BOOL,     false],
         self::NDB_LOG_UPDATE_AS_WRITE               => [S::GLOBAL,  true,  T::BOOL,     true],
         self::NDB_LOG_UPDATE_MINIMAL                => [S::GLOBAL,  true,  T::BOOL,     false],
@@ -2052,6 +2053,11 @@ class MysqlVariable extends SqlEnum
         self::SYNC_RELAY_LOG_INFO                   => [S::GLOBAL,  true,  T::UNSIGNED, 10000,      F::NONE, 0, I::UINT32_MAX],
         self::SYNC_SOURCE_INFO                      => [S::GLOBAL,  true,  T::UNSIGNED, 10000,      F::NONE, 0, I::UINT32_MAX],
         self::TERMINOLOGY_USE_PREVIOUS              => [null,       true,  T::ENUM,     'NONE',     F::NONE, ['NONE', 'BEFORE_8_0_26']],
+
+        // https://dev.mysql.com/doc/refman/8.0/en/rewriter-query-rewrite-plugin-reference.html
+        self::REWRITER_ENABLED                                      => [S::GLOBAL,  true, T::BOOL,     true],
+        self::REWRITER_ENABLED_FOR_THREADS_WITHOUT_PRIVILEGE_CHECKS => [S::GLOBAL,  true, T::BOOL,     true],
+        self::REWRITER_VERBOSE                                      => [S::GLOBAL,  true, T::UNSIGNED, 0],
 
         // https://dev.mysql.com/doc/refman/8.0/en/performance-schema-system-variables.html
         self::PERFORMANCE_SCHEMA                            => [S::GLOBAL,  false, T::BOOL,     true],
