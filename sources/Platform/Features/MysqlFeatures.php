@@ -97,9 +97,9 @@ use SqlFtw\Sql\Dml\Insert\ReplaceSelectCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceSetCommand;
 use SqlFtw\Sql\Dml\Insert\ReplaceValuesCommand;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
+use SqlFtw\Sql\Dml\Query\QueryExpression;
 use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\Dml\Query\TableCommand;
-use SqlFtw\Sql\Dml\Query\UnionExpression;
 use SqlFtw\Sql\Dml\Query\ValuesCommand;
 use SqlFtw\Sql\Dml\Transaction\CommitCommand;
 use SqlFtw\Sql\Dml\Transaction\RollbackCommand;
@@ -192,6 +192,7 @@ class MysqlFeatures extends FeaturesList
         [Keyword::EMPTY, 80004, self::MAX],
         [Keyword::ENCLOSED, self::MIN, self::MAX],
         [Keyword::ESCAPED, self::MIN, self::MAX],
+        [Keyword::EXCEPT, 80031, self::MAX],
         [Keyword::EXISTS, self::MIN, self::MAX],
         [Keyword::EXIT, 50000, self::MAX],
         [Keyword::EXPLAIN, self::MIN, self::MAX],
@@ -521,7 +522,7 @@ class MysqlFeatures extends FeaturesList
         [Keyword::EVENT, self::MIN, self::MAX],
         [Keyword::EVENTS, 50106, self::MAX],
         [Keyword::EVERY, 50106, self::MAX],
-        [Keyword::EXCEPT, 80000, self::MAX],
+        [Keyword::EXCEPT, 80000, 80030],
         [Keyword::EXCHANGE, 50600, self::MAX],
         [Keyword::EXCLUDE, 80002, self::MAX],
         [Keyword::EXECUTE, self::MIN, self::MAX],
@@ -2696,7 +2697,7 @@ class MysqlFeatures extends FeaturesList
         [StopSlaveCommand::class, self::MIN, self::MAX],
         [TableCommand::class, self::MIN, self::MAX],
         [TruncateTableCommand::class, self::MIN, self::MAX],
-        [UnionExpression::class, self::MIN, self::MAX],
+        [QueryExpression::class, self::MIN, self::MAX],
         [UninstallPluginCommand::class, self::MIN, self::MAX],
         [UpdateCommand::class, self::MIN, self::MAX],
         [ValuesCommand::class, self::MIN, self::MAX],

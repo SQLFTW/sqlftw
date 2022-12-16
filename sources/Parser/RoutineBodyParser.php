@@ -39,6 +39,7 @@ use SqlFtw\Sql\Dml\Error\SqlStateCategory;
 use SqlFtw\Sql\Dml\Load\LoadDataCommand;
 use SqlFtw\Sql\Dml\Load\LoadXmlCommand;
 use SqlFtw\Sql\Dml\Prepared\PreparedStatementCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Dml\Transaction\LockTablesCommand;
 use SqlFtw\Sql\Dml\Transaction\TransactionCommand;
 use SqlFtw\Sql\Dml\Transaction\UnlockTablesCommand;
@@ -285,7 +286,8 @@ class RoutineBodyParser
             throw new ParserException('Cannot use RESET MASTER/SLAVE inside a function, trigger or event.', $tokenList);
         } elseif ($in !== RoutineType::PROCEDURE && ($statement instanceof FlushCommand || $statement instanceof FlushTablesCommand)) {
             throw new ParserException('Cannot use FLUSH inside a function, trigger or event.', $tokenList);
-        } elseif ($statement instanceof SignalCommand || $statement instanceof ResignalCommand
+        } elseif ($statement instanceof Query
+            || $statement instanceof SignalCommand || $statement instanceof ResignalCommand
             || $statement instanceof GetDiagnosticsCommand || $statement instanceof ShowWarningsCommand
             || $statement instanceof ShowErrorsCommand || $statement instanceof PreparedStatementCommand
             || $statement instanceof TransactionCommand || $statement instanceof EventCommand

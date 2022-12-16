@@ -13,9 +13,9 @@ use Dogma\ShouldNotHappenException;
 use SqlFtw\Resolver\Functions\Functions;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
+use SqlFtw\Sql\Dml\Query\QueryExpression;
 use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\Dml\Query\TableCommand;
-use SqlFtw\Sql\Dml\Query\UnionExpression;
 use SqlFtw\Sql\Dml\Query\ValuesCommand;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Expression\ArgumentValue;
@@ -480,7 +480,7 @@ class ExpressionResolver
             }
         } elseif ($query instanceof ParenthesizedQueryExpression) {
             // todo: possible with LIMIT 1, but have to resolve ORDER BY
-        } elseif ($query instanceof UnionExpression) {
+        } elseif ($query instanceof QueryExpression) {
             // todo: possible with LIMIT 1, but have to resolve ORDER BY
         } else {
             throw new ShouldNotHappenException('');

@@ -18,6 +18,7 @@ use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
+use SqlFtw\Sql\CommonTableExpressionType;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\EntityType;
@@ -109,8 +110,11 @@ class TokenList
     /** @var list<SubqueryType::*> Are we inside a subquery, and what type? */
     private array $inSubquery = [];
 
-    /** @var bool Are we inside a UNION expression? */
-    private bool $inUnion = false;
+    /** @var bool Are we inside a UNION|EXCEPT|INTERSECT expression? */
+    private bool $inQueryExpression = false;
+
+    /** @var CommonTableExpressionType::WITH*|null Are we inside a Common Table Expression? */
+    private ?string $inCommonTableExpression = null;
 
     /** @var bool Are we inside a prepared statement declaration? */
     private bool $inPrepared = false;
@@ -168,7 +172,7 @@ class TokenList
     }
 
     /**
-     * @param string&RoutineType::* $type
+     * @param RoutineType::* $type
      */
     public function startRoutine(string $type): void
     {
@@ -186,7 +190,7 @@ class TokenList
     }
 
     /**
-     * @param string&SubqueryType::* $type
+     * @param SubqueryType::* $type
      */
     public function startSubquery(string $type): void
     {
@@ -198,19 +202,45 @@ class TokenList
         array_pop($this->inSubquery);
     }
 
-    public function inUnion(): bool
+    public function inQueryExpression(): bool
     {
-        return $this->inUnion;
+        return $this->inQueryExpression;
     }
 
-    public function startUnion(): void
+    public function startQueryExpression(): void
     {
-        $this->inUnion = true;
+        $this->inQueryExpression = true;
     }
 
-    public function endUnion(): void
+    public function endQueryExpression(): void
     {
-        $this->inUnion = false;
+        $this->inQueryExpression = false;
+    }
+
+    /**
+     * @param CommonTableExpressionType::WITH*|null $type
+     * @return bool
+     */
+    public function inCommonTableExression(?string $type = null): bool
+    {
+        if ($type === null) {
+            return $this->inCommonTableExpression !== null;
+        } else {
+            return $this->inCommonTableExpression === $type;
+        }
+    }
+
+    /**
+     * @param CommonTableExpressionType::WITH* $type
+     */
+    public function startCommonTableExpression(string $type): void
+    {
+        $this->inCommonTableExpression = $type;
+    }
+
+    public function endCommonTableExpression(): void
+    {
+        $this->inCommonTableExpression = null;
     }
 
     public function inPrepared(): bool

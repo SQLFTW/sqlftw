@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
-class UnionType extends SqlEnum
+class QueryOperatorOption extends SqlEnum
 {
 
     public const DEFAULT = '';

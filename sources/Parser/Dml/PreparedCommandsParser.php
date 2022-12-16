@@ -18,6 +18,7 @@ use SqlFtw\Sql\Ddl\Routine\StoredProcedureCommand;
 use SqlFtw\Sql\Dml\Prepared\DeallocatePrepareCommand;
 use SqlFtw\Sql\Dml\Prepared\ExecuteCommand;
 use SqlFtw\Sql\Dml\Prepared\PrepareCommand;
+use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Routine\RoutineType;

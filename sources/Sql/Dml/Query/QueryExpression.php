@@ -19,14 +19,14 @@ use SqlFtw\Sql\Statement;
 use function array_values;
 use function count;
 
-class UnionExpression extends Statement implements Query
+class QueryExpression extends Statement implements Query
 {
 
     /** @var non-empty-list<Query> */
     private array $queries;
 
-    /** @var non-empty-list<UnionType> */
-    private array $types;
+    /** @var non-empty-list<QueryOperator> */
+    private array $operators;
 
     /** @var non-empty-list<OrderByExpression>|null */
     private ?array $orderBy;
@@ -44,7 +44,7 @@ class UnionExpression extends Statement implements Query
 
     /**
      * @param non-empty-list<Query> $queries
-     * @param non-empty-list<UnionType> $types
+     * @param non-empty-list<QueryOperator> $operators
      * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      * @param int|SimpleName|Placeholder|null $offset
@@ -52,7 +52,7 @@ class UnionExpression extends Statement implements Query
      */
     public function __construct(
         array $queries,
-        array $types,
+        array $operators,
         ?array $orderBy = null,
         $limit = null,
         $offset = null,
@@ -60,11 +60,11 @@ class UnionExpression extends Statement implements Query
         ?array $locking = null
     )
     {
-        if (count($queries) !== count($types) + 1) {
-            throw new InvalidDefinitionException('Count of queries must be exactly 1 higher then count of union types.');
+        if (count($queries) !== count($operators) + 1) {
+            throw new InvalidDefinitionException('Count of queries must be exactly 1 higher then count of query operators.');
         }
         $this->queries = array_values($queries);
-        $this->types = array_values($types);
+        $this->operators = array_values($operators);
         $this->orderBy = $orderBy;
         $this->limit = $limit;
         $this->offset = $offset;
@@ -81,11 +81,11 @@ class UnionExpression extends Statement implements Query
     }
 
     /**
-     * @return non-empty-list<UnionType>
+     * @return non-empty-list<QueryOperator>
      */
-    public function getTypes(): array
+    public function getOperators(): array
     {
-        return $this->types;
+        return $this->operators;
     }
 
     /**
@@ -170,8 +170,8 @@ class UnionExpression extends Statement implements Query
     {
         $result = $this->queries[0]->serialize($formatter);
 
-        foreach ($this->types as $i => $type) {
-            $result .= "\n\tUNION " . $type->serialize($formatter) . "\n" . $this->queries[$i + 1]->serialize($formatter);
+        foreach ($this->operators as $i => $operator) {
+            $result .= "\n\t" . $operator->serialize($formatter) . "\n" . $this->queries[$i + 1]->serialize($formatter);
         }
 
         if ($this->orderBy !== null) {

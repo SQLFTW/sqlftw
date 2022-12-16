@@ -15,7 +15,7 @@ use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 
 /**
- * Interface for SELECT, TABLE and VALUES commands, UnionExpression and ParenthesizedQueryExpression
+ * Interface for SELECT, TABLE and VALUES commands, QueryExpression (UNION|EXCEPT|INTERSECT) and ParenthesizedQueryExpression
  */
 interface Query extends DmlCommand
 {

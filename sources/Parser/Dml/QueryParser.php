@@ -17,10 +17,14 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\CommonTableExpressionType;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\Query\GroupByExpression;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
 use SqlFtw\Sql\Dml\Query\Query;
+use SqlFtw\Sql\Dml\Query\QueryExpression;
+use SqlFtw\Sql\Dml\Query\QueryOperator;
+use SqlFtw\Sql\Dml\Query\QueryOperatorType;
 use SqlFtw\Sql\Dml\Query\Row;
 use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\Dml\Query\SelectDistinctOption;
@@ -34,8 +38,7 @@ use SqlFtw\Sql\Dml\Query\SelectLockOption;
 use SqlFtw\Sql\Dml\Query\SelectLockWaitOption;
 use SqlFtw\Sql\Dml\Query\SelectOption;
 use SqlFtw\Sql\Dml\Query\TableCommand;
-use SqlFtw\Sql\Dml\Query\UnionExpression;
-use SqlFtw\Sql\Dml\Query\UnionType;
+use SqlFtw\Sql\Dml\Query\QueryOperatorOption;
 use SqlFtw\Sql\Dml\Query\ValuesCommand;
 use SqlFtw\Sql\Dml\Query\WindowFrame;
 use SqlFtw\Sql\Dml\Query\WindowFrameType;
@@ -101,6 +104,7 @@ class QueryParser
     {
         $tokenList->expectKeyword(Keyword::WITH);
         $recursive = $tokenList->hasKeyword(Keyword::RECURSIVE);
+        $tokenList->startCommonTableExpression($recursive ? CommonTableExpressionType::WITH_RECURSIVE : CommonTableExpressionType::WITH);
 
         $expressions = [];
         do {
@@ -123,6 +127,7 @@ class QueryParser
             $expressions[] = new WithExpression($query, $name, $columns);
         } while ($tokenList->hasSymbol(','));
 
+        $tokenList->endCommonTableExpression();
         $with = new WithClause($expressions, $recursive);
 
         if ($tokenList->hasSymbol('(')) {
@@ -155,10 +160,22 @@ class QueryParser
      *     [into_clause]
      *
      * query_expression:
-     *   query_block [UNION [ALL | DISTINCT] query_block [UNION [ALL | DISTINCT] query_block ...]]
-     *     [order_by_clause]
-     *     [limit_clause]
-     *     [into_clause]
+     *     [with_clause]
+     *     query_expression_body
+     *     [order_by_clause] [limit_clause] [into_clause]
+     *
+     * query_expression_body:
+     *      query_term
+     *   |  query_expression_body UNION [ALL | DISTINCT] query_term
+     *   |  query_expression_body EXCEPT [ALL | DISTINCT] query_term
+     *
+     * query_term:
+     *      query_primary
+     *   |  query_term INTERSECT [ALL | DISTINCT] query_block
+     *
+     * query_primary:
+     *      query_block
+     *   |  '(' query_expression_body [order_by_clause] [limit_clause] [into_clause] ')'
      *
      * query_bock:
      *     parenthesized_query_expression
@@ -171,22 +188,31 @@ class QueryParser
     public function parseQuery(TokenList $tokenList, ?WithClause $with = null): Query
     {
         $queries = [$this->parseQueryBlock($tokenList, $with)];
-        $types = [];
+        $operators = [];
 
-        $tokenList->startUnion();
-        while ($tokenList->hasKeyword(Keyword::UNION)) {
-            if ($tokenList->hasKeyword(Keyword::ALL)) {
-                $types[] = UnionType::get(UnionType::ALL);
-            } elseif ($tokenList->hasKeyword(Keyword::DISTINCT)) {
-                $types[] = UnionType::get(UnionType::DISTINCT);
-            } else {
-                $types[] = UnionType::get(UnionType::DEFAULT);
+        $operatorType = $tokenList->getKeywordEnum(QueryOperatorType::class);
+        if ($operatorType !== null) {
+            $tokenList->startQueryExpression();
+            if (!$operatorType->equalsValue(QueryOperatorType::UNION) && $tokenList->inCommonTableExression(CommonTableExpressionType::WITH_RECURSIVE)) {
+                // todo: exact behavior?
+                //throw new ParserException("Only UNION operator is allowed inside recursive common table expression.", $tokenList);
             }
-            $queries[] = $this->parseQueryBlock($tokenList);
         }
-        $tokenList->endUnion();
+        while ($operatorType !== null) {
+            if ($tokenList->hasKeyword(Keyword::ALL)) {
+                $operatorOption = QueryOperatorOption::get(QueryOperatorOption::ALL);
+            } elseif ($tokenList->hasKeyword(Keyword::DISTINCT)) {
+                $operatorOption = QueryOperatorOption::get(QueryOperatorOption::DISTINCT);
+            } else {
+                $operatorOption = QueryOperatorOption::get(QueryOperatorOption::DEFAULT);
+            }
+            $operators[] = new QueryOperator($operatorType, $operatorOption);
+            $queries[] = $this->parseQueryBlock($tokenList);
+            $operatorType = $tokenList->getKeywordEnum(QueryOperatorType::class);
+        }
+        $tokenList->endQueryExpression();
 
-        if (count($queries) === 1 || count($types) === 0) {
+        if (count($queries) === 1 || count($operators) === 0) {
             return $queries[0];
         }
 
@@ -202,7 +228,7 @@ class QueryParser
             $queryLocking = $lastQuery->getLocking();
             if ($queryLocking !== null) {
                 if ($locking !== null) {
-                    throw new ParserException("Duplicate INTO clause in last query and in UNION.", $tokenList);
+                    throw new ParserException("Duplicate INTO clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
                 } else {
                     $locking = $queryLocking;
                     $lastQuery = $lastQuery->removeLocking();
@@ -213,7 +239,7 @@ class QueryParser
         $queryOrderBy = $lastQuery->getOrderBy();
         if ($queryOrderBy !== null) {
             if ($orderBy !== null) {
-                throw new ParserException("Duplicate ORDER BY clause in last query and in UNION.", $tokenList);
+                throw new ParserException("Duplicate ORDER BY clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
             } else {
                 $orderBy = $queryOrderBy;
                 $lastQuery = $lastQuery->removeOrderBy();
@@ -223,7 +249,7 @@ class QueryParser
         $queryLimit = $lastQuery->getLimit();
         if ($queryLimit !== null) {
             if ($limit !== null) {
-                throw new ParserException("Duplicate LIMIT clause in last query and in UNION.", $tokenList);
+                throw new ParserException("Duplicate LIMIT clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
             } else {
                 $limit = $queryLimit;
                 $lastQuery = $lastQuery->removeLimit();
@@ -233,7 +259,7 @@ class QueryParser
         $queryOffset = $lastQuery instanceof ValuesCommand ? null : $lastQuery->getOffset();
         if ($queryOffset !== null) {
             if ($offset !== null) {
-                throw new ParserException("Duplicate LIMIT clause in last query and in UNION.", $tokenList);
+                throw new ParserException("Duplicate LIMIT clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
             } else {
                 $offset = $queryOffset;
                 $lastQuery = $lastQuery->removeOffset();
@@ -243,7 +269,7 @@ class QueryParser
         $queryInto = $lastQuery->getInto();
         if ($queryInto !== null) {
             if ($into !== null) {
-                throw new ParserException("Duplicate INTO clause in last query and in UNION.", $tokenList);
+                throw new ParserException("Duplicate INTO clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
             } else {
                 $into = $queryInto;
                 $lastQuery = $lastQuery->removeInto();
@@ -255,21 +281,22 @@ class QueryParser
         foreach ($queries as $i => $query) {
             if ($query instanceof SelectCommand) {
                 if ($query->getLocking() !== null) {
-                    throw new ParserException("Locking options are not allowed in UNION without parentheses around query.", $tokenList);
+                    throw new ParserException("Locking options are not allowed in UNION|EXCEPT|INTERSECT without parentheses around query.", $tokenList);
                 }
             }
             if ($query->getLimit() !== null) {
-                throw new ParserException("LIMIT not allowed in UNION without parentheses around query.", $tokenList);
+                throw new ParserException("LIMIT not allowed in UNION|EXCEPT|INTERSECT without parentheses around query.", $tokenList);
             }
             if ($query->getOrderBy() !== null) {
-                throw new ParserException("ORDER BY not allowed in UNION without parentheses around query.", $tokenList);
+                throw new ParserException("ORDER BY not allowed in UNION|EXCEPT|INTERSECT without parentheses around query.", $tokenList);
             }
             if ($query->getInto() !== null) {
-                throw new ParserException("INTO not allowed in UNION or subquery.", $tokenList);
+                throw new ParserException("INTO not allowed in UNION|EXCEPT|INTERSECT or subquery.", $tokenList);
             }
             if ($query instanceof ParenthesizedQueryExpression) {
-                if ($i !== 0 && $query->getQuery() instanceof UnionExpression) {
-                    throw new ParserException("Nested UNIONs are only allowed on left side.", $tokenList);
+                if ($i !== 0 && $query->getQuery() instanceof QueryExpression) {
+                    // todo: seems like a pre 8.0.31 limitation
+                    //throw new ParserException("Nested UNIONs are only allowed on left side.", $tokenList);
                 }
                 if ($query->containsInto()) {
                     throw new ParserException("INTO not allowed in UNION or subquery.", $tokenList);
@@ -277,7 +304,7 @@ class QueryParser
             }
         }
 
-        return new UnionExpression($queries, $types, $orderBy, $limit, $offset, $into, $locking);
+        return new QueryExpression($queries, $operators, $orderBy, $limit, $offset, $into, $locking);
     }
 
     /**
@@ -535,7 +562,7 @@ class QueryParser
 
         $locking = $this->parseLocking($tokenList);
 
-        if ($tokenList->inSubquery() === null && !($tokenList->inUnion() && $from !== null)) {
+        if ($tokenList->inSubquery() === null && !($tokenList->inQueryExpression() && $from !== null)) {
             if ($into === null && $tokenList->hasKeyword(Keyword::INTO)) {
                 $into = $this->parseInto($tokenList, $locking !== null ? SelectInto::POSITION_AFTER_LOCKING : SelectInto::POSITION_BEFORE_LOCKING);
             }
