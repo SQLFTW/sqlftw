@@ -17,7 +17,7 @@ on its own it can be used to validate syntax of SQL code (e.g. migrations)
 SQL syntax support:
 -------------------
 
-supports all SQL commands from MySQL 5.x to MySQL 8.0.29 and almost all language features
+supports all SQL commands from MySQL 5.x to MySQL 8.0.31 and almost all language features
 
 not supported features, that will fail to parse:
 - support for ascii-incompatible multibyte encodings like `shift-jis`, `gb18030` or `utf-16` (fails to parse)
