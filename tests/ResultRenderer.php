@@ -14,14 +14,19 @@ use SqlFtw\Sql\Command;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Tests\Mysql\MysqlTestJob;
 use SqlFtw\Tests\Mysql\Result;
+use function rd;
+use function rdf;
 use function rl;
 
 class ResultRenderer
 {
 
     private string $baseDir;
+
     private bool $singleThread;
+
     private bool $fullRun;
+
     private Formatter $formatter;
 
     public function __construct(string $baseDir, bool $singleThread, bool $fullRun, Formatter $formatter)
@@ -43,6 +48,7 @@ class ResultRenderer
         $falsePositives = [];
         $serialisationErrors = [];
         $usedExceptions = [];
+        $unusedExceptions = [];
         foreach ($results as $result) {
             $size += $result->size;
             $time += $result->time;
@@ -82,18 +88,18 @@ class ResultRenderer
 
         if ($falseNegatives !== []) {
             echo 'False negatives: ' . Colors::white((string) array_sum(array_map(static function ($a): int {
-                    return count($a);
-                }, $falseNegatives))) . "\n";
+                return count($a);
+			}, $falseNegatives))) . "\n";
         }
         if ($falsePositives !== []) {
             echo 'False positives: ' . Colors::white((string) array_sum(array_map(static function ($a): int {
-                    return count($a);
-                }, $falsePositives))) . "\n";
+                return count($a);
+			}, $falsePositives))) . "\n";
         }
         if ($serialisationErrors !== []) {
             echo 'Serialisation errors: ' . Colors::white((string) array_sum(array_map(static function ($a): int {
-                    return count($a);
-                }, $serialisationErrors))) . "\n";
+                return count($a);
+			}, $serialisationErrors))) . "\n";
         }
         if ($this->fullRun && $unusedExceptions !== []) {
             echo "Unused serialisation exceptions: " . Colors::white((string) count($unusedExceptions)) . "\n";

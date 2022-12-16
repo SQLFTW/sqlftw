@@ -20,6 +20,7 @@ fn
 fsp
 geostd
 getters
+gipk
 hexadec
 hwm
 iso
@@ -27,6 +28,7 @@ icu
 inv
 jis
 keybcs
+kdf
 mixin
 nul
 num
@@ -112,6 +114,8 @@ picoseconds
 # en
 acceptor
 analytics
+autocomplete
+backend
 backtick
 backtrace
 bitwise
@@ -140,8 +144,10 @@ preload
 preorder
 preparable
 pushdown
+refactor
 reindex
 reorganise
+renderer
 rewriter
 serializables
 skippable

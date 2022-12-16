@@ -30,7 +30,7 @@ class Session
 
     private string $delimiter;
 
-    private ?SqlMode $mode = null;
+    private SqlMode $mode;
 
     private ?string $schema = null;
 

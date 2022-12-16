@@ -9,5 +9,6 @@
         <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
         <exclude name="Generic.CodeAnalysis.EmptyStatement"/>
         <exclude name="SlevomatCodingStandard.ControlStructures.UselessIfConditionWithReturn.UselessIfCondition"/>
+        <exclude name="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall.MissingTrailingComma"/>
     </rule>
 </ruleset>

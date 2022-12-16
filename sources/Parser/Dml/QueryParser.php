@@ -24,6 +24,7 @@ use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Dml\Query\QueryExpression;
 use SqlFtw\Sql\Dml\Query\QueryOperator;
+use SqlFtw\Sql\Dml\Query\QueryOperatorOption;
 use SqlFtw\Sql\Dml\Query\QueryOperatorType;
 use SqlFtw\Sql\Dml\Query\Row;
 use SqlFtw\Sql\Dml\Query\SelectCommand;
@@ -38,7 +39,6 @@ use SqlFtw\Sql\Dml\Query\SelectLockOption;
 use SqlFtw\Sql\Dml\Query\SelectLockWaitOption;
 use SqlFtw\Sql\Dml\Query\SelectOption;
 use SqlFtw\Sql\Dml\Query\TableCommand;
-use SqlFtw\Sql\Dml\Query\QueryOperatorOption;
 use SqlFtw\Sql\Dml\Query\ValuesCommand;
 use SqlFtw\Sql\Dml\Query\WindowFrame;
 use SqlFtw\Sql\Dml\Query\WindowFrameType;
@@ -193,7 +193,7 @@ class QueryParser
         $operatorType = $tokenList->getKeywordEnum(QueryOperatorType::class);
         if ($operatorType !== null) {
             $tokenList->startQueryExpression();
-            if (!$operatorType->equalsValue(QueryOperatorType::UNION) && $tokenList->inCommonTableExression(CommonTableExpressionType::WITH_RECURSIVE)) {
+            if (!$operatorType->equalsValue(QueryOperatorType::UNION) && $tokenList->inCommonTableExpression(CommonTableExpressionType::WITH_RECURSIVE)) {
                 // todo: exact behavior?
                 //throw new ParserException("Only UNION operator is allowed inside recursive common table expression.", $tokenList);
             }

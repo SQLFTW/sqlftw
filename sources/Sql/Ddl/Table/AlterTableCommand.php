@@ -125,18 +125,16 @@ class AlterTableCommand extends Statement implements DdlTableCommand
 
         $result = rtrim($result, ',');
 
-        if ($this->alterOptions !== null) {
-            foreach ($this->alterOptions as $option => $value) {
-                if ($option === AlterTableOption::ONLINE) {
-                    continue;
-                } elseif ($option === AlterTableOption::FORCE) {
-                    $result .= "\n" . $formatter->indent . 'FORCE, ';
-                } elseif ($option === AlterTableOption::VALIDATION) {
-                    assert(is_bool($value));
-                    $result .= "\n" . $formatter->indent . ($value ? 'WITH' : 'WITHOUT') . ' VALIDATION, ';
-                } else {
-                    $result .= "\n" . $formatter->indent . $option . ' ' . $formatter->formatValue($value) . ',';
-                }
+        foreach ($this->alterOptions as $option => $value) {
+            if ($option === AlterTableOption::ONLINE) {
+                continue;
+            } elseif ($option === AlterTableOption::FORCE) {
+                $result .= "\n" . $formatter->indent . 'FORCE, ';
+            } elseif ($option === AlterTableOption::VALIDATION) {
+                assert(is_bool($value));
+                $result .= "\n" . $formatter->indent . ($value ? 'WITH' : 'WITHOUT') . ' VALIDATION, ';
+            } else {
+                $result .= "\n" . $formatter->indent . $option . ' ' . $formatter->formatValue($value) . ',';
             }
         }
 

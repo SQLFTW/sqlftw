@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-// spell-check-ignore: 7where abc autocommitted bb blabla cblob cenum cint cset cvarchar dat dbb dbc dbd defaulte denormal divoire dml ibd idx initfiledb3 innr1 innr2 innrcte jt latin2mysql latin2mysqlcollate maccecollate macromancollate masterreplicate mno modifyowner mtr mv mysqlttest1 nabc ncote nj nx outr1 outr2 outr3 outrcte pmax russian selecta spexecute11 spexecute64 t1values t2values t3values tcnt tde ucs2collate wp xfcller xffe xfff yextent youre zip1k zip2k zip4k zip8k
+// spell-check-ignore: 7where abc autocommitted bb blabla cblob cenum cint cset cvarchar dat dbb dbc dbd defaulte denormal divoire dml ibd idx initfiledb3 innr1 innr2 innrcte jt latin2mysql latin2mysqlcollate maccecollate macromancollate masterreplicate mno modifyowner mtr mv mysqlttest1 nabc ncote nj nx outr1 outr2 outr3 outrcte pmax russian selecta spexecute11 spexecute64 t1values t2values t3values tcnt tde ucs2collate wp xfcller xffe xfff yextent youre zip1k zip2k zip4k zip8k fffd
 
 namespace SqlFtw\Tests\Mysql;
 

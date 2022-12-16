@@ -31,17 +31,23 @@ use function system;
 
 class MysqlTest
 {
-    use TestSkips;
     use Tags;
+    use TestSkips;
+    use TestSuites;
 
-    private const MYSQL_REPO_LINK = 'git@github.com:mysql/mysql-server.git';
+    private const MYSQL_REPOSITORY_LINK = 'git@github.com:mysql/mysql-server.git';
     private const DEFAULT_TAG = 'mysql-8.0.31';
 
     public string $tempDir;
+
     public string $tempTestsDir;
+
     public string $mysqlRepoDir;
+
     public string $mysqlTestsDir;
+
     public string $lastFailPath;
+
     public string $currentTagPath;
 
     private bool $specificTests = false;
@@ -192,7 +198,6 @@ class MysqlTest
                             $paths[] = $path;
                         }
                     }
-
                 }
             }
         }
@@ -210,7 +215,7 @@ class MysqlTest
             file_put_contents($this->lastFailPath, '');
         }
 
-        return [$paths, $tests === ''];
+        return [$paths, $tests === ['']];
     }
 
     public function initMysqlRepo(): void
@@ -236,8 +241,8 @@ class MysqlTest
 
         // sparse checkout setup (~4.5 GB -> ~270 MB)
         // todo: there is still some space to optimize, because sparse checkout of branch '8.0' has only ~70 MB. tags suck
-        echo Colors::lyellow("git clone --depth 1 --filter=blob:none --sparse " . self::MYSQL_REPO_LINK) . "\n";
-        system("git clone --depth 1 --filter=blob:none --sparse " . self::MYSQL_REPO_LINK);
+        echo Colors::lyellow("git clone --depth 1 --filter=blob:none --sparse " . self::MYSQL_REPOSITORY_LINK) . "\n";
+        system("git clone --depth 1 --filter=blob:none --sparse " . self::MYSQL_REPOSITORY_LINK);
         chdir($this->mysqlRepoDir);
         exec("git config core.sparseCheckout true");
         exec("git config core.sparseCheckoutCone false");

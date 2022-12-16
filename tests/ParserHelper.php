@@ -19,6 +19,7 @@ class ParserHelper
 {
 
     /**
+     * @param Platform::*|null $platform
      * @param int|string|null $version
      */
     public static function getParserFactory(

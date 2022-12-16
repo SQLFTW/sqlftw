@@ -39,7 +39,7 @@ class QueryOperator implements SqlSerializable
     {
         $option = $this->option->serialize($formatter);
 
-        return $this->type->serialize($formatter) . ($option ? ' ' . $option : '');
+        return $this->type->serialize($formatter) . ($option !== '' ? ' ' . $option : '');
     }
 
 }

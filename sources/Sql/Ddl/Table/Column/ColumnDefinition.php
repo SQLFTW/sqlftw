@@ -21,7 +21,6 @@ use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\SqlSerializable;
 
 class ColumnDefinition implements TableItem
 {

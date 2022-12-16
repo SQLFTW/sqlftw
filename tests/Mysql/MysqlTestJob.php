@@ -28,7 +28,6 @@ use function file_get_contents;
 use function function_exists;
 use function getmypid;
 use function memory_get_peak_usage;
-use function memory_reset_peak_usage;
 use function microtime;
 use function str_replace;
 use function strlen;
@@ -44,7 +43,7 @@ class MysqlTestJob
     use IgnoredErrors;
     use KnownFailures;
     use TestReplacements;
-    use SeriaisationAliases;
+    use SerialisationAliases;
     use SerialisationExceptions;
 
     public int $count = 0;
@@ -67,7 +66,8 @@ class MysqlTestJob
     public function run(string $path, string $version, bool $singleThread, bool $fullRun, ResultRenderer $renderer): Result
     {
         if (function_exists('memory_reset_peak_usage')) {
-            memory_reset_peak_usage(); // 8.2
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly
+            \memory_reset_peak_usage(); // 8.2
         }
 
         $this->count++;
@@ -272,7 +272,7 @@ class MysqlTestJob
         sort($exceptions);
         sort($usedExceptions);
 
-        return array_diff($exceptions, $usedExceptions);
+        return array_values(array_diff($exceptions, $usedExceptions));
     }
 
 }

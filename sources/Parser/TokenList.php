@@ -99,7 +99,6 @@ class TokenList
     private bool $invalid;
 
     // parser state ----------------------------------------------------------------------------------------------------
-
     private int $autoSkip;
 
     private int $position = 0;
@@ -221,7 +220,7 @@ class TokenList
      * @param CommonTableExpressionType::WITH*|null $type
      * @return bool
      */
-    public function inCommonTableExression(?string $type = null): bool
+    public function inCommonTableExpression(?string $type = null): bool
     {
         if ($type === null) {
             return $this->inCommonTableExpression !== null;

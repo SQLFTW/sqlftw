@@ -4,7 +4,7 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-trait SeriaisationAliases
+trait SerialisationAliases
 {
 
     /** @var array<string, string> */

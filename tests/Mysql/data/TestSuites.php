@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+// spell-check-ignore: bitdata fts funcs iuds nogtid perfschema rr sysschema
+
 namespace SqlFtw\Tests\Mysql;
 
 trait TestSuites

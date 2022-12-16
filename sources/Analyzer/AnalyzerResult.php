@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Analyzer;
 
+use LogicException;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;
 use function spl_object_id;
@@ -24,7 +25,7 @@ class AnalyzerResult
 
     private ?Statement $statement = null;
 
-    private ?SqlMode $mode = null;
+    private ?SqlMode $mode;
 
     private int $severity;
 
@@ -75,16 +76,28 @@ class AnalyzerResult
 
     public function getRule(): AnalyzerRule
     {
+        if ($this->rule === null) {
+            throw new LogicException('Context has not been set.');
+        }
+
         return $this->rule;
     }
 
     public function getStatement(): Statement
     {
+        if ($this->statement === null) {
+            throw new LogicException('Context has not been set.');
+        }
+
         return $this->statement;
     }
 
     public function getMode(): SqlMode
     {
+        if ($this->mode === null) {
+            throw new LogicException('Context has not been set.');
+        }
+
         return $this->mode;
     }
 

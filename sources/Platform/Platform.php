@@ -18,6 +18,8 @@ use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
 use function assert;
+use function end;
+use function explode;
 use function in_array;
 use function is_string;
 use function ltrim;
@@ -82,6 +84,7 @@ class Platform
     /** @var array<string, self> ($version => $instance) */
     private static array $instances = [];
 
+    /** @var self::* */
     private string $name;
 
     private Version $version;

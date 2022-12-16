@@ -17,9 +17,9 @@ $singleThread = in_array('--single', $argv, true);
 
 $tests = $argv;
 unset($tests[0]);
-$tests = array_filter($tests, static function ($arg): bool {
+$tests = array_values(array_filter($tests, static function ($arg): bool {
     return $arg[0] !== '-';
-});
+}));
 
 $test = new MysqlTest();
 $test->run($singleThread, null, $tests);
