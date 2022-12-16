@@ -24,17 +24,20 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
 
     private ?int $buckets;
 
+    private ?string $data;
+
     private bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $tables
      * @param non-empty-list<string> $columns
      */
-    public function __construct(array $tables, array $columns, ?int $buckets = null, bool $local = false)
+    public function __construct(array $tables, array $columns, ?int $buckets = null, ?string $data = null, bool $local = false)
     {
         $this->tables = $tables;
         $this->columns = $columns;
         $this->buckets = $buckets;
+        $this->data = $data;
         $this->local = $local;
     }
 
@@ -59,6 +62,11 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
         return $this->buckets;
     }
 
+    public function getData(): ?string
+    {
+        return $this->data;
+    }
+
     public function isLocal(): bool
     {
         return $this->local;
@@ -74,6 +82,8 @@ class AnalyzeTableUpdateHistogramCommand extends Statement implements DalTablesC
             . ' UPDATE HISTOGRAM ON ' . $formatter->formatNamesList($this->columns);
         if ($this->buckets !== null) {
             $result .= ' WITH ' . $this->buckets . ' BUCKETS';
+        } elseif ($this->data !== null) {
+            $result .= ' USING DATA ' . $formatter->formatString($this->data);
         }
 
         return $result;

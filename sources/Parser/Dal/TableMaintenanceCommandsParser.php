@@ -31,7 +31,11 @@ class TableMaintenanceCommandsParser
      * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL]
      *     TABLE tbl_name
      *     UPDATE HISTOGRAM ON col_name [, col_name] ...
-     *     [WITH N BUCKETS]
+     *         [WITH N BUCKETS]
+     *
+     * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL]
+     *     TABLE tbl_name
+     *     UPDATE HISTOGRAM ON col_name [USING DATA 'json_data']
      *
      * ANALYZE [NO_WRITE_TO_BINLOG | LOCAL]
      *     TABLE tbl_name
@@ -49,7 +53,7 @@ class TableMaintenanceCommandsParser
             $tables[] = $tokenList->expectObjectIdentifier();
         } while ($tokenList->hasSymbol(','));
 
-        $columns = $buckets = null;
+        $columns = $buckets = $data = null;
         if ($tokenList->hasKeywords(Keyword::UPDATE, Keyword::HISTOGRAM, Keyword::ON)) {
             do {
                 $columns[] = $tokenList->expectName(EntityType::COLUMN);
@@ -58,9 +62,11 @@ class TableMaintenanceCommandsParser
             if ($tokenList->hasKeyword(Keyword::WITH)) {
                 $buckets = (int) $tokenList->expectUnsignedInt();
                 $tokenList->expectKeyword(Keyword::BUCKETS);
+            } elseif ($tokenList->hasKeywords(Keyword::USING, Keyword::DATA)) {
+                $data = $tokenList->expectString();
             }
 
-            return new AnalyzeTableUpdateHistogramCommand($tables, $columns, $buckets, $local);
+            return new AnalyzeTableUpdateHistogramCommand($tables, $columns, $buckets, $data, $local);
         } elseif ($tokenList->hasKeywords(Keyword::DROP, Keyword::HISTOGRAM, Keyword::ON)) {
             do {
                 $columns[] = $tokenList->expectName(EntityType::COLUMN);
