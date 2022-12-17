@@ -10,11 +10,10 @@
 namespace SqlFtw\Sql\Dml\Error;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
 
-class SignalCommand extends Statement implements Command
+class SignalCommand extends Statement implements ErrorHandlingCommand
 {
 
     /** @var SqlState|string|null */

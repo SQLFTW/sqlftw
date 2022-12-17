@@ -11,13 +11,12 @@ namespace SqlFtw\Sql\Dml\Error;
 
 use Dogma\ShouldNotHappenException;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 use SqlFtw\Util\TypeChecker;
 
-class GetDiagnosticsCommand extends Statement implements Command
+class GetDiagnosticsCommand extends Statement implements ErrorHandlingCommand
 {
 
     private ?DiagnosticsArea $area;
