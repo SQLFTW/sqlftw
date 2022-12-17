@@ -10,10 +10,9 @@
 namespace SqlFtw\Sql\Dal\Resource;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Statement;
 
-class DropResourceGroupCommand extends Statement implements DalCommand
+class DropResourceGroupCommand extends Statement implements ResourceGroupCommand
 {
 
     private string $name;

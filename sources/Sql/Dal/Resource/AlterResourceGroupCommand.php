@@ -10,13 +10,12 @@
 namespace SqlFtw\Sql\Dal\Resource;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Statement;
 use function array_map;
 use function count;
 use function implode;
 
-class AlterResourceGroupCommand extends Statement implements DalCommand
+class AlterResourceGroupCommand extends Statement implements ResourceGroupCommand
 {
 
     private string $name;
