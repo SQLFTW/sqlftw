@@ -31,6 +31,19 @@ class PrepareCommand extends Statement implements PreparedStatementCommand
         $this->statement = $statement;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return UserVariable|Statement
+     */
+    public function getStatement()
+    {
+        return $this->statement;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $statement = $this->statement->serialize($formatter);

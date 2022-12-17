@@ -30,6 +30,19 @@ class ExecuteCommand extends Statement implements PreparedStatementCommand
         $this->variables = $variables;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return non-empty-list<string>|null
+     */
+    public function getVariables(): ?array
+    {
+        return $this->variables;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'EXECUTE ' . $formatter->formatName($this->name);

@@ -29,6 +29,21 @@ class SetTransactionCommand extends Statement implements TransactionCommand
         $this->write = $write;
     }
 
+    public function getScope(): ?Scope
+    {
+        return $this->scope;
+    }
+
+    public function getIsolationLevel(): ?TransactionIsolationLevel
+    {
+        return $this->isolationLevel;
+    }
+
+    public function write(): ?bool
+    {
+        return $this->write;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'SET';

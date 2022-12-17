@@ -22,6 +22,11 @@ class DeallocatePrepareCommand extends Statement implements PreparedStatementCom
         $this->name = $name;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         return 'DEALLOCATE PREPARE ' . $formatter->formatName($this->name);

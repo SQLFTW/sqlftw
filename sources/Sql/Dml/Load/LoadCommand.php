@@ -78,6 +78,65 @@ abstract class LoadCommand extends Statement implements DmlCommand
 
     abstract protected function serializeFormat(Formatter $formatter): string;
 
+    public function getFile(): string
+    {
+        return $this->file;
+    }
+
+    public function getTable(): ObjectIdentifier
+    {
+        return $this->table;
+    }
+
+    public function getCharset(): ?Charset
+    {
+        return $this->charset;
+    }
+
+    /**
+     * @return non-empty-list<string>|null
+     */
+    public function getFields(): ?array
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @return non-empty-array<string, RootNode>|null ($column => $expression)
+     */
+    public function getSetters(): ?array
+    {
+        return $this->setters;
+    }
+
+    public function getIgnoreRows(): ?int
+    {
+        return $this->ignoreRows;
+    }
+
+    public function getPriority(): ?LoadPriority
+    {
+        return $this->priority;
+    }
+
+    public function local(): bool
+    {
+        return $this->local;
+    }
+
+    public function getDuplicateOption(): ?DuplicateOption
+    {
+        return $this->duplicateOption;
+    }
+
+    /**
+     * @return non-empty-list<string>|null
+     */
+    public function getPartitions(): ?array
+    {
+        return $this->partitions;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'LOAD ' . $this->getWhat();

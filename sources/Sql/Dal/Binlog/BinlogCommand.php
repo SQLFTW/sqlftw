@@ -23,6 +23,11 @@ class BinlogCommand extends Statement implements DalCommand
         $this->value = $value;
     }
 
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         return "BINLOG " . $formatter->formatString($this->value);

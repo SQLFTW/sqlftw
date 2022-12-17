@@ -30,6 +30,19 @@ class SetResourceGroupCommand extends Statement implements DalCommand
         $this->threadIds = $threadIds;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return non-empty-list<int>|null
+     */
+    public function getThreadIds(): ?array
+    {
+        return $this->threadIds;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = 'SET RESOURCE GROUP ' . $formatter->formatName($this->name);

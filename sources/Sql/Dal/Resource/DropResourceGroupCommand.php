@@ -26,6 +26,16 @@ class DropResourceGroupCommand extends Statement implements DalCommand
         $this->force = $force;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function force(): bool
+    {
+        return $this->force;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         return 'DROP RESOURCE GROUP ' . $formatter->formatName($this->name) . ($this->force ? ' FORCE' : '');

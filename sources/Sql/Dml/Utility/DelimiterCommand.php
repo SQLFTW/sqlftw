@@ -23,6 +23,11 @@ class DelimiterCommand extends Statement implements DmlCommand
         $this->newDelimiter = $newDelimiter;
     }
 
+    public function getNewDelimiter(): string
+    {
+        return $this->newDelimiter;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         return 'DELIMITER ' . $this->newDelimiter;
