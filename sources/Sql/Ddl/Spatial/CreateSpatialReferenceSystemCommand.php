@@ -7,13 +7,13 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Ddl\Server;
+namespace SqlFtw\Sql\Ddl\Spatial;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
 
-class CreateSpatialReferenceSystemCommand extends Statement implements ServerCommand
+class CreateSpatialReferenceSystemCommand extends Statement implements SpatialReferenceSystemCommand
 {
 
     private int $srid;
