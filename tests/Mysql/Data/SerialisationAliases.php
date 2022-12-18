@@ -2,7 +2,7 @@
 
 // spell-check-ignore: ahaha algo binaryblafasel2 binaryrpl blafasel2 joe wp
 
-namespace SqlFtw\Tests\Mysql;
+namespace SqlFtw\Tests\Mysql\Data;
 
 trait SerialisationAliases
 {

@@ -2,7 +2,7 @@
 
 // spell-check-ignore: charlength
 
-namespace SqlFtw\Tests\Mysql;
+namespace SqlFtw\Tests\Mysql\Data;
 
 trait TestSkips
 {

@@ -1,12 +1,12 @@
 <?php declare(strict_types = 1);
 
-namespace SqlFtw\Tests\Mysql;
+namespace SqlFtw\Tests\Mysql\Data;
 
-trait Tags
+trait VersionTags
 {
 
     /** @var list<string> */
-    private static $tags = [
+    private static array $tags = [
         'mysql-8.0.0',
         'mysql-8.0.1',
         'mysql-8.0.2',

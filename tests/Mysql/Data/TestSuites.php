@@ -2,13 +2,13 @@
 
 // spell-check-ignore: bitdata fts funcs iuds nogtid perfschema rr sysschema
 
-namespace SqlFtw\Tests\Mysql;
+namespace SqlFtw\Tests\Mysql\Data;
 
 trait TestSuites
 {
 
     /** @var list<string> */
-    private static $suites = [
+    private static array $suites = [
         't',
         'extra/binlog_tests',
         'extra/rpl_tests',

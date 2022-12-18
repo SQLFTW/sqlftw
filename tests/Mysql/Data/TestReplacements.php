@@ -2,7 +2,7 @@
 
 // spell-check-ignore: DET FC charbinary crc doesn storedproc usexxx xplugin
 
-namespace SqlFtw\Tests\Mysql;
+namespace SqlFtw\Tests\Mysql\Data;
 
 trait TestReplacements
 {

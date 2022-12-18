@@ -10,6 +10,9 @@ use SplFileInfo;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
+use SqlFtw\Tests\Mysql\Data\VersionTags;
+use SqlFtw\Tests\Mysql\Data\TestSkips;
+use SqlFtw\Tests\Mysql\Data\TestSuites;
 use SqlFtw\Tests\ResultRenderer;
 use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
@@ -31,7 +34,7 @@ use function system;
 
 class MysqlTest
 {
-    use Tags;
+    use VersionTags;
     use TestSkips;
     use TestSuites;
 
