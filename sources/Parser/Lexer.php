@@ -514,7 +514,7 @@ class Lexer
                                 $column += 3;
                                 break;
                             }
-                            $validOptional = preg_match('~^([Mm]?!(?:00000|[1-9]\d{4,5})?)(?:[^\d])~', substr($string, $position, 10), $m) === 1;
+                            $validOptional = preg_match('~^([Mm]?!(?:00000|[1-9]\d{4,5})?)\D~', substr($string, $position, 10), $m) === 1;
                             if ($validOptional) {
                                 $versionId = strtoupper(str_replace('!', '', $m[1]));
                                 if ($this->platform->interpretOptionalComment($versionId)) {
@@ -998,7 +998,7 @@ class Lexer
                          * The delimiter string can be specified as an unquoted or quoted argument on the delimiter command line.
                          * Quoting can be done with either single quote ('), double quote ("), or backtick (`) characters.
                          * To include a quote within a quoted string, either quote the string with a different quote character
-                         * or escape the quote with a backslash (\) character. Backslash should be avoided outside of quoted
+                         * or escape the quote with a backslash (\) character. Backslash should be avoided outside quoted
                          * strings because it is the escape character for MySQL. For an unquoted argument, the delimiter is read
                          * up to the first space or end of line. For a quoted argument, the delimiter is read up to the matching quote on the line.
                          */
@@ -1244,7 +1244,7 @@ class Lexer
 
         $orig = $base . $exp;
         $value = $base . str_replace(' ', '', strtolower($exp));
-        if (substr($orig, 0, 3) === '-- ') {
+        if (strpos($orig, '-- ') === 0) {
             return null;
         }
 
