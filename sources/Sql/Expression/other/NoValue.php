@@ -7,10 +7,9 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace Sql\Expression\other;
+namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ArgumentNode;
 
 /**
  * Value of named argument without a value

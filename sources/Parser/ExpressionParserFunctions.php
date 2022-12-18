@@ -12,7 +12,6 @@
 namespace SqlFtw\Parser;
 
 use LogicException;
-use Sql\Expression\other\NoValue;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
@@ -33,6 +32,7 @@ use SqlFtw\Sql\Expression\JsonTableNestedColumns;
 use SqlFtw\Sql\Expression\JsonTableOrdinalityColumn;
 use SqlFtw\Sql\Expression\JsonTablePathColumn;
 use SqlFtw\Sql\Expression\Literal;
+use SqlFtw\Sql\Expression\NoValue;
 use SqlFtw\Sql\Expression\NumericValue;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\OrderByListExpression;

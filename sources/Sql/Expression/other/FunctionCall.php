@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use Sql\Expression\other\NoValue;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\WindowSpecification;
 use SqlFtw\Sql\InvalidDefinitionException;
