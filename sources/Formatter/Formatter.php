@@ -162,7 +162,7 @@ class Formatter
             return $this->formatDateTime($value);
         }
 
-        throw new LogicException('Unknown type: ' . is_object($value) ? get_class($value) : gettype($value));
+        throw new LogicException('Unknown type: ' . (is_object($value) ? get_class($value) : gettype($value)));
     }
 
     /**

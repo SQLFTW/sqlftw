@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use LogicException;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParserFactory;

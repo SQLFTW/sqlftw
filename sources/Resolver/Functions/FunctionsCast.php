@@ -15,10 +15,7 @@ use SqlFtw\Resolver\UnresolvableException;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\CastType;
 use SqlFtw\Sql\Expression\Value;
-use function get_class;
-use function gettype;
 use function is_int;
-use function is_object;
 use function str_pad;
 use function substr;
 

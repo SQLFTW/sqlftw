@@ -11,8 +11,8 @@ namespace SqlFtw\Parser\Ddl;
 
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Sql\Ddl\Server\CreateSpatialReferenceSystemCommand;
-use SqlFtw\Sql\Ddl\Server\DropSpatialReferenceSystemCommand;
+use SqlFtw\Sql\Ddl\Spatial\CreateSpatialReferenceSystemCommand;
+use SqlFtw\Sql\Ddl\Spatial\DropSpatialReferenceSystemCommand;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 use function strlen;
