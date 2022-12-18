@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Event;
 
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\TimeInterval;
@@ -71,7 +71,7 @@ class EventSchedule implements SqlSerializable
         } elseif ($this->interval !== null) {
             $result = 'EVERY ' . substr($this->interval->serialize($formatter), 9); // strip "INTERVAL " from start
         } else {
-            throw new ShouldNotHappenException('Either time or interval must be set.');
+            throw new LogicException('Either time or interval must be set.');
         }
 
         if ($this->startTime !== null) {

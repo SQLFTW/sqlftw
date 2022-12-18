@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParserFactory;
@@ -144,7 +144,7 @@ class QueryParser
             case Keyword::DELETE:
                 return $this->parserFactory->getDeleteCommandParser()->parseDelete($tokenList->rewind(-1), $with);
             default:
-                throw new ShouldNotHappenException('');
+                throw new ParserException('Unexpected token after WITH clause - expected keyword SELECT, UPDATE, DELETE or "("', $tokenList);
         }
     }
 

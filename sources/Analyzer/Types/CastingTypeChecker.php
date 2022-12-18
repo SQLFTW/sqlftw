@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Analyzer\Types;
 
-use Dogma\ShouldNotHappenException;
 use LogicException;
 use SqlFtw\Resolver\Cast;
 use SqlFtw\Resolver\UncastableTypeException;
@@ -128,7 +127,7 @@ class CastingTypeChecker
                     if (class_exists($type) || interface_exists($type)) {
                         return $value instanceof $type;
                     } else {
-                        throw new ShouldNotHappenException("Unexpected type '$type' in CastingTypeChecker.");
+                        throw new LogicException("Unexpected type '$type' in CastingTypeChecker.");
                     }
             }
         } catch (UncastableTypeException $e) {

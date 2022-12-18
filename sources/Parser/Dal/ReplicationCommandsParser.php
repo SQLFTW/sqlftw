@@ -10,7 +10,7 @@
 namespace SqlFtw\Parser\Dal;
 
 use Dogma\Math\PowersOfTwo;
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidValueException;
 use SqlFtw\Parser\ParserException;
@@ -182,7 +182,7 @@ class ReplicationCommandsParser
                     $value = $tokenList->expectKeywordEnum(ReplicationPrimaryKeyCheckOption::class);
                     break;
                 default:
-                    throw new ShouldNotHappenException(is_string($type) ? "Unknown type $type." : "Unknown type.");
+                    throw new LogicException(is_string($type) ? "Unknown type $type." : "Unknown type.");
             }
             $options[$option] = $value;
         } while ($tokenList->hasSymbol(','));
@@ -317,7 +317,7 @@ class ReplicationCommandsParser
                     $value = $tokenList->expectKeywordEnum(ReplicationPrimaryKeyCheckOption::class);
                     break;
                 default:
-                    throw new ShouldNotHappenException(is_string($type) ? "Unknown type $type." : "Unknown type.");
+                    throw new LogicException(is_string($type) ? "Unknown type $type." : "Unknown type.");
             }
             $options[$option] = $value;
         } while ($tokenList->hasSymbol(','));

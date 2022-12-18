@@ -10,7 +10,7 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
@@ -61,7 +61,8 @@ class ReplicationFilter implements SqlSerializable
         if ($this->items === []) {
             return $this->type . ' = ()';
         } else {
-            switch (ReplicationFilterType::getItemType($this->type)) {
+            $itemsType = ReplicationFilterType::getItemType($this->type);
+            switch ($itemsType) {
                 case BaseType::CHAR . '[]':
                     /** @var non-empty-list<string> $items */
                     $items = $this->items;
@@ -81,7 +82,7 @@ class ReplicationFilter implements SqlSerializable
                         return '(' . $formatter->formatName($key) . ', ' . $formatter->formatName($value) . ')';
                     })) . ')';
                 default:
-                    throw new ShouldNotHappenException('');
+                    throw new LogicException("Unknown items type: {$itemsType}");
             }
         }
     }

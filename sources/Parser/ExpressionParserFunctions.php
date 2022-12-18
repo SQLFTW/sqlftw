@@ -11,7 +11,7 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use Sql\Expression\other\NoValue;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Charset;
@@ -160,7 +160,7 @@ trait ExpressionParserFunctions
                         $tokenList->rewind(-1);
                         continue 3;
                     default:
-                        throw new ShouldNotHappenException('Unsupported named parameter type.');
+                        throw new LogicException('Unsupported named parameter type.');
                 }
             }
 

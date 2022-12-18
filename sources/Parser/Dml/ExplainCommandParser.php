@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
@@ -149,7 +149,7 @@ class ExplainCommandParser
 
                 return new DescribeTableCommand($table, $column);
             default:
-                throw new ShouldNotHappenException('Dead branch.');
+                throw new LogicException('Unknown EXPLAIN command.');
         }
 
         return new ExplainStatementCommand($statement, $type);

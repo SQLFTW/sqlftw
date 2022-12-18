@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Resolver;
 
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Resolver\Functions\Functions;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Dml\Query\ParenthesizedQueryExpression;
@@ -60,6 +60,7 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use function call_user_func_array;
 use function count;
+use function get_class;
 use function is_array;
 use function is_bool;
 use function is_float;
@@ -360,7 +361,7 @@ class ExpressionResolver
                 case Operator::JSON_EXTRACT_UNQUOTE:
                     return $this->functions->_json_extract_unquote($left, $right);
                 default:
-                    throw new ShouldNotHappenException('');
+                    throw new LogicException("Unknown operator: {$operator->getValue()}.");
             }
         } elseif ($expression instanceof ComparisonOperator) {
             $quantifier = $expression->getQuantifier();
@@ -403,7 +404,7 @@ class ExpressionResolver
                 case Operator::NOT_LIKE:
                     return $this->functions->_not_like($left, $right); // @phpstan-ignore-line (dimensionality)
                 default:
-                    throw new ShouldNotHappenException('');
+                    throw new LogicException("Unknown operator {$operator->getValue()}.");
             }
         } elseif ($expression instanceof TernaryOperator) {
             /** @var scalar|Value|null $left */
@@ -427,7 +428,7 @@ class ExpressionResolver
                 case Operator::NOT_LIKE:
                     return $this->functions->_not_like($left, $middle, $right);
                 default:
-                    throw new ShouldNotHappenException('');
+                    throw new LogicException("Unknown operator {$operator->getValue()}.");
             }
         } elseif ($expression instanceof UnaryOperator) {
             /** @var scalar|Value|null $right */
@@ -448,10 +449,10 @@ class ExpressionResolver
                 case Operator::MINUS:
                     return $this->functions->_unary_minus($right);
                 default:
-                    throw new ShouldNotHappenException('');
+                    throw new LogicException("Unknown operator {$operator->getValue()}.");
             }
         } else {
-            throw new ShouldNotHappenException('');
+            throw new LogicException("Unknown operator expression type: " . get_class($expression));
         }
     }
 
@@ -483,7 +484,7 @@ class ExpressionResolver
         } elseif ($query instanceof QueryExpression) {
             // todo: possible with LIMIT 1, but have to resolve ORDER BY
         } else {
-            throw new ShouldNotHappenException('');
+            throw new LogicException("Unknown subquery type:" . get_class($query));
         }
 
         return $expression;

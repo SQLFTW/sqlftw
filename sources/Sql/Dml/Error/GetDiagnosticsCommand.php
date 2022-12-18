@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Error;
 
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -102,7 +102,7 @@ class GetDiagnosticsCommand extends Statement implements ErrorHandlingCommand
         } elseif ($this->conditionNumber !== null && $this->conditionItems !== null) {
             $result .= 'CONDITION ' . $this->conditionNumber->serialize($formatter) . ' ' . $formatter->formatSerializablesList($this->conditionItems);
         } else {
-            throw new ShouldNotHappenException('Either conditionItems or statementItems must be set.');
+            throw new LogicException('Either conditionItems or statementItems must be set.');
         }
 
         return $result;

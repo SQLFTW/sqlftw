@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Util;
 
-use Dogma\ShouldNotHappenException;
 use Dogma\Str;
+use LogicException;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function assert;
@@ -138,7 +138,7 @@ class TypeChecker
                 if (class_exists($type) || interface_exists($type)) {
                     return $value instanceof $type;
                 } else {
-                    throw new ShouldNotHappenException("Unexpected type '$type' in TypeChecker.");
+                    throw new LogicException("Unexpected type '$type' in TypeChecker.");
                 }
         }
     }

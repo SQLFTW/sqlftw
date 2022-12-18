@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 use SqlFtw\Sql\Ddl\Table\TableItem;
@@ -48,7 +48,7 @@ class ConstraintDefinition implements TableItem
     public function getIndexDefinition(): IndexDefinition
     {
         if (!$this->body instanceof IndexDefinition) {
-            throw new ShouldNotHappenException('Index definition expected.');
+            throw new LogicException('Index definition expected.');
         }
 
         return $this->body;
@@ -57,7 +57,7 @@ class ConstraintDefinition implements TableItem
     public function getForeignKeyDefinition(): ForeignKeyDefinition
     {
         if (!$this->body instanceof ForeignKeyDefinition) {
-            throw new ShouldNotHappenException('Foreign key definition expected.');
+            throw new LogicException('Foreign key definition expected.');
         }
 
         return $this->body;
@@ -66,7 +66,7 @@ class ConstraintDefinition implements TableItem
     public function getCheckDefinition(): CheckDefinition
     {
         if (!$this->body instanceof CheckDefinition) {
-            throw new ShouldNotHappenException('Check definition expected.');
+            throw new LogicException('Check definition expected.');
         }
 
         return $this->body;

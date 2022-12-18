@@ -11,7 +11,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
-use Dogma\ShouldNotHappenException;
+use LogicException;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Dal\Show\ShowBinaryLogsCommand;
@@ -276,7 +276,7 @@ class ShowCommandsParser
                 // SHOW WARNINGS [LIMIT [offset,] row_count]
                 return $this->parseShowWarnings($tokenList);
             default:
-                throw new ShouldNotHappenException('');
+                throw new LogicException('Unknown SHOW command.');
         }
     }
 
@@ -409,7 +409,7 @@ class ShowCommandsParser
                 // SHOW CREATE VIEW view_name
                 return new ShowCreateViewCommand($tokenList->expectObjectIdentifier());
             default:
-                throw new ShouldNotHappenException('');
+                throw new LogicException('Unknown SHOW CREATE command.');
         }
     }
 

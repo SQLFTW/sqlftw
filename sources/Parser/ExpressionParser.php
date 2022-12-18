@@ -12,8 +12,8 @@
 namespace SqlFtw\Parser;
 
 use Dogma\Re;
-use Dogma\ShouldNotHappenException;
 use Dogma\Time\DateTime;
+use LogicException;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
@@ -933,7 +933,7 @@ class ExpressionParser
         } elseif (($token->type & TokenType::SYMBOL) !== 0 && $token->value === '\\N') {
             return new NullLiteral();
         } else {
-            throw new ShouldNotHappenException("Unknown token '$token->value' of type $token->type.");
+            throw new LogicException("Unknown token '$token->value' of type $token->type.");
         }
     }
 
