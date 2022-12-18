@@ -179,7 +179,7 @@ class TransactionCommandsParser
         $tokenList->expectKeyword(Keyword::SET);
 
         if ($tokenList->hasKeyword(Keyword::LOCAL)) {
-            $scope = Scope::get(Scope::SESSION);
+            $scope = new Scope(Scope::SESSION);
         } else {
             $scope = $tokenList->getKeywordEnum(Scope::class);
         }

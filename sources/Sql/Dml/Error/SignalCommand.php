@@ -29,7 +29,7 @@ class SignalCommand extends Statement implements ErrorHandlingCommand
     public function __construct($condition, array $items)
     {
         foreach ($items as $key => $value) {
-            ConditionInformationItem::get($key);
+            ConditionInformationItem::checkValue($key);
         }
         $this->condition = $condition;
         $this->items = $items;

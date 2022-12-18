@@ -89,13 +89,13 @@ class ExplainCommandParser
                     $tokenList->expectSymbol('=');
                     $tokenList->expectName(null, 'TREE');
                 }
-                $type = ExplainType::get(ExplainType::ANALYZE);
+                $type = new ExplainType(ExplainType::ANALYZE);
             } elseif ($type === Keyword::FORMAT) {
                 $tokenList->expectOperator(Operator::EQUAL);
                 $format = strtoupper($tokenList->expectAnyName(Keyword::TRADITIONAL, Keyword::JSON, 'TREE'));
-                $type = ExplainType::get($type . '=' . $format);
+                $type = new ExplainType($type . '=' . $format);
             } else {
-                $type = ExplainType::get($type);
+                $type = new ExplainType($type);
             }
         }
 

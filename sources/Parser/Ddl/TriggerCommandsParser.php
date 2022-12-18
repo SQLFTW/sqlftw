@@ -73,7 +73,7 @@ class TriggerCommandsParser
         $order = $tokenList->getAnyKeyword(Keyword::FOLLOWS, Keyword::PRECEDES);
         $triggerPosition = null;
         if ($order !== null) {
-            $order = TriggerOrder::get($order);
+            $order = new TriggerOrder($order);
             $otherTrigger = $tokenList->expectName(EntityType::TRIGGER);
             $triggerPosition = new TriggerPosition($order, $otherTrigger);
         }

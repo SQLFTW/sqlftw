@@ -140,7 +140,7 @@ class ViewCommandsParser
 
         $option = $tokenList->getAnyKeyword(Keyword::RESTRICT, Keyword::CASCADE);
         if ($option !== null) {
-            $option = DropViewOption::get($option);
+            $option = new DropViewOption($option);
         }
 
         return new DropViewCommand($names, $ifExists, $option);

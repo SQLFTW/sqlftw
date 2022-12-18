@@ -60,7 +60,7 @@ class FlushCommand extends Statement implements DalCommand
             $result .= 'LOCAL ';
         }
         $result .= implode(', ', array_map(function (FlushOption $option) use ($formatter) {
-            if ($this->channel !== null && $option->equalsAny(FlushOption::RELAY_LOGS)) {
+            if ($this->channel !== null && $option->equalsAnyValue(FlushOption::RELAY_LOGS)) {
                 return $option->serialize($formatter) . ' FOR CHANNEL ' . $formatter->formatString($this->channel);
             } else {
                 return $option->serialize($formatter);

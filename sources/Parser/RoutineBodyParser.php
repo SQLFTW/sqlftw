@@ -537,13 +537,13 @@ class RoutineBodyParser
             do {
                 $value = null;
                 if ($tokenList->hasKeywords(Keyword::NOT, Keyword::FOUND)) {
-                    $type = ConditionType::get(ConditionType::NOT_FOUND);
+                    $type = new ConditionType(ConditionType::NOT_FOUND);
                 } elseif ($tokenList->hasKeyword(Keyword::SQLEXCEPTION)) {
-                    $type = ConditionType::get(ConditionType::SQL_EXCEPTION);
+                    $type = new ConditionType(ConditionType::SQL_EXCEPTION);
                 } elseif ($tokenList->hasKeyword(Keyword::SQLWARNING)) {
-                    $type = ConditionType::get(ConditionType::SQL_WARNING);
+                    $type = new ConditionType(ConditionType::SQL_WARNING);
                 } elseif ($tokenList->hasKeyword(Keyword::SQLSTATE)) {
-                    $type = ConditionType::get(ConditionType::SQL_STATE);
+                    $type = new ConditionType(ConditionType::SQL_STATE);
                     $tokenList->passKeyword(Keyword::VALUE);
                     $value = $tokenList->expectSqlState();
                     if ($value->getCategory()->equalsValue(SqlStateCategory::SUCCESS)) {
@@ -552,13 +552,13 @@ class RoutineBodyParser
                 } else {
                     $value = $tokenList->getNonReservedName(null);
                     if ($value !== null) {
-                        $type = ConditionType::get(ConditionType::CONDITION);
+                        $type = new ConditionType(ConditionType::CONDITION);
                     } else {
                         $value = (int) $tokenList->expectUnsignedInt();
                         if ($value === 0) {
                             throw new ParserException('Condition value must be greater than 0.', $tokenList);
                         }
-                        $type = ConditionType::get(ConditionType::ERROR);
+                        $type = new ConditionType(ConditionType::ERROR);
                     }
                 }
                 $conditions[] = new Condition($type, $value);

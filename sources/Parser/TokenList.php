@@ -44,7 +44,6 @@ use SqlFtw\Sql\UserName;
 use function array_pop;
 use function array_slice;
 use function array_values;
-use function call_user_func;
 use function count;
 use function end;
 use function explode;
@@ -846,8 +845,8 @@ class TokenList
         $charset = null;
         if (($token->type & T::UNQUOTED_NAME) !== 0) {
             $charset = substr(strtolower($token->value), 1);
-            if ($token->value[0] === '_' && Charset::isValid($charset)) {
-                $charset = Charset::get($charset);
+            if ($token->value[0] === '_' && Charset::isValidValue($charset)) {
+                $charset = new Charset($charset);
                 $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
             } else {
                 $charset = null;
@@ -889,8 +888,8 @@ class TokenList
                 $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
             } else {
                 $lower = substr($lower, 1);
-                if ($token->value[0] === '_' && Charset::isValid($lower)) {
-                    $charset = Charset::get($lower);
+                if ($token->value[0] === '_' && Charset::isValidValue($lower)) {
+                    $charset = new Charset($lower);
                     $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
                 } else {
                     $this->position = $position;
@@ -969,13 +968,13 @@ class TokenList
 
         try {
             /** @var T $enum */
-            $enum = call_user_func([$className, 'get'], $value);
+            $enum = new $className($value);
 
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
             /** @var list<string> $values */
-            $values = call_user_func([$className, 'getAllowedValues']);
+            $values = $className::getAllowedValues();
 
             throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
         }
@@ -993,7 +992,7 @@ class TokenList
         }
         $start = $this->position;
         /** @var list<string> $values */
-        $values = call_user_func([$className, 'getAllowedValues']);
+        $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
             $keywords = explode(' ', $value);
@@ -1004,7 +1003,7 @@ class TokenList
             }
 
             /** @var T $enum */
-            $enum = call_user_func([$className, 'get'], $value);
+            $enum = new $className($value);
 
             return $enum;
         }
@@ -1022,7 +1021,7 @@ class TokenList
     {
         $start = $this->position;
         /** @var array<string, string> $values */
-        $values = call_user_func([$className, 'getAllowedValues']);
+        $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
             $keywords = explode(' ', $value);
@@ -1033,7 +1032,7 @@ class TokenList
             }
 
             /** @var T $enum */
-            $enum = call_user_func([$className, 'get'], $value);
+            $enum = new $className($value);
 
             return $enum;
         }
@@ -1170,7 +1169,7 @@ class TokenList
         if ($entity === EntityType::TABLE || $entity === EntityType::SCHEMA) {
             // might return an int collation id on unknown collations
             $collationName = $this->session->getSessionVariable(MysqlVariable::COLLATION_CONNECTION);
-            $collation = Collation::tryGet(is_scalar($collationName) ? $collationName : null);
+            $collation = Collation::tryCreate(is_scalar($collationName) ? $collationName : null);
             if ($collation !== null) {
                 $charset = $collation->getCharsetName();
                 if (Encoding::canCheck($charset) && !Encoding::check($name, $charset)) {
@@ -1354,10 +1353,10 @@ class TokenList
     public function expectKeywordEnum(string $className): SqlEnum
     {
         /** @var array<string, string> $values */
-        $values = call_user_func([$className, 'getAllowedValues']);
+        $values = $className::getAllowedValues();
 
         /** @var T $enum */
-        $enum = call_user_func([$className, 'get'], $this->expectAnyKeyword(...array_values($values)));
+        $enum = new $className($this->expectAnyKeyword(...array_values($values)));
 
         return $enum;
     }
@@ -1370,14 +1369,14 @@ class TokenList
     public function getKeywordEnum(string $className): ?SqlEnum
     {
         /** @var array<string, string> $values */
-        $values = call_user_func([$className, 'getAllowedValues']);
+        $values = $className::getAllowedValues();
         $token = $this->getAnyKeyword(...array_values($values));
         if ($token === null) {
             return null;
         }
 
         /** @var T $enum */
-        $enum = call_user_func([$className, 'get'], $token);
+        $enum = new $className($token);
 
         return $enum;
     }
@@ -1394,7 +1393,7 @@ class TokenList
         }
         $start = $this->position;
         /** @var list<string> $values */
-        $values = call_user_func([$className, 'getAllowedValues']);
+        $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
             $keywords = explode(' ', $value);
@@ -1405,7 +1404,7 @@ class TokenList
             }
 
             /** @var T $enum */
-            $enum = call_user_func([$className, 'get'], $value);
+            $enum = new $className($value);
 
             return $enum;
         }
@@ -1423,7 +1422,7 @@ class TokenList
     {
         $start = $this->position;
         /** @var array<string, string> $values */
-        $values = call_user_func([$className, 'getAllowedValues']);
+        $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
             $keywords = explode(' ', $value);
@@ -1434,7 +1433,7 @@ class TokenList
             }
 
             /** @var T $enum */
-            $enum = call_user_func([$className, 'get'], $value);
+            $enum = new $className($value);
 
             return $enum;
         }
@@ -1517,9 +1516,9 @@ class TokenList
     public function expectCharsetName(): Charset
     {
         if ($this->hasKeyword(Keyword::BINARY)) {
-            return Charset::get(Charset::BINARY);
+            return new Charset(Charset::BINARY);
         } elseif ($this->hasKeyword(Keyword::ASCII)) {
-            return Charset::get(Charset::ASCII);
+            return new Charset(Charset::ASCII);
         } else {
             $charset = $this->getString();
             if ($charset === null) {
@@ -1531,14 +1530,14 @@ class TokenList
                 throw InvalidTokenException::tokens(T::STRING | T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
             }
 
-            return Charset::get($charset);
+            return new Charset($charset);
         }
     }
 
     public function expectCollationName(): Collation
     {
         if ($this->hasKeyword(Keyword::BINARY)) {
-            return Collation::get(Collation::BINARY);
+            return new Collation(Collation::BINARY);
         } else {
             return $this->expectNameOrStringEnum(Collation::class);
         }
@@ -1547,7 +1546,7 @@ class TokenList
     public function getCollationName(): ?Collation
     {
         if ($this->hasKeyword(Keyword::BINARY)) {
-            return Collation::get(Collation::BINARY);
+            return new Collation(Collation::BINARY);
         } else {
             $position = $this->position;
             $value = $this->getNonReservedNameOrString();
@@ -1561,7 +1560,7 @@ class TokenList
                 return null;
             }
 
-            return Collation::get($value);
+            return new Collation($value);
         }
     }
 

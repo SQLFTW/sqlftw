@@ -67,7 +67,7 @@ class TableOptionsList
                 TypeChecker::check($value, ObjectIdentifier::class . '[]');
                 $this->options[$option] = $value;
             } else {
-                if (!TableOption::isValid($option)) {
+                if (!TableOption::isValidValue($option)) {
                     throw new InvalidDefinitionException("Invalid table option '$option'.");
                 }
                 TypeChecker::check($value, $types[$option]);
@@ -93,7 +93,7 @@ class TableOptionsList
      */
     public function get(string $option)
     {
-        if (!TableOption::isValid($option)) {
+        if (!TableOption::isValidValue($option)) {
             throw new InvalidDefinitionException("Invalid table option '$option'.");
         }
 
@@ -106,7 +106,7 @@ class TableOptionsList
      */
     public function set(string $option, $value): void
     {
-        if (!TableOption::isValid($option)) {
+        if (!TableOption::isValidValue($option)) {
             throw new InvalidDefinitionException("Invalid table option '$option'.");
         }
         TypeChecker::check($value, TableOption::getTypes()[$option], $option);
@@ -120,7 +120,7 @@ class TableOptionsList
      */
     public function setDefault(string $option, $value): void
     {
-        if (!TableOption::isValid($option)) {
+        if (!TableOption::isValidValue($option)) {
             throw new InvalidDefinitionException("Invalid table option '$option'.");
         }
         $types = TableOption::getTypes();

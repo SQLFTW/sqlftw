@@ -82,14 +82,14 @@ class IndexCommandsParser
             if ($keyword === Keyword::ALGORITHM) {
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    $alterAlgorithm = AlterTableAlgorithm::get(AlterTableAlgorithm::DEFAULT);
+                    $alterAlgorithm = new AlterTableAlgorithm(AlterTableAlgorithm::DEFAULT);
                 } else {
                     $alterAlgorithm = $tokenList->expectNameOrStringEnum(AlterTableAlgorithm::class);
                 }
             } elseif ($keyword === Keyword::LOCK) {
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    $alterLock = AlterTableLock::get(AlterTableLock::DEFAULT);
+                    $alterLock = new AlterTableLock(AlterTableLock::DEFAULT);
                 } else {
                     $alterLock = $tokenList->expectNameOrStringEnum(AlterTableLock::class);
                 }
@@ -103,11 +103,11 @@ class IndexCommandsParser
     {
         $keyword = $tokenList->getAnyKeyword(Keyword::UNIQUE, Keyword::FULLTEXT, Keyword::SPATIAL);
         if ($keyword === Keyword::UNIQUE) {
-            $type = IndexType::get($keyword . ' INDEX');
+            $type = new IndexType($keyword . ' INDEX');
         } elseif ($keyword !== null) {
-            $type = IndexType::get($keyword . ' INDEX');
+            $type = new IndexType($keyword . ' INDEX');
         } else {
-            $type = IndexType::get(IndexType::INDEX);
+            $type = new IndexType(IndexType::INDEX);
         }
         $isFulltext = $type->equalsValue(IndexType::FULLTEXT);
         $isSpatial = $type->equalsValue(IndexType::SPATIAL);
@@ -262,7 +262,7 @@ class IndexCommandsParser
         if ($tokenList->hasKeyword(Keyword::ALGORITHM)) {
             $tokenList->passSymbol('=');
             if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $algorithm = AlterTableAlgorithm::get(AlterTableAlgorithm::DEFAULT);
+                $algorithm = new AlterTableAlgorithm(AlterTableAlgorithm::DEFAULT);
             } else {
                 $algorithm = $tokenList->expectNameOrStringEnum(AlterTableAlgorithm::class);
             }
@@ -271,7 +271,7 @@ class IndexCommandsParser
         if ($tokenList->hasKeyword(Keyword::LOCK)) {
             $tokenList->passSymbol('=');
             if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                $lock = AlterTableLock::get(AlterTableLock::DEFAULT);
+                $lock = new AlterTableLock(AlterTableLock::DEFAULT);
             } else {
                 $lock = $tokenList->expectNameOrStringEnum(AlterTableLock::class);
             }

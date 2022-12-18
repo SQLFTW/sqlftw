@@ -35,7 +35,7 @@ class AlterUserDefaultRoleCommand extends Statement implements UserCommand
      */
     public function __construct(SqlSerializable $user, RolesSpecification $role, bool $ifExists = false)
     {
-        if ($role->getType()->equalsAny(RolesSpecificationType::DEFAULT, RolesSpecificationType::ALL_EXCEPT)) {
+        if ($role->getType()->equalsAnyValue(RolesSpecificationType::DEFAULT, RolesSpecificationType::ALL_EXCEPT)) {
             throw new InvalidDefinitionException('Role specification for ALTER USER DEFAULT ROLE cannot be DEFAULT or ALL EXCEPT.');
         }
 

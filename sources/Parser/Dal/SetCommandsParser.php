@@ -130,7 +130,7 @@ class SetCommandsParser
             $variable = $tokenList->getName(null);
         }
         if ($variable !== null) {
-            $variable = MysqlVariable::get($variable);
+            $variable = new MysqlVariable($variable);
         }
 
         return new ResetPersistCommand($variable, $ifExists);
@@ -148,7 +148,7 @@ class SetCommandsParser
         $current = false;
         do {
             if ($tokenList->hasKeyword(Keyword::LOCAL)) {
-                $lastKeywordScope = Scope::get(Scope::SESSION);
+                $lastKeywordScope = new Scope(Scope::SESSION);
                 $current = true;
             } else {
                 $s = $tokenList->getKeywordEnum(Scope::class);
@@ -175,7 +175,7 @@ class SetCommandsParser
                     $fullName = $name . '.' . $name2;
                     if (MysqlVariable::validateValue($fullName)) {
                         // plugin system variable without explicit scope
-                        $scope = $lastKeywordScope ?? Scope::get(Scope::SESSION);
+                        $scope = $lastKeywordScope ?? new Scope(Scope::SESSION);
                         $variable = $this->expressionParser->createSystemVariable($tokenList, $fullName, $scope, true);
                     } else {
                         // NEW.foo etc.
@@ -183,14 +183,14 @@ class SetCommandsParser
                     }
                 } elseif (!$session->isLocalVariable($name) && MysqlVariable::validateValue($name)) {
                     // system variable without explicit scope
-                    $scope = $lastKeywordScope ?? Scope::get(Scope::SESSION);
+                    $scope = $lastKeywordScope ?? new Scope(Scope::SESSION);
                     $variable = $this->expressionParser->createSystemVariable($tokenList, $name, $scope, true);
                 } elseif ($tokenList->inRoutine() !== null) {
                     // local variable
                     $variable = new SimpleName($name);
                 } else {
                     // throws
-                    $this->expressionParser->createSystemVariable($tokenList, $name, Scope::get(Scope::SESSION), true);
+                    $this->expressionParser->createSystemVariable($tokenList, $name, new Scope(Scope::SESSION), true);
                     exit;
                 }
             }

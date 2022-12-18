@@ -249,7 +249,7 @@ class SessionUpdater
             if (is_int($value)) {
                 $charset = Charset::getById($value);
             } else {
-                $charset = Charset::get($value);
+                $charset = new Charset($value);
             }
 
             if ($collationVariable !== null) {
@@ -289,7 +289,7 @@ class SessionUpdater
             if (is_int($value)) {
                 $collation = Collation::getById($value);
             } else {
-                $collation = Collation::get($value);
+                $collation = new Collation($value);
             }
 
             if ($charsetVariable !== null) {

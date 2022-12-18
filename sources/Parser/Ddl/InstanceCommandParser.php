@@ -62,7 +62,7 @@ class InstanceCommandParser
             $tokenList->expectName(null, 'INNODB');
             $tokenList->expectKeywords(Keyword::MASTER, Keyword::KEY);
 
-            return new AlterInstanceCommand(AlterInstanceAction::get(AlterInstanceAction::ROTATE_INNODB_MASTER_KEY));
+            return new AlterInstanceCommand(new AlterInstanceAction(AlterInstanceAction::ROTATE_INNODB_MASTER_KEY));
         } else {
             throw new InvalidVersionException('ALTER INSTANCE is implemented since 5.7', $tokenList);
         }

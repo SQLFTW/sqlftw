@@ -149,11 +149,11 @@ class ExpressionParser
         if ($operator === Operator::NOT) {
             $expr = $this->parseExpression($tokenList);
 
-            return new UnaryOperator(Operator::get(Operator::NOT), $expr);
+            return new UnaryOperator(new Operator(Operator::NOT), $expr);
         } elseif ($operator === Operator::EXCLAMATION) {
             $expr = $this->parseExpression($tokenList);
 
-            return new UnaryOperator(Operator::get(Operator::EXCLAMATION), $expr);
+            return new UnaryOperator(new Operator(Operator::EXCLAMATION), $expr);
         }
 
         $left = $this->parseBooleanPrimary($tokenList);
@@ -166,7 +166,7 @@ class ExpressionParser
         if ($operator !== null) {
             $right = $this->parseExpression($tokenList);
 
-            return new BinaryOperator($left, Operator::get($operator), $right);
+            return new BinaryOperator($left, new Operator($operator), $right);
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
             $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
@@ -184,7 +184,7 @@ class ExpressionParser
                     $right = new UnknownLiteral();
                     break;
             }
-            $operator = Operator::get($not ? Operator::IS_NOT : Operator::IS);
+            $operator = new Operator($not ? Operator::IS_NOT : Operator::IS);
 
             return new BinaryOperator($left, $operator, $right);
         } else {
@@ -234,7 +234,7 @@ class ExpressionParser
             if ($operator === Operator::SAFE_EQUAL) {
                 $right = $this->parseBooleanPrimary($tokenList);
 
-                return new ComparisonOperator($left, Operator::get($operator), null, $right);
+                return new ComparisonOperator($left, new Operator($operator), null, $right);
             }
             /** @var 'ALL'|'ANY'|'SOME'|null $quantifier */
             $quantifier = $tokenList->getAnyKeyword(Keyword::ALL, Keyword::ANY, Keyword::SOME);
@@ -245,11 +245,11 @@ class ExpressionParser
                 $tokenList->endSubquery();
                 $tokenList->expectSymbol(')');
 
-                return new ComparisonOperator($left, Operator::get($operator), $quantifier, $subquery);
+                return new ComparisonOperator($left, new Operator($operator), $quantifier, $subquery);
             } else {
                 $right = $this->parseBooleanPrimary($tokenList);
 
-                return new ComparisonOperator($left, Operator::get($operator), null, $right);
+                return new ComparisonOperator($left, new Operator($operator), null, $right);
             }
         }
 
@@ -270,7 +270,7 @@ class ExpressionParser
                     $right = new UnknownLiteral();
                     break;
             }
-            $operator = Operator::get($not ? Operator::IS_NOT : Operator::IS);
+            $operator = new Operator($not ? Operator::IS_NOT : Operator::IS);
 
             $left = new BinaryOperator($left, $operator, $right);
         }
@@ -319,13 +319,13 @@ class ExpressionParser
                     $subquery = $this->parseSubquery($tokenList->rewind(-1));
                     $tokenList->endSubquery();
                     $tokenList->expectSymbol(')');
-                    $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
+                    $operator = new Operator($not ? Operator::NOT_IN : Operator::IN);
 
                     return new ComparisonOperator($left, $operator, null, $subquery);
                 } else {
                     $expressions = new Parentheses(new ListExpression($this->parseExpressionList($tokenList)));
                     $tokenList->expectSymbol(')');
-                    $operator = Operator::get($not ? Operator::NOT_IN : Operator::IN);
+                    $operator = new Operator($not ? Operator::NOT_IN : Operator::IN);
 
                     return new ComparisonOperator($left, $operator, null, $expressions);
                 }
@@ -333,41 +333,41 @@ class ExpressionParser
                 $middle = $this->parseBitExpression($tokenList);
                 $tokenList->expectKeyword(Keyword::AND);
                 $right = $this->parsePredicate($tokenList);
-                $operator = Operator::get($not ? Operator::NOT_BETWEEN : Operator::BETWEEN);
+                $operator = new Operator($not ? Operator::NOT_BETWEEN : Operator::BETWEEN);
 
-                return new TernaryOperator($left, $operator, $middle, Operator::get(Operator::AND), $right);
+                return new TernaryOperator($left, $operator, $middle, new Operator(Operator::AND), $right);
             case Keyword::LIKE:
                 $second = $this->parseSimpleExpression($tokenList);
                 if ($tokenList->hasKeyword(Keyword::ESCAPE)) {
                     $third = $this->parseSimpleExpression($tokenList);
-                    $operator = Operator::get($not ? Operator::NOT_LIKE : Operator::LIKE);
+                    $operator = new Operator($not ? Operator::NOT_LIKE : Operator::LIKE);
 
-                    return new TernaryOperator($left, $operator, $second, Operator::get(Operator::ESCAPE), $third);
+                    return new TernaryOperator($left, $operator, $second, new Operator(Operator::ESCAPE), $third);
                 } else {
-                    $operator = Operator::get($not ? Operator::NOT_LIKE : Operator::LIKE);
+                    $operator = new Operator($not ? Operator::NOT_LIKE : Operator::LIKE);
 
                     return new BinaryOperator($left, $operator, $second);
                 }
             case Keyword::REGEXP:
                 $right = $this->parseBitExpression($tokenList);
-                $operator = Operator::get($not ? Operator::NOT_REGEXP : Operator::REGEXP);
+                $operator = new Operator($not ? Operator::NOT_REGEXP : Operator::REGEXP);
 
                 return new BinaryOperator($left, $operator, $right);
             case Keyword::RLIKE:
                 $right = $this->parseBitExpression($tokenList);
-                $operator = Operator::get($not ? Operator::NOT_RLIKE : Operator::RLIKE);
+                $operator = new Operator($not ? Operator::NOT_RLIKE : Operator::RLIKE);
 
                 return new BinaryOperator($left, $operator, $right);
             case Keyword::MEMBER:
                 $tokenList->passKeyword(Keyword::OF);
                 $right = $this->parseBitExpression($tokenList);
 
-                return new BinaryOperator($left, Operator::get(Operator::MEMBER_OF), $right);
+                return new BinaryOperator($left, new Operator(Operator::MEMBER_OF), $right);
             case Keyword::SOUNDS:
                 $tokenList->expectKeyword(Keyword::LIKE);
                 $right = $this->parseBitExpression($tokenList);
 
-                return new BinaryOperator($left, Operator::get(Operator::SOUNDS_LIKE), $right);
+                return new BinaryOperator($left, new Operator(Operator::SOUNDS_LIKE), $right);
         }
 
         return $left;
@@ -448,7 +448,7 @@ class ExpressionParser
             $right = new AssignOperator($right, $next);
         }
 
-        return new BinaryOperator($left, Operator::get($operator), $right);
+        return new BinaryOperator($left, new Operator($operator), $right);
     }
 
     /**
@@ -492,7 +492,7 @@ class ExpressionParser
             // simple_expr || simple_expr
             $right = $this->parseSimpleExpression($tokenList);
 
-            return new BinaryOperator($left, Operator::get(Operator::PIPES), $right);
+            return new BinaryOperator($left, new Operator(Operator::PIPES), $right);
         }
 
         return $left;
@@ -536,7 +536,7 @@ class ExpressionParser
                         return new NumericLiteral('-' . $right->getValue());
                     }
                 } else {
-                    return new UnaryOperator(Operator::get($operator), $right);
+                    return new UnaryOperator(new Operator($operator), $right);
                 }
             }
         } elseif ($tokenList->hasSymbol('(')) {
@@ -668,7 +668,7 @@ class ExpressionParser
             return $this->parseFunctionCall($tokenList, $token->value);
         } elseif (BuiltInFunction::validateValue($token->value) && BuiltInFunction::isBareName($token->value)) {
             // function without parentheses
-            return new FunctionCall(BuiltInFunction::get($token->value));
+            return new FunctionCall(new BuiltInFunction($token->value));
         }
 
         $tokenList->rewind($position);
@@ -715,7 +715,7 @@ class ExpressionParser
             if (strtoupper($atVariable) === '@@LOCAL') {
                 $atVariable = '@@SESSION';
             }
-            $scope = Scope::get(substr($atVariable, 2));
+            $scope = new Scope(substr($atVariable, 2));
 
             $name = $tokenList->expectName(null);
             if ($tokenList->hasSymbol('.')) {
@@ -754,7 +754,7 @@ class ExpressionParser
                     throw new ParserException("System variable {$name} cannot be set at runtime.", $tokenList);
                 }
             }
-            if ($scope !== null && $scope->equalsAny(Scope::PERSIST, Scope::PERSIST_ONLY)) {
+            if ($scope !== null && $scope->equalsAnyValue(Scope::PERSIST, Scope::PERSIST_ONLY)) {
                 if (MysqlVariable::isNonPersistent($name)) {
                     throw new ParserException("System variable {$name} cannot be persisted.", $tokenList);
                 }
@@ -769,7 +769,7 @@ class ExpressionParser
         $restrictedToScope = MysqlVariable::getScope($name);
         if ($write) {
             if ($scope === null) {
-                $scope = Scope::get(Scope::SESSION);
+                $scope = new Scope(Scope::SESSION);
             }
             if (!$this->hasValidScope($restrictedToScope, $scope)) {
                 throw new ParserException("System variable {$name} cannot be set at scope {$scope->getValue()}.", $tokenList);
@@ -1077,7 +1077,7 @@ class ExpressionParser
     public function parseDateTime(TokenList $tokenList)
     {
         if (($function = $tokenList->getAnyName(...BuiltInFunction::getTimeProviders())) !== null) {
-            $function = BuiltInFunction::get($function);
+            $function = new BuiltInFunction($function);
             if (!$function->isBare()) {
                 // throws
                 $tokenList->expectSymbol('(');
@@ -1174,7 +1174,7 @@ class ExpressionParser
                 $tokenList->expectSymbol(')');
             }
 
-            return new UserExpression(BuiltInFunction::get(BuiltInFunction::CURRENT_USER));
+            return new UserExpression(new BuiltInFunction(BuiltInFunction::CURRENT_USER));
         } else {
             return new UserExpression($tokenList->expectUserName());
         }
@@ -1368,14 +1368,14 @@ class ExpressionParser
             } elseif ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET)) {
                 $charset = $tokenList->expectCharsetName();
             } elseif ($tokenList->hasKeyword(Keyword::UNICODE)) {
-                $charset = Charset::get(Charset::UNICODE);
+                $charset = new Charset(Charset::UNICODE);
             } elseif ($tokenList->hasKeyword(Keyword::BINARY)) {
-                $charset = Charset::get(Charset::BINARY);
+                $charset = new Charset(Charset::BINARY);
             } elseif ($tokenList->hasKeyword(Keyword::BYTE)) {
                 // alias for BINARY
-                $charset = Charset::get(Charset::BINARY);
+                $charset = new Charset(Charset::BINARY);
             } elseif ($tokenList->hasKeyword(Keyword::ASCII)) {
-                $charset = Charset::get(Charset::ASCII);
+                $charset = new Charset(Charset::ASCII);
             }
 
             if ($collation === null) {

@@ -94,7 +94,7 @@ class SqlStateClass extends SqlEnum
                 )
             );
 
-        return SqlStateCategory::get($category);
+        return new SqlStateCategory($category);
     }
 
 }

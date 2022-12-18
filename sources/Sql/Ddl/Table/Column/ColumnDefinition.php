@@ -309,20 +309,17 @@ class ColumnDefinition implements TableItem
             if ($this->generatedColumnType !== null) {
                 $result .= ' ' . $this->generatedColumnType->serialize($formatter);
             }
-            if ($this->indexType === IndexType::get(IndexType::UNIQUE)) {
-                $result .= ' UNIQUE KEY';
+            if ($this->nullable !== null) {
+                $result .= $this->nullable ? ' NULL' : ' NOT NULL';
+            }
+            if ($this->indexType !== null) {
+                $result .= ' ' . $this->indexType->serializeIndexAsKey($formatter);
             }
             if ($this->comment !== null) {
                 $result .= ' COMMENT ' . $formatter->formatString($this->comment);
             }
-            if ($this->nullable !== null) {
-                $result .= $this->nullable ? ' NULL' : ' NOT NULL';
-            }
             if ($this->visible !== null) {
                 $result .= $this->visible ? ' VISIBLE' : ' INVISIBLE';
-            }
-            if ($this->indexType !== null) {
-                $result .= ' ' . $this->indexType->serializeIndexAsKey($formatter);
             }
             if ($this->reference !== null) {
                 $result .= ' ' . $this->reference->serialize($formatter);

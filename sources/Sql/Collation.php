@@ -968,10 +968,10 @@ class Collation extends SqlEnum
     /**
      * @param scalar|null $value
      */
-    public static function tryGet($value): ?self
+    public static function tryCreate($value): ?self
     {
         try {
-            return self::get((string) $value);
+            return new self((string) $value);
         } catch (InvalidValueException $e) {
             return null;
         }
@@ -984,7 +984,7 @@ class Collation extends SqlEnum
             throw new InvalidDefinitionException("Unknown collation id: $id");
         }
 
-        return self::get($name);
+        return new self($name);
     }
 
     public static function getNameById(int $id): ?string

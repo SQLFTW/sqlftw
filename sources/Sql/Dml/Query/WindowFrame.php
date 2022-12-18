@@ -35,11 +35,11 @@ class WindowFrame implements SqlSerializable
         ?RootNode $endExpression
     )
     {
-        if ($startType->equalsAny(WindowFrameType::PRECEDING, WindowFrameType::FOLLOWING) xor $startExpression !== null) {
+        if ($startType->equalsAnyValue(WindowFrameType::PRECEDING, WindowFrameType::FOLLOWING) xor $startExpression !== null) {
             throw new InvalidDefinitionException('Expression must be provided if and only if frame start type is PRECEDING or FOLLOWING.');
         }
 
-        if (($endType !== null && $endType->equalsAny(WindowFrameType::PRECEDING, WindowFrameType::FOLLOWING)) xor $endExpression !== null) {
+        if (($endType !== null && $endType->equalsAnyValue(WindowFrameType::PRECEDING, WindowFrameType::FOLLOWING)) xor $endExpression !== null) {
             throw new InvalidDefinitionException('Expression must be provided if and only if frame end type is PRECEDING or FOLLOWING.');
         }
 

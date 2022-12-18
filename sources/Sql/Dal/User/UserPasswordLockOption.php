@@ -49,9 +49,9 @@ class UserPasswordLockOption implements SqlSerializable
     {
         $result = $this->type->serialize($formatter);
 
-        if (is_int($this->value) && $this->type->equalsAny(UserPasswordLockOptionType::PASSWORD_EXPIRE)) {
+        if (is_int($this->value) && $this->type->equalsAnyValue(UserPasswordLockOptionType::PASSWORD_EXPIRE)) {
             $result .= ' INTERVAL ' . $this->value . ' DAY';
-        } elseif (is_int($this->value) && $this->type->equalsAny(UserPasswordLockOptionType::PASSWORD_REUSE_INTERVAL)) {
+        } elseif (is_int($this->value) && $this->type->equalsAnyValue(UserPasswordLockOptionType::PASSWORD_REUSE_INTERVAL)) {
             $result .= ' ' . $this->value . ' DAY';
         } elseif ($this->value !== null) {
             $result .= ' ' . $this->value;

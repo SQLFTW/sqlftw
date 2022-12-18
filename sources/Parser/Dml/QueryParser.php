@@ -199,11 +199,11 @@ class QueryParser
         }
         while ($operatorType !== null) {
             if ($tokenList->hasKeyword(Keyword::ALL)) {
-                $operatorOption = QueryOperatorOption::get(QueryOperatorOption::ALL);
+                $operatorOption = new QueryOperatorOption(QueryOperatorOption::ALL);
             } elseif ($tokenList->hasKeyword(Keyword::DISTINCT)) {
-                $operatorOption = QueryOperatorOption::get(QueryOperatorOption::DISTINCT);
+                $operatorOption = new QueryOperatorOption(QueryOperatorOption::DISTINCT);
             } else {
-                $operatorOption = QueryOperatorOption::get(QueryOperatorOption::DEFAULT);
+                $operatorOption = new QueryOperatorOption(QueryOperatorOption::DEFAULT);
             }
             $operators[] = new QueryOperator($operatorType, $operatorOption);
             $queries[] = $this->parseQueryBlock($tokenList);
@@ -418,7 +418,7 @@ class QueryParser
                             throw new ParserException('Cannot use both DISTINCT and ALL', $tokenList);
                         }
                     }
-                    $distinct = SelectDistinctOption::get($keyword);
+                    $distinct = new SelectDistinctOption($keyword);
                     break;
                 case Keyword::HIGH_PRIORITY:
                     $options[SelectOption::HIGH_PRIORITY] = true;
@@ -707,15 +707,15 @@ class QueryParser
         do {
             $updated = false;
             if ($tokenList->hasKeywords(Keyword::LOCK, Keyword::IN, Keyword::SHARE, Keyword::MODE)) {
-                $lockOption = SelectLockOption::get(SelectLockOption::LOCK_IN_SHARE_MODE);
+                $lockOption = new SelectLockOption(SelectLockOption::LOCK_IN_SHARE_MODE);
                 $locking[] = new SelectLocking($lockOption);
                 $updated = true;
             } elseif ($tokenList->hasKeyword(Keyword::FOR)) {
                 if ($tokenList->hasKeyword(Keyword::UPDATE)) {
-                    $lockOption = SelectLockOption::get(SelectLockOption::FOR_UPDATE);
+                    $lockOption = new SelectLockOption(SelectLockOption::FOR_UPDATE);
                 } else {
                     $tokenList->expectKeyword(Keyword::SHARE);
-                    $lockOption = SelectLockOption::get(SelectLockOption::FOR_SHARE);
+                    $lockOption = new SelectLockOption(SelectLockOption::FOR_SHARE);
                 }
                 $lockTables = null;
                 if ($tokenList->hasKeyword(Keyword::OF)) {
@@ -778,7 +778,7 @@ class QueryParser
         $keyword = $tokenList->getAnyKeyword(Keyword::ROWS, Keyword::RANGE);
         $rows = $keyword === Keyword::ROWS;
         if ($keyword !== null) {
-            $units = WindowFrameUnits::get($keyword);
+            $units = new WindowFrameUnits($keyword);
             if ($tokenList->hasKeyword(Keyword::BETWEEN)) {
                 [$startType, $startExpression] = $this->parseFrameBorder($tokenList, $rows, true);
                 $tokenList->expectKeyword(Keyword::AND);
@@ -812,11 +812,11 @@ class QueryParser
     {
         $expression = null;
         if ($tokenList->hasKeywords(Keyword::CURRENT, Keyword::ROW)) {
-            $type = WindowFrameType::get(WindowFrameType::CURRENT_ROW);
+            $type = new WindowFrameType(WindowFrameType::CURRENT_ROW);
         } elseif ($start !== false && $tokenList->hasKeywords(Keyword::UNBOUNDED, Keyword::PRECEDING)) {
-            $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_PRECEDING);
+            $type = new WindowFrameType(WindowFrameType::UNBOUNDED_PRECEDING);
         } elseif ($start !== true && $tokenList->hasKeywords(Keyword::UNBOUNDED, Keyword::FOLLOWING)) {
-            $type = WindowFrameType::get(WindowFrameType::UNBOUNDED_FOLLOWING);
+            $type = new WindowFrameType(WindowFrameType::UNBOUNDED_FOLLOWING);
         } else {
             $expression = $this->expressionParser->parseExpression($tokenList);
 
@@ -840,7 +840,7 @@ class QueryParser
             }
 
             $keyword = $tokenList->expectAnyKeyword(Keyword::PRECEDING, Keyword::FOLLOWING);
-            $type = WindowFrameType::get($keyword);
+            $type = new WindowFrameType($keyword);
         }
 
         return [$type, $expression];

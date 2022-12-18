@@ -190,7 +190,7 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
             throw new InvalidDefinitionException("Unknown charset id: $id");
         }
 
-        return self::get($key);
+        return new self($key);
     }
 
     public function getDefaultCollationName(): string

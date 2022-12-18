@@ -115,9 +115,9 @@ class SchemaCommandsParser
                 $tokenList->expectKeyword(Keyword::ONLY);
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    $readOnly = ThreeStateValue::get(ThreeStateValue::DEFAULT);
+                    $readOnly = new ThreeStateValue(ThreeStateValue::DEFAULT);
                 } else {
-                    $readOnly = ThreeStateValue::get((string) (int) $tokenList->expectBool());
+                    $readOnly = new ThreeStateValue((string) (int) $tokenList->expectBool());
                 }
             }
             $n++;

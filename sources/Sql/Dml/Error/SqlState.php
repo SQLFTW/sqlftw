@@ -329,11 +329,11 @@ class SqlState implements SqlSerializable
     public function getClass(): SqlStateClass
     {
         $class = substr($this->getValue(), 0, 2);
-        if (!SqlStateClass::isValid($class)) {
+        if (!SqlStateClass::isValidValue($class)) {
             $class = SqlStateClass::CUSTOM;
         }
 
-        return SqlStateClass::get($class);
+        return new SqlStateClass($class);
     }
 
     public function getCategory(): SqlStateCategory

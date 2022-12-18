@@ -142,7 +142,7 @@ class Session
         $collation = end($this->collation);
         if ($collation === false) {
             // todo: infer from Charset
-            return Collation::get(Collation::UTF8MB4_GENERAL_CI);
+            return new Collation(Collation::UTF8MB4_GENERAL_CI);
         } else {
             return $collation;
         }

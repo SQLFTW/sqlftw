@@ -46,7 +46,7 @@ class UnaryOperator implements OperatorExpression
 
     public function serialize(Formatter $formatter): string
     {
-        $isSymbol = !$this->operator->equalsAny(Operator::NOT, Operator::BINARY);
+        $isSymbol = !$this->operator->equalsAnyValue(Operator::NOT, Operator::BINARY);
         return $this->operator->serialize($formatter) . ($isSymbol ? '' : ' ') . $this->right->serialize($formatter);
     }
 

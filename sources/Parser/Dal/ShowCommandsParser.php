@@ -670,7 +670,7 @@ class ShowCommandsParser
             $where = $this->expressionParser->parseExpression($tokenList);
         }
 
-        return new ShowStatusCommand($scope !== null ? Scope::get($scope) : null, $like, $where);
+        return new ShowStatusCommand($scope !== null ? new Scope($scope) : null, $like, $where);
     }
 
     /**
@@ -763,7 +763,7 @@ class ShowCommandsParser
             $where = $this->expressionParser->parseExpression($tokenList);
         }
 
-        return new ShowVariablesCommand($scope !== null ? Scope::get($scope) : null, $like, $where);
+        return new ShowVariablesCommand($scope !== null ? new Scope($scope) : null, $like, $where);
     }
 
     /**

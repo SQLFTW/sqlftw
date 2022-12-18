@@ -64,11 +64,11 @@ class HandlerCommandsParser
             $what = $tokenList->getAnyKeyword(...HandlerReadTarget::getKeywords());
         }
         if ($what !== null) {
-            $what = HandlerReadTarget::get($what);
+            $what = new HandlerReadTarget($what);
         }
         if ($what === null) {
             $what = $tokenList->expectAnyOperator(...HandlerReadTarget::getOperators());
-            $what = HandlerReadTarget::get($what);
+            $what = new HandlerReadTarget($what);
 
             $values = [];
             $tokenList->expectSymbol('(');

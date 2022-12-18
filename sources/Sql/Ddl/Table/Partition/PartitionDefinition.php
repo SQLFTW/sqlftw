@@ -45,14 +45,14 @@ class PartitionDefinition implements SqlSerializable
     {
         if ($options !== null) {
             foreach ($options as $option => $value) {
-                PartitionOption::get($option);
+                PartitionOption::checkValue($option);
             }
         }
         if ($subpartitions !== null) {
             foreach ($subpartitions as $subpartitionOptions) {
                 if ($subpartitionOptions !== null) {
                     foreach ($subpartitionOptions as $option => $value) {
-                        PartitionOption::get($option);
+                        PartitionOption::checkValue($option);
                     }
                 }
             }

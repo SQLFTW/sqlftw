@@ -9,15 +9,12 @@
 
 namespace SqlFtw\Sql;
 
-use Dogma\Enum\StringEnum;
-use SqlFtw\Formatter\Formatter;
 use function strtolower;
 
 /**
- * Values passed to get() constructor are case-insensitive.
- * Other methods like equalsAny() are strict.
+ * Case-insensitive StringEnum
  */
-abstract class SqlEnum extends StringEnum implements SqlSerializable
+abstract class SqlEnum extends StringEnum
 {
 
     /** @var array<class-string, array<string, string>> */
@@ -43,22 +40,6 @@ abstract class SqlEnum extends StringEnum implements SqlSerializable
         }
 
         return parent::validateValue($value);
-    }
-
-    public function serialize(Formatter $formatter): string
-    {
-        return $this->getValue();
-    }
-
-    public function equalsAny(string ...$values): bool
-    {
-        foreach ($values as $value) {
-            if ($this->equalsValue($value)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
 }

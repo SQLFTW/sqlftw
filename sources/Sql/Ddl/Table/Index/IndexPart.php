@@ -42,7 +42,7 @@ class IndexPart implements SqlSerializable
 
     public static function getDefaultOrder(): Order
     {
-        return Order::get(Order::ASC);
+        return new Order(Order::ASC);
     }
 
     /**

@@ -100,16 +100,16 @@ class RoutineCommandsParser
                 $language = Keyword::SQL;
             } elseif ($keyword === Keyword::CONTAINS) {
                 $tokenList->expectKeyword(Keyword::SQL);
-                $sideEffects = RoutineSideEffects::get(RoutineSideEffects::CONTAINS_SQL);
+                $sideEffects = new RoutineSideEffects(RoutineSideEffects::CONTAINS_SQL);
             } elseif ($keyword === Keyword::NO) {
                 $tokenList->expectKeyword(Keyword::SQL);
-                $sideEffects = RoutineSideEffects::get(RoutineSideEffects::NO_SQL);
+                $sideEffects = new RoutineSideEffects(RoutineSideEffects::NO_SQL);
             } elseif ($keyword === Keyword::READS) {
                 $tokenList->expectKeywords(Keyword::SQL, Keyword::DATA);
-                $sideEffects = RoutineSideEffects::get(RoutineSideEffects::READS_SQL_DATA);
+                $sideEffects = new RoutineSideEffects(RoutineSideEffects::READS_SQL_DATA);
             } elseif ($keyword === Keyword::MODIFIES) {
                 $tokenList->expectKeywords(Keyword::SQL, Keyword::DATA);
-                $sideEffects = RoutineSideEffects::get(RoutineSideEffects::MODIFIES_SQL_DATA);
+                $sideEffects = new RoutineSideEffects(RoutineSideEffects::MODIFIES_SQL_DATA);
             } elseif ($keyword === Keyword::SQL) {
                 $tokenList->expectKeyword(Keyword::SECURITY);
                 $sqlSecurity = $tokenList->expectKeywordEnum(SqlSecurity::class);
@@ -243,7 +243,7 @@ class RoutineCommandsParser
                 $type = $this->expressionParser->parseColumnType($tokenList);
                 $charset = $type->getCharset();
                 $collation = $type->getCollation();
-                if ($inOut !== null && $inOut->equalsAny(InOutParamFlag::IN, InOutParamFlag::INOUT) && $charset === null && $collation !== null) {
+                if ($inOut !== null && $inOut->equalsAnyValue(InOutParamFlag::IN, InOutParamFlag::INOUT) && $charset === null && $collation !== null) {
                     throw new ParserException('Character set is required for IN parameter with collation.', $tokenList);
                 }
                 $params[$param] = new ProcedureParam($param, $type, $inOut);

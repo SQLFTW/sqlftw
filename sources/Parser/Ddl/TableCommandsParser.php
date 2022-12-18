@@ -331,7 +331,7 @@ class TableCommandsParser
                     // ALGORITHM [=] {DEFAULT|INPLACE|COPY}
                     $tokenList->passSymbol('=');
                     if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                        $alterOptions[Keyword::ALGORITHM] = AlterTableAlgorithm::get(AlterTableAlgorithm::DEFAULT);
+                        $alterOptions[Keyword::ALGORITHM] = new AlterTableAlgorithm(AlterTableAlgorithm::DEFAULT);
                     } else {
                         $alterOptions[Keyword::ALGORITHM] = $tokenList->expectNameOrStringEnum(AlterTableAlgorithm::class);
                     }
@@ -542,7 +542,7 @@ class TableCommandsParser
                     // LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
                     $tokenList->passSymbol('=');
                     if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                        $alterOptions[Keyword::LOCK] = AlterTableLock::get(AlterTableLock::DEFAULT);
+                        $alterOptions[Keyword::LOCK] = new AlterTableLock(AlterTableLock::DEFAULT);
                     } else {
                         $alterOptions[Keyword::LOCK] = $tokenList->expectNameOrStringEnum(AlterTableLock::class);
                     }
@@ -926,7 +926,7 @@ class TableCommandsParser
                         break;
                     }
                     // [DEFAULT CURRENT_TIMESTAMP[(...)]]
-                    $function = BuiltInFunction::get($function);
+                    $function = new BuiltInFunction($function);
                     if ($tokenList->hasSymbol('(')) {
                         $param = $tokenList->getUnsignedInt();
                         $params = $param !== null ? [new UintLiteral($param)] : [];
@@ -963,22 +963,22 @@ class TableCommandsParser
                         $param = $tokenList->getUnsignedInt();
                         $params = $param !== null ? [new UintLiteral($param)] : [];
                         $tokenList->expectSymbol(')');
-                        $onUpdate = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP), $params);
+                        $onUpdate = new FunctionCall(new BuiltInFunction(BuiltInFunction::CURRENT_TIMESTAMP), $params);
                     } else {
-                        $onUpdate = new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_TIMESTAMP));
+                        $onUpdate = new FunctionCall(new BuiltInFunction(BuiltInFunction::CURRENT_TIMESTAMP));
                     }
                     break;
                 case Keyword::UNIQUE:
                     // [UNIQUE [KEY] | [PRIMARY] KEY]
                     $tokenList->passKeyword(Keyword::KEY);
-                    $index = IndexType::get(IndexType::UNIQUE);
+                    $index = new IndexType(IndexType::UNIQUE);
                     break;
                 case Keyword::PRIMARY:
                     $tokenList->expectKeyword(Keyword::KEY);
-                    $index = IndexType::get(IndexType::PRIMARY);
+                    $index = new IndexType(IndexType::PRIMARY);
                     break;
                 case Keyword::KEY:
-                    $index = IndexType::get(IndexType::INDEX);
+                    $index = new IndexType(IndexType::INDEX);
                     break;
                 case Keyword::COMMENT:
                     // [COMMENT 'string']
@@ -1091,11 +1091,11 @@ class TableCommandsParser
                     break;
                 case Keyword::VIRTUAL:
                     // [VIRTUAL | STORED]
-                    $generatedType = GeneratedColumnType::get(GeneratedColumnType::VIRTUAL);
+                    $generatedType = new GeneratedColumnType(GeneratedColumnType::VIRTUAL);
                     break;
                 case Keyword::STORED:
                     // [VIRTUAL | STORED]
-                    $generatedType = GeneratedColumnType::get(GeneratedColumnType::STORED);
+                    $generatedType = new GeneratedColumnType(GeneratedColumnType::STORED);
                     break;
                 case Keyword::VISIBLE:
                     // [VISIBLE | INVISIBLE]
@@ -1110,14 +1110,14 @@ class TableCommandsParser
                 case Keyword::UNIQUE:
                     // [UNIQUE [KEY] | [PRIMARY] KEY]
                     $tokenList->passKeyword(Keyword::KEY);
-                    $index = IndexType::get(IndexType::UNIQUE);
+                    $index = new IndexType(IndexType::UNIQUE);
                     break;
                 case Keyword::PRIMARY:
                     $tokenList->expectKeyword(Keyword::KEY);
-                    $index = IndexType::get(IndexType::PRIMARY);
+                    $index = new IndexType(IndexType::PRIMARY);
                     break;
                 case Keyword::KEY:
-                    $index = IndexType::get(IndexType::INDEX);
+                    $index = new IndexType(IndexType::INDEX);
                     break;
                 case Keyword::COMMENT:
                     // [COMMENT 'string']
@@ -1212,22 +1212,22 @@ class TableCommandsParser
 
         $keyword = $tokenList->expectAnyKeyword(Keyword::PRIMARY, Keyword::UNIQUE, Keyword::FOREIGN, Keyword::CHECK);
         if ($keyword === Keyword::PRIMARY) {
-            $type = ConstraintType::get(ConstraintType::PRIMARY_KEY);
+            $type = new ConstraintType(ConstraintType::PRIMARY_KEY);
             $body = $this->parseIndex($tokenList, true);
 
             return new ConstraintDefinition($type, $name, $body);
         } elseif ($keyword === Keyword::UNIQUE) {
-            $type = ConstraintType::get(ConstraintType::UNIQUE_KEY);
+            $type = new ConstraintType(ConstraintType::UNIQUE_KEY);
             $body = $this->parseIndex($tokenList->rewind(-1));
 
             return new ConstraintDefinition($type, $name, $body);
         } elseif ($keyword === Keyword::FOREIGN) {
-            $type = ConstraintType::get(ConstraintType::FOREIGN_KEY);
+            $type = new ConstraintType(ConstraintType::FOREIGN_KEY);
             $body = $this->parseForeignKey($tokenList->rewind(-1));
 
             return new ConstraintDefinition($type, $name, $body);
         } else {
-            $type = ConstraintType::get(ConstraintType::CHECK);
+            $type = new ConstraintType(ConstraintType::CHECK);
             $body = $this->parseCheck($tokenList);
 
             return new ConstraintDefinition($type, $name, $body);
@@ -1387,7 +1387,7 @@ class TableCommandsParser
                 $tokenList->passSymbol('=');
                 $compression = $tokenList->expectString();
                 try {
-                    $compression = $compression === '' ? TableCompression::get(TableCompression::NONE) : TableCompression::get($compression);
+                    $compression = new TableCompression($compression === '' ? TableCompression::NONE : $compression);
                 } catch (InvalidEnumValueException $e) {
                     throw new InvalidValueException('TableCompression', $tokenList, $e);
                 }
@@ -1466,9 +1466,9 @@ class TableCommandsParser
             case Keyword::PACK_KEYS:
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    return [TableOption::PACK_KEYS, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
+                    return [TableOption::PACK_KEYS, new ThreeStateValue(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::PACK_KEYS, ThreeStateValue::get($tokenList->expectUnsignedInt())];
+                    return [TableOption::PACK_KEYS, new ThreeStateValue($tokenList->expectUnsignedInt())];
                 }
             case Keyword::PASSWORD:
                 $tokenList->passSymbol('=');
@@ -1485,16 +1485,16 @@ class TableCommandsParser
             case Keyword::STATS_AUTO_RECALC:
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
+                    return [TableOption::STATS_AUTO_RECALC, new ThreeStateValue(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::STATS_AUTO_RECALC, ThreeStateValue::get($tokenList->expectUnsignedInt())];
+                    return [TableOption::STATS_AUTO_RECALC, new ThreeStateValue($tokenList->expectUnsignedInt())];
                 }
             case Keyword::STATS_PERSISTENT:
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
-                    return [TableOption::STATS_PERSISTENT, ThreeStateValue::get(ThreeStateValue::DEFAULT)];
+                    return [TableOption::STATS_PERSISTENT, new ThreeStateValue(ThreeStateValue::DEFAULT)];
                 } else {
-                    return [TableOption::STATS_PERSISTENT, ThreeStateValue::get($tokenList->expectUnsignedInt())];
+                    return [TableOption::STATS_PERSISTENT, new ThreeStateValue($tokenList->expectUnsignedInt())];
                 }
             case Keyword::STATS_SAMPLE_PAGES:
                 $tokenList->passSymbol('=');
@@ -1625,7 +1625,7 @@ class TableCommandsParser
             $tokenList->expectSymbol('(');
             $expression = $this->expressionParser->parseExpression($tokenList);
             $tokenList->expectSymbol(')');
-            $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_HASH : PartitioningConditionType::HASH);
+            $type = new PartitioningConditionType($linear ? PartitioningConditionType::LINEAR_HASH : PartitioningConditionType::HASH);
             $condition = new PartitioningCondition($type, $expression);
         } elseif ($keyword === Keyword::KEY) {
             $algorithm = null;
@@ -1637,10 +1637,10 @@ class TableCommandsParser
                 }
             }
             $columns = $this->parseColumnList($tokenList);
-            $type = PartitioningConditionType::get($linear ? PartitioningConditionType::LINEAR_KEY : PartitioningConditionType::KEY);
+            $type = new PartitioningConditionType($linear ? PartitioningConditionType::LINEAR_KEY : PartitioningConditionType::KEY);
             $condition = new PartitioningCondition($type, null, $columns, $algorithm);
         } elseif ($keyword === Keyword::RANGE) {
-            $type = PartitioningConditionType::get(PartitioningConditionType::RANGE);
+            $type = new PartitioningConditionType(PartitioningConditionType::RANGE);
             if ($tokenList->hasKeyword(Keyword::COLUMNS)) {
                 $columns = $this->parseNonEmptyColumnList($tokenList);
                 $condition = new PartitioningCondition($type, null, $columns);
@@ -1651,7 +1651,7 @@ class TableCommandsParser
                 $condition = new PartitioningCondition($type, $expression);
             }
         } else {
-            $type = PartitioningConditionType::get(PartitioningConditionType::LIST);
+            $type = new PartitioningConditionType(PartitioningConditionType::LIST);
             if ($tokenList->hasKeyword(Keyword::COLUMNS)) {
                 $columns = $this->parseNonEmptyColumnList($tokenList);
                 $condition = new PartitioningCondition($type, null, $columns);

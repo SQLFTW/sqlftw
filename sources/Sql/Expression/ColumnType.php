@@ -170,7 +170,7 @@ class ColumnType implements SqlSerializable
         $that = clone $this;
         // todo: in fact it was collation all the time :E
         if ($this->charset !== null && $this->charset->equalsValue(Charset::BINARY)) {
-            $that->collation = Collation::get(Collation::BINARY);
+            $that->collation = new Collation(Collation::BINARY);
         }
         $that->charset = $charset;
 

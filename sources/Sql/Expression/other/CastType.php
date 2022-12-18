@@ -53,7 +53,7 @@ class CastType implements ArgumentNode, ArgumentValue
         ?int $srid = null
     ) {
         if ($type === null && $sign !== null) {
-            $type = BaseType::get($sign ? BaseType::SIGNED : BaseType::UNSIGNED);
+            $type = new BaseType($sign ? BaseType::SIGNED : BaseType::UNSIGNED);
         }
         if ($type !== null) {
             if (isset($sign) && !$type->isInteger()) {
@@ -161,7 +161,7 @@ class CastType implements ArgumentNode, ArgumentValue
     public function serialize(Formatter $formatter): string
     {
         $result = '';
-        $printSign = $this->sign !== null && $this->type !== null && !$this->type->equalsAny(BaseType::SIGNED, BaseType::UNSIGNED);
+        $printSign = $this->sign !== null && $this->type !== null && !$this->type->equalsAnyValue(BaseType::SIGNED, BaseType::UNSIGNED);
         if ($printSign) {
             $result .= $this->sign === true ? 'SIGNED' : 'UNSIGNED';
         }

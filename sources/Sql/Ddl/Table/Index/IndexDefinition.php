@@ -55,7 +55,7 @@ class IndexDefinition implements TableItem, ConstraintBody
     public function duplicateAsPrimary(): self
     {
         $self = clone $this;
-        $self->type = IndexType::get(IndexType::PRIMARY);
+        $self->type = new IndexType(IndexType::PRIMARY);
         $self->name = self::PRIMARY_KEY_NAME;
 
         return $self;

@@ -46,7 +46,7 @@ class RolesSpecification implements SqlSerializable
     public function serialize(Formatter $formatter): string
     {
         $result = $this->type->serialize($formatter);
-        if ($this->type->equalsAny(RolesSpecificationType::ALL_EXCEPT)) {
+        if ($this->type->equalsAnyValue(RolesSpecificationType::ALL_EXCEPT)) {
             $result .= ' ';
         }
         if ($this->roles !== null) {

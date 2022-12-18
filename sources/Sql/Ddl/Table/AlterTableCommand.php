@@ -58,7 +58,7 @@ class AlterTableCommand extends Statement implements DdlTableCommand
     ) {
         if ($alterOptions !== []) {
             foreach ($alterOptions as $option => $value) {
-                AlterTableOption::get($option);
+                AlterTableOption::checkValue($option);
             }
         }
 

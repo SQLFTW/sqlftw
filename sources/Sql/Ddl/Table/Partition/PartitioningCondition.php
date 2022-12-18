@@ -73,7 +73,7 @@ class PartitioningCondition implements SqlSerializable
             $result .= ' ALGORITHM = ' . $this->algorithm . ' ';
         }
         if ($this->columns !== null) {
-            if ($this->type->equalsAny(PartitioningConditionType::RANGE, PartitioningConditionType::LIST)) {
+            if ($this->type->equalsAnyValue(PartitioningConditionType::RANGE, PartitioningConditionType::LIST)) {
                 $result .= ' COLUMNS';
             }
             $result .= '(';

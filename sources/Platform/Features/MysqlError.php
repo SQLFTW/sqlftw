@@ -11,7 +11,7 @@
 
 namespace SqlFtw\Platform\Features;
 
-use Dogma\Enum\IntEnum;
+use SqlFtw\Sql\IntEnum;
 
 /**
  * MySQL error codes

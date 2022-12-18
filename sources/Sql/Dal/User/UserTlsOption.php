@@ -23,9 +23,9 @@ class UserTlsOption implements SqlSerializable
 
     public function __construct(UserTlsOptionType $type, ?string $value = null)
     {
-        if (!$type->equalsAny(UserTlsOptionType::SSL, UserTlsOptionType::X509)) {
+        if (!$type->equalsAnyValue(UserTlsOptionType::SSL, UserTlsOptionType::X509)) {
             if (!is_string($value) || $value === '') {
-                throw new InvalidDefinitionException("Value of option '$type' must be a non-empty string.");
+                throw new InvalidDefinitionException("Value of option '{$type->getValue()}' must be a non-empty string.");
             }
         }
         $this->type = $type;

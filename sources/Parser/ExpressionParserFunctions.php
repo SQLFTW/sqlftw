@@ -56,7 +56,7 @@ trait ExpressionParserFunctions
     public function parseFunctionCall(TokenList $tokenList, string $name1, ?string $name2 = null): FunctionCall
     {
         if ($name2 === null && BuiltInFunction::validateValue($name1)) {
-            $function = BuiltInFunction::get($name1);
+            $function = new BuiltInFunction($name1);
         } elseif ($name2 !== null) {
             $tokenList->validateName(EntityType::SCHEMA, $name1);
             $tokenList->validateName(EntityType::ROUTINE, $name2);
@@ -108,14 +108,14 @@ trait ExpressionParserFunctions
                         if ($name1 === BuiltInFunction::CAST) {
                             if ($arguments[0] instanceof TimeValue) {
                                 $baseType = $type->getBaseType();
-                                if ($baseType !== null && !$baseType->isTime() && !$baseType->equalsAny(BaseType::YEAR, BaseType::JSON, BaseType::FLOAT, BaseType::DOUBLE, BaseType::BINARY)) {
+                                if ($baseType !== null && !$baseType->isTime() && !$baseType->equalsAnyValue(BaseType::YEAR, BaseType::JSON, BaseType::FLOAT, BaseType::DOUBLE, BaseType::BINARY)) {
                                     throw new ParserException("Cannot cast from temporal type to {$baseType->getValue()}.", $tokenList);
                                 }
                                 if ($arguments[0] instanceof DatetimeLiteral || $arguments[0] instanceof TimestampLiteral) {
-                                    if (isset($arguments['AT TIME ZONE']) && $baseType !== null && !$baseType->equalsAny(BaseType::TIMESTAMP, BaseType::DATETIME)) {
+                                    if (isset($arguments['AT TIME ZONE']) && $baseType !== null && !$baseType->equalsAnyValue(BaseType::TIMESTAMP, BaseType::DATETIME)) {
                                         throw new ParserException("Cannot cast timestamp at timezone to {$baseType->getValue()}.", $tokenList);
                                     }
-                                    if ($baseType !== null && $baseType->equalsAny(BaseType::DATE, BaseType::TIME)) {
+                                    if ($baseType !== null && $baseType->equalsAnyValue(BaseType::DATE, BaseType::TIME)) {
                                         throw new ParserException("Cannot cast timestamp to {$baseType->getValue()}.", $tokenList);
                                     }
                                 }
@@ -135,9 +135,9 @@ trait ExpressionParserFunctions
                             $arguments[$keyword] = new TimeZoneOffset($zone);
                         } else {
                             if ($zone === '') {
-                                $arguments[$keyword] = TimeZoneName::get(TimeZoneName::UTC);
+                                $arguments[$keyword] = new TimeZoneName(TimeZoneName::UTC);
                             } else {
-                                $arguments[$keyword] = TimeZoneName::get($zone);
+                                $arguments[$keyword] = new TimeZoneName($zone);
                             }
                         }
                         continue 3;
@@ -365,7 +365,7 @@ trait ExpressionParserFunctions
 
         $tokenList->expectSymbol(')');
 
-        return new FunctionCall(BuiltInFunction::get(BuiltInFunction::JSON_TABLE), [$expression, $path, Keyword::COLUMNS => $columns]);
+        return new FunctionCall(new BuiltInFunction(BuiltInFunction::JSON_TABLE), [$expression, $path, Keyword::COLUMNS => $columns]);
     }
 
     private function parseJsonTableColumns(TokenList $tokenList): JsonTableColumnsList

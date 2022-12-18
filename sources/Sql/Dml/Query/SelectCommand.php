@@ -92,7 +92,7 @@ class SelectCommand extends Statement implements SimpleQuery
             throw new InvalidDefinitionException('WITH ROLLUP can be used only with GROUP BY.');
         }
         foreach ($options as $option => $value) {
-            SelectOption::get($option);
+            SelectOption::checkValue($option);
         }
 
         $this->columns = $columns;

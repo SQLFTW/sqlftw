@@ -155,7 +155,7 @@ class UserCommandsParser
             $tokenList->expectSymbol(')');
             $factor = $tokenList->getUnsignedInt();
             if ($factor !== null) {
-                return $this->parseRegistration($tokenList, new FunctionCall(BuiltInFunction::get(BuiltInFunction::USER)), (int) $factor, $ifExists);
+                return $this->parseRegistration($tokenList, new FunctionCall(new BuiltInFunction(BuiltInFunction::USER)), (int) $factor, $ifExists);
             } else {
                 $option = $replace = null;
                 if ($tokenList->hasKeyword(Keyword::IDENTIFIED)) {
@@ -543,14 +543,14 @@ class UserCommandsParser
         while ($keyword = $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT, Keyword::FAILED_LOGIN_ATTEMPTS, Keyword::PASSWORD_LOCK_TIME)) {
             if ($keyword === Keyword::ACCOUNT) {
                 $keyword = $tokenList->expectAnyKeyword(Keyword::LOCK, Keyword::UNLOCK);
-                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::ACCOUNT), $keyword);
+                $passwordLockOptions[] = new UserPasswordLockOption(new UserPasswordLockOptionType(UserPasswordLockOptionType::ACCOUNT), $keyword);
                 continue;
             } elseif ($keyword === Keyword::FAILED_LOGIN_ATTEMPTS) {
                 $value = (int) $tokenList->expectUnsignedInt();
                 if ($value > 32767) {
                     throw new ParserException('Maximum value of failed login attempts is 32767.', $tokenList);
                 }
-                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::FAILED_LOGIN_ATTEMPTS), $value);
+                $passwordLockOptions[] = new UserPasswordLockOption(new UserPasswordLockOptionType(UserPasswordLockOptionType::FAILED_LOGIN_ATTEMPTS), $value);
                 continue;
             } elseif ($keyword === Keyword::PASSWORD_LOCK_TIME) {
                 if ($tokenList->hasKeyword(Keyword::UNBOUNDED)) {
@@ -561,7 +561,7 @@ class UserCommandsParser
                         throw new ParserException('Maximum value of password lock time is 32767.', $tokenList);
                     }
                 }
-                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_LOCK_TIME), $value);
+                $passwordLockOptions[] = new UserPasswordLockOption(new UserPasswordLockOptionType(UserPasswordLockOptionType::PASSWORD_LOCK_TIME), $value);
                 continue;
             }
 
@@ -575,13 +575,13 @@ class UserCommandsParser
                     }
                     $tokenList->expectKeyword(Keyword::DAY);
                 }
-                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_EXPIRE), $value);
+                $passwordLockOptions[] = new UserPasswordLockOption(new UserPasswordLockOptionType(UserPasswordLockOptionType::PASSWORD_EXPIRE), $value);
             } elseif ($keyword === Keyword::HISTORY) {
                 $value = Keyword::DEFAULT;
                 if (!$tokenList->hasKeyword(Keyword::DEFAULT)) {
                     $value = (int) $tokenList->expectInt();
                 }
-                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_HISTORY), $value);
+                $passwordLockOptions[] = new UserPasswordLockOption(new UserPasswordLockOptionType(UserPasswordLockOptionType::PASSWORD_HISTORY), $value);
             } elseif ($keyword === Keyword::REUSE) {
                 $tokenList->expectKeyword(Keyword::INTERVAL);
                 $value = Keyword::DEFAULT;
@@ -589,11 +589,11 @@ class UserCommandsParser
                     $value = (int) $tokenList->expectInt();
                     $tokenList->expectKeyword(Keyword::DAY);
                 }
-                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_REUSE_INTERVAL), $value);
+                $passwordLockOptions[] = new UserPasswordLockOption(new UserPasswordLockOptionType(UserPasswordLockOptionType::PASSWORD_REUSE_INTERVAL), $value);
             } else {
                 $tokenList->expectKeyword(Keyword::CURRENT);
                 $value = $tokenList->getAnyKeyword(Keyword::DEFAULT, Keyword::OPTIONAL);
-                $passwordLockOptions[] = new UserPasswordLockOption(UserPasswordLockOptionType::get(UserPasswordLockOptionType::PASSWORD_REQUIRE_CURRENT), $value);
+                $passwordLockOptions[] = new UserPasswordLockOption(new UserPasswordLockOptionType(UserPasswordLockOptionType::PASSWORD_REQUIRE_CURRENT), $value);
             }
         }
 
@@ -753,7 +753,7 @@ class UserCommandsParser
                 if ($name !== null) {
                     // dynamic (names)
                     if (DynamicUserPrivilege::validateValue($name)) {
-                        $type = DynamicUserPrivilege::get($name);
+                        $type = new DynamicUserPrivilege($name);
                     } elseif ($ifExists) {
                         $type = new UnknownDynamicUserPrivilege($name);
                     } else {
@@ -1039,7 +1039,7 @@ class UserCommandsParser
             $roles = $this->parseRolesList($tokenList);
         }
 
-        return new RolesSpecification(RolesSpecificationType::get($type), $roles);
+        return new RolesSpecification(new RolesSpecificationType($type), $roles);
     }
 
     /**
@@ -1051,7 +1051,7 @@ class UserCommandsParser
             if ($tokenList->hasSymbol('(')) {
                 $tokenList->passSymbol(')');
             }
-            return new FunctionCall(BuiltInFunction::get(BuiltInFunction::CURRENT_USER));
+            return new FunctionCall(new BuiltInFunction(BuiltInFunction::CURRENT_USER));
         } else {
             return $tokenList->expectUserName();
         }
