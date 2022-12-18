@@ -7,17 +7,17 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql;
+namespace SqlFtw;
 
-use SqlFtw\SqlFtwException;
+use Exception;
 use Throwable;
 
-class InvalidDefinitionException extends SqlFtwException
+class SqlFtwException extends Exception
 {
 
-    public function __construct(string $message, ?Throwable $previous = null)
+    public function __construct(string $message, ?Throwable $previous = null, int $code = 0)
     {
-        parent::__construct($message, $previous);
+        parent::__construct($message, $code, $previous);
     }
 
 }

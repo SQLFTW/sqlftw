@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Resolver;
 
-use Dogma\Exception;
+use SqlFtw\SqlFtwException;
 
-class ResolveException extends Exception
+class ResolveException extends SqlFtwException
 {
 
 }
