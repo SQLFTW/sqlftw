@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * e.g. -123.456
+ */
 class NumericLiteral implements NumericValue
 {
 

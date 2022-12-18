@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * TRUE, FALSE
+ */
 class BoolLiteral implements BoolValue, KeywordLiteral
 {
 

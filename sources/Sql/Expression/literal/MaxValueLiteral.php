@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * MAXVALUE used in partitioning
+ */
 class MaxValueLiteral implements KeywordLiteral
 {
 

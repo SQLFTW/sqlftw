@@ -18,6 +18,9 @@ use function count;
 use function implode;
 use function is_null;
 
+/**
+ * Column type used in CREATE TABLE definition and in routine arguments definitions
+ */
 class ColumnType implements SqlSerializable
 {
 

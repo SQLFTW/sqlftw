@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * Column name including table name and schema name, e.g. "foo.bar.baz"
+ */
 class ColumnName implements Identifier, ColumnIdentifier
 {
 

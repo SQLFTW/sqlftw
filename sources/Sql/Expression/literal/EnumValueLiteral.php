@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * Value of ENUM-typed system variables
+ */
 class EnumValueLiteral implements Literal
 {
 

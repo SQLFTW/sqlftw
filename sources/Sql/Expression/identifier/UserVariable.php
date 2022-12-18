@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Expression;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 
+/**
+ * e.g. @foo
+ */
 class UserVariable implements Identifier
 {
 

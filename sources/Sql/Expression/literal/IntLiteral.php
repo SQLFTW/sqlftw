@@ -9,6 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
+/**
+ * e.g. -123
+ */
 class IntLiteral extends NumericLiteral implements IntValue
 {
 

@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * Name without schema, e.g. "foo"
+ */
 class SimpleName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier
 {
 

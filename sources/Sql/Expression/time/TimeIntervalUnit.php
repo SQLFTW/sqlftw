@@ -13,6 +13,9 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 use function in_array;
 
+/**
+ * e.g. SECOND, DAY...
+ */
 class TimeIntervalUnit extends SqlEnum
 {
 

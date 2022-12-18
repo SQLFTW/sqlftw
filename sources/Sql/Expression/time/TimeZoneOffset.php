@@ -13,6 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use function preg_match;
 
+/**
+ * e.g. +01:00
+ */
 class TimeZoneOffset implements TimeZone
 {
 

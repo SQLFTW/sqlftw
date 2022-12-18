@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * Name of an object including schema name, e.g. "foo.bar"
+ */
 class QualifiedName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier
 {
 

@@ -15,6 +15,9 @@ use SqlFtw\Sql\SqlEnum;
 use function in_array;
 use function strtoupper;
 
+/**
+ * Function name, e.g. CURRENT_TIME
+ */
 class BuiltInFunction extends SqlEnum implements FunctionIdentifier
 {
 

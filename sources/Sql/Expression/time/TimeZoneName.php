@@ -14,6 +14,9 @@ namespace SqlFtw\Sql\Expression;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\SqlEnum;
 
+/**
+ * e.g. Europe/Prague
+ */
 class TimeZoneName extends SqlEnum implements TimeZone
 {
 

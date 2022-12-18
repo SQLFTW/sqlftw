@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * e.g. in COUNT(*)
+ */
 class Asterisk implements ArgumentNode, ArgumentValue
 {
 

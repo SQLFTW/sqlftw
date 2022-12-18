@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * ALL
+ */
 class AllLiteral implements KeywordLiteral
 {
 

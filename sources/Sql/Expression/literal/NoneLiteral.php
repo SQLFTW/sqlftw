@@ -11,6 +11,9 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
+/**
+ * NONE
+ */
 class NoneLiteral implements KeywordLiteral
 {
 

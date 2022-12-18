@@ -12,6 +12,9 @@ namespace SqlFtw\Sql\Expression;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlEnum;
 
+/**
+ * System variable scope: GLOBAL, SESSION, PERSIST, PERSIST_ONLY
+ */
 class Scope extends SqlEnum
 {
 

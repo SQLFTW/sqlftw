@@ -16,6 +16,9 @@ use function array_map;
 use function explode;
 use function implode;
 
+/**
+ * Variable name, e.g. VERSION
+ */
 class SystemVariable implements Identifier
 {
 
