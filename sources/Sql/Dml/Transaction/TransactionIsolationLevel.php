@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 /**
- * This file is part of the SqlFtw library (https://github.com/paranoiq/dogma)
+ * This file is part of the SqlFtw library (https://github.com/sqlftw)
  *
  * Copyright (c) 2017 Vlasta Neubauer (@paranoiq)
  *
