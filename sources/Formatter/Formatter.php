@@ -11,10 +11,10 @@ namespace SqlFtw\Formatter;
 
 use DateTimeInterface;
 use Dogma\Arr;
-use Dogma\NotImplementedException;
 use Dogma\Time\Date;
 use Dogma\Time\DateTime;
 use Dogma\Time\Time;
+use LogicException;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Dml\Utility\DelimiterCommand;
 use SqlFtw\Sql\Expression\AllLiteral;
@@ -27,8 +27,11 @@ use SqlFtw\Sql\Statement;
 use function array_keys;
 use function array_map;
 use function array_values;
+use function get_class;
+use function gettype;
 use function implode;
 use function is_numeric;
+use function is_object;
 use function is_string;
 use function ltrim;
 use function preg_match;
@@ -159,7 +162,7 @@ class Formatter
             return $this->formatDateTime($value);
         }
 
-        throw new NotImplementedException('Unknown type.');
+        throw new LogicException('Unknown type: ' . is_object($value) ? get_class($value) : gettype($value));
     }
 
     /**

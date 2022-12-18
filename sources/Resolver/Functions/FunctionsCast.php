@@ -9,13 +9,16 @@
 
 namespace SqlFtw\Resolver\Functions;
 
-use Dogma\NotImplementedException;
 use Dogma\Str;
+use LogicException;
 use SqlFtw\Resolver\UnresolvableException;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\CastType;
 use SqlFtw\Sql\Expression\Value;
+use function get_class;
+use function gettype;
 use function is_int;
+use function is_object;
 use function str_pad;
 use function substr;
 
@@ -89,7 +92,7 @@ trait FunctionsCast
             case BaseType::YEAR:
                 throw new UnresolvableException('Casting to JSON, DATE, DATETIME, TIME, YEAR is not implemented.');
             default:
-                throw new NotImplementedException('');
+                throw new LogicException("Unknown type: {$baseType->getValue()}");
         }
     }
 

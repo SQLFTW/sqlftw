@@ -10,7 +10,7 @@
 namespace SqlFtw\Platform;
 
 use Dogma\InvalidArgumentException;
-use Dogma\NotImplementedException;
+use LogicException;
 use SqlFtw\Platform\Features\FeaturesList;
 use SqlFtw\Platform\Features\MysqlFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
@@ -127,7 +127,7 @@ class Platform
                 $this->featuresList = new MysqlFeatures();
                 break;
             default:
-                throw new NotImplementedException('Only MySQL is supported for now.');
+                throw new LogicException('Only MySQL platform is supported for now.');
         }
     }
 

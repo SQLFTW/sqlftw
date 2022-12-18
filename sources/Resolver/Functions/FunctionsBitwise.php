@@ -10,7 +10,7 @@
 namespace SqlFtw\Resolver\Functions;
 
 use Dogma\Math\IntCalc;
-use Dogma\NotImplementedException;
+use LogicException;
 use SqlFtw\Resolver\ResolveException;
 use SqlFtw\Sql\Expression\Value;
 use function is_string;
@@ -112,7 +112,7 @@ trait FunctionsBitwise
             return null;
         } elseif (is_string($value)) {
             // todo: string shifts
-            throw new NotImplementedException('');
+            throw new LogicException('_right_shift() is not implemented yet.');
         } else {
             return $value << $shift;
         }
@@ -134,7 +134,7 @@ trait FunctionsBitwise
             return null;
         } elseif (is_string($value)) {
             // todo: string shifts
-            throw new NotImplementedException('');
+            throw new LogicException('_left_shift() is not implemented yet.');
         } else {
             return $value >> $shift;
         }
