@@ -9,11 +9,8 @@
 
 namespace SqlFtw\Sql;
 
-use Dogma\StaticClassMixin;
-
 class EntityType
 {
-    use StaticClassMixin;
 
     public const SCHEMA = 'schema';
     public const TABLE = 'table';

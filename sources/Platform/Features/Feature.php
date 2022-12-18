@@ -9,10 +9,7 @@
 
 namespace SqlFtw\Platform\Features;
 
-use Dogma\StaticClassMixin;
-
 class Feature
 {
-    use StaticClassMixin;
 
 }

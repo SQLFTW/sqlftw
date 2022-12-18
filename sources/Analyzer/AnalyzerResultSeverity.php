@@ -2,11 +2,8 @@
 
 namespace SqlFtw\Analyzer;
 
-use Dogma\StaticClassMixin;
-
 final class AnalyzerResultSeverity
 {
-    use StaticClassMixin;
 
     public const LEXER_ERROR = 1; // critical syntax error on lexer level
     public const PARSER_ERROR = 2; // critical syntax error on parser level

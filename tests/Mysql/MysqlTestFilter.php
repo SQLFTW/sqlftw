@@ -11,7 +11,6 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-use Dogma\StaticClassMixin;
 use Dogma\Str;
 use SqlFtw\Platform\Features\MysqlError;
 use function array_flip;
@@ -28,7 +27,6 @@ use function substr;
  */
 class MysqlTestFilter
 {
-    use StaticClassMixin;
 
     public const MYSQL_TEST_SUITE_COMMANDS = [
         'append_file', 'assert', 'break', 'cat_file', 'change_user', 'character_set', 'chdir', 'chmod', /*'close',*/ 'close OUT', 'closehandle',

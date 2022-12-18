@@ -9,11 +9,8 @@
 
 namespace SqlFtw\Analyzer;
 
-use Dogma\StaticClassMixin;
-
 final class AutoRepair
 {
-    use StaticClassMixin;
 
     public const NOT_POSSIBLE = null;
     public const POSSIBLE = false;

@@ -9,12 +9,8 @@
 
 namespace SqlFtw\Analyzer;
 
-use Dogma\StaticClassMixin;
-
 final class AnalyzerFlags
 {
-    use StaticClassMixin;
-
     public const NONE = 0;
     public const REPAIR = 1;
     public const GENERATE_REPAIR_COMMAND = 2;
