@@ -10,7 +10,6 @@
 namespace SqlFtw\Sql;
 
 use Dogma\Enum\StringSet;
-use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Math\IntCalc;
 use Dogma\Math\PowersOfTwo;
 use function array_filter;

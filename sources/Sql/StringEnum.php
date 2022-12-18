@@ -9,8 +9,6 @@
 
 namespace SqlFtw\Sql;
 
-use Dogma\InvalidTypeException;
-use Dogma\InvalidValueException;
 use LogicException;
 use ReflectionClass;
 use SqlFtw\Formatter\Formatter;
@@ -35,7 +33,7 @@ abstract class StringEnum implements SqlSerializable
         }
 
         if (!static::validateValue($value)) {
-            throw new InvalidValueException($value, $class);
+            throw new InvalidEnumValueException($value, $class);
         }
 
         $this->value = $value;
@@ -57,7 +55,7 @@ abstract class StringEnum implements SqlSerializable
     public function equals(StringEnum $other): bool
     {
         if (get_class($other) !== static::class) {
-            throw new InvalidTypeException(static::class, $other);
+            throw new LogicException('Comparing incompatible IntEnum types.');
         }
 
         return $this->value === $other->value;
@@ -128,7 +126,7 @@ abstract class StringEnum implements SqlSerializable
     public static function checkValue(string $value): void
     {
         if (!self::validateValue($value)) {
-            throw new InvalidValueException($value, static::class);
+            throw new InvalidEnumValueException($value, static::class);
         }
     }
 

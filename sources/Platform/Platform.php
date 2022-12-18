@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Platform;
 
-use Dogma\InvalidArgumentException;
 use LogicException;
 use SqlFtw\Platform\Features\FeaturesList;
 use SqlFtw\Platform\Features\MysqlFeatures;
@@ -138,11 +137,11 @@ class Platform
     public static function get(string $name, $version = null): self
     {
         if (!isset(self::$versions[$name])) {
-            throw new InvalidArgumentException("Unknown platform $name.");
+            throw new LogicException("Unknown platform {$name}.");
         }
         $version = new Version($version ?? self::$defaultVersions[$name]);
         if (!in_array($version->getMajorMinor(), self::$versions[$name], true)) {
-            throw new InvalidArgumentException("Unknown version {$version->format()} of platform $name.");
+            throw new LogicException("Unknown version {$version->format()} of platform {$name}.");
         }
 
         $key = $name . $version->getId();

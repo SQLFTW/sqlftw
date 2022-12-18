@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser\Ddl;
 
-use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Math\PowersOfTwo;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
@@ -113,6 +112,7 @@ use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\InvalidEnumValueException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;

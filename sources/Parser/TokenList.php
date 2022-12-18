@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Parser;
 
-use Dogma\InvalidValueException as InvalidEnumValueException;
 use Dogma\Language\Encoding;
 use Dogma\Str;
 use InvalidArgumentException;
@@ -35,6 +34,7 @@ use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\InvalidDefinitionException;
+use SqlFtw\Sql\InvalidEnumValueException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Routine\RoutineType;

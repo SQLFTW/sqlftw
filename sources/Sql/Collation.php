@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Sql;
 
-use Dogma\InvalidValueException;
 use Dogma\Str;
 use function array_search;
 
@@ -972,7 +971,7 @@ class Collation extends SqlEnum
     {
         try {
             return new self((string) $value);
-        } catch (InvalidValueException $e) {
+        } catch (InvalidEnumValueException $e) {
             return null;
         }
     }
