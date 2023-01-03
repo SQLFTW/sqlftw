@@ -207,12 +207,12 @@ trait FunctionsComparison
         $escape = preg_quote($escape, '~');
         $pattern = preg_quote($pattern, '~');
         // todo: quoted delimiters before wild chars
-        $pattern = preg_replace("~(?!$escape)_~", ".", $pattern);
+        $pattern = preg_replace("~(?!{$escape})_~", ".", $pattern);
         assert($pattern !== null);
-        $pattern = preg_replace("~(?!$escape)%~", ".*?", $pattern);
+        $pattern = preg_replace("~(?!{$escape})%~", ".*?", $pattern);
         assert($pattern !== null);
         $pattern = str_replace($escape . $escape, $escape, $pattern);
-        $pattern = "~^$pattern$~iu";
+        $pattern = "~^{$pattern}$~iu";
 
         return preg_match($pattern, $string) !== 0;
     }
