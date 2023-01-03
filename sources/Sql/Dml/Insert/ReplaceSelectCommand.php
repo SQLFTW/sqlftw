@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
@@ -22,6 +23,7 @@ class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceComm
     /**
      * @param list<ColumnIdentifier>|null $columns
      * @param non-empty-list<string>|null $partitions
+     * @param non-empty-list<OptimizerHint>|null $optimizerHints
      */
     public function __construct(
         ObjectIdentifier $table,
@@ -29,9 +31,10 @@ class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceComm
         ?array $columns = null,
         ?array $partitions = null,
         ?InsertPriority $priority = null,
-        bool $ignore = false
+        bool $ignore = false,
+        ?array $optimizerHints = null
     ) {
-        parent::__construct($table, $columns, $partitions, $priority, $ignore);
+        parent::__construct($table, $columns, $partitions, $priority, $ignore, $optimizerHints);
 
         $this->query = $query;
     }

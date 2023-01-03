@@ -28,7 +28,7 @@ class TokenType extends IntSet
     public const OPTIONAL_COMMENT = PowersOfTwo::_8;
 
     /** /*+ ... * / (MySQL) */
-    public const HINT_COMMENT = PowersOfTwo::_16;
+    public const OPTIMIZER_HINT_COMMENT = PowersOfTwo::_16;
 
     /** -- ... (standard) */
     public const DOUBLE_HYPHEN_COMMENT = PowersOfTwo::_32;
@@ -99,16 +99,22 @@ class TokenType extends IntSet
     /** Reserved word operator or token consisting of characters: !$%&*+-/:<=>?@\^|~ */
     public const OPERATOR = PowersOfTwo::_128M;
 
+    /** /*+ ... (MySQL) */
+    public const OPTIMIZER_HINT_START = PowersOfTwo::_256M;
+
+    /** ... * / (MySQL) */
+    public const OPTIMIZER_HINT_END = PowersOfTwo::_512M;
+
     /** Statement delimiter determined by DELIMITER keyword or default ";" */
-    public const DELIMITER = PowersOfTwo::_256M;
+    public const DELIMITER = PowersOfTwo::_1G;
 
     /** Token following the DELIMITER keyword */
-    public const DELIMITER_DEFINITION = PowersOfTwo::_512M;
+    public const DELIMITER_DEFINITION = PowersOfTwo::_2G;
 
     /** Not a real token. Indicates expectation of end of token list */
-    public const END = PowersOfTwo::_1G;
+    public const END = PowersOfTwo::_4G;
 
     /** Produced on invalid input to allow further parsing, instead of producing exception */
-    public const INVALID = PowersOfTwo::_2G;
+    public const INVALID = PowersOfTwo::_8G;
 
 }

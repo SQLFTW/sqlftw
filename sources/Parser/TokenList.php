@@ -962,6 +962,55 @@ class TokenList
      * @param class-string<T> $className
      * @return T
      */
+    public function expectNameEnum(string $className, ?string $entity = null): SqlEnum
+    {
+        $value = $this->expectNonReservedName($entity);
+
+        try {
+            /** @var T $enum */
+            $enum = new $className($value);
+
+            return $enum;
+        } catch (InvalidEnumValueException $e) {
+            $this->position--;
+            /** @var list<string> $values */
+            $values = $className::getAllowedValues();
+
+            throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
+        }
+    }
+
+    /**
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T
+     */
+    public function getNameEnum(string $className, ?string $entity = null): ?SqlEnum
+    {
+        $value = $this->getNonReservedName($entity);
+        if ($value === null) {
+            return null;
+        }
+
+        try {
+            /** @var T $enum */
+            $enum = new $className($value);
+
+            return $enum;
+        } catch (InvalidEnumValueException $e) {
+            $this->position--;
+            /** @var list<string> $values */
+            $values = $className::getAllowedValues();
+
+            throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
+        }
+    }
+
+    /**
+     * @template T of SqlEnum
+     * @param class-string<T> $className
+     * @return T
+     */
     public function expectNameOrStringEnum(string $className): SqlEnum
     {
         $value = $this->expectNonReservedNameOrString();

@@ -14,6 +14,7 @@ namespace SqlFtw\Parser;
 
 use Generator;
 use SqlFtw\Parser\TokenType as T;
+use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Keyword;
@@ -92,6 +93,8 @@ class Lexer
 
     private ?string $condition = null;
 
+    private bool $hint = false;
+
     /** @var array<string, int> */
     private array $reservedKey;
 
@@ -167,6 +170,14 @@ class Lexer
                     $buffer[] = $last;
                     $invalid = true;
                 }
+                if ($this->hint) {
+                    $last = array_pop($buffer);
+                    $this->hint = false;
+                    $exception = new LexerException("End of optimizer hint not found.", $token->position, '');
+                    $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
+                    $buffer[] = $last;
+                    $invalid = true;
+                }
 
                 yield new TokenList($buffer, $this->session, $autoSkip, $invalid);
 
@@ -177,6 +188,14 @@ class Lexer
                     $last = array_pop($buffer);
                     $this->condition = null;
                     $exception = new LexerException("End of optional comment not found.", $token->position, '');
+                    $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
+                    $buffer[] = $last;
+                    $invalid = true;
+                }
+                if ($this->hint) {
+                    $last = array_pop($buffer);
+                    $this->hint = false;
+                    $exception = new LexerException("End of optimizer hint not found.", $token->position, '');
                     $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
                     $buffer[] = $last;
                     $invalid = true;
@@ -195,6 +214,12 @@ class Lexer
                 $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
                 $invalid = true;
             }
+            if ($this->hint) {
+                $this->hint = false;
+                $exception = new LexerException("End of optimizer hint not found.", $token->position, ''); // @phpstan-ignore-line $token exists!
+                $buffer[] = new Token(T::END + T::INVALID, 0, 0, '', '', $exception);
+                $invalid = true;
+            }
 
             yield new TokenList($buffer, $this->session, $autoSkip, $invalid);
         }
@@ -206,19 +231,23 @@ class Lexer
      */
     public function tokenize(string $string): Generator
     {
-        $oldNull = $this->session->getPlatform()->getVersion()->getId() < 80000;
+        $platform = $this->session->getPlatform();
+        $parseOldNullLiteral = $platform->hasFeature(Feature::OLD_NULL_LITERAL);
+        $parseOptimizerHints = $platform->hasFeature(Feature::OPTIMIZER_HINTS);
 
         // last significant token parsed (comments and whitespace are skipped here)
         $previous = new Token(TokenType::END, 0, 0, '');
+
+        // reset
         $delimiter = $this->session->getDelimiter();
         $commentDepth = 0;
         $this->condition = null;
-
-        $length = strlen($string);
+        $this->hint = false;
         $position = 0;
         $row = 1;
         $column = 1;
 
+        $length = strlen($string);
         while ($position < $length) {
             $char = $string[$position];
             $start = $position;
@@ -301,21 +330,32 @@ class Lexer
                     break;
                 case '*':
                     // /*!12345 ... */
-                    if ($position < $length && $this->condition !== null && $string[$position] === '/') {
-                        $afterComment = $string[$position + 1];
-                        if ($this->withWhitespace && $afterComment !== ' ' && $afterComment !== "\t" && $afterComment !== "\n") {
-                            // insert a space in case that optional comment is immediately followed by a non-whitespace token
-                            // (resulting token list would serialize into invalid code)
-                            yield new Token(T::WHITESPACE, $position + 1, $row, ' ', null);
+                    if ($position < $length && $string[$position] === '/') {
+                        if ($this->condition !== null) {
+                            // end of optional comment
+                            $afterComment = $string[$position + 1];
+                            if ($this->withWhitespace && $afterComment !== ' ' && $afterComment !== "\t" && $afterComment !== "\n") {
+                                // insert a space in case that optional comment is immediately followed by a non-whitespace token
+                                // (resulting token list would serialize into invalid code)
+                                yield new Token(T::WHITESPACE, $position + 1, $row, ' ', null);
+                            }
+                            $this->condition = null;
+                            $position++;
+                            $column++;
+                            break;
+                        } elseif ($this->hint) {
+                            // end of optimizer hint
+                            yield new Token(T::OPTIMIZER_HINT_END, $position - 1, $row, '*/', null);
+
+                            $this->hint = false;
+                            $position++;
+                            $column++;
+                            break;
                         }
-                        $this->condition = null;
-                        $position++;
-                        $column++;
-                        break;
                     }
                     // continue
                 case '\\':
-                    if ($oldNull && $char === '\\' && $position < $length && $string[$position] === 'N') {
+                    if ($parseOldNullLiteral && $char === '\\' && $position < $length && $string[$position] === 'N') {
                         $position++;
                         $column++;
                         yield $previous = new Token(T::SYMBOL | T::VALUE, $start, $row, '\\N', null);
@@ -534,6 +574,13 @@ class Lexer
                         }
 
                         $hint = $string[$position] === '+';
+                        if ($hint && $parseOptimizerHints) {
+                            $this->hint = true;
+                            $position++;
+                            $column++;
+                            yield new Token(T::OPTIMIZER_HINT_START, $start, $row, '/*+', null);
+                            break;
+                        }
 
                         // parse as a regular comment
                         $commentDepth++;
@@ -541,7 +588,7 @@ class Lexer
                         $terminated = false;
                         while ($position < $length) {
                             $next8 = $string[$position];
-                            if (!$hint && $next8 === '/' && ($position + 1 < $length) && $string[$position + 1] === '*') {
+                            if ($next8 === '/' && ($position + 1 < $length) && $string[$position + 1] === '*') {
                                 $comment .= $next8 . $string[$position + 1];
                                 $position += 2;
                                 $column += 2;
@@ -584,8 +631,8 @@ class Lexer
                                 // /*!12345 comment (when not interpreted as code) */
                                 yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIONAL_COMMENT, $start, $row, $comment);
                             } elseif ($hint) {
-                                // /*+ comment */
-                                yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::HINT_COMMENT, $start, $row, $comment);
+                                // /*+ comment */ (when not interpreted as code)
+                                yield new Token(T::COMMENT | T::BLOCK_COMMENT | T::OPTIMIZER_HINT_COMMENT, $start, $row, $comment);
                             } else {
                                 // /* comment */
                                 yield new Token(T::COMMENT | T::BLOCK_COMMENT, $start, $row, $comment);

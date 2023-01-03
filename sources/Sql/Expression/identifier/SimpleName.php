@@ -10,11 +10,12 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\OptimizerHint\HintTableIdentifier;
 
 /**
  * Name without schema, e.g. "foo"
  */
-class SimpleName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier
+class SimpleName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier, HintTableIdentifier
 {
 
     private string $name;

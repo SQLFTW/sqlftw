@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Platform\Features;
 
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Cache\CacheIndexCommand;
 use SqlFtw\Sql\Dal\Cache\LoadIndexIntoCacheCommand;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
@@ -116,13 +117,14 @@ use SqlFtw\Sql\MysqlVariable;
 class MysqlFeatures extends FeaturesList
 {
 
-    /** @var list<array{string, int, int}> */
-    public $features = [
-        // todo:
+    /** @var list<array{Feature::*, int, int}> */
+    public array $features = [
+        [Feature::OPTIMIZER_HINTS, self::MIN, self::MAX],
+        [Feature::OLD_NULL_LITERAL, self::MIN, 79999],
     ];
 
-    /** @var list<array{string, int, int}> */
-    public $reserved = [
+    /** @var list<array{Keyword::*, int, int}> */
+    public array $reserved = [
         // https://dev.mysql.com/doc/refman/8.0/en/keywords.html
         [Keyword::ACCESSIBLE, 50106, self::MAX],
         [Keyword::ADD, self::MIN, self::MAX],
@@ -408,8 +410,8 @@ class MysqlFeatures extends FeaturesList
         [Keyword::ZEROFILL, self::MIN, self::MAX],
     ];
 
-    /** @var list<array{string, int, int}> */
-    public $nonReserved = [
+    /** @var list<array{Keyword::*, int, int}> */
+    public array $nonReserved = [
         [Keyword::ACCOUNT, 50706, self::MAX],
         [Keyword::ACTION, self::MIN, self::MAX],
         [Keyword::ACTIVE, 80014, self::MAX],
@@ -944,8 +946,8 @@ class MysqlFeatures extends FeaturesList
         [Keyword::ZONE, 80022, self::MAX],
     ];
 
-    /** @var list<array{string, int, int}> */
-    public $operators = [
+    /** @var list<array{Operator::*, int, int}> */
+    public array $operators = [
         // assign
         [Operator::ASSIGN, self::MIN, self::MAX],
 
@@ -1023,8 +1025,8 @@ class MysqlFeatures extends FeaturesList
         [Operator::MEMBER_OF, 80017, self::MAX],
     ];
 
-    /** @var list<array{string, int, int}> */
-    public $types = [
+    /** @var list<array{BaseType::*, int, int}> */
+    public array $types = [
         // bitwise
         [BaseType::BIT, self::MIN, self::MAX],
 
@@ -1109,8 +1111,8 @@ class MysqlFeatures extends FeaturesList
         [BaseType::MULTIPOLYGON, self::MIN, self::MAX],
     ];
 
-    /** @var list<array{string, int, int, 3?: int}> */
-    public $functions = [
+    /** @var list<array{BuiltInFunction::*, int, int, 3?: int}> */
+    public array $functions = [
         // comparison
         [BuiltInFunction::COALESCE, self::MIN, self::MAX],
         [BuiltInFunction::GREATEST, self::MIN, self::MAX],
@@ -1620,8 +1622,8 @@ class MysqlFeatures extends FeaturesList
         [BuiltInFunction::Y, self::MIN, 80000, 50700],
     ];
 
-    /** @var list<array{string, int, int}> */
-    public $variables = [
+    /** @var list<array{MysqlVariable::*, int, int}> */
+    public array $variables = [
         // https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html
         [MysqlVariable::ACTIVATE_ALL_ROLES_ON_LOGIN, self::MIN, self::MAX],
         [MysqlVariable::ADMIN_ADDRESS, 80014, self::MAX],
@@ -2601,8 +2603,8 @@ class MysqlFeatures extends FeaturesList
         [MysqlVariable::MYSQLX_ZSTD_MAX_CLIENT_COMPRESSION_LEVEL, 80020, self::MAX],
     ];
 
-    /** @var list<array{class-string, int, int}> */
-    public $preparableCommands = [
+    /** @var list<array{class-string<Command>, int, int}> */
+    public array $preparableCommands = [
         // https://dev.mysql.com/doc/refman/8.0/en/sql-prepared-statements.html (terribly incomplete)
         [AlterTableCommand::class, self::MIN, self::MAX],
         [AlterUserCommand::class, self::MIN, self::MAX],
@@ -2704,7 +2706,7 @@ class MysqlFeatures extends FeaturesList
     ];
 
     /** @var array<EntityType::*, int> */
-    public $maxLengths = [
+    public array $maxLengths = [
         EntityType::SCHEMA => 64,
         EntityType::TABLE => 64,
         EntityType::VIEW => 64,
@@ -2714,12 +2716,15 @@ class MysqlFeatures extends FeaturesList
         EntityType::ROUTINE => 64,
         EntityType::EVENT => 64, // not documented
         EntityType::TRIGGER => 64, // not documented
+        EntityType::SYSTEM_VARIABLE => 64, // not documented
+        EntityType::LOCAL_VARIABLE => 64, // not documented
         EntityType::USER_VARIABLE => 64,
         EntityType::TABLESPACE => 64,
         EntityType::PARTITION => 64, // not documented
         EntityType::SERVER => 64,
         EntityType::LOG_FILE_GROUP => 64,
         EntityType::RESOURCE_GROUP => 64,
+        EntityType::QUERY_BLOCK => 64,
         EntityType::ALIAS => 256,
         EntityType::LABEL => 256, // doc says 16, but db parses anything
         EntityType::USER => 32,

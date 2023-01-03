@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Dml;
 use Countable;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
@@ -25,10 +26,17 @@ class UpdateCommandParser
 
     private TableReferenceParser $tableReferenceParser;
 
-    public function __construct(ExpressionParser $expressionParser, TableReferenceParser $tableReferenceParser)
+    private OptimizerHintParser $optimizerHintParser;
+
+    public function __construct(
+        ExpressionParser $expressionParser,
+        TableReferenceParser $tableReferenceParser,
+        OptimizerHintParser $optimizerHintParser
+    )
     {
         $this->expressionParser = $expressionParser;
         $this->tableReferenceParser = $tableReferenceParser;
+        $this->optimizerHintParser = $optimizerHintParser;
     }
 
     /**
@@ -45,6 +53,13 @@ class UpdateCommandParser
     public function parseUpdate(TokenList $tokenList, ?WithClause $with = null): UpdateCommand
     {
         $tokenList->expectKeyword(Keyword::UPDATE);
+
+        $optimizerHints = null;
+        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList);
+            $tokenList->expect(TokenType::OPTIMIZER_HINT_END);
+        }
+
         $lowPriority = $tokenList->hasKeyword(Keyword::LOW_PRIORITY);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
 
@@ -76,7 +91,7 @@ class UpdateCommandParser
             }
         }
 
-        return new UpdateCommand($tableReferences, $values, $where, $with, $orderBy, $limit, $ignore, $lowPriority);
+        return new UpdateCommand($tableReferences, $values, $where, $with, $orderBy, $limit, $ignore, $lowPriority, $optimizerHints);
     }
 
 }

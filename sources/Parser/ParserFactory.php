@@ -48,6 +48,7 @@ use SqlFtw\Parser\Dml\HelpCommandParser;
 use SqlFtw\Parser\Dml\ImportCommandParser;
 use SqlFtw\Parser\Dml\InsertCommandParser;
 use SqlFtw\Parser\Dml\LoadCommandsParser;
+use SqlFtw\Parser\Dml\OptimizerHintParser;
 use SqlFtw\Parser\Dml\PreparedCommandsParser;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\Dml\TableReferenceParser;
@@ -76,6 +77,8 @@ class ParserFactory
 
     private RoutineBodyParser $routineBodyParser;
 
+    private OptimizerHintParser $optimizerHintParser;
+
     public function __construct(Parser $parser, Session $session, SessionUpdater $sessionUpdater)
     {
         $this->parser = $parser;
@@ -85,8 +88,9 @@ class ParserFactory
             return $this->queryParser;
         };
         $this->expressionParser = new ExpressionParser($queryParserProxy);
+        $this->optimizerHintParser = new OptimizerHintParser($this->expressionParser);
         $this->tableReferenceParser = new TableReferenceParser($this->expressionParser, $queryParserProxy);
-        $this->queryParser = new QueryParser($this, $this->expressionParser, $this->tableReferenceParser);
+        $this->queryParser = new QueryParser($this, $this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
         $this->routineBodyParser = new RoutineBodyParser($this->parser, $this->expressionParser, $this->queryParser, $sessionUpdater);
     }
 
@@ -139,7 +143,7 @@ class ParserFactory
 
     public function getDeleteCommandParser(): DeleteCommandParser
     {
-        return new DeleteCommandParser($this->expressionParser, $this->tableReferenceParser);
+        return new DeleteCommandParser($this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
     }
 
     public function getDelimiterCommandParser(): DelimiterCommandParser
@@ -199,7 +203,7 @@ class ParserFactory
 
     public function getInsertCommandParser(): InsertCommandParser
     {
-        return new InsertCommandParser($this->expressionParser, $this->queryParser);
+        return new InsertCommandParser($this->expressionParser, $this->queryParser, $this->optimizerHintParser);
     }
 
     public function getInstanceCommandParser(): InstanceCommandParser
@@ -309,7 +313,7 @@ class ParserFactory
 
     public function getUpdateCommandParser(): UpdateCommandParser
     {
-        return new UpdateCommandParser($this->expressionParser, $this->tableReferenceParser);
+        return new UpdateCommandParser($this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
     }
 
     public function getUseCommandParser(): UseCommandParser

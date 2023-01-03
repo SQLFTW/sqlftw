@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
@@ -61,6 +62,9 @@ class SelectCommand extends Statement implements SimpleQuery
 
     private bool $withRollup;
 
+    /** @var non-empty-list<OptimizerHint>|null */
+    private ?array $optimizerHints;
+
     /**
      * @param non-empty-list<SelectExpression> $columns
      * @param non-empty-list<GroupByExpression>|null $groupBy
@@ -70,6 +74,7 @@ class SelectCommand extends Statement implements SimpleQuery
      * @param int|SimpleName|Placeholder|null $offset
      * @param array<SelectOption::*, bool> $options
      * @param non-empty-list<SelectLocking>|null $locking
+     * @param non-empty-list<OptimizerHint>|null $optimizerHints
      */
     public function __construct(
         array $columns,
@@ -86,7 +91,8 @@ class SelectCommand extends Statement implements SimpleQuery
         array $options = [],
         ?SelectInto $into = null,
         ?array $locking = null,
-        bool $withRollup = false
+        bool $withRollup = false,
+        ?array $optimizerHints = null
     ) {
         if ($groupBy === null && $withRollup === true) {
             throw new InvalidDefinitionException('WITH ROLLUP can be used only with GROUP BY.');
@@ -110,6 +116,7 @@ class SelectCommand extends Statement implements SimpleQuery
         $this->into = $into;
         $this->locking = $locking;
         $this->withRollup = $withRollup;
+        $this->optimizerHints = $optimizerHints;
     }
 
     /**
@@ -254,6 +261,14 @@ class SelectCommand extends Statement implements SimpleQuery
         return $that;
     }
 
+    /**
+     * @return non-empty-list<OptimizerHint>|null
+     */
+    public function getOptimizerHints(): ?array
+    {
+        return $this->optimizerHints;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';
@@ -262,6 +277,11 @@ class SelectCommand extends Statement implements SimpleQuery
         }
 
         $result .= 'SELECT';
+
+        if ($this->optimizerHints !== null) {
+            $result .= ' /*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */';
+        }
+
         if ($this->distinct !== null) {
             $result .= ' ' . $this->distinct->serialize($formatter);
         }

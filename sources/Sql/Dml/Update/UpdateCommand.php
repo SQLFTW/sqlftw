@@ -12,6 +12,7 @@ namespace SqlFtw\Sql\Dml\Update;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\DmlCommand;
+use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceList;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
@@ -46,10 +47,14 @@ class UpdateCommand extends Statement implements DmlCommand
 
     private bool $lowPriority;
 
+    /** @var non-empty-list<OptimizerHint>|null */
+    private ?array $optimizerHints;
+
     /**
      * @param non-empty-list<Assignment> $values
      * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
+     * @param non-empty-list<OptimizerHint>|null $optimizerHints
      */
     public function __construct(
         TableReferenceNode $tableReferences,
@@ -59,7 +64,8 @@ class UpdateCommand extends Statement implements DmlCommand
         ?array $orderBy = null,
         $limit = null,
         bool $ignore = false,
-        bool $lowPriority = false
+        bool $lowPriority = false,
+        ?array $optimizerHints = null
     ) {
         if ($tableReferences instanceof TableReferenceList && count($tableReferences) > 1 && ($orderBy !== null || $limit !== null)) {
             throw new InvalidDefinitionException('ORDER BY and LIMIT must not be set, when more table references are used.');
@@ -73,6 +79,7 @@ class UpdateCommand extends Statement implements DmlCommand
         $this->limit = $limit;
         $this->ignore = $ignore;
         $this->lowPriority = $lowPriority;
+        $this->optimizerHints = $optimizerHints;
     }
 
     public function getTableReferences(): TableReferenceNode
@@ -124,6 +131,14 @@ class UpdateCommand extends Statement implements DmlCommand
         return $this->lowPriority;
     }
 
+    /**
+     * @return non-empty-list<OptimizerHint>|null
+     */
+    public function getOptimizerHints(): ?array
+    {
+        return $this->optimizerHints;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';
@@ -132,6 +147,11 @@ class UpdateCommand extends Statement implements DmlCommand
         }
 
         $result .= 'UPDATE ';
+
+        if ($this->optimizerHints !== null) {
+            $result .= ' /*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */';
+        }
+
         if ($this->lowPriority) {
             $result .= 'LOW_PRIORITY ';
         }

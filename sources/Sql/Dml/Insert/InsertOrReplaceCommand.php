@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
+use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
@@ -30,16 +31,21 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
 
     protected bool $ignore;
 
+    /** @var non-empty-list<OptimizerHint>|null */
+    protected ?array $optimizerHints;
+
     /**
      * @param list<ColumnIdentifier>|null $columns
      * @param non-empty-list<string>|null $partitions
+     * @param non-empty-list<OptimizerHint>|null $optimizerHints
      */
     public function __construct(
         ObjectIdentifier $table,
         ?array $columns = null,
         ?array $partitions = null,
         ?InsertPriority $priority = null,
-        bool $ignore = false
+        bool $ignore = false,
+        ?array $optimizerHints = null
     )
     {
         $this->table = $table;
@@ -47,6 +53,7 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
         $this->partitions = $partitions;
         $this->priority = $priority;
         $this->ignore = $ignore;
+        $this->optimizerHints = $optimizerHints;
     }
 
     public function getTable(): ObjectIdentifier
@@ -80,9 +87,21 @@ abstract class InsertOrReplaceCommand extends Statement implements DmlCommand
         return $this->ignore;
     }
 
+    /**
+     * @return non-empty-list<OptimizerHint>|null
+     */
+    public function getOptimizerHints(): ?array
+    {
+        return $this->optimizerHints;
+    }
+
     protected function serializeBody(Formatter $formatter): string
     {
         $result = '';
+        if ($this->optimizerHints !== null) {
+            $result .= ' /*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */';
+        }
+
         if ($this->priority !== null) {
             $result .= ' ' . $this->priority->serialize($formatter);
         }

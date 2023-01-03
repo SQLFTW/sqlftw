@@ -7,12 +7,13 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Platform\Features;
+namespace SqlFtw\Sql\Dml\OptimizerHint;
 
-class Feature
+use SqlFtw\Sql\SqlSerializable;
+
+interface OptimizerHint extends SqlSerializable
 {
 
-    public const OPTIMIZER_HINTS = 'optimizer-hints'; // /*+ ... */
-    public const OLD_NULL_LITERAL = 'old-null-literal'; // \N
+    public function getType(): string;
 
 }

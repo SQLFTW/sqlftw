@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Assignment;
+use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
@@ -28,6 +29,7 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
      * @param non-empty-list<Assignment> $assignments
      * @param list<ColumnIdentifier>|null $columns
      * @param non-empty-list<string>|null $partitions
+     * @param non-empty-list<OptimizerHint>|null $optimizerHints
      */
     public function __construct(
         ObjectIdentifier $table,
@@ -37,9 +39,10 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
         ?array $partitions = null,
         ?InsertPriority $priority = null,
         bool $ignore = false,
+        ?array $optimizerHints = null,
         ?OnDuplicateKeyActions $onDuplicateKeyActions = null
     ) {
-        parent::__construct($table, $columns, $partitions, $priority, $ignore);
+        parent::__construct($table, $columns, $partitions, $priority, $ignore, $optimizerHints);
 
         $this->assignments = $assignments;
         $this->alias = $alias;

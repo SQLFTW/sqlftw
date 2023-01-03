@@ -81,14 +81,18 @@ class QueryParser
 
     private TableReferenceParser $tableReferenceParser;
 
+    private OptimizerHintParser $optimizerHintParser;
+
     public function __construct(
         ParserFactory $parserFactory,
         ExpressionParser $expressionParser,
-        TableReferenceParser $tableReferenceParser
+        TableReferenceParser $tableReferenceParser,
+        OptimizerHintParser $optimizerHintParser
     ) {
         $this->parserFactory = $parserFactory;
         $this->expressionParser = $expressionParser;
         $this->tableReferenceParser = $tableReferenceParser;
+        $this->optimizerHintParser = $optimizerHintParser;
     }
 
     /**
@@ -398,6 +402,12 @@ class QueryParser
     {
         $tokenList->expectKeyword(Keyword::SELECT);
 
+        $optimizerHints = null;
+        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList);
+            $tokenList->expect(TokenType::OPTIMIZER_HINT_END);
+        }
+
         $keywords = [
             Keyword::ALL, Keyword::DISTINCT, Keyword::DISTINCTROW, Keyword::HIGH_PRIORITY, Keyword::STRAIGHT_JOIN,
             Keyword::SQL_SMALL_RESULT, Keyword::SQL_BIG_RESULT, Keyword::SQL_BUFFER_RESULT, Keyword::SQL_CACHE,
@@ -575,7 +585,7 @@ class QueryParser
             throw new ParserException('No tables used in query.', $tokenList);
         }
 
-        return new SelectCommand($what, $from, $where, $groupBy, $having, $with, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup);
+        return new SelectCommand($what, $from, $where, $groupBy, $having, $with, $windows, $orderBy, $limit, $offset, $distinct, $options, $into, $locking, $withRollup, $optimizerHints);
     }
 
     /**

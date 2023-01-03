@@ -3,6 +3,7 @@ ansi
 args
 armscii
 async
+baz
 booleans
 buf
 ci
@@ -41,6 +42,7 @@ remstr
 rl
 rdf
 sdi
+semijoin
 sqlftw
 srs
 stm
@@ -347,3 +349,12 @@ KEYRING_OKV_CONF_DIR
 NDB_CLUSTER_CONNECTION_POOL_NODEIDS
 NDB_RECV_THREAD_ACTIVATION_THRESHOLD
 NDB_RECV_THREAD_CPU_MASK
+
+# hints
+BKA
+BNL
+DUPSWEEDOUT
+FIRSTMATCH
+ICP
+INTOEXISTS
+LOOSESCAN

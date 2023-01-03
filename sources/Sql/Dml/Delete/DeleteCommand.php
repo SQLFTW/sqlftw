@@ -11,6 +11,7 @@ namespace SqlFtw\Sql\Dml\Delete;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\DmlCommand;
+use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\ExpressionNode;
@@ -51,11 +52,15 @@ class DeleteCommand extends Statement implements DmlCommand
 
     private bool $ignore;
 
+    /** @var non-empty-list<OptimizerHint>|null */
+    private ?array $optimizerHints;
+
     /**
      * @param non-empty-list<array{ObjectIdentifier, string|null}> $tables
      * @param non-empty-list<OrderByExpression>|null $orderBy
      * @param int|SimpleName|Placeholder|null $limit
      * @param non-empty-list<string>|null $partitions
+     * @param non-empty-list<OptimizerHint>|null $optimizerHints
      */
     public function __construct(
         array $tables,
@@ -67,7 +72,8 @@ class DeleteCommand extends Statement implements DmlCommand
         ?array $partitions = null,
         bool $lowPriority = false,
         bool $quick = false,
-        bool $ignore = false
+        bool $ignore = false,
+        ?array $optimizerHints = null
     ) {
         if ($references !== null && $partitions !== null) {
             throw new InvalidDefinitionException('Either table references or partition may be set. Not both a once.');
@@ -87,6 +93,7 @@ class DeleteCommand extends Statement implements DmlCommand
         $this->lowPriority = $lowPriority;
         $this->quick = $quick;
         $this->ignore = $ignore;
+        $this->optimizerHints = $optimizerHints;
     }
 
     /**
@@ -151,6 +158,14 @@ class DeleteCommand extends Statement implements DmlCommand
         return $this->ignore;
     }
 
+    /**
+     * @return non-empty-list<OptimizerHint>|null
+     */
+    public function getOptimizerHints(): ?array
+    {
+        return $this->optimizerHints;
+    }
+
     public function serialize(Formatter $formatter): string
     {
         $result = '';
@@ -159,6 +174,11 @@ class DeleteCommand extends Statement implements DmlCommand
         }
 
         $result .= 'DELETE ';
+
+        if ($this->optimizerHints !== null) {
+            $result .= ' /*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */';
+        }
+
         if ($this->lowPriority) {
             $result .= 'LOW_PRIORITY ';
         }

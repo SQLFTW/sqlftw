@@ -9,7 +9,13 @@
 
 namespace SqlFtw\Platform\Features;
 
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\EntityType;
+use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\BuiltInFunction;
+use SqlFtw\Sql\Expression\Operator;
+use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\MysqlVariable;
 
 abstract class FeaturesList
 {
@@ -17,31 +23,31 @@ abstract class FeaturesList
     protected const MIN = 10000;
     protected const MAX = 999999;
 
-    /** @var list<array{string, int, int}> */
-    public $features = [];
+    /** @var list<array{Feature::*, int, int}> */
+    public array $features = [];
 
-    /** @var list<array{string, int, int}> */
-    public $reserved = [];
+    /** @var list<array{Keyword::*, int, int}> */
+    public array $reserved = [];
 
-    /** @var list<array{string, int, int}> */
-    public $nonReserved = [];
+    /** @var list<array{Keyword::*, int, int}> */
+    public array $nonReserved = [];
 
-    /** @var list<array{string, int, int}> */
-    public $operators = [];
+    /** @var list<array{Operator::*, int, int}> */
+    public array $operators = [];
 
-    /** @var list<array{string, int, int}> */
-    public $types = [];
+    /** @var list<array{BaseType::*, int, int}> */
+    public array $types = [];
 
-    /** @var list<array{string, int, int, 3?: int}> */
-    public $functions = [];
+    /** @var list<array{BuiltInFunction::*, int, int, 3?: int}> */
+    public array $functions = [];
 
-    /** @var list<array{string, int, int}> */
-    public $variables = [];
+    /** @var list<array{MysqlVariable::*, int, int}> */
+    public array $variables = [];
 
-    /** @var list<array{class-string, int, int}> */
-    public $preparableCommands = [];
+    /** @var list<array{class-string<Command>, int, int}> */
+    public array $preparableCommands = [];
 
     /** @var array<EntityType::*, int> */
-    public $maxLengths = [];
+    public array $maxLengths = [];
 
 }

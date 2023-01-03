@@ -21,12 +21,15 @@ class EntityType
     public const TRIGGER = 'trigger';
     public const ROUTINE = 'routine';
     public const EVENT = 'event';
+    public const SYSTEM_VARIABLE = 'system variable';
+    public const LOCAL_VARIABLE = 'local variable';
     public const USER_VARIABLE = 'user variable';
     public const TABLESPACE = 'tablespace';
     public const PARTITION = 'partition';
     public const SERVER = 'server';
     public const LOG_FILE_GROUP = 'log file group';
     public const RESOURCE_GROUP = 'resource group';
+    public const QUERY_BLOCK = 'query block';
     public const ALIAS = 'alias';
     public const LABEL = 'label';
     public const USER = 'user';
@@ -40,8 +43,6 @@ class EntityType
     public const INDEX_COMMENT = 'index comment';
 
     // other named objects:
-    // - local variable
-    // - system variable
     // - routine parameter
     // - index part
     // - cursor

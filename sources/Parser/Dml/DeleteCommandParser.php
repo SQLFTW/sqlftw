@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\EntityType;
@@ -27,10 +28,17 @@ class DeleteCommandParser
 
     private TableReferenceParser $tableReferenceParser;
 
-    public function __construct(ExpressionParser $expressionParser, TableReferenceParser $tableReferenceParser)
+    private OptimizerHintParser $optimizerHintParser;
+
+    public function __construct(
+        ExpressionParser $expressionParser,
+        TableReferenceParser $tableReferenceParser,
+        OptimizerHintParser $optimizerHintParser
+    )
     {
         $this->expressionParser = $expressionParser;
         $this->tableReferenceParser = $tableReferenceParser;
+        $this->optimizerHintParser = $optimizerHintParser;
     }
 
     /**
@@ -54,6 +62,13 @@ class DeleteCommandParser
     public function parseDelete(TokenList $tokenList, ?WithClause $with = null): DeleteCommand
     {
         $tokenList->expectKeyword(Keyword::DELETE);
+
+        $optimizerHints = null;
+        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList);
+            $tokenList->expect(TokenType::OPTIMIZER_HINT_END);
+        }
+
         $lowPriority = $tokenList->hasKeywords(Keyword::LOW_PRIORITY);
         $quick = $tokenList->hasKeyword(Keyword::QUICK);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
@@ -92,7 +107,7 @@ class DeleteCommandParser
             }
         }
 
-        return new DeleteCommand($tables, $where, $with, $orderBy, $limit, $references, $partitions, $lowPriority, $quick, $ignore);
+        return new DeleteCommand($tables, $where, $with, $orderBy, $limit, $references, $partitions, $lowPriority, $quick, $ignore, $optimizerHints);
     }
 
     /**

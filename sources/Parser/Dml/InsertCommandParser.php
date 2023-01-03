@@ -11,6 +11,7 @@ namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Assignment;
 use SqlFtw\Sql\Dml\Insert\InsertCommand;
 use SqlFtw\Sql\Dml\Insert\InsertPriority;
@@ -38,10 +39,17 @@ class InsertCommandParser
 
     private QueryParser $queryParser;
 
-    public function __construct(ExpressionParser $expressionParser, QueryParser $queryParser)
+    private OptimizerHintParser $optimizerHintParser;
+
+    public function __construct(
+        ExpressionParser $expressionParser,
+        QueryParser $queryParser,
+        OptimizerHintParser $optimizerHintParser
+    )
     {
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
+        $this->optimizerHintParser = $optimizerHintParser;
     }
 
     /**
@@ -95,6 +103,12 @@ class InsertCommandParser
     {
         $tokenList->expectKeyword(Keyword::INSERT);
 
+        $optimizerHints = null;
+        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList);
+            $tokenList->expect(TokenType::OPTIMIZER_HINT_END);
+        }
+
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
         $tokenList->passKeyword(Keyword::INTO);
@@ -122,7 +136,7 @@ class InsertCommandParser
 
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertValuesCommand($table, $rows, $columns, $alias, $columnAliases, $partitions, $priority, $ignore, $update);
+            return new InsertValuesCommand($table, $rows, $columns, $alias, $columnAliases, $partitions, $priority, $ignore, $optimizerHints, $update);
         }
         $tokenList->rewind($position);
 
@@ -136,7 +150,7 @@ class InsertCommandParser
 
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertSetCommand($table, $assignments, $columns, $alias, $partitions, $priority, $ignore, $update);
+            return new InsertSetCommand($table, $assignments, $columns, $alias, $partitions, $priority, $ignore, $optimizerHints, $update);
         }
 
         $tokenList->startSubquery(SubqueryType::INSERT);
@@ -145,7 +159,7 @@ class InsertCommandParser
 
         $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-        return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $update);
+        return new InsertSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $optimizerHints, $update);
     }
 
     /**
@@ -172,6 +186,12 @@ class InsertCommandParser
     {
         $tokenList->expectKeyword(Keyword::REPLACE);
 
+        $optimizerHints = null;
+        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList);
+            $tokenList->expect(TokenType::OPTIMIZER_HINT_END);
+        }
+
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
         $ignore = $tokenList->hasKeyword(Keyword::IGNORE);
         $tokenList->passKeyword(Keyword::INTO);
@@ -188,22 +208,22 @@ class InsertCommandParser
             $tokenList->expectSymbol(')');
             $query = new ParenthesizedQueryExpression($query);
 
-            return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
+            return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $optimizerHints);
         } elseif ($tokenList->hasAnyKeyword(Keyword::SELECT, Keyword::WITH, Keyword::TABLE)) { // no Keyword::VALUES!
             $tokenList->startSubquery(SubqueryType::REPLACE);
             $query = $this->queryParser->parseQuery($tokenList->rewind(-1));
             $tokenList->endSubquery();
 
-            return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore);
+            return new ReplaceSelectCommand($table, $query, $columns, $partitions, $priority, $ignore, $optimizerHints);
         } elseif ($tokenList->hasKeyword(Keyword::SET)) {
             $assignments = $this->parseAssignments($tokenList);
 
-            return new ReplaceSetCommand($table, $assignments, $columns, $partitions, $priority, $ignore);
+            return new ReplaceSetCommand($table, $assignments, $columns, $partitions, $priority, $ignore, $optimizerHints);
         } else {
             $tokenList->expectAnyKeyword(Keyword::VALUE, Keyword::VALUES);
             $rows = $this->parseRows($tokenList);
 
-            return new ReplaceValuesCommand($table, $rows, $columns, $partitions, $priority, $ignore);
+            return new ReplaceValuesCommand($table, $rows, $columns, $partitions, $priority, $ignore, $optimizerHints);
         }
     }
 
