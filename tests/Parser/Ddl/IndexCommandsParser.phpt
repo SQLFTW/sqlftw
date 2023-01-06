@@ -12,7 +12,7 @@ Assert::parseSerialize("CREATE INDEX idx1 ON tbl1 (col1)");
 Assert::parseSerialize("CREATE INDEX idx1 ON tbl1 (col1, col2)");
 Assert::parseSerialize("CREATE INDEX idx1 ON tbl1 (col1(10), col2(20))");
 Assert::parseSerialize("CREATE INDEX idx1 ON tbl1 (col1 ASC, col2 DESC, col3(20) ASC)");
-Assert::parseSerialize("CREATE UNIQUE INDEX idx1 ON tbl1 (col1)");
+Assert::parseSerialize("CREATE UNIQUE KEY idx1 ON tbl1 (col1)");
 Assert::parseSerialize("CREATE FULLTEXT INDEX idx1 ON tbl1 (col1)");
 Assert::parseSerialize("CREATE SPATIAL INDEX idx1 ON tbl1 (col1)");
 

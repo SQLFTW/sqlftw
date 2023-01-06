@@ -21,9 +21,9 @@ Assert::parseSerialize("ALTER TABLE tbl1 ADD PRIMARY KEY (col1)");
 Assert::parseSerialize("ALTER TABLE tbl1 ADD CONSTRAINT con1 PRIMARY KEY (col1)");
 
 // ADD [CONSTRAINT] UNIQUE {INDEX|KEY}
-Assert::parseSerialize("ALTER TABLE tbl1 ADD UNIQUE INDEX (col1)");
-Assert::parseSerialize("ALTER TABLE tbl1 ADD UNIQUE KEY (col1)", "ALTER TABLE tbl1 ADD UNIQUE INDEX (col1)");
-Assert::parseSerialize("ALTER TABLE tbl1 ADD CONSTRAINT con1 UNIQUE INDEX (col1)");
+Assert::parseSerialize("ALTER TABLE tbl1 ADD UNIQUE KEY (col1)");
+Assert::parseSerialize("ALTER TABLE tbl1 ADD UNIQUE INDEX (col1)", "ALTER TABLE tbl1 ADD UNIQUE KEY (col1)");
+Assert::parseSerialize("ALTER TABLE tbl1 ADD CONSTRAINT con1 UNIQUE KEY (col1)");
 
 // ADD FULLTEXT [INDEX|KEY]
 Assert::parseSerialize("ALTER TABLE tbl1 ADD FULLTEXT INDEX (col1)");
