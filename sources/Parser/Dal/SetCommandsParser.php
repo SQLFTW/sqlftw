@@ -198,10 +198,10 @@ class SetCommandsParser
             $operator = $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
 
             if ($variable instanceof SystemVariable) {
-                $varName = $variable->getName();
-                $type = MysqlVariable::getType($varName);
+                $variableName = $variable->getName();
+                $type = MysqlVariable::getType($variableName);
                 if ($type === BaseType::ENUM || $type === BaseType::SET) {
-                    $value = $tokenList->getVariableEnumValue(...MysqlVariable::getValues($varName));
+                    $value = $tokenList->getVariableEnumValue(...MysqlVariable::getValues($variableName));
                     if ($value !== null) {
                         $expression = new EnumValueLiteral((string) $value);
                     } else {

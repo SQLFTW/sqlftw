@@ -7,6 +7,7 @@ use Dogma\Debug\Debugger;
 use Dogma\Re;
 use Dogma\Tester\Assert as DogmaAssert;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Parser\AnalyzerException;
 use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\LexerException;
@@ -123,7 +124,14 @@ class Assert extends DogmaAssert
             if (class_exists(Debugger::class)) {
                 Debugger::dump($tokenList);
             }
-            throw $command->getException();
+            $exception = $command->getException();
+            $message = '';
+            if ($exception instanceof AnalyzerException) {
+                foreach ($exception->getResults() as $failure) {
+                    $message .= "\n - " . $failure->getMessage();
+                }
+            }
+            self::fail($exception->getMessage() . $message);
         }
 
         $actual = $command->serialize($formatter);

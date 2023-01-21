@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
+use function preg_match;
 
 /**
  * Value of ENUM-typed system variables
@@ -31,6 +32,11 @@ class EnumValueLiteral implements Literal
 
     public function serialize(Formatter $formatter): string
     {
+        // things like AES-128-ECB etc.
+        if (!preg_match('~^[A-Za-z\d_]+$~', $this->value)) {
+            return $formatter->formatString($this->value);
+        }
+
         return $this->value;
     }
 

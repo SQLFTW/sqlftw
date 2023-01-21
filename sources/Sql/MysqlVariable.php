@@ -19,6 +19,10 @@ use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BaseType as T;
 use SqlFtw\Sql\Expression\Scope as S;
 use SqlFtw\Sql\VariableFlags as F;
+use function is_float;
+use function is_int;
+use function is_string;
+use function preg_match;
 use const PHP_INT_MAX as MAX;
 
 class MysqlVariable extends SqlEnum
@@ -1169,7 +1173,7 @@ class MysqlVariable extends SqlEnum
         self::ADMIN_SSL_CRLPATH                         => [S::GLOBAL,  true,  T::CHAR,     null], // dir
         self::ADMIN_SSL_KEY                             => [S::GLOBAL,  true,  T::CHAR,     null], // file
         self::ADMIN_TLS_CIPHERSUITES                    => [S::GLOBAL,  true,  T::CHAR,     null],
-        self::ADMIN_TLS_VERSION                         => [S::GLOBAL,  true,  T::ENUM,     'TLSV1.2,TLSV1.3', F::NONE, ['TLSV1.2', 'TLSV1.3']], // < 8.0.28 "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3"
+        self::ADMIN_TLS_VERSION                         => [S::GLOBAL,  true,  T::SET,      'TLSV1.2,TLSV1.3', F::NONE, ['TLSV1.2', 'TLSV1.3']], // < 8.0.28 "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3"
         self::AUTHENTICATION_POLICY                     => [S::GLOBAL,  true,  T::CHAR,     '*,,'],
         self::AUTHENTICATION_WINDOWS_LOG_LEVEL          => [S::GLOBAL,  false, T::UNSIGNED, 2,          F::NONE, 0, 2],
         self::AUTHENTICATION_WINDOWS_USE_PRINCIPAL_NAME => [S::GLOBAL,  false, T::BOOL,     true],
@@ -1304,7 +1308,7 @@ class MysqlVariable extends SqlEnum
         self::LOG_SYSLOG                                => [S::GLOBAL,  true,  T::BOOL,     false], // removed
         self::LOG_SYSLOG_FACILITY                       => [S::GLOBAL,  true,  T::CHAR,     'daemon'],
         self::LOG_SYSLOG_INCLUDE_PID                    => [S::GLOBAL,  true,  T::BOOL,     true],
-        self::LOG_SYSLOG_TAG                            => [S::GLOBAL,  true,  T::BOOL,     ''],
+        self::LOG_SYSLOG_TAG                            => [S::GLOBAL,  true,  T::CHAR,     ''],
         self::LOG_TIMESTAMPS                            => [S::GLOBAL,  true,  T::ENUM,     'UTC',      F::NONE, ['UTC', 'SYSTEM']],
         self::LOG_THROTTLE_QUERIES_NOT_USING_INDEXES    => [S::GLOBAL,  true,  T::UNSIGNED, 0,          F::CLAMP, 0, I::UINT32_MAX],
         self::LONG_QUERY_TIME                           => [null,       true,  T::NUMERIC,  10,         F::CLAMP, 0, 31536000],
@@ -2259,6 +2263,64 @@ class MysqlVariable extends SqlEnum
             !$enum && ($flags & F::CLAMP) !== 0,
             !$enum && ($flags & F::CLAMP_MIN) !== 0,
         ];
+    }
+
+    /**
+     * @internal for testing
+     */
+    public static function getSampleValue(string $variable): string
+    {
+        // default
+        $value = self::$properties[$variable][3] ?? null;
+        [$type, $nullable, $nonEmpty, $nonZero, $values, $min, $max, $increment, $clamp, $clampMin] = self::getTypeInfo($variable);
+
+        if (is_string($value)) {
+            if ($value === '') {
+                if ($nonEmpty) {
+                    return self::pickValue($type, $values);
+                } else {
+                    return "''";
+                }
+            } elseif ($type === T::ENUM || $type === T::SET) {
+                if (!preg_match('~^[A-Za-z\d_]+$~', $value)) {
+                    return "'{$value}'";
+                }
+            } else {
+                return "'{$value}'";
+            }
+        } elseif (is_int($value)) {
+            if ($value < $min) {
+                $value = $min;
+            }
+            return (string) $value;
+        } elseif (is_float($value)) {
+            return (string) $value;
+        } elseif ($value === false) {
+            return 'FALSE';
+        } elseif ($value === true) {
+            return 'TRUE';
+        } elseif ($value === null) {
+            if ($nullable) {
+                return 'NULL';
+            } else {
+                return self::pickValue($type, $values);
+            }
+        }
+
+        return $value;
+    }
+
+    private static function pickValue(string $type, ?array $values): string
+    {
+        switch ($type) {
+            case T::ENUM:
+            case T::SET:
+                return $values[0];
+            case T::CHAR:
+                return "'foo'";
+            default:
+                return '0';
+        }
     }
 
 }
