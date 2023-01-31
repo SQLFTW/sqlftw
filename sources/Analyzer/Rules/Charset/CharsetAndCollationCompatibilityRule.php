@@ -67,7 +67,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
     private function processTable(TableCommand $command, SimpleContext $context): array
     {
         $results = [];
-        $options = $command->getOptions();
+        $options = $command->getOptionsList();
         /** @var Charset|DefaultLiteral $charset */
         $charset = $options->get(TableOption::CHARACTER_SET);
         if ($charset instanceof DefaultLiteral) {
@@ -86,7 +86,7 @@ class CharsetAndCollationCompatibilityRule implements SimpleRule
 
         if ($command instanceof AlterTableCommand) {
             /** @var list<ConvertToCharsetAction> $convertActions */
-            $convertActions = $command->getActions()->filter(ConvertToCharsetAction::class);
+            $convertActions = $command->getActionsList()->filter(ConvertToCharsetAction::class);
             $convertAction = $convertActions[0] ?? null;
             if ($convertAction !== null) {
                 $convertCharset = $convertAction->getCharset();

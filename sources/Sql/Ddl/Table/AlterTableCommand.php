@@ -74,9 +74,17 @@ class AlterTableCommand extends Statement implements DdlTableCommand
         return $this->name;
     }
 
-    public function getActions(): AlterActionsList
+    public function getActionsList(): AlterActionsList
     {
         return $this->actions;
+    }
+
+    /**
+     * @return list<AlterTableAction>
+     */
+    public function getActions(): array
+    {
+        return $this->actions->getActions();
     }
 
     /**
@@ -87,7 +95,15 @@ class AlterTableCommand extends Statement implements DdlTableCommand
         return $this->alterOptions;
     }
 
-    public function getOptions(): TableOptionsList
+    /**
+     * @return array<TableOption::*, TableOptionValue|null>
+     */
+    public function getOptions(): array
+    {
+        return $this->tableOptions !== null ? $this->tableOptions->getOptions() : [];
+    }
+
+    public function getOptionsList(): TableOptionsList
     {
         return $this->tableOptions ?? new TableOptionsList([]);
     }

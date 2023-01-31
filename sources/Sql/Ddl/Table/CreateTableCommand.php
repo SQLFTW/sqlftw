@@ -107,7 +107,15 @@ class CreateTableCommand extends Statement implements AnyCreateTableCommand
         return $columns;
     }
 
-    public function getOptions(): TableOptionsList
+    /**
+     * @return array<TableOption::*, TableOptionValue|null>
+     */
+    public function getOptions(): array
+    {
+        return $this->options !== null ? $this->options->getOptions() : [];
+    }
+
+    public function getOptionsList(): TableOptionsList
     {
         return $this->options ?? new TableOptionsList([]);
     }

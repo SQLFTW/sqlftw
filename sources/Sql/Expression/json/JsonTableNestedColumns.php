@@ -29,7 +29,15 @@ class JsonTableNestedColumns implements JsonTableColumn
         return $this->path;
     }
 
-    public function getColumns(): JsonTableColumnsList
+    /**
+     * @return non-empty-list<JsonTableColumn>
+     */
+    public function getColumns(): array
+    {
+        return $this->columns->getColumns();
+    }
+
+    public function getColumnsList(): JsonTableColumnsList
     {
         return $this->columns;
     }
