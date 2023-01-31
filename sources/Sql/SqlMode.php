@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql;
 
 use Dogma\Enum\StringSet;
+use Dogma\InvalidValueException;
 use Dogma\Math\IntCalc;
 use Dogma\Math\PowersOfTwo;
 use function array_filter;
@@ -190,7 +191,7 @@ class SqlMode extends StringSet
         $parts = array_filter($parts);
         try {
             self::checkValues($parts);
-        } catch (InvalidEnumValueException $e) {
+        } catch (InvalidValueException $e) {
             throw new InvalidDefinitionException("Invalid value for system variable @@sql_mode: " . $string, $e);
         }
         $items = [];
