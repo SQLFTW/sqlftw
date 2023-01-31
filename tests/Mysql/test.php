@@ -2,6 +2,7 @@
 
 namespace SqlFtw\Tests\Mysql;
 
+use Dogma\Application\Colors;
 use Dogma\Debug\Dumper;
 use function class_exists;
 use function in_array;
@@ -12,6 +13,26 @@ if (class_exists(Dumper::class)) {
 }
 
 rd($argv);
+
+$help = in_array('help', $argv, true);
+if ($help) {
+    echo Colors::white("MySQL Tests usage:") . "\n";
+    echo "  " . Colors::yellow("test.php") . " - runs all test suites in parallel. displays results at the end\n";
+    echo "  " . Colors::yellow("test.php --single ...") . " - runs all test suites in single thread. displays results immediately\n";
+    echo "  " . Colors::yellow("test.php help") . " - this help\n";
+    echo "  " . Colors::yellow("test.php list") . " - list possible MySQL test suites\n";
+    echo "  " . Colors::yellow("test.php <name>[, <name>]...") . " - run specified test suites\n";
+    echo "  " . Colors::yellow("test.php <number>[, <number>]...") . " - run test suites specified by number\n";
+    echo "  " . Colors::yellow("test.php <file1.test>[, <file2.test>]...") . " - run specified test cases\n";
+    exit;
+}
+
+$listSuites = in_array('list', $argv, true);
+if ($listSuites) {
+    $test = new MysqlTest();
+    $test->listSuites();
+    exit;
+}
 
 $singleThread = in_array('--single', $argv, true);
 

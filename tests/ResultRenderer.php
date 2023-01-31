@@ -14,9 +14,11 @@ use SqlFtw\Sql\Command;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Tests\Mysql\MysqlTestJob;
 use SqlFtw\Tests\Mysql\Result;
+use function count;
 use function rd;
 use function rdf;
 use function rl;
+use function usort;
 
 class ResultRenderer
 {
@@ -101,9 +103,6 @@ class ResultRenderer
                 return count($a);
 			}, $serialisationErrors))) . "\n";
         }
-        if ($this->fullRun && $unusedExceptions !== []) {
-            echo "Unused serialisation exceptions: " . Colors::white((string) count($unusedExceptions)) . "\n";
-        }
 
         echo 'Running time: ' . Units::time(microtime(true) - Debugger::getStart()) . "\n";
         echo 'Parse time: ' . Units::time($time) . "\n";
@@ -111,38 +110,10 @@ class ResultRenderer
         echo "Statements parsed: {$statements}\n";
         echo "Tokens parsed: {$tokens}\n";
 
-        usort($results, static function (Result $a, Result $b) {
-            return $b->time <=> $a->time;
-        });
-        echo "Slowest:\n";
-        $n = 0;
-        foreach ($results as $result) {
-            $time = Units::time($result->time);
-            $memory = Units::memory($result->memory);
-            $size = Units::memory($result->size);
-            $path = Str::after($result->path, $this->baseDir);
-            echo "  {$time}, {$memory}, pid: {$result->pid}, {$result->statements} st ({$path} - {$size})\n";
-            $n++;
-            if ($n >= 10) {
-                break;
-            }
-        }
+        $this->renderOutliers($results);
 
-        usort($results, static function (Result $a, Result $b) {
-            return $b->memory <=> $a->memory;
-        });
-        echo "Hungriest:\n";
-        $n = 0;
-        foreach ($results as $result) {
-            $time = Units::time($result->time);
-            $memory = Units::memory($result->memory);
-            $size = Units::memory($result->size);
-            $path = Str::after($result->path, $this->baseDir);
-            echo "  {$time}, {$memory}, pid: {$result->pid}, {$result->statements} st ({$path} - {$size})\n";
-            $n++;
-            if ($n >= 10) {
-                break;
-            }
+        if ($this->fullRun && $unusedExceptions !== []) {
+            echo "Unused serialisation exceptions: " . Colors::white((string) count($unusedExceptions)) . "\n";
         }
 
         return array_merge(array_keys($falseNegatives), array_keys($falsePositives), array_keys($serialisationErrors));
@@ -163,8 +134,8 @@ class ResultRenderer
 
     public function renderFalseNegative(Command $command, TokenList $tokenList, SqlMode $mode): void
     {
-        rl('Should not fail:', null, 'r');
-        //rl($mode->getValue(), 'mode', 'C');
+        rl('False negative (should not fail):', null, 'r');
+        rl("'{$mode->getValue()}'", 'sql_mode', 'C');
 
         $tokensSerialized = trim($tokenList->serialize());
         rl($tokensSerialized, null, 'y');
@@ -202,7 +173,7 @@ class ResultRenderer
 
     public function renderFalsePositive(Command $command, TokenList $tokenList, SqlMode $mode): void
     {
-        rl('Should fail:', null, 'r');
+        rl('False positive (should fail):', null, 'r');
         rl($mode->getValue(), 'mode', 'C');
 
         $tokensSerialized = trim($tokenList->serialize());
@@ -234,18 +205,22 @@ class ResultRenderer
     {
         rl('Serialisation error:', null, 'r');
 
-        [$beforeOrig, $before] = $job->normalizeSqlBefore($tokenList);
-        [$afterOrig, $after] = $job->normalizeSqlAfter($command, $this->formatter, $tokenList->getSession());
+        [$origin, $originNorm] = $job->normalizeOriginalSql($tokenList, true);
+        [$parsed, $parsedNorm] = $job->normalizeParsedSql($command, $this->formatter, $tokenList->getSession(), true);
 
-        $after_ = $after;
-        $afterOrig_ = $afterOrig;
-        rdf($before, $after);
-        rd($before);
-        rd($after_);
+        // before normalization
         Dumper::$escapeWhiteSpace = false;
-        rd($beforeOrig);
-        rd($afterOrig_);
+        rd($origin);
+        rd($parsed);
         Dumper::$escapeWhiteSpace = true;
+
+        // after normalization
+        rd($originNorm);
+        rd($parsedNorm);
+
+        // diff
+        rdf($originNorm, $parsedNorm);
+
         rd($command, 20);
         rd($tokenList);
     }
@@ -258,6 +233,46 @@ class ResultRenderer
         rl('Unused serialisation exceptions:', null, 'r');
         foreach ($exceptions as $exception) {
             rl($exception);
+        }
+    }
+
+    /**
+     * @param list<Result> $results
+     */
+    private function renderOutliers(array $results): void
+    {
+        usort($results, static function (Result $a, Result $b) {
+            return $b->time <=> $a->time;
+        });
+        echo "Slowest:\n";
+        $n = 0;
+        foreach ($results as $result) {
+            $time = Units::time($result->time);
+            $memory = Units::memory($result->memory);
+            $size = Units::memory($result->size);
+            $path = Str::after($result->path, $this->baseDir);
+            echo "  {$time}, {$memory}, pid: {$result->pid}, {$result->statements} st ({$path} - {$size})\n";
+            $n++;
+            if ($n >= 10) {
+                break;
+            }
+        }
+
+        usort($results, static function (Result $a, Result $b) {
+            return $b->memory <=> $a->memory;
+        });
+        echo "Hungriest:\n";
+        $n = 0;
+        foreach ($results as $result) {
+            $time = Units::time($result->time);
+            $memory = Units::memory($result->memory);
+            $size = Units::memory($result->size);
+            $path = Str::after($result->path, $this->baseDir);
+            echo "  {$time}, {$memory}, pid: {$result->pid}, {$result->statements} st ({$path} - {$size})\n";
+            $n++;
+            if ($n >= 10) {
+                break;
+            }
         }
     }
 

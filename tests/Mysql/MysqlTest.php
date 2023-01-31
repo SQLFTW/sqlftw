@@ -18,12 +18,14 @@ use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
 use function chdir;
 use function count;
+use function ctype_digit;
 use function dirname;
 use function exec;
 use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
 use function implode;
+use function in_array;
 use function ini_set;
 use function is_dir;
 use function ltrim;
@@ -63,6 +65,14 @@ class MysqlTest
         $this->mysqlTestsDir = $this->mysqlRepoDir . '/mysql-test';
         $this->lastFailPath = $this->tempTestsDir . '/last-fail.txt';
         $this->currentTagPath = $this->tempTestsDir . '/current-tag.txt';
+    }
+
+    public function listSuites(): void
+    {
+        echo Colors::white("MySQL Test suites:") . "\n";
+        foreach (self::$suites as $i => $suite) {
+            echo "  " . Colors::yellow("{$i}") . ": " . Colors::white("{$suite}") . "\n";
+        }
     }
 
     /**
@@ -140,6 +150,20 @@ class MysqlTest
                 continue;
             }
 
+            if (!in_array($test, self::$suites, true)) {
+                if (in_array("extra/{$test}", self::$suites, true)) {
+                    $test = "extra/{$test}";
+                } elseif (in_array("suite/{$test}/t", self::$suites, true)) {
+                    $test = "suite/{$test}/t";
+                } elseif (ctype_digit($test) && $test < count(self::$suites)) {
+                    $test = self::$suites[(int) $test];
+                } elseif ($test === '') {
+                    // all
+                } else {
+                    echo "Test suite '{$test}' not found.\n";
+                    exit(1);
+                }
+            }
             $suitePath = $test !== '' ? $this->mysqlTestsDir . '/' . $test : $this->mysqlTestsDir;
             $suites[] = $suitePath;
         }
@@ -243,6 +267,8 @@ class MysqlTest
         chdir($this->tempTestsDir);
 
         // sparse checkout setup (~4.5 GB -> ~270 MB)
+        // https://git-scm.com/docs/git-sparse-checkout
+        // https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/#sparse-checkout-and-partial-clones
         // todo: there is still some space to optimize, because sparse checkout of branch '8.0' has only ~70 MB. tags suck
         echo Colors::lyellow("git clone --depth 1 --filter=blob:none --sparse " . self::MYSQL_REPOSITORY_LINK) . "\n";
         system("git clone --depth 1 --filter=blob:none --sparse " . self::MYSQL_REPOSITORY_LINK);

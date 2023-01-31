@@ -34,6 +34,7 @@ use function function_exists;
 use function getmypid;
 use function memory_get_peak_usage;
 use function microtime;
+use function rl;
 use function str_replace;
 use function strlen;
 use function strpos;
@@ -214,8 +215,8 @@ class MysqlTestJob
             return true;
         }
 
-        [, $before] = $this->normalizeSqlBefore($tokenList);
-        [, $after] = $this->normalizeSqlAfter($command, $formatter, $session);
+        [, $before] = $this->normalizeOriginalSql($tokenList);
+        [, $after] = $this->normalizeParsedSql($command, $formatter, $session);
 
         if ($before !== $after) {
             if (isset(self::$exceptions[$before]) && self::$exceptions[$before] === $after) {
@@ -231,36 +232,79 @@ class MysqlTestJob
     /**
      * @return array{string, string}
      */
-    public function normalizeSqlBefore(TokenList $tokenList): array
+    public function normalizeOriginalSql(TokenList $tokenList, bool $debug = false): array
     {
-        $beforeOrig = $tokenList->map(static function (Token $token): Token {
+        $original = $tokenList->map(static function (Token $token): Token {
             return ($token->type & TokenType::COMMENT) !== 0
                 ? new Token(TokenType::WHITESPACE, $token->position, $token->row, ' ')
                 : $token;
         })->serialize();
-        $before = strtolower($beforeOrig);
-        $before = Re::replace($before, '~[\n\s]+~', ' ');
-        $before = trim($before);
-        $before = str_replace($this->aliasKeys, $this->aliasValues, $before);
-        foreach (self::$reAliases as $find => $replace) {
-            $before = Re::replace($before, $find, $replace);
-        }
-        $before = Str::replaceKeys($before, self::$normalize);
 
-        return [$beforeOrig, $before];
+        $original = trim($original);
+
+        // normalize whitespace and case
+        $result = strtolower($original);
+        $result = Re::replace($result, '~[\n\s]+~', ' ');
+
+        if (!$debug) {
+            $result = str_replace($this->aliasKeys, $this->aliasValues, $result);
+        } else {
+            foreach (self::$aliases as $find => $replace) {
+                $after = str_replace($find, $replace, $result);
+                if ($after !== $result) {
+                    //rl("Alias used: \"{$find}\" -> \"{$replace}\"");
+                }
+                $result = $after;
+            }
+        }
+
+        foreach (self::$reAliases as $find => $replace) {
+            $after = Re::replace($result, $find, $replace);
+            if ($debug && $after !== $result) {
+                //rl("Replacement used: \"{$find}\" -> \"{$replace}\"");
+            }
+            $result = $after;
+        }
+
+        if (!$debug) {
+            $result = Str::replaceKeys($result, self::$normalize);
+        } else {
+            foreach (self::$normalize as $find => $replace) {
+                $after = str_replace($find, $replace, $result);
+                if ($after !== $result) {
+                    //rl("Normalization used (original): \"{$find}\" -> \"{$replace}\"");
+                }
+                $result = $after;
+            }
+        }
+
+        return [$original, $result];
     }
 
     /**
      * @return array{string, string}
      */
-    public function normalizeSqlAfter(Command $command, Formatter $formatter, Session $session): array
+    public function normalizeParsedSql(Command $command, Formatter $formatter, Session $session, bool $debug = false): array
     {
-        $afterOrig = $formatter->serialize($command, false, $session->getDelimiter());
-        $after = strtolower($afterOrig);
-        $after = Re::replace($after, '~[\n\s]+~', ' ');
-        $after = Str::replaceKeys($after, self::$normalize);
+        $serialized = $formatter->serialize($command, false, $session->getDelimiter());
 
-        return [$afterOrig, $after];
+        // normalize whitespace and case
+        $result = strtolower($serialized);
+        $result = Re::replace($result, '~[\n\s]+~', ' ');
+
+        if (!$debug) {
+            $result = Str::replaceKeys($result, self::$normalize);
+        } else {
+            foreach (self::$normalize as $find => $replace) {
+                $after = str_replace($find, $replace, $result);
+                if ($after !== $result) {
+                    //rl("Normalization used (serialized): \"{$find}\" -> \"{$replace}\"");
+                }
+                $result = $after;
+            }
+        }
+
+        return [$serialized, $result];
     }
 
     /**
