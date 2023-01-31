@@ -7,9 +7,9 @@ namespace SqlFtw\Parser;
 use SqlFtw\Sql\Expression\Scope;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Tests\Assert;
+use SqlFtw\Tests\Util\MysqlVariableHelper;
 
 require __DIR__ . '/../bootstrap.php';
-
 
 
 foreach (MysqlVariable::getAllowedValues() as $variableName) {
@@ -20,14 +20,14 @@ foreach (MysqlVariable::getAllowedValues() as $variableName) {
     $scope = MysqlVariable::getScope($variableName);
     $sessionReadOnly = MysqlVariable::isSessionReadonly($variableName);
 
-    $value = MysqlVariable::getSampleValue($variableName);
+    $value = MysqlVariableHelper::getSampleFormattedValue($variableName);
 
     if ($scope === Scope::GLOBAL || $scope === null) {
-        $code = "SET @@GLOBAL.{$variableName} = $value";
+        $code = "SET @@GLOBAL.{$variableName} = {$value}";
         Assert::parseSerialize($code);
     }
     if (($scope === Scope::SESSION || $scope === null) && !$sessionReadOnly) {
-        $code = "SET @@{$variableName} = $value";
+        $code = "SET @@{$variableName} = {$value}";
         Assert::parseSerialize($code);
     }
 }

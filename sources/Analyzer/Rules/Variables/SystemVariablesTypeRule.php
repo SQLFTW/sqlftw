@@ -68,8 +68,9 @@ class SystemVariablesTypeRule implements SimpleRule
             }
 
             $name = $variable->getName();
-            [$type, $nullable, $nonEmpty, $nonZero, $values, $min, $max, $increment, $clamp, $clampMin] = MysqlVariable::getTypeInfo($name);
-            if ($type === BaseType::UNSIGNED && !$strict && ($clamp || $clampMin)) {
+            $var = MysqlVariable::getInfo($name);
+            $type = $var->type;
+            if ($type === BaseType::UNSIGNED && !$strict && ($var->clamp || $var->clampMin)) {
                 $type = BaseType::SIGNED;
             }
             $expression = $assignment->getExpression();
@@ -91,7 +92,7 @@ class SystemVariablesTypeRule implements SimpleRule
                 continue;
             }
             if ($value === null) {
-                if (!$nullable) {
+                if (!$var->nullable) {
                     $results[] = new AnalyzerResult("System variable {$name} is not nullable.");
                 }
                 continue;
@@ -116,15 +117,15 @@ class SystemVariablesTypeRule implements SimpleRule
                 $message = "System variable {$name} assignment with expression \"{$expressionString}\" ({$expressionType}) was not checked.";
                 $results[] = new AnalyzerResult($message, AnalyzerResultSeverity::SKIP_NOTICE);
             } else {
-                if ($nonEmpty && $value === '') {
+                if ($var->nonEmpty && $value === '') {
                     $results[] = new AnalyzerResult("System variable {$name} can not be set to an empty value.");
                 }
-                if ($nonZero && $value === 0) {
+                if ($var->nonZero && $value === 0) {
                     $results[] = new AnalyzerResult("System variable {$name} can not be set to zero.");
                 }
-                if (!$context->getTypeChecker()->canBeCastedTo($value, $type, $values, $context->getResolver()->cast())) {
-                    if ($values !== null) {
-                        $type .= '(' . implode(',', $values) . ')';
+                if (!$context->getTypeChecker()->canBeCastedTo($value, $type, $var->values, $context->getResolver()->cast())) {
+                    if ($var->values !== null) {
+                        $type .= '(' . implode(',', $var->values) . ')';
                     }
                     $realType = is_object($value) ? get_class($value) : gettype($value);
                     $results[] = new AnalyzerResult("System variable {$name} only accepts {$type}, but {$realType} given.");
@@ -135,17 +136,17 @@ class SystemVariablesTypeRule implements SimpleRule
                 if (!is_numeric($value)) {
                     continue;
                 }
-                if ($min === null || $max === null) {
+                if ($var->min === null || $var->max === null) {
                     continue;
-                } elseif ($value < $min && ($strict || (!$clamp && !$clampMin))) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$min} and {$max}.");
-                } elseif ($value > $max && ($strict || !$clamp)) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$min} and {$max}.");
+                } elseif ($value < $var->min && ($strict || (!$var->clamp && !$var->clampMin))) {
+                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$var->min} and {$var->max}.");
+                } elseif ($value > $var->max && ($strict || !$var->clamp)) {
+                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$var->min} and {$var->max}.");
                 }
-                if ($increment === null) {
+                if ($var->increment === null) {
                     continue;
-                } elseif (($strict || !$clamp) && (!is_int($value) || ($value % $increment) !== 0)) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be multiple of {$increment}.");
+                } elseif (($strict || !$var->clamp) && (!is_int($value) || ($value % $var->increment) !== 0)) {
+                    $results[] = new AnalyzerResult("System variable {$name} value must be multiple of {$var->increment}.");
                 }
             }
         }

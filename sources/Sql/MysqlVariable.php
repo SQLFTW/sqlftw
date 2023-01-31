@@ -19,10 +19,6 @@ use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BaseType as T;
 use SqlFtw\Sql\Expression\Scope as S;
 use SqlFtw\Sql\VariableFlags as F;
-use function is_float;
-use function is_int;
-use function is_string;
-use function preg_match;
 use const PHP_INT_MAX as MAX;
 
 class MysqlVariable extends SqlEnum
@@ -2235,23 +2231,21 @@ class MysqlVariable extends SqlEnum
         return ($flags & F::NO_DEFAULT) === 0;
     }
 
-    /**
-     * @return array{string, bool, bool, bool, list<int|string>|null, int|float|null, int|float|null, int|null, bool, bool}
-     */
-    public static function getTypeInfo(string $variable): array
+    public static function getInfo(string $variable): SystemVariableInfo
     {
         $properties = self::$properties[$variable] ?? [];
         $type = $properties[2] ?? T::CHAR;
         $enum = $type === T::ENUM || $type === T::SET;
         $flags = $properties[4] ?? 0;
-        /** @var list<int|string>|null $values */
+        /** @var non-empty-list<int|string>|null $values */
         $values = $enum ? $properties[5] ?? null : null;
         /** @var int|float|null $min */
         $min = !$enum ? $properties[5] ?? null : null;
         $max = !$enum ? $properties[6] ?? null : null;
         $increment = !$enum ? $properties[7] ?? null : null;
 
-        return [
+        return new SystemVariableInfo(
+            $variable,
             $type,
             ($flags & F::NULLABLE) !== 0,
             ($flags & F::NON_EMPTY) !== 0,
@@ -2261,66 +2255,8 @@ class MysqlVariable extends SqlEnum
             $max,
             $increment,
             !$enum && ($flags & F::CLAMP) !== 0,
-            !$enum && ($flags & F::CLAMP_MIN) !== 0,
-        ];
-    }
-
-    /**
-     * @internal for testing
-     */
-    public static function getSampleValue(string $variable): string
-    {
-        // default
-        $value = self::$properties[$variable][3] ?? null;
-        [$type, $nullable, $nonEmpty, $nonZero, $values, $min, $max, $increment, $clamp, $clampMin] = self::getTypeInfo($variable);
-
-        if (is_string($value)) {
-            if ($value === '') {
-                if ($nonEmpty) {
-                    return self::pickValue($type, $values);
-                } else {
-                    return "''";
-                }
-            } elseif ($type === T::ENUM || $type === T::SET) {
-                if (!preg_match('~^[A-Za-z\d_]+$~', $value)) {
-                    return "'{$value}'";
-                }
-            } else {
-                return "'{$value}'";
-            }
-        } elseif (is_int($value)) {
-            if ($value < $min) {
-                $value = $min;
-            }
-            return (string) $value;
-        } elseif (is_float($value)) {
-            return (string) $value;
-        } elseif ($value === false) {
-            return 'FALSE';
-        } elseif ($value === true) {
-            return 'TRUE';
-        } elseif ($value === null) {
-            if ($nullable) {
-                return 'NULL';
-            } else {
-                return self::pickValue($type, $values);
-            }
-        }
-
-        return $value;
-    }
-
-    private static function pickValue(string $type, ?array $values): string
-    {
-        switch ($type) {
-            case T::ENUM:
-            case T::SET:
-                return $values[0];
-            case T::CHAR:
-                return "'foo'";
-            default:
-                return '0';
-        }
+            !$enum && ($flags & F::CLAMP_MIN) !== 0
+        );
     }
 
 }
