@@ -85,10 +85,10 @@
 
         "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M",
         "phpstan:all": [
-            "php82 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
-            "php81 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
-            "php80 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M",
-            "php74 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=256M"
+            "php82 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M",
+            "php81 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M",
+            "php80 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M",
+            "php74 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M"
         ],
 
         "phpcs:all": [
