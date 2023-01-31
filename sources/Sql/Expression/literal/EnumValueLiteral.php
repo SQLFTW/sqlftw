@@ -33,7 +33,7 @@ class EnumValueLiteral implements Literal
     public function serialize(Formatter $formatter): string
     {
         // things like AES-128-ECB etc.
-        if (!preg_match('~^[A-Za-z\d_]+$~', $this->value)) {
+        if (preg_match('~^[A-Za-z\d_]+$~', $this->value) !== 1) {
             return $formatter->formatString($this->value);
         }
 
