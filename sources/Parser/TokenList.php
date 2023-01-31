@@ -964,7 +964,7 @@ class TokenList
      */
     public function expectNameEnum(string $className, ?string $entity = null): SqlEnum
     {
-        $value = $this->expectNonReservedName($entity);
+        $value = $this->expectName($entity);
 
         try {
             /** @var T $enum */
@@ -987,7 +987,7 @@ class TokenList
      */
     public function getNameEnum(string $className, ?string $entity = null): ?SqlEnum
     {
-        $value = $this->getNonReservedName($entity);
+        $value = $this->getName($entity);
         if ($value === null) {
             return null;
         }

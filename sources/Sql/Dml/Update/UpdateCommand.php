@@ -149,7 +149,7 @@ class UpdateCommand extends Statement implements DmlCommand
         $result .= 'UPDATE ';
 
         if ($this->optimizerHints !== null) {
-            $result .= ' /*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */';
+            $result .= '/*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */ ';
         }
 
         if ($this->lowPriority) {

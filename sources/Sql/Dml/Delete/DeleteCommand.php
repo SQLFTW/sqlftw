@@ -176,7 +176,7 @@ class DeleteCommand extends Statement implements DmlCommand
         $result .= 'DELETE ';
 
         if ($this->optimizerHints !== null) {
-            $result .= ' /*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */';
+            $result .= '/*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */ ';
         }
 
         if ($this->lowPriority) {

@@ -13,9 +13,11 @@ namespace SqlFtw\Parser\Dml;
 
 use LogicException;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidTokenException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Dml\OptimizerHint\HintTableIdentifier;
 use SqlFtw\Sql\Dml\OptimizerHint\IndexLevelHint;
 use SqlFtw\Sql\Dml\OptimizerHint\JoinFixedOrderHint;
@@ -33,6 +35,8 @@ use SqlFtw\Sql\Dml\OptimizerHint\SubqueryHint;
 use SqlFtw\Sql\Dml\OptimizerHint\SubqueryHintStrategy;
 use SqlFtw\Sql\Dml\OptimizerHint\TableLevelHint;
 use SqlFtw\Sql\EntityType;
+use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\EnumValueLiteral;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
@@ -116,25 +120,38 @@ class OptimizerHintParser
      * named_query_block_hint:
      *     QB_NAME(name)
      *
-     * @return non-empty-list<OptimizerHint>
+     * @return non-empty-list<OptimizerHint>|null
      */
-    public function parseHints(TokenList $tokenList): array
+    public function parseHints(TokenList $tokenList): ?array
     {
         $tokenList->expect(TokenType::OPTIMIZER_HINT_START);
 
         $hints = [];
         do {
-            $type = $tokenList->expectNameEnum(OptimizerHintType::class)->getValue();
-            $tokenList->expectSymbol('(');
+            try {
+                $type = $tokenList->expectNameEnum(OptimizerHintType::class)->getValue();
+            } catch (InvalidTokenException $e) {
+                // fallback to regular comment (ignored)
+                while ($token = $tokenList->get()) {
+                    if ($token->type === TokenType::OPTIMIZER_HINT_END) {
+                        // todo: parser warning
+                        return null;
+                    }
+                }
+
+                throw new ParserException('End of invalid optimizer hint comment not found.', $tokenList);
+            }
+
+            $open = $tokenList->hasSymbol('(');
             switch ($type) {
                 case OptimizerHintType::JOIN_FIXED_ORDER:
-                    $queryBlock = $tokenList->getName(EntityType::QUERY_BLOCK);
+                    $queryBlock = $this->parseQueryBlockUsageName($tokenList);
                     $hints[] = new JoinFixedOrderHint($queryBlock);
                     break;
                 case OptimizerHintType::JOIN_ORDER:
                 case OptimizerHintType::JOIN_PREFIX:
                 case OptimizerHintType::JOIN_SUFFIX:
-                    $queryBlock = $tokenList->getName(EntityType::QUERY_BLOCK);
+                    $queryBlock = $this->parseQueryBlockUsageName($tokenList);
 
                     $tables = [];
                     do {
@@ -153,7 +170,7 @@ class OptimizerHintParser
                 case OptimizerHintType::NO_HASH_JOIN:
                 case OptimizerHintType::MERGE:
                 case OptimizerHintType::NO_MERGE:
-                    $queryBlock = $tokenList->getName(EntityType::QUERY_BLOCK);
+                    $queryBlock = $this->parseQueryBlockUsageName($tokenList);
                     $tables = $this->parseTableNamesOrNull($tokenList);
 
                     $hints[] = new TableLevelHint($type, $queryBlock, $tables);
@@ -174,7 +191,7 @@ class OptimizerHintParser
                 case OptimizerHintType::NO_ORDER_INDEX:
                 case OptimizerHintType::SKIP_SCAN:
                 case OptimizerHintType::NO_SKIP_SCAN:
-                    $queryBlock = $tokenList->getName(EntityType::QUERY_BLOCK);
+                    $queryBlock = $this->parseQueryBlockUsageName($tokenList);
                     $table = $this->parseTableName($tokenList);
 
                     $indexes = null;
@@ -190,7 +207,7 @@ class OptimizerHintParser
                     break;
                 case OptimizerHintType::SEMIJOIN:
                 case OptimizerHintType::NO_SEMIJOIN:
-                    $queryBlock = $tokenList->getName(EntityType::QUERY_BLOCK);
+                    $queryBlock = $this->parseQueryBlockUsageName($tokenList);
 
                     $strategies = null;
                     $token = $tokenList->getNameEnum(SemijoinHintStrategy::class);
@@ -208,7 +225,7 @@ class OptimizerHintParser
                     $hints[] = new SemijoinHint($type, $queryBlock, $strategies);
                     break;
                 case OptimizerHintType::SUBQUERY:
-                    $queryBlock = $tokenList->getName(EntityType::QUERY_BLOCK);
+                    $queryBlock = $this->parseQueryBlockUsageName($tokenList);
                     /** @var 'INTOEXISTS'|'MATERIALIZATION' $strategy */
                     $strategy = $tokenList->expectNameEnum(SubqueryHintStrategy::class)->getValue();
                     $hints[] = new SubqueryHint($queryBlock, $strategy);
@@ -220,11 +237,23 @@ class OptimizerHintParser
                 case OptimizerHintType::SET_VAR:
                     $variableName = $tokenList->expectNonReservedName(EntityType::SYSTEM_VARIABLE);
                     $variable = $this->expressionParser->createSystemVariable($tokenList, $variableName);
-                    if (MysqlVariable::supportsSetVar($variable->getName())) {
+                    if (!MysqlVariable::supportsSetVar($variable->getName())) {
                         throw new ParserException("Variable {$variableName} cannot be used in SET_VAR optimizer hint.", $tokenList);
                     }
                     $tokenList->expectOperator(Operator::EQUAL);
-                    $value = $this->expressionParser->parseLiteral($tokenList);
+                    $type = MysqlVariable::getType($variableName);
+                    if ($type === BaseType::ENUM || $type === BaseType::SET) {
+                        $value = $tokenList->getVariableEnumValue(...MysqlVariable::getValues($variableName));
+                        if ($value !== null) {
+                            $value = new EnumValueLiteral((string) $value);
+                        } else {
+                            $value = $this->expressionParser->parseLiteral($tokenList);
+                        }
+                    } elseif ($type === StorageEngine::class) {
+                        $value = $tokenList->expectStorageEngineName();
+                    } else {
+                        $value = $this->expressionParser->parseLiteral($tokenList);
+                    }
                     $hints[] = new SetVarHint($variable, $value);
                     break;
                 case OptimizerHintType::RESOURCE_GROUP:
@@ -232,17 +261,32 @@ class OptimizerHintParser
                     $hints[] = new ResourceGroupHint($group);
                     break;
                 case OptimizerHintType::QUERY_BLOCK_NAME:
-                    $block = $tokenList->expectName(EntityType::QUERY_BLOCK);
-                    $hints[] = new QueryBlockNameHint($block);
+                    $queryBlock = $tokenList->expectName(EntityType::QUERY_BLOCK);
+                    $hints[] = new QueryBlockNameHint($queryBlock);
                     break;
                 default:
                     throw new LogicException("Unknown optimizer hint type {$type}.");
             }
-            $tokenList->expectSymbol(')');
-
+            if ($open) {
+                $tokenList->expectSymbol(')');
+            }
         } while (!$tokenList->has(TokenType::OPTIMIZER_HINT_END));
 
         return $hints;
+    }
+
+    private function parseQueryBlockUsageName(TokenList $tokenList): ?string
+    {
+        $queryBlock = $tokenList->get(TokenType::AT_VARIABLE);
+
+        if ($queryBlock === null) {
+            return null;
+        }
+
+        $queryBlock = substr($queryBlock->value, 1);
+        $tokenList->validateName(EntityType::QUERY_BLOCK, $queryBlock);
+
+        return $queryBlock;
     }
 
     /**
@@ -252,6 +296,7 @@ class OptimizerHintParser
     {
         if ($tokenList->hasSymbol(')')) {
             $tokenList->rewind(-1);
+
             return null;
         }
 
@@ -277,6 +322,7 @@ class OptimizerHintParser
         if ($queryBlock !== null) {
             $queryBlock = substr($queryBlock->value, 1);
             $tokenList->validateName(EntityType::QUERY_BLOCK, $queryBlock);
+
             return new NameWithQueryBlock($table, $queryBlock);
         } else {
             return $table;

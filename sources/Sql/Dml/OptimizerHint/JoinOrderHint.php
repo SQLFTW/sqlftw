@@ -69,7 +69,7 @@ class JoinOrderHint implements OptimizerHint
     public function serialize(Formatter $formatter): string
     {
         return $this->type . '('
-            . ($this->queryBlock !== null ? $formatter->formatName($this->queryBlock) . ' ' : '')
+            . ($this->queryBlock !== null ? '@' . $formatter->formatName($this->queryBlock) . ' ' : '')
             . $formatter->formatSerializablesList($this->tables) . ')';
     }
 

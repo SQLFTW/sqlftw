@@ -164,10 +164,6 @@ class MysqlTestJob
                 // strange large command, todo: debug, obviously
                 || Str::endsWith($path, 'undo_log_tmp_table.test')
                 || Str::endsWith($path, 'ctype_tis620_myisam.test')
-                // todo: not yet supported
-                || Str::endsWith($path, 'opt_hints.test')
-                || Str::endsWith($path, 'opt_hints_set_var.test')
-                || Str::endsWith($path, 'opt_hints_subquery.test')
             ) {
                 $match = true;
             } else {

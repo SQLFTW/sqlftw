@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Dml\OptimizerHint;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\SystemVariable;
 
@@ -18,9 +19,13 @@ class SetVarHint implements OptimizerHint
 
     private SystemVariable $variable;
 
-    private Literal $value;
+    /** @var Literal|StorageEngine */
+    private $value;
 
-    public function __construct(SystemVariable $variable, Literal $value)
+    /**
+     * @param Literal|StorageEngine $value
+     */
+    public function __construct(SystemVariable $variable, $value)
     {
         $this->variable = $variable;
         $this->value = $value;
@@ -36,14 +41,17 @@ class SetVarHint implements OptimizerHint
         return $this->variable;
     }
 
-    public function getValue(): Literal
+    /**
+     * @return Literal|StorageEngine
+     */
+    public function getValue()
     {
         return $this->value;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'SET_VAR(' . $this->variable->serialize($formatter) . ' = ' . $this->variable->serialize($formatter) . ')';
+        return 'SET_VAR(' . $this->variable->getName() . ' = ' . $this->value->serialize($formatter) . ')';
     }
 
 }

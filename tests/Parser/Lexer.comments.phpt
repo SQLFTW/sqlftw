@@ -29,15 +29,22 @@ $tokens = Assert::tokens(' /* comment ', 2);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::INVALID, '/* comment ', 1);
 
-// HINT_COMMENT (parsed)
-$tokens = Assert::tokens(' /*+ content */ ', 7);
+// HINT_COMMENT (not parsed)
+$tokens = Assert::tokens(' /*+ content */ ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::OPTIMIZER_HINT_START, '/*+', 1);
-Assert::token($tokens[2], T::WHITESPACE, ' ', 4);
-Assert::token($tokens[3], T::NAME | T::UNQUOTED_NAME, 'content', 5);
-Assert::token($tokens[4], T::WHITESPACE, ' ', 12);
-Assert::token($tokens[5], T::OPTIMIZER_HINT_END, '*/', 13);
-Assert::token($tokens[6], T::WHITESPACE, ' ', 15);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::OPTIMIZER_HINT_COMMENT, '/*+ content */', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 15);
+
+// HINT_COMMENT (parsed)
+$tokens = Assert::tokens('SELECT /*+ content */ ', 8);
+Assert::token($tokens[0], T::NAME | T::UNQUOTED_NAME | T::KEYWORD | T::RESERVED, 'SELECT', 0);
+Assert::token($tokens[1], T::WHITESPACE, ' ', 6);
+Assert::token($tokens[2], T::OPTIMIZER_HINT_START, '/*+', 7);
+Assert::token($tokens[3], T::WHITESPACE, ' ', 10);
+Assert::token($tokens[4], T::NAME | T::UNQUOTED_NAME, 'content', 11);
+Assert::token($tokens[5], T::WHITESPACE, ' ', 18);
+Assert::token($tokens[6], T::OPTIMIZER_HINT_END, '*/', 19);
+Assert::token($tokens[7], T::WHITESPACE, ' ', 21);
 
 // OPTIONAL_COMMENT
 $tokens = Assert::tokens(' /*!90000 comment */ ', 3);

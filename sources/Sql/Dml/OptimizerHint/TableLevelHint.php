@@ -69,7 +69,7 @@ class TableLevelHint implements OptimizerHint
     public function serialize(Formatter $formatter): string
     {
         return $this->type . '('
-            . ($this->queryBlock !== null ? $formatter->formatName($this->queryBlock) : '')
+            . ($this->queryBlock !== null ? '@' . $formatter->formatName($this->queryBlock) : '')
             . ($this->queryBlock !== null && $this->tables !== null ? ' ' : '')
             . ($this->tables !== null ? $formatter->formatSerializablesList($this->tables) : '') . ')';
     }

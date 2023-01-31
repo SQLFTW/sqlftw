@@ -1,6 +1,7 @@
 <?php declare(strict_types = 1);
 
 // spell-check-ignore: DBACCESS TABLENAME abc abcdefghijklmnopqrstuvwxyz condname1 ctx dat dblwr ddse endswithspace fil haha hehe hoho lsn pri testrole testuser wp xyzzy 0every BQAAAA DRAUGR DUP FIL TRG VÐƷWİ aaa aaaaaa abcd asd attr4 azundris badvar bbbbbb fvar idx ivar loaddata5 maste mv mvi nosuchvar º Æ Ö Γåô Γê Γò Γòí ツ
+// spell-check-ignore: switc acces é ü
 
 namespace SqlFtw\Tests\Mysql\Data;
 
@@ -842,6 +843,56 @@ trait KnownFailures
         "set @@ndbinfo_max_rows = @max_rows;" => Valid::YES,
         "SET @@global.max_allowed_packet:= @tmp_max;" => Valid::YES,
         "SET @@global.gtid_purged= @gtid_purged_init;" => Valid::YES,
+
+        // invalid hints (ignored by MySQL)
+        "SELECT /*+ SET_VAR(foo = 1K) */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(bar = 'baz') */ 1;" => Valid::YES,
+        "SELECT /*+ NO_ICP() */ 1\n  FROM /*+ regular commentary, not a hint! */ t1;" => Valid::YES, // NO_ICP should have params!
+        "(SELECT 1) UNION (SELECT /*+ NO_ICP() */ 1);" => Valid::YES,
+        "SELECT /*+ NO_ICP(t1 ( */ 1;" => Valid::YES,
+        "SELECT /*+ NO_ICP(t1 */ 1;" => Valid::YES,
+        "SELECT /*+ NO_ICP) */ 1;" => Valid::YES,
+        "SELECT /*+ NO_ICP( */ 1;" => Valid::YES,
+        "SELECT /*+ NO_ICP(10) */ 1;" => Valid::YES,
+        "SELECT /*+ NO_ICP() */ 1;" => Valid::YES,
+        "EXPLAIN SELECT /*+ QB_NAME(``) */ 1;" => Valid::YES,
+        "SELECT /*+ BKA(a b) */   1 FROM t1 a, t1 b;" => Valid::YES,
+        "DELETE  /*+ NO_ICP() */ FROM t1 WHERE 1;" => Valid::YES,
+        "REPLACE /*+ NO_ICP() */ INTO t1 VALUES ();" => Valid::YES,
+        "INSERT  /*+ NO_ICP() */ INTO t1 VALUES ();" => Valid::YES,
+        "UPDATE  /*+ NO_ICP() */ t1 SET i = 10;" => Valid::YES,
+        "(SELECT /*+ NO_ICP() */ 1) UNION (SELECT 1);" => Valid::YES,
+        "SELECT  /*+ NO_ICP() */ 1 UNION SELECT 1;" => Valid::YES,
+        "SELECT  /*+ NO_ICP (  ) */ 1;" => Valid::YES,
+        "SELECT  /*+ NO_ICP () */ 1;" => Valid::YES,
+        "SELECT  /*+NO_ICP()*/ 1;" => Valid::YES,
+        "SELECT  /*+ NO_ICP() */ 1;" => Valid::YES,
+        "SELECT /*+ BKA(t1 @) */ 1;" => Valid::YES,
+        "SELECT /*+ BKA( @) */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(foo = 'test') */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(foo = 10) */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(foo = 21M) */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(foo = 321G) */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(foo = 9000100500G) */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(foo = \"test\"\"test\") */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(foo = 900010050018247362846826482468) */ 1;" => Valid::YES,
+        "SELECT /*+ SET_VAR(foo = 900010050018247362846826482468000) */ 1;" => Valid::YES,
+        "explain SELECT /*+ SET_VAR(max_allowed_packet = 1M) */ * FROM t1;" => Valid::YES,
+        "explain SELECT /*+ SET_VAR(optimizer_switc = 'batched_key_access=off') */ * FROM t1;" => Valid::YES,
+        "explain SELECT /*+ SET_VAR(optimizer_switch = 'batched_key_acces=off') SET_VAR(range_alloc_block_size=amba)*/ * FROM t1;" => Valid::YES,
+        "EXPLAIN SELECT /*+ SET_VAR(max_error_count=0) SET_VAR(optimizer_switch = 'batched_key_acces=off') SET_VAR(range_alloc_block_size=amba)*/ * FROM t1;" => Valid::YES,
+        "EXPLAIN\nSELECT /*+ SUBQUERY(@subq1 FIRSTMATCH) SUBQUERY(@subq2 LOOSESCAN) */ *\nFROM t3\nWHERE t3.a IN (SELECT /*+ QB_NAME(subq1) */ a FROM t1 tx)\n  AND t3.b IN (SELECT /*+ QB_NAME(subq2) */ a FROM t1 ty);" => Valid::YES,
+        "EXPLAIN\nSELECT /*+ SUBQUERY(@subq1 MATERIALIZATION, INTOEXISTS)\n       SUBQUERY(@subq2 MATERIALIZATION, INTOEXISTS) */ *\nFROM t3\nWHERE t3.a IN (SELECT /*+ QB_NAME(subq1) */ a FROM t1 tx)\n  AND t3.b IN (SELECT /*+ QB_NAME(subq2) */ a FROM t1 ty);" => Valid::YES,
+        "EXPLAIN\nSELECT /*+ SEMIJOIN(@subq1 INTOEXISTS) NO_SEMIJOIN(@subq2 INTOEXISTS) */ *\nFROM t1\nWHERE t1.a IN (SELECT /*+ QB_NAME(subq1) */ a FROM t3)\n  AND t1.b IN (SELECT /*+ QB_NAME(subq2) */ a FROM t2);" => Valid::YES,
+        "EXPLAIN SELECT * FROM\n  (SELECT /*+ QB_NAME(qb1) BKA(@qb1 t1@qb1, t2@qb1, t3) */ t2.f1, t2.f2, t2.f3 FROM t1,t2,t3) tt;" => Valid::YES,
+        "EXPLAIN SELECT /*+ BKA(qb1 t3@qb1) */ f2 FROM\n  (SELECT /*+ QB_NAME(qb1) */ f2, f3, f1 FROM t3 WHERE f1 > 2 AND f3 = 'poiu') AS TD\n    WHERE TD.f1 > 2 AND TD.f3 = 'poiu';" => Valid::YES,
+        "select /*+ INDEX_MERGE( t , a ) */ a from t where a ='2016-11-11' and a ='65525'  ;" => Valid::YES,
+        "select /*+ JOIN_FIXED_ORDER(qb2 / */ a from t where a ='255' and a =1  ;" => Valid::YES,
+        "select /*+ JOIN_FIXED_ORDER(qb2 / */ a from t where a =255  ;" => Valid::YES,
+        "select /*+ SUBQUERY(INTOEXISTS,MATERIALIZATION ) */ a from t where a ='65525' and a =1  ;" => Valid::YES,
+
+        "SELECT /*+ BKA(\" quoted name тест\") */ 1 FROM t1;" => Valid::SOMETIMES,
+        "-- error ER_PARSE_ERROR\nSELECT /*+ BKA(`test*/`) */ 1;" => Valid::NO,
 
         // invalid test code
         "REVOKE abc ON *.* FROM testuser@localhost;" => Valid::YES,

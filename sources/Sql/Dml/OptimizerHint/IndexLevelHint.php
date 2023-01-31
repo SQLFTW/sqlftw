@@ -23,7 +23,7 @@ class IndexLevelHint implements OptimizerHint
 
     private ?string $queryBlock;
 
-    private HintTableIdentifier $table;
+    private ?HintTableIdentifier $table;
 
     /** @var non-empty-list<string>|null */
     private ?array $indexes;
@@ -32,7 +32,7 @@ class IndexLevelHint implements OptimizerHint
      * @param IndexLevelHintType&string $type
      * @param non-empty-list<string> $indexes
      */
-    public function __construct(string $type, ?string $queryBlock, HintTableIdentifier $table, ?array $indexes = null)
+    public function __construct(string $type, ?string $queryBlock, ?HintTableIdentifier $table, ?array $indexes = null)
     {
         if ($queryBlock !== null) {
             if ($table instanceof NameWithQueryBlock) {
@@ -59,7 +59,7 @@ class IndexLevelHint implements OptimizerHint
         return $this->queryBlock;
     }
 
-    public function getTable(): HintTableIdentifier
+    public function getTable(): ?HintTableIdentifier
     {
         return $this->table;
     }
@@ -75,8 +75,8 @@ class IndexLevelHint implements OptimizerHint
     public function serialize(Formatter $formatter): string
     {
         return $this->type . '('
-            . ($this->queryBlock !== null ? $formatter->formatName($this->queryBlock) . ' ' : '')
-            . $this->table->serialize($formatter)
+            . ($this->queryBlock !== null ? '@' . $formatter->formatName($this->queryBlock) . ' ' : '')
+            . ($this->table !== null ? $this->table->serialize($formatter) : '')
             . ($this->indexes !== null ? ' ' . $formatter->formatNamesList($this->indexes) : '') . ')';
     }
 

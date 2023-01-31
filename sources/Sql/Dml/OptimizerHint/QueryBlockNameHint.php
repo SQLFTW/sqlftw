@@ -33,7 +33,7 @@ class QueryBlockNameHint implements OptimizerHint
 
     public function serialize(Formatter $formatter): string
     {
-        return 'RESOURCE_GROUP(' . $this->queryBlock . ')';
+        return 'QB_NAME(' . $this->queryBlock . ')';
     }
 
 }

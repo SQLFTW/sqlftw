@@ -56,8 +56,7 @@ class UpdateCommandParser
 
         $optimizerHints = null;
         if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
-            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList);
-            $tokenList->expect(TokenType::OPTIMIZER_HINT_END);
+            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList->rewind(-1));
         }
 
         $lowPriority = $tokenList->hasKeyword(Keyword::LOW_PRIORITY);

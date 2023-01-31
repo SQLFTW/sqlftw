@@ -105,8 +105,7 @@ class InsertCommandParser
 
         $optimizerHints = null;
         if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
-            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList);
-            $tokenList->expect(TokenType::OPTIMIZER_HINT_END);
+            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList->rewind(-1));
         }
 
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);
@@ -188,8 +187,7 @@ class InsertCommandParser
 
         $optimizerHints = null;
         if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
-            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList);
-            $tokenList->expect(TokenType::OPTIMIZER_HINT_END);
+            $optimizerHints = $this->optimizerHintParser->parseHints($tokenList->rewind(-1));
         }
 
         $priority = $tokenList->getKeywordEnum(InsertPriority::class);

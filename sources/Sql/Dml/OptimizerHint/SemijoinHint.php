@@ -61,7 +61,7 @@ class SemijoinHint implements OptimizerHint
     public function serialize(Formatter $formatter): string
     {
         return $this->type . '('
-            . ($this->queryBlock !== null ? $formatter->formatName($this->queryBlock) : '')
+            . ($this->queryBlock !== null ? '@' . $formatter->formatName($this->queryBlock) : '')
             . ($this->queryBlock !== null && $this->strategies !== null ? ' ' : '')
             . ($this->strategies !== null ? implode(', ', $this->strategies) : '') . ')';
     }

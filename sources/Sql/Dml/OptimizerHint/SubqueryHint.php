@@ -49,7 +49,7 @@ class SubqueryHint implements OptimizerHint
     public function serialize(Formatter $formatter): string
     {
         return 'SUBQUERY('
-            . ($this->queryBlock !== null ? $formatter->formatName($this->queryBlock) . ' ' : '')
+            . ($this->queryBlock !== null ? '@' . $formatter->formatName($this->queryBlock) . ' ' : '')
             . $this->strategy . ')';
     }
 

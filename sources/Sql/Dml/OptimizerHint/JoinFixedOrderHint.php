@@ -33,7 +33,7 @@ class JoinFixedOrderHint implements OptimizerHint
 
     public function serialize(Formatter $formatter): string
     {
-        return 'JOIN_FIXED_ORDER(' . ($this->queryBlock !== null ? $formatter->formatName($this->queryBlock) : '') . ')';
+        return 'JOIN_FIXED_ORDER(' . ($this->queryBlock !== null ? '@' . $formatter->formatName($this->queryBlock) : '') . ')';
     }
 
 }

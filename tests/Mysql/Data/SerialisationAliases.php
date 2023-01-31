@@ -315,18 +315,25 @@ trait SerialisationAliases
         '~b\'([01]+)\'~' => '0b$1',
         // add whitespace after ")"
         '~\)([a-z])~' => ') $1',
+        // remove .*
+        '~(?<!trailing \'\\.\\*\' )(delete(?: ?/\\*[^*]+\\*/)?( ignore| from| low_priority| quick)* (?!on)(?:[^(;]+)(?<![=*\']))\\.\\*~' => '$1', // permutations for multiple cases...
+        '~(?<!trailing \'\\.\\*\' )(delete(?: ?/\\*[^*]+\\*/)?( from| ignore| low_priority| quick)* (?!on)(?:[^(;]+)(?<![=*\']))\\.\\*~' => '$1',
+        '~(?<!trailing \'\\.\\*\' )(delete(?: ?/\\*[^*]+\\*/)?( ignore| low_priority| from| quick)* (?!on)(?:[^(;]+)(?<![=*\']))\\.\\*~' => '$1',
+        '~(?<!trailing \'\\.\\*\' )(delete(?: ?/\\*[^*]+\\*/)?( ignore| from| quick| low_priority)* (?!on)(?:[^(;]+)(?<![=*\']))\\.\\*~' => '$1',
         // delete from x using y vs delete x from y
-        '~(?<!before |after |revoke |[a-z\d_])delete ([^(;]+) from (.+)~' => 'delete from $1 using $2',
-        '~from ignore using~' => 'ignore from', // fix previous
-        '~delete from quick~' => 'delete quick from',
-        '~delete from ignore~' => 'delete ignore from',
-        '~delete quick from ignore~' => 'delete quick ignore from',
-        '~delete quick from using~' => 'delete quick from',
-        '~delete quick ignore from using~' => 'delete quick ignore from',
-        '~delete from low_priority using~' => 'delete low_priority from',
-        '~delete from low_priority quick ignore~' => 'delete low_priority quick ignore from',
-        '~delete from low_priority quick ignore using~' => 'delete low_priority quick ignore from',
-        '~delete low_priority quick ignore from using~' => 'delete low_priority quick ignore from',
+        '~(?<!before |after |revoke |[a-z\d_])delete( ?/\\*[^*]+\\*/)? (?!low_priority)(?!quick)(?!ignore)(?!low_priority quick)([^(;]+) from (.+)~' => 'delete$1 from $2 using $3',
+        '~(?<!insert )(?<!\\) )(low_priority|ignore|quick) (?!low_priority)(?!quick)(?!ignore)(?!low_priority quick)([^(;]+) from (.+)~' => '$1 from $2 using $3',
+        '~from ignore using~' => 'ignore from', // fix previous...
+        '~delete( ?/\\*[^*]+\\*/)? from quick~' => 'delete$1 quick from',
+        '~delete( ?/\\*[^*]+\\*/)? from ignore~' => 'delete$1 ignore from',
+        '~delete( ?/\\*[^*]+\\*/)? quick from ignore~' => 'delete$1 quick ignore from',
+        '~delete( ?/\\*[^*]+\\*/)? quick from using~' => 'delete$1 quick from',
+        '~delete( ?/\\*[^*]+\\*/)? quick ignore from using~' => 'delete$1 quick ignore from',
+        '~delete( ?/\\*[^*]+\\*/)? from low_priority using~' => 'delete$1 low_priority from',
+        '~delete( ?/\\*[^*]+\\*/)? from low_priority quick ignore~' => 'delete$1 low_priority quick ignore from',
+        '~delete( ?/\\*[^*]+\\*/)? from low_priority quick ignore using~' => 'delete$1 low_priority quick ignore from',
+        '~delete( ?/\\*[^*]+\\*/)? low_priority quick ignore from using~' => 'delete$1 low_priority quick ignore from',
+        '~low_priority([^(;]+)(?:\\.\\*) from (.+)~' => 'low_priority from $1 using $2',
         // charset, but not charset()
         '~(?<![a-z\d_])charset(?![a-z\d_\(])~' => 'character set',
         // unnecessary signed
@@ -444,6 +451,7 @@ trait SerialisationAliases
         'localtime()' => 'localtime',
         'localtimestamp()' => 'localtimestamp',
         'utc_date()' => 'utc_date',
+        'utc_timestamp()' => 'utc_timestamp',
 
         // unnecessary signed
         'tinyint signed' => 'tinyint',

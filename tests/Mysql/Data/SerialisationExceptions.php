@@ -1,6 +1,7 @@
 <?php declare(strict_types = 1);
 
 // spell-check-ignore: 7where abc autocommitted bb blabla cblob cenum cint cset cvarchar dat dbb dbc dbd defaulte denormal divoire dml ibd idx initfiledb3 innr1 innr2 innrcte jt latin2mysql latin2mysqlcollate maccecollate macromancollate masterreplicate mno modifyowner mtr mv mysqlttest1 nabc ncote nj nx outr1 outr2 outr3 outrcte pmax russian selecta spexecute11 spexecute64 t1values t2values t3values tcnt tde ucs2collate wp xfcller xffe xfff yextent youre zip1k zip2k zip4k zip8k fffd
+// spell-check-ignore: bka bnl dupsweedout firstmatch icp intoexists loosescan qb
 
 namespace SqlFtw\Tests\Mysql\Data;
 
@@ -91,6 +92,31 @@ trait SerialisationExceptions
         "create procedure p1()begin prepare stmt from create procedure p2()begin select 1;end;execute stmt;deallocate prepare stmt;end|"
             => "create procedure p1()begin prepare stmt from create procedure p2()begin select 1;end;;execute stmt;deallocate prepare stmt;end|",
 
+        // invalid optimizer hints treated as regular comments (ignored)
+        "select/*+bad_hint_also_goes_to_digest*/1;" => "select 1;",
+        "select/*+*/*from t1;" => "select*from t1;",
+        "select/*+bka(t1@qb1)bnl(@qb1 t1)dupsweedout firstmatch intoexists loosescan materialization mrr(t1)no_bka(t2)no_bnl(t2)no_icp(t2)no_mrr(t2)no_range_optimization(t2)no_semijoin(t2)qb_name(qb1)semijoin(t1)subquery(t1)*/*from t1 t2;" => "select*from t1 t2;",
+        "alter view v1 select/*+bad_hint*/1;" => "alter view v1 select 1;",
+        "create view v1 select/*+bad_hint*/1;" => "create view v1 select 1;",
+        "select/*+*/a from t where a=2012-01-01 00:11:11;" => "select a from t where a=2012-01-01 00:11:11;",
+        "select/*+? bad syntax*/1;" => "select 1;",
+        "select/*+no_icp(t1)bad_hint*/1 from t1;" => "select 1 from t1;",
+        "select/*+10*/1;" => "select 1;",
+        "select 1 from dual where 1 in(select/*+debug_hint3*/1);" => "select 1 from dual where 1 in(select 1);",
+        "select(select/*+debug_hint3*/1);" => "select(select 1);",
+        "select*from(select/*+debug_hint3*/1)a;" => "select*from(select 1)a;",
+        "explain delete from/*+test*/using t1 where i=10;" => "explain delete from t1 where i=10;",
+        "explain update/*+test*/t1 set i=10 where j=10;" => "explain update t1 set i=10 where j=10;",
+        "explain replace/*+test*/into t1 values(10 10);" => "explain replace t1 values(10 10);",
+        "explain insert/*+test*/into t1 values(10 10);" => "explain insert t1 values(10 10);",
+        "explain select/*+test*/1;" => "explain select 1;",
+        "select/*+foo @bar*/1;" => "select 1;",
+        "select/*+foo@bar*/1;" => "select 1;",
+        "select/*+@foo*/1;" => "select 1;",
+        "select/*+@*/1;" => "select 1;",
+        "select/*+***/select/*+@*/1;" => "select 1;",
+        "select/*+*/1;" => "select 1;",
+
         // todo: not yet supported
         "prepare stmt2 from select/*+max_execution_time(2)*/*sleep(0.5)from t1 where b=new_string;" => "prepare stmt2 from select*sleep(0.5)from t1 where b=new_string;",
         "prepare stmt3 from select/*+max_execution_time(3600000)*/count(*)from t1;" => "prepare stmt3 from select count(*)from t1;",
@@ -125,6 +151,10 @@ trait SerialisationExceptions
         "prepare stmt4 from show columns from t2 from test like a%;" => "prepare stmt4 from show columns from test.t2 like a%;",
         "prepare stmt4 from show indexes from t2 from test;" => "prepare stmt4 from show indexes from test.t2;",
         "show columns from ab from mysqlttest1;" => "show columns from mysqlttest1.ab;",
+
+        // missing into
+        "insert/*+set_var(time_zone=utc)*/t1 values(timediff(current_timestamp utc_timestamp));"
+            => "insert/*+set_var(time_zone=utc)*/into t1 values(timediff(current_timestamp utc_timestamp));",
 
         // query expressions vs into
         "(select 1 into @v);" => "(select 1)into @v;",
@@ -548,6 +578,23 @@ trait SerialisationExceptions
             => "create procedure tde_db.create_t_encrypt(encrypt varchar(5)tcnt int)begin declare i int default 1;declare has_error int default 0;declare continue handler for 1050 set has_error=1;set i=tcnt;while(i<=5000)do set @sql_text=concat(create table concat(tde_db.t_encrypt_ encrypt _ i)(c1 int)encryption=encrypt engine innodb);prepare stmt from @sql_text;execute stmt;deallocate prepare stmt;set i=i+1;end while;end|",
         "insert proc values(test downgrade_alter_proc procedure downgrade_alter_proc sql contains_sql no invoker begin select c1 english french from t1 join t2 on t1.c3=t2.col2;end root@localhost 1988-04-25 20:45:00 1988-04-25 20:45:00 no_zero_date latin1 latin1_swedish_ci latin1_swedish_ci begin select c1 english french from t1 join t2 on t1.c3=t2.col2;end)(test my_test_func function myfunc sql contains_sql no definer varchar(20)character set latin1 begin return \u{e5};end root@localhost 2017-03-08 09:07:36 2017-03-08 09:07:36 only_full_group_by strict_trans_tables no_zero_in_date no_zero_date error_for_division_by_zero no_auto_create_user no_engine_substitution latin1 latin1_swedish_ci latin1_swedish_ci begin return \u{c3}\u{a5};end);" // 8.0.31
             => "insert proc values(test downgrade_alter_proc procedure downgrade_alter_proc sql contains_sql no invoker begin select c1 english french from t1 join t2 on t1.c3=t2.col2;end root@localhost 1988-04-25 20:45:00 1988-04-25 20:45:00 no_zero_date latin1 latin1_swedish_ci latin1_swedish_ci begin select c1 english french from t1 join t2 on t1.c3=t2.col2;end)(test my_test_func function myfunc sql contains_sql no definer varchar(20)charset latin1 begin return \u{e5};end root@localhost 2017-03-08 09:07:36 2017-03-08 09:07:36 only_full_group_by strict_trans_tables no_zero_in_date no_zero_date error_for_division_by_zero no_auto_create_user no_engine_substitution latin1 latin1_swedish_ci latin1_swedish_ci begin return \u{c3}\u{a5};end);",
+        "call mtr.add_suppression(slave sql.*master suffers from this bug: http:..bugs.mysql.com.bug.php.id=37426 error_code: my-013127);"
+            => "call mtr.add_suppression(slave sql.*master suffers from this bug: http:..bugs.mysql.com.bug.php.id=37426.*error_code: my-013127);",
+        "call mtr.add_suppression(internal query: clone instance from root@127.0.0.1:);" => "call mtr.add_suppression(internal query: clone instance from root@127.0.0.1:.*);",
+        "call mtr.add_suppression(internal query: clone instance from root@127.0.0.1: error number: 3862);"
+            => "call mtr.add_suppression(internal query: clone instance from root@127.0.0.1:.*error number: 3862);",
+        "call mtr.add_suppression([error].*my-d+.*cannot delete tablespace because it is not found in the tablespace memory cache);"
+            => "call mtr.add_suppression([error].*my-d+.*cannot delete tablespace.*because it is not found in the tablespace memory cache);",
+        "call mtr.add_suppression(cannot delete or update a parent row: a foreign key constraint fails error_code: my-001451);"
+            => "call mtr.add_suppression(cannot delete or update a parent row: a foreign key constraint fails.*error_code: my-001451);",
+        "call mtr.add_suppression(slave sql.*cannot delete or update a parent row: a foreign key constraint fails error_code: 1451);"
+            => "call mtr.add_suppression(slave sql.*cannot delete or update a parent row: a foreign key constraint fails.*error_code: 1451);",
+        "call mtr.add_suppression(cannot delete tablespace because it is not found in the tablespace memory cache.);"
+            => "call mtr.add_suppression(cannot delete tablespace.*because it is not found in the tablespace memory cache.);",
+        "call mtr.add_suppression(cannot delete tablespace in discard tablespace.tablespace not found);"
+            => "call mtr.add_suppression(cannot delete tablespace.*in discard tablespace.tablespace not found);",
+        "call mtr.add_suppression(failed to delete from the row: using the gtid_executed table.);"
+            => "call mtr.add_suppression(failed to delete the row:.*from the gtid_executed table.);",
 
         // too much features removed
         "alter table t1 engine csv encryption;" => "alter table t1 engine csv encryption n;",

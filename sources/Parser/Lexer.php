@@ -27,6 +27,7 @@ use function array_values;
 use function ctype_alnum;
 use function ctype_digit;
 use function implode;
+use function in_array;
 use function ltrim;
 use function ord;
 use function preg_match;
@@ -575,11 +576,16 @@ class Lexer
 
                         $hint = $string[$position] === '+';
                         if ($hint && $parseOptimizerHints) {
-                            $this->hint = true;
-                            $position++;
-                            $column++;
-                            yield new Token(T::OPTIMIZER_HINT_START, $start, $row, '/*+', null);
-                            break;
+                            $optimizerHintCanFollow = ($previous->type & TokenType::RESERVED) !== 0
+                                && in_array(strtoupper($previous->value), [Keyword::SELECT, Keyword::INSERT, Keyword::REPLACE, Keyword::UPDATE, Keyword::DELETE], true);
+
+                            if ($optimizerHintCanFollow) {
+                                $this->hint = true;
+                                $position++;
+                                $column++;
+                                yield new Token(T::OPTIMIZER_HINT_START, $start, $row, '/*+', null);
+                                break;
+                            }
                         }
 
                         // parse as a regular comment
