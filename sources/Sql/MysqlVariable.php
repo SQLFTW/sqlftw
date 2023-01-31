@@ -1179,7 +1179,7 @@ class MysqlVariable extends SqlEnum
         self::AVOID_TEMPORAL_UPGRADE                    => [S::GLOBAL,  true,  T::BOOL,     false],
         self::BACK_LOG                                  => [S::GLOBAL,  false, T::UNSIGNED, -1,         F::NONE, 1, 65535], // default -1 = auto
         self::BASEDIR                                   => [S::GLOBAL,  false, T::CHAR,     '/var/lib/mysql', F::NO_PERSIST], // dir
-        self::BIG_TABLES                                => [null,       true,  T::BOOL,     false],
+        self::BIG_TABLES                                => [null,       true,  T::BOOL,     false,      F::SET_VAR],
         self::BIND_ADDRESS                              => [S::GLOBAL,  false, T::CHAR,     '*',        F::NO_PERSIST],
         self::BLOCK_ENCRYPTION_MODE                     => [null,       true,  T::ENUM,     'AES-128-ECB', F::NONE, ['AES-128-ECB', 'AES-192-ECB', 'AES-256-ECB', 'AES-128-CBC', 'AES-192-CBC', 'AES-256-CBC']],
         self::BUILD_ID                                  => [S::GLOBAL,  false, T::CHAR,     ''], // sha1 hash
@@ -1208,7 +1208,7 @@ class MysqlVariable extends SqlEnum
         self::CONNECTION_MEMORY_LIMIT                   => [null,       true,  T::UNSIGNED, MAX,        F::CLAMP, 2097152, MAX],
         self::CORE_FILE                                 => [S::GLOBAL,  false, T::BOOL,     false,      F::NO_PERSIST],
         self::CREATE_ADMIN_LISTENER_THREAD              => [S::GLOBAL,  false, T::BOOL,     false],
-        self::CTE_MAX_RECURSION_DEPTH                   => [null,       true,  T::UNSIGNED, 1000,       F::NONE, 0, I::UINT32_MAX],
+        self::CTE_MAX_RECURSION_DEPTH                   => [null,       true,  T::UNSIGNED, 1000,       F::SET_VAR, 0, I::UINT32_MAX],
         self::DATADIR                                   => [S::GLOBAL,  false, T::CHAR,     '/var/lib/mysql/data', F::NO_PERSIST], // dir
         self::DEBUG                                     => [null,       true,  T::CHAR,     'd:t:i:o,/tmp/mysqld.trace', F::NULLABLE],
         self::DEBUG_SYNC                                => [S::SESSION, true,  T::CHAR,     ''],
@@ -1251,7 +1251,7 @@ class MysqlVariable extends SqlEnum
         self::GENERATED_RANDOM_PASSWORD_LENGTH          => [null,       true,  T::UNSIGNED, 20,         F::CLAMP, 2, 255],
         self::GLOBAL_CONNECTION_MEMORY_LIMIT            => [S::GLOBAL,  true,  T::UNSIGNED, MAX,        F::CLAMP, 16777216, MAX],
         self::GLOBAL_CONNECTION_MEMORY_TRACKING         => [null,       true,  T::BOOL,     false],
-        self::GROUP_CONCAT_MAX_LEN                      => [null,       true,  T::UNSIGNED, 1024,       F::CLAMP, 4, MAX],
+        self::GROUP_CONCAT_MAX_LEN                      => [null,       true,  T::UNSIGNED, 1024,       F::CLAMP | F::SET_VAR, 4, MAX],
         self::HAVE_COMPRESS                             => [S::GLOBAL,  false, T::BOOL,     true],
         self::HAVE_CRYPT                                => [S::GLOBAL,  false, T::BOOL,     false], // deprecated?
         self::HAVE_DYNAMIC_LOADING                      => [S::GLOBAL,  false, T::BOOL,     true],
@@ -1271,7 +1271,7 @@ class MysqlVariable extends SqlEnum
         self::INIT_CONNECT                              => [S::GLOBAL,  true,  T::CHAR,     null,       F::NULLABLE],
         self::INFORMATION_SCHEMA_STATS_EXPIRY           => [null,       true,  T::UNSIGNED, 86400,      F::CLAMP, 0, Seconds::COMMON_YEAR],
         self::INIT_FILE                                 => [S::GLOBAL,  false, T::CHAR,     null], // file
-        self::INSERT_ID                                 => [S::SESSION, true,  T::UNSIGNED, 0,          F::CLAMP, 0, MAX],
+        self::INSERT_ID                                 => [S::SESSION, true,  T::UNSIGNED, 0,          F::CLAMP | F::SET_VAR, 0, MAX],
         self::INTERACTIVE_TIMEOUT                       => [null,       true,  T::UNSIGNED, 28800,      F::CLAMP, 0, Seconds::COMMON_YEAR],
         self::INTERNAL_TMP_DISK_STORAGE_ENGINE          => [S::GLOBAL,  true,  StorageEngine::class, StorageEngine::INNODB],
         self::INTERNAL_TMP_MEM_STORAGE_ENGINE           => [null,       true,  StorageEngine::class, StorageEngine::TEMP_TABLE, F::SET_VAR],
@@ -1389,7 +1389,7 @@ class MysqlVariable extends SqlEnum
         self::RAND_SEED1                                => [S::SESSION, true,  T::UNSIGNED, null,       F::NONE, 0, I::UINT32_MAX],
         self::RAND_SEED2                                => [S::SESSION, true,  T::UNSIGNED, null,       F::NONE, 0, I::UINT32_MAX],
         self::RANGE_ALLOC_BLOCK_SIZE                    => [null,       true,  T::UNSIGNED, 4096,       F::CLAMP | F::SET_VAR, 4096, MAX, 1024],
-        self::RANGE_OPTIMIZER_MAX_MEM_SIZE              => [null,       true,  T::UNSIGNED, 8388608,    F::CLAMP, 0, MAX],
+        self::RANGE_OPTIMIZER_MAX_MEM_SIZE              => [null,       true,  T::UNSIGNED, 8388608,    F::CLAMP | F::SET_VAR, 0, MAX],
         self::RBR_EXEC_MODE                             => [S::SESSION, true,  T::ENUM,     'STRICT',   F::NONE, ['STRICT', 'IDEMPOTENT']],
         self::READ_BUFFER_SIZE                          => [null,       true,  T::UNSIGNED, 131072,     F::CLAMP | F::SET_VAR, 8192, I::INT32_MAX, 4096],
         self::READ_ONLY                                 => [S::GLOBAL,  true,  T::BOOL,     false],
