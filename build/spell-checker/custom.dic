@@ -41,6 +41,7 @@ refman
 remstr
 rl
 rdf
+scm
 sdi
 semijoin
 sqlftw
@@ -141,6 +142,7 @@ lookups
 matchers
 ok
 ordinality
+outliers
 prefetch
 preload
 preorder
