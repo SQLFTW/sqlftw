@@ -122,7 +122,7 @@ class Uuid
             $remainder = 0;
 
             for ($i = 0; $i !== $count; ++$i) {
-                $carry = ((int) $digits[$i]) + $remainder * 10;
+                $carry = ((int) $digits[$i]) + $remainder * 10; // @phpstan-ignore-line Offset int<0, max> might not exist on array{}|array{int}|string.
                 $digit = $carry >> 8;
                 $remainder = $carry & 0xFF;
 
