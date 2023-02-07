@@ -26,8 +26,7 @@ not supported features, that will fail to parse:
 
 accepted, but ignored features (no model and serialization):
 - resolving operator precedence in expressions (for now operators of the same tier are just parsed from left to right; will be implemented later)
-- regular comments inside statements (comments before statement are collected and conditional comments are parsed)
-- optimizer hint comments (ignored)
+- regular comments inside statements (comments before statement are collected)
 - HeatWave plugin features (SECONDARY_ENGINE)
 - `SELECT ... PROCEDURE ANALYSE (...)` - removed in MySQL 8
 - `WEIGHT_STRING(... LEVEL ...)` - removed in MySQL 8
@@ -35,6 +34,7 @@ accepted, but ignored features (no model and serialization):
 features implemented other way than MySQL:
 - parser produces an error on unterminated comments same as PostgreSQL does (MySQL is silent and according to tests, this might be a bug)
 - parser produces an error when reading user variables with invalid name (MySQL silently ignores them and returns null)
+- parser produces an error on optimizer hint with invalid syntax (MySQL produces a warning)
 
 
 Architecture:

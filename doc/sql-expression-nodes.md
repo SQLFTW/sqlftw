@@ -75,3 +75,4 @@ maybes:
 - **Collation** as node ???
 - **UserName** as node ???
 - **ThreeStateValue** as *Literal* ???
+- **StorageEngine** as node ???
