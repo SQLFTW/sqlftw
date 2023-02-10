@@ -7,7 +7,7 @@ TokenType constants:
 - **WHITESPACE**
 - **COMMENT**
     - **BLOCK_COMMENT** - `/* ... * /`
-        - **OPTIONAL_COMMENT - `/*! ... * /`
+        - **OPTIONAL_COMMENT** - `/*! ... * /`
         - **HINT_COMMENT** - `/*+ ... * /`
     - **DOUBLE_HYPHEN_COMMENT** - `-- ...`
     - **DOUBLE_SLASH_COMMENT** - `// ...`
@@ -37,6 +37,9 @@ TokenType constants:
     - **UUID** - e.g. `3E11FA47-71CA-11E1-9E33-C80AA9429562`
 - **SYMBOL** - `(`, `)`, `[`, `]`, `{`, `}`, `.`, `,`, `;`
     - **OPERATOR** - `+`, `||` etc.
-    - **PLACEHOLDER** - `?`
+- **PLACEHOLDER** - placeholder for a parameter
+    - **QUESTION_MARK_PLACEHOLDER** - `?` (SQL, Doctrine, Laravel)
+    - **NUMBERED_QUESTION_MARK_PLACEHOLDER** - `?123` (Doctrine)
+    - **DOUBLE_COLON_PLACEHOLDER** - `:foo` (Doctrine, Laravel)
 - **DELIMITER** - default `;`
 - **DELIMITER_DEFINITION**

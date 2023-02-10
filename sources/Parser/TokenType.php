@@ -93,28 +93,37 @@ class TokenType extends IntSet
     /** Any symbol (parenthesis, operators...) */
     public const SYMBOL = PowersOfTwo::_32M;
 
-    /** Placeholder for variables in prepared statements */
-    public const PLACEHOLDER = PowersOfTwo::_64M;
-
     /** Reserved word operator or token consisting of characters: !$%&*+-/:<=>?@\^|~ */
-    public const OPERATOR = PowersOfTwo::_128M;
+    public const OPERATOR = PowersOfTwo::_64M;
+
+    /** Any placeholder */
+    public const PLACEHOLDER = PowersOfTwo::_128M;
+
+    /** Placeholder for variables in prepared statements "?" */
+    public const QUESTION_MARK_PLACEHOLDER = PowersOfTwo::_256M;
+
+    /** Placeholder used in client-side code in Doctrine, Laravel etc. "?123" */
+    public const NUMBERED_QUESTION_MARK_PLACEHOLDER = PowersOfTwo::_512M;
+
+    /** Placeholder used in client-side code in Doctrine, Laravel etc. ":variable" */
+    public const DOUBLE_COLON_PLACEHOLDER = PowersOfTwo::_1G;
 
     /** /*+ ... (MySQL) */
-    public const OPTIMIZER_HINT_START = PowersOfTwo::_256M;
+    public const OPTIMIZER_HINT_START = PowersOfTwo::_2G;
 
     /** ... * / (MySQL) */
-    public const OPTIMIZER_HINT_END = PowersOfTwo::_512M;
+    public const OPTIMIZER_HINT_END = PowersOfTwo::_4G;
 
     /** Statement delimiter determined by DELIMITER keyword or default ";" */
-    public const DELIMITER = PowersOfTwo::_1G;
+    public const DELIMITER = PowersOfTwo::_8G;
 
     /** Token following the DELIMITER keyword */
-    public const DELIMITER_DEFINITION = PowersOfTwo::_2G;
+    public const DELIMITER_DEFINITION = PowersOfTwo::_16G;
 
     /** Not a real token. Indicates expectation of end of token list */
-    public const END = PowersOfTwo::_4G;
+    public const END = PowersOfTwo::_32G;
 
     /** Produced on invalid input to allow further parsing, instead of producing exception */
-    public const INVALID = PowersOfTwo::_8G;
+    public const INVALID = PowersOfTwo::_64G;
 
 }

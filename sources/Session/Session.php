@@ -36,6 +36,8 @@ class Session
 
     private ?Charset $charset;
 
+    private int $extensions;
+
     /** @var list<Collation> */
     private array $collation = [];
 
@@ -55,9 +57,11 @@ class Session
         Platform $platform,
         ?string $delimiter = null,
         ?Charset $charset = null,
-        ?SqlMode $mode = null
+        ?SqlMode $mode = null,
+        int $clientSideExtensions = 0
     ) {
         $this->platform = $platform;
+        $this->extensions = $clientSideExtensions;
 
         $this->reset($delimiter, $charset, $mode);
     }
@@ -84,6 +88,11 @@ class Session
     public function getPlatform(): Platform
     {
         return $this->platform;
+    }
+
+    public function getClientSideExtensions(): int
+    {
+        return $this->extensions;
     }
 
     public function getDelimiter(): string

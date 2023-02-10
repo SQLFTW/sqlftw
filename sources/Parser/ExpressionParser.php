@@ -15,6 +15,7 @@ use Dogma\Re;
 use Dogma\Time\DateTime;
 use LogicException;
 use SqlFtw\Parser\Dml\QueryParser;
+use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\UserExpression;
@@ -38,6 +39,7 @@ use SqlFtw\Sql\Expression\CurlyExpression;
 use SqlFtw\Sql\Expression\DateLiteral;
 use SqlFtw\Sql\Expression\DatetimeLiteral;
 use SqlFtw\Sql\Expression\DefaultLiteral;
+use SqlFtw\Sql\Expression\DoubleColonPlaceholder;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
@@ -48,6 +50,7 @@ use SqlFtw\Sql\Expression\MatchExpression;
 use SqlFtw\Sql\Expression\MatchMode;
 use SqlFtw\Sql\Expression\NoneLiteral;
 use SqlFtw\Sql\Expression\NullLiteral;
+use SqlFtw\Sql\Expression\NumberedQuestionMarkPlaceholder;
 use SqlFtw\Sql\Expression\NumericLiteral;
 use SqlFtw\Sql\Expression\OnOffLiteral;
 use SqlFtw\Sql\Expression\Operator;
@@ -55,6 +58,7 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Parentheses;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\QualifiedName;
+use SqlFtw\Sql\Expression\QuestionMarkPlaceholder;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\RowExpression;
 use SqlFtw\Sql\Expression\Scope;
@@ -568,9 +572,6 @@ class ExpressionParser
             $tokenList->expectSymbol('}');
 
             return new CurlyExpression($name, $expression);
-        } elseif ($tokenList->inPrepared() && $tokenList->has(TokenType::PLACEHOLDER)) {
-            // param_marker
-            return new Placeholder();
         }
 
         $keyword = $tokenList->getAnyKeyword(Keyword::EXISTS, Keyword::ROW, Keyword::INTERVAL, Keyword::CASE, Keyword::MATCH);
@@ -621,6 +622,11 @@ class ExpressionParser
         $value = $this->parseTimeValue($tokenList);
         if ($value !== null) {
             return $value;
+        }
+
+        $placeholder = $this->parsePlaceholder($tokenList);
+        if ($placeholder !== null) {
+            return $placeholder;
         }
 
         $position = $tokenList->getPosition();
@@ -984,6 +990,28 @@ class ExpressionParser
         return null;
     }
 
+    private function parsePlaceholder(TokenList $tokenList): ?Placeholder
+    {
+        $token = $tokenList->get(TokenType::PLACEHOLDER);
+        if ($token === null) {
+            return null;
+        }
+
+        $extensions = $tokenList->getSession()->getClientSideExtensions();
+        if (($token->type & TokenType::QUESTION_MARK_PLACEHOLDER) !== 0 && (($extensions & ClientSideExtension::ALLOW_QUESTION_MARK_PLACEHOLDERS_OUTSIDE_PREPARED_STATEMENTS) !== 0 || $tokenList->inPrepared())) {
+            // param_marker
+            return new QuestionMarkPlaceholder();
+        } elseif (($token->type & TokenType::NUMBERED_QUESTION_MARK_PLACEHOLDER) !== 0 && ($extensions & ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS) !== 0) {
+            // ?123
+            return new NumberedQuestionMarkPlaceholder($token->value);
+        } elseif (($token->type & TokenType::DOUBLE_COLON_PLACEHOLDER) !== 0 && ($extensions & ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS) !== 0) {
+            // :var
+            return new DoubleColonPlaceholder($token->value);
+        } else {
+            throw new ParserException("Placeholder {$token->value} is not allowed here.", $tokenList);
+        }
+    }
+
     /**
      * order_by:
      *     [ORDER BY {col_name | expr | position} [ASC | DESC], ...]
@@ -1040,8 +1068,11 @@ class ExpressionParser
             if ($token !== null) {
                 return new SimpleName($token->value);
             }
-        } elseif ($tokenList->inPrepared() && $tokenList->has(TokenType::PLACEHOLDER)) {
-            return new Placeholder();
+        }
+
+        $placeholder = $this->parsePlaceholder($tokenList);
+        if ($placeholder !== null) {
+            return $placeholder;
         }
 
         return (int) $tokenList->expectUnsignedInt();

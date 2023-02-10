@@ -9,27 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Formatter\Formatter;
-
 /**
- * ?
+ * SQL or client side placeholder: ?, ?123, :var
  */
-class Placeholder implements Identifier
+interface Placeholder extends Identifier
 {
-
-    public function getName(): string
-    {
-        return '?';
-    }
-
-    public function getFullName(): string
-    {
-        return '?';
-    }
-
-    public function serialize(Formatter $formatter): string
-    {
-        return '?';
-    }
 
 }

@@ -15,6 +15,7 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
@@ -35,9 +36,13 @@ class Assert extends DogmaAssert
     /**
      * @return array<Token>
      */
-    public static function tokens(string $sql, int $count, ?string $mode = null): array
+    public static function tokens(string $sql, int $count, ?string $mode = null, ?int $extensions = null): array
     {
-        $session = new Session(Platform::get(Platform::MYSQL, '5.7'));
+        $platform = Platform::get(Platform::MYSQL, '5.7');
+        if ($extensions === null) {
+            $extensions = ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS | ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS;
+        }
+        $session = new Session($platform, null, null, null, $extensions);
         if ($mode !== null) {
             $session->setMode($session->getMode()->add($mode));
         }

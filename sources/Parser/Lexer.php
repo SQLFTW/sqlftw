@@ -14,6 +14,7 @@ namespace SqlFtw\Parser;
 
 use Generator;
 use SqlFtw\Parser\TokenType as T;
+use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
@@ -25,6 +26,7 @@ use function array_merge;
 use function array_pop;
 use function array_values;
 use function ctype_alnum;
+use function ctype_alpha;
 use function ctype_digit;
 use function implode;
 use function in_array;
@@ -233,6 +235,7 @@ class Lexer
     public function tokenize(string $string): Generator
     {
         $platform = $this->session->getPlatform();
+        $extensions = $this->session->getClientSideExtensions();
         $parseOldNullLiteral = $platform->hasFeature(Feature::OLD_NULL_LITERAL);
         $parseOptimizerHints = $platform->hasFeature(Feature::OPTIMIZER_HINTS);
 
@@ -304,6 +307,23 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL, $start, $row, $char, null);
                     break;
                 case ':':
+                    if (($extensions & ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS) !== 0) {
+                        $name = '';
+                        while ($position < $length) {
+                            $nextDc = $string[$position];
+                            if ($nextDc === '_' || ctype_alpha($nextDc) || (strlen($name) > 0 && ctype_digit($nextDc))) {
+                                $name .= $nextDc;
+                                $position++;
+                                $column++;
+                            } else {
+                                break;
+                            }
+                        }
+                        if ($name !== '') {
+                            yield $previous = new Token(T::PLACEHOLDER | T::DOUBLE_COLON_PLACEHOLDER, $start, $row, ':' . $name, null);
+                            break;
+                        }
+                    }
                     $operator = $char;
                     while ($position < $length) {
                         $next2 = $string[$position];
@@ -390,19 +410,37 @@ class Lexer
                     yield $previous = new Token(T::SYMBOL | T::OPERATOR, $start, $row, $operator2, null);
                     break;
                 case '?':
+                    if (($extensions & ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS) !== 0) {
+                        $number = '';
+                        while ($position < $length) {
+                            $nextQm = $string[$position];
+                            if (ctype_digit($nextQm)) {
+                                $number .= $nextQm;
+                                $position++;
+                                $column++;
+                            } else {
+                                break;
+                            }
+                        }
+                        if ($number !== '') {
+                            yield $previous = new Token(T::PLACEHOLDER | T::NUMBERED_QUESTION_MARK_PLACEHOLDER, $start, $row, '?' . $number, null);
+                            break;
+                        }
+                    }
                     if ($position < $length && ctype_alnum($string[$position])) {
                         $exception = new LexerException("Invalid character after placeholder $string[$position].", $position, $string);
 
-                        yield new Token(T::SYMBOL | T::PLACEHOLDER | T::INVALID, $start, $row, '?', null, $exception);
+                        yield new Token(T::PLACEHOLDER | T::QUESTION_MARK_PLACEHOLDER | T::INVALID, $start, $row, '?', null, $exception);
                         break;
-                    } elseif ($position > 1 && ctype_alnum($string[$position - 2])) {
+                    }
+                    if ($position > 1 && ctype_alnum($string[$position - 2])) {
                         $exception = new LexerException("Invalid character before placeholder {$string[$position - 2]}.", $position, $string);
 
-                        yield new Token(T::SYMBOL | T::PLACEHOLDER | T::INVALID, $start, $row, '?', null, $exception);
+                        yield new Token(T::PLACEHOLDER | T::QUESTION_MARK_PLACEHOLDER | T::INVALID, $start, $row, '?', null, $exception);
                         break;
                     }
 
-                    yield $previous = new Token(T::SYMBOL | T::PLACEHOLDER, $start, $row, $char, null);
+                    yield $previous = new Token(T::PLACEHOLDER | T::QUESTION_MARK_PLACEHOLDER, $start, $row, $char, null);
                     break;
                 case '@':
                     $var = $char;

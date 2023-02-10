@@ -22,8 +22,20 @@ Assert::token($tokens[0], T::WHITESPACE, "\t\n\r", 0);
 // PLACEHOLDER
 $tokens = Assert::tokens(' ? ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::SYMBOL | T::PLACEHOLDER, '?', 1);
+Assert::token($tokens[1], T::PLACEHOLDER | T::QUESTION_MARK_PLACEHOLDER, '?', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 2);
+
+// ?123
+$tokens = Assert::tokens(' ?123 ', 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::PLACEHOLDER | T::NUMBERED_QUESTION_MARK_PLACEHOLDER, '?123', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
+
+// :var
+$tokens = Assert::tokens(' :var ', 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::PLACEHOLDER | T::DOUBLE_COLON_PLACEHOLDER, ':var', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 // DOT
 $tokens = Assert::tokens(' . ', 3);
