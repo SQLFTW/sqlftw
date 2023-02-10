@@ -34,7 +34,6 @@ use function function_exists;
 use function getmypid;
 use function memory_get_peak_usage;
 use function microtime;
-use function rl;
 use function str_replace;
 use function strlen;
 use function strpos;
