@@ -15,8 +15,8 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Sql\Assignment;
 use SqlFtw\Sql\Dal\Set\ResetPersistCommand;
-use SqlFtw\Sql\Dal\Set\SetAssignment;
 use SqlFtw\Sql\Dal\Set\SetCharacterSetCommand;
 use SqlFtw\Sql\Dal\Set\SetNamesCommand;
 use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
@@ -137,7 +137,7 @@ class SetCommandsParser
     }
 
     /**
-     * @return non-empty-list<SetAssignment>
+     * @return non-empty-list<Assignment>
      */
     private function parseAssignments(TokenList $tokenList): array
     {
@@ -217,7 +217,7 @@ class SetCommandsParser
                 }
             }
 
-            $assignments[] = new SetAssignment($variable, $expression, $operator);
+            $assignments[] = new Assignment($variable, $expression, $operator);
             $current = false;
         } while ($tokenList->hasSymbol(','));
 
