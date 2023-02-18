@@ -117,7 +117,11 @@ class LoadCommandsParser
         }
 
         $charset = null;
-        if ($tokenList->hasKeywords(Keyword::CHARACTER, Keyword::SET) || $tokenList->hasKeyword(Keyword::CHARSET)) {
+        $keyword = $tokenList->getAnyKeyword(Keyword::CHARACTER, Keyword::CHAR, Keyword::CHARSET);
+        if ($keyword !== null) {
+            if ($keyword !== Keyword::CHARSET) {
+                $tokenList->expectKeyword(Keyword::SET);
+            }
             $charset = $tokenList->expectCharsetName();
         }
 

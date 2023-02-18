@@ -65,14 +65,14 @@ class SetCommandsParser
     }
 
     /**
-     * SET {CHARACTER SET | CHARSET}
+     * SET {CHARACTER SET | CHAR SET | CHARSET}
      *     {'charset_name' | DEFAULT}
      */
     public function parseSetCharacterSet(TokenList $tokenList): SetCharacterSetCommand
     {
         $tokenList->expectKeyword(Keyword::SET);
-        $keyword = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHARSET);
-        if ($keyword === Keyword::CHARACTER) {
+        $keyword = $tokenList->expectAnyKeyword(Keyword::CHARACTER, Keyword::CHAR, Keyword::CHARSET);
+        if ($keyword !== Keyword::CHARSET) {
             $tokenList->expectKeyword(Keyword::SET);
         }
 
