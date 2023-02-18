@@ -1,9 +1,13 @@
 
 # technical
 acl
+amphp
 ansi
+apigen
 args
 armscii
+ascii
+ast
 async
 aws
 baz
@@ -36,6 +40,7 @@ hexadec
 hwm
 icu
 ietf
+init
 inv
 iso
 jis
@@ -48,6 +53,7 @@ mariadb
 mixin
 mysql
 nextras
+nowdoc
 nul
 num
 oci
@@ -88,6 +94,7 @@ xyz
 analysed
 analysing
 associativity
+autoloader
 backticks
 caseless
 casted
@@ -155,6 +162,7 @@ matchers
 ok
 ordinality
 outliers
+parallelized
 prefetch
 preload
 preorder
@@ -162,22 +170,26 @@ preparable
 pushdown
 refactor
 reindex
-reorganise
 renderer
+reorganise
 rewriter
 serializables
+serializer
 skippable
 startup
 submatch
 subqueries
 timestamps
+tokenizes
 transactional
+unbracketed
 unencrypted
 unescape
 unescaped
 unlogged
 unparenthesized
 unregister
+unterminated
 updatable
 uppercased
 validator
@@ -349,13 +361,18 @@ xmlroot
 xmlserialize
 zstd
 
+# names
+Müller
+
+# shorts
+chan1
+
 # vars
 INNODB_FIL_MAKE_PAGE_DIRTY_DEBUG
 innodb_fil_make_page_dirty_debug
 ndb_autoincrement_prefetch_sz
 GEN_CLUST_INDEX
 MECAB_RC_FILE
-SHOW_GIPK_IN_CREATE_TABLE_AND_INFORMATION_SCHEMA
 THREAD_POOL_PRIO_KICKUP_TIMER
 BINLOGGING_IMPOSSIBLE_MODE
 KEYRING_AWS_CMK_ID
