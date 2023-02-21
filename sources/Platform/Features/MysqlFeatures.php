@@ -1702,6 +1702,7 @@ class MysqlFeatures extends FeaturesList
         [MysqlVariable::EQ_RANGE_INDEX_DIVE_LIMIT, self::MIN, self::MAX],
         [MysqlVariable::ERROR_COUNT, self::MIN, self::MAX],
         [MysqlVariable::EVENT_SCHEDULER, self::MIN, self::MAX],
+        [MysqlVariable::EXPLAIN_FORMAT, 80032, self::MAX],
         [MysqlVariable::EXPLICIT_DEFAULTS_FOR_TIMESTAMP, self::MIN, self::MAX],
         [MysqlVariable::EXTERNAL_USER, self::MIN, self::MAX],
         [MysqlVariable::FLUSH, self::MIN, self::MAX],
