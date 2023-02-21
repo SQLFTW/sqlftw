@@ -42,7 +42,7 @@ class Assert extends DogmaAssert
         if ($extensions === null) {
             $extensions = ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS | ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS;
         }
-        $session = new Session($platform, null, null, null, $extensions);
+        $session = new Session($platform, $extensions);
         if ($mode !== null) {
             $session->setMode($session->getMode()->add($mode));
         }

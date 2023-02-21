@@ -37,7 +37,10 @@ class ParserHelper
             | ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS
             | ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS;
 
-        $session = new Session($platform, $delimiter, null, null, $extensions);
+        $session = new Session($platform, $extensions);
+        if ($delimiter !== null) {
+            $session->setDelimiter($delimiter);
+        }
 
         $lexer = new Lexer($session, $withComments, $withWhitespace);
         $parser = new Parser($session, $lexer);
