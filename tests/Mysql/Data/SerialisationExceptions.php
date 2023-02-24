@@ -39,6 +39,7 @@ trait SerialisationExceptions
         "create table t1(russian_deviant enum(e f e\xfff f e)not null defaulte);" => "create table t1(russian_deviant enum(e f e\xfff f e)not null default e);",
         "select regexp_instr(char(313:50:35.199734using utf16le)cast(uuid()char character set utf16le));" // 8.0.31
             => "select regexp_instr(char(313:50:35.199734 using utf16le)cast(uuid()char character set utf16le));",
+        "select 8.0 \$p 8.4\$p.0\$p 8.\$p 8.p;" => "select 8.0 \$p 8.4 \$p.0 \$p 8.\$p 8.p;",
 
         // useless whitespace
         "grant all on*.*to x_root @10.0.2.1 with grant option;" => "grant all on*.*to x_root@10.0.2.1 with grant option;",

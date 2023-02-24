@@ -701,7 +701,8 @@ class Lexer
                     break;
                 case '.':
                     $next9 = $position < $length ? $string[$position] : '';
-                    if (isset(self::$numbersKey[$next9])) {
+                    // .123 cannot follow a name, e.g.: "select 1ea10.1a20, ...", but can follow a keyword, e.g.: "INTERVAL .4 SECOND"
+                    if (isset(self::$numbersKey[$next9]) && (($previous->type & T::NAME) === 0 || ($previous->type & T::KEYWORD) !== 0)) {
                         $token = $this->parseNumber($string, $position, $column, $row, '.');
                         if ($token !== null) {
                             yield $previous = $token;
@@ -1227,6 +1228,7 @@ class Lexer
         $type = T::VALUE | T::NUMBER;
         $length = strlen($string);
         $offset = 0;
+        $isFloat = $start === '.';
         $isNumeric = isset(self::$numbersKey[$start]);
         $base = $start;
         $minusAllowed = $start === '-';
@@ -1253,6 +1255,7 @@ class Lexer
 
             // decimal part
             if ($next === '.') {
+                $isFloat = true;
                 if ($start !== '.') {
                     $base .= $next;
                     $offset++;
@@ -1323,7 +1326,9 @@ class Lexer
                         }
                     }
                 } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
-                    $isNumeric = false;
+                    if (!$isFloat) {
+                        $isNumeric = false;
+                    }
                     break 2;
                 }
             } while (false); // @phpstan-ignore-line

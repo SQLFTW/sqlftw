@@ -116,3 +116,35 @@ Assert::token($tokens[2], T::SYMBOL, '(', 2);
 Assert::token($tokens[3], T::VALUE | T::NUMBER | T::INT, '-1', 3);
 Assert::token($tokens[4], T::SYMBOL, ')', 5);
 Assert::token($tokens[5], T::WHITESPACE, ' ', 6);
+
+// space between float and identifier, idents with $
+$tokens = Assert::tokens(' 8.0 $p ', 5);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '8.0', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 4);
+Assert::token($tokens[3], T::NAME | T::UNQUOTED_NAME, '$p', 5);
+Assert::token($tokens[4], T::WHITESPACE, ' ', 7);
+
+$tokens = Assert::tokens(' 8.4$p ', 4);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '8.4', 1);
+Assert::token($tokens[2], T::NAME | T::UNQUOTED_NAME, '$p', 4);
+Assert::token($tokens[3], T::WHITESPACE, ' ', 6);
+
+$tokens = Assert::tokens(' .0$p ', 4);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '.0', 1);
+Assert::token($tokens[2], T::NAME | T::UNQUOTED_NAME, '$p', 3);
+Assert::token($tokens[3], T::WHITESPACE, ' ', 5);
+
+$tokens = Assert::tokens(' 8.$p ', 4);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '8.', 1);
+Assert::token($tokens[2], T::NAME | T::UNQUOTED_NAME, '$p', 3);
+Assert::token($tokens[3], T::WHITESPACE, ' ', 5);
+
+$tokens = Assert::tokens(' 8.p ', 4);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '8.', 1);
+Assert::token($tokens[2], T::NAME | T::UNQUOTED_NAME, 'p', 3);
+Assert::token($tokens[3], T::WHITESPACE, ' ', 4);
