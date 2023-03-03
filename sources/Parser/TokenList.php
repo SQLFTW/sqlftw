@@ -41,6 +41,7 @@ use SqlFtw\Sql\Routine\RoutineType;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\SubqueryType;
 use SqlFtw\Sql\UserName;
+use function array_merge;
 use function array_pop;
 use function array_slice;
 use function array_values;
@@ -381,6 +382,11 @@ class TokenList
         $value = $token->original ?? $token->value;
 
         return $token->position + strlen($value);
+    }
+
+    public function append(self $tokenList): void
+    {
+        $this->tokens = array_merge($this->tokens, $tokenList->tokens);
     }
 
     public function slice(int $startOffset, int $endOffset): self

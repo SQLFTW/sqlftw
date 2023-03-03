@@ -33,7 +33,8 @@ class ParserHelper
     {
         $platform = Platform::get($platform ?? Platform::MYSQL, $version);
 
-        $extensions = ClientSideExtension::ALLOW_QUESTION_MARK_PLACEHOLDERS_OUTSIDE_PREPARED_STATEMENTS
+        $extensions = ClientSideExtension::ALLOW_DELIMITER_DEFINITION
+            | ClientSideExtension::ALLOW_QUESTION_MARK_PLACEHOLDERS_OUTSIDE_PREPARED_STATEMENTS
             | ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS
             | ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS;
 

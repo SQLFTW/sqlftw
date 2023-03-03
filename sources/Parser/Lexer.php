@@ -238,6 +238,7 @@ class Lexer
         $extensions = $this->session->getClientSideExtensions();
         $parseOldNullLiteral = $platform->hasFeature(Feature::OLD_NULL_LITERAL);
         $parseOptimizerHints = $platform->hasFeature(Feature::OPTIMIZER_HINTS);
+        $allowDelimiterDefinition = ($this->session->getClientSideExtensions() & ClientSideExtension::ALLOW_DELIMITER_DEFINITION) !== 0;
 
         // last significant token parsed (comments and whitespace are skipped here)
         $previous = new Token(TokenType::END, 0, 0, '');
@@ -1054,7 +1055,7 @@ class Lexer
                         }
                     } elseif (isset($this->keywordsKey[$upper])) {
                         yield $previous = new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $row, $name, null);
-                    } elseif ($upper === Keyword::DELIMITER && $this->platform->userDelimiter()) {
+                    } elseif ($upper === Keyword::DELIMITER && $allowDelimiterDefinition) {
                         yield new Token(T::KEYWORD | T::NAME | T::UNQUOTED_NAME, $start, $row, $name, null);
                         $start = $position;
                         $whitespace = $this->parseWhitespace($string, $position, $column, $row);

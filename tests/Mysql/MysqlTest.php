@@ -8,6 +8,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Tests\Mysql\Data\TestSkips;
@@ -92,7 +93,7 @@ class MysqlTest
 
         $platform = Platform::fromTag(Platform::MYSQL, $tag);
         $version = $platform->getVersion()->format();
-        $session = new Session($platform);
+        $session = new Session($platform, ClientSideExtension::ALLOW_DELIMITER_DEFINITION);
         $formatter = new Formatter($session);
         $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun, $formatter);
 

@@ -40,7 +40,9 @@ class Assert extends DogmaAssert
     {
         $platform = Platform::get(Platform::MYSQL, '5.7');
         if ($extensions === null) {
-            $extensions = ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS | ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS;
+            $extensions = ClientSideExtension::ALLOW_DELIMITER_DEFINITION
+                | ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS
+                | ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS;
         }
         $session = new Session($platform, $extensions);
         if ($mode !== null) {

@@ -15,6 +15,7 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
@@ -93,7 +94,7 @@ class MysqlTestJob
         $sql = $filter->filter($sql);
 
         $platform = Platform::get(Platform::MYSQL, $version);
-        $session = new Session($platform);
+        $session = new Session($platform, ClientSideExtension::ALLOW_DELIMITER_DEFINITION);
         $lexer = new Lexer($session, true, true);
         $parser = new Parser($session, $lexer);
         $formatter = new Formatter($session);
