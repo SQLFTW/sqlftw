@@ -1825,5 +1825,4 @@ class MysqlError extends IntEnum
     public const ER_SP_UNSUPPORTED_LANGUAGE = 4163;
     public const ER_SP_NO_ALTER_LANGUAGE = 4164;
 
-
 }

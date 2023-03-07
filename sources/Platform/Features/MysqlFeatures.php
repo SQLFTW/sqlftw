@@ -121,6 +121,7 @@ class MysqlFeatures extends FeaturesList
     public array $features = [
         [Feature::OPTIMIZER_HINTS, self::MIN, self::MAX],
         [Feature::OLD_NULL_LITERAL, self::MIN, 79999],
+        [Feature::UNQUOTED_NAMES_CAN_START_WITH_DOLLAR_SIGN, self::MIN, 80031],
     ];
 
     /** @var list<array{Keyword::*, int, int}> */
