@@ -14,6 +14,9 @@ trait KnownFailures
     private static array $knownFailures = [
         // false negatives -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+        // expressions
+        "SELECT t1.x IS NULL = t2.x AS col FROM t AS t1, t AS t2 ORDER BY col;" => Valid::YES,
+
         // encoding
         "DROP TABLE IF EXISTS `abc\xFFdef`;" => Valid::YES,
         "CREATE TABLE `abc\xFFdef` (i int);" => Valid::YES,
@@ -176,6 +179,7 @@ trait KnownFailures
         "-- error ER_UNKNOWN_SYSTEM_VARIABLE\nSELECT @@global.dragnet.log_error_filter_rules;" => Valid::NO,
         "-- error ER_UNKNOWN_SYSTEM_VARIABLE\nSET @@global.dragnet.log_error_filter_rules='IF err_symbol==\"ER_STARTUP\" THEN drop.';" => Valid::NO,
         "-- error ER_CTE_RECURSIVE_FORBIDDEN_JOIN_ORDER\nEXECUTE ps;" => Valid::NO,
+        "-- error ER_MASTER_INFO\nRESET REPLICA;" => Valid::NO,
         // let's use magic in tests...
         "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSELECT test_set_system_variable_default(0, NULL, \"admin_port\", \"GLOBAL\");" => Valid::NO,
         "-- error ER_UNKNOWN_SYSTEM_VARIABLE\nSELECT test_set_system_variable_default(1, NULL, \"the_meaning_of_life\", \"GLOBAL\");" => Valid::NO,
@@ -1124,6 +1128,11 @@ trait KnownFailures
         "-- error ER_SPECIFIC_ACCESS_DENIED_ERROR\nSET GLOBAL test_component_int.int_sys_var=12345678;" => Valid::YES,
         "SET GLOBAL test_component.str_sys_var=\"Before crash\";" => Valid::YES,
         "SET GLOBAL test_component.int_sys_var=123;" => Valid::YES,
+        "SELECT @@global.test_component.str_sys_var;" => Valid::YES,
+        "RESET PERSIST test_component.str_sys_var;" => Valid::YES,
+        "SET PERSIST test_component.str_sys_var = 'test';" => Valid::YES,
+        "RESET PERSIST test_component.bool_sys_var;" => Valid::YES,
+        "SET PERSIST_ONLY test_component.bool_sys_var = 12;" => Valid::YES,
     ];
 
 }
