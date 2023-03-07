@@ -117,7 +117,7 @@ Assert::token($tokens[3], T::VALUE | T::NUMBER | T::INT, '-1', 3);
 Assert::token($tokens[4], T::SYMBOL, ')', 5);
 Assert::token($tokens[5], T::WHITESPACE, ' ', 6);
 
-// space between float and identifier, idents with $
+// space between float and identifier, identifiers with $
 $tokens = Assert::tokens(' 8.0 $p ', 5);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::VALUE | T::NUMBER, '8.0', 1);

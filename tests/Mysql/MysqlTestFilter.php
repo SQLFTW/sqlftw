@@ -7,7 +7,7 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-// spell-check-ignore: XBA XBB XBC XBD XBE XBF XBG XBY XBZ closehandle expecterror mysqld recvresult stmtadmin stmtsql usexxx
+// spell-check-ignore: XBA XBB XBC XBD XBE XBF XBG XBY XBZ closehandle expecterror mysqld recvresult stmtadmin stmtsql usexxx uroot
 
 namespace SqlFtw\Tests\Mysql;
 
