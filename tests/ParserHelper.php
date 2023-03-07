@@ -11,7 +11,6 @@ namespace SqlFtw\Tests;
 
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
@@ -23,13 +22,13 @@ class ParserHelper
      * @param Platform::*|null $platform
      * @param int|string|null $version
      */
-    public static function getParserFactory(
+    public static function createParser(
         ?string $platform = null,
         $version = null,
         ?string $delimiter = null,
         bool $withComments = true,
         bool $withWhitespace = true
-    ): ParserFactory
+    ): Parser
     {
         $platform = Platform::get($platform ?? Platform::MYSQL, $version);
 
@@ -44,9 +43,8 @@ class ParserHelper
         }
 
         $lexer = new Lexer($session, $withComments, $withWhitespace);
-        $parser = new Parser($session, $lexer);
 
-        return $parser->getParserFactory();
+        return new Parser($session, $lexer);
     }
 
 }

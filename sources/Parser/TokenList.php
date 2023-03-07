@@ -12,6 +12,7 @@ namespace SqlFtw\Parser;
 use Dogma\Language\Encoding;
 use Dogma\Str;
 use InvalidArgumentException;
+use LogicException;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
@@ -359,6 +360,45 @@ class TokenList
             $this->position++;
             $token = $this->tokens[$this->position] ?? null;
         }
+    }
+
+    public function extractRawExpression(int $start): string
+    {
+        if ($this->autoSkip === 0) {
+            throw new LogicException('Raw expression could be incomplete, when whitespace and comments parsing is disabled.');
+        }
+
+        $end = $this->position - 1;
+        $beginning = true;
+        $position = $start;
+        $tokens = [];
+        while ($position <= $end && isset($this->tokens[$position])) {
+            $token = $this->tokens[$position];
+            $position++;
+            // remove leading whitespace and comments
+            if ($beginning && ($token->type & $this->autoSkip) !== 0) {
+                continue;
+            }
+            $tokens[] = $token;
+            $beginning = false;
+        }
+
+        // remove trailing whitespace and comments
+        for ($i = count($tokens) - 1; $i >= 0; $i--) {
+            if (($tokens[$i]->type & $this->autoSkip) !== 0) {
+                unset($tokens[$i]);
+            } else {
+                break;
+            }
+        }
+
+        $expression = '';
+        /** @var Token $token */
+        foreach ($tokens as $token) {
+            $expression .= $token->original ?? $token->value;
+        }
+
+        return $expression;
     }
 
     // contents --------------------------------------------------------------------------------------------------------
