@@ -65,7 +65,7 @@ $tokenFormatter = static function (Token $token, int $depth = 0): string {
     $type = implode('|', TokenType::getByValue($token->type)->getConstantNames());
     $orig = $token->original !== null && $token->original !== $token->value ? ' / ' . Dumper::value($token->original) : '';
 
-    return Dumper::name(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
+    return Dumper::class(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
         . Dumper::value2($type) . ' ' . Dumper::info('at row') . ' ' . $token->row
         . Dumper::bracket(')') . Dumper::objectInfo($token);
 };
@@ -84,21 +84,21 @@ Dumper::$shortObjectFormatters[TokenList::class] = static function (TokenList $t
     }
     $dots = $count > $limit ? '...' : '';
 
-    return Dumper::name(get_class($tokenList)) . Dumper::bracket('(')
+    return Dumper::class(get_class($tokenList)) . Dumper::bracket('(')
         . Dumper::value($contents . $dots) . ' | ' . Dumper::value2($count . ' tokens, position ' . $tokenList->getPosition())
         . Dumper::bracket(')') . Dumper::objectInfo($tokenList);
 };
 
 // Platform
 Dumper::$objectFormatters[Platform::class] = static function (Platform $platform): string {
-    return Dumper::name(get_class($platform)) . Dumper::bracket('(')
+    return Dumper::class(get_class($platform)) . Dumper::bracket('(')
         . Dumper::value($platform->getName()) . ' ' . Dumper::value2($platform->getVersion()->format())
         . Dumper::bracket(')');
 };
 
 // SimpleName
 Dumper::$objectFormatters[SimpleName::class] = static function (SimpleName $simpleName): string {
-    return Dumper::name(get_class($simpleName)) . Dumper::bracket('(')
+    return Dumper::class(get_class($simpleName)) . Dumper::bracket('(')
         . Dumper::value($simpleName->getName())
         . Dumper::bracket(')');
 };
@@ -112,26 +112,26 @@ Dumper::$objectFormatters[QualifiedName::class] = static function (QualifiedName
         $name = Dumper::value($name);
     }
 
-    return Dumper::name(get_class($qualifiedName)) . Dumper::bracket('(') . $name . Dumper::bracket(')');
+    return Dumper::class(get_class($qualifiedName)) . Dumper::bracket('(') . $name . Dumper::bracket(')');
 };
 
 // UserVariable
 Dumper::$objectFormatters[UserVariable::class] = static function (UserVariable $userVariable): string {
-    return Dumper::name(get_class($userVariable)) . Dumper::bracket('(')
+    return Dumper::class(get_class($userVariable)) . Dumper::bracket('(')
         . Dumper::value($userVariable->getName())
         . Dumper::bracket(')');
 };
 
 // UintLiteral
 Dumper::$objectFormatters[UintLiteral::class] = static function (UintLiteral $uintLiteral): string {
-    return Dumper::name(get_class($uintLiteral)) . Dumper::bracket('(')
+    return Dumper::class(get_class($uintLiteral)) . Dumper::bracket('(')
         . Dumper::value($uintLiteral->getValue())
         . Dumper::bracket(')');
 };
 
 // IntLiteral
 Dumper::$objectFormatters[IntLiteral::class] = static function (IntLiteral $intLiteral): string {
-    return Dumper::name(get_class($intLiteral)) . Dumper::bracket('(')
+    return Dumper::class(get_class($intLiteral)) . Dumper::bracket('(')
         . Dumper::value($intLiteral->getValue())
         . Dumper::bracket(')');
 };
@@ -141,7 +141,7 @@ Dumper::$objectFormatters[StringLiteral::class] = static function (StringLiteral
     if ($stringLiteral->getCharset() !== null || count($stringLiteral->getParts()) > 1) {
         return '';
     }
-    return Dumper::name(get_class($stringLiteral)) . Dumper::bracket('(')
+    return Dumper::class(get_class($stringLiteral)) . Dumper::bracket('(')
         . Dumper::string($stringLiteral->getParts()[0])
         . Dumper::bracket(')');
 };
@@ -153,14 +153,14 @@ Dumper::$objectFormatters[ColumnType::class] = static function (ColumnType $colu
     ) {
         return '';
     }
-    return Dumper::name(get_class($columnType)) . Dumper::bracket('(')
+    return Dumper::class(get_class($columnType)) . Dumper::bracket('(')
         . Dumper::value($columnType->getBaseType()->getValue())
         . Dumper::bracket(')');
 };
 
 // FunctionCall
 Dumper::$shortObjectFormatters[FunctionCall::class] = static function (FunctionCall $functionCall): string {
-    return Dumper::name(get_class($functionCall)) . Dumper::bracket('(') . ' '
+    return Dumper::class(get_class($functionCall)) . Dumper::bracket('(') . ' '
         . Dumper::value($functionCall->getFunction()->getFullName()) . ' ' . Dumper::exceptions('...') . ' '
         . Dumper::bracket(')') . Dumper::objectInfo($functionCall);
 };
@@ -170,7 +170,7 @@ Dumper::$shortObjectFormatters[TableReferenceTable::class] = static function (Ta
     if ($reference->getPartitions() !== null || $reference->getIndexHints() !== null) {
         return '';
     }
-    return Dumper::name(get_class($reference)) . Dumper::bracket('(')
+    return Dumper::class(get_class($reference)) . Dumper::bracket('(')
         . Dumper::value($reference->getTable()->getFullName())
         . ($reference->getAlias() !== null ? ' AS ' . Dumper::value2($reference->getAlias()) : '')
         . Dumper::bracket(')') . Dumper::objectInfo($reference);
