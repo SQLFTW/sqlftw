@@ -23,7 +23,10 @@
         "dogma/dogma-debug": "0.1"
     },
     "autoload": {
-        "classmap": ["sources", "tests", "build"]
+        "classmap": ["sources"]
+    },
+    "autoload-dev": {
+        "classmap": ["tests", "build"]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
