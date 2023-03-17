@@ -636,6 +636,7 @@ trait KnownFailures
         "-- error ER_NOT_SUPPORTED_YET\ncreate index i1 on t1((cast(f1->\"\$\" as YEAR array)));" => Valid::NO,
         "-- error ER_NOT_SUPPORTED_YET\nCREATE TABLE t_copy AS SELECT * FROM t;" => Valid::NO,
         "-- error ER_NOT_SUPPORTED_YET\nSELECT JSON_SCHEMA_VALID('{\n  \"type\": \"object\",\n  \"properties\": { \"\$ref\": \"http://example.com\" }\n}','\n{\n  \"latitude\": 63.444697\n}') AS invalid;" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nCREATE TABLE t(x INT, KEY k ((1 AND CAST(JSON_ARRAY(x) AS UNSIGNED ARRAY))));" => Valid::NO,
         "-- error ER_PARSE_ERROR\nSELECT JSON_VALUE('{}', NULL);" => Valid::NO,
         // needs analysing param types
         "-- error ER_PARSE_ERROR\ncreate procedure p1(p1 date, p2 date) select * from t1 limit p1, p2;" => Valid::NO,
