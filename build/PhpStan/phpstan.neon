@@ -7,6 +7,13 @@ parameters:
 
     treatPhpDocTypesAsCertain: false
 
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    rememberPossiblyImpureFunctionValues: false # default true
+    #checkImplicitMixed: true # 192x
+    #checkBenevolentUnionTypes: true # 73x
+    #reportAlwaysTrueInLastCondition: true # nope
+
     paths:
         - ../../sources
         - ../../tests
