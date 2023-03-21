@@ -2162,6 +2162,16 @@ class MysqlVariable extends SqlEnum
         //                                                      0:scope, 1:dynamic, 2:type, 3:default, [4:flags, [5:values]|[5:min, 6:max, [7:increment]]]
     ];
 
+    public static function normalizeValue(string $value): string
+    {
+        $valid = self::validateValue($value);
+        if (!$valid) {
+            throw new InvalidDefinitionException("'{$value}' is not a valid name of system variable.");
+        }
+
+        return $value;
+    }
+
     public static function getScope(string $variable): ?string
     {
         return self::$properties[$variable][0] ?? null;
