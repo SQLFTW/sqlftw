@@ -170,8 +170,10 @@ Dumper::$shortObjectFormatters[TableReferenceTable::class] = static function (Ta
     if ($reference->getPartitions() !== null || $reference->getIndexHints() !== null) {
         return '';
     }
+    $alias = $reference->getAlias();
+
     return Dumper::class(get_class($reference)) . Dumper::bracket('(')
         . Dumper::value($reference->getTable()->getFullName())
-        . ($reference->getAlias() !== null ? ' AS ' . Dumper::value2($reference->getAlias()) : '')
+        . ($alias !== null ? ' AS ' . Dumper::value2($alias) : '')
         . Dumper::bracket(')') . Dumper::objectInfo($reference);
 };
