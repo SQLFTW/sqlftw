@@ -38,6 +38,29 @@ class MysqlVariable extends SqlEnum
     public const ADMIN_SSL_KEY = 'admin_ssl_key';
     public const ADMIN_TLS_VERSION = 'admin_tls_version';
 
+    public const AUDIT_LOG_BUFFER_SIZE = 'audit_log_buffer_size';
+    public const AUDIT_LOG_COMPRESSION = 'audit_log_compression';
+    public const AUDIT_LOG_CONNECTION_POLICY = 'audit_log_connection_policy';
+    public const AUDIT_LOG_CURRENT_SESSION = 'audit_log_current_session';
+    public const AUDIT_LOG_DATABASE = 'audit_log_database';
+    public const AUDIT_LOG_DISABLE = 'audit_log_disable';
+    public const AUDIT_LOG_ENCRYPTION = 'audit_log_encryption';
+    public const AUDIT_LOG_EXCLUDE_ACCOUNTS = 'audit_log_exclude_accounts';
+    public const AUDIT_LOG_FILE = 'audit_log_file';
+    public const AUDIT_LOG_FILTER_ID = 'audit_log_filter_id';
+    public const AUDIT_LOG_FLUSH = 'audit_log_flush';
+    public const AUDIT_LOG_FORMAT = 'audit_log_format';
+    public const AUDIT_LOG_FORMAT_UNIX_TIMESTAMP = 'audit_log_format_unix_timestamp';
+    public const AUDIT_LOG_INCLUDE_ACCOUNTS = 'audit_log_include_accounts';
+    public const AUDIT_LOG_MAX_SIZE = 'audit_log_max_size';
+    public const AUDIT_LOG_PASSWORD_HISTORY_KEEP_DAYS = 'audit_log_password_history_keep_days';
+    public const AUDIT_LOG_POLICY = 'audit_log_policy';
+    public const AUDIT_LOG_PRUNE_SECONDS = 'audit_log_prune_seconds';
+    public const AUDIT_LOG_READ_BUFFER_SIZE = 'audit_log_read_buffer_size';
+    public const AUDIT_LOG_ROTATE_ON_SIZE = 'audit_log_rotate_on_size';
+    public const AUDIT_LOG_STATEMENT_POLICY = 'audit_log_statement_policy';
+    public const AUDIT_LOG_STRATEGY = 'audit_log_strategy';
+
     public const AUTHENTICATION_POLICY = 'authentication_policy';
     public const AUTHENTICATION_WINDOWS_LOG_LEVEL = 'authentication_windows_log_level';
     public const AUTHENTICATION_WINDOWS_USE_PRINCIPAL_NAME = 'authentication_windows_use_principal_name';
@@ -1503,6 +1526,28 @@ class MysqlVariable extends SqlEnum
         self::XA_DETACH_ON_PREPARE                      => [null,       true,  T::BOOL,     true],
 
         // https://dev.mysql.com/doc/refman/8.0/en/audit-log-reference.html
+        self::AUDIT_LOG_BUFFER_SIZE                     => [S::GLOBAL,  false, T::UNSIGNED, 1048576,    F::NONE, 4096, MAX, 4096],
+        self::AUDIT_LOG_COMPRESSION                     => [S::GLOBAL,  false, T::ENUM,     'NONE',     F::NONE, ['NONE', 'GZIP']],
+        self::AUDIT_LOG_CONNECTION_POLICY               => [S::GLOBAL,  false, T::ENUM,     'ALL',      F::NONE, ['ALL', 'ERRORS', 'NONE']],
+        self::AUDIT_LOG_CURRENT_SESSION                 => [null,       false, T::BOOL,     true],
+        self::AUDIT_LOG_DATABASE                        => [S::GLOBAL,  false, T::CHAR,     'mysql'], // since 8.0.33
+        self::AUDIT_LOG_DISABLE                         => [S::GLOBAL,  true,  T::BOOL,     false], // since 8.0.28
+        self::AUDIT_LOG_ENCRYPTION                      => [S::GLOBAL,  false, T::ENUM,     'NONE',     F::NONE, ['NONE', 'AES']],
+        self::AUDIT_LOG_EXCLUDE_ACCOUNTS                => [S::GLOBAL,  true,  T::CHAR,     null],
+        self::AUDIT_LOG_FILE                            => [S::GLOBAL,  false, T::CHAR,     'audit.log'],
+        self::AUDIT_LOG_FILTER_ID                       => [null,       false, T::UNSIGNED, 1,          F::NONE, 0, I::UINT32_MAX],
+        self::AUDIT_LOG_FLUSH                           => [S::GLOBAL,  true,  T::BOOL,     false],
+        self::AUDIT_LOG_FORMAT                          => [S::GLOBAL,  false, T::ENUM,     'NEW',      F::NONE, ['OLD', 'NEW', 'JSON']],
+        self::AUDIT_LOG_FORMAT_UNIX_TIMESTAMP           => [S::GLOBAL,  true,  T::BOOL,     false], // since 8.0.26
+        self::AUDIT_LOG_INCLUDE_ACCOUNTS                => [S::GLOBAL,  true,  T::CHAR,     null],
+        self::AUDIT_LOG_MAX_SIZE                        => [S::GLOBAL,  true,  T::UNSIGNED, 0,          F::NONE, 0, MAX], // since 8.0.26
+        self::AUDIT_LOG_PASSWORD_HISTORY_KEEP_DAYS      => [S::GLOBAL,  true,  T::UNSIGNED, 0,          F::NONE, 0, I::UINT32_MAX], // since 8.0.17
+        self::AUDIT_LOG_POLICY                          => [S::GLOBAL,  false, T::ENUM,     'ALL',      F::NONE, ['ALL', 'LOGINS', 'QUERIES', 'NONE']],
+        self::AUDIT_LOG_PRUNE_SECONDS                   => [S::GLOBAL,  true,  T::UNSIGNED, 0,          F::NONE, 0, MAX], // since 8.0.24
+        self::AUDIT_LOG_READ_BUFFER_SIZE                => [S::GLOBAL,  true,  T::UNSIGNED, 32768,      F::NONE, 32768, 4194304],
+        self::AUDIT_LOG_ROTATE_ON_SIZE                  => [S::GLOBAL,  true,  T::UNSIGNED, 0,          F::NONE, 0, MAX, 4096],
+        self::AUDIT_LOG_STATEMENT_POLICY                => [S::GLOBAL,  true,  T::ENUM,     'ALL',      F::NONE, ['ALL', 'ERRORS', 'NONE']],
+        self::AUDIT_LOG_STRATEGY                        => [S::GLOBAL,  false, T::ENUM,     'ASYNCHRONOUS', F::NONE, ['ASYNCHRONOUS', 'PERFORMANCE', 'SEMISYNCHRONOUS', 'SYNCHRONOUS']],
 
         // https://dev.mysql.com/doc/refman/8.0/en/replication-options-binary-log.html
         self::BINLOG_CACHE_SIZE                         => [S::GLOBAL,  true,  T::UNSIGNED, 32768,      F::CLAMP, 4096, MAX, 4096],
