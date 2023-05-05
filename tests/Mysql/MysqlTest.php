@@ -42,7 +42,7 @@ class MysqlTest
     use TestSuites;
 
     private const MYSQL_REPOSITORY_LINK = 'git@github.com:mysql/mysql-server.git';
-    private const DEFAULT_TAG = 'mysql-8.0.32';
+    private const DEFAULT_TAG = 'mysql-8.0.33';
 
     public string $tempDir;
 
