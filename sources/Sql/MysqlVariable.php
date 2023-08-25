@@ -83,7 +83,7 @@ class MysqlVariable extends SqlEnum
     public const BINLOG_ERROR_ACTION = 'binlog_error_action';
     public const BINLOG_EXPIRE_LOGS_AUTO_PURGE = 'binlog_expire_logs_auto_purge';
     public const BINLOG_EXPIRE_LOGS_SECONDS = 'binlog_expire_logs_seconds';
-    public const BINLOG_FORMAT = 'binlog_format';
+    public const BINLOG_FORMAT = 'binlog_format'; // deprecated since 8.0.34
     public const BINLOG_GROUP_COMMIT_SYNC_DELAY = 'binlog_group_commit_sync_delay';
     public const BINLOG_GROUP_COMMIT_SYNC_NO_DELAY_COUNT = 'binlog_group_commit_sync_no_delay_count';
     public const BINLOG_GTID_SIMPLE_RECOVERY = 'binlog_gtid_simple_recovery';
@@ -256,7 +256,7 @@ class MysqlVariable extends SqlEnum
     public const GROUP_REPLICATION_MESSAGE_CACHE_SIZE = 'group_replication_message_cache_size';
     public const GROUP_REPLICATION_PAXOS_SINGLE_LEADER = 'group_replication_paxos_single_leader';
     public const GROUP_REPLICATION_POLL_SPIN_LOOPS = 'group_replication_poll_spin_loops';
-    public const GROUP_REPLICATION_RECOVERY_COMPLETE_AT = 'group_replication_recovery_complete_at';
+    public const GROUP_REPLICATION_RECOVERY_COMPLETE_AT = 'group_replication_recovery_complete_at'; // deprecated since 8.0.34
     public const GROUP_REPLICATION_RECOVERY_COMPRESSION_ALGORITHMS = 'group_replication_recovery_compression_algorithms';
     public const GROUP_REPLICATION_RECOVERY_GET_PUBLIC_KEY = 'group_replication_recovery_get_public_key';
     public const GROUP_REPLICATION_RECOVERY_PUBLIC_KEY_PATH = 'group_replication_recovery_public_key_path';
@@ -1069,7 +1069,7 @@ class MysqlVariable extends SqlEnum
     public const SYNC_FRM = 'sync_frm'; // removed in 8.0
     public const SYNC_MASTER_INFO = 'sync_master_info';
     public const SYNC_RELAY_LOG = 'sync_relay_log';
-    public const SYNC_RELAY_LOG_INFO = 'sync_relay_log_info';
+    public const SYNC_RELAY_LOG_INFO = 'sync_relay_log_info'; // deprecated since 8.0.34
     public const SYNC_SOURCE_INFO = 'sync_source_info';
 
     public const SYSTEM_TIME_ZONE = 'system_time_zone';
@@ -1148,6 +1148,7 @@ class MysqlVariable extends SqlEnum
     public const SYSEVENTLOG__TAG = 'syseventlog.tag';
     public const SYSEVENTLOG__FACILITY = 'syseventlog.facility';
     public const SYSEVENTLOG__INCLUDE_PID = 'syseventlog.include_pid';
+    public const VALIDATE_PASSWORD__CHANGED_CHARACTERS_PERCENTAGE = 'validate_password.changed_characters_percentage';
     public const VALIDATE_PASSWORD__CHECK_USER_NAME = 'validate_password.check_user_name';
     public const VALIDATE_PASSWORD__DICTIONARY_FILE = 'validate_password.dictionary_file';
     public const VALIDATE_PASSWORD__LENGTH = 'validate_password.length';
@@ -2162,6 +2163,7 @@ class MysqlVariable extends SqlEnum
         self::VALIDATE_PASSWORD__NUMBER_COUNT       => [S::GLOBAL,  true,  T::UNSIGNED, 1, F::NONE, 0, MAX],
         self::VALIDATE_PASSWORD__POLICY             => [S::GLOBAL,  true,  T::UNSIGNED, 1, F::NONE, 0, 2],
         self::VALIDATE_PASSWORD__SPECIAL_CHAR_COUNT => [S::GLOBAL,  true,  T::UNSIGNED, 1, F::NONE, 0, MAX],
+        self::VALIDATE_PASSWORD__CHANGED_CHARACTERS_PERCENTAGE => [S::GLOBAL,  true,  T::UNSIGNED, 0, F::NONE, 0, 100], // since 8.0.34
         self::VALIDATE_PASSWORD_CHECK_USER_NAME     => [S::GLOBAL,  true,  T::BOOL,     true],
         self::VALIDATE_PASSWORD_DICTIONARY_FILE     => [S::GLOBAL,  true,  T::CHAR,     null, F::NULLABLE], // file
         self::VALIDATE_PASSWORD_LENGTH              => [S::GLOBAL,  true,  T::UNSIGNED, 8, F::CLAMP, 0, MAX],
