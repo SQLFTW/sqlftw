@@ -100,6 +100,56 @@ class Assert extends DogmaAssert
         return iterator_to_array($lexer->tokenizeLists($sql))[0];
     }
 
+    public static function parseSerializeMany(
+        string $query,
+        ?string $expected = null,
+        ?int $version = null
+    ): void
+    {
+        /** @var string $query */
+        $query = preg_replace('/\\s+/', ' ', $query);
+        $query = str_replace(['( ', ' )'], ['(', ')'], $query);
+
+        if ($expected !== null) {
+            /** @var string $expected */
+            $expected = preg_replace('/\\s+/', ' ', $expected);
+            $expected = str_replace(['( ', ' )'], ['(', ')'], $expected);
+        } else {
+            $expected = $query;
+        }
+
+        $parser = ParserHelper::createParser(null, $version);
+        $formatter = new Formatter($parser->getSession());
+
+        $results = iterator_to_array($parser->parse($query));
+
+        $serialized = [];
+        foreach ($results as [$command, $tokenList]) {
+            if ($command instanceof InvalidCommand) {
+                if (class_exists(Debugger::class)) {
+                    Debugger::dump($tokenList);
+                }
+                $exception = $command->getException();
+                $message = '';
+                if ($exception instanceof AnalyzerException) {
+                    foreach ($exception->getResults() as $failure) {
+                        $message .= "\n - " . $failure->getMessage();
+                    }
+                }
+                self::fail($exception->getMessage() . $message);
+                break;
+            }
+            $serialized[] = $formatter->serialize($command);
+        }
+        $actual = implode("\n", $serialized);
+
+        /** @var string $actual */
+        $actual = preg_replace('/\\s+/', ' ', $actual);
+        $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);
+
+        self::same($actual, $expected);
+    }
+
     public static function parseSerialize(
         string $query,
         ?string $expected = null,
