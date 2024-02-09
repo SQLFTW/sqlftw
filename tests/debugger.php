@@ -36,6 +36,10 @@ Dumper::$hiddenFields[] = 'maxLengths';
 Dumper::$doNotTraverse[] = Parser::class;
 Dumper::$doNotTraverse[] = Assert::class . '::validCommands';
 Dumper::$doNotTraverse[] = InvalidTokenException::class . '::tokens';
+Dumper::$doNotTraverse[] = Platform::class . '::nonReserved';
+Dumper::$doNotTraverse[] = Platform::class . '::operators';
+Dumper::$doNotTraverse[] = Platform::class . '::preparableCommands';
+Dumper::$doNotTraverse[] = Platform::class . '::reserved';
 Dumper::$namespaceReplacements['~SqlFtw\\\\Parser\\\\(.*)~'] = '..\1';
 Dumper::$namespaceReplacements['~SqlFtw\\\\Formatter\\\\(.*)~'] = '..\1';
 Dumper::$namespaceReplacements['~SqlFtw\\\\Sql\\\\(.*)~'] = '..\1';
@@ -55,12 +59,15 @@ Dumper::$intFormatters = [
 // Token
 $tokenFormatter = static function (Token $token, int $depth = 0): string {
     $oldInfo = Dumper::$showInfo;
+    $oldEscapeWhiteSpace = Dumper::$escapeWhiteSpace;
     Dumper::$showInfo = false;
+    Dumper::$escapeWhiteSpace = true;
     $value = Dumper::dumpValue($token->value, $depth + 1);
     if (($token->type & (TokenType::COMMENT | TokenType::WHITESPACE)) !== 0) {
         $value = Ansi::dgray(Ansi::removeColors($value));
     }
     Dumper::$showInfo = $oldInfo;
+    Dumper::$escapeWhiteSpace = $oldEscapeWhiteSpace;
 
     $type = implode('|', TokenType::getByValue($token->type)->getConstantNames());
     $orig = $token->original !== null && $token->original !== $token->value ? ' / ' . Dumper::value($token->original) : '';

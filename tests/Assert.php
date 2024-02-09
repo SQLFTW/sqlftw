@@ -97,7 +97,7 @@ class Assert extends DogmaAssert
         $session = new Session(Platform::get(Platform::MYSQL, '5.7'));
         $lexer = new Lexer($session, true, true);
 
-        return iterator_to_array($lexer->tokenizeLists($sql))[0];
+        return iterator_to_array($lexer->tokenize($sql))[0];
     }
 
     public static function parseSerializeMany(
