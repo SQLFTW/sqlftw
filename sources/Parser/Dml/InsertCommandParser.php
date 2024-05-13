@@ -140,6 +140,10 @@ class InsertCommandParser
         $tokenList->rewind($position);
 
         if ($tokenList->hasKeyword(Keyword::SET)) {
+            if ($columns !== null) {
+                $tokenList->rewind(-1);
+                $tokenList->missingAnyKeyword(Keyword::VALUE, Keyword::VALUES, Keyword::SELECT, Keyword::WITH);
+            }
             $assignments = $this->parseAssignments($tokenList);
 
             $alias = null;
@@ -149,7 +153,7 @@ class InsertCommandParser
 
             $update = $this->parseOnDuplicateKeyUpdate($tokenList);
 
-            return new InsertSetCommand($table, $assignments, $columns, $alias, $partitions, $priority, $ignore, $optimizerHints, $update);
+            return new InsertSetCommand($table, $assignments, $alias, $partitions, $priority, $ignore, $optimizerHints, $update);
         }
 
         $tokenList->startSubquery(SubqueryType::INSERT);
