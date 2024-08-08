@@ -570,7 +570,7 @@ class ExpressionParser
         } elseif ($tokenList->hasSymbol('{')) {
             // {identifier expr}
             // @see https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/escape-sequences-in-odbc?view=sql-server-ver16
-            $name = $tokenList->expectName(null);
+            $name = $tokenList->expectName(EntityType::ODBC_EXPRESSION_IDENTIFIER);
             $expression = $this->parseExpression($tokenList);
             $tokenList->expectSymbol('}');
 
@@ -681,7 +681,7 @@ class ExpressionParser
         }
 
         $tokenList->rewind($position);
-        $name1 = $tokenList->expectNonReservedName(null);
+        $name1 = $tokenList->expectNonReservedName(EntityType::GENERAL); // schema, table, column, local variable
         $name2 = $name3 = null;
         if ($tokenList->hasSymbol('.')) {
             if ($tokenList->hasOperator(Operator::MULTIPLY)) {
@@ -726,9 +726,9 @@ class ExpressionParser
             }
             $scope = new Scope(substr($atVariable, 2));
 
-            $name = $tokenList->expectName(null);
+            $name = $tokenList->expectName(EntityType::SYSTEM_VARIABLE);
             if ($tokenList->hasSymbol('.')) {
-                $name .= '.' . $tokenList->expectName(null);
+                $name .= '.' . $tokenList->expectName(EntityType::SYSTEM_VARIABLE);
             }
 
             return $this->createSystemVariable($tokenList, $name, $scope, $write);
@@ -736,7 +736,7 @@ class ExpressionParser
             // @@foo
             $name = substr($atVariable, 2);
             if ($tokenList->hasSymbol('.')) {
-                $name .= '.' . $tokenList->expectName(null);
+                $name .= '.' . $tokenList->expectName(EntityType::SYSTEM_VARIABLE);
             }
 
             return $this->createSystemVariable($tokenList, $name, null, $write);
@@ -1088,10 +1088,10 @@ class ExpressionParser
             if ($alias !== null) {
                 return $alias;
             } else {
-                return $tokenList->expectNonReservedName(EntityType::ALIAS, null, TokenType::AT_VARIABLE);
+                return $tokenList->expectNonReservedName(EntityType::ALIAS,  TokenType::AT_VARIABLE);
             }
         } else {
-            $alias = $tokenList->getNonReservedName(EntityType::ALIAS, null, TokenType::AT_VARIABLE);
+            $alias = $tokenList->getNonReservedName(EntityType::ALIAS, TokenType::AT_VARIABLE);
             if ($alias !== null) {
                 return $alias;
             } else {

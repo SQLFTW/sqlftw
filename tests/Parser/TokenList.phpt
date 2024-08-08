@@ -4,6 +4,7 @@ namespace SqlFtw\Parser;
 
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Tests\Assert;
 
 require '../bootstrap.php';
@@ -53,13 +54,13 @@ Assert::same($tokenList->getLast()->value, $name->value);
 expectNonReservedName:
 $tokenList = Assert::tokenList(' 1 ');
 Assert::exception(static function () use ($tokenList): void {
-    $tokenList->expectNonReservedName(null);
+    $tokenList->expectNonReservedName(EntityType::TABLE);
 }, InvalidTokenException::class);
 
 $tokenList = Assert::tokenList(' select ');
 Assert::exception(static function () use ($tokenList): void {
-    $tokenList->expectNonReservedName(null);
+    $tokenList->expectNonReservedName(EntityType::TABLE);
 }, InvalidTokenException::class);
 
 $tokenList = Assert::tokenList(' `select` ');
-Assert::same($tokenList->expectNonReservedName(null), 'select');
+Assert::same($tokenList->expectNonReservedName(EntityType::TABLE), 'select');

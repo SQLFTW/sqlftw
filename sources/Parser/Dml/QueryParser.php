@@ -110,7 +110,7 @@ class QueryParser
 
         $expressions = [];
         do {
-            $name = $tokenList->expectName(null);
+            $name = $tokenList->expectName(EntityType::CTE);
             $columns = null;
             if ($tokenList->hasSymbol('(')) {
                 $columns = [];
@@ -470,7 +470,7 @@ class QueryParser
                     $window = $this->parseWindow($tokenList);
                     $tokenList->expectSymbol(')');
                 } else {
-                    $window = $tokenList->expectName(null);
+                    $window = $tokenList->expectName(EntityType::WINDOW);
                 }
             }
             $alias = $this->expressionParser->parseAlias($tokenList);
@@ -523,7 +523,7 @@ class QueryParser
         if ($tokenList->hasKeyword(Keyword::WINDOW)) {
             $windows = [];
             do {
-                $name = $tokenList->expectName(null);
+                $name = $tokenList->expectName(EntityType::WINDOW);
                 $tokenList->expectKeyword(Keyword::AS);
 
                 $tokenList->expectSymbol('(');
@@ -696,7 +696,7 @@ class QueryParser
                 if ($token !== null) {
                     $variable = new UserVariable($token->value);
                 } else {
-                    $name = $tokenList->expectName(null);
+                    $name = $tokenList->expectName(EntityType::LOCAL_VARIABLE);
                     $variable = new SimpleName($name);
                 }
                 $variables[] = $variable;
@@ -769,7 +769,7 @@ class QueryParser
      */
     public function parseWindow(TokenList $tokenList): WindowSpecification
     {
-        $name = $tokenList->getNonReservedName(null);
+        $name = $tokenList->getNonReservedName(EntityType::WINDOW);
 
         $partitionBy = $orderBy = $frame = null;
         if ($tokenList->hasKeywords(Keyword::PARTITION, Keyword::BY)) {

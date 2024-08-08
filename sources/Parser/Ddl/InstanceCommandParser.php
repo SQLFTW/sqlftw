@@ -15,6 +15,7 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceAction;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceCommand;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 use function strtolower;
 
@@ -67,7 +68,7 @@ class InstanceCommandParser
             return new AlterInstanceCommand($action, $forChannel, $noRollbackOnError);
         } elseif ($tokenList->using(null, 50700)) {
             $tokenList->expectKeywords(Keyword::ALTER, Keyword::INSTANCE, Keyword::ROTATE);
-            $tokenList->expectName(null, 'INNODB');
+            $tokenList->expectAnyName('INNODB');
             $tokenList->expectKeywords(Keyword::MASTER, Keyword::KEY);
 
             return new AlterInstanceCommand(new AlterInstanceAction(AlterInstanceAction::ROTATE_INNODB_MASTER_KEY));

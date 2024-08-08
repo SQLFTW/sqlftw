@@ -19,6 +19,7 @@ use SqlFtw\Sql\Ddl\Routine\StoredProcedureCommand;
 use SqlFtw\Sql\Dml\Prepared\DeallocatePrepareCommand;
 use SqlFtw\Sql\Dml\Prepared\ExecuteCommand;
 use SqlFtw\Sql\Dml\Prepared\PrepareCommand;
+use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Routine\RoutineType;
@@ -47,7 +48,7 @@ class PreparedCommandsParser
     {
         $tokenList->expectAnyKeyword(Keyword::DEALLOCATE, Keyword::DROP);
         $tokenList->expectKeyword(Keyword::PREPARE);
-        $name = $tokenList->expectName(null);
+        $name = $tokenList->expectName(EntityType::PREPARED_STATEMENT);
 
         return new DeallocatePrepareCommand($name);
     }
@@ -59,7 +60,7 @@ class PreparedCommandsParser
     public function parseExecute(TokenList $tokenList): ExecuteCommand
     {
         $tokenList->expectKeyword(Keyword::EXECUTE);
-        $name = $tokenList->expectName(null);
+        $name = $tokenList->expectName(EntityType::PREPARED_STATEMENT);
         $variables = null;
         if ($tokenList->hasKeyword(Keyword::USING)) {
             $variables = [];
@@ -78,7 +79,7 @@ class PreparedCommandsParser
     public function parsePrepare(TokenList $tokenList): PrepareCommand
     {
         $tokenList->expectKeyword(Keyword::PREPARE);
-        $name = $tokenList->expectName(null);
+        $name = $tokenList->expectName(EntityType::PREPARED_STATEMENT);
         $tokenList->expectKeyword(Keyword::FROM);
 
         $variable = $tokenList->get(TokenType::AT_VARIABLE);

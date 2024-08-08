@@ -1010,12 +1010,11 @@ class TokenList
     /**
      * @template T of SqlEnum
      * @param class-string<T> $className
-     * @param EntityType::*|null $entity
      * @return T
      */
-    public function expectNameEnum(string $className, ?string $entity = null): SqlEnum
+    public function expectNameEnum(string $className): SqlEnum
     {
-        $value = $this->expectName($entity);
+        $value = $this->expectName(EntityType::GENERAL);
 
         try {
             /** @var T $enum */
@@ -1034,12 +1033,11 @@ class TokenList
     /**
      * @template T of SqlEnum
      * @param class-string<T> $className
-     * @param EntityType::*|null $entity
      * @return T
      */
-    public function getNameEnum(string $className, ?string $entity = null): ?SqlEnum
+    public function getNameEnum(string $className): ?SqlEnum
     {
-        $value = $this->getName($entity);
+        $value = $this->getName(EntityType::GENERAL);
         if ($value === null) {
             return null;
         }
@@ -1144,9 +1142,9 @@ class TokenList
     // names ---------------------------------------------------------------------------------------------------------
 
     /**
-     * @param EntityType::*|null $entity
+     * @param EntityType::* $entity
      */
-    public function expectNameOrString(?string $entity): string
+    public function expectNameOrString(string $entity): string
     {
         $token = $this->expect(T::NAME | T::STRING);
         $this->validateName($entity, $token->value);
@@ -1155,16 +1153,11 @@ class TokenList
     }
 
     /**
-     * @param EntityType::*|null $entity
+     * @param EntityType::* $entity
      */
-    public function expectName(?string $entity, ?string $name = null, int $mask = 0): string
+    public function expectName(string $entity, int $mask = 0): string
     {
         $token = $this->expect(T::NAME, $mask);
-        if ($name !== null && strtoupper($token->value) !== $name) {
-            $this->position--;
-
-            throw InvalidTokenException::tokens(T::NAME, 0, $name, $token, $this);
-        }
         $this->validateName($entity, $token->value);
 
         return $token->value;
@@ -1182,12 +1175,12 @@ class TokenList
     }
 
     /**
-     * @param EntityType::*|null $entity
+     * @param EntityType::* $entity
      */
-    public function getName(?string $entity, ?string $name = null): ?string
+    public function getName(string $entity): ?string
     {
         $position = $this->position;
-        $token = $this->get(T::NAME, 0, $name);
+        $token = $this->get(T::NAME);
         if ($token !== null) {
             $this->validateName($entity, $token->value);
 
@@ -1219,13 +1212,20 @@ class TokenList
      */
     public function hasName(string $name): bool
     {
-        return $this->getName(null, $name) !== null;
+        $position = $this->position;
+        $token = $this->get(T::NAME, 0, $name);
+        if ($token !== null) {
+            return true;
+        }
+        $this->position = $position;
+
+        return false;
     }
 
     /**
-     * @param EntityType::*|null $entity
+     * @param EntityType::* $entity
      */
-    public function getNonKeywordNameOrString(?string $entity): ?string
+    public function getNonKeywordNameOrString(string $entity): ?string
     {
         $token = $this->get(T::NAME | T::STRING, T::KEYWORD);
         if ($token === null) {
@@ -1237,11 +1237,11 @@ class TokenList
     }
 
     /**
-     * @param EntityType::*|null $entity
+     * @param EntityType::* $entity
      */
-    public function getNonKeywordName(?string $entity, ?string $name = null): ?string
+    public function getNonKeywordName(string $entity): ?string
     {
-        $token = $this->get(T::NAME, T::KEYWORD, $name);
+        $token = $this->get(T::NAME, T::KEYWORD);
         if ($token === null) {
             return null;
         }
@@ -1251,27 +1251,22 @@ class TokenList
     }
 
     /**
-     * @param EntityType::*|null $entity
+     * @param EntityType::* $entity
      */
-    public function expectNonReservedName(?string $entity, ?string $name = null, int $mask = 0): string
+    public function expectNonReservedName(string $entity, int $mask = 0): string
     {
         $token = $this->expect(T::NAME, T::RESERVED | $mask);
-        if ($name !== null && $token->value !== $name) {
-            $this->position--;
-
-            throw InvalidTokenException::tokens(T::NAME, T::RESERVED | $mask, $name, $token, $this);
-        }
         $this->validateName($entity, $token->value);
 
         return $token->value;
     }
 
     /**
-     * @param EntityType::*|null $entity
+     * @param EntityType::* $entity
      */
-    public function getNonReservedName(?string $entity, ?string $name = null, int $mask = 0): ?string
+    public function getNonReservedName(string $entity, int $mask = 0): ?string
     {
-        $token = $this->get(T::NAME, T::RESERVED | $mask, $name);
+        $token = $this->get(T::NAME, T::RESERVED | $mask);
         if ($token === null) {
             return null;
         }
@@ -1281,15 +1276,15 @@ class TokenList
     }
 
     /**
-     * @param EntityType::*|null $entity
+     * @param EntityType::* $entity
      */
-    public function validateName(?string $entity, string $name): void
+    public function validateName(string $entity, string $name): void
     {
         // todo: move to platform
         static $trailingWhitespaceNotAllowed = [
             EntityType::SCHEMA, EntityType::TABLE, EntityType::COLUMN, EntityType::PARTITION, EntityType::USER_VARIABLE, EntityType::SRS, EntityType::CHANNEL,
         ];
-        static $emptyAllowed = [null, EntityType::TABLESPACE, EntityType::XA_TRANSACTION, EntityType::CHANNEL];
+        static $emptyAllowed = [EntityType::GENERAL, EntityType::TABLESPACE, EntityType::XA_TRANSACTION, EntityType::CHANNEL];
 
         if ($entity === EntityType::TABLE || $entity === EntityType::SCHEMA) {
             // might return an int collation id on unknown collations
@@ -1306,19 +1301,17 @@ class TokenList
         if ($name === '' && !in_array($entity, $emptyAllowed, true)) {
             throw new ParserException('Name must not be empty.', $this);
         }
-        if ($entity !== null) {
-            if ($entity === EntityType::SRS && ltrim($name, " \t\r\n") !== $name) {
-                throw new ParserException(ucfirst($entity) . ' name must not contain left side white space.', $this);
-            }
-            if (in_array($entity, $trailingWhitespaceNotAllowed, true) && rtrim($name, " \t\r\n") !== $name) {
-                throw new ParserException(ucfirst($entity) . ' name must not contain right side white space.', $this);
-            }
-            if (Str::length($name) > $this->maxLengths[$entity]) {
-                throw new ParserException(ucfirst($entity) . " name must be at most {$this->maxLengths[$entity]} characters long.", $this);
-            }
-            if ($entity === EntityType::INDEX && strtoupper($name) === 'GEN_CLUST_INDEX') {
-                throw new ParserException('GEN_CLUST_INDEX is a reserved name for primary index.', $this);
-            }
+        if ($entity === EntityType::SRS && ltrim($name, " \t\r\n") !== $name) {
+            throw new ParserException(ucfirst($entity) . ' name must not contain left side white space.', $this);
+        }
+        if (in_array($entity, $trailingWhitespaceNotAllowed, true) && rtrim($name, " \t\r\n") !== $name) {
+            throw new ParserException(ucfirst($entity) . ' name must not contain right side white space.', $this);
+        }
+        if (isset($this->maxLengths[$entity]) && Str::length($name) > $this->maxLengths[$entity]) { // todo: chars or bytes?
+            throw new ParserException(ucfirst($entity) . " name must be at most {$this->maxLengths[$entity]} characters long.", $this);
+        }
+        if ($entity === EntityType::INDEX && strtoupper($name) === 'GEN_CLUST_INDEX') {
+            throw new ParserException('GEN_CLUST_INDEX is a reserved name for primary index.', $this);
         }
     }
 
@@ -1647,7 +1640,7 @@ class TokenList
         } else {
             $charset = $this->getString();
             if ($charset === null) {
-                $charset = $this->expectName(null);
+                $charset = $this->expectName(EntityType::CHARACTER_SET);
             }
             if (!Charset::isValidValue($charset)) {
                 $values = array_values(Charset::getAllowedValues());

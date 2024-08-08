@@ -166,7 +166,7 @@ class IndexCommandsParser
                 $keyBlockSize = (int) $tokenList->expectUnsignedInt();
             } elseif ($keyword === Keyword::WITH) {
                 $tokenList->expectKeyword(Keyword::PARSER);
-                $withParser = $tokenList->expectName(null);
+                $withParser = $tokenList->expectName(EntityType::INDEX_PARSER);
             } elseif ($keyword === Keyword::COMMENT) {
                 $commentString = $tokenList->expectString();
                 $limit = $this->platform->getMaxLengths()[EntityType::INDEX_COMMENT];

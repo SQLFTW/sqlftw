@@ -201,13 +201,13 @@ class RoutineBodyParser
                 $statement = $this->parseDeclare($tokenList);
                 break;
             case Keyword::OPEN:
-                $statement = new OpenCursorStatement($tokenList->expectName(null));
+                $statement = new OpenCursorStatement($tokenList->expectName(EntityType::CURSOR));
                 break;
             case Keyword::FETCH:
                 $statement = $this->parseFetch($tokenList);
                 break;
             case Keyword::CLOSE:
-                $statement = new CloseCursorStatement($tokenList->expectName(null));
+                $statement = new CloseCursorStatement($tokenList->expectName(EntityType::CURSOR));
                 break;
             case Keyword::RETURN:
                 $statement = new ReturnStatement($this->expressionParser->parseExpression($tokenList));
@@ -559,7 +559,7 @@ class RoutineBodyParser
                         throw new ParserException('Only non-success SQL states are allowed.', $tokenList);
                     }
                 } else {
-                    $value = $tokenList->getNonReservedName(null);
+                    $value = $tokenList->getNonReservedName(EntityType::CONDITION);
                     if ($value !== null) {
                         $type = new ConditionType(ConditionType::CONDITION);
                     } else {
@@ -581,7 +581,7 @@ class RoutineBodyParser
             return new DeclareHandlerStatement($action, $conditions, $statement);
         }
 
-        $name = $tokenList->expectNonReservedName(null, null, TokenType::AT_VARIABLE);
+        $name = $tokenList->expectNonReservedName(EntityType::GENERAL, TokenType::AT_VARIABLE); // todo: type - cursor or condition
 
         if ($tokenList->hasKeyword(Keyword::CURSOR)) {
             $tokenList->expectKeyword(Keyword::FOR);
@@ -612,7 +612,7 @@ class RoutineBodyParser
         /** @var non-empty-list<string> $names */
         $names = [$name];
         while ($tokenList->hasSymbol(',')) {
-            $names[] = $tokenList->expectNonReservedName(null, null, TokenType::AT_VARIABLE);
+            $names[] = $tokenList->expectNonReservedName(EntityType::LOCAL_VARIABLE, TokenType::AT_VARIABLE);
         }
         $type = $this->expressionParser->parseColumnType($tokenList);
         $charset = $type->getCharset();
@@ -638,11 +638,11 @@ class RoutineBodyParser
         } else {
             $tokenList->passKeyword(Keyword::FROM);
         }
-        $cursor = $tokenList->expectName(null);
+        $cursor = $tokenList->expectName(EntityType::CURSOR);
         $tokenList->expectKeyword(Keyword::INTO);
         $variables = [];
         do {
-            $variables[] = $tokenList->expectName(null);
+            $variables[] = $tokenList->expectName(EntityType::LOCAL_VARIABLE);
         } while ($tokenList->hasSymbol(','));
 
         return new FetchStatement($cursor, $variables);
