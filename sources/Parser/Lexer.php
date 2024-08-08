@@ -86,6 +86,8 @@ class Lexer
     /** @var array<string, int> */
     private static array $operatorSymbolsKey;
 
+    private ParserConfig $config;
+
     private Session $session;
 
     private Platform $platform;
@@ -109,11 +111,8 @@ class Lexer
     /** @var list<string> */
     private array $escapeValues;
 
-    public function __construct(
-        Session $session,
-        bool $withComments = true,
-        bool $withWhitespace = false
-    ) {
+    public function __construct(ParserConfig $config, Session $session)
+    {
         if (self::$numbersKey === []) {
             self::$numbersKey = array_flip(self::NUMBERS); // @phpstan-ignore-line
             self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
@@ -122,10 +121,11 @@ class Lexer
             self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
         }
 
+        $this->config = $config;
         $this->session = $session;
         $this->platform = $session->getPlatform();
-        $this->withComments = $withComments;
-        $this->withWhitespace = $withWhitespace;
+        $this->withComments = $config->tokenizeComments();
+        $this->withWhitespace = $config->tokenizeWhitespace();
 
         $this->reservedKey = array_flip($this->platform->getReserved());
         $this->keywordsKey = array_flip($this->platform->getNonReserved());
@@ -144,10 +144,10 @@ class Lexer
         $autoSkip = ($this->withWhitespace ? T::WHITESPACE : 0) | ($this->withComments ? T::COMMENT : 0);
 
         $platform = $this->session->getPlatform();
-        $extensions = $this->session->getClientSideExtensions();
+        $extensions = $this->config->getClientSideExtensions();
         $parseOldNullLiteral = $platform->hasFeature(Feature::OLD_NULL_LITERAL);
         $parseOptimizerHints = $platform->hasFeature(Feature::OPTIMIZER_HINTS);
-        $allowDelimiterDefinition = ($this->session->getClientSideExtensions() & ClientSideExtension::ALLOW_DELIMITER_DEFINITION) !== 0;
+        $allowDelimiterDefinition = ($extensions & ClientSideExtension::ALLOW_DELIMITER_DEFINITION) !== 0;
 
         // last significant token parsed (comments and whitespace are skipped here)
         $previous = new Token(TokenType::END, 0, 0, '');

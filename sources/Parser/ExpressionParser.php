@@ -108,6 +108,8 @@ class ExpressionParser
         . '[ T](?:[01][0-9]|2[0-3])' . self::PUNCTUATION . '[0-5][0-9]' . self::PUNCTUATION . '[0-5][0-9])' // time
         . '(\\.[0-9]+)?$/'; // ms
 
+    private ParserConfig $config;
+
     /** @var callable(): QueryParser */
     private $queryParserProxy;
 
@@ -116,8 +118,9 @@ class ExpressionParser
     /**
      * @param callable(): QueryParser $queryParserProxy
      */
-    public function __construct(callable $queryParserProxy)
+    public function __construct(ParserConfig $config, callable $queryParserProxy)
     {
+        $this->config = $config;
         $this->queryParserProxy = $queryParserProxy;
     }
 
@@ -997,7 +1000,7 @@ class ExpressionParser
             return null;
         }
 
-        $extensions = $tokenList->getSession()->getClientSideExtensions();
+        $extensions = $this->config->getClientSideExtensions();
         if (($token->type & TokenType::QUESTION_MARK_PLACEHOLDER) !== 0 && (($extensions & ClientSideExtension::ALLOW_QUESTION_MARK_PLACEHOLDERS_OUTSIDE_PREPARED_STATEMENTS) !== 0 || $tokenList->inPrepared())) {
             // param_marker
             return new QuestionMarkPlaceholder();

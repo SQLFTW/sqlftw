@@ -101,6 +101,7 @@ class TokenList
     private bool $invalid;
 
     // parser state ----------------------------------------------------------------------------------------------------
+
     private int $autoSkip;
 
     private int $position = 0;

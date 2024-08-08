@@ -86,8 +86,7 @@ class PreparedCommandsParser
             if (count($statements) > 1) {
                 throw new ParserException('Multiple statements in PREPARE.', $tokenList);
             }
-            // phpcs:ignore
-            [$statement, ] = $statements[0];
+            $statement = $statements[0];
             if ($statement instanceof InvalidCommand) {
                 throw new ParserException('Invalid statement in PREPARE.', $tokenList, $statement->getException());
             }

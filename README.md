@@ -63,7 +63,7 @@ $parser = new Parser($session);
 
 // returns a Generator. will not parse anything if you don't iterate over it
 $commands = $parser->parse('SELECT foo FROM ...');
-foreach ($commands as [$command, $tokenList, $start, $end]) {
+foreach ($commands as $command) {
     // Parser does not throw exceptions. this allows to parse partially invalid code and not fail on first error
     if ($command instanceof InvalidCommand) {
         $e = $command->getException();

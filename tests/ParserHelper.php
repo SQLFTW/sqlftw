@@ -11,6 +11,7 @@ namespace SqlFtw\Tests;
 
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserConfig;
 use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
@@ -26,8 +27,7 @@ class ParserHelper
         ?string $platform = null,
         $version = null,
         ?string $delimiter = null,
-        bool $withComments = true,
-        bool $withWhitespace = true
+        ?ParserConfig $config = null
     ): Parser
     {
         $platform = Platform::get($platform ?? Platform::MYSQL, $version);
@@ -36,15 +36,16 @@ class ParserHelper
             | ClientSideExtension::ALLOW_QUESTION_MARK_PLACEHOLDERS_OUTSIDE_PREPARED_STATEMENTS
             | ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS
             | ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS;
+        $config = $config ?? new ParserConfig(true, true, true, $extensions);
 
-        $session = new Session($platform, $extensions);
+        $session = new Session($platform);
         if ($delimiter !== null) {
             $session->setDelimiter($delimiter);
         }
 
-        $lexer = new Lexer($session, $withComments, $withWhitespace);
+        $lexer = new Lexer($config, $session);
 
-        return new Parser($session, $lexer);
+        return new Parser($config, $session, $lexer);
     }
 
 }

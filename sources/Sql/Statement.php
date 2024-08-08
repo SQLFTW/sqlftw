@@ -9,8 +9,14 @@
 
 namespace SqlFtw\Sql;
 
+use SqlFtw\Parser\TokenList;
+
 interface Statement extends SqlSerializable
 {
+
+    public function setTokenList(TokenList $tokenList): void;
+
+    public function getTokenList(): ?TokenList;
 
     public function setDelimiter(string $delimiter): void;
 

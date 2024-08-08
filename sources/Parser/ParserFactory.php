@@ -65,9 +65,9 @@ use SqlFtw\Session\SessionUpdater;
 class ParserFactory
 {
 
-    private Session $session;
-
     private Parser $parser;
+
+    private Session $session;
 
     private ExpressionParser $expressionParser;
 
@@ -79,7 +79,7 @@ class ParserFactory
 
     private OptimizerHintParser $optimizerHintParser;
 
-    public function __construct(Parser $parser, Session $session, SessionUpdater $sessionUpdater)
+    public function __construct(Parser $parser, ParserConfig $config, Session $session, SessionUpdater $sessionUpdater)
     {
         $this->parser = $parser;
         $this->session = $session;
@@ -87,7 +87,7 @@ class ParserFactory
         $queryParserProxy = function (): QueryParser {
             return $this->queryParser; // @phpstan-ignore-line "uninitialized property" that's why there is a proxy
         };
-        $this->expressionParser = new ExpressionParser($queryParserProxy);
+        $this->expressionParser = new ExpressionParser($config, $queryParserProxy);
         $this->optimizerHintParser = new OptimizerHintParser($this->expressionParser);
         $this->tableReferenceParser = new TableReferenceParser($this->expressionParser, $queryParserProxy);
         $this->queryParser = new QueryParser($this, $this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);

@@ -43,6 +43,8 @@ class Parser
         Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA,
     ];
 
+    private ParserConfig $config;
+
     private Session $session;
 
     private SessionUpdater $sessionUpdater;
@@ -55,14 +57,15 @@ class Parser
 
     private Generator $tokenListGenerator; // @phpstan-ignore-line "uninitialized property" may only fail in @internal getNextTokenList()
 
-    public function __construct(Session $session, ?Lexer $lexer = null)
+    public function __construct(ParserConfig $config, Session $session, ?Lexer $lexer = null)
     {
         $resolver = new ExpressionResolver($session);
 
+        $this->config = $config;
         $this->session = $session;
         $this->sessionUpdater = new SessionUpdater($session, $resolver);
-        $this->lexer = $lexer ?? new Lexer($session);
-        $this->factory = new ParserFactory($this, $session, $this->sessionUpdater);
+        $this->lexer = $lexer ?? new Lexer($config, $session);
+        $this->factory = new ParserFactory($this, $config, $session, $this->sessionUpdater);
 
         $context = new SimpleContext($session, $resolver);
         // always executed rules (errors not as obvious as syntax error, but preventing command execution anyway)
@@ -99,10 +102,11 @@ class Parser
     }
 
     /**
-     * @return Generator<int, array{Command, TokenList}>
+     * @return Generator<int, Command>
      */
     public function parse(string $sql, bool $prepared = false): Generator
     {
+        $provideTokenLists = $this->config->provideTokenLists();
         $this->tokenListGenerator = $this->lexer->tokenize($sql);
         $first = true;
 
@@ -130,7 +134,11 @@ class Parser
                 $exception = new AnalyzerException($results, $command, $tokenList);
                 $command = new InvalidCommand($command->getCommentsBefore(), $exception, $command);
 
-                yield [$command, $tokenList->slice($start, $end)];
+                if ($provideTokenLists) {
+                    $command->setTokenList($tokenList->slice($start, $end));
+                }
+
+                yield $command;
 
                 continue;
             }
@@ -141,13 +149,21 @@ class Parser
                 } catch (ParsingException $e) {
                     $command = new InvalidCommand($command->getCommentsBefore(), $e, $command);
 
-                    yield [$command, $tokenList->slice($start, $end)];
+                    if ($provideTokenLists) {
+                        $command->setTokenList($tokenList->slice($start, $end));
+                    }
+
+                    yield $command;
 
                     continue;
                 }
             }
 
-            yield [$command, $tokenList->slice($start, $end)];
+            if ($provideTokenLists) {
+                $command->setTokenList($tokenList->slice($start, $end));
+            }
+
+            yield $command;
         }
     }
 

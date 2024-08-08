@@ -9,13 +9,27 @@
 
 namespace SqlFtw\Sql;
 
+use SqlFtw\Parser\TokenList;
+
 abstract class StatementImpl implements Statement
 {
+
+    protected ?TokenList $tokenList = null;
 
     protected ?string $delimiter = null;
 
     /** @var list<string> */
     protected array $commentsBefore = [];
+
+    public function setTokenList(TokenList $tokenList): void
+    {
+        $this->tokenList = $tokenList;
+    }
+
+    public function getTokenList(): ?TokenList
+    {
+        return $this->tokenList;
+    }
 
     public function setDelimiter(string $delimiter): void
     {
