@@ -106,7 +106,7 @@ class MysqlTestJob
         $falsePositives = [];
         $serialisationErrors = [];
 
-        /** @var Command&Statement $command */
+        /** @var Command $command */
         /** @var TokenList $tokenList */
         foreach ($parser->parse($sql) as [$command, $tokenList]) {
             $tokensSerialized = trim($tokenList->serialize());

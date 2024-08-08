@@ -21,7 +21,6 @@ use SqlFtw\Session\Session;
 use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\Statement;
 use Throwable;
 use function count;
 use function strtoupper;
@@ -100,7 +99,7 @@ class Parser
     }
 
     /**
-     * @return Generator<int, array{Command&Statement, TokenList}>
+     * @return Generator<int, array{Command, TokenList}>
      */
     public function parse(string $sql, bool $prepared = false): Generator
     {
@@ -153,7 +152,6 @@ class Parser
     }
 
     /**
-     * @return Command&Statement
      * @internal
      */
     public function parseTokenList(TokenList $tokenList): Command
@@ -245,9 +243,6 @@ class Parser
         }
     }
 
-    /**
-     * @return Command&Statement
-     */
     private function parseCommand(TokenList $tokenList, Token $first): Command
     {
         $start = $tokenList->getPosition() - 1;

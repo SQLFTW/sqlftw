@@ -9,38 +9,21 @@
 
 namespace SqlFtw\Sql;
 
-abstract class Statement implements SqlSerializable
+interface Statement extends SqlSerializable
 {
 
-    protected ?string $delimiter = null;
+    public function setDelimiter(string $delimiter): void;
 
-    /** @var list<string> */
-    protected array $commentsBefore = [];
-
-    public function setDelimiter(string $delimiter): void
-    {
-        $this->delimiter = $delimiter;
-    }
-
-    public function getDelimiter(): ?string
-    {
-        return $this->delimiter;
-    }
+    public function getDelimiter(): ?string;
 
     /**
      * @param list<string> $comments
      */
-    public function setCommentsBefore(array $comments): void
-    {
-        $this->commentsBefore = $comments;
-    }
+    public function setCommentsBefore(array $comments): void;
 
     /**
      * @return list<string>
      */
-    public function getCommentsBefore(): array
-    {
-        return $this->commentsBefore;
-    }
+    public function getCommentsBefore(): array;
 
 }

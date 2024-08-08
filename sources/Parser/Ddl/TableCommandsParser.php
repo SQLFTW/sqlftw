@@ -115,7 +115,6 @@ use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\InvalidEnumValueException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
-use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\SubqueryType;
 use function array_values;
 use function count;
@@ -711,8 +710,6 @@ class TableCommandsParser
      *
      * query_expression:
      *     SELECT ...   (Some valid select or union statement)
-     *
-     * @return AnyCreateTableCommand&Statement
      */
     public function parseCreateTable(TokenList $tokenList): AnyCreateTableCommand
     {

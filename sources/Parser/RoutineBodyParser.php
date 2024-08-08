@@ -258,9 +258,6 @@ class RoutineBodyParser
         return $statement;
     }
 
-    /**
-     * @return Command&Statement
-     */
     private function parseCommand(TokenList $tokenList, bool $topLevel): Command
     {
         $in = $tokenList->inRoutine();
