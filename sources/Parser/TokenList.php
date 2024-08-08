@@ -1010,6 +1010,7 @@ class TokenList
     /**
      * @template T of SqlEnum
      * @param class-string<T> $className
+     * @param EntityType::*|null $entity
      * @return T
      */
     public function expectNameEnum(string $className, ?string $entity = null): SqlEnum
@@ -1033,6 +1034,7 @@ class TokenList
     /**
      * @template T of SqlEnum
      * @param class-string<T> $className
+     * @param EntityType::*|null $entity
      * @return T
      */
     public function getNameEnum(string $className, ?string $entity = null): ?SqlEnum
@@ -1141,6 +1143,9 @@ class TokenList
 
     // names ---------------------------------------------------------------------------------------------------------
 
+    /**
+     * @param EntityType::*|null $entity
+     */
     public function expectNameOrString(?string $entity): string
     {
         $token = $this->expect(T::NAME | T::STRING);
@@ -1149,6 +1154,9 @@ class TokenList
         return $token->value;
     }
 
+    /**
+     * @param EntityType::*|null $entity
+     */
     public function expectName(?string $entity, ?string $name = null, int $mask = 0): string
     {
         $token = $this->expect(T::NAME, $mask);
@@ -1173,6 +1181,9 @@ class TokenList
         return $token->value;
     }
 
+    /**
+     * @param EntityType::*|null $entity
+     */
     public function getName(?string $entity, ?string $name = null): ?string
     {
         $position = $this->position;
@@ -1211,6 +1222,9 @@ class TokenList
         return $this->getName(null, $name) !== null;
     }
 
+    /**
+     * @param EntityType::*|null $entity
+     */
     public function getNonKeywordNameOrString(?string $entity): ?string
     {
         $token = $this->get(T::NAME | T::STRING, T::KEYWORD);
@@ -1222,6 +1236,9 @@ class TokenList
         return $token->value;
     }
 
+    /**
+     * @param EntityType::*|null $entity
+     */
     public function getNonKeywordName(?string $entity, ?string $name = null): ?string
     {
         $token = $this->get(T::NAME, T::KEYWORD, $name);
@@ -1233,6 +1250,9 @@ class TokenList
         return $token->value;
     }
 
+    /**
+     * @param EntityType::*|null $entity
+     */
     public function expectNonReservedName(?string $entity, ?string $name = null, int $mask = 0): string
     {
         $token = $this->expect(T::NAME, T::RESERVED | $mask);
@@ -1246,6 +1266,9 @@ class TokenList
         return $token->value;
     }
 
+    /**
+     * @param EntityType::*|null $entity
+     */
     public function getNonReservedName(?string $entity, ?string $name = null, int $mask = 0): ?string
     {
         $token = $this->get(T::NAME, T::RESERVED | $mask, $name);
@@ -1257,6 +1280,9 @@ class TokenList
         return $token->value;
     }
 
+    /**
+     * @param EntityType::*|null $entity
+     */
     public function validateName(?string $entity, string $name): void
     {
         // todo: move to platform
