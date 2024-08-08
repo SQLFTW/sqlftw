@@ -58,14 +58,14 @@ class Parser
 
     private Generator $tokenListGenerator; // @phpstan-ignore-line "uninitialized property" may only fail in @internal getNextTokenList()
 
-    public function __construct(ParserConfig $config, Session $session, ?Lexer $lexer = null)
+    public function __construct(ParserConfig $config, Session $session)
     {
         $resolver = new ExpressionResolver($config->getPlatform(), $session);
 
         $this->config = $config;
         $this->session = $session;
         $this->sessionUpdater = new SessionUpdater($session, $resolver);
-        $this->lexer = $lexer ?? new Lexer($config, $session);
+        $this->lexer = new Lexer($config, $session);
         $this->factory = new ParserFactory($this, $config, $session, $this->sessionUpdater);
 
         $context = new SimpleContext($config->getPlatform(), $session, $resolver);

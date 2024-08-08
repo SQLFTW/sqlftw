@@ -43,9 +43,7 @@ class ParserHelper
             $session->setDelimiter($delimiter);
         }
 
-        $lexer = new Lexer($config, $session);
-
-        return new Parser($config, $session, $lexer);
+        return new Parser($config, $session);
     }
 
 }

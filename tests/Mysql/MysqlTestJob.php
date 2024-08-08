@@ -103,8 +103,7 @@ class MysqlTestJob
             true
         );
         $session = new Session($platform);
-        $lexer = new Lexer($config, $session);
-        $parser = new Parser($config, $session, $lexer);
+        $parser = new Parser($config, $session);
         $formatter = new Formatter($platform, $session);
 
         $start = microtime(true);
