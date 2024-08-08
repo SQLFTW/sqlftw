@@ -8,14 +8,15 @@ use SqlFtw\Tests\Assert;
 
 require '../bootstrap.php';
 
-$session = new Session(Platform::get(Platform::MYSQL, '5.7'));
+$platform = Platform::get(Platform::MYSQL, '5.7');
+$session = new Session($platform);
 
 $ws = new Token(TokenType::WHITESPACE, 0, 1, 'ws');
 $comment = new Token(TokenType::COMMENT, 1, 1, 'comment');
 $value = new Token(TokenType::VALUE, 2, 1, 'value');
 $name = new Token(TokenType::NAME, 2, 1, 'name');
 
-$tokenList = new TokenList([$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $session);
+$tokenList = new TokenList([$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $platform, $session);
 $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT);
 
 getLast:

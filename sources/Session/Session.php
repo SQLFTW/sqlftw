@@ -80,11 +80,6 @@ class Session
         }
     }
 
-    public function getPlatform(): Platform
-    {
-        return $this->platform;
-    }
-
     public function getDelimiter(): string
     {
         return $this->delimiter;

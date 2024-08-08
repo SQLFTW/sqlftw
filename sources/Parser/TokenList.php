@@ -91,9 +91,9 @@ class TokenList
     /** @var non-empty-list<Token> */
     private array $tokens;
 
-    private Session $session;
-
     private Platform $platform;
+
+    private Session $session;
 
     /** @var array<string, int> */
     private array $maxLengths;
@@ -129,12 +129,12 @@ class TokenList
     /**
      * @param non-empty-list<Token> $tokens
      */
-    public function __construct(array $tokens, Session $session, int $autoSkip = 0, bool $invalid = false)
+    public function __construct(array $tokens, Platform $platform, Session $session, int $autoSkip = 0, bool $invalid = false)
     {
         $this->tokens = $tokens;
+        $this->platform = $platform;
         $this->session = $session;
-        $this->platform = $session->getPlatform();
-        $this->maxLengths = $this->platform->getMaxLengths();
+        $this->maxLengths = $platform->getMaxLengths();
         $this->autoSkip = $autoSkip;
         $this->invalid = $invalid;
     }
@@ -152,7 +152,7 @@ class TokenList
     public function check(string $feature, ?int $minVersion = null, ?int $maxVersion = null, ?string $platform = null): void
     {
         if (!$this->platform->matches($platform, $minVersion, $maxVersion)) {
-            throw new InvalidVersionException($feature, $this);
+            throw new InvalidVersionException($feature, $this->platform, $this);
         }
     }
 
@@ -439,7 +439,7 @@ class TokenList
         /** @var non-empty-list<Token> $tokens */
         $tokens = array_slice($this->tokens, $startOffset, $endOffset - $startOffset + 1);
 
-        return new self($tokens, $this->session, $this->autoSkip);
+        return new self($tokens, $this->platform, $this->session, $this->autoSkip);
     }
 
     /**
@@ -455,7 +455,7 @@ class TokenList
             }
         }
 
-        return new self($tokens, $this->session, $this->autoSkip);
+        return new self($tokens, $this->platform, $this->session, $this->autoSkip);
     }
 
     /**
@@ -469,7 +469,7 @@ class TokenList
             $tokens[] = $mapper($token);
         }
 
-        return new self($tokens, $this->session, $this->autoSkip);
+        return new self($tokens, $this->platform, $this->session, $this->autoSkip);
     }
 
     public function getLast(): Token

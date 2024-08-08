@@ -123,7 +123,7 @@ class Lexer
 
         $this->config = $config;
         $this->session = $session;
-        $this->platform = $session->getPlatform();
+        $this->platform = $config->getPlatform();
         $this->withComments = $config->tokenizeComments();
         $this->withWhitespace = $config->tokenizeWhitespace();
 
@@ -143,10 +143,9 @@ class Lexer
         // this allows TokenList to not have to call doAutoSkip() million times when there are no skippable tokens produced
         $autoSkip = ($this->withWhitespace ? T::WHITESPACE : 0) | ($this->withComments ? T::COMMENT : 0);
 
-        $platform = $this->session->getPlatform();
         $extensions = $this->config->getClientSideExtensions();
-        $parseOldNullLiteral = $platform->hasFeature(Feature::OLD_NULL_LITERAL);
-        $parseOptimizerHints = $platform->hasFeature(Feature::OPTIMIZER_HINTS);
+        $parseOldNullLiteral = $this->platform->hasFeature(Feature::OLD_NULL_LITERAL);
+        $parseOptimizerHints = $this->platform->hasFeature(Feature::OPTIMIZER_HINTS);
         $allowDelimiterDefinition = ($extensions & ClientSideExtension::ALLOW_DELIMITER_DEFINITION) !== 0;
 
         // last significant token parsed (comments and whitespace are skipped here)
@@ -1002,7 +1001,7 @@ class Lexer
                             $invalid = true;
                             break;
                         }
-                        if ($this->session->getPlatform()->isReserved(strtoupper($del))) {
+                        if ($this->platform->isReserved(strtoupper($del))) {
                             $exception = new LexerException('Delimiter can not be a reserved word', $position, $string);
 
                             $tokens[] = $previous = new Token(T::DELIMITER_DEFINITION | T::INVALID, $start, $row, $del, null, $exception);
@@ -1071,7 +1070,7 @@ class Lexer
                 $invalid = true;
             }
 
-            yield new TokenList($tokens, $this->session, $autoSkip, $invalid);
+            yield new TokenList($tokens, $this->config->getPlatform(), $this->session, $autoSkip, $invalid);
 
             $tokens = [];
             $invalid = false;

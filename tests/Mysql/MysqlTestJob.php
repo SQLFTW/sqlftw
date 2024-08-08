@@ -12,6 +12,7 @@ use SqlFtw\Parser\EmptyCommand;
 use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserConfig;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -94,10 +95,17 @@ class MysqlTestJob
         $sql = $filter->filter($sql);
 
         $platform = Platform::get(Platform::MYSQL, $version);
-        $session = new Session($platform, ClientSideExtension::ALLOW_DELIMITER_DEFINITION);
-        $lexer = new Lexer($session, true, true);
-        $parser = new Parser($session, $lexer);
-        $formatter = new Formatter($session);
+        $config = new ParserConfig(
+            $platform,
+            ClientSideExtension::ALLOW_DELIMITER_DEFINITION,
+            true,
+            true,
+            true
+        );
+        $session = new Session($platform);
+        $lexer = new Lexer($config, $session);
+        $parser = new Parser($config, $session, $lexer);
+        $formatter = new Formatter($platform, $session);
 
         $start = microtime(true);
         $statements = 0;

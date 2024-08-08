@@ -13,6 +13,7 @@ namespace SqlFtw\Parser;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Dml\QueryParser;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
@@ -75,6 +76,8 @@ use function in_array;
 class RoutineBodyParser
 {
 
+    private Platform $platform;
+
     private Parser $parser;
 
     private ExpressionParser $expressionParser;
@@ -84,11 +87,13 @@ class RoutineBodyParser
     private SessionUpdater $sessionUpdater;
 
     public function __construct(
+        Platform $platform,
         Parser $parser,
         ExpressionParser $expressionParser,
         QueryParser $queryParser,
         SessionUpdater $sessionUpdater
     ) {
+        $this->platform = $platform;
         $this->parser = $parser;
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
@@ -296,7 +301,7 @@ class RoutineBodyParser
             // ok
         } else {
             $class = get_class($statement);
-            if (!in_array($class, $tokenList->getSession()->getPlatform()->getPreparableCommands(), true)) {
+            if (!in_array($class, $this->platform->getPreparableCommands(), true)) {
                 throw new ParserException('Non-preparable statement in routine body: ' . $class, $tokenList);
             }
         }
@@ -444,7 +449,7 @@ class RoutineBodyParser
             $condition = $this->expressionParser->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::WHEN);
         }
-        $formatter = new Formatter($tokenList->getSession());
+        $formatter = new Formatter($this->platform, $tokenList->getSession());
         $values = [];
         /** @var non-empty-list<list<Statement>> $statementLists */
         $statementLists = [];
@@ -452,7 +457,7 @@ class RoutineBodyParser
             $expression = $this->expressionParser->parseExpression($tokenList);
             $key = $expression->serialize($formatter);
             if (isset($values[$key])) {
-                throw new ParserException('Duplicit CASE value.', $tokenList);
+                throw new ParserException('Duplicate CASE value.', $tokenList);
             }
             $values[$key] = $expression;
             $tokenList->expectKeyword(Keyword::THEN);

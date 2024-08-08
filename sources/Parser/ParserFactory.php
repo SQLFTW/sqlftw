@@ -56,6 +56,7 @@ use SqlFtw\Parser\Dml\TransactionCommandsParser;
 use SqlFtw\Parser\Dml\UpdateCommandParser;
 use SqlFtw\Parser\Dml\UseCommandParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Session\SessionUpdater;
 
@@ -66,6 +67,8 @@ class ParserFactory
 {
 
     private Parser $parser;
+
+    private Platform $platform;
 
     private Session $session;
 
@@ -82,6 +85,7 @@ class ParserFactory
     public function __construct(Parser $parser, ParserConfig $config, Session $session, SessionUpdater $sessionUpdater)
     {
         $this->parser = $parser;
+        $this->platform = $config->getPlatform();
         $this->session = $session;
 
         $queryParserProxy = function (): QueryParser {
@@ -91,7 +95,7 @@ class ParserFactory
         $this->optimizerHintParser = new OptimizerHintParser($this->expressionParser);
         $this->tableReferenceParser = new TableReferenceParser($this->expressionParser, $queryParserProxy);
         $this->queryParser = new QueryParser($this, $this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
-        $this->routineBodyParser = new RoutineBodyParser($this->parser, $this->expressionParser, $this->queryParser, $sessionUpdater);
+        $this->routineBodyParser = new RoutineBodyParser($this->platform, $this->parser, $this->expressionParser, $this->queryParser, $sessionUpdater);
     }
 
     public function getParser(): Parser
@@ -198,7 +202,7 @@ class ParserFactory
 
     public function getIndexCommandsParser(): IndexCommandsParser
     {
-        return new IndexCommandsParser($this->expressionParser);
+        return new IndexCommandsParser($this->platform, $this->expressionParser);
     }
 
     public function getInsertCommandParser(): InsertCommandParser
@@ -208,7 +212,7 @@ class ParserFactory
 
     public function getInstanceCommandParser(): InstanceCommandParser
     {
-        return new InstanceCommandParser();
+        return new InstanceCommandParser($this->platform);
     }
 
     public function getKillCommandParser(): KillCommandParser
@@ -233,7 +237,7 @@ class ParserFactory
 
     public function getPreparedCommandsParser(): PreparedCommandsParser
     {
-        return new PreparedCommandsParser($this->parser);
+        return new PreparedCommandsParser($this->platform, $this->parser);
     }
 
     public function getReplicationCommandsParser(): ReplicationCommandsParser
@@ -288,7 +292,7 @@ class ParserFactory
 
     public function getTableCommandsParser(): TableCommandsParser
     {
-        return new TableCommandsParser($this->expressionParser, $this->getIndexCommandsParser(), $this->queryParser);
+        return new TableCommandsParser($this->platform, $this->expressionParser, $this->getIndexCommandsParser(), $this->queryParser);
     }
 
     public function getTableMaintenanceCommandsParser(): TableMaintenanceCommandsParser

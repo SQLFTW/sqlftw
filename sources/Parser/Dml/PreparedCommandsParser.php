@@ -14,6 +14,7 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Ddl\Routine\StoredProcedureCommand;
 use SqlFtw\Sql\Dml\Prepared\DeallocatePrepareCommand;
 use SqlFtw\Sql\Dml\Prepared\ExecuteCommand;
@@ -29,10 +30,13 @@ use function iterator_to_array;
 class PreparedCommandsParser
 {
 
+    private Platform $platform;
+
     private Parser $parser;
 
-    public function __construct(Parser $parser)
+    public function __construct(Platform $platform, Parser $parser)
     {
+        $this->platform = $platform;
         $this->parser = $parser;
     }
 
@@ -93,7 +97,7 @@ class PreparedCommandsParser
             $class = get_class($statement);
             if ($statement instanceof StoredProcedureCommand && $tokenList->inRoutine() === RoutineType::PROCEDURE) {
                 // ok
-            } elseif (!in_array($class, $tokenList->getSession()->getPlatform()->getPreparableCommands(), true)) {
+            } elseif (!in_array($class, $this->platform->getPreparableCommands(), true)) {
                 throw new ParserException('Non-preparable statement in PREPARE: ' . $class, $tokenList);
             }
         }

@@ -16,6 +16,7 @@ use SqlFtw\Analyzer\Rules\Charset\CharsetAndCollationCompatibilityRule;
 use SqlFtw\Analyzer\Rules\Variables\SystemVariablesTypeRule;
 use SqlFtw\Analyzer\SimpleAnalyzer;
 use SqlFtw\Analyzer\SimpleContext;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Resolver\ExpressionResolver;
 use SqlFtw\Session\Session;
 use SqlFtw\Session\SessionUpdater;
@@ -59,7 +60,7 @@ class Parser
 
     public function __construct(ParserConfig $config, Session $session, ?Lexer $lexer = null)
     {
-        $resolver = new ExpressionResolver($session);
+        $resolver = new ExpressionResolver($config->getPlatform(), $session);
 
         $this->config = $config;
         $this->session = $session;
@@ -67,12 +68,17 @@ class Parser
         $this->lexer = $lexer ?? new Lexer($config, $session);
         $this->factory = new ParserFactory($this, $config, $session, $this->sessionUpdater);
 
-        $context = new SimpleContext($session, $resolver);
+        $context = new SimpleContext($config->getPlatform(), $session, $resolver);
         // always executed rules (errors not as obvious as syntax error, but preventing command execution anyway)
         $this->analyzer = new SimpleAnalyzer($context, [
             new SystemVariablesTypeRule(),
             //new CharsetAndCollationCompatibilityRule(),
         ]);
+    }
+
+    public function getPlatform(): Platform
+    {
+        return $this->config->getPlatform();
     }
 
     public function getSession(): Session

@@ -7,6 +7,8 @@ use SqlFtw\Platform\Platform;
 class ParserConfig
 {
 
+    private Platform $platform;
+
     private int $clientSideExtensions;
 
     private bool $tokenizeComments;
@@ -16,15 +18,22 @@ class ParserConfig
     private bool $provideTokenLists;
 
     public function __construct(
+        Platform $platform,
         int $clientSideExtensions = 0,
         bool $tokenizeComments = true,
         bool $tokenizeWhitespace = false,
         bool $provideTokenLists = false
     ) {
+        $this->platform = $platform;
         $this->clientSideExtensions = $clientSideExtensions;
         $this->tokenizeComments = $tokenizeComments;
         $this->tokenizeWhitespace = $tokenizeWhitespace;
         $this->provideTokenLists = $provideTokenLists;
+    }
+
+    public function getPlatform(): Platform
+    {
+        return $this->platform;
     }
 
     public function getClientSideExtensions(): int

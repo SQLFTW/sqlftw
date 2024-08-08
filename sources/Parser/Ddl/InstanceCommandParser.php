@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Ddl;
 use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceAction;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceCommand;
 use SqlFtw\Sql\Keyword;
@@ -19,6 +20,13 @@ use function strtolower;
 
 class InstanceCommandParser
 {
+
+    private Platform $platform;
+
+    public function __construct(Platform $platform)
+    {
+        $this->platform = $platform;
+    }
 
     /**
      * 8.0 https://dev.mysql.com/doc/refman/8.0/en/alter-instance.html
@@ -64,7 +72,7 @@ class InstanceCommandParser
 
             return new AlterInstanceCommand(new AlterInstanceAction(AlterInstanceAction::ROTATE_INNODB_MASTER_KEY));
         } else {
-            throw new InvalidVersionException('ALTER INSTANCE is implemented since 5.7', $tokenList);
+            throw new InvalidVersionException('ALTER INSTANCE is implemented since 5.7', $this->platform, $tokenList);
         }
     }
 
