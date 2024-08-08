@@ -1027,7 +1027,7 @@ class Lexer
                     if ($yieldDelimiter) {
                         $tokens[] = new Token(T::DELIMITER, $start, $row, $delimiter);
                         goto yield_token_list;
-                    } elseif ($previous->type & T::DELIMITER_DEFINITION) {
+                    } elseif (($previous->type & T::DELIMITER_DEFINITION) !== 0) {
                         goto yield_token_list;
                     }
                     break;
