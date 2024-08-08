@@ -15,7 +15,7 @@ $query = 'CREATE TABLE test (
   col2 CHAR(10),
   col3 CHAR(20),
   PRIMARY KEY (col1),
-  UNIQUE KEY key2 (col2(5), col3(10)),
+  UNIQUE INDEX key2 (col2(5), col3(10)),
   INDEX key3 (col3) USING HASH
 )';
 Assert::parseSerialize($query);
@@ -39,13 +39,13 @@ Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, PRIMARY KEY (col1) INVISIBL
 
 
 // [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name, ...) [index_option] ...
-Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, UNIQUE KEY (col1))");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, UNIQUE INDEX (col1))");
 Assert::parseSerialize(
-    "CREATE TABLE tbl1 (col1 INT, UNIQUE INDEX (col1))",
-    "CREATE TABLE tbl1 (col1 INT, UNIQUE KEY (col1))"
+    "CREATE TABLE tbl1 (col1 INT, UNIQUE KEY (col1))",
+    "CREATE TABLE tbl1 (col1 INT, UNIQUE INDEX (col1))"
 );
-Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, CONSTRAINT UNIQUE KEY (col1))");
-Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, CONSTRAINT con1 UNIQUE KEY (col1))");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, CONSTRAINT UNIQUE INDEX (col1))");
+Assert::parseSerialize("CREATE TABLE tbl1 (col1 INT, CONSTRAINT con1 UNIQUE INDEX (col1))");
 
 
 // {INDEX|KEY} [index_name] [index_type] (index_col_name, ...) [index_option] ...

@@ -12,6 +12,7 @@ use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Parser;
+use SqlFtw\Parser\ParserConfig;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -19,6 +20,7 @@ use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
+use function array_merge;
 use function class_exists;
 use function gettype;
 use function implode;
@@ -44,13 +46,19 @@ class Assert extends DogmaAssert
                 | ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS
                 | ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS;
         }
-        $session = new Session($platform, $extensions);
+        $config = new ParserConfig($platform, $extensions, true, true);
+        $session = new Session($platform);
         if ($mode !== null) {
             $session->setMode($session->getMode()->add($mode));
         }
-        $lexer = new Lexer($session, true, true);
+        $lexer = new Lexer($config, $session);
 
-        $tokens = iterator_to_array($lexer->tokenize($sql));
+        /** @var array<TokenList> $tokenLists */
+        $tokenLists = iterator_to_array($lexer->tokenize($sql));
+        $tokens = [];
+        foreach ($tokenLists as $tokenList) {
+            $tokens = array_merge($tokens, $tokenList->getTokens());
+        }
 
         self::count($tokens, $count);
 
@@ -94,8 +102,10 @@ class Assert extends DogmaAssert
 
     public static function tokenList(string $sql): TokenList
     {
-        $session = new Session(Platform::get(Platform::MYSQL, '5.7'));
-        $lexer = new Lexer($session, true, true);
+        $platform = Platform::get(Platform::MYSQL, '5.7');
+        $config = new ParserConfig($platform, 0, true, true);
+        $session = new Session($platform);
+        $lexer = new Lexer($config, $session);
 
         return iterator_to_array($lexer->tokenize($sql))[0];
     }
@@ -124,10 +134,10 @@ class Assert extends DogmaAssert
         $results = iterator_to_array($parser->parse($query));
 
         $serialized = [];
-        foreach ($results as [$command, $tokenList]) {
+        foreach ($results as $command) {
             if ($command instanceof InvalidCommand) {
                 if (class_exists(Debugger::class)) {
-                    Debugger::dump($tokenList);
+                    Debugger::dump($command->getTokenList());
                 }
                 $exception = $command->getException();
                 $message = '';
@@ -174,7 +184,7 @@ class Assert extends DogmaAssert
         if (count($results) > 1) {
             if (class_exists(Debugger::class)) {
                 Debugger::dump($results);
-                foreach ($results as [$command, $tokenList]) {
+                foreach ($results as $command) {
                     if ($command instanceof InvalidCommand) {
                         Debugger::dumpException($command->getException());
                     }
@@ -182,11 +192,11 @@ class Assert extends DogmaAssert
             }
             self::fail('More than one command found in given SQL code.');
         }
-        [$command, $tokenList] = $results[0];
+        $command = $results[0];
 
         if ($command instanceof InvalidCommand) {
             if (class_exists(Debugger::class)) {
-                Debugger::dump($tokenList);
+                Debugger::dump($command->getTokenList());
             }
             $exception = $command->getException();
             $message = '';
@@ -217,11 +227,11 @@ class Assert extends DogmaAssert
         if (count($results) > 1) {
             self::fail('More than one command found in given SQL code.');
         }
-        [$command, $tokenList] = $results[0];
+        $command = $results[0];
 
         if ($command instanceof InvalidCommand) {
             if (class_exists(Debugger::class)) {
-                Debugger::dump($tokenList);
+                Debugger::dump($command->getTokenList());
             }
             throw $command->getException();
         }
@@ -241,8 +251,7 @@ class Assert extends DogmaAssert
         $commands = [];
         try {
             /** @var Command $command */
-            /** @var TokenList $tokenList */
-            foreach ($parser->parse($sql) as [$command, $tokenList]) {
+            foreach ($parser->parse($sql) as $command) {
                 $commands[] = $command;
                 if ($command instanceof InvalidCommand) {
                     throw $command->getException();

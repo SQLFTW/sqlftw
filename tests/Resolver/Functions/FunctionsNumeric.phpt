@@ -12,7 +12,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 $platform = Platform::get(Platform::MYSQL, '8.0');
 $session = new Session($platform);
-$f = new Functions($session, new Cast());
+$f = new Functions($platform, $session, new Cast());
 
 Assert::true(true);
 

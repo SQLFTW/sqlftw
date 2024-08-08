@@ -32,7 +32,7 @@ Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::INVALID, '/* commen
 // HINT_COMMENT (not parsed)
 $tokens = Assert::tokens(' /*+ content */ ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT | T::OPTIMIZER_HINT_COMMENT, '/*+ content */', 1);
+Assert::token($tokens[1], T::COMMENT | T::BLOCK_COMMENT, '/*+ content */', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 15);
 
 // HINT_COMMENT (parsed)
