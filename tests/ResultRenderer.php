@@ -120,23 +120,24 @@ class ResultRenderer
     }
 
     /**
-     * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $falseNegatives
+     * @param array<string, non-empty-list<array{Command, SqlMode}>> $falseNegatives
      */
     public function renderFalseNegatives(array $falseNegatives): void
     {
         foreach ($falseNegatives as $path => $falseNegative) {
-            foreach ($falseNegative as [$command, $tokenList, $mode]) {
+            foreach ($falseNegative as [$command, $mode]) {
                 $this->renderTestPath($path);
-                $this->renderFalseNegative($command, $tokenList, $mode);
+                $this->renderFalseNegative($command, $mode);
             }
         }
     }
 
-    public function renderFalseNegative(Command $command, TokenList $tokenList, SqlMode $mode): void
+    public function renderFalseNegative(Command $command, SqlMode $mode): void
     {
         rl('False negative (should not fail):', null, 'r');
         rl("'{$mode->getValue()}'", 'sql_mode', 'C');
 
+        $tokenList = $command->getTokenList();
         $tokensSerialized = trim($tokenList->serialize());
         rl($tokensSerialized, null, 'y');
 
@@ -159,23 +160,24 @@ class ResultRenderer
     }
 
     /**
-     * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $falsePositives
+     * @param array<string, non-empty-list<array{Command, SqlMode}>> $falsePositives
      */
     public function renderFalsePositives(array $falsePositives): void
     {
         foreach ($falsePositives as $path => $falsePositive) {
-            foreach ($falsePositive as [$command, $tokenList, $mode]) {
+            foreach ($falsePositive as [$command, $mode]) {
                 $this->renderTestPath($path);
-                $this->renderFalsePositive($command, $tokenList, $mode);
+                $this->renderFalsePositive($command, $mode);
             }
         }
     }
 
-    public function renderFalsePositive(Command $command, TokenList $tokenList, SqlMode $mode): void
+    public function renderFalsePositive(Command $command, SqlMode $mode): void
     {
         rl('False positive (should fail):', null, 'r');
         rl($mode->getValue(), 'mode', 'C');
 
+        $tokenList = $command->getTokenList();
         $tokensSerialized = trim($tokenList->serialize());
         rl($tokensSerialized, null, 'y');
 
@@ -188,7 +190,7 @@ class ResultRenderer
     }
 
     /**
-     * @param array<string, non-empty-list<array{Command, TokenList, SqlMode}>> $serialisationErrors
+     * @param array<string, non-empty-list<array{Command, SqlMode}>> $serialisationErrors
      */
     public function renderSerialisationErrors(array $serialisationErrors): void
     {
@@ -196,15 +198,16 @@ class ResultRenderer
         foreach ($serialisationErrors as $path => $serialisationError) {
             foreach ($serialisationError as [$command, $tokenList, $mode]) {
                 $this->renderTestPath($path);
-                $this->renderSerialisationError($command, $tokenList, $mode, $job);
+                $this->renderSerialisationError($command, $mode, $job);
             }
         }
     }
 
-    public function renderSerialisationError(Command $command, TokenList $tokenList, SqlMode $mode, MysqlTestJob $job): void
+    public function renderSerialisationError(Command $command, SqlMode $mode, MysqlTestJob $job): void
     {
         rl('Serialisation error:', null, 'r');
 
+        $tokenList = $command->getTokenList();
         [$origin, $originNorm] = $job->normalizeOriginalSql($tokenList, true);
         [$parsed, $parsedNorm] = $job->normalizeParsedSql($command, $this->formatter, $tokenList->getSession(), true);
 

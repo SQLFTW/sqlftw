@@ -113,9 +113,8 @@ class MysqlTestJob
         $falsePositives = [];
         $serialisationErrors = [];
 
-        /** @var Command $command */
-        /** @var TokenList $tokenList */
-        foreach ($parser->parse($sql) as [$command, $tokenList]) {
+        foreach ($parser->parse($sql) as $command) {
+            $tokenList = $command->getTokenList();
             $tokensSerialized = trim($tokenList->serialize());
             $tokensSerializedWithoutGarbage = trim($tokenList->filter(static function (Token $token): bool {
                 return ($token->type & TokenType::COMMENT) !== 0
@@ -154,17 +153,17 @@ class MysqlTestJob
                     // could not be filtered from mysql-server tests
                     continue;
                 }
-                $falseNegatives[] = [$command, $tokenList, $sqlMode];
+                $falseNegatives[] = [$command, $sqlMode];
                 if ($singleThread) {
-                    $renderer->renderFalseNegative($command, $tokenList, $sqlMode);
+                    $renderer->renderFalseNegative($command, $sqlMode);
                 }
             } elseif (!$command instanceof InvalidCommand && $shouldFail) {
                 if (Str::containsAny($tokensSerialized, self::$partiallyParsedErrors)) {
                     continue;
                 }
-                $falsePositives[] = [$command, $tokenList, $sqlMode];
+                $falsePositives[] = [$command, $sqlMode];
                 if ($singleThread) {
-                    $renderer->renderFalsePositive($command, $tokenList, $sqlMode);
+                    $renderer->renderFalsePositive($command, $sqlMode);
                 }
             }
 
@@ -175,12 +174,12 @@ class MysqlTestJob
             ) {
                 $match = true;
             } else {
-                $match = $this->checkSerialisation($tokenList, $command, $formatter, $session);
+                $match = $this->checkSerialisation($command, $formatter, $session);
             }
             if (!$match) {
-                $serialisationErrors[] = [$command, $tokenList, $sqlMode];
+                $serialisationErrors[] = [$command, $sqlMode];
                 if ($singleThread) {
-                    $renderer->renderSerialisationError($command, $tokenList, $sqlMode, $this);
+                    $renderer->renderSerialisationError($command, $sqlMode, $this);
                 }
             }
 
@@ -216,12 +215,13 @@ class MysqlTestJob
         );
     }
 
-    private function checkSerialisation(TokenList $tokenList, Command $command, Formatter $formatter, Session $session): bool
+    private function checkSerialisation(Command $command, Formatter $formatter, Session $session): bool
     {
         if ($command instanceof EmptyCommand || $command instanceof InvalidCommand) {
             return true;
         }
 
+        $tokenList = $command->getTokenList();
         [, $before] = $this->normalizeOriginalSql($tokenList);
         [, $after] = $this->normalizeParsedSql($command, $formatter, $session);
 

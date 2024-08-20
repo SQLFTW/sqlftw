@@ -93,7 +93,7 @@ class MysqlTest
 
         $platform = Platform::fromTag(Platform::MYSQL, $tag);
         $version = $platform->getVersion()->format();
-        $session = new Session($platform, ClientSideExtension::ALLOW_DELIMITER_DEFINITION);
+        $session = new Session($platform);
         $formatter = new Formatter($platform, $session);
         $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun, $formatter);
 

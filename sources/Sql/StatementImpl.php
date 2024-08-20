@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql;
 
+use LogicException;
 use SqlFtw\Parser\TokenList;
 
 abstract class StatementImpl implements Statement
@@ -26,8 +27,12 @@ abstract class StatementImpl implements Statement
         $this->tokenList = $tokenList;
     }
 
-    public function getTokenList(): ?TokenList
+    public function getTokenList(): TokenList
     {
+        if ($this->tokenList === null) {
+            throw new LogicException('Command was not generated with token list. Use ParserConfig with $provideTokenLists set to true.');
+        }
+
         return $this->tokenList;
     }
 

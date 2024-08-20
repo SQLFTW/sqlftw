@@ -23,22 +23,22 @@ class Result
 
     public int $tokens;
 
-    /** @var list<array{Command, TokenList, SqlMode}> */
+    /** @var list<array{Command, SqlMode}> */
     public array $falseNegatives;
 
-    /** @var list<array{Command, TokenList, SqlMode}> */
+    /** @var list<array{Command, SqlMode}> */
     public array $falsePositives;
 
-    /** @var list<array{Command, TokenList, SqlMode}> */
+    /** @var list<array{Command, SqlMode}> */
     public array $serialisationErrors;
 
     /** @var list<string> */
     public array $usedSerialisationExceptions;
 
     /**
-     * @param list<array{Command, TokenList, SqlMode}> $falseNegatives
-     * @param list<array{Command, TokenList, SqlMode}> $falsePositives
-     * @param list<array{Command, TokenList, SqlMode}> $serialisationErrors
+     * @param list<array{Command, SqlMode}> $falseNegatives
+     * @param list<array{Command, SqlMode}> $falsePositives
+     * @param list<array{Command, SqlMode}> $serialisationErrors
      * @param list<string> $usedSerialisationExceptions
      */
     public function __construct(
