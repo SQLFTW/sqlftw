@@ -30,7 +30,7 @@ class MysqlTestFilter
 {
 
     public const MYSQL_TEST_SUITE_COMMANDS = [
-        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'character_set', 'chdir', 'chmod', 'close OUT', 'closehandle',
+        'append_file', 'assert', 'break', 'cat_file', 'change_user', 'character_set', 'chdir', 'chmod', 'close OUT', 'close\\(', 'closehandle',
         'connect', 'CONNECT', 'copy_file', 'dec', 'DEC', 'die', 'diff_files', 'dirty_close', 'disable_abort_on_error',
         'disable_async_client', 'disable_connect_log', 'disable_info', 'disable_metadata', 'disable_parsing',
         'disable_ps_protocol', 'disable_query_log', 'disable_reconnect', 'disable_result_log', 'disable_session_track_info',
@@ -38,8 +38,8 @@ class MysqlTestFilter
         'enable_connect_log', 'enable_info', 'enable_metadata', 'enable_parsing', 'enable_ps_protocol', 'enable_query_log',
         'enable_reconnect', 'enable_result_log', 'enable_session_track_info', 'enable_testcase', 'enable_warnings',
         'END_OF_PROCEDURE', 'eof', 'EOF', 'ERROR_LOG', 'eval', 'EVAL', 'exec', 'exec_in_background', 'EXECUTE_STEP', 'exit', 'expecterror',
-        'expr', 'file_exists', 'force', 'horizontal_results', 'ibdata2', 'inc', 'INC', 'let', 'LET', 'list_files',
-        'lowercase_result', 'mkdir', 'move_file', 'my', 'mysqlx', /*'open',*/ 'open OUT', 'output', 'partially_sorted_result', 'perl',
+        'expr', 'file_exists', 'for my', 'force', 'horizontal_results', 'ibdata2', 'inc', 'INC', 'let', 'LET', 'list_files',
+        'lowercase_result', 'mkdir', 'move_file', 'my', 'mysqlx', /*'open',*/ 'open OUT', 'open\\(', 'output', 'partially_sorted_result', 'perl',
         'print', 'PROCEDURE', 'query', 'query_attributes', 'read', 'real_sleep', 'reap', 'REAP', 'REAp', 'recvresult', 'remove_file',
         'remove_files_wildcard', 'replace_column', 'replace_numeric_round', 'replace_regex', 'replace_result',
         'reset_connection', 'result_format', 'rmdir', 'save_master_pos', 'SCRIPT', 'secret', 'send_eval', 'send_quit',
@@ -48,6 +48,8 @@ class MysqlTestFilter
         'wait_for_slave_to_stop', 'write_file',
         // some params
         'create-schema', '-uroot', '--password', 'silent', 'concurrency', 'iterations', '--commit=1',
+        // labels
+        'END_OF_PERL',
     ];
 
     private string $commands;

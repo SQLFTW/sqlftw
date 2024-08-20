@@ -8,7 +8,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Tests\Mysql\Data\TestSkips;

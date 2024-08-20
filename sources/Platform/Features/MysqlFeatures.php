@@ -2382,6 +2382,7 @@ class MysqlFeatures extends FeaturesList
         [MysqlVariable::NDB_LOG_ORIG, self::MIN, self::MAX],
         [MysqlVariable::NDB_LOG_TRANSACTION_COMPRESSION, 80031, self::MAX],
         [MysqlVariable::NDB_LOG_TRANSACTION_COMPRESSION_LEVEL_ZSTD, 80031, self::MAX],
+        [MysqlVariable::NDB_LOG_TRANSACTION_DEPENDENCY, 80033, self::MAX],
         [MysqlVariable::NDB_LOG_TRANSACTION_ID, self::MIN, self::MAX],
         [MysqlVariable::NDB_LOG_UPDATE_AS_WRITE, self::MIN, self::MAX],
         [MysqlVariable::NDB_LOG_UPDATE_MINIMAL, 50636, 50699],
@@ -2712,7 +2713,7 @@ class MysqlFeatures extends FeaturesList
 
     /** @var array<EntityType::*, int> */
     public array $maxLengths = [
-        EntityType::GENERAL => 64, // default
+        EntityType::GENERAL => 65535, // limit unknown, but bigger than 64
         EntityType::SCHEMA => 64,
         EntityType::TABLE => 64,
         EntityType::VIEW => 64,

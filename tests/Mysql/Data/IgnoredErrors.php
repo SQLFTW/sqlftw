@@ -35,6 +35,7 @@ trait IgnoredErrors
         'ER_TRUNCATED_WRONG_VALUE', // e.g. adding column without default value
         'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD',
         'ER_TOO_MANY_KEY_PARTS', // to do: detect multi-column index when not explicitly spatial
+        'ER_BAD_FIELD_ERROR',
     ];
 
     /** @var list<string> */
@@ -114,7 +115,6 @@ trait IgnoredErrors
         'ER_CANT_CREATE_TABLE',
         // columns
         'ER_DUP_FIELDNAME',
-        'ER_BAD_FIELD_ERROR',
         'ER_CANT_REMOVE_ALL_FIELDS',
         'ER_DEPENDENT_BY_GENERATED_COLUMN',
         'ER_UNSUPPORTED_ACTION_ON_GENERATED_COLUMN',
@@ -262,6 +262,7 @@ trait IgnoredErrors
         'ER_TRG_IN_WRONG_SCHEMA',
         // locking
         'ER_WRONG_LOCK_OF_SYSTEM_TABLE',
+        'ER_USER_LOCK_OVERLONG_NAME',
         // routines
         'ER_UDF_EXISTS',
         'ER_SP_DOES_NOT_EXIST',
@@ -540,6 +541,7 @@ trait IgnoredErrors
         'ER_VIEW_CHECK_FAILED',
         'ER_UNABLE_TO_COLLECT_LOG_STATUS',
         'ER_ADMIN_WRONG_MRG_TABLE',
+        'ER_SECONDARY_ENGINE',
         'ER_SECONDARY_ENGINE_DDL',
         'ER_CRASHED_ON_USAGE',
         'ER_AUTOINC_READ_FAILED',
@@ -783,6 +785,24 @@ trait IgnoredErrors
         'ER_SLAVE_CHANNEL_SQL_SKIP_COUNTER',
         'ER_BINLOG_FATAL_ERROR',
         'ER_TEMP_TABLE_PREVENTS_SWITCH_SESSION_BINLOG_FORMAT',
+        'ER_REPLICA_CONFIGURATION',
+        'ER_CONNECTION_METADATA',
+        'ER_BAD_REPLICA',
+        'ER_REPLICA_CHANNEL_DOES_NOT_EXIST',
+        'ER_REPLICA_CHANNEL_SQL_SKIP_COUNTER',
+        'ER_REPLICA_SQL_THREAD_MUST_STOP',
+        'ER_REPLICA_AM_INIT_REPOSITORY',
+        'ER_REPLICA_CHANNEL_MUST_STOP',
+        'ER_REPLICA_CHANNEL_OPERATION_NOT_ALLOWED',
+        'ER_BAD_REPLICA_AUTO_POSITION',
+        'ER_REPLICA_IGNORE_SERVER_IDS',
+        'ER_REPLICA_MAX_CHANNELS_EXCEEDED',
+        'ER_REPLICA_MULTIPLE_CHANNELS_CMD',
+        'ER_REPLICA_CHANNEL_SQL_THREAD_MUST_STOP',
+        'ER_REPLICA_CHANNEL_IO_THREAD_MUST_STOP',
+        'ER_CANT_RESET_SOURCE',
+        'ER_RESET_SOURCE_TO_VALUE_OUT_OF_RANGE',
+        'ER_CANNOT_PURGE_BINLOG_WITH_BACKUP_LOCK',
         '3',
         // group replication
         'ER_GROUP_REPLICATION_CONFIGURATION',
@@ -889,6 +909,7 @@ trait IgnoredErrors
         'ER_NOT_VALID_PASSWORD',
         'ER_PASSWORD_NO_MATCH',
         'ER_READ_ONLY_MODE',
+        'ER_CANT_CHANGE_SYS_VAR_IN_READ_ONLY_MODE',
         'ER_UNKNOWN_AUTHID',
         'ER_RENAME_ROLE',
         'ER_ROLE_NOT_GRANTED',
@@ -910,6 +931,7 @@ trait IgnoredErrors
         'ER_CANNOT_GRANT_SYSTEM_PRIV_TO_MANDATORY_ROLE',
         'ER_CMD_NEED_SUPER',
         'ER_MISSING_CURRENT_PASSWORD',
+        'ER_VALIDATE_PASSWORD_INSUFFICIENT_CHANGED_CHARACTERS',
     ];
 
 }

@@ -1134,6 +1134,16 @@ trait KnownFailures
         "SET PERSIST test_component.str_sys_var = 'test';" => Valid::YES,
         "RESET PERSIST test_component.bool_sys_var;" => Valid::YES,
         "SET PERSIST_ONLY test_component.bool_sys_var = 12;" => Valid::YES,
+        "RESET PERSIST test_component.bool_ro_sys_var;" => Valid::YES,
+        "SET PERSIST test_component.bool_ro_sys_var = OFF;" => Valid::YES,
+        "SET PERSIST test_component.bool_sys_var = OFF;" => Valid::YES,
+        "SELECT @@test_component.str_sys_var_default;" => Valid::YES,
+        "SET GLOBAL test_component.str_sys_var_default=something;" => Valid::YES,
+        "SET GLOBAL test_component.str_sys_var_default=\"dictionary.txt\";",
+        "SET GLOBAL test_server_telemetry_traces.callsite_context_keys=';source_file;source_line;;';" => Valid::YES,
+
+        "SET GLOBAL test_server_telemetry_traces.application_context_keys='client_id;root_id;parent_id;id';" => Valid::YES,
+        "SET GLOBAL test_server_telemetry_traces.trace_key='activate';" => Valid::YES,
     ];
 
 }
