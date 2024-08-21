@@ -24,6 +24,7 @@ use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use Throwable;
 use function count;
+use function iterator_to_array;
 use function strtoupper;
 
 /**
@@ -108,7 +109,33 @@ class Parser
     }
 
     /**
-     * @return Generator<int, Command>
+     * @return list<Command>
+     */
+    public function parseAll(string $sql): array
+    {
+        return iterator_to_array($this->parse($sql));
+    }
+
+    /**
+     * @throws SingleStatementExpectedException when given SQL with multiple or no statements
+     */
+    public function parseSingle(string $sql): Command
+    {
+        $commands = iterator_to_array($this->parse($sql));
+        if (count($commands) === 0) {
+            throw new SingleStatementExpectedException($commands);
+        }
+        if (count($commands) > 1) {
+            if (count($commands) !== 2 || !$commands[1] instanceof EmptyCommand) {
+                throw new SingleStatementExpectedException($commands);
+            }
+        }
+
+        return $commands[0];
+    }
+
+    /**
+     * @return Generator<Command>
      */
     public function parse(string $sql, bool $prepared = false): Generator
     {
