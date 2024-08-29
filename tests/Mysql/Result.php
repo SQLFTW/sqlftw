@@ -2,7 +2,6 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\SqlMode;
 
