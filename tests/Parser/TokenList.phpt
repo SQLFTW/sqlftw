@@ -1,5 +1,8 @@
 <?php declare(strict_types = 1);
 
+// phpcs:disable SlevomatCodingStandard.ControlStructures.NewWithParentheses.MissingParentheses
+// phpcs:disable Generic.Formatting.DisallowMultipleStatements.SameLine
+
 namespace SqlFtw\Parser;
 
 use SqlFtw\Platform\Platform;
@@ -12,10 +15,10 @@ require '../bootstrap.php';
 $platform = Platform::get(Platform::MYSQL, '5.7');
 $session = new Session($platform);
 
-$ws = new Token(TokenType::WHITESPACE, 0, 1, 'ws');
-$comment = new Token(TokenType::COMMENT, 1, 1, 'comment');
-$value = new Token(TokenType::VALUE, 2, 1, 'value');
-$name = new Token(TokenType::NAME, 2, 1, 'name');
+$ws = new Token; $ws->type = TokenType::WHITESPACE; $ws->position = 0; $ws->row = 1; $ws->value = 'ws';
+$comment = new Token; $comment->type = TokenType::COMMENT; $comment->position = 1; $comment->row = 1; $comment->value = 'comment';
+$value = new Token; $value->type = TokenType::VALUE; $value->position = 2; $value->row = 1; $value->value = 'value';
+$name = new Token; $name->type = TokenType::NAME; $name->position = 2; $name->row = 1; $name->value = 'name';
 
 $tokenList = new TokenList([$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $platform, $session);
 $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT);
