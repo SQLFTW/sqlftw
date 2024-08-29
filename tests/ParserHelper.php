@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Tests;
 
-use SqlFtw\Parser\Lexer;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserConfig;
 use SqlFtw\Platform\ClientSideExtension;
