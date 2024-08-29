@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+// phpcs:disable SlevomatCodingStandard.ControlStructures.NewWithParentheses.MissingParentheses
+// phpcs:disable Generic.Formatting.DisallowMultipleStatements.SameLine
 // spell-check-ignore: XB
 
 namespace SqlFtw\Tests\Mysql;
@@ -242,9 +244,13 @@ class MysqlTestJob
     public function normalizeOriginalSql(TokenList $tokenList, bool $debug = false): array
     {
         $original = $tokenList->map(static function (Token $token): Token {
-            return ($token->type & TokenType::COMMENT) !== 0
-                ? new Token(TokenType::WHITESPACE, $token->position, $token->row, ' ')
-                : $token;
+            if (($token->type & TokenType::COMMENT) !== 0) {
+                $t = new Token; $t->type = TokenType::WHITESPACE; $t->position = $token->position; $t->row = $token->row; $t->value = ' ';
+
+                return $t;
+            } else {
+                return $token;
+            }
         })->serialize();
 
         $original = trim($original);
