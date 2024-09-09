@@ -162,7 +162,6 @@ class Lexer
         $commentDepth = 0;
         $position = 0;
         $row = 1;
-        $column = 1;
 
         $length = strlen($string);
         continue_tokenizing:
@@ -170,7 +169,6 @@ class Lexer
             $char = $string[$position];
             $start = $position;
             $position++;
-            $column++;
 
             if ($char === $delimiter[0]) {
                 if (substr($string, $position - 1, strlen($delimiter)) === $delimiter) {
@@ -187,7 +185,6 @@ class Lexer
                 case "\n":
                     $ws = $char;
                     if ($char === "\n") {
-                        $column = 1;
                         $row++;
                     }
                     while ($position < $length) {
@@ -195,11 +192,9 @@ class Lexer
                         if ($next === ' ' || $next === "\t" || $next === "\r") {
                             $ws .= $next;
                             $position++;
-                            $column++;
                         } elseif ($next === "\n") {
                             $ws .= $next;
                             $position++;
-                            $column = 1;
                             $row++;
                         } else {
                             break;
@@ -227,7 +222,6 @@ class Lexer
                             if ($nextDc === '_' || ctype_alpha($nextDc) || (strlen($name) > 0 && ctype_digit($nextDc))) {
                                 $name .= $nextDc;
                                 $position++;
-                                $column++;
                             } else {
                                 break;
                             }
@@ -251,7 +245,6 @@ class Lexer
                         if (isset(self::$operatorSymbolsKey[$next2])) {
                             $operator .= $next2;
                             $position++;
-                            $column++;
                         } else {
                             break;
                         }
@@ -275,7 +268,6 @@ class Lexer
                             }
                             $condition = null;
                             $position++;
-                            $column++;
                             break;
                         } elseif ($hint) {
                             // end of optimizer hint
@@ -283,7 +275,6 @@ class Lexer
 
                             $hint = false;
                             $position++;
-                            $column++;
                             break;
                         }
                     }
@@ -291,7 +282,6 @@ class Lexer
                 case '\\':
                     if ($parseOldNullLiteral && $char === '\\' && $position < $length && $string[$position] === 'N') {
                         $position++;
-                        $column++;
                         $tokens[] = $previous = $t = new Token; $t->type = T::SYMBOL | T::VALUE; $t->position = $start; $t->row = $row; $t->value = '\\N';
                         break;
                     }
@@ -315,7 +305,6 @@ class Lexer
                         if (isset(self::$operatorSymbolsKey[$next3])) {
                             $operator2 .= $next3;
                             $position++;
-                            $column++;
                         } else {
                             break;
                         }
@@ -330,7 +319,6 @@ class Lexer
                             if (ctype_digit($nextQm)) {
                                 $number .= $nextQm;
                                 $position++;
-                                $column++;
                             } else {
                                 break;
                             }
@@ -364,12 +352,10 @@ class Lexer
                         // @@variable
                         $var .= $second;
                         $position++;
-                        $column++;
                         if ($string[$position] === '`') {
                             // @@`variable`
                             $position++;
-                            $column++;
-                            $tokens[] = $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, '`', '@@');
+                            $tokens[] = $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::BACKTICK_QUOTED_STRING, $string, $position, $row, '`', '@@');
                             break;
                         }
                         while ($position < $length) {
@@ -377,7 +363,6 @@ class Lexer
                             if ($next4 === '@' || isset(self::$nameCharsKey[$next4]) || ord($next4) > 127) {
                                 $var .= $next4;
                                 $position++;
-                                $column++;
                             } else {
                                 break;
                             }
@@ -407,27 +392,22 @@ class Lexer
                         }
                     } elseif ($second === '`') {
                         $position++;
-                        $column++;
-                        $tokens[] = $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, $second, '@');
+                        $tokens[] = $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::BACKTICK_QUOTED_STRING, $string, $position, $row, $second, '@');
                     } elseif ($second === "'") {
                         $position++;
-                        $column++;
-                        $tokens[] = $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, $second, '@');
+                        $tokens[] = $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::SINGLE_QUOTED_STRING, $string, $position, $row, $second, '@');
                     } elseif ($second === '"') {
                         $position++;
-                        $column++;
-                        $tokens[] = $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::DOUBLE_QUOTED_STRING, $string, $position, $column, $row, $second, '@');
+                        $tokens[] = $previous = $this->parseString(T::NAME | T::AT_VARIABLE | T::DOUBLE_QUOTED_STRING, $string, $position, $row, $second, '@');
                     } elseif (isset(self::$userVariableNameCharsKey[$second]) || ord($second) > 127) {
                         // @variable
                         $var .= $second;
                         $position++;
-                        $column++;
                         while ($position < $length) {
                             $next5 = $string[$position];
                             if (isset(self::$userVariableNameCharsKey[$next5]) || ord($next5) > 127) {
                                 $var .= $next5;
                                 $position++;
-                                $column++;
                             } else {
                                 break;
                             }
@@ -469,7 +449,6 @@ class Lexer
                         $hashComment .= $next6;
                         $position++;
                         if ($next6 === "\n") {
-                            $column = 0;
                             $row++;
                             break;
                         }
@@ -489,7 +468,6 @@ class Lexer
                             $slashComment .= $next7;
                             $position++;
                             if ($next7 === "\n") {
-                                $column = 0;
                                 $row++;
                                 break;
                             }
@@ -499,7 +477,6 @@ class Lexer
                         }
                     } elseif ($next7 === '*') {
                         $position++;
-                        $column++;
 
                         $optional = $string[$position] === '!';
                         $beforeComment = $string[$position - 3];
@@ -509,7 +486,6 @@ class Lexer
                             if (strlen($string) > $position + 1 && $string[$position + 1] === '*' && $string[$position + 2] === '/') {
                                 // /*!*/
                                 $position += 3;
-                                $column += 3;
                                 break;
                             }
                             $validOptional = preg_match('~^([Mm]?!(?:00000|[1-9]\d{4,5})?)\D~', substr($string, $position, 10), $m) === 1;
@@ -523,7 +499,6 @@ class Lexer
                                     }
                                     $condition = $versionId;
                                     $position += strlen($versionId) + 1;
-                                    $column += strlen($versionId) + 1;
 
                                     // continue parsing as conditional code
                                     break;
@@ -539,7 +514,6 @@ class Lexer
                             if ($optimizerHintCanFollow) {
                                 $hint = true;
                                 $position++;
-                                $column++;
                                 $tokens[] = $t = new Token; $t->type = T::OPTIMIZER_HINT_START; $t->position = $start; $t->row = $row; $t->value = '/*+';
                                 break;
                             }
@@ -554,12 +528,10 @@ class Lexer
                             if ($next8 === '/' && ($position + 1 < $length) && $string[$position + 1] === '*') {
                                 $comment .= $next8 . $string[$position + 1];
                                 $position += 2;
-                                $column += 2;
                                 $commentDepth++;
                             } elseif ($next8 === '*' && ($position + 1 < $length) && $string[$position + 1] === '/') {
                                 $comment .= $next8 . $string[$position + 1];
                                 $position += 2;
-                                $column += 2;
                                 $commentDepth--;
                                 if ($commentDepth === 0) {
                                     $terminated = true;
@@ -568,12 +540,10 @@ class Lexer
                             } elseif ($next8 === "\n") {
                                 $comment .= $next8;
                                 $position++;
-                                $column = 0;
                                 $row++;
                             } else {
                                 $comment .= $next8;
                                 $position++;
-                                $column++;
                             }
                         }
                         if (!$terminated) {
@@ -612,19 +582,19 @@ class Lexer
                         ? T::NAME | T::DOUBLE_QUOTED_STRING
                         : T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING;
 
-                    $tokens[] = $previous = $this->parseString($type, $string, $position, $column, $row, '"');
+                    $tokens[] = $previous = $this->parseString($type, $string, $position, $row, '"');
                     break;
                 case "'":
-                    $tokens[] = $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, "'");
+                    $tokens[] = $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $row, "'");
                     break;
                 case '`':
-                    $tokens[] = $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, '`');
+                    $tokens[] = $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $row, '`');
                     break;
                 case '.':
                     $next9 = $position < $length ? $string[$position] : '';
                     // .123 cannot follow a name, e.g.: "select 1ea10.1a20, ...", but can follow a keyword, e.g.: "INTERVAL .4 SECOND"
                     if (isset(self::$numbersKey[$next9]) && (($previous->type & T::NAME) === 0 || ($previous->type & T::KEYWORD) !== 0)) {
-                        $token = $this->parseNumber($string, $position, $column, $row, '.');
+                        $token = $this->parseNumber($string, $position, $row, '.');
                         if ($token !== null) {
                             $tokens[] = $previous = $token;
                             break;
@@ -638,7 +608,7 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && strtoupper($previous->value) === Keyword::DEFAULT);
                     if ($numberCanFollow) {
-                        $token = $this->parseNumber($string, $position, $column, $row, '-');
+                        $token = $this->parseNumber($string, $position, $row, '-');
                         if ($token !== null) {
                             $tokens[] = $previous = $token;
                             break;
@@ -656,7 +626,6 @@ class Lexer
                             }
                             $line = substr($string, $position - 1, $endOfLine - $position + 2);
                             $position += strlen($line) - 1;
-                            $column = 0;
                             $row++;
 
                             if ($this->withComments) {
@@ -667,9 +636,8 @@ class Lexer
 
                         $tokens[] = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = '-';
                         $position++;
-                        $column++;
 
-                        $token = $this->parseNumber($string, $position, $column, $row, '-');
+                        $token = $this->parseNumber($string, $position, $row, '-');
                         if ($token !== null) {
                             $tokens[] = $previous = $token;
                             break;
@@ -686,7 +654,6 @@ class Lexer
                         if (isset(self::$operatorSymbolsKey[$next10])) {
                             $operator3 .= $next10;
                             $position++;
-                            $column++;
                         } else {
                             break;
                         }
@@ -699,7 +666,7 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
                     if ($numberCanFollow && ($next11 === '.' || isset(self::$numbersKey[$next11]))) {
-                        $token = $this->parseNumber($string, $position, $column, $row, '+');
+                        $token = $this->parseNumber($string, $position, $row, '+');
                         if ($token !== null) {
                             $tokens[] = $previous = $token;
                             break;
@@ -716,7 +683,6 @@ class Lexer
                         if (isset(self::$operatorSymbolsKey[$next12])) {
                             $operator4 .= $next12;
                             $position++;
-                            $column++;
                         } else {
                             break;
                         }
@@ -728,18 +694,15 @@ class Lexer
                     if ($next13 === 'b') {
                         // 0b00100011
                         $position++;
-                        $column++;
                         $bits = '';
                         while ($position < $length) {
                             $next13 = $string[$position];
                             if ($next13 === '0' || $next13 === '1') {
                                 $bits .= $next13;
                                 $position++;
-                                $column++;
                             } elseif (isset(self::$nameCharsKey[$next13])) {
                                 // name pretending to be a binary literal :E
                                 $position -= strlen($bits) + 1;
-                                $column -= strlen($bits) + 1;
                                 break;
                             } else {
                                 $orig = $char . 'b' . $bits;
@@ -750,18 +713,15 @@ class Lexer
                     } elseif ($next13 === 'x') {
                         // 0x001f
                         $position++;
-                        $column++;
                         $bits = '';
                         while ($position < $length) {
                             $next13 = $string[$position];
                             if (isset(self::$hexadecKey[$next13])) {
                                 $bits .= $next13;
                                 $position++;
-                                $column++;
                             } elseif (isset(self::$nameCharsKey[$next13])) {
                                 // name pretending to be a hexadecimal literal :E
                                 $position -= strlen($bits) + 1;
-                                $column -= strlen($bits) + 1;
                                 break;
                             } else {
                                 $orig = $char . 'x' . $bits;
@@ -784,18 +744,16 @@ class Lexer
                     // UUID
                     if (strlen($uuid) === 36 && preg_match(self::UUID_REGEXP, $uuid) !== 0) {
                         $position += 35;
-                        $column += 35;
                         $tokens[] = $previous = $t = new Token; $t->type = T::VALUE | T::UUID; $t->position = $start; $t->row = $row; $t->value = $uuid;
                         break;
                     }
                     // IPv4
                     if (preg_match(self::IP_V4_REGEXP, $uuid, $m) !== 0) {
                         $position += strlen($m[0]) - 1;
-                        $column += strlen($m[0]) - 1;
                         $tokens[] = $previous = $t = new Token; $t->token = T::VALUE | T::STRING; $t->position = $start; $t->row = $row; $t->value = $m[0];
                         break;
                     }
-                    $token = $this->parseNumber($string, $position, $column, $row, $char);
+                    $token = $this->parseNumber($string, $position, $row, $char);
                     if ($token !== null) {
                         $tokens[] = $previous = $token;
                         break;
@@ -807,18 +765,15 @@ class Lexer
                     // B'01'
                     if (($char === 'B' || $char === 'b') && $position < $length && $string[$position] === '\'') {
                         $position++;
-                        $column++;
                         $bits = $next14 = '';
                         while ($position < $length) {
                             $next14 = $string[$position];
                             if ($next14 === '\'') {
                                 $position++;
-                                $column++;
                                 break;
                             } else {
                                 $bits .= $next14;
                                 $position++;
-                                $column++;
                             }
                         }
                         if (ltrim($bits, '01') === '') {
@@ -850,7 +805,6 @@ class Lexer
                     // UUID
                     if (strlen($uuid2) === 36 && preg_match(self::UUID_REGEXP, $uuid2) !== 0) {
                         $position += 35;
-                        $column += 35;
                         $tokens[] = $previous = $t = new Token; $t->type = T::VALUE | T::UUID; $t->position = $start; $t->row = $row; $t->value = $uuid2;
                         break;
                     }
@@ -859,18 +813,15 @@ class Lexer
                 case 'x':
                     if (($char === 'X' || $char === 'x') && $position < $length && $string[$position] === '\'') {
                         $position++;
-                        $column++;
                         $bits = $next15 = '';
                         while ($position < $length) {
                             $next15 = $string[$position];
                             if ($next15 === '\'') {
                                 $position++;
-                                $column++;
                                 break;
                             } else {
                                 $bits .= $next15;
                                 $position++;
-                                $column++;
                             }
                         }
                         $bits = strtolower($bits);
@@ -893,22 +844,19 @@ class Lexer
                     $next16 = $position < $length ? $string[$position] : null;
                     if ($char === 'N' && $next16 === '"') {
                         $position++;
-                        $column++;
                         $type = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES)
                             ? T::NAME | T::DOUBLE_QUOTED_STRING
                             : T::VALUE | T::STRING | T::DOUBLE_QUOTED_STRING;
 
-                        $tokens[] = $previous = $this->parseString($type, $string, $position, $column, $row, '"', 'N');
+                        $tokens[] = $previous = $this->parseString($type, $string, $position, $row, '"', 'N');
                         break;
                     } elseif ($char === 'N' && $next16 === "'") {
                         $position++;
-                        $column++;
-                        $tokens[] = $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $column, $row, "'", 'N');
+                        $tokens[] = $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $row, "'", 'N');
                         break;
                     } elseif ($char === 'N' && $next16 === '`') {
                         $position++;
-                        $column++;
-                        $tokens[] = $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $column, $row, "`", 'N');
+                        $tokens[] = $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $row, "`", 'N');
                         break;
                     }
                 case 'n':
@@ -956,7 +904,6 @@ class Lexer
                         if (isset(self::$nameCharsKey[$next17]) || ord($next17) > 127) {
                             $name .= $next17;
                             $position++;
-                            $column++;
                         } else {
                             break;
                         }
@@ -980,7 +927,7 @@ class Lexer
                     } elseif ($upper === Keyword::DELIMITER && $allowDelimiterDefinition) {
                         $tokens[] = $t = new Token; $t->type = T::KEYWORD | T::NAME | T::UNQUOTED_NAME; $t->position = $start; $t->row = $row; $t->value = $name;
                         $start = $position;
-                        $whitespace = $this->parseWhitespace($string, $position, $column, $row);
+                        $whitespace = $this->parseWhitespace($string, $position, $row);
                         if ($this->withWhitespace) {
                             $tokens[] = $t = new Token; $t->type = T::WHITESPACE; $t->position = $start; $t->row = $row; $t->value = $whitespace;
                         }
@@ -993,7 +940,6 @@ class Lexer
                             } else {
                                 $del .= $next18;
                                 $position++;
-                                $column++;
                             }
                         }
                         if ($del === '') {
@@ -1046,7 +992,6 @@ class Lexer
                         if (isset(self::$nameCharsKey[$next19]) || ord($next19) > 127) {
                             $name2 .= $next19;
                             $position++;
-                            $column++;
                         } else {
                             break;
                         }
@@ -1083,7 +1028,7 @@ class Lexer
         }
     }
 
-    private function parseWhitespace(string $string, int &$position, int &$column, int &$row): string
+    private function parseWhitespace(string $string, int &$position, int &$row): string
     {
         $length = strlen($string);
         $whitespace = '';
@@ -1092,11 +1037,9 @@ class Lexer
             if ($next === ' ' || $next === "\t" || $next === "\r") {
                 $whitespace .= $next;
                 $position++;
-                $column++;
             } elseif ($next === "\n") {
                 $whitespace .= $next;
                 $position++;
-                $column = 1;
                 $row++;
             } else {
                 break;
@@ -1106,7 +1049,7 @@ class Lexer
         return $whitespace;
     }
 
-    private function parseString(int $tokenType, string $string, int &$position, int &$column, int &$row, string $quote, string $prefix = ''): Token
+    private function parseString(int $tokenType, string $string, int &$position, int &$row, string $quote, string $prefix = ''): Token
     {
         $startAt = $position - 1 - strlen($prefix);
         $length = strlen($string);
@@ -1126,7 +1069,6 @@ class Lexer
             if ($next === $quote) {
                 $orig[] = $next;
                 $position++;
-                $column++;
                 if ($escaped) {
                     $escaped = false;
                 } elseif ($position < $length && $string[$position] === $quote) {
@@ -1138,22 +1080,18 @@ class Lexer
             } elseif ($next === "\n") {
                 $orig[] = $next;
                 $position++;
-                $column = 1;
                 $row++;
             } elseif ($backslashes && $next === '\\') {
                 $escaped = !$escaped;
                 $orig[] = $next;
                 $position++;
-                $column++;
             } elseif ($escaped && $next !== '\\' && $next !== $quote) {
                 $escaped = false;
                 $orig[] = $next;
                 $position++;
-                $column++;
             } else {
                 $orig[] = $next;
                 $position++;
-                $column++;
             }
         }
 
@@ -1181,7 +1119,7 @@ class Lexer
         return $t;
     }
 
-    private function parseNumber(string $string, int &$position, int &$column, int $row, string $start): ?Token
+    private function parseNumber(string $string, int &$position, int $row, string $start): ?Token
     {
         $startAt = $position - 1;
         $type = T::VALUE | T::NUMBER;
@@ -1264,7 +1202,6 @@ class Lexer
                             if (trim($exp, 'e+-') === '' && strpos($base, '.') !== false) {
                                 $len = strlen($base . $exp) - 1;
                                 $position += $len;
-                                $column += $len;
                                 $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
 
                                 $t = new Token; $t->type = $type | T::INVALID; $t->position = $startAt; $t->row = $row; $t->value = $base . $exp; $t->original = $base . $exp; $t->exception = $exception;
@@ -1278,7 +1215,6 @@ class Lexer
                         if (strpos($base, '.') !== false) {
                             $len = strlen($base . $exp) - 1;
                             $position += $len;
-                            $column += $len;
                             $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
 
                             $t = new Token; $t->type = $type | T::INVALID; $t->position = $startAt; $t->row = $row; $t->value = $base . $exp; $t->original = $base . $exp; $t->exception = $exception; // todo why orig?
@@ -1309,7 +1245,6 @@ class Lexer
 
         $len = strlen($orig) - 1;
         $position += $len;
-        $column += $len;
 
         // todo: is "+42" considered uint?
         if (ctype_digit($value)) {
