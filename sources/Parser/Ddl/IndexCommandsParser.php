@@ -169,7 +169,7 @@ class IndexCommandsParser
                 $withParser = $tokenList->expectName(EntityType::INDEX_PARSER);
             } elseif ($keyword === Keyword::COMMENT) {
                 $commentString = $tokenList->expectString();
-                $limit = $this->platform->getMaxLengths()[EntityType::INDEX_COMMENT];
+                $limit = $this->platform->maxLengths[EntityType::INDEX_COMMENT];
                 if (strlen($commentString) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
                     throw new ParserException("Index comment length exceeds limit of {$limit} bytes.", $tokenList);
                 }

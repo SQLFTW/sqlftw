@@ -95,8 +95,6 @@ class Platform
 
     private Version $version;
 
-    private FeaturesList $featuresList;
-
     /**
      * @readonly
      * @var array<Feature::*, Feature::*>
@@ -146,6 +144,12 @@ class Platform
     public array $preparableCommands;
 
     /**
+     * @readonly
+     * @var array<EntityType::*, int>
+     */
+    public array $maxLengths;
+
+    /**
      * @param self::* $name
      */
     final private function __construct(string $name, Version $version)
@@ -154,7 +158,7 @@ class Platform
         $this->version = $version;
         switch ($name) {
             case self::MYSQL:
-                $this->featuresList = new MysqlFeatures();
+                $featuresList = new MysqlFeatures();
                 break;
             default:
                 throw new LogicException('Only MySQL platform is supported for now.');
@@ -163,36 +167,38 @@ class Platform
         $versionId = $this->version->getId();
 
         /** @var list<Feature::*> $filtered */
-        $filtered = $this->filterForVersion($this->featuresList->features, $versionId);
+        $filtered = $this->filterForVersion($featuresList->features, $versionId);
         $this->features = array_combine($filtered, $filtered);
 
         /** @var list<Keyword::*> $filtered */
-        $filtered = $this->filterForVersion($this->featuresList->reserved, $versionId);
+        $filtered = $this->filterForVersion($featuresList->reserved, $versionId);
         $this->reserved = array_combine($filtered, $filtered);
 
         /** @var list<Keyword::*> $filtered */
-        $filtered = $this->filterForVersion($this->featuresList->nonReserved, $versionId);
+        $filtered = $this->filterForVersion($featuresList->nonReserved, $versionId);
         $this->nonReserved = array_combine($filtered, $filtered);
 
         /** @var list<Operator::*> $filtered */
-        $filtered = $this->filterForVersion($this->featuresList->operators, $versionId);
+        $filtered = $this->filterForVersion($featuresList->operators, $versionId);
         $this->operators = array_combine($filtered, $filtered);
 
         /** @var list<BaseType::*> $filtered */
-        $filtered = $this->filterForVersion($this->featuresList->types, $versionId);
+        $filtered = $this->filterForVersion($featuresList->types, $versionId);
         $this->types = array_combine($filtered, $filtered);
 
         /** @var list<BuiltInFunction::*> $filtered */
-        $filtered = $this->filterForVersion($this->featuresList->functions, $versionId);
+        $filtered = $this->filterForVersion($featuresList->functions, $versionId);
         $this->functions = array_combine($filtered, $filtered);
 
         /** @var list<MysqlVariable::*> $filtered */
-        $filtered = $this->filterForVersion($this->featuresList->variables, $versionId);
+        $filtered = $this->filterForVersion($featuresList->variables, $versionId);
         $this->variables = array_combine($filtered, $filtered);
 
         /** @var list<class-string<Command>> $filtered */
-        $filtered = $this->filterForVersion($this->featuresList->preparableCommands, $versionId);
+        $filtered = $this->filterForVersion($featuresList->preparableCommands, $versionId);
         $this->preparableCommands = array_combine($filtered, $filtered);
+
+        $this->maxLengths = $featuresList->maxLengths;
     }
 
     /**
@@ -343,14 +349,6 @@ class Platform
         $class = 'SqlFtw\\Platform\\Naming\\NamingStrategy' . ucfirst($this->name);
 
         return new $class();
-    }
-
-    /**
-     * @return array<EntityType::*, int>
-     */
-    public function getMaxLengths(): array
-    {
-        return $this->featuresList->maxLengths;
     }
 
     /**

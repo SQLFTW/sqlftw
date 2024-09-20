@@ -985,7 +985,7 @@ class TableCommandsParser
                 case Keyword::COMMENT:
                     // [COMMENT 'string']
                     $comment = $tokenList->expectString();
-                    $limit = $this->platform->getMaxLengths()[EntityType::FIELD_COMMENT];
+                    $limit = $this->platform->maxLengths[EntityType::FIELD_COMMENT];
                     if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
                         throw new ParserException("Column comment length exceeds limit of {$limit} bytes.", $tokenList);
                     }
@@ -1125,7 +1125,7 @@ class TableCommandsParser
                 case Keyword::COMMENT:
                     // [COMMENT 'string']
                     $comment = $tokenList->expectString();
-                    $limit = $this->platform->getMaxLengths()[EntityType::FIELD_COMMENT];
+                    $limit = $this->platform->maxLengths[EntityType::FIELD_COMMENT];
                     if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
                         throw new ParserException("Column comment length exceeds limit of {$limit} bytes.", $tokenList);
                     }
@@ -1383,7 +1383,7 @@ class TableCommandsParser
             case Keyword::COMMENT:
                 $tokenList->passSymbol('=');
                 $comment = $tokenList->expectString();
-                $limit = $this->platform->getMaxLengths()[EntityType::TABLE_COMMENT];
+                $limit = $this->platform->maxLengths[EntityType::TABLE_COMMENT];
                 if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
                     throw new ParserException("Table comment length exceeds limit of {$limit} bytes.", $tokenList);
                 }

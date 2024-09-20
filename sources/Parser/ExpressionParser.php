@@ -1366,7 +1366,7 @@ class ExpressionParser
             $values = [];
             do {
                 $value = $tokenList->expectStringValue();
-                $limit = $this->config->getPlatform()->getMaxLengths()[EntityType::ENUM_VALUE];
+                $limit = $this->config->getPlatform()->maxLengths[EntityType::ENUM_VALUE];
                 if (strlen($value->asString()) > $limit) {
                     throw new ParserException("Enum value '{$value->getValue()}' exceeds limit of {$limit} bytes.", $tokenList);
                 }
