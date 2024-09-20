@@ -113,7 +113,7 @@ class Parser
      */
     public function parseAll(string $sql): array
     {
-        return iterator_to_array($this->parse($sql));
+        return array_values(iterator_to_array($this->parse($sql)));
     }
 
     /**
@@ -121,7 +121,7 @@ class Parser
      */
     public function parseSingle(string $sql): Command
     {
-        $commands = iterator_to_array($this->parse($sql));
+        $commands = array_values(iterator_to_array($this->parse($sql)));
         if (count($commands) === 0) {
             throw new SingleStatementExpectedException($commands);
         }
@@ -284,7 +284,8 @@ class Parser
             }
 
             return $command;
-        } catch (ParsingException | Throwable $e) { // todo: remove Throwable
+        } catch (ParsingException | Throwable $e) { // @phpstan-ignore catch.neverThrown
+            // todo: remove Throwable
             // Throwable should not be here
             $tokenList->finish();
 

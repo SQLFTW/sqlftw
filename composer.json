@@ -16,7 +16,7 @@
     },
     "require-dev": {
         "dogma/dogma-dev": "0.1.29",
-        "phpstan/phpstan": "1.9.15",
+        "phpstan/phpstan": "1.12.3",
         "phpstan/phpstan-strict-rules": "^1.0",
         "amphp/parallel-functions": "1.1.0",
         "rector/rector": "0.14.8",
@@ -90,7 +90,10 @@
         "tests:mysql": "php tests/Mysql/test.php",
         "tests:mysql-s": "php tests/Mysql/test.php --single",
 
-        "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M",
+        "phpstan:run": [
+            "Composer\\Config::disableProcessTimeout",
+            "php vendor/phpstan/phpstan/phpstan analyse -vvv -c build/phpstan/phpstan.neon --memory-limit=512M"
+        ],
         "phpstan:all": [
             "php84 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M",
             "php83 vendor/phpstan/phpstan/phpstan analyse -c build/phpstan/phpstan.neon --memory-limit=512M",

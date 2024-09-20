@@ -71,14 +71,12 @@ class MysqlTestFilter
         $quotedDelimiter = ';';
         while ($i < count($rows)) {
             $row = $rows[$i];
-            if ($row === 'my $escaped_query = <<END;'
-                || $row === '($session_epoch)'
-            ) {
+            if ($row === 'my $escaped_query = <<END;' || $row === '($session_epoch)') {
                 // trim rest of file
                 array_splice($rows, $i, count($rows) - $i, ['-- XB1 removed all']);
                 break;
             } elseif (preg_match('~^\s*DELIMITER (.*)~i', $row, $m) !== 0) {
-                $d = trim($m[1]);
+                $d = trim($m[1]); // @phpstan-ignore offsetAccess.notFound
                 //rl($delimiter, $i, 'y');
                 //rl($d, null, 'g');
                 // stripping Perl delimiter from SQL delimiter definition
@@ -88,7 +86,7 @@ class MysqlTestFilter
                 $quotedDelimiter = preg_quote($delimiter, '~');
             } elseif (preg_match('~^\s*--delimiter (.*)~i', $row, $m) !== 0) {
                 // delimiter
-                $d = trim($m[1]);
+                $d = trim($m[1]); // @phpstan-ignore offsetAccess.notFound
                 //rl($delimiter, $i, 'y');
                 //rl($d, null, 'g');
                 $rows[$i] = 'DELIMITER ' . $d . ' -- XB0';
@@ -97,7 +95,7 @@ class MysqlTestFilter
                 $quotedDelimiter = preg_quote($delimiter, '~');
             } elseif (preg_match('~^\s*--delimiter="([^"]+)"~', $row, $m) !== 0) {
                 // delimiter
-                $d = $m[1];
+                $d = $m[1]; // @phpstan-ignore offsetAccess.notFound
                 //rl($delimiter, $i, 'y');
                 //rl($d, null, 'g');
                 $rows[$i] = 'DELIMITER ' . $d . ' -- XB0';
@@ -106,19 +104,19 @@ class MysqlTestFilter
                 $quotedDelimiter = preg_quote($delimiter, '~');
             } elseif (preg_match('~^\s*-- ?error (.*)~i', $row, $m) !== 0) {
                 // error code
-                $rows[$i] = '-- error ' . $this->translateErrorCodes($m[1]);
+                $rows[$i] = '-- error ' . $this->translateErrorCodes($m[1]); // @phpstan-ignore offsetAccess.notFound
             } elseif (preg_match('~^\s*error ((?:\d|ER_).*)~i', $row, $m) !== 0) {
                 // error code
-                $rows[$i] = '-- error ' . $this->translateErrorCodes($m[1]);
+                $rows[$i] = '-- error ' . $this->translateErrorCodes($m[1]); // @phpstan-ignore offsetAccess.notFound
             } elseif (preg_match('~^--disable_abort_on_error~i', $row, $m) !== 0) {
                 // error code
-                $rows[$i] = '-- error DISABLED (from "' . $m[0] . '")';
+                $rows[$i] = '-- error DISABLED (from "' . $m[0] . '")'; // @phpstan-ignore offsetAccess.notFound
             } elseif (preg_match('~^--(query_vertical|send) (.*)~i', $row, $m) !== 0) {
                 // query
-                $rows[$i] = $m[2] . '; -- (from "--' . $m[1] . '")';
+                $rows[$i] = $m[2] . '; -- (from "--' . $m[1] . '")'; // @phpstan-ignore offsetAccess.notFound, offsetAccess.notFound
             } elseif (preg_match('~^\s*(query_vertical|send)(?:\s+(.*)|$)~i', $row, $m) !== 0) {
                 // query
-                $rows[$i] = ($m[2] ?? '') . ' -- (from "' . $m[1] . '")';
+                $rows[$i] = ($m[2] ?? '') . ' -- (from "' . $m[1] . '")'; // @phpstan-ignore offsetAccess.notFound
             } elseif (preg_match('~^--disable_testcase~', $row) !== 0) {
                 // skipped
                 $j = $i + 1;
@@ -161,13 +159,13 @@ class MysqlTestFilter
             if (preg_match('~^\s*if\s*\(!?`(select.*)~i', $row, $m) !== 0) {
                 // processing selects in conditions
                 if (preg_match('~`\)\s*$~', $row) !== 0) {
-                    $rows[$i] = substr($m[1], 0, -2) . ' -- XB5';
+                    $rows[$i] = substr($m[1], 0, -2) . ' -- XB5'; // @phpstan-ignore offsetAccess.notFound
                 } else {
                     $j = $i;
-                    $rows[$i] = $m[1] . ' -- XB6';
+                    $rows[$i] = $m[1] . ' -- XB6'; // @phpstan-ignore offsetAccess.notFound
                     while ($j < count($rows)) {
                         if (preg_match('~(.*)`\)\s*{?$~', $rows[$j], $m) !== 0) {
-                            $rows[$j] = $m[1] . $delimiter . ' -- XB7';
+                            $rows[$j] = $m[1] . $delimiter . ' -- XB7'; // @phpstan-ignore offsetAccess.notFound
                             break;
                         }
                         $j++;

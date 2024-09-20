@@ -15,13 +15,13 @@ namespace SqlFtw\Parser;
 final class Token
 {
 
-    public int $type;
+    public int $type; // @phpstan-ignore property.uninitialized
 
-    public int $position;
+    public int $position; // @phpstan-ignore property.uninitialized
 
-    public int $row;
+    public int $row; // @phpstan-ignore property.uninitialized
 
-    public string $value;
+    public string $value; // @phpstan-ignore property.uninitialized
 
     public ?string $original = null;
 
