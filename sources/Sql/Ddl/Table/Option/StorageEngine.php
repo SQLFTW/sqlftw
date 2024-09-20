@@ -27,10 +27,11 @@ class StorageEngine implements SqlSerializable
 
     public function __construct(string $value)
     {
-        if (!isset(self::$map[strtolower($value)])) {
-            throw new InvalidDefinitionException("Invalid storage engine name: $value.");
+        $lower = strtolower($value);
+        if (!isset(self::$map[$lower])) {
+            throw new InvalidDefinitionException("Invalid storage engine name: {$value}.");
         }
-        $this->value = self::$map[strtolower($value)];
+        $this->value = self::$map[$lower];
     }
 
     // standard

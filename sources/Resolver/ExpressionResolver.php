@@ -69,7 +69,7 @@ use function is_int;
 use function is_string;
 use function method_exists;
 use function round;
-use function strtoupper;
+use function strcasecmp;
 
 /**
  * Simplifies or resolves SQL expressions
@@ -499,7 +499,7 @@ class ExpressionResolver
         $from = $select->getFrom();
         while ($from !== null) {
             // FROM DUAL allowed
-            if ($from instanceof TableReferenceTable && strtoupper($from->getTable()->getFullName()) === Keyword::DUAL) {
+            if ($from instanceof TableReferenceTable && strcasecmp($from->getTable()->getFullName(), Keyword::DUAL) === 0) {
                 break;
             }
             // todo: check other allowed states (simple subselect...)
