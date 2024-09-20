@@ -23,6 +23,7 @@ use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use Throwable;
+use function array_values;
 use function count;
 use function iterator_to_array;
 use function strtoupper;

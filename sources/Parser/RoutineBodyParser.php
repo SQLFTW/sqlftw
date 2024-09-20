@@ -71,7 +71,6 @@ use SqlFtw\Sql\Statement;
 use SqlFtw\Sql\SubqueryType;
 use function array_values;
 use function get_class;
-use function in_array;
 
 class RoutineBodyParser
 {
