@@ -98,15 +98,6 @@ class Lexer
 
     private bool $withWhitespace;
 
-    /** @var array<string, int> */
-    private array $reservedKey;
-
-    /** @var array<string, int> */
-    private array $keywordsKey;
-
-    /** @var array<string, int> */
-    private array $operatorsKey;
-
     /** @var list<string> */
     private array $escapeKeys;
 
@@ -129,9 +120,6 @@ class Lexer
         $this->withComments = $config->tokenizeComments();
         $this->withWhitespace = $config->tokenizeWhitespace();
 
-        $this->reservedKey = array_flip($this->platform->getReserved());
-        $this->keywordsKey = array_flip($this->platform->getNonReserved());
-        $this->operatorsKey = array_flip($this->platform->getOperators());
         $this->escapeKeys = array_keys(self::MYSQL_ESCAPES);
         $this->escapeValues = array_values(self::MYSQL_ESCAPES);
     }
@@ -146,8 +134,8 @@ class Lexer
         $autoSkip = ($this->withWhitespace ? T::WHITESPACE : 0) | ($this->withComments ? T::COMMENT : 0);
 
         $extensions = $this->config->getClientSideExtensions();
-        $parseOldNullLiteral = $this->platform->hasFeature(Feature::OLD_NULL_LITERAL);
-        $parseOptimizerHints = $this->platform->hasFeature(Feature::OPTIMIZER_HINTS);
+        $parseOldNullLiteral = isset($this->platform->features[Feature::OLD_NULL_LITERAL]);
+        $parseOptimizerHints = isset($this->platform->features[Feature::OPTIMIZER_HINTS]);
         $allowDelimiterDefinition = ($extensions & ClientSideExtension::ALLOW_DELIMITER_DEFINITION) !== 0;
 
         // last significant token parsed (comments and whitespace are skipped here)
@@ -234,7 +222,7 @@ class Lexer
                     $operator = $char;
                     while ($position < $length) {
                         $next2 = $string[$position];
-                        if (!isset($this->operatorsKey[$operator . $next2])) {
+                        if (!isset($this->platform->operators[$operator . $next2])) {
                             if ($operator !== ':') {
                                 $tokens[] = $previous = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = $operator;
                             } else {
@@ -298,7 +286,7 @@ class Lexer
                     $operator2 = $char;
                     while ($position < $length) {
                         $next3 = $string[$position];
-                        if (!isset($this->operatorsKey[$operator2 . $next3])) {
+                        if (!isset($this->platform->operators[$operator2 . $next3])) {
                             $tokens[] = $previous = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = $operator2;
                             break 2;
                         }
@@ -647,7 +635,7 @@ class Lexer
                     $operator3 = $char;
                     while ($position < $length) {
                         $next10 = $string[$position];
-                        if (!isset($this->operatorsKey[$operator3 . $next10])) {
+                        if (!isset($this->platform->operators[$operator3 . $next10])) {
                             $tokens[] = $previous = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = $operator3;
                             break 2;
                         }
@@ -676,7 +664,7 @@ class Lexer
                     $operator4 = $char;
                     while ($position < $length) {
                         $next12 = $string[$position];
-                        if (!isset($this->operatorsKey[$operator4 . $next12])) {
+                        if (!isset($this->platform->operators[$operator4 . $next12])) {
                             $tokens[] = $previous = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = $operator4;
                             break 2;
                         }
@@ -916,13 +904,13 @@ class Lexer
                     }
 
                     $upper = strtoupper($name);
-                    if (isset($this->reservedKey[$upper])) {
-                        if (isset($this->operatorsKey[$upper])) {
+                    if (isset($this->platform->reserved[$upper])) {
+                        if (isset($this->platform->operators[$upper])) {
                             $tokens[] = $previous = $t = new Token; $t->type = T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = $name;
                         } else {
                             $tokens[] = $previous = $t = new Token; $t->type = T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME; $t->position = $start; $t->row = $row; $t->value = $name;
                         }
-                    } elseif (isset($this->keywordsKey[$upper])) {
+                    } elseif (isset($this->platform->nonReserved[$upper])) {
                         $tokens[] = $previous = $t = new Token; $t->type = T::KEYWORD | T::NAME | T::UNQUOTED_NAME; $t->position = $start; $t->row = $row; $t->value = $name;
                     } elseif ($upper === Keyword::DELIMITER && $allowDelimiterDefinition) {
                         $tokens[] = $t = new Token; $t->type = T::KEYWORD | T::NAME | T::UNQUOTED_NAME; $t->position = $start; $t->row = $row; $t->value = $name;
@@ -949,7 +937,7 @@ class Lexer
                             $invalid = true;
                             break;
                         }
-                        if ($this->platform->isReserved(strtoupper($del))) {
+                        if (isset($this->platform->reserved[strtoupper($del)])) {
                             $exception = new LexerException('Delimiter can not be a reserved word', $position, $string);
 
                             $tokens[] = $previous = $t = new Token; $t->type = T::DELIMITER_DEFINITION | T::INVALID; $t->position = $start; $t->row = $row; $t->value = $del; $t->exception = $exception;

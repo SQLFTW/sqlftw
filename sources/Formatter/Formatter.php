@@ -38,6 +38,7 @@ use function ltrim;
 use function preg_match;
 use function str_replace;
 use function strpos;
+use function strtoupper;
 
 class Formatter
 {
@@ -124,12 +125,13 @@ class Formatter
         $sqlMode = $this->session->getMode();
         $quote = $sqlMode->containsAny(SqlMode::ANSI_QUOTES) ? '"' : '`';
         $name = str_replace($quote, $quote . $quote, $name);
+        $upper = strtoupper($name);
 
         $needsQuoting = $this->quoteAllNames
+            || isset($this->platform->reserved[$upper])
             || strpos($name, $quote) !== false // contains quote
             || preg_match('~[\pL_]~u', $name) === 0 // does not contain letters
-            || preg_match('~[\pC\pM\pS\pZ\p{Pd}\p{Pe}\p{Pf}\p{Pi}\p{Po}\p{Ps}]~u', ltrim($name, '@')) !== 0 // contains control, mark, symbols, whitespace, punctuation except _
-            || $this->platform->isReserved($name);
+            || preg_match('~[\pC\pM\pS\pZ\p{Pd}\p{Pe}\p{Pf}\p{Pi}\p{Po}\p{Ps}]~u', ltrim($name, '@')) !== 0; // contains control, mark, symbols, whitespace, punctuation except _
 
         if ($needsQuoting && !$sqlMode->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
             $name = str_replace($this->escapeKeys, $this->escapeValues, $name);

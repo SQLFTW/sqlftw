@@ -22,6 +22,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
+use function array_combine;
 use function assert;
 use function end;
 use function explode;
@@ -96,29 +97,53 @@ class Platform
 
     private FeaturesList $featuresList;
 
-    /** @var list<Feature::*> */
-    private ?array $features = null;
+    /**
+     * @readonly
+     * @var array<Feature::*, Feature::*>
+     */
+    public array $features;
 
-    /** @var list<Keyword::*> */
-    private ?array $reserved = null;
+    /**
+     * @readonly
+     * @var array<Keyword::*, Keyword::*>
+     */
+    public array $reserved;
 
-    /** @var list<Keyword::*> */
-    private ?array $nonReserved = null;
+    /**
+     * @readonly
+     * @var array<Keyword::*, Keyword::*>
+     */
+    public array $nonReserved;
 
-    /** @var list<Operator::*> */
-    private ?array $operators = null;
+    /**
+     * @readonly
+     * @var array<Operator::*, Operator::*>
+     */
+    public array $operators;
 
-    /** @var list<BaseType::*> */
-    private ?array $types = null;
+    /**
+     * @readonly
+     * @var array<BaseType::*, BaseType::*>
+     */
+    public array $types;
 
-    /** @var list<BuiltInFunction::*> */
-    private ?array $functions = null;
+    /**
+     * @readonly
+     * @var array<BuiltInFunction::*, BuiltInFunction::*>
+     */
+    public array $functions;
 
-    /** @var list<MysqlVariable::*> */
-    private ?array $variables = null;
+    /**
+     * @readonly
+     * @var array<MysqlVariable::*, MysqlVariable::*>
+     */
+    public array $variables;
 
-    /** @var list<class-string<Command>> */
-    private ?array $preparableCommands = null;
+    /**
+     * @readonly
+     * @var array<class-string<Command>, class-string<Command>>
+     */
+    public array $preparableCommands;
 
     /**
      * @param self::* $name
@@ -134,6 +159,40 @@ class Platform
             default:
                 throw new LogicException('Only MySQL platform is supported for now.');
         }
+
+        $versionId = $this->version->getId();
+
+        /** @var list<Feature::*> $filtered */
+        $filtered = $this->filterForVersion($this->featuresList->features, $versionId);
+        $this->features = array_combine($filtered, $filtered);
+
+        /** @var list<Keyword::*> $filtered */
+        $filtered = $this->filterForVersion($this->featuresList->reserved, $versionId);
+        $this->reserved = array_combine($filtered, $filtered);
+
+        /** @var list<Keyword::*> $filtered */
+        $filtered = $this->filterForVersion($this->featuresList->nonReserved, $versionId);
+        $this->nonReserved = array_combine($filtered, $filtered);
+
+        /** @var list<Operator::*> $filtered */
+        $filtered = $this->filterForVersion($this->featuresList->operators, $versionId);
+        $this->operators = array_combine($filtered, $filtered);
+
+        /** @var list<BaseType::*> $filtered */
+        $filtered = $this->filterForVersion($this->featuresList->types, $versionId);
+        $this->types = array_combine($filtered, $filtered);
+
+        /** @var list<BuiltInFunction::*> $filtered */
+        $filtered = $this->filterForVersion($this->featuresList->functions, $versionId);
+        $this->functions = array_combine($filtered, $filtered);
+
+        /** @var list<MysqlVariable::*> $filtered */
+        $filtered = $this->filterForVersion($this->featuresList->variables, $versionId);
+        $this->variables = array_combine($filtered, $filtered);
+
+        /** @var list<class-string<Command>> $filtered */
+        $filtered = $this->filterForVersion($this->featuresList->preparableCommands, $versionId);
+        $this->preparableCommands = array_combine($filtered, $filtered);
     }
 
     /**
@@ -284,144 +343,6 @@ class Platform
         $class = 'SqlFtw\\Platform\\Naming\\NamingStrategy' . ucfirst($this->name);
 
         return new $class();
-    }
-
-    // features --------------------------------------------------------------------------------------------------------
-
-    public function hasFeature(string $feature): bool
-    {
-        return in_array($feature, $this->getFeatures(), true);
-    }
-
-    /**
-     * @return list<Feature::*>
-     */
-    public function getFeatures(): array
-    {
-        if ($this->features === null) {
-            /** @var list<Feature::*> $filtered */
-            $filtered = $this->filterForVersion($this->featuresList->features, $this->version->getId());
-            $this->features = $filtered;
-        }
-
-        return $this->features;
-    }
-
-    public function isReserved(string $word): bool
-    {
-        $word = strtoupper($word);
-
-        return in_array($word, $this->getReserved(), true);
-    }
-
-    /**
-     * @return list<Keyword::*>
-     */
-    public function getReserved(): array
-    {
-        if ($this->reserved === null) {
-            /** @var list<Keyword::*> $filtered */
-            $filtered = $this->filterForVersion($this->featuresList->reserved, $this->version->getId());
-            $this->reserved = $filtered;
-        }
-
-        return $this->reserved;
-    }
-
-    public function isKeyword(string $word, int $version): bool
-    {
-        $word = strtoupper($word);
-
-        return in_array($word, $this->getReserved(), true) || in_array($word, $this->getNonReserved(), true);
-    }
-
-    /**
-     * @return list<Keyword::*>
-     */
-    public function getNonReserved(): array
-    {
-        if ($this->nonReserved === null) {
-            /** @var list<Keyword::*> $filtered */
-            $filtered = $this->filterForVersion($this->featuresList->nonReserved, $this->version->getId());
-            $this->nonReserved = $filtered;
-        }
-
-        return $this->nonReserved;
-    }
-
-    /**
-     * @return list<Operator::*>
-     */
-    public function getOperators(): array
-    {
-        if ($this->operators === null) {
-            /** @var list<Operator::*> $filtered */
-            $filtered = $this->filterForVersion($this->featuresList->operators, $this->version->getId());
-            $this->operators = $filtered;
-        }
-
-        return $this->operators;
-    }
-
-    public function isType(string $word): bool
-    {
-        return in_array($word, $this->getTypes(), true);
-    }
-
-    /**
-     * @return list<BaseType::*>
-     */
-    public function getTypes(): array
-    {
-        if ($this->types === null) {
-            /** @var list<BaseType::*> $filtered */
-            $filtered = $this->filterForVersion($this->featuresList->types, $this->version->getId());
-            $this->types = $filtered;
-        }
-
-        return $this->types;
-    }
-
-    /**
-     * @return list<BuiltInFunction::*>
-     */
-    public function getBuiltInFunctions(): array
-    {
-        if ($this->functions === null) {
-            /** @var list<BuiltInFunction::*> $filtered */
-            $filtered = $this->filterForVersion($this->featuresList->functions, $this->version->getId());
-            $this->functions = $filtered;
-        }
-
-        return $this->functions;
-    }
-
-    /**
-     * @return list<MysqlVariable::*>
-     */
-    public function getSystemVariables(): array
-    {
-        if ($this->variables === null) {
-            /** @var list<MysqlVariable::*> $filtered */
-            $filtered = $this->filterForVersion($this->featuresList->variables, $this->version->getId());
-            $this->variables = $filtered;
-        }
-
-        return $this->variables;
-    }
-
-    /**
-     * @return list<class-string<Command>>
-     */
-    public function getPreparableCommands(): array
-    {
-        if ($this->preparableCommands === null) {
-            /** @var list<class-string<Command>> $filtered */
-            $filtered = $this->filterForVersion($this->featuresList->preparableCommands, $this->version->getId());
-            $this->preparableCommands = $filtered;
-        }
-
-        return $this->preparableCommands;
     }
 
     /**
