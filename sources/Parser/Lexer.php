@@ -1006,7 +1006,7 @@ class Lexer
                 $invalid = true;
             }
 
-            yield new TokenList($tokens, $this->config->getPlatform(), $this->session, $autoSkip, $invalid);
+            yield new TokenList($tokens, $this->platform, $this->session, $autoSkip, $invalid);
 
             $tokens = [];
             $invalid = false;
