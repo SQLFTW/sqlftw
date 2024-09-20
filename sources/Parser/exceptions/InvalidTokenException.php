@@ -20,7 +20,7 @@ class InvalidTokenException extends ParserException
 {
 
     /**
-     * @param string|list<string>|null $expectedValue
+     * @param string|array<string>|null $expectedValue
      */
     public static function tokens(
         int $expectedToken,

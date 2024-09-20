@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Session;
 
+use LogicException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Resolver\ExpressionHelper;
@@ -42,6 +43,7 @@ use function is_array;
 use function is_bool;
 use function is_float;
 use function is_int;
+use function is_scalar;
 use function is_string;
 use function trim;
 
@@ -113,9 +115,9 @@ class SessionUpdater
                 $value = MysqlVariable::getDefault($name);
             } elseif (!ExpressionHelper::isValue($value)) {
                 $value = new UnresolvedExpression($value);
+            } elseif ($value !== null && !is_scalar($value)) {
+                throw new LogicException('Should be scalar at this point: ' . gettype($value));
             }
-            /** @var UnresolvedExpression|Value|scalar|null $value */
-            $value = $value;
 
             if ($variable instanceof SystemVariable) {
                 $scope = $variable->getScope();

@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use LogicException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
@@ -755,8 +756,9 @@ class UserCommandsParser
                     }
                 }
             }
-            /** @var UserPrivilegeType $type */
-            $type = $type;
+            if ($type === null) {
+                throw new LogicException('Type cannot be null here.');
+            }
 
             $columns = null;
             if ($tokenList->hasSymbol('(')) {

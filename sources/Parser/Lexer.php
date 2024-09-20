@@ -737,8 +737,9 @@ class Lexer
                     }
                     // IPv4
                     if (preg_match(self::IP_V4_REGEXP, $uuid, $m) !== 0) {
-                        $position += strlen($m[0]) - 1;
-                        $tokens[] = $previous = $t = new Token; $t->token = T::VALUE | T::STRING; $t->position = $start; $t->row = $row; $t->value = $m[0];
+                        $ipv4 = $m[0]; // @phpstan-ignore offsetAccess.notFound
+                        $position += strlen($ipv4) - 1;
+                        $tokens[] = $previous = $t = new Token; $t->type = T::VALUE | T::STRING; $t->position = $start; $t->row = $row; $t->value = $ipv4;
                         break;
                     }
                     $token = $this->parseNumber($string, $position, $row, $char);

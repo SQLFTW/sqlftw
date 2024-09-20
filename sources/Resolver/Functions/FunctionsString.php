@@ -251,11 +251,11 @@ trait FunctionsString
             return 0;
         }
 
-        /** @var int|string $i */
+        /** @var int $i */
         foreach ($strings as $i => $string) {
             $string = $this->cast->toString($string);
             if ($find === $string) {
-                return ((int) $i) + 1;
+                return $i + 1;
             }
         }
 
@@ -549,9 +549,8 @@ trait FunctionsString
             return null;
         }
         $result = [];
-        /** @var int|string $i */
         foreach ($values as $i => $value) {
-            if ($value !== null && ($bits & (2 ** (int) $i)) !== 0) {
+            if ($value !== null && ($bits & (2 ** $i)) !== 0) {
                 $result[] = $this->cast->toString($value);
             }
         }

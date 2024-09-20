@@ -758,7 +758,7 @@ class TokenList
         if (!in_array($upper, $operators, true)) {
             $this->position--;
 
-            throw InvalidTokenException::tokens(T::OPERATOR, 0, array_values($operators), $token, $this);
+            throw InvalidTokenException::tokens(T::OPERATOR, 0, $operators, $token, $this);
         }
 
         return $token->value;
@@ -1023,8 +1023,7 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            /** @var list<string> $values */
-            $values = $className::getAllowedValues();
+            $values = array_values($className::getAllowedValues());
 
             throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
         }
@@ -1049,8 +1048,7 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            /** @var list<string> $values */
-            $values = $className::getAllowedValues();
+            $values = array_values($className::getAllowedValues());
 
             throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
         }
@@ -1072,8 +1070,7 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            /** @var list<string> $values */
-            $values = $className::getAllowedValues();
+            $values = array_values($className::getAllowedValues());
 
             throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
         }
@@ -1090,8 +1087,7 @@ class TokenList
             $this->doAutoSkip();
         }
         $start = $this->position;
-        /** @var list<string> $values */
-        $values = $className::getAllowedValues();
+        $values = array_values($className::getAllowedValues());
         foreach ($values as $value) {
             $this->position = $start;
             $keywords = explode(' ', $value);
@@ -1470,7 +1466,6 @@ class TokenList
      */
     public function expectKeywordEnum(string $className): SqlEnum
     {
-        /** @var array<string, string> $values */
         $values = $className::getAllowedValues();
 
         /** @var T $enum */
@@ -1486,7 +1481,6 @@ class TokenList
      */
     public function getKeywordEnum(string $className): ?SqlEnum
     {
-        /** @var array<string, string> $values */
         $values = $className::getAllowedValues();
         $token = $this->getAnyKeyword(...array_values($values));
         if ($token === null) {
@@ -1510,7 +1504,6 @@ class TokenList
             $this->doAutoSkip();
         }
         $start = $this->position;
-        /** @var list<string> $values */
         $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
@@ -1539,7 +1532,6 @@ class TokenList
     public function getMultiKeywordsEnum(string $className): ?SqlEnum
     {
         $start = $this->position;
-        /** @var array<string, string> $values */
         $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;

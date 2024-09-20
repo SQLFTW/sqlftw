@@ -74,8 +74,8 @@ class ConstraintList
      */
     public function getForeignKeys(): array
     {
-        /** @var list<ForeignKeyDefinition> $result */
-        $result = array_filter($this->constraints, static function (ConstraintDefinition $constraint) {
+        /** @var array<string|int, ForeignKeyDefinition> $result */
+        $result = array_filter($this->constraints, static function (ConstraintDefinition $constraint) { // @phpstan-ignore varTag.type
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });
 
@@ -87,8 +87,8 @@ class ConstraintList
      */
     public function getDroppedForeignKeys(): array
     {
-        /** @var list<ForeignKeyDefinition> $result */
-        $result = array_filter($this->droppedConstraints, static function (ConstraintDefinition $constraint) {
+        /** @var array<string|int, ForeignKeyDefinition> $result */
+        $result = array_filter($this->droppedConstraints, static function (ConstraintDefinition $constraint) { // @phpstan-ignore varTag.type
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });
 
