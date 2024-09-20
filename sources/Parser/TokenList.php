@@ -97,9 +97,6 @@ class TokenList
 
     private Session $session;
 
-    /** @var array<string, int> */
-    private array $maxLengths;
-
     private bool $invalid;
 
     // parser state ----------------------------------------------------------------------------------------------------
@@ -136,7 +133,6 @@ class TokenList
         $this->tokens = $tokens;
         $this->platform = $platform;
         $this->session = $session;
-        $this->maxLengths = $platform->getMaxLengths();
         $this->autoSkip = $autoSkip;
         $this->invalid = $invalid;
     }
@@ -1303,8 +1299,8 @@ class TokenList
         if (in_array($entity, $trailingWhitespaceNotAllowed, true) && rtrim($name, " \t\r\n") !== $name) {
             throw new ParserException(ucfirst($entity) . ' name must not contain right side white space.', $this);
         }
-        if (isset($this->maxLengths[$entity]) && Str::length($name) > $this->maxLengths[$entity]) { // todo: chars or bytes?
-            throw new ParserException(ucfirst($entity) . " name must be at most {$this->maxLengths[$entity]} characters long.", $this);
+        if (isset($this->platform->maxLengths[$entity]) && Str::length($name) > $this->platform->maxLengths[$entity]) { // todo: chars or bytes?
+            throw new ParserException(ucfirst($entity) . " name must be at most {$this->platform->maxLengths[$entity]} characters long.", $this);
         }
         if ($entity === EntityType::INDEX && strtoupper($name) === 'GEN_CLUST_INDEX') {
             throw new ParserException('GEN_CLUST_INDEX is a reserved name for primary index.', $this);
@@ -1606,7 +1602,7 @@ class TokenList
         $name = $token->value;
         // characters, not bytes
         // todo: encoding
-        if (mb_strlen($name) > $this->maxLengths[EntityType::USER]) {
+        if (mb_strlen($name) > $this->platform->maxLengths[EntityType::USER]) {
             throw new ParserException('Too long user name.', $this);
         } elseif ($forRole && ($token->type & T::UNQUOTED_NAME) !== 0 && in_array(strtoupper($name), $notAllowed, true)) {
             throw new ParserException('User name not allowed.', $this);
@@ -1615,7 +1611,7 @@ class TokenList
         $token = $this->get(T::AT_VARIABLE);
         if ($token !== null) {
             $host = ltrim($token->value, '@');
-            if (strlen($host) > $this->maxLengths[EntityType::HOST]) {
+            if (strlen($host) > $this->platform->maxLengths[EntityType::HOST]) {
                 throw new ParserException('Too long host name.', $this);
             }
         }
