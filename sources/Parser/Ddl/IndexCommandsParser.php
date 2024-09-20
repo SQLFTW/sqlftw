@@ -28,8 +28,8 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use function count;
+use function strcasecmp;
 use function strlen;
-use function strtoupper;
 
 class IndexCommandsParser
 {
@@ -124,7 +124,7 @@ class IndexCommandsParser
             $name = $tokenList->expectName(EntityType::INDEX);
         }
 
-        if ($name !== null && strtoupper($name) === Keyword::PRIMARY) {
+        if ($name !== null && strcasecmp($name, Keyword::PRIMARY) === 0) {
             throw new ParserException('Invalid index name.', $tokenList);
         }
 

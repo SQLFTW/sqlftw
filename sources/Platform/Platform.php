@@ -29,7 +29,6 @@ use function explode;
 use function in_array;
 use function is_string;
 use function ltrim;
-use function strtoupper;
 use function ucfirst;
 
 class Platform
@@ -293,7 +292,7 @@ class Platform
 
     public function interpretOptionalComment(string $versionId): bool
     {
-        $maria = $versionId !== '' && strtoupper($versionId[0]) === 'M';
+        $maria = $versionId !== '' && ($versionId[0] === 'M' || $versionId[0] === 'm');
         $versionId = (int) ltrim($versionId, 'Mm');
 
         if ($this->name !== self::MYSQL && $this->name !== self::MARIA) {

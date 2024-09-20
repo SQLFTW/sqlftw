@@ -119,6 +119,7 @@ use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
 use function array_values;
 use function count;
+use function strcasecmp;
 use function strlen;
 use function strtoupper;
 
@@ -596,12 +597,12 @@ class TableCommandsParser
                     } elseif ($tokenList->hasAnyKeyword(Keyword::INDEX, Keyword::KEY)) {
                         // RENAME {INDEX|KEY} old_index_name TO new_index_name
                         $oldName = $tokenList->expectName(EntityType::INDEX);
-                        if (strtoupper($oldName) === Keyword::PRIMARY) {
+                        if (strcasecmp($oldName, Keyword::PRIMARY) === 0) {
                             throw new ParserException('Cannot rename key PRIMARY.', $tokenList);
                         }
                         $tokenList->expectKeyword(Keyword::TO);
                         $newName = $tokenList->expectName(EntityType::INDEX);
-                        if ($newName === '' || strtoupper($newName) === Keyword::PRIMARY) {
+                        if ($newName === '' || strcasecmp($newName, Keyword::PRIMARY) === 0) {
                             throw new ParserException('Invalid index name.', $tokenList);
                         }
                         $actions[] = new RenameIndexAction($oldName, $newName);
@@ -1753,7 +1754,7 @@ class TableCommandsParser
                 do {
                     $values[] = $value = $this->expressionParser->parseExpression($tokenList);
 
-                    if ($value instanceof SimpleName && strtoupper($value->getName()) === Keyword::MAXVALUE) {
+                    if ($value instanceof SimpleName && strcasecmp($value->getName(), Keyword::MAXVALUE) === 0) {
                         // check MAXVALUE
                         throw new ParserException('MAXVALUE is not allowed in values list.', $tokenList);
                     } elseif ($value instanceof Parentheses) {
@@ -1766,7 +1767,7 @@ class TableCommandsParser
                             $items = $list->getItems();
                             // check MAXVALUE
                             foreach ($items as $item) {
-                                if ($item instanceof SimpleName && strtoupper($item->getName()) === Keyword::MAXVALUE) {
+                                if ($item instanceof SimpleName && strcasecmp($item->getName(), Keyword::MAXVALUE) === 0) {
                                     throw new ParserException('MAXVALUE is not allowed in values list.', $tokenList);
                                 }
                             }

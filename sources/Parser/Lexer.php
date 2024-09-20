@@ -36,6 +36,7 @@ use function ltrim;
 use function ord;
 use function preg_match;
 use function str_replace;
+use function strcasecmp;
 use function strlen;
 use function strpos;
 use function strtolower;
@@ -362,8 +363,7 @@ class Lexer
                             $var = substr($var, 0, -strlen($delimiter));
                             $yieldDelimiter = true;
                         }
-                        $upper = strtoupper(substr($var, 2));
-                        if ($upper === 'DEFAULT') {
+                        if (strcasecmp(substr($var, 2), 'DEFAULT') === 0) {
                             // todo: probably all magic functions?
                             $exception = new LexerException("Invalid variable name $var.", $position, $string);
 
@@ -407,8 +407,7 @@ class Lexer
                             $var = substr($var, 0, -strlen($delimiter));
                             $yieldDelimiter = true;
                         }
-                        $upper = strtoupper(substr($var, 1));
-                        if ($upper === 'DEFAULT') {
+                        if (strcasecmp(substr($var, 1), 'DEFAULT') === 0) {
                             // todo: probably all magic functions?
                             $exception = new LexerException("Invalid variable name $var.", $position, $string);
 
@@ -594,7 +593,7 @@ class Lexer
                     $second = $position < $length ? $string[$position] : '';
                     $numberCanFollow = ($previous->type & T::END) !== 0
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
-                        || (($previous->type & T::KEYWORD) !== 0 && strtoupper($previous->value) === Keyword::DEFAULT);
+                        || (($previous->type & T::KEYWORD) !== 0 && strcasecmp($previous->value, Keyword::DEFAULT) === 0);
                     if ($numberCanFollow) {
                         $token = $this->parseNumber($string, $position, $row, '-');
                         if ($token !== null) {

@@ -60,6 +60,7 @@ use function mb_strlen;
 use function min;
 use function preg_match;
 use function rtrim;
+use function strcasecmp;
 use function strlen;
 use function strtolower;
 use function strtoupper;
@@ -561,7 +562,7 @@ class TokenList
                 break;
             }
             $this->position++;
-            if (($token->type & T::KEYWORD) !== 0 && strtoupper($token->value) === $keyword) {
+            if (($token->type & T::KEYWORD) !== 0 && strcasecmp($token->value, $keyword) === 0) {
                 $this->position = $position;
 
                 return true;
@@ -585,11 +586,11 @@ class TokenList
             }
             $this->position++;
             if (($token->type & T::KEYWORD) !== 0) {
-                if (strtoupper($token->value) === $keyword) {
+                if (strcasecmp($token->value, $keyword) === 0) {
                     $this->position = $position;
 
                     return true;
-                } elseif (strtoupper($token->value) === $beforeKeyword) {
+                } elseif (strcasecmp($token->value, $beforeKeyword) === 0) {
                     $this->position = $position;
 
                     return false;
@@ -640,7 +641,7 @@ class TokenList
         if ($tokenType !== null && (($token->type & $tokenType) === 0 || ($token->type & $tokenMask) !== 0)) {
             return null;
         }
-        if ($value !== null && strtolower($token->value) !== strtolower($value)) {
+        if ($value !== null && strcasecmp($token->value, $value) !== 0) {
             return null;
         }
 
@@ -738,7 +739,7 @@ class TokenList
         $token = $this->get(T::OPERATOR);
         if ($token === null) {
             return false;
-        } elseif (strtoupper($token->value) === $operator) {
+        } elseif (strcasecmp($token->value, $operator) === 0) {
             return true;
         } else {
             $this->position = $position;
@@ -765,13 +766,19 @@ class TokenList
         $position = $this->position;
 
         $token = $this->get(T::OPERATOR);
-        if ($token === null || !in_array(strtoupper($token->value), $operators, true)) {
+        if ($token === null) {
+            $this->position = $position;
+
+            return null;
+        }
+        $upper = strtoupper($token->value);
+        if (!in_array($upper, $operators, true)) {
             $this->position = $position;
 
             return null;
         }
 
-        return strtoupper($token->value);
+        return $upper;
     }
 
     // numbers ---------------------------------------------------------------------------------------------------------
@@ -1302,7 +1309,7 @@ class TokenList
         if (isset($this->platform->maxLengths[$entity]) && Str::length($name) > $this->platform->maxLengths[$entity]) { // todo: chars or bytes?
             throw new ParserException(ucfirst($entity) . " name must be at most {$this->platform->maxLengths[$entity]} characters long.", $this);
         }
-        if ($entity === EntityType::INDEX && strtoupper($name) === 'GEN_CLUST_INDEX') {
+        if ($entity === EntityType::INDEX && strcasecmp($name, 'GEN_CLUST_INDEX') === 0) {
             throw new ParserException('GEN_CLUST_INDEX is a reserved name for primary index.', $this);
         }
     }
@@ -1329,13 +1336,13 @@ class TokenList
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
             throw InvalidTokenException::tokens(T::KEYWORD, 0, $keyword, $token, $this);
         }
-        $value = strtoupper($token->value);
-        if ($keyword !== null && $value !== $keyword) {
+        $upper = strtoupper($token->value);
+        if ($keyword !== null && $upper !== $keyword) {
             throw InvalidTokenException::tokens(T::KEYWORD, 0, $keyword, $token, $this);
         }
         $this->position++;
 
-        return $value;
+        return $upper;
     }
 
     public function getKeyword(?string $keyword = null): ?string
@@ -1347,13 +1354,13 @@ class TokenList
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
             return null;
         }
-        $value = strtoupper($token->value);
-        if ($keyword !== null && $value !== $keyword) {
+        $upper = strtoupper($token->value);
+        if ($keyword !== null && $upper !== $keyword) {
             return null;
         }
         $this->position++;
 
-        return $value;
+        return $upper;
     }
 
     /**
@@ -1368,8 +1375,7 @@ class TokenList
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
             return false;
         }
-        $value = strtoupper($token->value);
-        if ($value !== $keyword) {
+        if (strcasecmp($token->value, $keyword) !== 0) {
             return false;
         }
         $this->position++;

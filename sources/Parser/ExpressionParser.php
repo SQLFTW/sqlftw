@@ -90,6 +90,7 @@ use function count;
 use function in_array;
 use function ltrim;
 use function sprintf;
+use function strcasecmp;
 use function strlen;
 use function strtolower;
 use function strtoupper;
@@ -721,7 +722,7 @@ class ExpressionParser
         if (in_array(strtoupper($atVariable), ['@@LOCAL', '@@SESSION', '@@GLOBAL', '@@PERSIST', '@@PERSIST_ONLY'], true)) {
             // @@global.foo
             $tokenList->expectSymbol('.');
-            if (strtoupper($atVariable) === '@@LOCAL') {
+            if (strcasecmp($atVariable, '@@LOCAL') === 0) {
                 $atVariable = '@@SESSION';
             }
             $scope = new Scope(substr($atVariable, 2));
