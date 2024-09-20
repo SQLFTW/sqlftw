@@ -15,6 +15,7 @@ use SqlFtw\Sql\MysqlVariable;
 use function array_map;
 use function explode;
 use function implode;
+use function strtoupper;
 
 /**
  * Variable name, e.g. VERSION
@@ -54,7 +55,9 @@ class SystemVariable implements Identifier
     public function serialize(Formatter $formatter): string
     {
         $parts = array_map(static function (string $part) use ($formatter): string {
-            return $formatter->getPlatform()->isReserved($part) ? '`' . $part . '`' : $part;
+            $platform = $formatter->getPlatform();
+
+            return isset($platform->reserved[strtoupper($part)]) ? '`' . $part . '`' : $part;
         }, explode('.', $this->name));
 
         return ($this->scope !== null ? '@@' . $this->scope->getValue() . '.' : '@@') . implode('.', $parts);
