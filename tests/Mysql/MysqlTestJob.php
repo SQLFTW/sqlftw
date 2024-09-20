@@ -94,6 +94,7 @@ class MysqlTestJob
         $filter = new MysqlTestFilter();
         $sql = $filter->filter($sql);
 
+        // phpcs:disable SlevomatCodingStandard.Functions.RequireSingleLineCall.RequiredSingleLineCall
         $platform = Platform::get(Platform::MYSQL, $version);
         $config = new ParserConfig(
             $platform,

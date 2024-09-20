@@ -39,6 +39,7 @@ use SqlFtw\Sql\Routine\DeclareVariablesStatement;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;
 use function count;
+use function gettype;
 use function is_array;
 use function is_bool;
 use function is_float;

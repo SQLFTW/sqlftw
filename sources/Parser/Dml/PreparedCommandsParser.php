@@ -25,7 +25,6 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Routine\RoutineType;
 use function count;
 use function get_class;
-use function in_array;
 use function iterator_to_array;
 
 class PreparedCommandsParser

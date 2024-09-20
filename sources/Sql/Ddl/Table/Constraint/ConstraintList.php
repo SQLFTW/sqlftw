@@ -7,6 +7,8 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable Squiz.Functions.MultiLineFunctionDeclaration.ContentAfterBrace
+
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use function array_filter;
@@ -75,7 +77,7 @@ class ConstraintList
     public function getForeignKeys(): array
     {
         /** @var array<string|int, ForeignKeyDefinition> $result */
-        $result = array_filter($this->constraints, static function (ConstraintDefinition $constraint) { // @phpstan-ignore varTag.type
+        $result = array_filter($this->constraints, static function (ConstraintDefinition $constraint): bool { // @phpstan-ignore varTag.type
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });
 
@@ -88,7 +90,7 @@ class ConstraintList
     public function getDroppedForeignKeys(): array
     {
         /** @var array<string|int, ForeignKeyDefinition> $result */
-        $result = array_filter($this->droppedConstraints, static function (ConstraintDefinition $constraint) { // @phpstan-ignore varTag.type
+        $result = array_filter($this->droppedConstraints, static function (ConstraintDefinition $constraint): bool { // @phpstan-ignore varTag.type
             return $constraint->getBody() instanceof ForeignKeyDefinition;
         });
 

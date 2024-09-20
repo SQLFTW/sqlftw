@@ -56,7 +56,6 @@ use SqlFtw\Sql\Dal\User\UserPasswordLockOptionType;
 use SqlFtw\Sql\Dal\User\UserPrivilege;
 use SqlFtw\Sql\Dal\User\UserPrivilegeResource;
 use SqlFtw\Sql\Dal\User\UserPrivilegeResourceType;
-use SqlFtw\Sql\Dal\User\UserPrivilegeType;
 use SqlFtw\Sql\Dal\User\UserResourceOption;
 use SqlFtw\Sql\Dal\User\UserResourceOptionType;
 use SqlFtw\Sql\Dal\User\UserTlsOption;
