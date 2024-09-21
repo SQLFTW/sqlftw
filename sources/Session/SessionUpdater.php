@@ -24,6 +24,7 @@ use SqlFtw\Sql\Ddl\Event\CreateEventCommand;
 use SqlFtw\Sql\Ddl\Routine\CreateRoutineCommand;
 use SqlFtw\Sql\Dml\Query\SelectCommand;
 use SqlFtw\Sql\Dml\Query\SelectIntoVariables;
+use SqlFtw\Sql\Expression\BoolValue;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\NoneLiteral;
 use SqlFtw\Sql\Expression\Scope;
@@ -39,11 +40,13 @@ use SqlFtw\Sql\Routine\DeclareVariablesStatement;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\Statement;
 use function count;
+use function get_class;
 use function gettype;
 use function is_array;
 use function is_bool;
 use function is_float;
 use function is_int;
+use function is_object;
 use function is_scalar;
 use function is_string;
 use function trim;
@@ -116,8 +119,10 @@ class SessionUpdater
                 $value = MysqlVariable::getDefault($name);
             } elseif (!ExpressionHelper::isValue($value)) {
                 $value = new UnresolvedExpression($value);
+            } elseif ($value instanceof BoolValue) {
+                $value = $value->asBool();
             } elseif ($value !== null && !is_scalar($value)) {
-                throw new LogicException('Should be scalar at this point: ' . gettype($value));
+                throw new LogicException('Should be scalar at this point: ' . (is_object($value) ? get_class($value) : gettype($value)));
             }
 
             if ($variable instanceof SystemVariable) {
