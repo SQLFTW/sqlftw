@@ -277,7 +277,12 @@ class TokenList
     public function isFinished(): bool
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
 
         if ($this->position >= count($this->tokens)) {
@@ -354,7 +359,7 @@ class TokenList
         $this->autoSkip = $autoSkip;
     }
 
-    private function doAutoSkip(): void
+    private function doAutoSkip(): void // @phpstan-ignore method.unused
     {
         $token = $this->tokens[$this->position] ?? null;
         while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
@@ -532,7 +537,12 @@ class TokenList
         $position = $this->position;
         for ($n = 0; $n < $maxOffset; $n++) {
             if ($this->autoSkip !== 0) {
-                $this->doAutoSkip();
+                // doAutoSkip() inlined
+                $token = $this->tokens[$this->position] ?? null;
+                while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                    $this->position++;
+                    $token = $this->tokens[$this->position] ?? null;
+                }
             }
             $token = $this->tokens[$this->position] ?? null;
             if ($token === null) {
@@ -555,7 +565,12 @@ class TokenList
         $position = $this->position;
         for ($n = 0; $n < $maxOffset; $n++) {
             if ($this->autoSkip !== 0) {
-                $this->doAutoSkip();
+                // doAutoSkip() inlined
+                $token = $this->tokens[$this->position] ?? null;
+                while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                    $this->position++;
+                    $token = $this->tokens[$this->position] ?? null;
+                }
             }
             $token = $this->tokens[$this->position] ?? null;
             if ($token === null) {
@@ -578,7 +593,12 @@ class TokenList
         $position = $this->position;
         for ($n = 0; $n < $maxOffset; $n++) {
             if ($this->autoSkip !== 0) {
-                $this->doAutoSkip();
+                // doAutoSkip() inlined
+                $token = $this->tokens[$this->position] ?? null;
+                while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                    $this->position++;
+                    $token = $this->tokens[$this->position] ?? null;
+                }
             }
             $token = $this->tokens[$this->position] ?? null;
             if ($token === null) {
@@ -615,7 +635,12 @@ class TokenList
     public function expect(int $tokenType, int $tokenMask = 0): Token
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & $tokenType) === 0 || ($token->type & $tokenMask) !== 0) {
@@ -632,7 +657,12 @@ class TokenList
     public function get(?int $tokenType = null, int $tokenMask = 0, ?string $value = null): ?Token
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null) {
@@ -668,7 +698,12 @@ class TokenList
     public function expectSymbol(string $symbol): Token
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::SYMBOL) === 0) {
@@ -688,7 +723,12 @@ class TokenList
     public function hasSymbol(string $symbol): bool
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token !== null && ($token->type & T::SYMBOL) !== 0 && $token->value === $symbol) {
@@ -706,7 +746,12 @@ class TokenList
     public function passSymbol(string $symbol): void
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token !== null && ($token->type & T::SYMBOL) !== 0 && $token->value === $symbol) {
@@ -1087,7 +1132,12 @@ class TokenList
     public function expectMultiNameEnum(string $className): SqlEnum
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $start = $this->position;
         $values = array_values($className::getAllowedValues());
@@ -1330,7 +1380,12 @@ class TokenList
     public function expectKeyword(?string $keyword = null): string
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
@@ -1348,7 +1403,12 @@ class TokenList
     public function getKeyword(?string $keyword = null): ?string
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
@@ -1369,7 +1429,12 @@ class TokenList
     public function hasKeyword(string $keyword): bool
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
@@ -1427,7 +1492,12 @@ class TokenList
     public function getAnyKeyword(string ...$keywords): ?string
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $token = $this->tokens[$this->position] ?? null;
         if ($token === null || ($token->type & T::KEYWORD) === 0) {
@@ -1503,7 +1573,12 @@ class TokenList
     public function expectMultiKeywordsEnum(string $className): SqlEnum
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         $start = $this->position;
         $values = $className::getAllowedValues();
@@ -1702,13 +1777,23 @@ class TokenList
     public function expectEnd(): void
     {
         if ($this->autoSkip !== 0) {
-            $this->doAutoSkip();
+            // doAutoSkip() inlined
+            $token = $this->tokens[$this->position] ?? null;
+            while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                $this->position++;
+                $token = $this->tokens[$this->position] ?? null;
+            }
         }
         // pass trailing ; when delimiter is something else
         while ($this->hasSymbol(';')) {
             $this->trailingDelimiter .= ';';
             if ($this->autoSkip !== 0) {
-                $this->doAutoSkip();
+                // doAutoSkip() inlined
+                $token = $this->tokens[$this->position] ?? null;
+                while ($token !== null && ($this->autoSkip & $token->type) !== 0) {
+                    $this->position++;
+                    $token = $this->tokens[$this->position] ?? null;
+                }
             }
         }
 
