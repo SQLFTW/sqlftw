@@ -6,9 +6,8 @@ use Dogma\Application\Colors;
 use function in_array;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-if (class_exists(Dumper::class)) {
-    require_once __DIR__ . '/../debugger.php';
-}
+require_once __DIR__ . '/../../vendor/dogma/dogma-debug/shortcuts.php';
+require_once __DIR__ . '/../debugger.php';
 
 rd($argv);
 
