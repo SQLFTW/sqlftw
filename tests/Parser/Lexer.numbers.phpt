@@ -65,7 +65,7 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
 $tokens = Assert::tokens(' 1.23E4 ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER, '1.23e4', 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER, '1.23E4', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 7);
 
 $tokens = Assert::tokens(' 1.23e+4 ', 3);
