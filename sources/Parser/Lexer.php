@@ -42,7 +42,7 @@ use function strpos;
 use function strtolower;
 use function strtoupper;
 use function substr;
-use function trim;
+use const PREG_UNMATCHED_AS_NULL;
 
 /**
  * SQL lexer - breaks input string into `Token` objects, resolves delimiters and returns `TokenList` objects
@@ -71,6 +71,7 @@ class Lexer
         '\\\\' => '\\',
     ];
 
+    public const NUMBER_REGEXP = '~\G([+-]*)(\d*\.\d+|\d+\.?)(?:([eE])([+-]?)(\d*))?~';
     public const UUID_REGEXP = '~^[\dA-F]{8}-[\dA-F]{4}-[\dA-F]{4}-[\dA-F]{4}-[\dA-F]{12}$~i';
     public const IP_V4_REGEXP = '~^((?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))~';
 
@@ -581,10 +582,13 @@ class Lexer
                     $next9 = $position < $length ? $string[$position] : '';
                     // .123 cannot follow a name, e.g.: "select 1ea10.1a20, ...", but can follow a keyword, e.g.: "INTERVAL .4 SECOND"
                     if (isset(self::$numbersKey[$next9]) && (($previous->type & T::NAME) === 0 || ($previous->type & T::KEYWORD) !== 0)) {
-                        $token = $this->parseNumber($string, $position, $row, '.');
-                        if ($token !== null) {
-                            $tokens[] = $previous = $token;
-                            break;
+                        $match1 = preg_match('~\G([+-]*)(\d*\.\d+|\d+\.?)(?:([eE])([+-]?)(\d*))?~', $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1);
+                        if ($match1 !== 0) {
+                            $token = $this->numberToken($string, $position, $row, $m);
+                            if ($token !== null) {
+                                $tokens[] = $previous = $token;
+                                break;
+                            }
                         }
                     }
                     $tokens[] = $previous = $t = new Token; $t->type = T::SYMBOL; $t->position = $start; $t->row = $row; $t->value = $char;
@@ -595,10 +599,12 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && strcasecmp($previous->value, Keyword::DEFAULT) === 0);
                     if ($numberCanFollow) {
-                        $token = $this->parseNumber($string, $position, $row, '-');
-                        if ($token !== null) {
-                            $tokens[] = $previous = $token;
-                            break;
+                        if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                            $token = $this->numberToken($string, $position, $row, $m);
+                            if ($token !== null) {
+                                $tokens[] = $previous = $token;
+                                break;
+                            }
                         }
                     }
 
@@ -624,10 +630,12 @@ class Lexer
                         $tokens[] = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = '-';
                         $position++;
 
-                        $token = $this->parseNumber($string, $position, $row, '-');
-                        if ($token !== null) {
-                            $tokens[] = $previous = $token;
-                            break;
+                        if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                            $token = $this->numberToken($string, $position, $row, $m);
+                            if ($token !== null) {
+                                $tokens[] = $previous = $token;
+                                break;
+                            }
                         }
                     }
 
@@ -648,15 +656,18 @@ class Lexer
                     $tokens[] = $previous = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = $operator3;
                     break;
                 case '+':
-                    $next11 = $position < $length ? $string[$position] : '';
+                    $afterPlus = $position < $length ? $string[$position] : '';
                     $numberCanFollow = ($previous->type & T::END) !== 0
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
-                    if ($numberCanFollow && ($next11 === '.' || isset(self::$numbersKey[$next11]))) {
-                        $token = $this->parseNumber($string, $position, $row, '+');
-                        if ($token !== null) {
-                            $tokens[] = $previous = $token;
-                            break;
+
+                    if ($numberCanFollow && ($afterPlus === '.' || isset(self::$numbersKey[$afterPlus]))) {
+                        if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                            $token = $this->numberToken($string, $position, $row, $m);
+                            if ($token !== null) {
+                                $tokens[] = $previous = $token;
+                                break;
+                            }
                         }
                     }
 
@@ -741,10 +752,12 @@ class Lexer
                         $tokens[] = $previous = $t = new Token; $t->type = T::VALUE | T::STRING; $t->position = $start; $t->row = $row; $t->value = $ipv4;
                         break;
                     }
-                    $token = $this->parseNumber($string, $position, $row, $char);
-                    if ($token !== null) {
-                        $tokens[] = $previous = $token;
-                        break;
+                    if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                        $token = $this->numberToken($string, $position, $row, $m);
+                        if ($token !== null) {
+                            $tokens[] = $previous = $token;
+                            break;
+                        }
                     }
                     // continue
                 case 'B':
@@ -1107,152 +1120,51 @@ class Lexer
         return $t;
     }
 
-    private function parseNumber(string $string, int &$position, int $row, string $start): ?Token
+    private function numberToken(string $string, int &$position, int $row, array $m): ?Token
     {
+        [$value, $sign, $base, $e, $expSign, $exponent] = $m;
+
         $startAt = $position - 1;
+        $len = strlen($value) - 1;
+
+        $intBase = ctype_digit($base);
+        $nextChar = $string[$position + $len] ?? '';
+        if (!$e && $intBase && isset(self::$nameCharsKey[$nextChar])) {
+            // followed by a name character while not having '.' or exponent - this is a prefix of a name, not a number
+            return null;
+        }
+
         $type = T::VALUE | T::NUMBER;
-        $length = strlen($string);
-        $offset = 0;
-        $isFloat = $start === '.';
-        $isNumeric = isset(self::$numbersKey[$start]);
-        $base = $start;
-        $minusAllowed = $start === '-';
-        $exp = '';
-        do {
-            // integer (prefixed by any number of "-")
-            $next = '';
-            while ($position + $offset < $length) {
-                $next = $string[$position + $offset];
-                if (isset(self::$numbersKey[$next]) || ($minusAllowed && ($next === '-' || $next === ' '))) {
-                    $base .= $next;
-                    $offset++;
-                    if ($next !== '-' && $next !== ' ') {
-                        $isNumeric = true;
-                        $minusAllowed = false;
-                    }
-                } else {
-                    break;
-                }
-            }
-            if ($position + $offset >= $length) {
-                break;
-            }
-
-            // decimal part
-            if ($next === '.') {
-                $isFloat = true;
-                if ($start !== '.') {
-                    $base .= $next;
-                    $offset++;
-                    while ($position + $offset < $length) {
-                        $next = $string[$position + $offset];
-                        if (isset(self::$numbersKey[$next])) {
-                            $base .= $next;
-                            $offset++;
-                            $isNumeric = true;
-                        } else {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }
-            if (!$isNumeric) {
-                return null;
-            }
-            if ($position + $offset >= $length) {
-                break;
-            }
-
-            // exponent
-            $next = $string[$position + $offset];
-            do {
-                if ($next === 'e' || $next === 'E') {
-                    $exp = $next;
-                    $offset++;
-                    $next = $position + $offset < $length ? $string[$position + $offset] : '';
-                    $expComplete = false;
-                    if ($next === '+' || $next === '-' || isset(self::$numbersKey[$next])) {
-                        $exp .= $next;
-                        $offset++;
-                        if (isset(self::$numbersKey[$next])) {
-                            $expComplete = true;
-                        }
-                    }
-                    while ($position + $offset < $length) {
-                        $next = $string[$position + $offset];
-                        if (isset(self::$numbersKey[$next])) {
-                            $exp .= $next;
-                            $offset++;
-                            $expComplete = true;
-                        } else {
-                            if (trim($exp, 'e+-') === '' && strpos($base, '.') !== false) {
-                                $len = strlen($base . $exp) - 1;
-                                $position += $len;
-                                $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
-
-                                $t = new Token; $t->type = $type | T::INVALID; $t->position = $startAt; $t->row = $row; $t->value = $base . $exp; $t->original = $base . $exp; $t->exception = $exception;
-
-                                return $t;
-                            }
-                            break;
-                        }
-                    }
-                    if (!$expComplete) {
-                        if (strpos($base, '.') !== false) {
-                            $len = strlen($base . $exp) - 1;
-                            $position += $len;
-                            $exception = new LexerException('Invalid number exponent ' . $exp, $position, $string);
-
-                            $t = new Token; $t->type = $type | T::INVALID; $t->position = $startAt; $t->row = $row; $t->value = $base . $exp; $t->original = $base . $exp; $t->exception = $exception; // todo why orig?
-
-                            return $t;
-                        } else {
-                            return null;
-                        }
-                    }
-                } elseif (isset(self::$nameCharsKey[$next]) || ord($next) > 127) {
-                    if (!$isFloat) {
-                        $isNumeric = false;
-                    }
-                    break 2;
-                }
-            } while (false); // @phpstan-ignore-line
-        } while (false); // @phpstan-ignore-line
-
-        if (!$isNumeric) {
-            return null;
-        }
-
-        $orig = $base . $exp;
-        $value = $base . str_replace(' ', '', strtolower($exp));
-        if (strpos($orig, '-- ') === 0) {
-            return null;
-        }
-
-        $len = strlen($orig) - 1;
         $position += $len;
 
-        // todo: is "+42" considered uint?
-        if (ctype_digit($value)) {
-            $type |= T::INT | T::UINT;
+        if ($e && !$exponent) {
+            $exception = new LexerException('Invalid number exponent ' . $value, $position, $string);
 
-            $t = new Token; $t->type = $type; $t->position = $startAt; $t->row = $row; $t->value = $value; $t->original = $orig;
+            $t = new Token; $t->type = $type | T::INVALID; $t->position = $startAt; $t->row = $row; $t->value = $value; $t->original = $value; $t->exception = $exception;
 
             return $t;
         }
 
-        // value clean-up: --+.123E+2 => +0.123e+2
-        while ($value[0] === '-' && $value[1] === '-') {
-            $value = substr($value, 2);
+        // todo: is "+42" considered uint?
+        if ($intBase && !$sign && !$e) {
+            $t = new Token; $t->type = $type | T::INT | T::UINT; $t->position = $startAt; $t->row = $row; $t->value = $value; $t->original = $value;
+
+            return $t;
         }
 
-        if (preg_match('~^(?:0|[+-]?[1-9]\\d*)$~', $value) !== 0) {
-            $type |= TokenType::INT;
+        // todo: remove normalization
+        while (strlen($sign) > 1 && $sign[0] === '-' && $sign[1] === '-') {
+            $sign = substr($sign, 2);
         }
 
-        $t = new Token; $t->type = $type; $t->position = $startAt; $t->row = $row; $t->value = $value; $t->original = $orig;
+        if (!$e) {
+            if ($base === '0' || (($sign === '' || $sign === '+' || $sign === '-') && $intBase)) {
+                $type |= T::INT;
+            }
+        }
+
+        $v = $sign . $base . $e . $expSign . $exponent;
+        $t = new Token; $t->type = $type; $t->position = $startAt; $t->row = $row; $t->value = $v; $t->original = $value;
 
         return $t;
     }
