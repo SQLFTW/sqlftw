@@ -579,11 +579,10 @@ class Lexer
                     $tokens[] = $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $row, '`');
                     break;
                 case '.':
-                    $next9 = $position < $length ? $string[$position] : '';
+                    $afterDot = $position < $length ? $string[$position] : '';
                     // .123 cannot follow a name, e.g.: "select 1ea10.1a20, ...", but can follow a keyword, e.g.: "INTERVAL .4 SECOND"
-                    if (isset(self::$numbersKey[$next9]) && (($previous->type & T::NAME) === 0 || ($previous->type & T::KEYWORD) !== 0)) {
-                        $match1 = preg_match('~\G([+-]*)(\d*\.\d+|\d+\.?)(?:([eE])([+-]?)(\d*))?~', $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1);
-                        if ($match1 !== 0) {
+                    if (isset(self::$numbersKey[$afterDot]) && (($previous->type & T::NAME) === 0 || ($previous->type & T::KEYWORD) !== 0)) {
+                        if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
                             $token = $this->numberToken($string, $position, $row, $m);
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
@@ -842,8 +841,8 @@ class Lexer
                     }
                     // continue
                 case 'N':
-                    $next16 = $position < $length ? $string[$position] : null;
-                    if ($char === 'N' && $next16 === '"') {
+                    $afterN = $position < $length ? $string[$position] : null;
+                    if ($char === 'N' && $afterN === '"') {
                         $position++;
                         $type = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES)
                             ? T::NAME | T::DOUBLE_QUOTED_STRING
@@ -851,11 +850,11 @@ class Lexer
 
                         $tokens[] = $previous = $this->parseString($type, $string, $position, $row, '"', 'N');
                         break;
-                    } elseif ($char === 'N' && $next16 === "'") {
+                    } elseif ($char === 'N' && $afterN === "'") {
                         $position++;
                         $tokens[] = $previous = $this->parseString(T::VALUE | T::STRING | T::SINGLE_QUOTED_STRING, $string, $position, $row, "'", 'N');
                         break;
-                    } elseif ($char === 'N' && $next16 === '`') {
+                    } elseif ($char === 'N' && $afterN === '`') {
                         $position++;
                         $tokens[] = $previous = $this->parseString(T::NAME | T::BACKTICK_QUOTED_STRING, $string, $position, $row, "`", 'N');
                         break;
