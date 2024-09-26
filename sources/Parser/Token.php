@@ -19,8 +19,6 @@ final class Token
 
     public int $position; // @phpstan-ignore property.uninitialized
 
-    public int $row; // @phpstan-ignore property.uninitialized
-
     public string $value; // @phpstan-ignore property.uninitialized
 
     public ?string $original = null;

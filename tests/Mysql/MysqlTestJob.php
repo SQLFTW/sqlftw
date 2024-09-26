@@ -244,7 +244,7 @@ class MysqlTestJob
     {
         $original = $tokenList->map(static function (Token $token): Token {
             if (($token->type & TokenType::COMMENT) !== 0) {
-                $t = new Token; $t->type = TokenType::WHITESPACE; $t->position = $token->position; $t->row = $token->row; $t->value = ' ';
+                $t = new Token; $t->type = TokenType::WHITESPACE; $t->position = $token->position; $t->value = ' ';
 
                 return $t;
             } else {
