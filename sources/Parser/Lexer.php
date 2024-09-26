@@ -71,7 +71,9 @@ class Lexer
         '\\\\' => '\\',
     ];
 
-    public const NUMBER_REGEXP = '~\G([+-]*)(\d*\.\d+|\d+\.?)(?:([eE])([+-]?)(\d*))?~';
+    public const ANCHORED_NUMBER_REGEXP = '~\G([+-]*)(\d*\.\d+|\d+\.?)(?:([eE])([+-]?)(\d*))?~';
+    public const ANCHORED_UUID_REGEXP = '~\G[\dA-F]{8}-[\dA-F]{4}-[\dA-F]{4}-[\dA-F]{4}-[\dA-F]{12}~i';
+    public const ANCHORED_IP_V4_REGEXP = '~\G((?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))~';
     public const UUID_REGEXP = '~^[\dA-F]{8}-[\dA-F]{4}-[\dA-F]{4}-[\dA-F]{4}-[\dA-F]{12}$~i';
     public const IP_V4_REGEXP = '~^((?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))~';
 
@@ -582,7 +584,7 @@ class Lexer
                     $afterDot = $position < $length ? $string[$position] : '';
                     // .123 cannot follow a name, e.g.: "select 1ea10.1a20, ...", but can follow a keyword, e.g.: "INTERVAL .4 SECOND"
                     if (isset(self::$numbersKey[$afterDot]) && (($previous->type & T::NAME) === 0 || ($previous->type & T::KEYWORD) !== 0)) {
-                        if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                        if (preg_match(self::ANCHORED_NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
                             $token = $this->numberToken($string, $position, $row, $m);
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
@@ -598,7 +600,7 @@ class Lexer
                         || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
                         || (($previous->type & T::KEYWORD) !== 0 && strcasecmp($previous->value, Keyword::DEFAULT) === 0);
                     if ($numberCanFollow) {
-                        if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                        if (preg_match(self::ANCHORED_NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
                             $token = $this->numberToken($string, $position, $row, $m);
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
@@ -629,7 +631,7 @@ class Lexer
                         $tokens[] = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->position = $start; $t->row = $row; $t->value = '-';
                         $position++;
 
-                        if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                        if (preg_match(self::ANCHORED_NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
                             $token = $this->numberToken($string, $position, $row, $m);
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
@@ -661,7 +663,7 @@ class Lexer
                         || (($previous->type & T::KEYWORD) !== 0 && $previous->value === Keyword::DEFAULT);
 
                     if ($numberCanFollow && ($afterPlus === '.' || isset(self::$numbersKey[$afterPlus]))) {
-                        if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                        if (preg_match(self::ANCHORED_NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
                             $token = $this->numberToken($string, $position, $row, $m);
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
@@ -737,21 +739,22 @@ class Lexer
                 case '7':
                 case '8':
                 case '9':
-                    $uuid = substr($string, $position - 1, 36);
                     // UUID
-                    if (strlen($uuid) === 36 && preg_match(self::UUID_REGEXP, $uuid) !== 0) {
+                    if ($length >= $position + 35 && preg_match(self::ANCHORED_UUID_REGEXP, $string, $m, 0, $position - 1) !== 0) {
+                        $uuid = $m[0]; // @phpstan-ignore offsetAccess.notFound
                         $position += 35;
                         $tokens[] = $previous = $t = new Token; $t->type = T::VALUE | T::UUID; $t->position = $start; $t->row = $row; $t->value = $uuid;
                         break;
                     }
                     // IPv4
-                    if (preg_match(self::IP_V4_REGEXP, $uuid, $m) !== 0) {
+                    if ($length >= $position + 6 && preg_match(self::ANCHORED_IP_V4_REGEXP, $string, $m, 0, $position - 1) !== 0) {
                         $ipv4 = $m[0]; // @phpstan-ignore offsetAccess.notFound
                         $position += strlen($ipv4) - 1;
                         $tokens[] = $previous = $t = new Token; $t->type = T::VALUE | T::STRING; $t->position = $start; $t->row = $row; $t->value = $ipv4;
                         break;
                     }
-                    if (preg_match(self::NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                    // number
+                    if (preg_match(self::ANCHORED_NUMBER_REGEXP, $string, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
                         $token = $this->numberToken($string, $position, $row, $m);
                         if ($token !== null) {
                             $tokens[] = $previous = $token;
@@ -801,9 +804,9 @@ class Lexer
                 case 'e':
                 case 'F':
                 case 'f':
-                    $uuid2 = substr($string, $position - 1, 36);
                     // UUID
-                    if (strlen($uuid2) === 36 && preg_match(self::UUID_REGEXP, $uuid2) !== 0) {
+                    if ($length >= $position + 35 && preg_match(self::ANCHORED_UUID_REGEXP, $string, $m, 0, $position - 1) !== 0) {
+                        $uuid2 = $m[0]; // @phpstan-ignore offsetAccess.notFound
                         $position += 35;
                         $tokens[] = $previous = $t = new Token; $t->type = T::VALUE | T::UUID; $t->position = $start; $t->row = $row; $t->value = $uuid2;
                         break;
