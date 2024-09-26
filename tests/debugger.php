@@ -73,7 +73,7 @@ $tokenFormatter = static function (Token $token, int $depth = 0): string {
     $orig = $token->original !== null && $token->original !== $token->value ? ' / ' . Dumper::value($token->original) : '';
 
     return Dumper::class(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
-        . Dumper::value2($type) . ' ' . Dumper::info('at row') . ' ' . $token->row
+        . Dumper::value2($type) . ' ' . Dumper::info('at position') . ' ' . $token->position
         . Dumper::bracket(')') . Dumper::objectInfo($token);
 };
 Dumper::$objectFormatters[Token::class] = $tokenFormatter;
