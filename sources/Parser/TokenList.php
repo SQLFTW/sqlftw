@@ -65,6 +65,7 @@ use function strlen;
 use function strtolower;
 use function strtoupper;
 use function substr;
+use function trim;
 use function ucfirst;
 
 /**
@@ -90,6 +91,8 @@ use function ucfirst;
  */
 class TokenList
 {
+
+    private string $source;
 
     /** @var non-empty-list<Token> */
     private array $tokens;
@@ -129,8 +132,9 @@ class TokenList
     /**
      * @param non-empty-list<Token> $tokens
      */
-    public function __construct(array $tokens, Platform $platform, Session $session, int $autoSkip = 0, bool $invalid = false)
+    public function __construct(string &$source, array $tokens, Platform $platform, Session $session, int $autoSkip = 0, bool $invalid = false)
     {
+        $this->source = &$source;
         $this->tokens = $tokens;
         $this->platform = $platform;
         $this->session = $session;
@@ -375,6 +379,7 @@ class TokenList
         }
 
         $end = $this->position - 1;
+        $endIndex = $this->position;
         $beginning = true;
         $position = $start;
         $tokens = [];
@@ -393,6 +398,7 @@ class TokenList
         for ($i = count($tokens) - 1; $i >= 0; $i--) {
             if (($tokens[$i]->type & $this->autoSkip) !== 0) {
                 unset($tokens[$i]);
+                $endIndex--;
             } else {
                 break;
             }
@@ -400,11 +406,13 @@ class TokenList
 
         $expression = '';
         /** @var Token $token */
-        foreach ($tokens as $token) {
-            $expression .= $token->original ?? $token->value;
+        foreach ($tokens as $i => $token) {
+            $expression .= ($token->type & Token::NORMALIZED_TYPES) !== 0
+                ? $token->getSourceValue($this->source, $tokens[$i + 1] ?? $this->tokens[$endIndex] ?? null)
+                : $token->value;
         }
 
-        return $expression;
+        return trim($expression);
     }
 
     // contents --------------------------------------------------------------------------------------------------------
@@ -425,7 +433,7 @@ class TokenList
     public function getEndOffset(): int
     {
         $token = end($this->tokens);
-        $value = $token->original ?? $token->value;
+        $value = $token->value; // todo: should get source value end
 
         return $token->start + strlen($value);
     }
@@ -443,7 +451,7 @@ class TokenList
         /** @var non-empty-list<Token> $tokens */
         $tokens = array_slice($this->tokens, $startOffset, $endOffset - $startOffset + 1);
 
-        return new self($tokens, $this->platform, $this->session, $this->autoSkip);
+        return new self($this->source, $tokens, $this->platform, $this->session, $this->autoSkip);
     }
 
     /**
@@ -459,7 +467,7 @@ class TokenList
             }
         }
 
-        return new self($tokens, $this->platform, $this->session, $this->autoSkip);
+        return new self($this->source, $tokens, $this->platform, $this->session, $this->autoSkip);
     }
 
     /**
@@ -473,7 +481,7 @@ class TokenList
             $tokens[] = $mapper($token);
         }
 
-        return new self($tokens, $this->platform, $this->session, $this->autoSkip);
+        return new self($this->source, $tokens, $this->platform, $this->session, $this->autoSkip);
     }
 
     public function getLast(): Token
@@ -505,7 +513,9 @@ class TokenList
 
         $result = '';
         foreach ($this->tokens as $i => $token) {
-            $result .= $token->original ?? $token->value;
+            $result .= ($token->type & Token::NORMALIZED_TYPES) !== 0
+                ? $token->getSourceValue($this->source, $this->tokens[$i + 1] ?? null)
+                : $token->value;
 
             if (($this->autoSkip & T::WHITESPACE) !== 0) {
                 continue;
