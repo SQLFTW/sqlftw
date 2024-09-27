@@ -24,7 +24,7 @@ class InvalidValueException extends ParserException
         $context = self::formatContext($tokenList);
 
         parent::__construct(
-            sprintf("Invalid value $value->original for type $expectedType at position %d in:\n%s", $tokenList->getPosition(), $context),
+            sprintf("Invalid value {$value->value} for type {$expectedType} at position %d in:\n%s", $tokenList->getPosition(), $context),
             $tokenList,
             $previous
         );

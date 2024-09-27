@@ -43,13 +43,13 @@ class ParserException extends ParsingException
         $separator = ($tokenList->getAutoSkip() & TokenType::WHITESPACE) === 0 ? ' ' : '';
 
         $context = '"…' . implode($separator, array_map(static function (Token $token) {
-            return $token->original ?? $token->value;
+            return $token->value; // todo: should fetch source value
         }, array_slice($tokens, 0, $prefix)));
 
         if (isset($tokens[$prefix])) {
-            $context .= '»' . ($tokens[$prefix]->original ?? $tokens[$prefix]->value) . '«';
+            $context .= '»' . ($tokens[$prefix]->value) . '«'; // todo: should fetch source value
             $context .= implode($separator, array_map(static function (Token $token) {
-                return $token->original ?? $token->value;
+                return $token->value; // todo: should fetch source value
             }, array_slice($tokens, $prefix + 1))) . '…"';
         } else {
             $context .= '»«"';

@@ -70,9 +70,8 @@ $tokenFormatter = static function (Token $token, int $depth = 0): string {
     Dumper::$escapeWhiteSpace = $oldEscapeWhiteSpace;
 
     $type = implode('|', TokenType::getByValue($token->type)->getConstantNames());
-    $orig = $token->original !== null && $token->original !== $token->value ? ' / ' . Dumper::value($token->original) : '';
 
-    return Dumper::class(get_class($token)) . Dumper::bracket('(') . $value . $orig . ' / '
+    return Dumper::class(get_class($token)) . Dumper::bracket('(') . $value . ' / '
         . Dumper::value2($type) . ' ' . Dumper::info('at position') . ' ' . $token->start
         . Dumper::bracket(')') . Dumper::objectInfo($token);
 };

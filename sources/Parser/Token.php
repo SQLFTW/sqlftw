@@ -7,13 +7,24 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
+// phpcs:disable Squiz.WhiteSpace.MemberVarSpacing.Incorrect
+
 namespace SqlFtw\Parser;
+
+use function substr;
 
 /**
  * Represents atomic part of SQL syntax
  */
 final class Token
 {
+
+    public const NORMALIZED_TYPES = TokenType::BINARY_LITERAL
+        | TokenType::HEXADECIMAL_LITERAL
+        | TokenType::SINGLE_QUOTED_STRING
+        | TokenType::DOUBLE_QUOTED_STRING
+        | TokenType::BACKTICK_QUOTED_STRING
+        | TokenType::NUMBER;
 
     // union of TokenType constants
     public int $type; // @phpstan-ignore property.uninitialized
@@ -24,9 +35,15 @@ final class Token
     // normalized value. original value can be retrieved by position and length from parsed string
     public string $value; // @phpstan-ignore property.uninitialized
 
-    /** @deprecated */
-    public ?string $original = null;
-
     public ?LexerException $exception = null;
+
+    public function getSourceValue(string $source, ?Token $next): string
+    {
+        if ($next !== null) {
+            return substr($source, $this->start, $next->start - $this->start);
+        } else {
+            return substr($source, $this->start);
+        }
+    }
 
 }

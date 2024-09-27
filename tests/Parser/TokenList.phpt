@@ -20,7 +20,8 @@ $comment = new Token; $comment->type = TokenType::COMMENT; $comment->start = 1; 
 $value = new Token; $value->type = TokenType::VALUE; $value->start = 2; $value->value = 'value';
 $name = new Token; $name->type = TokenType::NAME; $name->start = 2; $name->value = 'name';
 
-$tokenList = new TokenList([$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $platform, $session);
+$source = '----------------------------------------------------';
+$tokenList = new TokenList($source, [$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $platform, $session);
 $tokenList->setAutoSkip(TokenType::WHITESPACE | TokenType::COMMENT);
 
 getLast:
