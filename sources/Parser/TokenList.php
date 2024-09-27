@@ -419,7 +419,7 @@ class TokenList
 
     public function getStartOffset(): int
     {
-        return $this->tokens[0]->position;
+        return $this->tokens[0]->start;
     }
 
     public function getEndOffset(): int
@@ -427,7 +427,7 @@ class TokenList
         $token = end($this->tokens);
         $value = $token->original ?? $token->value;
 
-        return $token->position + strlen($value);
+        return $token->start + strlen($value);
     }
 
     public function append(self $tokenList): void

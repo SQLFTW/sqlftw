@@ -75,8 +75,8 @@ class Assert extends DogmaAssert
         if ($value !== $token->value) {
             parent::fail(sprintf('Token value is "%s" (%s) and should be "%s" (%s).', $token->value, gettype($token->value), $value, gettype($value)));
         }
-        if ($position !== null && $position !== $token->position) {
-            parent::fail(sprintf('Token starting position is %s and should be %s.', $token->position, $position));
+        if ($position !== null && $position !== $token->start) {
+            parent::fail(sprintf('Token starting position is %s and should be %s.', $token->start, $position));
         }
     }
 
@@ -95,8 +95,8 @@ class Assert extends DogmaAssert
                 parent::fail(sprintf('Token exception message is "%s" and should match "%s".', $message, $messageRegexp));
             }
         }
-        if ($position !== null && $position !== $token->position) {
-            parent::fail(sprintf('Token starting position is %s and should be %s.', $token->position, $position));
+        if ($position !== null && $position !== $token->start) {
+            parent::fail(sprintf('Token starting position is %s and should be %s.', $token->start, $position));
         }
     }
 
