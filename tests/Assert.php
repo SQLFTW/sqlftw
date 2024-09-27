@@ -186,7 +186,7 @@ class Assert extends DogmaAssert
                 Debugger::dump($results);
                 foreach ($results as $command) {
                     if ($command instanceof InvalidCommand) {
-                        Debugger::dumpException($command->getException());
+                        Debugger::dumpException($command->getException()); // @phpstan-ignore staticMethod.notFound (WTF?)
                     }
                 }
             }

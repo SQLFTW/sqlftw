@@ -577,7 +577,7 @@ class Lexer
                     // .123 cannot follow a name, e.g.: "select 1ea10.1a20, ...", but can follow a keyword, e.g.: "INTERVAL .4 SECOND"
                     if (isset(self::$numbersKey[$afterDot]) && (($previous->type & T::NAME) === 0 || ($previous->type & T::KEYWORD) !== 0)) {
                         if (preg_match(self::ANCHORED_NUMBER_REGEXP, $source, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
-                            $token = $this->numberToken($source, $position, $m);
+                            $token = $this->numberToken($source, $position, $m); // @phpstan-ignore argument.type
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
                                 break;
@@ -593,7 +593,7 @@ class Lexer
                         || (($previous->type & T::KEYWORD) !== 0 && strcasecmp($previous->value, Keyword::DEFAULT) === 0);
                     if ($numberCanFollow) {
                         if (preg_match(self::ANCHORED_NUMBER_REGEXP, $source, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
-                            $token = $this->numberToken($source, $position, $m);
+                            $token = $this->numberToken($source, $position, $m); // @phpstan-ignore argument.type
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
                                 break;
@@ -623,7 +623,7 @@ class Lexer
                         $position++;
 
                         if (preg_match(self::ANCHORED_NUMBER_REGEXP, $source, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
-                            $token = $this->numberToken($source, $position, $m);
+                            $token = $this->numberToken($source, $position, $m); // @phpstan-ignore argument.type
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
                                 break;
@@ -655,7 +655,7 @@ class Lexer
 
                     if ($numberCanFollow && ($afterPlus === '.' || isset(self::$numbersKey[$afterPlus]))) {
                         if (preg_match(self::ANCHORED_NUMBER_REGEXP, $source, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
-                            $token = $this->numberToken($source, $position, $m);
+                            $token = $this->numberToken($source, $position, $m); // @phpstan-ignore argument.type
                             if ($token !== null) {
                                 $tokens[] = $previous = $token;
                                 break;
@@ -744,7 +744,7 @@ class Lexer
                     }
                     // number
                     if (preg_match(self::ANCHORED_NUMBER_REGEXP, $source, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
-                        $token = $this->numberToken($source, $position, $m);
+                        $token = $this->numberToken($source, $position, $m); // @phpstan-ignore argument.type
                         if ($token !== null) {
                             $tokens[] = $previous = $token;
                             break;
@@ -1102,6 +1102,9 @@ class Lexer
         return $t;
     }
 
+    /**
+     * @param array{string, ?string, string, ?string, ?string, ?string} $m
+     */
     private function numberToken(string $source, int &$position, array $m): ?Token
     {
         [$value, $sign, $base, $e, $expSign, $exponent] = $m;
@@ -1111,7 +1114,7 @@ class Lexer
 
         $intBase = ctype_digit($base);
         $nextChar = $source[$position + $len] ?? '';
-        if (!$e && $intBase && isset(self::$nameCharsKey[$nextChar])) {
+        if ($e === null && $intBase && isset(self::$nameCharsKey[$nextChar])) {
             // followed by a name character while not having '.' or exponent - this is a prefix of a name, not a number
             return null;
         }
@@ -1119,7 +1122,7 @@ class Lexer
         $type = T::VALUE | T::NUMBER;
         $position += $len;
 
-        if ($e && !$exponent) {
+        if ($e !== null && $exponent === '') {
             $exception = new LexerException('Invalid number exponent ' . $value, $position, $source);
 
             $t = new Token; $t->type = $type | T::INVALID; $t->start = $startAt; $t->value = $value; $t->exception = $exception;
@@ -1128,24 +1131,21 @@ class Lexer
         }
 
         // todo: is "+42" considered uint?
-        if ($intBase && !$sign && !$e) {
+        if ($intBase && $sign === '' && $e === null) {
             $t = new Token; $t->type = $type | T::INT | T::UINT; $t->start = $startAt; $t->value = $value;
 
             return $t;
         }
 
-        // todo: remove normalization
-        while (strlen($sign) > 1 && $sign[0] === '-' && $sign[1] === '-') {
-            $sign = substr($sign, 2);
+        while (strlen($sign) > 1 && $sign[0] === '-' && $sign[1] === '-') { // @phpstan-ignore argument.type, offsetAccess.notFound, offsetAccess.notFound
+            $sign = substr($sign, 2); // @phpstan-ignore argument.type
         }
 
-        if (!$e) {
-            if ($base === '0' || (($sign === '' || $sign === '+' || $sign === '-') && $intBase)) {
-                $type |= T::INT;
-            }
+        if ($intBase && $e === null) {
+            $type |= T::INT;
         }
 
-        $v = $sign . $base . $e . $expSign . $exponent;
+        $v = ($sign === '-' ? '-' : '') . $base . ($e !== null ? 'e' : '') . $expSign . $exponent;
         $t = new Token; $t->type = $type; $t->start = $startAt; $t->value = $v;
 
         return $t;
