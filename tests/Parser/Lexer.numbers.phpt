@@ -20,7 +20,7 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 4);
 
 $tokens = Assert::tokens(' +123 ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '123', 1);
+Assert::token($tokens[1], T::VALUE | T::NUMBER | T::INT, '+123', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 $tokens = Assert::tokens(' -123 ', 3);
