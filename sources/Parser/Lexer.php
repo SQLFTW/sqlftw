@@ -1165,7 +1165,7 @@ class Lexer
             $type |= T::INT;
         }
 
-        $v = ($sign === '-' ? '-' : '') . $base . ($e !== null ? 'e' : '') . $expSign . $exponent;
+        $v = $sign . $base . ($e !== null ? 'e' : '') . $expSign . $exponent;
         $t = new Token; $t->type = $type; $t->start = $startAt; $t->value = $v;
 
         return $t;
