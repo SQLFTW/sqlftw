@@ -11,8 +11,8 @@
 
 namespace SqlFtw\Tests\Mysql;
 
-use Dogma\Str;
 use SqlFtw\Platform\Features\MysqlError;
+use SqlFtw\Util\Str;
 use function array_flip;
 use function array_splice;
 use function explode;

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql;
 
-use Dogma\Str;
+use SqlFtw\Util\Str;
 use function array_search;
 
 class Collation extends SqlEnum

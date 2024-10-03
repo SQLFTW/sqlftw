@@ -10,7 +10,7 @@
 namespace SqlFtw\Parser;
 
 use Dogma\ExceptionValueFormatter;
-use Dogma\Str;
+use SqlFtw\Util\Str;
 use Throwable;
 use function implode;
 use function is_array;

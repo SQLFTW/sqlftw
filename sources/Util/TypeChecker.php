@@ -9,7 +9,6 @@
 
 namespace SqlFtw\Util;
 
-use Dogma\Str;
 use LogicException;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\InvalidDefinitionException;

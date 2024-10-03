@@ -3,7 +3,6 @@
 namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Application\Colors;
-use Dogma\Str;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -14,6 +13,7 @@ use SqlFtw\Tests\Mysql\Data\TestSkips;
 use SqlFtw\Tests\Mysql\Data\TestSuites;
 use SqlFtw\Tests\Mysql\Data\VersionTags;
 use SqlFtw\Tests\ResultRenderer;
+use SqlFtw\Util\Str;
 use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
 use function chdir;

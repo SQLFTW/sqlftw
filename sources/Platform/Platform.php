@@ -11,7 +11,6 @@ namespace SqlFtw\Platform;
 
 use LogicException;
 use SqlFtw\Platform\Features\Feature;
-use SqlFtw\Platform\Features\FeaturesList;
 use SqlFtw\Platform\Features\MysqlFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
 use SqlFtw\Sql\Command;
