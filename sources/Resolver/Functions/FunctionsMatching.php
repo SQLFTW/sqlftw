@@ -9,8 +9,8 @@
 
 namespace SqlFtw\Resolver\Functions;
 
-use Dogma\Str;
 use SqlFtw\Sql\Expression\Value;
+use SqlFtw\Util\Str;
 use function preg_match;
 use function preg_replace;
 use function soundex;

@@ -10,9 +10,9 @@
 namespace SqlFtw\Resolver\Functions;
 
 use Dogma\InvalidValueException;
-use Dogma\Str;
 use SqlFtw\Resolver\UnresolvableException;
 use SqlFtw\Sql\Expression\Value;
+use SqlFtw\Util\Str;
 use function array_reverse;
 use function array_slice;
 use function assert;

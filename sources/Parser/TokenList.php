@@ -12,7 +12,6 @@
 namespace SqlFtw\Parser;
 
 use Dogma\Language\Encoding;
-use Dogma\Str;
 use InvalidArgumentException;
 use LogicException;
 use SqlFtw\Parser\TokenType as T;
@@ -44,6 +43,7 @@ use SqlFtw\Sql\Routine\RoutineType;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\SubqueryType;
 use SqlFtw\Sql\UserName;
+use SqlFtw\Util\Str;
 use function array_merge;
 use function array_pop;
 use function array_slice;

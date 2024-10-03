@@ -8,7 +8,6 @@ namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Debug\Callstack;
 use Dogma\Re;
-use Dogma\Str;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\EmptyCommand;
 use SqlFtw\Parser\InvalidCommand;
@@ -27,6 +26,7 @@ use SqlFtw\Tests\Mysql\Data\SerialisationAliases;
 use SqlFtw\Tests\Mysql\Data\SerialisationExceptions;
 use SqlFtw\Tests\Mysql\Data\TestReplacements;
 use SqlFtw\Tests\ResultRenderer;
+use SqlFtw\Util\Str;
 use function array_diff;
 use function array_keys;
 use function array_values;

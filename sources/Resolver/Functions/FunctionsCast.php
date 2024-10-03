@@ -9,12 +9,12 @@
 
 namespace SqlFtw\Resolver\Functions;
 
-use Dogma\Str;
 use LogicException;
 use SqlFtw\Resolver\UnresolvableException;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\CastType;
 use SqlFtw\Sql\Expression\Value;
+use SqlFtw\Util\Str;
 use function is_int;
 use function str_pad;
 use function substr;
