@@ -9,8 +9,11 @@
 
 namespace SqlFtw\Parser\Ddl;
 
+use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Features\Feature;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Ddl\Schema\AlterSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\CreateSchemaCommand;
 use SqlFtw\Sql\Ddl\Schema\DropSchemaCommand;
@@ -22,6 +25,13 @@ use function trim;
 
 class SchemaCommandsParser
 {
+
+    private Platform $platform;
+
+    public function __construct(Platform $platform)
+    {
+        $this->platform = $platform;
+    }
 
     /**
      * ALTER {DATABASE | SCHEMA} [db_name]
@@ -107,11 +117,15 @@ class SchemaCommandsParser
                 $tokenList->passSymbol('=');
                 $collation = $tokenList->expectCollationName();
             } elseif ($keyword === Keyword::ENCRYPTION) {
-                $tokenList->check('schema encryption', 80016);
+                if (!isset($this->platform->features[Feature::SCHEMA_ENCRYPTION])) {
+                    throw new InvalidVersionException(Feature::SCHEMA_ENCRYPTION, $this->platform, $tokenList);
+                }
                 $tokenList->passSymbol('=');
                 $encryption = $tokenList->expectBool();
             } else {
-                $tokenList->check('schema read only', 80022);
+                if (!isset($this->platform->features[Feature::SCHEMA_READ_ONLY])) {
+                    throw new InvalidVersionException(Feature::SCHEMA_READ_ONLY, $this->platform, $tokenList);
+                }
                 $tokenList->expectKeyword(Keyword::ONLY);
                 $tokenList->passSymbol('=');
                 if ($tokenList->hasKeyword(Keyword::DEFAULT)) {

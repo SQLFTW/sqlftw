@@ -213,6 +213,7 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
     public const ENCODE = 'ENCODE';
     public const ENCRYPT = 'ENCRYPT';
     public const MD5 = 'MD5';
+    public const OLD_PASSWORD = 'OLD_PASSWORD';
     public const PASSWORD = 'PASSWORD';
     public const RANDOM_BYTES = 'RANDOM_BYTES';
     public const SHA = 'SHA';

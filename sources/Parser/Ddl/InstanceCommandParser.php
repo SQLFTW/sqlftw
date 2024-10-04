@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Ddl;
 use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceAction;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceCommand;
@@ -47,33 +48,32 @@ class InstanceCommandParser
      */
     public function parseAlterInstance(TokenList $tokenList): AlterInstanceCommand
     {
-        if ($tokenList->using(null, 80000)) {
-            $tokenList->expectKeywords(Keyword::ALTER, Keyword::INSTANCE);
-
-            $action = $tokenList->expectMultiNameEnum(AlterInstanceAction::class);
-
-            $forChannel = null;
-            $noRollbackOnError = false;
-            if ($action->equalsValue(AlterInstanceAction::RELOAD_TLS)) {
-                if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
-                    $forChannel = strtolower($tokenList->expectNonReservedNameOrString());
-                    if ($forChannel !== 'mysql_main' && $forChannel !== 'mysql_admin') {
-                        throw new ParserException('Invalid channel name.', $tokenList);
-                    }
-                }
-                $noRollbackOnError = $tokenList->hasKeywords(Keyword::NO, Keyword::ROLLBACK, Keyword::ON, Keyword::ERROR);
-            }
-
-            return new AlterInstanceCommand($action, $forChannel, $noRollbackOnError);
-        } elseif ($tokenList->using(null, 50700)) {
-            $tokenList->expectKeywords(Keyword::ALTER, Keyword::INSTANCE, Keyword::ROTATE);
-            $tokenList->expectAnyName('INNODB');
-            $tokenList->expectKeywords(Keyword::MASTER, Keyword::KEY);
-
-            return new AlterInstanceCommand(new AlterInstanceAction(AlterInstanceAction::ROTATE_INNODB_MASTER_KEY));
-        } else {
-            throw new InvalidVersionException('ALTER INSTANCE is implemented since 5.7', $this->platform, $tokenList);
+        if (!isset($this->platform->features[Feature::ALTER_INSTANCE])) {
+            throw new InvalidVersionException(Feature::ALTER_INSTANCE, $this->platform, $tokenList);
         }
+
+        $tokenList->expectKeywords(Keyword::ALTER, Keyword::INSTANCE);
+
+        $action = $tokenList->expectMultiNameEnum(AlterInstanceAction::class);
+        if (!$action->equalsValue(AlterInstanceAction::ROTATE_INNODB_MASTER_KEY)
+            && !isset($this->platform->features[Feature::ALTER_INSTANCE_2])
+        ) {
+            throw new InvalidVersionException(Feature::ALTER_INSTANCE_2, $this->platform, $tokenList);
+        }
+
+        $forChannel = null;
+        $noRollbackOnError = false;
+        if ($action->equalsValue(AlterInstanceAction::RELOAD_TLS)) {
+            if ($tokenList->hasKeywords(Keyword::FOR, Keyword::CHANNEL)) {
+                $forChannel = strtolower($tokenList->expectNonReservedNameOrString());
+                if ($forChannel !== 'mysql_main' && $forChannel !== 'mysql_admin') {
+                    throw new ParserException('Invalid channel name.', $tokenList);
+                }
+            }
+            $noRollbackOnError = $tokenList->hasKeywords(Keyword::NO, Keyword::ROLLBACK, Keyword::ON, Keyword::ERROR);
+        }
+
+        return new AlterInstanceCommand($action, $forChannel, $noRollbackOnError);
     }
 
 }

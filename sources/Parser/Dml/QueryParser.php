@@ -10,10 +10,12 @@
 namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParserFactory;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\CommonTableExpressionType;
@@ -74,6 +76,8 @@ use function in_array;
 class QueryParser
 {
 
+    private Platform $platform;
+
     private ParserFactory $parserFactory;
 
     private ExpressionParser $expressionParser;
@@ -83,11 +87,13 @@ class QueryParser
     private OptimizerHintParser $optimizerHintParser;
 
     public function __construct(
+        Platform $platform,
         ParserFactory $parserFactory,
         ExpressionParser $expressionParser,
         TableReferenceParser $tableReferenceParser,
         OptimizerHintParser $optimizerHintParser
     ) {
+        $this->platform = $platform;
         $this->parserFactory = $parserFactory;
         $this->expressionParser = $expressionParser;
         $this->tableReferenceParser = $tableReferenceParser;
@@ -504,9 +510,9 @@ class QueryParser
             $groupBy = [];
             do {
                 $expression = $this->expressionParser->parseAssignExpression($tokenList);
-                $order = null;
-                if ($tokenList->using(Platform::MYSQL, null, 50799)) {
-                    $order = $tokenList->getKeywordEnum(Order::class);
+                $order = $tokenList->getKeywordEnum(Order::class);
+                if ($order !== null && !isset($this->platform->features[Feature::DEPRECATED_GROUP_BY_ORDERING])) {
+                    throw new InvalidVersionException(Feature::DEPRECATED_GROUP_BY_ORDERING, $this->platform, $tokenList);
                 }
                 $groupBy[] = new GroupByExpression($expression, $order);
             } while ($tokenList->hasSymbol(','));

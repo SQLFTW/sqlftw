@@ -11,8 +11,10 @@ namespace SqlFtw\Parser\Ddl;
 
 use Dogma\Re;
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Ddl\Index\CreateIndexCommand;
 use SqlFtw\Sql\Ddl\Index\DropIndexCommand;
@@ -185,11 +187,15 @@ class IndexCommandsParser
             } elseif ($keyword === Keyword::INVISIBLE) {
                 $visible = false;
             } elseif ($keyword === Keyword::ENGINE_ATTRIBUTE) {
-                $tokenList->check(Keyword::ENGINE_ATTRIBUTE, 80021);
+                if (!isset($this->platform->features[Feature::ENGINE_ATTRIBUTE])) {
+                    throw new InvalidVersionException(Feature::ENGINE_ATTRIBUTE, $this->platform, $tokenList);
+                }
                 $tokenList->passSymbol('=');
                 $engineAttribute = $tokenList->expectString();
             } elseif ($keyword === Keyword::SECONDARY_ENGINE_ATTRIBUTE) {
-                $tokenList->check(Keyword::SECONDARY_ENGINE_ATTRIBUTE, 80021);
+                if (!isset($this->platform->features[Feature::SECONDARY_ENGINE_ATTRIBUTE])) {
+                    throw new InvalidVersionException(Feature::SECONDARY_ENGINE_ATTRIBUTE, $this->platform, $tokenList);
+                }
                 $tokenList->passSymbol('=');
                 $secondaryEngineAttribute = $tokenList->expectString();
             }
@@ -219,7 +225,9 @@ class IndexCommandsParser
         $parts = [];
         do {
             if ($tokenList->hasSymbol('(')) {
-                $tokenList->check('functional indexes', 80013);
+                if (!isset($this->platform->features[Feature::FUNCTIONAL_INDEXES])) {
+                    throw new InvalidVersionException(Feature::FUNCTIONAL_INDEXES, $this->platform, $tokenList);
+                }
                 $expression = $this->expressionParser->parseExpression($tokenList);
                 $tokenList->expectSymbol(')');
 

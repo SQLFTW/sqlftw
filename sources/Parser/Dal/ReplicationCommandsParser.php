@@ -13,9 +13,12 @@ use Dogma\Math\PowersOfTwo;
 use LogicException;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidValueException;
+use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Features\Feature;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Dal\Replication\ChangeMasterToCommand;
 use SqlFtw\Sql\Dal\Replication\ChangeReplicationFilterCommand;
 use SqlFtw\Sql\Dal\Replication\ChangeReplicationSourceToCommand;
@@ -55,10 +58,13 @@ use const PHP_INT_MAX;
 class ReplicationCommandsParser
 {
 
+    private Platform $platform;
+
     private ExpressionParser $expressionParser;
 
-    public function __construct(ExpressionParser $expressionParser)
+    public function __construct(Platform $platform, ExpressionParser $expressionParser)
     {
+        $this->platform = $platform;
         $this->expressionParser = $expressionParser;
     }
 
@@ -511,7 +517,9 @@ class ReplicationCommandsParser
         $keywords = [Keyword::USER, Keyword::PASSWORD, Keyword::DEFAULT_AUTH];
         $keyword = $tokenList->getAnyKeyword(...$keywords);
         while ($keyword !== null) {
-            $tokenList->check('group replication credentials', 80021);
+            if (!isset($this->platform->features[Feature::GROUP_REPLICATION_CREDENTIALS])) {
+                throw new InvalidVersionException(Feature::GROUP_REPLICATION_CREDENTIALS, $this->platform, $tokenList);
+            }
             $tokenList->passSymbol('=');
             if ($keyword === Keyword::USER) {
                 $user = $tokenList->expectString();

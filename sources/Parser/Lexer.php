@@ -138,7 +138,7 @@ class Lexer
         $autoSkip = ($this->withWhitespace ? T::WHITESPACE : 0) | ($this->withComments ? T::COMMENT : 0);
 
         $extensions = $this->config->getClientSideExtensions();
-        $parseOldNullLiteral = isset($this->platform->features[Feature::OLD_NULL_LITERAL]);
+        $parseOldNullLiteral = isset($this->platform->features[Feature::DEPRECATED_OLD_NULL_LITERAL]);
         $parseOptimizerHints = isset($this->platform->features[Feature::OPTIMIZER_HINTS]);
         $allowDelimiterDefinition = ($extensions & ClientSideExtension::ALLOW_DELIMITER_DEFINITION) !== 0;
 
