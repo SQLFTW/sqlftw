@@ -94,7 +94,7 @@ class ParserFactory
         $this->expressionParser = new ExpressionParser($config, $queryParserProxy);
         $this->optimizerHintParser = new OptimizerHintParser($this->expressionParser);
         $this->tableReferenceParser = new TableReferenceParser($this->expressionParser, $queryParserProxy);
-        $this->queryParser = new QueryParser($this, $this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
+        $this->queryParser = new QueryParser($this->platform, $this, $this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
         $this->routineBodyParser = new RoutineBodyParser($this->platform, $this->parser, $this->expressionParser, $this->queryParser, $sessionUpdater);
     }
 
@@ -142,7 +142,7 @@ class ParserFactory
 
     public function getSchemaCommandsParser(): SchemaCommandsParser
     {
-        return new SchemaCommandsParser();
+        return new SchemaCommandsParser($this->platform);
     }
 
     public function getDeleteCommandParser(): DeleteCommandParser
@@ -242,7 +242,7 @@ class ParserFactory
 
     public function getReplicationCommandsParser(): ReplicationCommandsParser
     {
-        return new ReplicationCommandsParser($this->expressionParser);
+        return new ReplicationCommandsParser($this->platform, $this->expressionParser);
     }
 
     public function getResetCommandParser(): ResetCommandParser
@@ -262,7 +262,7 @@ class ParserFactory
 
     public function getRoutineCommandsParser(): RoutineCommandsParser
     {
-        return new RoutineCommandsParser($this->expressionParser, $this->routineBodyParser);
+        return new RoutineCommandsParser($this->platform, $this->expressionParser, $this->routineBodyParser);
     }
 
     public function getServerCommandsParser(): ServerCommandsParser
@@ -312,7 +312,7 @@ class ParserFactory
 
     public function getTriggerCommandsParser(): TriggerCommandsParser
     {
-        return new TriggerCommandsParser($this->expressionParser, $this->routineBodyParser);
+        return new TriggerCommandsParser($this->platform, $this->expressionParser, $this->routineBodyParser);
     }
 
     public function getUpdateCommandParser(): UpdateCommandParser
@@ -327,7 +327,7 @@ class ParserFactory
 
     public function getUserCommandsParser(): UserCommandsParser
     {
-        return new UserCommandsParser();
+        return new UserCommandsParser($this->platform);
     }
 
     public function getViewCommandsParser(): ViewCommandsParser

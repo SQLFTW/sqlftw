@@ -12,6 +12,7 @@ namespace SqlFtw\Parser\Dal;
 use LogicException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Dal\User\AddAuthFactor;
 use SqlFtw\Sql\Dal\User\AlterAuthOption;
@@ -73,6 +74,13 @@ use function in_array;
 
 class UserCommandsParser
 {
+
+    private Platform $platform;
+
+    public function __construct(Platform $platform)
+    {
+        $this->platform = $platform;
+    }
 
     private const RESOURCE_PRIVILEGES = [
         UserPrivilegeResourceType::TABLE => [
@@ -368,7 +376,7 @@ class UserCommandsParser
         if (!$currentUser && $authPlugin !== null && $tokenList->hasKeyword(Keyword::AS)) {
             $as = $tokenList->expectStringValue();
         } elseif ($tokenList->hasKeyword(Keyword::BY)) {
-            if ($tokenList->using(Platform::MYSQL, null, 50799) && $tokenList->hasKeyword(Keyword::PASSWORD)) {
+            if (isset($this->platform->features[Feature::DEPRECATED_IDENTIFIED_BY_PASSWORD]) && $tokenList->hasKeyword(Keyword::PASSWORD)) {
                 $oldHashedPassword = true;
                 $password = $tokenList->expectStringValue();
             } elseif ($tokenList->hasKeywords(Keyword::RANDOM, Keyword::PASSWORD)) {
@@ -977,9 +985,9 @@ class UserCommandsParser
 
         $passwordFunction = $password = $replace = null;
         if ($tokenList->hasOperator(Operator::EQUAL)) {
-            $passwordFunction = $tokenList->using(null, 50700)
-                ? $tokenList->getAnyKeyword(Keyword::PASSWORD)
-                : $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::OLD_PASSWORD);
+            $passwordFunction = isset($this->platform->functions[BuiltInFunction::OLD_PASSWORD])
+                ? $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::OLD_PASSWORD)
+                : $tokenList->getAnyKeyword(Keyword::PASSWORD);
             if ($passwordFunction !== null) {
                 $tokenList->expectSymbol('(');
             }

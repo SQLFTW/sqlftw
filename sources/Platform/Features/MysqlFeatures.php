@@ -119,9 +119,23 @@ class MysqlFeatures extends FeaturesList
 
     /** @var list<array{Feature::*, int, int}> */
     public array $features = [
+        [Feature::ALTER_INSTANCE, 50700, self::MAX],
+        [Feature::ALTER_INSTANCE, 80000, self::MAX],
+        [Feature::COLUMN_VISIBILITY, 80023, self::MAX],
+        [Feature::CREATE_ROUTINE_IF_NOT_EXISTS, 80000, self::MAX],
+        [Feature::ENGINE_ATTRIBUTE, 80021, self::MAX],
+        [Feature::FUNCTIONAL_INDEXES, 80013, self::MAX],
+        [Feature::GROUP_REPLICATION_CREDENTIALS, 80021, self::MAX],
         [Feature::OPTIMIZER_HINTS, self::MIN, self::MAX],
-        [Feature::OLD_NULL_LITERAL, self::MIN, 79999],
-        [Feature::UNQUOTED_NAMES_CAN_START_WITH_DOLLAR_SIGN, self::MIN, 80031],
+        [Feature::SCHEMA_ENCRYPTION, 80016, self::MAX],
+        [Feature::SCHEMA_READ_ONLY, 80022, self::MAX],
+        [Feature::SECONDARY_ENGINE_ATTRIBUTE, 80021, self::MAX],
+
+        [Feature::DEPRECATED_GROUP_BY_ORDERING, self::MIN, 50799],
+        [Feature::DEPRECATED_IDENTIFIED_BY_PASSWORD, self::MIN, 50799],
+        [Feature::DEPRECATED_OLD_NULL_LITERAL, self::MIN, 79999],
+        [Feature::DEPRECATED_UNQUOTED_NAMES_CAN_START_WITH_DOLLAR_SIGN, self::MIN, 80031],
+
     ];
 
     /** @var list<array{Keyword::*, int, int}> */
@@ -1308,6 +1322,7 @@ class MysqlFeatures extends FeaturesList
         [BuiltInFunction::ENCODE, self::MIN, self::MAX, 50700],
         [BuiltInFunction::ENCRYPT, self::MIN, 80000, 50700],
         [BuiltInFunction::MD5, self::MIN, self::MAX],
+        [BuiltInFunction::OLD_PASSWORD, self::MIN, 50704],
         [BuiltInFunction::PASSWORD, self::MIN, 80001, 50700],
         [BuiltInFunction::RANDOM_BYTES, 50617, self::MAX],
         [BuiltInFunction::SHA, self::MIN, self::MAX],

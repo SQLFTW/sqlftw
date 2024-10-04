@@ -147,18 +147,6 @@ class TokenList
         return $this->session;
     }
 
-    public function using(?string $platform = null, ?int $minVersion = null, ?int $maxVersion = null): bool
-    {
-        return $this->platform->matches($platform, $minVersion, $maxVersion);
-    }
-
-    public function check(string $feature, ?int $minVersion = null, ?int $maxVersion = null, ?string $platform = null): void
-    {
-        if (!$this->platform->matches($platform, $minVersion, $maxVersion)) {
-            throw new InvalidVersionException($feature, $this->platform, $this);
-        }
-    }
-
     // state -----------------------------------------------------------------------------------------------------------
 
     public function invalid(): bool

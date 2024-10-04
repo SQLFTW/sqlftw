@@ -10,9 +10,12 @@
 namespace SqlFtw\Parser\Ddl;
 
 use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\RoutineBodyParser;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Features\Feature;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Routine\AlterFunctionCommand;
 use SqlFtw\Sql\Ddl\Routine\AlterProcedureCommand;
@@ -32,12 +35,15 @@ use SqlFtw\Sql\Routine\RoutineType;
 class RoutineCommandsParser
 {
 
+    private Platform $platform;
+
     private ExpressionParser $expressionParser;
 
     private RoutineBodyParser $routineBodyParser;
 
-    public function __construct(ExpressionParser $expressionParser, RoutineBodyParser $routineBodyParser)
+    public function __construct(Platform $platform, ExpressionParser $expressionParser, RoutineBodyParser $routineBodyParser)
     {
+        $this->platform = $platform;
         $this->expressionParser = $expressionParser;
         $this->routineBodyParser = $routineBodyParser;
     }
@@ -158,7 +164,10 @@ class RoutineCommandsParser
         }
         $tokenList->expectKeyword(Keyword::FUNCTION);
 
-        $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        if ($ifNotExists && !isset($this->platform->features[Feature::CREATE_ROUTINE_IF_NOT_EXISTS])) {
+            throw new InvalidVersionException(Feature::CREATE_ROUTINE_IF_NOT_EXISTS, $this->platform, $tokenList);
+        }
 
         $name = $tokenList->expectObjectIdentifier();
 
@@ -228,7 +237,10 @@ class RoutineCommandsParser
         }
         $tokenList->expectKeyword(Keyword::PROCEDURE);
 
-        $ifNotExists = $tokenList->using(null, 80000) && $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        $ifNotExists = $tokenList->hasKeywords(Keyword::IF, Keyword::NOT, Keyword::EXISTS);
+        if ($ifNotExists && !isset($this->platform->features[Feature::CREATE_ROUTINE_IF_NOT_EXISTS])) {
+            throw new InvalidVersionException(Feature::CREATE_ROUTINE_IF_NOT_EXISTS, $this->platform, $tokenList);
+        }
 
         $name = $tokenList->expectObjectIdentifier();
 

@@ -13,9 +13,11 @@ use Dogma\Math\PowersOfTwo;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidValueException;
+use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
+use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Ddl\StorageType;
@@ -946,12 +948,16 @@ class TableCommandsParser
                     break;
                 case Keyword::VISIBLE:
                     // [VISIBLE | INVISIBLE]
-                    $tokenList->check('column visibility', 80023);
+                    if (!isset($this->platform->features[Feature::COLUMN_VISIBILITY])) {
+                        throw new InvalidVersionException(Feature::COLUMN_VISIBILITY, $this->platform, $tokenList);
+                    }
                     $visible = true;
                     break;
                 case Keyword::INVISIBLE:
                     // [VISIBLE | INVISIBLE]
-                    $tokenList->check('column visibility', 80023);
+                    if (!isset($this->platform->features[Feature::COLUMN_VISIBILITY])) {
+                        throw new InvalidVersionException(Feature::COLUMN_VISIBILITY, $this->platform, $tokenList);
+                    }
                     $visible = false;
                     break;
                 case Keyword::AUTO_INCREMENT:
@@ -1103,12 +1109,16 @@ class TableCommandsParser
                     break;
                 case Keyword::VISIBLE:
                     // [VISIBLE | INVISIBLE]
-                    $tokenList->check('column visibility', 80023);
+                    if (!isset($this->platform->features[Feature::COLUMN_VISIBILITY])) {
+                        throw new InvalidVersionException(Feature::COLUMN_VISIBILITY, $this->platform, $tokenList);
+                    }
                     $visible = true;
                     break;
                 case Keyword::INVISIBLE:
                     // [VISIBLE | INVISIBLE]
-                    $tokenList->check('column visibility', 80023);
+                    if (!isset($this->platform->features[Feature::COLUMN_VISIBILITY])) {
+                        throw new InvalidVersionException(Feature::COLUMN_VISIBILITY, $this->platform, $tokenList);
+                    }
                     $visible = false;
                     break;
                 case Keyword::UNIQUE:
