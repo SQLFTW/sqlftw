@@ -3,8 +3,6 @@
 namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Application\Colors;
-use Dogma\Debug\Dumper;
-use function class_exists;
 use function in_array;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
