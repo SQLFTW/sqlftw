@@ -588,22 +588,29 @@ class Lexer
                     break;
                 case '-':
                     $second = $position < $length ? $source[$position] : '';
-                    $numberCanFollow = ($previous->type & T::END) !== 0
-                        || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
-                        || (($previous->type & T::KEYWORD) !== 0 && strcasecmp($previous->value, Keyword::DEFAULT) === 0);
-                    if ($numberCanFollow) {
-                        if (preg_match(self::ANCHORED_NUMBER_REGEXP, $source, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
-                            $token = $this->numberToken($source, $position, $m); // @phpstan-ignore argument.type
-                            if ($token !== null) {
-                                $tokens[] = $previous = $token;
-                                break;
-                            }
-                        }
-                    }
 
                     if ($second === '-') {
                         $third = $position + 1 < $length ? $source[$position + 1] : '';
 
+                        if ($third === "\n") {
+                            // --\n
+                            $position += 2;
+                            if ($this->withComments) {
+                                $tokens[] = $previous = $t = new Token; $t->type = T::COMMENT | T::DOUBLE_HYPHEN_COMMENT; $t->start = $start; $t->value = "--\n";
+                            }
+                            break;
+                        }
+                        if ($third === "\r") {
+                            $fourth = $position + 2 < $length ? $source[$position + 2] : '';
+                            if ($fourth === "\n") {
+                                // --\r\n
+                                $position += 3;
+                                if ($this->withComments) {
+                                    $tokens[] = $previous = $t = new Token; $t->type = T::COMMENT | T::DOUBLE_HYPHEN_COMMENT; $t->start = $start; $t->value = "--\r\n";
+                                }
+                                break;
+                            }
+                        }
                         if ($third === ' ') {
                             // -- comment
                             $endOfLine = strpos($source, "\n", $position);
@@ -622,6 +629,19 @@ class Lexer
                         $tokens[] = $t = new Token; $t->type = T::SYMBOL | T::OPERATOR; $t->start = $start; $t->value = '-';
                         $position++;
 
+                        if (preg_match(self::ANCHORED_NUMBER_REGEXP, $source, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
+                            $token = $this->numberToken($source, $position, $m); // @phpstan-ignore argument.type
+                            if ($token !== null) {
+                                $tokens[] = $previous = $token;
+                                break;
+                            }
+                        }
+                    }
+
+                    $numberCanFollow = ($previous->type & T::END) !== 0
+                        || (($previous->type & T::SYMBOL) !== 0 && $previous->value !== ')' && $previous->value !== '?')
+                        || (($previous->type & T::KEYWORD) !== 0 && strcasecmp($previous->value, Keyword::DEFAULT) === 0);
+                    if ($numberCanFollow) {
                         if (preg_match(self::ANCHORED_NUMBER_REGEXP, $source, $m, PREG_UNMATCHED_AS_NULL, $position - 1) !== 0) {
                             $token = $this->numberToken($source, $position, $m); // @phpstan-ignore argument.type
                             if ($token !== null) {
