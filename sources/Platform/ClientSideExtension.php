@@ -45,4 +45,7 @@ class ClientSideExtension
     // "UPDATE [tbl2] SET [a] = 1 WHERE [b] = 2" (Doctrine, Dibi)
     //public const CONVERT_SQUARE_BRACKET_IDENTIFIERS = 16;
 
+    // placeholders in places not allowed by MySQL, but used by DBALs and other tools (LIMIT ?, foo IS ? etc.)
+    public const ALLOW_PLACEHOLDERS_ANYWHERE = 32;
+
 }

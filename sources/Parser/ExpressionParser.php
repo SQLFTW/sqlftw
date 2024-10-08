@@ -177,20 +177,25 @@ class ExpressionParser
             return new BinaryOperator($left, new Operator($operator), $right);
         } elseif ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
-            $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
+            $keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
             switch ($keyword) {
+                case Keyword::NULL:
+                    $right = new NullLiteral();
+                    break;
                 case Keyword::TRUE:
                     $right = new BoolLiteral(true);
                     break;
                 case Keyword::FALSE:
                     $right = new BoolLiteral(false);
                     break;
-                case Keyword::NULL:
-                    $right = new NullLiteral();
-                    break;
-                default:
+                case Keyword::UNKNOWN:
                     $right = new UnknownLiteral();
                     break;
+                default: // null
+                    $right = $this->parsePlaceholder($tokenList, true);
+                    if ($right === null) {
+                        $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
+                    }
             }
             $operator = new Operator($not ? Operator::IS_NOT : Operator::IS);
 
@@ -263,20 +268,25 @@ class ExpressionParser
 
         while ($tokenList->hasKeyword(Keyword::IS)) {
             $not = $tokenList->hasKeyword(Keyword::NOT);
-            $keyword = $tokenList->expectAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
+            $keyword = $tokenList->getAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
             switch ($keyword) {
+                case Keyword::NULL:
+                    $right = new NullLiteral();
+                    break;
                 case Keyword::TRUE:
                     $right = new BoolLiteral(true);
                     break;
                 case Keyword::FALSE:
                     $right = new BoolLiteral(false);
                     break;
-                case Keyword::NULL:
-                    $right = new NullLiteral();
-                    break;
-                default:
+                case Keyword::UNKNOWN:
                     $right = new UnknownLiteral();
                     break;
+                default:
+                    $right = $this->parsePlaceholder($tokenList, true);
+                    if ($right === null) {
+                        $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::UNKNOWN);
+                    }
             }
             $operator = new Operator($not ? Operator::IS_NOT : Operator::IS);
 
@@ -994,7 +1004,7 @@ class ExpressionParser
         return null;
     }
 
-    private function parsePlaceholder(TokenList $tokenList): ?Placeholder
+    private function parsePlaceholder(TokenList $tokenList, bool $ifAllowedAnywhere = false): ?Placeholder
     {
         $token = $tokenList->get(TokenType::PLACEHOLDER);
         if ($token === null) {
@@ -1002,6 +1012,10 @@ class ExpressionParser
         }
 
         $extensions = $this->config->getClientSideExtensions();
+        if ($ifAllowedAnywhere && ($extensions & ClientSideExtension::ALLOW_PLACEHOLDERS_ANYWHERE) === 0) {
+            throw new ParserException("Placeholder {$token->value} is not allowed here.", $tokenList);
+        }
+
         if (($token->type & TokenType::QUESTION_MARK_PLACEHOLDER) !== 0 && (($extensions & ClientSideExtension::ALLOW_QUESTION_MARK_PLACEHOLDERS_OUTSIDE_PREPARED_STATEMENTS) !== 0 || $tokenList->inPrepared())) {
             // param_marker
             return new QuestionMarkPlaceholder();
