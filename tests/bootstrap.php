@@ -9,14 +9,15 @@ use function dirname;
 use function header;
 use const PHP_SAPI;
 
+if (!class_exists(Dumper::class)) {
+    require_once dirname(__DIR__) . '/vendor/dogma/dogma-debug/shortcuts.php';
+}
+
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../vendor/nette/tester/src/bootstrap.php';
 require_once __DIR__ . '/ParserHelper.php';
 require_once __DIR__ . '/Assert.php';
-
-if (class_exists(Dumper::class)) {
-    require_once __DIR__ . '/debugger.php';
-}
+require_once __DIR__ . '/debugger.php';
 
 // phpcs:ignore SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable
 if (!empty($_SERVER['argv'])) { // @phpstan-ignore-line ❤ empty()
