@@ -195,7 +195,7 @@ class ResultRenderer
     {
         $job = new MysqlTestJob();
         foreach ($serialisationErrors as $path => $serialisationError) {
-            foreach ($serialisationError as [$command, $tokenList, $mode]) {
+            foreach ($serialisationError as [$command, $mode]) {
                 $this->renderTestPath($path);
                 $this->renderSerialisationError($command, $mode, $job);
             }

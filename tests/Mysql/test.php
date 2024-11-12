@@ -3,7 +3,14 @@
 namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Application\Colors;
+use Dogma\Debug\Dumper;
+use function class_exists;
+use function dirname;
 use function in_array;
+
+if (!class_exists(Dumper::class)) {
+    require_once dirname(__DIR__, 2) . '/vendor/dogma/dogma-debug/shortcuts.php';
+}
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../vendor/dogma/dogma-debug/shortcuts.php';
