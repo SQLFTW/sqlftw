@@ -118,7 +118,7 @@ class MysqlTestJob
             $tokenList = $command->getTokenList();
             $tokensSerialized = trim($tokenList->serialize());
             $tokensSerializedWithoutGarbage = trim($tokenList->filter(static function (Token $token): bool {
-                return ($token->type & TokenType::COMMENT) !== 0
+                return ($token->type & TokenType::COMMENTS) !== 0
                     && (Str::startsWith($token->value, '-- XB') || Str::startsWith($token->value, '#'));
             })->serialize());
             $comments = Re::filter($command->getCommentsBefore(), '~^[^#]~');
@@ -243,7 +243,7 @@ class MysqlTestJob
     public function normalizeOriginalSql(TokenList $tokenList, bool $debug = false): array
     {
         $original = $tokenList->map(static function (Token $token): Token {
-            if (($token->type & TokenType::COMMENT) !== 0) {
+            if (($token->type & TokenType::COMMENTS) !== 0) {
                 $t = new Token; $t->type = TokenType::WHITESPACE; $t->start = $token->start; $t->value = ' ';
 
                 return $t;

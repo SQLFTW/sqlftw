@@ -216,7 +216,7 @@ class Parser
                 return new EmptyCommand($comments);
             } elseif (($first->type & TokenType::DELIMITER) !== 0) {
                 return new EmptyCommand($comments);
-            } elseif (($first->type & TokenType::COMMENT) !== 0) {
+            } elseif (($first->type & TokenType::COMMENTS) !== 0) {
                 $comments[] = $first->value;
             } elseif (($first->type & TokenType::KEYWORD) !== 0) {
                 break;
@@ -235,7 +235,7 @@ class Parser
                 return new InvalidCommand($comments, $exception);
             }
             $first = $tokenList->get();
-        } while ($first === null || ($first->type & (TokenType::COMMENT | TokenType::DELIMITER)) !== 0);
+        } while ($first === null || ($first->type & (TokenType::COMMENTS | TokenType::DELIMITER)) !== 0);
         $tokenList->setAutoSkip($autoSkip);
 
         // list with invalid tokens

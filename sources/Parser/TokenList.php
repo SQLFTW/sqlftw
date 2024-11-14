@@ -42,6 +42,7 @@ use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Routine\RoutineType;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\SubqueryType;
+use SqlFtw\Sql\Symbol;
 use SqlFtw\Sql\UserName;
 use SqlFtw\Util\Str;
 use function array_merge;
@@ -287,7 +288,7 @@ class TokenList
             $token = $this->tokens[$n];
             if (($token->type & $this->autoSkip) !== 0) {
                 continue;
-            } elseif (($token->type & T::SYMBOL) !== 0 && $token->value === ';') {
+            } elseif (($token->type & T::SYMBOL) !== 0 && $token->value === Symbol::SEMICOLON) {
                 // trailing ;
                 $this->trailingDelimiter .= ';';
             } elseif (($token->type & T::DELIMITER) !== 0) {
@@ -486,7 +487,7 @@ class TokenList
     public function getFirstSignificantToken(): ?Token
     {
         foreach ($this->tokens as $token) {
-            if (($token->type & (T::WHITESPACE | T::COMMENT)) === 0) {
+            if (($token->type & (T::WHITESPACE | T::COMMENTS)) === 0) {
                 return $token;
             }
         }
@@ -856,15 +857,15 @@ class TokenList
 
     public function expectIntLike(): Value
     {
-        $number = $this->expect(T::INT | T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+        $number = $this->expect(T::INT | T::STRING | T::BIT_STRING);
         $value = $number->value;
         if (($number->type & T::STRING) !== 0 && preg_match('~^(?:0|-[1-9][0-9]*)$~', $value) === 0) {
             throw new InvalidValueException('integer', $this);
         }
 
-        if (($number->type & T::HEXADECIMAL_LITERAL) !== 0) {
+        if (($number->type & T::HEXADECIMAL_LITERAL) === T::HEXADECIMAL_LITERAL) {
             return new HexadecimalLiteral($value);
-        } elseif (($number->type & T::BINARY_LITERAL) !== 0) {
+        } elseif (($number->type & T::BINARY_LITERAL) === T::BINARY_LITERAL) {
             return new BinaryLiteral($value);
         } elseif (($number->type & T::UINT) !== 0) {
             return new UintLiteral($value);
@@ -875,7 +876,7 @@ class TokenList
 
     public function expectSize(): SizeLiteral
     {
-        $token = $this->expect(T::UINT | T::NAME);
+        $token = $this->expect(T::UINT | T::NAMES);
         if (($token->type & T::UINT) !== 0) {
             return new SizeLiteral($token->value);
         }
@@ -890,7 +891,7 @@ class TokenList
     public function expectBool(): bool
     {
         // TRUE, FALSE, ON, OFF, 1, 0, Y, N, T, F
-        $value = $this->expect(T::VALUE)->value;
+        $value = $this->expect(T::VALUES)->value;
 
         if ($value === '1' || $value === 'Y' || $value === 'T' || $value === 'y' || $value === 't') {
             return true;
@@ -903,7 +904,7 @@ class TokenList
 
     public function expectYesNo(): bool
     {
-        $value = $this->expect(T::VALUE)->value;
+        $value = $this->expect(T::VALUES)->value;
 
         if ($value === 'Y' || $value === 'y') {
             return true;
@@ -943,7 +944,7 @@ class TokenList
     public function expectStringValue(): StringValue
     {
         $position = $this->position;
-        $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL | T::UNQUOTED_NAME);
+        $token = $this->expect(T::STRING | T::BIT_STRING | T::UNQUOTED_NAME);
 
         // charset introducer
         $charset = null;
@@ -951,18 +952,18 @@ class TokenList
             $charset = substr(strtolower($token->value), 1);
             if ($token->value[0] === '_' && Charset::isValidValue($charset)) {
                 $charset = new Charset($charset);
-                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                $token = $this->expect(T::STRING | T::BIT_STRING);
             } else {
                 $charset = null;
                 $this->position = $position;
 
-                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                $token = $this->expect(T::STRING | T::BIT_STRING);
             }
         }
 
-        if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
+        if (($token->type & T::HEXADECIMAL_LITERAL) === T::HEXADECIMAL_LITERAL) {
             return new HexadecimalLiteral($token->value, $charset);
-        } elseif (($token->type & T::BINARY_LITERAL) !== 0) {
+        } elseif (($token->type & T::BINARY_LITERAL) === T::BINARY_LITERAL) {
             return new BinaryLiteral($token->value, $charset);
         } else {
             /** @var non-empty-list<string> $values */
@@ -978,7 +979,7 @@ class TokenList
     public function getStringValue(): ?StringValue
     {
         $position = $this->position;
-        $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL | T::UNQUOTED_NAME);
+        $token = $this->get(T::STRING | T::BIT_STRING | T::UNQUOTED_NAME);
         if ($token === null) {
             return null;
         }
@@ -989,12 +990,12 @@ class TokenList
             $lower = strtolower($token->value);
             if ($lower === 'n') {
                 // todo: keep?
-                $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                $token = $this->get(T::STRING | T::BIT_STRING);
             } else {
                 $lower = substr($lower, 1);
                 if ($token->value[0] === '_' && Charset::isValidValue($lower)) {
                     $charset = new Charset($lower);
-                    $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                    $token = $this->get(T::STRING | T::BIT_STRING);
                 } else {
                     $this->position = $position;
 
@@ -1008,9 +1009,9 @@ class TokenList
             return null;
         }
 
-        if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
+        if (($token->type & T::HEXADECIMAL_LITERAL) === T::HEXADECIMAL_LITERAL) {
             return new HexadecimalLiteral($token->value, $charset);
-        } elseif (($token->type & T::BINARY_LITERAL) !== 0) {
+        } elseif (($token->type & T::BINARY_LITERAL) === T::BINARY_LITERAL) {
             return new BinaryLiteral($token->value, $charset);
         } else {
             /** @var non-empty-list<string> $values */
@@ -1025,12 +1026,12 @@ class TokenList
 
     public function expectNonReservedNameOrString(): string
     {
-        return $this->expect(T::NAME | T::STRING, T::RESERVED | T::AT_VARIABLE)->value;
+        return $this->expect(T::NAMES | T::STRING, T::RESERVED | T::AT_VARIABLE)->value;
     }
 
     public function getNonReservedNameOrString(): ?string
     {
-        $token = $this->get(T::NAME | T::STRING, T::RESERVED | T::AT_VARIABLE);
+        $token = $this->get(T::NAMES | T::STRING, T::RESERVED | T::AT_VARIABLE);
 
         return $token !== null ? $token->value : null;
     }
@@ -1041,7 +1042,7 @@ class TokenList
      */
     public function getVariableEnumValue(...$values)
     {
-        $token = $this->get(T::NAME | T::STRING | T::INT);
+        $token = $this->get(T::NAMES | T::STRING | T::INT);
         if ($token === null) {
             return null;
         }
@@ -1079,7 +1080,7 @@ class TokenList
             $this->position--;
             $values = array_values($className::getAllowedValues());
 
-            throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
+            throw InvalidTokenException::tokens(T::NAMES, 0, $values, $this->tokens[$this->position - 1], $this);
         }
     }
 
@@ -1104,7 +1105,7 @@ class TokenList
             $this->position--;
             $values = array_values($className::getAllowedValues());
 
-            throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
+            throw InvalidTokenException::tokens(T::NAMES, 0, $values, $this->tokens[$this->position - 1], $this);
         }
     }
 
@@ -1126,7 +1127,7 @@ class TokenList
             $this->position--;
             $values = array_values($className::getAllowedValues());
 
-            throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
+            throw InvalidTokenException::tokens(T::NAMES | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
         }
     }
 
@@ -1164,7 +1165,7 @@ class TokenList
         }
         $this->position = $start;
 
-        throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position], $this);
+        throw InvalidTokenException::tokens(T::NAMES, 0, $values, $this->tokens[$this->position], $this);
     }
 
     /**
@@ -1202,7 +1203,7 @@ class TokenList
      */
     public function expectNameOrString(string $entity): string
     {
-        $token = $this->expect(T::NAME | T::STRING);
+        $token = $this->expect(T::NAMES | T::STRING);
         $this->validateName($entity, $token->value);
 
         return $token->value;
@@ -1213,7 +1214,7 @@ class TokenList
      */
     public function expectName(string $entity, int $mask = 0): string
     {
-        $token = $this->expect(T::NAME, $mask);
+        $token = $this->expect(T::NAMES, $mask);
         $this->validateName($entity, $token->value);
 
         return $token->value;
@@ -1221,7 +1222,7 @@ class TokenList
 
     public function expectAnyName(string ...$names): string
     {
-        $token = $this->expect(T::NAME);
+        $token = $this->expect(T::NAMES);
         $upper = strtoupper($token->value);
         if (!in_array($upper, $names, true)) {
             $this->missingAnyKeyword(...$names);
@@ -1236,7 +1237,7 @@ class TokenList
     public function getName(string $entity): ?string
     {
         $position = $this->position;
-        $token = $this->get(T::NAME);
+        $token = $this->get(T::NAMES);
         if ($token !== null) {
             $this->validateName($entity, $token->value);
 
@@ -1250,7 +1251,7 @@ class TokenList
     public function getAnyName(string ...$names): ?string
     {
         $position = $this->position;
-        $token = $this->get(T::NAME);
+        $token = $this->get(T::NAMES);
         if ($token === null) {
             return null;
         }
@@ -1269,7 +1270,7 @@ class TokenList
     public function hasName(string $name): bool
     {
         $position = $this->position;
-        $token = $this->get(T::NAME, 0, $name);
+        $token = $this->get(T::NAMES, 0, $name);
         if ($token !== null) {
             return true;
         }
@@ -1283,7 +1284,7 @@ class TokenList
      */
     public function getNonKeywordNameOrString(string $entity): ?string
     {
-        $token = $this->get(T::NAME | T::STRING, T::KEYWORD);
+        $token = $this->get(T::NAMES | T::STRING, T::KEYWORD);
         if ($token === null) {
             return null;
         }
@@ -1297,7 +1298,7 @@ class TokenList
      */
     public function getNonKeywordName(string $entity): ?string
     {
-        $token = $this->get(T::NAME, T::KEYWORD);
+        $token = $this->get(T::NAMES, T::KEYWORD);
         if ($token === null) {
             return null;
         }
@@ -1311,7 +1312,7 @@ class TokenList
      */
     public function expectNonReservedName(string $entity, int $mask = 0): string
     {
-        $token = $this->expect(T::NAME, T::RESERVED | $mask);
+        $token = $this->expect(T::NAMES, T::RESERVED | $mask);
         $this->validateName($entity, $token->value);
 
         return $token->value;
@@ -1322,7 +1323,7 @@ class TokenList
      */
     public function getNonReservedName(string $entity, int $mask = 0): ?string
     {
-        $token = $this->get(T::NAME, T::RESERVED | $mask);
+        $token = $this->get(T::NAMES, T::RESERVED | $mask);
         if ($token === null) {
             return null;
         }
@@ -1690,7 +1691,7 @@ class TokenList
             Keyword::RELOAD, Keyword::REPLICATION, Keyword::RESOURCE, Keyword::SUPER,
         ];
 
-        $token = $this->expect(T::NAME | T::STRING, T::RESERVED | T::AT_VARIABLE);
+        $token = $this->expect(T::NAMES | T::STRING, T::RESERVED | T::AT_VARIABLE);
         $name = $token->value;
         // characters, not bytes
         // todo: encoding
@@ -1725,7 +1726,7 @@ class TokenList
             if (!Charset::isValidValue($charset)) {
                 $values = array_values(Charset::getAllowedValues());
 
-                throw InvalidTokenException::tokens(T::STRING | T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
+                throw InvalidTokenException::tokens(T::STRING | T::NAMES, 0, $values, $this->tokens[$this->position - 1], $this);
             }
 
             return new Charset($charset);

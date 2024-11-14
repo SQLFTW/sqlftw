@@ -620,7 +620,7 @@ class TableCommandsParser
                     $tokenList->expectKeyword(Keyword::PARTITION);
                     $position = $tokenList->getPosition();
                     $oldPartitions = $newPartitions = null;
-                    if ($tokenList->has(TokenType::NAME)) {
+                    if ($tokenList->has(TokenType::QUOTED_NAME | TokenType::UNQUOTED_NAME)) {
                         $oldPartitions = $this->parsePartitionNames($tokenList->rewind($position));
                         if ($oldPartitions === null) {
                             $tokenList->missing('Expected specific partition names, found "ALL".');

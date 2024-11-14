@@ -30,6 +30,7 @@ use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SubqueryType;
+use SqlFtw\Sql\Symbol;
 
 class InsertCommandParser
 {
@@ -101,7 +102,7 @@ class InsertCommandParser
         $tokenList->expectKeyword(Keyword::INSERT);
 
         $optimizerHints = null;
-        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+        if ($tokenList->hasSymbol(Symbol::OPTIMIZER_HINT_START)) {
             $optimizerHints = $this->optimizerHintParser->parseHints($tokenList->rewind(-1));
         }
 
@@ -185,7 +186,7 @@ class InsertCommandParser
         $tokenList->expectKeyword(Keyword::REPLACE);
 
         $optimizerHints = null;
-        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+        if ($tokenList->hasSymbol(Symbol::OPTIMIZER_HINT_START)) {
             $optimizerHints = $this->optimizerHintParser->parseHints($tokenList->rewind(-1));
         }
 

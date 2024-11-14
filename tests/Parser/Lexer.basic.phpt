@@ -57,7 +57,7 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 2);
 
 // DELIMITER_DEFINITION, SEMICOLON
 $tokens = Assert::tokens("DELIMITER ;;\n;", 5);
-Assert::token($tokens[0], T::KEYWORD | T::NAME | T::UNQUOTED_NAME, Keyword::DELIMITER, 0);
+Assert::token($tokens[0], T::UNQUOTED_NAME| T::KEYWORD, Keyword::DELIMITER, 0);
 Assert::token($tokens[1], T::WHITESPACE, ' ', 9);
 Assert::token($tokens[2], T::DELIMITER_DEFINITION, ';;', 10);
 Assert::token($tokens[3], T::WHITESPACE, "\n", 12);
@@ -69,13 +69,13 @@ Assert::invalidToken($tokens[2], T::DELIMITER_DEFINITION | T::INVALID, '~^Delimi
 // NULL
 $tokens = Assert::tokens(' NULL ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::NAME | T::UNQUOTED_NAME | T::RESERVED, 'NULL', 1);
+Assert::token($tokens[1], T::UNQUOTED_NAME | T::KEYWORD | T::RESERVED, 'NULL', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 5);
 
 // uuid
 $tokens = Assert::tokens(' 3E11FA47-71CA-11E1-9E33-C80AA9429562 ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::VALUE | T::UUID, '3E11FA47-71CA-11E1-9E33-C80AA9429562', 1);
+Assert::token($tokens[1], T::UUID, '3E11FA47-71CA-11E1-9E33-C80AA9429562', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 37);
 
 // parenthesis
@@ -117,7 +117,7 @@ Assert::token($tokens[2], T::WHITESPACE, ' ', 3);
 
 $tokens = Assert::tokens(' OR ', 3);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
-Assert::token($tokens[1], T::KEYWORD | T::RESERVED | T::NAME | T::UNQUOTED_NAME | T::OPERATOR, 'OR', 1);
+Assert::token($tokens[1], T::UNQUOTED_NAME | T::KEYWORD | T::RESERVED | T::OPERATOR, 'OR', 1);
 Assert::token($tokens[2], T::WHITESPACE, ' ', 3);
 
 /*

@@ -63,7 +63,7 @@ $tokenFormatter = static function (Token $token, int $depth = 0): string {
     Dumper::$showInfo = false;
     Dumper::$escapeWhiteSpace = true;
     $value = Dumper::dumpValue($token->value, $depth + 1);
-    if (($token->type & (TokenType::COMMENT | TokenType::WHITESPACE)) !== 0) {
+    if (($token->type & (TokenType::COMMENTS | TokenType::WHITESPACE)) !== 0) {
         $value = Ansi::dgray(Ansi::removeColors($value));
     }
     Dumper::$showInfo = $oldInfo;

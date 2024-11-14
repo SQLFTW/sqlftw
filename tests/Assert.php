@@ -20,6 +20,7 @@ use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
+use Throwable;
 use function array_merge;
 use function class_exists;
 use function gettype;
@@ -214,7 +215,13 @@ class Assert extends DogmaAssert
         $actual = preg_replace('/\\s+/', ' ', $actual);
         $actual = str_replace(['( ', ' )'], ['(', ')'], $actual);
 
-        self::same($actual, $expected);
+        try {
+            self::same($actual, $expected);
+        } catch (Throwable $e) {
+            //rd($command->getTokenList());
+            rd($command);
+            throw $e;
+        }
 
         return $command;
     }

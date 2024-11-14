@@ -18,13 +18,7 @@ use function substr;
  */
 final class Token
 {
-
-    public const NORMALIZED_TYPES = TokenType::BINARY_LITERAL
-        | TokenType::HEXADECIMAL_LITERAL
-        | TokenType::SINGLE_QUOTED_STRING
-        | TokenType::DOUBLE_QUOTED_STRING
-        | TokenType::BACKTICK_QUOTED_STRING
-        | TokenType::NUMBER;
+    public const NORMALIZED_TYPES = TokenType::VALUES;
 
     // union of TokenType constants
     public int $type; // @phpstan-ignore property.uninitialized
