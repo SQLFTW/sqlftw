@@ -92,6 +92,14 @@ class Lexer
     /** @var array<string, int> */
     private static array $operatorSymbolsKey;
 
+    /** @var list<string> */
+    private static array $escapeKeys;
+
+    /** @var list<string> */
+    private static array $escapeValues;
+
+    // config ----------------------------------------------------------------------------------------------------------
+
     private ParserConfig $config;
 
     private Session $session;
@@ -102,12 +110,6 @@ class Lexer
 
     private bool $withWhitespace;
 
-    /** @var list<string> */
-    private array $escapeKeys;
-
-    /** @var list<string> */
-    private array $escapeValues;
-
     public function __construct(ParserConfig $config, Session $session)
     {
         if (self::$numbersKey === []) {
@@ -116,6 +118,8 @@ class Lexer
             self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
             self::$userVariableNameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_', '.']));
             self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
+            self::$escapeKeys = array_keys(self::MYSQL_ESCAPES);
+            self::$escapeValues = array_values(self::MYSQL_ESCAPES);
         }
 
         $this->config = $config;
@@ -123,9 +127,6 @@ class Lexer
         $this->platform = $config->getPlatform();
         $this->withComments = $config->tokenizeComments();
         $this->withWhitespace = $config->tokenizeWhitespace();
-
-        $this->escapeKeys = array_keys(self::MYSQL_ESCAPES);
-        $this->escapeValues = array_values(self::MYSQL_ESCAPES);
     }
 
     /**
@@ -1114,7 +1115,7 @@ class Lexer
         $value = str_replace($quote . $quote, $quote, $value);
         if ($backslashes) {
             // unescape backslashes only in string context
-            $value = str_replace($this->escapeKeys, $this->escapeValues, $value);
+            $value = str_replace(self::$escapeKeys, self::$escapeValues, $value);
         }
 
         $t = new Token; $t->type = $tokenType; $t->start = $startAt; $t->value = ($isAtVariable ? $prefix : '') . $value;
