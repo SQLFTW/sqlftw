@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 
-class InnerJoin extends Join
+class InnerJoin extends Join implements ConditionalJoin
 {
 
     private bool $crossJoin;
