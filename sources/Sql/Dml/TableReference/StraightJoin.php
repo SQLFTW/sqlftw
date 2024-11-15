@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 
-class StraightJoin extends Join
+class StraightJoin extends Join implements ConditionalJoin
 {
 
     private ?RootNode $condition;
