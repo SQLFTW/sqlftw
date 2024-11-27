@@ -2,6 +2,7 @@
 
 namespace SqlFtw\Tests\Mysql;
 
+use Amp\MultiReasonException;
 use Dogma\Application\Colors;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -78,7 +79,7 @@ class MysqlTest
     /**
      * @param list<string> $tests
      */
-    public function run(bool $singleThread, ?string $tag = null, array $tests = []): void
+    public function test(bool $singleThread, ?string $tag = null, array $tests = []): void
     {
         if ($tag === null) {
             $tag = self::DEFAULT_TAG;
@@ -123,6 +124,58 @@ class MysqlTest
     }
 
     /**
+     * @param list<string> $tests
+     */
+    public function benchmark(bool $singleThread, ?string $tag = null, array $tests = []): void
+    {
+        if ($tag === null) {
+            $tag = self::DEFAULT_TAG;
+        }
+        $this->initMysqlRepo();
+        $this->checkoutTag($tag);
+
+        ini_set('memory_limit', '3G');
+
+        [$paths, $fullRun] = $this->getPaths($tests, true);
+
+        $platform = Platform::fromTag(Platform::MYSQL, $tag);
+        $version = $platform->getVersion()->format();
+        $session = new Session($platform);
+        $formatter = new Formatter($platform, $session);
+        $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun, $formatter);
+
+        if ($singleThread) {
+            // renders errors immediately
+            $results = [];
+            foreach ($paths as $path) {
+                $results[] = (new MysqlParseJob())->run($path, $version, true, $fullRun, $renderer);
+            }
+        } else {
+            // collects errors and renders them at the end
+            $parallelRunner = static function (string $path) use ($version, $fullRun, $renderer): Result {
+                ini_set('memory_limit', '3G');
+                set_time_limit(25);
+
+                return (new MysqlParseJob())->run($path, $version, false, $fullRun, $renderer);
+            };
+
+            try {
+                /** @var list<Result> $results */
+                $results = wait(parallelMap($paths, $parallelRunner)); // @phpstan-ignore-line Unable to resolve the template type T in call to function Amp\Promise\wait
+            } catch (MultiReasonException $e) {
+                //var_dump($e->getReasons());
+                throw $e;
+            }
+        }
+
+        $errorPaths = $renderer->displayResults($results);
+
+        if (!$this->specificTests && $errorPaths !== []) {
+            $this->repeatPaths($errorPaths);
+        }
+    }
+
+    /**
      * @param list<string> $paths
      */
     public function repeatPaths(array $paths): void
@@ -134,7 +187,7 @@ class MysqlTest
      * @param list<string> $tests
      * @return array{list<string>, bool} ($paths, $fullRun)
      */
-    public function getPaths(array $tests): array
+    public function getPaths(array $tests, bool $ignorePrevious = false): array
     {
         if ($tests === []) {
             $tests = [''];
@@ -169,7 +222,7 @@ class MysqlTest
         }
 
         // last time failed tests
-        if (!$this->specificTests && file_exists($this->lastFailPath)) {
+        if (!$ignorePrevious && !$this->specificTests && file_exists($this->lastFailPath)) {
             $paths = file_get_contents($this->lastFailPath);
 
             if ($paths !== '' && $paths !== false) {
@@ -234,8 +287,8 @@ class MysqlTest
             echo "Running specific tests ({$count})\n";
         }
         if ($suites !== []) {
-            $all = implode(',', $suites);
-            echo "Running all tests in {$all} ({$count})\n";
+            $ignorePrevious = implode(',', $suites);
+            echo "Running all tests in {$ignorePrevious} ({$count})\n";
         }
 
         if (!$this->specificTests) {

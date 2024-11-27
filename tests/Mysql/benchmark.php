@@ -47,4 +47,4 @@ $tests = array_values(array_filter($tests, static function ($arg): bool {
 }));
 
 $test = new MysqlTest();
-$test->test($singleThread, null, $tests);
+$test->benchmark($singleThread, null, $tests);
