@@ -41,6 +41,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\MysqlVariable;
+use SqlFtw\Sql\Symbol;
 use function substr;
 
 class OptimizerHintParser
@@ -124,7 +125,7 @@ class OptimizerHintParser
      */
     public function parseHints(TokenList $tokenList): ?array
     {
-        $tokenList->expect(TokenType::OPTIMIZER_HINT_START);
+        $tokenList->expectSymbol(Symbol::OPTIMIZER_HINT_START);
 
         $hints = [];
         do {
@@ -133,7 +134,7 @@ class OptimizerHintParser
             } catch (InvalidTokenException $e) {
                 // fallback to regular comment (ignored)
                 while ($token = $tokenList->get()) {
-                    if ($token->type === TokenType::OPTIMIZER_HINT_END) {
+                    if ($token->type === TokenType::SYMBOL && $token->value === Symbol::OPTIMIZER_HINT_END) {
                         // todo: parser warning
                         return null;
                     }
@@ -270,7 +271,7 @@ class OptimizerHintParser
             if ($open) {
                 $tokenList->expectSymbol(')');
             }
-        } while (!$tokenList->has(TokenType::OPTIMIZER_HINT_END));
+        } while (!$tokenList->hasSymbol(Symbol::OPTIMIZER_HINT_END));
 
         return $hints;
     }

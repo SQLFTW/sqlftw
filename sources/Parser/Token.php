@@ -18,22 +18,16 @@ use function substr;
  */
 final class Token
 {
-
-    public const NORMALIZED_TYPES = TokenType::BINARY_LITERAL
-        | TokenType::HEXADECIMAL_LITERAL
-        | TokenType::SINGLE_QUOTED_STRING
-        | TokenType::DOUBLE_QUOTED_STRING
-        | TokenType::BACKTICK_QUOTED_STRING
-        | TokenType::NUMBER;
+    public const NORMALIZED_TYPES = TokenType::VALUE;
 
     // union of TokenType constants
     public int $type; // @phpstan-ignore property.uninitialized
 
-    // length can be calculated using position of next token
-    public int $start; // @phpstan-ignore property.uninitialized
-
     // normalized value. original value can be retrieved by position and length from parsed string
     public string $value; // @phpstan-ignore property.uninitialized
+
+    // length can be calculated using position of next token
+    public int $start; // @phpstan-ignore property.uninitialized
 
     public ?LexerException $exception = null;
 

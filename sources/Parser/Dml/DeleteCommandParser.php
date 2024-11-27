@@ -11,7 +11,6 @@ namespace SqlFtw\Parser\Dml;
 
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Dml\Delete\DeleteCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\EntityType;
@@ -20,6 +19,7 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Symbol;
 
 class DeleteCommandParser
 {
@@ -64,7 +64,7 @@ class DeleteCommandParser
         $tokenList->expectKeyword(Keyword::DELETE);
 
         $optimizerHints = null;
-        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+        if ($tokenList->hasSymbol(Symbol::OPTIMIZER_HINT_START)) {
             $optimizerHints = $this->optimizerHintParser->parseHints($tokenList->rewind(-1));
         }
 

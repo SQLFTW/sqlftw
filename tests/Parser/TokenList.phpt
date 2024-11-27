@@ -16,9 +16,9 @@ $platform = Platform::get(Platform::MYSQL, '5.7');
 $session = new Session($platform);
 
 $ws = new Token; $ws->type = TokenType::WHITESPACE; $ws->start = 0; $ws->value = 'ws';
-$comment = new Token; $comment->type = TokenType::COMMENT; $comment->start = 1; $comment->value = 'comment';
-$value = new Token; $value->type = TokenType::VALUE; $value->start = 2; $value->value = 'value';
-$name = new Token; $name->type = TokenType::NAME; $name->start = 2; $name->value = 'name';
+$comment = new Token; $comment->type = TokenType::BLOCK_COMMENT; $comment->start = 1; $comment->value = 'comment';
+$value = new Token; $value->type = TokenType::STRING; $value->start = 2; $value->value = 'value';
+$name = new Token; $name->type = TokenType::UNQUOTED_NAME; $name->start = 2; $name->value = 'name';
 
 $source = '----------------------------------------------------';
 $tokenList = new TokenList($source, [$ws, $comment, $value, $ws, $comment, $name, $ws, $comment], $platform, $session);

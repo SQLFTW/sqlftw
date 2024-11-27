@@ -85,6 +85,7 @@ use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
+use SqlFtw\Sql\Symbol;
 use function array_values;
 use function count;
 use function in_array;
@@ -646,7 +647,7 @@ class ExpressionParser
         $position = $tokenList->getPosition();
         $token = $tokenList->expect(TokenType::VALUE | TokenType::NAME);
 
-        if (($token->type & TokenType::BINARY_LITERAL) !== 0) {
+        if (($token->type & TokenType::BINARY_LITERAL) === TokenType::BINARY_LITERAL) {
             return new BinaryLiteral($token->value);
         } elseif (($token->type & TokenType::UINT) !== 0) {
             return new UintLiteral($token->value);
@@ -654,7 +655,7 @@ class ExpressionParser
             return new IntLiteral($token->value);
         } elseif (($token->type & TokenType::NUMBER) !== 0) {
             return new NumericLiteral($token->value);
-        } elseif (($token->type & TokenType::SYMBOL) !== 0 && $token->value === '\\N') {
+        } elseif (($token->type & TokenType::SYMBOL) !== 0 && $token->value === Symbol::OLD_NULL_SYMBOL) {
             return new NullLiteral();
         } elseif (($token->type & TokenType::KEYWORD) !== 0) {
             $upper = strtoupper($token->value);
@@ -942,7 +943,7 @@ class ExpressionParser
             } else {
                 $tokenList->missingAnyKeyword(Keyword::NULL, Keyword::TRUE, Keyword::FALSE, Keyword::DEFAULT, Keyword::ON, Keyword::OFF, Keyword::ALL, Keyword::NONE);
             }
-        } elseif (($token->type & TokenType::BINARY_LITERAL) !== 0) {
+        } elseif (($token->type & TokenType::BINARY_LITERAL) === TokenType::BINARY_LITERAL) {
             return new BinaryLiteral($token->value);
         } elseif (($token->type & TokenType::UINT) !== 0) {
             return new UintLiteral($token->value);
@@ -1016,13 +1017,13 @@ class ExpressionParser
             throw new ParserException("Placeholder {$token->value} is not allowed here.", $tokenList);
         }
 
-        if (($token->type & TokenType::QUESTION_MARK_PLACEHOLDER) !== 0 && (($extensions & ClientSideExtension::ALLOW_QUESTION_MARK_PLACEHOLDERS_OUTSIDE_PREPARED_STATEMENTS) !== 0 || $tokenList->inPrepared())) {
+        if (($token->type & TokenType::QUESTION_MARK_PLACEHOLDER) === TokenType::QUESTION_MARK_PLACEHOLDER && (($extensions & ClientSideExtension::ALLOW_QUESTION_MARK_PLACEHOLDERS_OUTSIDE_PREPARED_STATEMENTS) !== 0 || $tokenList->inPrepared())) {
             // param_marker
             return new QuestionMarkPlaceholder();
-        } elseif (($token->type & TokenType::NUMBERED_QUESTION_MARK_PLACEHOLDER) !== 0 && ($extensions & ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS) !== 0) {
+        } elseif (($token->type & TokenType::NUMBERED_QUESTION_MARK_PLACEHOLDER) === TokenType::NUMBERED_QUESTION_MARK_PLACEHOLDER && ($extensions & ClientSideExtension::ALLOW_NUMBERED_QUESTION_MARK_PLACEHOLDERS) !== 0) {
             // ?123
             return new NumberedQuestionMarkPlaceholder($token->value);
-        } elseif (($token->type & TokenType::DOUBLE_COLON_PLACEHOLDER) !== 0 && ($extensions & ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS) !== 0) {
+        } elseif (($token->type & TokenType::DOUBLE_COLON_PLACEHOLDER) === TokenType::DOUBLE_COLON_PLACEHOLDER && ($extensions & ClientSideExtension::ALLOW_NAMED_DOUBLE_COLON_PLACEHOLDERS) !== 0) {
             // :var
             return new DoubleColonPlaceholder($token->value);
         } else {
@@ -1082,7 +1083,7 @@ class ExpressionParser
     public function parseLimitOrOffsetValue(TokenList $tokenList)
     {
         if ($tokenList->inRoutine() !== null) {
-            $token = $tokenList->get(TokenType::NAME, TokenType::AT_VARIABLE);
+            $token = $tokenList->get(TokenType::QUOTED_NAME | TokenType::UNQUOTED_NAME);
             if ($token !== null) {
                 return new SimpleName($token->value);
             }

@@ -42,6 +42,7 @@ use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Routine\RoutineType;
 use SqlFtw\Sql\SqlEnum;
 use SqlFtw\Sql\SubqueryType;
+use SqlFtw\Sql\Symbol;
 use SqlFtw\Sql\UserName;
 use SqlFtw\Util\Str;
 use function array_merge;
@@ -287,7 +288,7 @@ class TokenList
             $token = $this->tokens[$n];
             if (($token->type & $this->autoSkip) !== 0) {
                 continue;
-            } elseif (($token->type & T::SYMBOL) !== 0 && $token->value === ';') {
+            } elseif (($token->type & T::SYMBOL) !== 0 && $token->value === Symbol::SEMICOLON) {
                 // trailing ;
                 $this->trailingDelimiter .= ';';
             } elseif (($token->type & T::DELIMITER) !== 0) {
@@ -856,15 +857,15 @@ class TokenList
 
     public function expectIntLike(): Value
     {
-        $number = $this->expect(T::INT | T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+        $number = $this->expect(T::INT | T::STRING | T::BIT_STRING);
         $value = $number->value;
         if (($number->type & T::STRING) !== 0 && preg_match('~^(?:0|-[1-9][0-9]*)$~', $value) === 0) {
             throw new InvalidValueException('integer', $this);
         }
 
-        if (($number->type & T::HEXADECIMAL_LITERAL) !== 0) {
+        if (($number->type & T::HEXADECIMAL_LITERAL) === T::HEXADECIMAL_LITERAL) {
             return new HexadecimalLiteral($value);
-        } elseif (($number->type & T::BINARY_LITERAL) !== 0) {
+        } elseif (($number->type & T::BINARY_LITERAL) === T::BINARY_LITERAL) {
             return new BinaryLiteral($value);
         } elseif (($number->type & T::UINT) !== 0) {
             return new UintLiteral($value);
@@ -943,7 +944,7 @@ class TokenList
     public function expectStringValue(): StringValue
     {
         $position = $this->position;
-        $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL | T::UNQUOTED_NAME);
+        $token = $this->expect(T::STRING | T::BIT_STRING | T::UNQUOTED_NAME);
 
         // charset introducer
         $charset = null;
@@ -951,18 +952,18 @@ class TokenList
             $charset = substr(strtolower($token->value), 1);
             if ($token->value[0] === '_' && Charset::isValidValue($charset)) {
                 $charset = new Charset($charset);
-                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                $token = $this->expect(T::STRING | T::BIT_STRING);
             } else {
                 $charset = null;
                 $this->position = $position;
 
-                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                $token = $this->expect(T::STRING | T::BIT_STRING);
             }
         }
 
-        if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
+        if (($token->type & T::HEXADECIMAL_LITERAL) === T::HEXADECIMAL_LITERAL) {
             return new HexadecimalLiteral($token->value, $charset);
-        } elseif (($token->type & T::BINARY_LITERAL) !== 0) {
+        } elseif (($token->type & T::BINARY_LITERAL) === T::BINARY_LITERAL) {
             return new BinaryLiteral($token->value, $charset);
         } else {
             /** @var non-empty-list<string> $values */
@@ -978,7 +979,7 @@ class TokenList
     public function getStringValue(): ?StringValue
     {
         $position = $this->position;
-        $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL | T::UNQUOTED_NAME);
+        $token = $this->get(T::STRING | T::BIT_STRING | T::UNQUOTED_NAME);
         if ($token === null) {
             return null;
         }
@@ -989,12 +990,12 @@ class TokenList
             $lower = strtolower($token->value);
             if ($lower === 'n') {
                 // todo: keep?
-                $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                $token = $this->get(T::STRING | T::BIT_STRING);
             } else {
                 $lower = substr($lower, 1);
                 if ($token->value[0] === '_' && Charset::isValidValue($lower)) {
                     $charset = new Charset($lower);
-                    $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+                    $token = $this->get(T::STRING | T::BIT_STRING);
                 } else {
                     $this->position = $position;
 
@@ -1008,9 +1009,9 @@ class TokenList
             return null;
         }
 
-        if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
+        if (($token->type & T::HEXADECIMAL_LITERAL) === T::HEXADECIMAL_LITERAL) {
             return new HexadecimalLiteral($token->value, $charset);
-        } elseif (($token->type & T::BINARY_LITERAL) !== 0) {
+        } elseif (($token->type & T::BINARY_LITERAL) === T::BINARY_LITERAL) {
             return new BinaryLiteral($token->value, $charset);
         } else {
             /** @var non-empty-list<string> $values */

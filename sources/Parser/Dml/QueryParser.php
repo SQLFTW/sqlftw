@@ -69,6 +69,7 @@ use SqlFtw\Sql\Expression\UserVariable;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\Order;
 use SqlFtw\Sql\SubqueryType;
+use SqlFtw\Sql\Symbol;
 use function array_pop;
 use function count;
 use function in_array;
@@ -401,7 +402,7 @@ class QueryParser
         $tokenList->expectKeyword(Keyword::SELECT);
 
         $optimizerHints = null;
-        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+        if ($tokenList->hasSymbol(Symbol::OPTIMIZER_HINT_START)) {
             $optimizerHints = $this->optimizerHintParser->parseHints($tokenList->rewind(-1));
         }
 

@@ -12,12 +12,12 @@ namespace SqlFtw\Parser\Dml;
 use Countable;
 use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\TokenList;
-use SqlFtw\Parser\TokenType;
 use SqlFtw\Sql\Assignment;
 use SqlFtw\Sql\Dml\Update\UpdateCommand;
 use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Keyword;
+use SqlFtw\Sql\Symbol;
 
 class UpdateCommandParser
 {
@@ -55,7 +55,7 @@ class UpdateCommandParser
         $tokenList->expectKeyword(Keyword::UPDATE);
 
         $optimizerHints = null;
-        if ($tokenList->has(TokenType::OPTIMIZER_HINT_START)) {
+        if ($tokenList->hasSymbol(Symbol::OPTIMIZER_HINT_START)) {
             $optimizerHints = $this->optimizerHintParser->parseHints($tokenList->rewind(-1));
         }
 
