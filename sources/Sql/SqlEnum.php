@@ -28,7 +28,7 @@ abstract class SqlEnum extends StringEnum
         if (!isset(self::$lowerValues[$class])) {
             $values = [];
             foreach (self::getAllowedValues() as $val) {
-                $values[strtolower($val)] = $val;
+                $values[strtolower((string) $val)] = $val;
             }
             self::$lowerValues[$class] = $values;
         }
@@ -36,7 +36,7 @@ abstract class SqlEnum extends StringEnum
         $lower = strtolower($value);
         $values = self::$lowerValues[$class];
         if (isset($values[$lower])) {
-            $value = $values[$lower];
+            $value = (string) $values[$lower];
         }
 
         return parent::validateValue($value);

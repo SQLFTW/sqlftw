@@ -29,7 +29,7 @@ class InvalidEnumValueException extends SqlFtwException
         $valueFormatted = ExceptionValueFormatter::format($value);
         $type = ExceptionTypeFormatter::format($type);
 
-        parent::__construct("Value $valueFormatted is not a valid value of $type.", $previous);
+        parent::__construct("Value {$valueFormatted} is not a valid value of {$type}.", $previous);
 
         $this->value = $value;
     }

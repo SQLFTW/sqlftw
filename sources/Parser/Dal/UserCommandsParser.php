@@ -68,7 +68,6 @@ use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\UserName;
-use function array_values;
 use function count;
 use function in_array;
 
@@ -759,7 +758,7 @@ class UserCommandsParser
                     } elseif ($ifExists) {
                         $type = new UnknownDynamicUserPrivilege($name);
                     } else {
-                        $tokenList->missingAnyKeyword(...array_values(StaticUserPrivilege::getAllowedValues()), ...array_values(DynamicUserPrivilege::getAllowedValues()));
+                        $tokenList->missingAnyKeyword(...StaticUserPrivilege::getAllowedValues(), ...DynamicUserPrivilege::getAllowedValues());
                     }
                 }
             }

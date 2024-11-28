@@ -12,15 +12,14 @@ namespace SqlFtw\Sql;
 use LogicException;
 use ReflectionClass;
 use SqlFtw\Formatter\Formatter;
-use function array_search;
+use function array_keys;
 use function get_class;
-use function in_array;
 use function is_string;
 
 abstract class StringEnum implements SqlSerializable
 {
 
-    /** @var array<class-string, array<string, string>> ($class => ($constName => $value)) */
+    /** @var array<class-string, array<string, string>> ($class => ($value => $constName)) */
     private static array $availableValues = [];
 
     private string $value;
@@ -46,7 +45,7 @@ abstract class StringEnum implements SqlSerializable
 
     public function getConstantName(): string
     {
-        return array_search($this->value, self::$availableValues[static::class], true); // @phpstan-ignore-line guaranteed to exist
+        return self::$availableValues[static::class][$this->value];
     }
 
     /**
@@ -101,7 +100,7 @@ abstract class StringEnum implements SqlSerializable
             if (!is_string($value)) {
                 throw new LogicException('Constants in StringEnum must be strings.');
             }
-            self::$availableValues[$class][$constant->getName()] = $value;
+            self::$availableValues[$class][$value] = $constant->getName();
         }
     }
 
@@ -115,7 +114,7 @@ abstract class StringEnum implements SqlSerializable
             self::init($class);
         }
 
-        return in_array($value, self::$availableValues[$class], true);
+        return isset(self::$availableValues[$class][$value]);
     }
 
     public static function isValidValue(string $value): bool
@@ -131,7 +130,7 @@ abstract class StringEnum implements SqlSerializable
     }
 
     /**
-     * @return array<string, string>
+     * @return list<string>
      */
     public static function getAllowedValues(): array
     {
@@ -140,7 +139,7 @@ abstract class StringEnum implements SqlSerializable
             self::init($class);
         }
 
-        return self::$availableValues[$class];
+        return array_keys(self::$availableValues[$class]);
     }
 
 }

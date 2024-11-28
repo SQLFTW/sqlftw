@@ -1078,7 +1078,7 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            $values = array_values($className::getAllowedValues());
+            $values = $className::getAllowedValues();
 
             throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
         }
@@ -1103,7 +1103,7 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            $values = array_values($className::getAllowedValues());
+            $values = $className::getAllowedValues();
 
             throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
         }
@@ -1125,7 +1125,7 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            $values = array_values($className::getAllowedValues());
+            $values = $className::getAllowedValues();
 
             throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
         }
@@ -1148,7 +1148,7 @@ class TokenList
         }
 
         $start = $this->position;
-        $values = array_values($className::getAllowedValues());
+        $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
             $keywords = explode(' ', $value);
@@ -1176,7 +1176,7 @@ class TokenList
     public function getMultiNameEnum(string $className): ?SqlEnum
     {
         $start = $this->position;
-        /** @var array<string, string> $values */
+        /** @var list<string> $values */
         $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
@@ -1724,7 +1724,7 @@ class TokenList
                 $charset = $this->expectName(EntityType::CHARACTER_SET);
             }
             if (!Charset::isValidValue($charset)) {
-                $values = array_values(Charset::getAllowedValues());
+                $values = Charset::getAllowedValues();
 
                 throw InvalidTokenException::tokens(T::STRING | T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
             }

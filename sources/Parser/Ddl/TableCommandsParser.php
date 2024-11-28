@@ -119,6 +119,7 @@ use SqlFtw\Sql\InvalidEnumValueException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SubqueryType;
+use function array_merge;
 use function array_values;
 use function count;
 use function strcasecmp;
@@ -670,8 +671,11 @@ class TableCommandsParser
                 default:
                     [$option, $value] = $this->parseTableOption($tokenList->rewind($position), $tableOptions);
                     if ($option === null) {
-                        $keywords = AlterTableActionType::getAllowedValues() + AlterTableOption::getAllowedValues()
-                            + [Keyword::ALGORITHM, Keyword::LOCK, Keyword::WITH, Keyword::WITHOUT];
+                        $keywords = array_merge(
+                            AlterTableActionType::getAllowedValues(),
+                            AlterTableOption::getAllowedValues(),
+                            [Keyword::ALGORITHM, Keyword::LOCK, Keyword::WITH, Keyword::WITHOUT]
+                        );
                         $tokenList->missingAnyKeyword(...array_values($keywords));
                     }
                     $tableOptions[$option] = $value;
