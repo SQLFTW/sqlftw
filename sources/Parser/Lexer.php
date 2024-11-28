@@ -35,7 +35,6 @@ use function end;
 use function implode;
 use function in_array;
 use function ltrim;
-use function ord;
 use function preg_match;
 use function str_replace;
 use function strcasecmp;
@@ -117,8 +116,8 @@ class Lexer
         if (self::$numbersKey === []) {
             self::$numbersKey = array_flip(self::NUMBERS); // @phpstan-ignore-line
             self::$hexadecKey = array_flip(array_merge(self::NUMBERS, ['A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f']));
-            self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']));
-            self::$userVariableNameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_', '.']));
+            self::$nameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_']/*, self::NON_ASCII_CHARS*/));
+            self::$userVariableNameCharsKey = array_flip(array_merge(self::LETTERS, self::NUMBERS, ['$', '_', '.']/*, self::NON_ASCII_CHARS*/));
             self::$operatorSymbolsKey = array_flip(self::OPERATOR_SYMBOLS);
             self::$escapeKeys = array_keys(self::MYSQL_ESCAPES);
             self::$escapeValues = array_values(self::MYSQL_ESCAPES);
@@ -173,10 +172,47 @@ class Lexer
             }
 
             switch ($char) {
-                case ' ':
+                case "\x00":
+                case "\x01":
+                case "\x02":
+                case "\x03":
+                case "\x04":
+                case "\x05":
+                case "\x06":
+                case "\x07":
+                case "\x08":
+                //case "\x09": TAB
+                //case "\x0A": LF
+                case "\x0B":
+                case "\x0C":
+                //case "\x0D": CR
+                case "\x0E":
+                case "\x0F":
+                case "\x10":
+                case "\x11":
+                case "\x12":
+                case "\x13":
+                case "\x14":
+                case "\x15":
+                case "\x16":
+                case "\x17":
+                case "\x18":
+                case "\x19":
+                case "\x1A":
+                case "\x1B":
+                case "\x1C":
+                case "\x1E":
+                case "\x1F":
+                case "\x7F":
+                    $exception = new LexerException('Invalid ASCII control character', $position, $source);
+
+                    $tokens[] = $previous = $t = new Token; $t->type = T::INVALID; $t->start = $start; $t->value = $char; $t->exception = $exception;
+                    $invalid = true;
+                    break;
                 case "\t":
                 case "\r":
                 case "\n":
+                case ' ':
                     $ws = $char;
                     while ($position < $length) {
                         $next = $source[$position];
@@ -350,7 +386,7 @@ class Lexer
                         }
                         while ($position < $length) {
                             $next4 = $source[$position];
-                            if ($next4 === '@' || isset(self::$nameCharsKey[$next4]) || ord($next4) > 127) {
+                            if ($next4 === '@' || isset(self::$nameCharsKey[$next4]) || $next4 > "\x7F") {
                                 $var .= $next4;
                                 $position++;
                             } else {
@@ -388,13 +424,13 @@ class Lexer
                     } elseif ($second === '"') {
                         $position++;
                         $tokens[] = $previous = $this->parseString(T::AT_VARIABLE | T::DOUBLE_QUOTED, $source, $position, $second, '@');
-                    } elseif (isset(self::$userVariableNameCharsKey[$second]) || ord($second) > 127) {
+                    } elseif (isset(self::$userVariableNameCharsKey[$second]) || $second > "\x7F") {
                         // @variable
                         $var .= $second;
                         $position++;
                         while ($position < $length) {
                             $next5 = $source[$position];
-                            if (isset(self::$userVariableNameCharsKey[$next5]) || ord($next5) > 127) {
+                            if (isset(self::$userVariableNameCharsKey[$next5]) || $next5 > "\x7F") {
                                 $var .= $next5;
                                 $position++;
                             } else {
@@ -705,7 +741,7 @@ class Lexer
                             if ($next13 === '0' || $next13 === '1') {
                                 $bits .= $next13;
                                 $position++;
-                            } elseif (isset(self::$nameCharsKey[$next13])) {
+                            } elseif (isset(self::$nameCharsKey[$next13]) || $next13 > "\x7F") {
                                 // name pretending to be a binary literal :E
                                 $position -= strlen($bits) + 1;
                                 break;
@@ -723,7 +759,7 @@ class Lexer
                             if (isset(self::$hexadecKey[$next13])) {
                                 $bits .= $next13;
                                 $position++;
-                            } elseif (isset(self::$nameCharsKey[$next13])) {
+                            } elseif (isset(self::$nameCharsKey[$next13]) || $next13 > "\x7F") {
                                 // name pretending to be a hexadecimal literal :E
                                 $position -= strlen($bits) + 1;
                                 break;
@@ -904,7 +940,7 @@ class Lexer
                     $name = $char;
                     while ($position < $length) {
                         $next17 = $source[$position];
-                        if (isset(self::$nameCharsKey[$next17]) || ord($next17) > 127) {
+                        if (isset(self::$nameCharsKey[$next17]) || $next17 > "\x7F") {
                             $name .= $next17;
                             $position++;
                         } else {
@@ -982,17 +1018,10 @@ class Lexer
                     }
                     break;
                 default:
-                    if (ord($char) < 32) {
-                        $exception = new LexerException('Invalid ASCII control character', $position, $source);
-
-                        $tokens[] = $previous = $t = new Token; $t->type = T::INVALID; $t->start = $start; $t->value = $char; $t->exception = $exception;
-                        $invalid = true;
-                        break;
-                    }
                     $name2 = $char;
                     while ($position < $length) {
                         $next19 = $source[$position];
-                        if (isset(self::$nameCharsKey[$next19]) || ord($next19) > 127) {
+                        if (isset(self::$nameCharsKey[$next19]) || $next19 > "\x7F") {
                             $name2 .= $next19;
                             $position++;
                         } else {
@@ -1129,7 +1158,7 @@ class Lexer
 
         $intBase = ctype_digit($base);
         $nextChar = $source[$position + $len] ?? '';
-        if ($e === null && $intBase && isset(self::$nameCharsKey[$nextChar])) {
+        if ($e === null && $intBase && (isset(self::$nameCharsKey[$nextChar]) || $nextChar > "\x7F")) {
             // followed by a name character while not having '.' or exponent - this is a prefix of a name, not a number
             return null;
         }
