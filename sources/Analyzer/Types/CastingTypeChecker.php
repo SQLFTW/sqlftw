@@ -10,6 +10,7 @@
 namespace SqlFtw\Analyzer\Types;
 
 use LogicException;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Resolver\Cast;
 use SqlFtw\Resolver\UncastableTypeException;
 use SqlFtw\Sql\Charset;
@@ -35,6 +36,13 @@ use function strtoupper;
 
 class CastingTypeChecker
 {
+
+    private Platform $platform;
+
+    public function __construct(Platform $platform)
+    {
+        $this->platform = $platform;
+    }
 
     /**
      * @param scalar|Value|list<scalar>|null $value
@@ -108,7 +116,7 @@ class CastingTypeChecker
                         return true;
                     } elseif (is_string($value)) {
                         try {
-                            SqlMode::getFromString($value);
+                            SqlMode::fromString($value, $this->platform);
 
                             return true;
                         } catch (InvalidDefinitionException $e) {
@@ -116,7 +124,7 @@ class CastingTypeChecker
                         }
                     } elseif (is_int($value)) {
                         try {
-                            SqlMode::getFromInt($value);
+                            SqlMode::fromInt($value);
 
                             return true;
                         } catch (InvalidDefinitionException $e) {

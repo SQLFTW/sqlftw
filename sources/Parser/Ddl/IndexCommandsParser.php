@@ -172,7 +172,7 @@ class IndexCommandsParser
             } elseif ($keyword === Keyword::COMMENT) {
                 $commentString = $tokenList->expectString();
                 $limit = $this->platform->maxLengths[EntityType::INDEX_COMMENT];
-                if (strlen($commentString) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
+                if (strlen($commentString) > $limit && ($tokenList->getSession()->getMode()->fullValue & SqlMode::STRICT_ALL_TABLES) !== 0) {
                     throw new ParserException("Index comment length exceeds limit of {$limit} bytes.", $tokenList);
                 }
                 // parse "COMMENT 'MERGE_THRESHOLD=40';"

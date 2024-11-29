@@ -134,7 +134,7 @@ class ResultRenderer
     public function renderFalseNegative(Command $command, SqlMode $mode): void
     {
         rl('False negative (should not fail):', null, 'r');
-        rl("'{$mode->getValue()}'", 'sql_mode', 'C');
+        rl("'{$mode->asString()}'", 'sql_mode', 'C');
 
         $tokenList = $command->getTokenList();
         $tokensSerialized = trim($tokenList->serialize());
@@ -174,7 +174,7 @@ class ResultRenderer
     public function renderFalsePositive(Command $command, SqlMode $mode): void
     {
         rl('False positive (should fail):', null, 'r');
-        rl($mode->getValue(), 'mode', 'C');
+        rl($mode->asString(), 'mode', 'C');
 
         $tokenList = $command->getTokenList();
         $tokensSerialized = trim($tokenList->serialize());

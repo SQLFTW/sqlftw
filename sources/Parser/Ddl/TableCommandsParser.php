@@ -993,7 +993,7 @@ class TableCommandsParser
                     // [COMMENT 'string']
                     $comment = $tokenList->expectString();
                     $limit = $this->platform->maxLengths[EntityType::FIELD_COMMENT];
-                    if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
+                    if (strlen($comment) > $limit && ($tokenList->getSession()->getMode()->fullValue & SqlMode::STRICT_ALL_TABLES) !== 0) {
                         throw new ParserException("Column comment length exceeds limit of {$limit} bytes.", $tokenList);
                     }
                     break;
@@ -1052,7 +1052,7 @@ class TableCommandsParser
 
         // default '' is allowed in non-strict mode
         $isEmptyStringAndNonStrict = $default instanceof StringLiteral && $default->getValue() === ''
-            && !$tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_TRANS_TABLES);
+            && ($tokenList->getSession()->getMode()->fullValue & SqlMode::STRICT_TRANS_TABLES) === 0;
         if ($hasDefaultValue && $type->getBaseType()->isBlob() && !$isEmptyStringAndNonStrict) {
             throw new ParserException('BLOB columns cannot have a default value.', $tokenList);
         }
@@ -1137,7 +1137,7 @@ class TableCommandsParser
                     // [COMMENT 'string']
                     $comment = $tokenList->expectString();
                     $limit = $this->platform->maxLengths[EntityType::FIELD_COMMENT];
-                    if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
+                    if (strlen($comment) > $limit && ($tokenList->getSession()->getMode()->fullValue & SqlMode::STRICT_ALL_TABLES) !== 0) {
                         throw new ParserException("Column comment length exceeds limit of {$limit} bytes.", $tokenList);
                     }
                     break;
@@ -1395,7 +1395,7 @@ class TableCommandsParser
                 $tokenList->passSymbol('=');
                 $comment = $tokenList->expectString();
                 $limit = $this->platform->maxLengths[EntityType::TABLE_COMMENT];
-                if (strlen($comment) > $limit && $tokenList->getSession()->getMode()->containsAny(SqlMode::STRICT_ALL_TABLES)) {
+                if (strlen($comment) > $limit && ($tokenList->getSession()->getMode()->fullValue & SqlMode::STRICT_ALL_TABLES) !== 0) {
                     throw new ParserException("Table comment length exceeds limit of {$limit} bytes.", $tokenList);
                 }
 

@@ -58,7 +58,7 @@ class SystemVariablesTypeRule implements SimpleRule
     private function processSet(SetVariablesCommand $command, SimpleContext $context): array
     {
         $mode = $context->getSession()->getMode();
-        $strict = $mode->containsAny(SqlMode::STRICT_ALL_TABLES);
+        $strict = ($mode->fullValue & SqlMode::STRICT_ALL_TABLES) !== 0;
 
         $results = [];
         foreach ($command->getAssignments() as $assignment) {

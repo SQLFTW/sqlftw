@@ -62,15 +62,16 @@ class Parser
 
     public function __construct(ParserConfig $config, Session $session)
     {
-        $resolver = new ExpressionResolver($config->getPlatform(), $session);
+        $platform = $config->getPlatform();
+        $resolver = new ExpressionResolver($platform, $session);
 
         $this->config = $config;
         $this->session = $session;
-        $this->sessionUpdater = new SessionUpdater($session, $resolver);
+        $this->sessionUpdater = new SessionUpdater($platform, $session, $resolver);
         $this->lexer = new Lexer($config, $session);
         $this->factory = new ParserFactory($this, $config, $session, $this->sessionUpdater);
 
-        $context = new SimpleContext($config->getPlatform(), $session, $resolver);
+        $context = new SimpleContext($platform, $session, $resolver);
         // always executed rules (errors not as obvious as syntax error, but preventing command execution anyway)
         $this->analyzer = new SimpleAnalyzer($context, [
             new SystemVariablesTypeRule(),

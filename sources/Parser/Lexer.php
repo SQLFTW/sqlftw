@@ -99,6 +99,10 @@ class Lexer
     /** @var list<string> */
     private static array $escapeValues;
 
+    private string $delimiter;
+
+    private SqlMode $sqlMode;
+
     // config ----------------------------------------------------------------------------------------------------------
 
     private ParserConfig $config;
@@ -122,6 +126,15 @@ class Lexer
             self::$escapeKeys = array_keys(self::MYSQL_ESCAPES);
             self::$escapeValues = array_values(self::MYSQL_ESCAPES);
         }
+
+        $this->delimiter = $session->getDelimiter();
+        $session->onDelimiterChange(function (string $delimiter): void {
+            $this->delimiter = $delimiter;
+        });
+        $this->sqlMode = $session->getMode();
+        $session->onSqlModeChange(function (SqlMode $sqlMode): void {
+            $this->sqlMode = $sqlMode;
+        });
 
         $this->config = $config;
         $this->session = $session;
@@ -152,7 +165,6 @@ class Lexer
         $invalid = false;
         $condition = null;
         $hint = false;
-        $delimiter = $this->session->getDelimiter();
         $commentDepth = 0;
         $position = 0;
 
@@ -163,10 +175,10 @@ class Lexer
             $start = $position;
             $position++;
 
-            if ($char === $delimiter[0]) {
-                if (substr($source, $position - 1, strlen($delimiter)) === $delimiter) {
-                    $position += strlen($delimiter) - 1;
-                    $tokens[] = $t = new Token; $t->type = T::DELIMITER; $t->start = $start; $t->value = $delimiter;
+            if ($char === $this->delimiter[0]) {
+                if (substr($source, $position - 1, strlen($this->delimiter)) === $this->delimiter) {
+                    $position += strlen($this->delimiter) - 1;
+                    $tokens[] = $t = new Token; $t->type = T::DELIMITER; $t->start = $start; $t->value = $this->delimiter;
                     goto yield_token_list;
                 }
             }
@@ -395,9 +407,9 @@ class Lexer
                         }
 
                         $yieldDelimiter = false;
-                        if (substr($var, -strlen($delimiter)) === $delimiter) { // str_ends_with()
+                        if (substr($var, -strlen($this->delimiter)) === $this->delimiter) { // str_ends_with()
                             // fucking name-like delimiter after name without whitespace
-                            $var = substr($var, 0, -strlen($delimiter));
+                            $var = substr($var, 0, -strlen($this->delimiter));
                             $yieldDelimiter = true;
                         }
                         if (strcasecmp(substr($var, 2), 'DEFAULT') === 0) {
@@ -412,7 +424,7 @@ class Lexer
                         $tokens[] = $previous = $t = new Token; $t->type = T::AT_VARIABLE; $t->start = $start; $t->value = $var;
 
                         if ($yieldDelimiter) {
-                            $tokens[] = $t = new Token; $t->type = T::DELIMITER; $t->start = $start; $t->value = $delimiter;
+                            $tokens[] = $t = new Token; $t->type = T::DELIMITER; $t->start = $start; $t->value = $this->delimiter;
                             goto yield_token_list;
                         }
                     } elseif ($second === '`') {
@@ -439,9 +451,9 @@ class Lexer
                         }
 
                         $yieldDelimiter = false;
-                        if (substr($var, -strlen($delimiter)) === $delimiter) { // str_ends_with()
+                        if (substr($var, -strlen($this->delimiter)) === $this->delimiter) { // str_ends_with()
                             // fucking name-like delimiter after name without whitespace
-                            $var = substr($var, 0, -strlen($delimiter));
+                            $var = substr($var, 0, -strlen($this->delimiter));
                             $yieldDelimiter = true;
                         }
                         if (strcasecmp(substr($var, 1), 'DEFAULT') === 0) {
@@ -456,7 +468,7 @@ class Lexer
                         $tokens[] = $previous = $t = new Token; $t->type = T::AT_VARIABLE; $t->start = $start; $t->value = $var;
 
                         if ($yieldDelimiter) {
-                            $tokens[] = $t = new Token; $t->type = T::DELIMITER; $t->start = $start; $t->value = $delimiter;
+                            $tokens[] = $t = new Token; $t->type = T::DELIMITER; $t->start = $start; $t->value = $this->delimiter;
                             goto yield_token_list;
                         }
                     } else {
@@ -599,7 +611,7 @@ class Lexer
                     }
                     break;
                 case '"':
-                    $type = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES)
+                    $type = ($this->sqlMode->fullValue & SqlMode::ANSI_QUOTES) !== 0
                         ? T::QUOTED_NAME | T::DOUBLE_QUOTED
                         : T::STRING | T::DOUBLE_QUOTED;
 
@@ -883,7 +895,7 @@ class Lexer
                     $afterN = $position < $length ? $source[$position] : null;
                     if ($char === 'N' && $afterN === '"') {
                         $position++;
-                        $type = $this->session->getMode()->containsAny(SqlMode::ANSI_QUOTES)
+                        $type = ($this->sqlMode->fullValue & SqlMode::ANSI_QUOTES) !== 0
                             ? T::QUOTED_NAME | T::DOUBLE_QUOTED
                             : T::STRING | T::DOUBLE_QUOTED;
 
@@ -948,9 +960,9 @@ class Lexer
                         }
                     }
                     $yieldDelimiter = false;
-                    if (substr($name, -strlen($delimiter)) === $delimiter) { // str_ends_with()
+                    if (substr($name, -strlen($this->delimiter)) === $this->delimiter) { // str_ends_with()
                         // fucking name-like delimiter after name without whitespace
-                        $name = substr($name, 0, -strlen($delimiter));
+                        $name = substr($name, 0, -strlen($this->delimiter));
                         $yieldDelimiter = true;
                     }
 
@@ -1004,14 +1016,13 @@ class Lexer
                          * strings because it is the escape character for MySQL. For an unquoted argument, the delimiter is read
                          * up to the first space or end of line. For a quoted argument, the delimiter is read up to the matching quote on the line.
                          */
-                        $delimiter = $del;
-                        $this->session->setDelimiter($delimiter);
-                        $tokens[] = $previous = $t = new Token; $t->type = T::DELIMITER_DEFINITION; $t->start = $start; $t->value = $delimiter;
+                        $this->session->setDelimiter($del);
+                        $tokens[] = $previous = $t = new Token; $t->type = T::DELIMITER_DEFINITION; $t->start = $start; $t->value = $this->delimiter;
                     } else {
                         $tokens[] = $previous = $t = new Token; $t->type = T::UNQUOTED_NAME; $t->start = $start; $t->value = $name;
                     }
                     if ($yieldDelimiter) {
-                        $tokens[] = $t = new Token; $t->type = T::DELIMITER; $t->start = $start; $t->value = $delimiter;
+                        $tokens[] = $t = new Token; $t->type = T::DELIMITER; $t->start = $start; $t->value = $this->delimiter;
                         goto yield_token_list;
                     } elseif (($previous->type & T::DELIMITER_DEFINITION) !== 0) {
                         goto yield_token_list;
@@ -1082,11 +1093,10 @@ class Lexer
         $startAt = $position - 1 - strlen($prefix);
         $length = strlen($source);
 
-        $mode = $this->session->getMode();
-        $ansi = $mode->containsAny(SqlMode::ANSI_QUOTES);
+        $ansi = ($this->sqlMode->fullValue & SqlMode::ANSI_QUOTES) !== 0;
         $isAtVariable = ($tokenType & T::AT_VARIABLE) !== 0;
         $mayHaveBackslashes = ($tokenType & (T::STRING | T::SINGLE_QUOTED)) !== 0 || (!$ansi && ($tokenType & T::DOUBLE_QUOTED) !== 0);
-        $backslashes = $mayHaveBackslashes && !$mode->containsAny(SqlMode::NO_BACKSLASH_ESCAPES);
+        $backslashes = $mayHaveBackslashes && ($this->sqlMode->fullValue & SqlMode::NO_BACKSLASH_ESCAPES) === 0;
 
         $orig = [$quote];
         $escaped = false;

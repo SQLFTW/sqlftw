@@ -168,7 +168,7 @@ class ExpressionParser
         $left = $this->parseBooleanPrimary($tokenList);
 
         $operators = [Operator::OR, Operator::XOR, Operator::AND, Operator::AMPERSANDS];
-        if (!$tokenList->getSession()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT)) {
+        if (($tokenList->getSession()->getMode()->fullValue & SqlMode::PIPES_AS_CONCAT) === 0) {
             $operators[] = Operator::PIPES;
         }
         $operator = $tokenList->getAnyOperator(...$operators);
@@ -507,7 +507,7 @@ class ExpressionParser
             return new CollateExpression($left, $collation);
         }
 
-        if ($tokenList->getSession()->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT) && $tokenList->hasOperator(Operator::PIPES)) {
+        if (($tokenList->getSession()->getMode()->fullValue & SqlMode::PIPES_AS_CONCAT) !== 0 && $tokenList->hasOperator(Operator::PIPES)) {
             // simple_expr || simple_expr
             $right = $this->parseSimpleExpression($tokenList);
 
@@ -967,11 +967,12 @@ class ExpressionParser
         if ($keyword !== null) {
             $string = $tokenList->getString();
             if ($string !== null) {
+                $mode = $tokenList->getSession()->getMode();
                 if ($keyword === Keyword::DATE) {
                     $date = new DateLiteral($string);
-                    if ($date->hasZeroDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_DATE)) {
+                    if ($date->hasZeroDate() && ($mode->fullValue & SqlMode::NO_ZERO_DATE) !== 0) {
                         throw new ParserException('Invalid date literal value.', $tokenList);
-                    } elseif ($date->hasZeroInDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_IN_DATE)) {
+                    } elseif ($date->hasZeroInDate() && ($mode->fullValue & SqlMode::NO_ZERO_IN_DATE) !== 0) {
                         throw new ParserException('Invalid date literal value.', $tokenList);
                     }
 
@@ -980,18 +981,18 @@ class ExpressionParser
                     return new TimeLiteral($string);
                 } elseif ($keyword === Keyword::TIMESTAMP) {
                     $timestamp = new TimestampLiteral($string);
-                    if ($timestamp->hasZeroDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_DATE)) {
+                    if ($timestamp->hasZeroDate() && ($mode->fullValue & SqlMode::NO_ZERO_DATE) !== 0) {
                         throw new ParserException('Invalid date literal value.', $tokenList);
-                    } elseif ($timestamp->hasZeroInDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_IN_DATE)) {
+                    } elseif ($timestamp->hasZeroInDate() && ($mode->fullValue & SqlMode::NO_ZERO_IN_DATE) !== 0) {
                         throw new ParserException('Invalid date literal value.', $tokenList);
                     }
 
                     return $timestamp;
                 } else {
                     $datetime = new DatetimeLiteral($string);
-                    if ($datetime->hasZeroDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_DATE)) {
+                    if ($datetime->hasZeroDate() && ($mode->fullValue & SqlMode::NO_ZERO_DATE) !== 0) {
                         throw new ParserException('Invalid date literal value.', $tokenList);
-                    } elseif ($datetime->hasZeroInDate() && $tokenList->getSession()->getMode()->containsAny(SqlMode::NO_ZERO_IN_DATE)) {
+                    } elseif ($datetime->hasZeroInDate() && ($mode->fullValue & SqlMode::NO_ZERO_IN_DATE) !== 0) {
                         throw new ParserException('Invalid date literal value.', $tokenList);
                     }
 

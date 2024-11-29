@@ -305,7 +305,7 @@ class ExpressionResolver
                 case Operator::AND:
                     return $this->functions->_and($left, $right);
                 case Operator::PIPES:
-                    if ($this->session->getMode()->containsAny(SqlMode::PIPES_AS_CONCAT)) {
+                    if (($this->session->getMode()->fullValue & SqlMode::PIPES_AS_CONCAT) !== 0) {
                         return $this->functions->concat($left, $right);
                     }
                 case Operator::OR:

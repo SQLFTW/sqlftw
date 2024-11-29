@@ -20,6 +20,7 @@ use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
+use SqlFtw\Sql\SqlMode;
 use function array_merge;
 use function class_exists;
 use function gettype;
@@ -38,7 +39,7 @@ class Assert extends DogmaAssert
     /**
      * @return array<Token>
      */
-    public static function tokens(string $sql, int $count, ?string $mode = null, ?int $extensions = null): array
+    public static function tokens(string $sql, int $count, ?int $mode = null, ?int $extensions = null): array
     {
         $platform = Platform::get(Platform::MYSQL, '5.7');
         if ($extensions === null) {
@@ -49,7 +50,7 @@ class Assert extends DogmaAssert
         $config = new ParserConfig($platform, $extensions, true, true);
         $session = new Session($platform);
         if ($mode !== null) {
-            $session->setMode($session->getMode()->add($mode));
+            $session->setMode(SqlMode::fromInt($mode));
         }
         $lexer = new Lexer($config, $session);
 
@@ -234,6 +235,28 @@ class Assert extends DogmaAssert
                 Debugger::dump($command->getTokenList());
             }
             throw $command->getException();
+        }
+
+        self::true(true);
+
+        return $command;
+    }
+
+    public static function invalidCommand(string $query, ?Parser $parser = null): Command
+    {
+        $parser = $parser ?? ParserHelper::createParser();
+
+        $results = iterator_to_array($parser->parse($query));
+        if (count($results) > 1) {
+            self::fail('More than one command found in given SQL code.');
+        }
+        $command = $results[0];
+
+        if (!$command instanceof InvalidCommand) {
+            if (class_exists(Debugger::class)) {
+                Debugger::dump($command->getTokenList());
+            }
+            self::fail("Command should have failed to parse.");
         }
 
         self::true(true);

@@ -33,7 +33,7 @@ class SimpleContext
         $this->platform = $platform;
         $this->session = $session;
         $this->resolver = $resolver;
-        $this->typeChecker = new CastingTypeChecker();
+        $this->typeChecker = new CastingTypeChecker($platform);
     }
 
     public function getPlatform(): Platform

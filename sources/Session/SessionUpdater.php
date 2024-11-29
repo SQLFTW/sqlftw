@@ -12,6 +12,7 @@ namespace SqlFtw\Session;
 use LogicException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Resolver\ExpressionHelper;
 use SqlFtw\Resolver\ExpressionResolver;
 use SqlFtw\Sql\Charset;
@@ -57,12 +58,15 @@ use function trim;
 class SessionUpdater
 {
 
+    private Platform $platform;
+
     private Session $session;
 
     private ExpressionResolver $resolver;
 
-    public function __construct(Session $session, ExpressionResolver $resolver)
+    public function __construct(Platform $platform, Session $session, ExpressionResolver $resolver)
     {
+        $this->platform = $platform;
         $this->session = $session;
         $this->resolver = $resolver;
     }
@@ -121,6 +125,8 @@ class SessionUpdater
                 $value = new UnresolvedExpression($value);
             } elseif ($value instanceof BoolValue) {
                 $value = $value->asBool();
+            } elseif ($value instanceof SqlMode) {
+                $value = $value->asString();
             } elseif ($value !== null && !is_scalar($value)) {
                 throw new LogicException('Should be scalar at this point: ' . (is_object($value) ? get_class($value) : gettype($value)));
             }
@@ -207,7 +213,7 @@ class SessionUpdater
     /**
      * @param UnresolvedExpression|Value|scalar|null $value
      */
-    private function processSqlMode($value, TokenList $tokenList): string
+    private function processSqlMode($value, TokenList $tokenList): SqlMode
     {
         if ($value instanceof Value) {
             $value = $this->resolver->cast()->toIntOrString($value);
@@ -218,9 +224,9 @@ class SessionUpdater
 
         try {
             if (is_int($value) || (is_string($value) && $value === (string) (int) $value)) {
-                $mode = SqlMode::getFromInt((int) $value);
+                $mode = SqlMode::fromInt((int) $value);
             } elseif (is_string($value)) {
-                $mode = SqlMode::getFromString(trim($value));
+                $mode = SqlMode::fromString(trim($value), $this->platform);
             } else {
                 throw new ParserException('Cannot detect SQL_MODE change. Cannot continue parsing, as the syntax may have been changed.', $tokenList);
             }
@@ -232,7 +238,7 @@ class SessionUpdater
             $this->session->setMode($mode);
         }
 
-        return $mode->getValue();
+        return $mode;
     }
 
     /**

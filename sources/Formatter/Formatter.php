@@ -123,7 +123,7 @@ class Formatter
             return '*';
         }
         $sqlMode = $this->session->getMode();
-        $quote = $sqlMode->containsAny(SqlMode::ANSI_QUOTES) ? '"' : '`';
+        $quote = ($sqlMode->fullValue & SqlMode::ANSI_QUOTES) !== 0 ? '"' : '`';
         $name = str_replace($quote, $quote . $quote, $name);
         $upper = strtoupper($name);
 
@@ -133,7 +133,7 @@ class Formatter
             || preg_match('~[\pL_]~u', $name) === 0 // does not contain letters
             || preg_match('~[\pC\pM\pS\pZ\p{Pd}\p{Pe}\p{Pf}\p{Pi}\p{Po}\p{Ps}]~u', ltrim($name, '@')) !== 0; // contains control, mark, symbols, whitespace, punctuation except _
 
-        if ($needsQuoting && !$sqlMode->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
+        if ($needsQuoting && ($sqlMode->fullValue & SqlMode::NO_BACKSLASH_ESCAPES) === 0) {
             $name = str_replace($this->escapeKeys, $this->escapeValues, $name);
         }
 
@@ -190,7 +190,7 @@ class Formatter
 
     public function formatString(string $string): string
     {
-        if (!$this->session->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
+        if (($this->session->getMode()->fullValue & SqlMode::NO_BACKSLASH_ESCAPES) === 0) {
             $string = str_replace($this->escapeKeys, $this->escapeValues, $string);
         }
 
@@ -199,7 +199,7 @@ class Formatter
 
     public function formatStringForceEscapeWhitespace(string $string): string
     {
-        if (!$this->session->getMode()->containsAny(SqlMode::NO_BACKSLASH_ESCAPES)) {
+        if (($this->session->getMode()->fullValue & SqlMode::NO_BACKSLASH_ESCAPES) === 0) {
             $string = str_replace($this->escapeWsKeys, $this->escapeWsValues, $string);
         }
 

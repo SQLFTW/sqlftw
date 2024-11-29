@@ -13,6 +13,7 @@ use LogicException;
 use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Features\MysqlFeatures;
 use SqlFtw\Platform\Naming\NamingStrategy;
+use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BaseType;
@@ -22,11 +23,9 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
 use function array_combine;
-use function assert;
 use function end;
 use function explode;
 use function in_array;
-use function is_string;
 use function ltrim;
 use function ucfirst;
 
@@ -39,9 +38,18 @@ class Platform
 
     /** @var array<string, non-empty-list<string>> ($platform => $versions) */
     private static array $versions = [
-        self::SQL => ['92', '99', '2003', '2008', '2011', '2016', '2019'],
-        self::MYSQL => ['5.1', '5.5', '5.6', '5.7', '8.0'],
-        self::MARIA => ['5.1', '5.2', '5.3', '5.5', '10.0', '10.1', '10.2', '10.3', '10.4', '10.5', '10.6', '10.7', '10.8'],
+        self::SQL => [
+            '92', '99', '2003', '2008', '2011', '2016', '2019'
+        ],
+        self::MYSQL => [
+            '5.1', '5.5', '5.6', '5.7',
+            '8.0', '8.4',
+        ],
+        self::MARIA => [
+            '5.1', '5.2', '5.3', '5.5',
+            '10.0', '10.1', '10.2', '10.3', '10.4', '10.5', '10.6', '10.7', '10.8', '10.9', '10.10', '10.11',
+            '11.0', '11.1', '11.2', '11.3', '11.4', '11.5'
+        ],
     ];
 
     /** @var array<string, string> ($platform => $version) */
@@ -51,38 +59,49 @@ class Platform
         self::MARIA => '10.8',
     ];
 
-    /** @var array<string, list<string>> ($version => $modes) */
-    public static array $defaultSqlModes = [
-        'mysql-5.6' => [
-            SqlMode::NO_ENGINE_SUBSTITUTION,
-        ],
-        'mysql-5.7' => [
-            SqlMode::NO_ENGINE_SUBSTITUTION,
-            SqlMode::ERROR_FOR_DIVISION_BY_ZERO,
-            SqlMode::STRICT_TRANS_TABLES,
-            SqlMode::ONLY_FULL_GROUP_BY,
-            SqlMode::NO_ZERO_IN_DATE,
-            SqlMode::NO_ZERO_DATE,
-            SqlMode::NO_AUTO_CREATE_USER,
-        ],
-        'mysql-8.0' => [
-            SqlMode::NO_ENGINE_SUBSTITUTION,
-            SqlMode::ERROR_FOR_DIVISION_BY_ZERO,
-            SqlMode::STRICT_TRANS_TABLES,
-            SqlMode::ONLY_FULL_GROUP_BY,
-            SqlMode::NO_ZERO_IN_DATE,
-            SqlMode::NO_ZERO_DATE,
-        ],
-        'maria-10.1' => [
-            SqlMode::NO_ENGINE_SUBSTITUTION,
-            SqlMode::NO_AUTO_CREATE_USER,
-        ],
-        'maria-10.2' => [
-            SqlMode::NO_ENGINE_SUBSTITUTION,
-            SqlMode::ERROR_FOR_DIVISION_BY_ZERO,
-            SqlMode::STRICT_TRANS_TABLES,
-            SqlMode::NO_AUTO_CREATE_USER,
-        ],
+    /** @var array<string, Charset::*> */
+    private static array $defaultCharset = [
+        'mysql-5.1' => Charset::LATIN1,
+        'mysql-5.5' => Charset::LATIN1,
+        'mysql-5.6' => Charset::LATIN1,
+        'mysql-5.7' => Charset::LATIN1,
+        'mysql-8.0' => Charset::UTF8MB4,
+
+        'maria-5.1' => Charset::LATIN1,
+        'maria-5.2' => Charset::LATIN1,
+        'maria-5.3' => Charset::LATIN1,
+        'maria-5.5' => Charset::LATIN1,
+        'maria-10.0' => Charset::LATIN1,
+        'maria-10.1' => Charset::LATIN1,
+        'maria-10.2' => Charset::LATIN1,
+        'maria-10.3' => Charset::UTF8MB4,
+    ];
+
+    /** @var array<string, int> ($version => $mode) */
+    public static array $defaultSqlMode = [
+        'mysql-5.1' => 0,
+        'mysql-5.5' => 0,
+        'mysql-5.6' => SqlMode::NO_ENGINE_SUBSTITUTION,
+        'mysql-5.7' => SqlMode::NO_ENGINE_SUBSTITUTION
+            | SqlMode::ERROR_FOR_DIVISION_BY_ZERO
+            | SqlMode::STRICT_TRANS_TABLES
+            | SqlMode::ONLY_FULL_GROUP_BY
+            | SqlMode::NO_ZERO_IN_DATE
+            | SqlMode::NO_ZERO_DATE
+            | SqlMode::NO_AUTO_CREATE_USER,
+        'mysql-8.0' => SqlMode::NO_ENGINE_SUBSTITUTION
+            | SqlMode::ERROR_FOR_DIVISION_BY_ZERO
+            | SqlMode::STRICT_TRANS_TABLES
+            | SqlMode::ONLY_FULL_GROUP_BY
+            | SqlMode::NO_ZERO_IN_DATE
+            | SqlMode::NO_ZERO_DATE,
+
+        'maria-10.1' => SqlMode::NO_ENGINE_SUBSTITUTION
+            | SqlMode::NO_AUTO_CREATE_USER,
+        'maria-10.2' => SqlMode::NO_ENGINE_SUBSTITUTION
+            | SqlMode::ERROR_FOR_DIVISION_BY_ZERO
+            | SqlMode::STRICT_TRANS_TABLES
+            | SqlMode::NO_AUTO_CREATE_USER,
     ];
 
     /** @var array<string, self> ($version => $instance) */
@@ -314,30 +333,31 @@ class Platform
         }
     }
 
-    public function getDefaultMode(): SqlMode
+    public function getDefaultCharset(): Charset
     {
-        if ($this->name === self::MYSQL || $this->name === self::MARIA) {
-            $default = MysqlVariable::getDefault(MysqlVariable::SQL_MODE);
-            assert(is_string($default));
-
-            return SqlMode::getFromString($default);
+        $family = $this->getFamilyId();
+        if (isset(self::$defaultCharset[$family])) {
+            return new Charset(self::$defaultCharset[$family]);
+        } elseif ($this->name === self::MYSQL && $family >= 'mysql-8.0') {
+            return new Charset(self::$defaultCharset['mysql-8.0']);
+        } elseif ($this->name === self::MARIA && $family >= 'maria-10.2') {
+            return new Charset(self::$defaultCharset['maria-10.2']);
         } else {
-            return SqlMode::getFromString(SqlMode::ANSI);
+            throw new LogicException("No default character set for platform {$family}.");
         }
     }
 
-    /**
-     * @return list<string>
-     */
-    public function getDefaultModes(): array
+    public function getDefaultSqlModeValue(): int
     {
         $family = $this->getFamilyId();
-        if (isset(self::$defaultSqlModes[$family])) {
-            return self::$defaultSqlModes[$family];
+        if (isset(self::$defaultSqlMode[$family])) {
+            return self::$defaultSqlMode[$family];
+        } elseif ($this->name === self::MYSQL && $family >= 'mysql-8.0') {
+            return self::$defaultSqlMode['mysql-8.0'];
         } elseif ($this->name === self::MARIA && $family >= 'maria-10.2') {
-            return self::$defaultSqlModes['maria-10.2'];
+            return self::$defaultSqlMode['maria-10.2'];
         } else {
-            return [];
+            throw new LogicException("No default SqlMode set for platform {$family}.");
         }
     }
 

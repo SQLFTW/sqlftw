@@ -16,6 +16,7 @@ use SqlFtw\Sql\Expression\UnresolvedExpression;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
+use SqlFtw\Sql\Symbol;
 use function array_key_exists;
 use function array_pop;
 use function end;
@@ -34,7 +35,7 @@ class Session
 
     private ?string $schema = null;
 
-    private ?Charset $charset;
+    private Charset $charset;
 
     /** @var list<Collation> */
     private array $collation = [];
@@ -51,11 +52,44 @@ class Session
     /** @var array<string, UnresolvedExpression|scalar|Value|null> */
     private array $localVariables = [];
 
+    /** @var list<callable(string): void> */
+    private array $onDelimiterChange = [];
+
+    /** @var list<callable(Charset): void> */
+    private array $onCharsetChange = [];
+
+    /** @var list<callable(SqlMode): void> */
+    private array $onSqlModeChange = [];
+
     public function __construct(Platform $platform)
     {
         $this->platform = $platform;
 
         $this->reset();
+    }
+
+    /**
+     * @param callable(string): void $callback
+     */
+    public function onDelimiterChange(callable $callback): void
+    {
+        $this->onDelimiterChange[] = $callback;
+    }
+
+    /**
+     * @param callable(Charset): void $callback
+     */
+    public function onCharsetChange(callable $callback): void
+    {
+        $this->onCharsetChange[] = $callback;
+    }
+
+    /**
+     * @param callable(SqlMode): void $callback
+     */
+    public function onSqlModeChange(callable $callback): void
+    {
+        $this->onSqlModeChange[] = $callback;
     }
 
     /**
@@ -67,17 +101,13 @@ class Session
         $this->sessionVariables = [];
         $this->globalVariables = [];
 
-        $this->delimiter = $delimiter ?? ';';
-        $this->charset = $charset;
-
         $this->setGlobalVariable(MysqlVariable::VERSION, $this->platform->getVersion()->format());
-        if ($mode !== null) {
-            $this->setMode($mode);
-        } else {
-            /** @var string $defaultMode */
-            $defaultMode = MysqlVariable::getDefault(MysqlVariable::SQL_MODE);
-            $this->setMode(SqlMode::getFromString($defaultMode));
-        }
+
+        $this->setDelimiter($delimiter ?? Symbol::SEMICOLON);
+
+        $this->setCharset($charset ?? $this->platform->getDefaultCharset());
+
+        $this->setMode($mode ?? SqlMode::fromInt($this->platform->getDefaultSqlModeValue()));
     }
 
     public function getDelimiter(): string
@@ -88,6 +118,10 @@ class Session
     public function setDelimiter(string $delimiter): void
     {
         $this->delimiter = $delimiter;
+
+        foreach ($this->onDelimiterChange as $callback) {
+            $callback($delimiter);
+        }
     }
 
     public function getMode(): SqlMode
@@ -98,7 +132,11 @@ class Session
     public function setMode(SqlMode $mode): void
     {
         $this->mode = $mode;
-        $this->sessionVariables['sql_mode'] = $mode->getValue();
+        $this->sessionVariables['sql_mode'] = $mode;
+
+        foreach ($this->onSqlModeChange as $callback) {
+            $callback($mode);
+        }
     }
 
     public function getSchema(): ?string
@@ -119,6 +157,10 @@ class Session
     public function setCharset(Charset $charset): void
     {
         $this->charset = $charset;
+
+        foreach ($this->onCharsetChange as $callback) {
+            $callback($charset);
+        }
     }
 
     public function startCollation(Collation $collation): void
