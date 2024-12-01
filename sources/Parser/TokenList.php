@@ -1409,7 +1409,7 @@ class TokenList
         return $upper;
     }
 
-    public function getKeyword(?string $keyword = null): ?string
+    public function getKeyword(): ?string
     {
         $token = $this->tokens[$this->position] ?? null;
 
@@ -1425,9 +1425,6 @@ class TokenList
             return null;
         }
         $upper = strtoupper($token->value);
-        if ($keyword !== null && $upper !== $keyword) {
-            return null;
-        }
         $this->position++;
 
         return $upper;
@@ -1460,7 +1457,7 @@ class TokenList
 
     public function passKeyword(string $keyword): void
     {
-        $this->getKeyword($keyword);
+        $this->hasKeyword($keyword);
     }
 
     public function expectKeywords(string ...$keywords): string
@@ -1530,8 +1527,7 @@ class TokenList
     {
         $position = $this->position;
         foreach ($keywords as $keyword) {
-            $token = $this->getKeyword($keyword);
-            if ($token !== null) {
+            if ($this->hasKeyword($keyword)) {
                 return true;
             }
         }

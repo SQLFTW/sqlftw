@@ -163,8 +163,9 @@ class SetCommandsParser
 
             if ($lastKeywordScope !== null && $current === true) {
                 // GLOBAL foo
-                $name = $tokenList->getKeyword(Keyword::DEFAULT);
-                if ($name === null) {
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                    $name = Keyword::DEFAULT;
+                } else {
                     $name = $tokenList->expectNonReservedNameOrString(); // todo: type? prefix or sysvar
                 }
                 if ($tokenList->hasSymbol('.')) {
