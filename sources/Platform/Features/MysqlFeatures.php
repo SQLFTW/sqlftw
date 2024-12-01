@@ -120,7 +120,7 @@ class MysqlFeatures extends FeaturesList
     /** @var list<array{Feature::*, int, int}> */
     public array $features = [
         [Feature::ALTER_INSTANCE, 50700, self::MAX],
-        [Feature::ALTER_INSTANCE, 80000, self::MAX],
+        [Feature::ALTER_INSTANCE_2, 80000, self::MAX],
         [Feature::COLUMN_VISIBILITY, 80023, self::MAX],
         [Feature::CREATE_ROUTINE_IF_NOT_EXISTS, 80000, self::MAX],
         [Feature::ENGINE_ATTRIBUTE, 80021, self::MAX],
