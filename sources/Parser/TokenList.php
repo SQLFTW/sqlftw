@@ -976,6 +976,7 @@ class TokenList
         }
     }
 
+    // todo: move to ExpressionParser
     public function getStringValue(): ?StringValue
     {
         $position = $this->position;

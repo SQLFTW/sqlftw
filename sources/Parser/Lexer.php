@@ -1167,10 +1167,16 @@ class Lexer
         $len = strlen($value) - 1;
 
         $intBase = ctype_digit($base);
-        $nextChar = $source[$position + $len] ?? '';
-        if ($e === null && $intBase && (isset(self::$nameCharsKey[$nextChar]) || $nextChar > "\x7F")) {
-            // followed by a name character while not having '.' or exponent - this is a prefix of a name, not a number
-            return null;
+        if ($intBase) {
+            if ($e !== null && $exponent === '') {
+                // dumb name followed by +/- operator
+                return null;
+            }
+            $nextChar = $source[$position + $len] ?? '';
+            if ($e === null && (isset(self::$nameCharsKey[$nextChar]) || $nextChar > "\x7F")) {
+                // followed by a name character while not having '.' or exponent - this is a prefix of a name, not a number
+                return null;
+            }
         }
 
         $type = T::NUMBER;

@@ -922,6 +922,12 @@ class ExpressionParser
             return $value;
         }
 
+        // todo: optimize this edge-case out
+        if ($tokenList->hasOperator(Operator::MINUS)) {
+            $token = $tokenList->expect(TokenType::NUMBER);
+            return new NumericLiteral('-' . $token->value);
+        }
+
         $token = $tokenList->expect(TokenType::VALUE | TokenType::KEYWORD);
 
         if (($token->type & TokenType::KEYWORD) !== 0) {

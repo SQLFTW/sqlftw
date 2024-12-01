@@ -108,6 +108,28 @@ Assert::invalidToken($tokens[1], T::NUMBER | T::INVALID, '~^Invalid number expon
 $tokens = Assert::tokens(' 1.23e-f', 3);
 Assert::invalidToken($tokens[1], T::NUMBER | T::INVALID, '~^Invalid number exponent~', 1);
 
+$tokens = Assert::tokens(' 1.23ea', 3);
+Assert::invalidToken($tokens[1], T::NUMBER | T::INVALID, '~^Invalid number exponent~', 1);
+
+// valid size literal (parsed as name)
+$tokens = Assert::tokens(' 8k ', 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::UNQUOTED_NAME, '8k', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 3);
+
+// valid name, not a number
+$tokens = Assert::tokens(' 1e ', 3);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::UNQUOTED_NAME, '1e', 1);
+Assert::token($tokens[2], T::WHITESPACE, ' ', 3);
+
+// valid name followed by + operator
+$tokens = Assert::tokens(' 1e+ ', 4);
+Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
+Assert::token($tokens[1], T::UNQUOTED_NAME, '1e', 1);
+Assert::token($tokens[2], T::SYMBOL | T::OPERATOR, '+', 3);
+Assert::token($tokens[3], T::WHITESPACE, ' ', 4);
+
 $tokens = Assert::tokens(' -(1) ', 6);
 Assert::token($tokens[0], T::WHITESPACE, ' ', 0);
 Assert::token($tokens[1], T::SYMBOL | T::OPERATOR, '-', 1);
