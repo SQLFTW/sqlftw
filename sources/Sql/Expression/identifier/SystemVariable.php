@@ -10,8 +10,6 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\MysqlVariable;
 use function array_map;
 use function explode;
 use function implode;
@@ -29,10 +27,6 @@ class SystemVariable implements Identifier
 
     public function __construct(string $name, ?Scope $scope = null)
     {
-        if (!MysqlVariable::isValidValue($name)) {
-            throw new InvalidDefinitionException("Invalid system variable name '$name'.");
-        }
-
         $this->name = $name;
         $this->scope = $scope;
     }

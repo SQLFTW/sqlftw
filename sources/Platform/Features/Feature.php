@@ -19,6 +19,7 @@ class Feature
     public const ENGINE_ATTRIBUTE = 'engine-attributes';
     public const FUNCTIONAL_INDEXES = 'functional-indexes';
     public const GROUP_REPLICATION_CREDENTIALS = 'group-replication-credentials';
+    public const INSTALL_COMPONENT_SET = 'install-component-set'; // 8.0.33 https://blogs.oracle.com/mysql/post/announcing-mysql-server-8033
     public const OPTIMIZER_HINTS = 'optimizer-hints'; // /*+ ... */
     public const REQUIRE_TABLE_PRIMARY_KEY_CHECK_GENERATE = 'require-table-primary-key-check-generate'; // >=8.0.32
     public const SCHEMA_ENCRYPTION = 'schema-encryption';

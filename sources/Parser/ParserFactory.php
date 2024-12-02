@@ -132,7 +132,7 @@ class ParserFactory
 
     public function getComponentCommandsParser(): ComponentCommandsParser
     {
-        return new ComponentCommandsParser();
+        return new ComponentCommandsParser($this->platform, $this->expressionParser);
     }
 
     public function getCreateFunctionCommandParser(): CreateFunctionCommandParser

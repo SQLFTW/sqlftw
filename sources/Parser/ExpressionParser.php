@@ -16,6 +16,7 @@ use Dogma\Time\DateTime;
 use LogicException;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Platform\ClientSideExtension;
+use SqlFtw\Sql\Assignment;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\UserExpression;
@@ -40,6 +41,7 @@ use SqlFtw\Sql\Expression\DateLiteral;
 use SqlFtw\Sql\Expression\DatetimeLiteral;
 use SqlFtw\Sql\Expression\DefaultLiteral;
 use SqlFtw\Sql\Expression\DoubleColonPlaceholder;
+use SqlFtw\Sql\Expression\EnumValueLiteral;
 use SqlFtw\Sql\Expression\ExistsExpression;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\Expression\Identifier;
@@ -79,7 +81,6 @@ use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UnaryOperator;
 use SqlFtw\Sql\Expression\UnknownLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
-use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\Order;
@@ -760,13 +761,127 @@ class ExpressionParser
         }
     }
 
-    public function createSystemVariable(TokenList $tokenList, string $name, ?Scope $scope = null, bool $write = false): SystemVariable
+    /**
+     * variable_assignment:
+     *      user_var_name = expr
+     *    | param_name = expr
+     *    | local_var_name = expr
+     *    | {GLOBAL | @@GLOBAL.} system_var_name = expr
+     *    | {PERSIST | @@PERSIST.} system_var_name = expr
+     *    | {PERSIST_ONLY | @@PERSIST_ONLY.} system_var_name = expr
+     *    | [SESSION | @@SESSION. | @@] system_var_name = expr
+     *    | [LOCAL | @@LOCAL | @@] system_var_name = expr -- alias for SESSION
+     *
+     * @return non-empty-list<Assignment>
+     */
+    public function parseSetAssignments(TokenList $tokenList, bool $forComponent = false): array
+    {
+        $session = $tokenList->getSession();
+        $assignments = [];
+        // scope used by last assignment stays valid for other assignments, until changed or overruled by "@@foo." syntax
+        $lastKeywordScope = null;
+        $current = false;
+        do {
+            if ($tokenList->hasKeyword(Keyword::LOCAL)) {
+                $lastKeywordScope = new Scope(Scope::SESSION);
+                $current = true;
+            } else {
+                $s = $tokenList->getKeywordEnum(Scope::class);
+                if ($s !== null) {
+                    $lastKeywordScope = $s;
+                    $current = true;
+                }
+            }
+
+            if ($lastKeywordScope !== null && $current === true) {
+                // GLOBAL foo
+                if ($tokenList->hasKeyword(Keyword::DEFAULT)) {
+                    $name = Keyword::DEFAULT;
+                } else {
+                    $name = $tokenList->expectNonReservedNameOrString(); // todo: type? prefix or sysvar
+                }
+                if ($tokenList->hasSymbol('.')) {
+                    $name .= '.' . $tokenList->expectName(EntityType::SYSTEM_VARIABLE);
+                }
+                $variable = $this->createSystemVariable($tokenList, $name, $lastKeywordScope, true, $forComponent);
+            } elseif (($token = $tokenList->get(TokenType::AT_VARIABLE)) !== null) {
+                // @foo, @@foo...
+                $variable = $this->parseAtVariable($tokenList, $token->value, true);
+            } else {
+                $name = $tokenList->expectName(EntityType::SYSTEM_VARIABLE);
+                if ($tokenList->hasSymbol('.')) {
+                    $name2 = $tokenList->expectName(EntityType::COLUMN);
+                    $fullName = $name . '.' . $name2;
+                    if (MysqlVariable::isValidValue($fullName)) {
+                        // plugin system variable without explicit scope
+                        $scope = $lastKeywordScope ?? ($forComponent ? null : new Scope(Scope::SESSION));
+                        $variable = $this->createSystemVariable($tokenList, $fullName, $scope, true, $forComponent);
+                    } else {
+                        // NEW.foo etc.
+                        $variable = new QualifiedName($name2, $name);
+                    }
+                } elseif (!$session->isLocalVariable($name) && MysqlVariable::isValidValue($name)) {
+                    // system variable without explicit scope
+                    $scope = $lastKeywordScope ?? ($forComponent ? null : new Scope(Scope::SESSION));
+                    $variable = $this->createSystemVariable($tokenList, $name, $scope, true, $forComponent);
+                } elseif ($tokenList->inRoutine() !== null) {
+                    // local variable
+                    $variable = new SimpleName($name);
+                } else {
+                    // throws when not used with $forComponent = true
+                    $variable = $this->createSystemVariable($tokenList, $name, $forComponent ? null : new Scope(Scope::SESSION), true, $forComponent);
+                }
+            }
+
+            $operator = $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
+
+            if ($variable instanceof SystemVariable) {
+                $variableName = $variable->getName();
+                $type = MysqlVariable::getType($variableName);
+                if ($type === BaseType::ENUM || $type === BaseType::SET) {
+                    $value = $tokenList->getVariableEnumValue(...MysqlVariable::getValues($variableName));
+                    if ($value !== null) {
+                        $expression = new EnumValueLiteral((string) $value);
+                    } else {
+                        $expression = $this->parseAssignExpression($tokenList);
+                    }
+                } else {
+                    $expression = $this->parseAssignExpression($tokenList);
+                }
+            } else {
+                $expression = $this->parseAssignExpression($tokenList);
+                if (($variable instanceof SimpleName || $variable instanceof QualifiedName) && $expression instanceof DefaultLiteral) {
+                    throw new ParserException('Local variables cannot be set to DEFAULT.', $tokenList);
+                }
+            }
+
+            $assignments[] = new Assignment($variable, $expression, $operator);
+            $current = false;
+        } while ($tokenList->hasSymbol(','));
+
+        return $assignments;
+    }
+
+    public function createSystemVariable(
+        TokenList $tokenList,
+        string $name,
+        ?Scope $scope = null,
+        bool $write = false,
+        bool $forComponent = false
+    ): Identifier
     {
         $name = strtolower($name);
-        try {
-            $variable = new SystemVariable($name, $scope);
-        } catch (InvalidDefinitionException $e) {
-            throw new ParserException("Invalid system variable name: {$name}.", $tokenList, $e);
+        if (!$forComponent && !MysqlVariable::isValidValue($name)) {
+            throw new ParserException("Invalid system variable name: {$name}.", $tokenList);
+        }
+        $variable = new SystemVariable($name, $scope);
+
+        if ($forComponent) {
+            if ($scope === null) {
+                $scope = new Scope(Scope::GLOBAL);
+            } elseif (!$scope->equalsAnyValue(Scope::GLOBAL, Scope::PERSIST)) {
+                throw new ParserException("Component variable {$name} must only have GLOBAL or PERSIST scope.", $tokenList);
+            }
         }
 
         if ($write) {

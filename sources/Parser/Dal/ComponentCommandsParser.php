@@ -9,7 +9,11 @@
 
 namespace SqlFtw\Parser\Dal;
 
+use SqlFtw\Parser\ExpressionParser;
+use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\TokenList;
+use SqlFtw\Platform\Features\Feature;
+use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Dal\Component\InstallComponentCommand;
 use SqlFtw\Sql\Dal\Component\UninstallComponentCommand;
 use SqlFtw\Sql\Keyword;
@@ -17,8 +21,24 @@ use SqlFtw\Sql\Keyword;
 class ComponentCommandsParser
 {
 
+    private Platform $platform;
+
+    private ExpressionParser $expressionParser;
+
+    public function __construct(Platform $platform, ExpressionParser $expressionParser)
+    {
+        $this->platform = $platform;
+        $this->expressionParser = $expressionParser;
+    }
+
     /**
      * INSTALL COMPONENT component_name [, component_name ] ...
+     *   [SET variable = expr [, variable = expr] ...]
+     *
+     * variable: {
+     *     {GLOBAL | @@GLOBAL.} [component_prefix.]system_var_name
+     *   | {PERSIST | @@PERSIST.} [component_prefix.]system_var_name
+     * }
      */
     public function parseInstallComponent(TokenList $tokenList): InstallComponentCommand
     {
@@ -28,7 +48,15 @@ class ComponentCommandsParser
             $components[] = $tokenList->expectNonReservedNameOrString();
         } while ($tokenList->hasSymbol(','));
 
-        return new InstallComponentCommand($components);
+        $assignments = [];
+        if ($tokenList->hasKeyword(Keyword::SET)) {
+            if (!isset($this->platform->features[Feature::INSTALL_COMPONENT_SET])) {
+                throw new InvalidVersionException(Feature::INSTALL_COMPONENT_SET, $this->platform, $tokenList);
+            }
+            $assignments = $this->expressionParser->parseSetAssignments($tokenList, true);
+        }
+
+        return new InstallComponentCommand($components, $assignments);
     }
 
     /**

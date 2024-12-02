@@ -126,6 +126,7 @@ class MysqlFeatures extends FeaturesList
         [Feature::ENGINE_ATTRIBUTE, 80021, self::MAX],
         [Feature::FUNCTIONAL_INDEXES, 80013, self::MAX],
         [Feature::GROUP_REPLICATION_CREDENTIALS, 80021, self::MAX],
+        [Feature::INSTALL_COMPONENT_SET, 80033, self::MAX],
         [Feature::OPTIMIZER_HINTS, self::MIN, self::MAX],
         [Feature::SCHEMA_ENCRYPTION, 80016, self::MAX],
         [Feature::SCHEMA_READ_ONLY, 80022, self::MAX],
