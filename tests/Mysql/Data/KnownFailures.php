@@ -18,12 +18,16 @@ trait KnownFailures
         "SELECT t1.x IS NULL = t2.x AS col FROM t AS t1, t AS t2 ORDER BY col;" => Valid::YES,
 
         // encoding
+        "DROP TABLE IF EXISTS abc\xFFdef;" => Valid::YES,
         "DROP TABLE IF EXISTS `abc\xFFdef`;" => Valid::YES,
+        "CREATE TABLE abc\xFFdef (i int);" => Valid::YES,
         "CREATE TABLE `abc\xFFdef` (i int);" => Valid::YES,
         "INSERT INTO `abc\xFFdef` VALUES (1);" => Valid::YES,
+        "INSERT INTO abc\xFFdef VALUES (1);" => Valid::YES,
         "INSERT INTO abc\xFFdef VALUES (2);" => Valid::YES,
         "SELECT * FROM `abc\xFFdef`;" => Valid::YES,
         "SELECT * FROM abc\xFFdef;" => Valid::YES,
+        "DROP TABLE abc\xFFdef;" => Valid::YES,
         "DROP TABLE `abc\xFFdef`;" => Valid::YES,
 
         // persist vs DEFAULT
@@ -41,8 +45,6 @@ trait KnownFailures
         'create index on edges (e)' => Valid::YES,
         'CREATE INDEX ON t1(a)' => Valid::YES,
         'CREATE INDEX ON t1 (col1, col2)' => Valid::YES,
-        // pseudo-replica mode trickery
-        "SET @@session.sql_mode=1436549152;" => Valid::YES,
         // error ignored...
         "-- error ER_BAD_FIELD_ERROR\nSET @@character_set_connection = utf8 + latin2;" => Valid::YES,
         "-- error ER_BAD_FIELD_ERROR\nSET @@character_set_client = utf8 + latin2;" => Valid::YES,
@@ -133,6 +135,10 @@ trait KnownFailures
         "SET @@GLOBAL.innodb_doublewrite=4;" => Valid::YES,
         "SET @@GLOBAL.innodb_doublewrite=5;" => Valid::YES,
 
+
+        // heatwave (not implemented)
+        "ALTER TABLE t1 SECONDARY_LOAD;" => Valid::YES,
+        "CREATE TABLE t1 (c1 INT PRIMARY KEY) SECONDARY_ENGINE rapid;" => Valid::YES,
 
         // false positives -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -558,6 +564,7 @@ trait KnownFailures
         "-- error ER_MASTER_INFO\nRESET SLAVE ALL;" => Valid::NO,
         "-- error ER_UNKNOWN_SYSTEM_VARIABLE\nCALL p1('test');" => Valid::NO,
         "-- error ER_UNKNOWN_SYSTEM_VARIABLE\nCALL p2();" => Valid::NO,
+        "-- error ER_NOT_SUPPORTED_YET\nDROP INDEX PRIMARY ON t3;" => Valid::NO,
         // valid on real DB
         "-- error ER_USER_LOCK_WRONG_NAME\nSELECT STD(IS_FREE_LOCK(0x2ADA5C38)),1 FROM t1 WHERE a+(EXISTS(SELECT 1));" => Valid::NO,
         "-- error 0,ER_NOT_SUPPORTED_YET\nSELECT * FROM (\n  SELECT a, JSON_ARRAYAGG(a) OVER () AS b FROM t1\n) AS d1\nWHERE (a,b) IN (\n  SELECT a, JSON_ARRAYAGG(a) OVER () AS b FROM t1\n);" => Valid::NO,
@@ -661,6 +668,13 @@ trait KnownFailures
         "-- error ER_PARSE_ERROR\nSELECT ST_ASTEXT(ST_Y(ST_POINTFROMWKB(ST_ASWKB(POINT(1)), 5)));" => Valid::NO,
         // parse error misuse
         "-- error ER_PARSE_ERROR\nALTER TABLE t1 ADD PARTITION\n(PARTITION p2 VALUES IN ((71),(72),(73),(74),(75),(76),(77),(78),(79),(80),\n                         (81),(82),(83),(84),(85),(86),(87),(88),(89),(90)));" => Valid::NO,
+        "-- error ER_PARSE_ERROR\ncreate table t1 (a int)\npartition by range (a + (select count(*) from t1))\n(partition p1 values less than (1));" => Valid::NO,
+        "-- error ER_PARSE_ERROR\nCREATE TABLE t1(c3 INTEGER)\nPARTITION BY HASH ((SELECT c1 FROM t0));" => Valid::NO,
+        "-- error ER_PARSE_ERROR\nCREATE TABLE t1(c3 INTEGER)\nPARTITION BY HASH ((SELECT c1 FROM t0))\nAS TABLE t0;" => Valid::NO,
+        "-- error ER_PARSE_ERROR\nCREATE TABLE t1(c3 INTEGER)\nPARTITION BY RANGE ((SELECT c1 FROM t0)) (PARTITION a1 VALUES LESS THAN (1));" => Valid::NO,
+        "-- error ER_PARSE_ERROR\nCREATE TABLE t1(c3 INTEGER)\nPARTITION BY RANGE ((SELECT c1 FROM t0)) (PARTITION a1 VALUES LESS THAN (1))\nAS TABLE t0;" => Valid::NO,
+        "-- error ER_PARSE_ERROR\nCREATE TABLE t1(c3 INTEGER)\nPARTITION BY LIST ((SELECT c1 FROM t0)) (PARTITION p0 VALUES IN (0));" => Valid::NO,
+        "-- error ER_PARSE_ERROR\nCREATE TABLE t1(c3 INTEGER)\nPARTITION BY LIST ((SELECT c1 FROM t0)) (PARTITION p0 VALUES IN (0))\nAS TABLE t0;" => Valid::NO,
         // conflicting aliases
         "-- error ER_PARSE_ERROR\nDELETE FROM t1 alias USING t1, t2 alias WHERE t1.a = alias.a;" => Valid::NO,
         "-- error ER_UNKNOWN_TABLE\nDELETE FROM t1, t2 USING t1, t2 alias WHERE t1.a = alias.a;" => Valid::NO,
@@ -817,6 +831,47 @@ trait KnownFailures
         "-- error ER_PARSE_ERROR\ncreate function f1(p1 decimal, p2 decimal)\n  returns int\nbegin\n  declare a int;\n  set a = (select count(*) from t1 limit p1, p2);\n  return a;\nend|" => Valid::NO,
         "-- error ER_PARSE_ERROR\ncreate function f1(p1 double, p2 double)\n  returns int\nbegin\n  declare a int;\n  set a = (select count(*) from t1 limit p1, p2);\n  return a;\nend|" => Valid::NO,
 
+        // readonly since 8.0.34
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode=on;" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode=ON;" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode='oN';" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode='Strict';" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode=strict;" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode=off;" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode='oFf';" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode=0;" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode=1;" => Valid::NO,
+        "-- error ER_INCORRECT_GLOBAL_LOCAL_VAR\nSET GLOBAL ssl_fips_mode=2;" => Valid::NO,
+
+        // deprecated
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,8) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,9) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,10) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,11) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,12) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,13) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,14) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,15) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,16) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,17) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@global.sql_mode= cast(pow(2,28) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,8) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,9) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,10) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,11) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,12) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,13) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,14) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,15) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,16) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,17) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,28) as unsigned integer);" => Valid::NO,
+        "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode=1436549152;" => Valid::NO,
+
+        // encoding
+        "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create=_latin1 x'5452DC45';" => Valid::NO,
+        "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create= _utf8 x'5452C39C45';" => Valid::NO,
+        "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create= _binary x'5452C39C45';" => Valid::NO,
 
         // sometimes fails, depending on context ---------------------------------------------------------------------------------------------------------------------------------------
 
@@ -828,13 +883,16 @@ trait KnownFailures
         "SET GLOBAL replica_preserve_commit_order= @save_replica_preserve_commit_order;" => Valid::SOMETIMES,
         "SET GLOBAL binlog_transaction_dependency_tracking=@save_binlog_transaction_dependency_tracking;" => Valid::SOMETIMES,
         "SET @@global.dragnet.log_error_filter_rules= @rules;" => Valid::SOMETIMES,
-
+        // pseudo-replica mode trickery
+        "SET @@session.sql_mode=1436549152;" => Valid::SOMETIMES,
 
         // won't fix - miscellaneous errors not caused by parser implementation --------------------------------------------------------------------------------------------------------
 
         // invalid variable name (differs from MySQL behavior, which is insane)
-        "select @``;" => Valid::YES,
-        "select @`endswithspace `;" => Valid::YES,
+        //"select @``;" => Valid::YES,
+        "select @;" => Valid::YES,
+        //"select @`endswithspace `;" => Valid::YES,
+        "select @endswithspace ;" => Valid::YES,
         "select @X2345678901234567890123456789012345678901234567890123456789012345;" => Valid::YES,
 
         // wrong perl filtering
@@ -939,6 +997,7 @@ trait KnownFailures
         "-- error ER_TOO_MANY_KEYS\nCREATE TABLE t1 (a int PRIMARY KEY) ENGINE=EXAMPLE;" => Valid::YES,
         "-- error ER_TOO_MANY_KEYS\nCREATE TABLE t1 (a int, KEY (a)) ENGINE=EXAMPLE;" => Valid::YES,
         "CREATE TABLE t1(a INT, b TEXT, KEY (a)) SECONDARY_ENGINE=MOCK;" => Valid::YES,
+        "CREATE TABLE t1(id INT AUTO_INCREMENT,\n                c1 VARCHAR(10), c2 VARCHAR(10), c3 VARCHAR(10),\n                PRIMARY KEY(id)) SECONDARY_ENGINE MOCK;" => Valid::YES,
 
         // non-existing variables
         "-- error ER_WRONG_TYPE_FOR_VAR\nSET GLOBAL example_signed_long_var = -9223372036854775809;" => Valid::YES,
@@ -1141,6 +1200,7 @@ trait KnownFailures
         "SET GLOBAL test_component.str_sys_var_default=something;" => Valid::YES,
         "SET GLOBAL test_component.str_sys_var_default=\"dictionary.txt\";" => Valid::YES,
         "SET GLOBAL test_server_telemetry_traces.callsite_context_keys=';source_file;source_line;;';" => Valid::YES,
+        "RESET PERSIST test_component.int_sys_var;" => Valid::YES,
 
         "SET GLOBAL test_server_telemetry_traces.application_context_keys='client_id;root_id;parent_id;id';" => Valid::YES,
         "SET GLOBAL test_server_telemetry_traces.trace_key='activate';" => Valid::YES,

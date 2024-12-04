@@ -162,6 +162,7 @@ trait IgnoredErrors
         'ER_NOT_IMPLEMENTED_FOR_CARTESIAN_SRS',
         'ER_INVALID_JSON_VALUE_FOR_FUNC_INDEX',
         'ER_FUNCTION_NOT_DEFINED',
+//        'ER_NOT_SUPPORTED_YET', // for DROP INDEX PRIMARY
         // constraints
         'ER_CONSTRAINT_NOT_FOUND',
         'ER_MULTIPLE_CONSTRAINTS_WITH_SAME_NAME',
@@ -406,6 +407,7 @@ trait IgnoredErrors
         'ER_SIZE_OVERFLOW_ERROR',
         'ER_STD_INVALID_ARGUMENT',
         'ER_WRONG_VALUE_FOR_TYPE',
+        //'ER_WRONG_VALUE_FOR_VAR',
         'ER_WRONG_VALUE_FOR_VAR_PLUS_ACTIONABLE_PART',
         // geo
         'ER_GEOMETRY_PARAM_LONGITUDE_OUT_OF_RANGE',
@@ -481,6 +483,9 @@ trait IgnoredErrors
         'ER_COMPONENTS_NO_SCHEME',
         'ER_COMPONENTS_NO_SCHEME_SERVICE',
         'ER_COMPONENTS_UNLOAD_DUPLICATE_IN_GROUP',
+        'ER_INSTALL_COMPONENT_SET_UNUSED_VALUE',
+        'ER_SET_CONSTANTS_ONLY',
+        'ER_INSTALL_COMPONENT_SET_NULL_VALUE',
         // access
         'ER_NONEXISTING_TABLE_GRANT',
         // prepared
@@ -716,6 +721,7 @@ trait IgnoredErrors
         'ER_CANT_RENAME_LOG_TABLE',
         'ER_BAD_LOG_STATEMENT',
         'ER_UNSUPORTED_LOG_ENGINE',
+        'ER_INNODB_ONLINE_LOG_TOO_BIG',
         // libs & plugins
         'ER_COMPONENTS_CANT_LOAD',
         'ER_CANT_OPEN_LIBRARY',

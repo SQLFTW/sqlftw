@@ -9,7 +9,6 @@ trait VersionTags
     private static array $tags = [
         'mysql-8.0.0',
         'mysql-8.0.1',
-        'mysql-8.0.2',
         'mysql-8.0.3',
         'mysql-8.0.4',
         'mysql-8.0.11',
@@ -33,6 +32,24 @@ trait VersionTags
         'mysql-8.0.29',
         'mysql-8.0.30',
         'mysql-8.0.31',
+        'mysql-8.0.32',
+        'mysql-8.0.33',
+        'mysql-8.0.34',
+        'mysql-8.0.35',
+        'mysql-8.0.36',
+        'mysql-8.0.37',
+        'mysql-8.0.38',
+        'mysql-8.0.39',
+        'mysql-8.0.40',
+        'mysql-8.1.0',
+        'mysql-8.2.0',
+        'mysql-8.3.0',
+        'mysql-8.4.0',
+        'mysql-8.4.1',
+        'mysql-8.4.2',
+        'mysql-8.4.3',
+        'mysql-9.0.0',
+        'mysql-9.0.1',
     ];
 
 }

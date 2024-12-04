@@ -1183,7 +1183,7 @@ class MysqlVariable extends SqlEnum
         // values: list of allowed values for ENUM or SET
         // min, max: minimal and maximal values
         // increment: value must be divisible by this number
-        //                                                 0:scope, 1:dynamic, 2:type, 3:default, 4:flags, [5:values] | [5:min, 6:max, [7:increment]]
+        //                                                 0:scope, 1:dynamic, 2:type,      3:default, 4:flags, [5:values] | [5:min, 6:max, [7:increment]]
         self::ACTIVATE_ALL_ROLES_ON_LOGIN               => [S::GLOBAL,  true,  T::BOOL,     false],
         self::ADMIN_ADDRESS                             => [S::GLOBAL,  false, T::CHAR,     null],
         self::ADMIN_PORT                                => [S::GLOBAL,  false, T::UNSIGNED, 33062,      F::NONE, 1, 65535],
@@ -1194,7 +1194,7 @@ class MysqlVariable extends SqlEnum
         self::ADMIN_SSL_CRL                             => [S::GLOBAL,  true,  T::CHAR,     null], // file
         self::ADMIN_SSL_CRLPATH                         => [S::GLOBAL,  true,  T::CHAR,     null], // dir
         self::ADMIN_SSL_KEY                             => [S::GLOBAL,  true,  T::CHAR,     null], // file
-        self::ADMIN_TLS_CIPHERSUITES                    => [S::GLOBAL,  true,  T::CHAR,     null],
+        self::ADMIN_TLS_CIPHERSUITES                    => [S::GLOBAL,  true,  T::CHAR,     null,       F::NULLABLE],
         self::ADMIN_TLS_VERSION                         => [S::GLOBAL,  true,  T::SET,      'TLSV1.2,TLSV1.3', F::NONE, ['TLSV1.2', 'TLSV1.3']], // < 8.0.28 "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3"
         self::AUTHENTICATION_POLICY                     => [S::GLOBAL,  true,  T::CHAR,     '*,,'],
         self::AUTHENTICATION_WINDOWS_LOG_LEVEL          => [S::GLOBAL,  false, T::UNSIGNED, 2,          F::NONE, 0, 2],
@@ -1971,6 +1971,7 @@ class MysqlVariable extends SqlEnum
         self::NDB_LOG_TRANSACTION_COMPRESSION       => [S::GLOBAL,  true,  T::BOOL,     false],
         self::NDB_LOG_TRANSACTION_COMPRESSION_LEVEL_ZSTD
                                                     => [S::GLOBAL,  true,  T::UNSIGNED, 3,          F::CLAMP, 1, 22],
+        self::NDB_LOG_TRANSACTION_DEPENDENCY        => [S::GLOBAL,  false, T::BOOL,     false],
         self::NDB_LOG_TRANSACTION_ID                => [S::GLOBAL,  false, T::BOOL,     false],
         self::NDB_LOG_UPDATE_AS_WRITE               => [S::GLOBAL,  true,  T::BOOL,     true],
         self::NDB_LOG_UPDATE_MINIMAL                => [S::GLOBAL,  true,  T::BOOL,     false],

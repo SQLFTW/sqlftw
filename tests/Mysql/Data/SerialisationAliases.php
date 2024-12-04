@@ -295,10 +295,10 @@ trait SerialisationAliases
     /** @var array<string, string> */
     private static array $reAliases = [
         // delete .*
-        '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3, $4, $5',
-        '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3, $4',
-        '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3',
-        '~(delete |ignore |from )([a-z\d_.]+)\.\*~' => '$1$2',
+//        '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3, $4, $5',
+//        '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3, $4',
+//        '~(delete |ignore |from )([a-z\d_.]+)\.\*, ?([a-z\d_.]+)\.\*~' => '$1$2, $3',
+//        '~(delete |ignore |from )([a-z\d_.]+)\.\*~' => '$1$2',
         // trans
         '~^begin;~' => 'start transaction;',
         // column features ordering
@@ -348,7 +348,7 @@ trait SerialisationAliases
         '~(alter (?:online )?table) ([^ ]+) lock[= ](exclusive|shared|none|default)([^;]+);~' => '$1 $2 $4 lock $3;',
         // index alias
         '~,\s*key ~' => ', index ',
-        '~(?<!primary |foreign |by |[a-z\d_])key \(~' => 'index (',
+        '~(?<!primary |foreign |by |[a-z\d_\.])key \(~' => 'index (',
         // useless pk name
         '~primary key (?!check)[`a-z\d_]+ ?\(~' => 'primary key (',
         '~primary key [`a-z\d_]+ using~' => 'primary key using',
@@ -479,6 +479,7 @@ trait SerialisationAliases
         '"' => '',
         "'" => '',
         "`" => '',
+        '/*!*/' => '',
 
         // remove non-significant whitespace
         ': begin' => ':begin',
