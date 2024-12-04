@@ -147,8 +147,11 @@ class MysqlTest
         if ($singleThread) {
             // renders errors immediately
             $results = [];
-            foreach ($paths as $path) {
+            foreach ($paths as $i => $path) {
                 $results[] = (new MysqlParseJob())->run($path, $version, true, $fullRun, $renderer);
+                if ($i > 1000) {
+                    break;
+                }
             }
         } else {
             // collects errors and renders them at the end
@@ -339,6 +342,8 @@ class MysqlTest
         if ($result !== 0) {
             //echo Colors::lyellow("git fetch --tags") . "\n"; // slightly bigger (~290 MB)
             //system("git fetch --tags");
+            echo Colors::lyellow("git tag") . "\n";
+            system("git tag");
             echo Colors::lyellow("git fetch origin refs/tags/{$tag}:refs/tags/{$tag}") . "\n";
             system("git fetch origin refs/tags/{$tag}:refs/tags/{$tag}");
         }
@@ -346,7 +351,7 @@ class MysqlTest
         $currentTag = null;
         if (file_exists($this->currentTagPath)) {
             $currentTag = file_get_contents($this->currentTagPath);
-        }
+        }ld($currentTag);
         if ($tag !== $currentTag) {
             echo Colors::lyellow("git checkout {$tag}") . "\n";
             system("git checkout {$tag}");

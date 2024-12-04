@@ -16,8 +16,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../vendor/dogma/dogma-debug/shortcuts.php';
 require_once __DIR__ . '/../debugger.php';
 
-rd($argv);
-
 $help = in_array('help', $argv, true);
 if ($help) {
     echo Colors::white("MySQL Tests usage:") . "\n";

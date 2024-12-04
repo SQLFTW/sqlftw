@@ -75,7 +75,7 @@ class Parser
         // always executed rules (errors not as obvious as syntax error, but preventing command execution anyway)
         $this->analyzer = new SimpleAnalyzer($context, [
             new SystemVariablesTypeRule(),
-            //new CharsetAndCollationCompatibilityRule(),
+            new CharsetAndCollationCompatibilityRule(),
         ]);
     }
 

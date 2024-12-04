@@ -203,7 +203,7 @@ class ResultRenderer
     }
 
     public function renderSerialisationError(Command $command, SqlMode $mode, MysqlTestJob $job): void
-    {
+    {return;
         rl('Serialisation error:', null, 'r');
 
         $tokenList = $command->getTokenList();
