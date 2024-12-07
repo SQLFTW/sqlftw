@@ -52,7 +52,7 @@ main layers:
 Basic usage:
 ------------
 
-```
+```php
 <?php
 
 use ...
