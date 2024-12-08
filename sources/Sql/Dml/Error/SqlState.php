@@ -315,10 +315,15 @@ class SqlState implements SqlSerializable
 
     public function __construct(string $value)
     {
-        if (preg_match('~^[\dA-Z]{5}$~', $value) === 0) {
+        if (!self::isValid($value)) {
             throw new InvalidDefinitionException('Invalid SQLSTATE value.');
         }
         $this->value = $value;
+    }
+
+    public static function isValid(string $value): bool
+    {
+        return preg_match('~^[\dA-Z]{5}$~', $value) !== 0;
     }
 
     public function getValue(): string

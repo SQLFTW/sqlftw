@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql;
 
 use LogicException;
+use SqlFtw\Error\Error;
 use SqlFtw\Parser\TokenList;
 
 abstract class StatementImpl implements Statement
@@ -21,6 +22,9 @@ abstract class StatementImpl implements Statement
 
     /** @var list<string> */
     protected array $commentsBefore = [];
+
+    /** @var list<Error> */
+    protected array $errors = [];
 
     public function setTokenList(TokenList $tokenList): void
     {
@@ -60,6 +64,19 @@ abstract class StatementImpl implements Statement
     public function getCommentsBefore(): array
     {
         return $this->commentsBefore;
+    }
+
+    public function addError(Error $error): void
+    {
+        $this->errors[] = $error;
+    }
+
+    /**
+     * @return list<Error>
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 
 }

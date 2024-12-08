@@ -11,6 +11,7 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Error\Error;
 use function substr;
 
 /**
@@ -29,7 +30,7 @@ final class Token
     // length can be calculated using position of next token
     public int $start; // @phpstan-ignore property.uninitialized
 
-    public ?LexerException $exception = null;
+    public ?Error $error = null;
 
     public function getSourceValue(string $source, ?Token $next): string
     {

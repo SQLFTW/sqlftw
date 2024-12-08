@@ -95,7 +95,7 @@ class Session
     /**
      * Clears internal state (variables) and resets delimiter, charset and mode to defaults
      */
-    public function reset(?string $delimiter = null, ?Charset $charset = null, ?SqlMode $mode = null): void
+    public function reset(?Charset $charset = null, ?SqlMode $mode = null): void
     {
         $this->userVariables = [];
         $this->sessionVariables = [];
@@ -103,7 +103,7 @@ class Session
 
         $this->setGlobalVariable(MysqlVariable::VERSION, $this->platform->getVersion()->format());
 
-        $this->setDelimiter($delimiter ?? Symbol::SEMICOLON);
+        $this->setDelimiter(Symbol::SEMICOLON);
 
         $this->setCharset($charset ?? $this->platform->getDefaultCharset());
 

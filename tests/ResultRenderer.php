@@ -6,13 +6,12 @@ use Dogma\Application\Colors;
 use Dogma\Debug\Debugger;
 use Dogma\Debug\Dumper;
 use Dogma\Debug\Units;
-use SqlFtw\Formatter\Formatter;
-use SqlFtw\Parser\InvalidCommand;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Tests\Mysql\MysqlTestJob;
 use SqlFtw\Tests\Mysql\Result;
 use SqlFtw\Util\Str;
+use function array_merge;
 use function count;
 use function rd;
 use function rdf;
@@ -28,14 +27,11 @@ class ResultRenderer
 
     private bool $fullRun;
 
-    private Formatter $formatter;
-
-    public function __construct(string $baseDir, bool $singleThread, bool $fullRun, Formatter $formatter)
+    public function __construct(string $baseDir, bool $singleThread, bool $fullRun)
     {
         $this->baseDir = $baseDir;
         $this->singleThread = $singleThread;
         $this->fullRun = $fullRun;
-        $this->formatter = $formatter;
     }
 
     /**
@@ -131,7 +127,7 @@ class ResultRenderer
         }
     }
 
-    public function renderFalseNegative(Command $command, SqlMode $mode): void
+    public function renderFalseNegative(Command $command, SqlMode $mode, array $errors = []): void
     {
         rl('False negative (should not fail):', null, 'r');
         rl("'{$mode->asString()}'", 'sql_mode', 'C');
@@ -144,17 +140,9 @@ class ResultRenderer
         //$commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
         //rl($commandSerialized);
 
-        if ($command instanceof InvalidCommand) {
-            //rl($mode->getValue(), 'mode', 'C');
-            $exception = $command->getException();
-            $parsedCommand = $command->getCommand();
-            if ($parsedCommand !== null) {
-                rd($parsedCommand);
-            }
-            re($exception);
-        } else {
-            rd($command);
-        }
+        $errors = array_merge($command->getErrors(), $errors);
+        rd($errors);
+        rd($command);
         //rd($tokenList);
     }
 

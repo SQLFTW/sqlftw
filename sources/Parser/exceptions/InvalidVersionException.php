@@ -12,6 +12,9 @@ namespace SqlFtw\Parser;
 use SqlFtw\Platform\Platform;
 use Throwable;
 
+/**
+ * @deprecated
+ */
 class InvalidVersionException extends ParserException
 {
 

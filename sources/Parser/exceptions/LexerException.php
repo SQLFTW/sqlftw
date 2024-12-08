@@ -11,6 +11,9 @@ namespace SqlFtw\Parser;
 
 use Throwable;
 
+/**
+ * @deprecated
+ */
 class LexerException extends ParsingException
 {
 

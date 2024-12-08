@@ -9,7 +9,20 @@
 
 namespace SqlFtw\Analyzer;
 
+use SqlFtw\Error\Error;
+use SqlFtw\Sql\Statement;
+
 interface AnalyzerRule
 {
+
+    /**
+     * @return class-string<Statement>
+     */
+    public function getNodes(): array;
+
+    /**
+     * @return list<Error>
+     */
+    public function process(Statement $statement, AnalyzerContext $context, int $flags): array;
 
 }

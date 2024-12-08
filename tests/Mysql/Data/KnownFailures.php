@@ -208,6 +208,8 @@ trait KnownFailures
         "-- error ER_COMMAND_SERVICE_BACKEND_FAILED\nSELECT test_mysql_command_services_udf(\"SELECT * FROM mysql.plugin ORDER BY name\");" => Valid::NO,
         // sql_mode vs escaping
         "INSERT INTO t1 VALUES (\"1\\\"\"), (\"\\\"2\");" => Valid::NO,
+        // restoring 'WRONGVALUE'
+        "-- XBE --echo\n\n-- XBE --echo # Restoring the original values.\nSET @@global.offline_mode = @global_saved_tmp;" => Valid::YES,
         // no info on charset/engine ids. this is runtime error
         "-- error ER_UNKNOWN_CHARACTER_SET\nSET CHARACTER_SET_CLIENT=17;" => Valid::NO,
         "-- error ER_UNKNOWN_CHARACTER_SET\nset session character_set_client=2048;" => Valid::NO,
@@ -867,11 +869,6 @@ trait KnownFailures
         "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,17) as unsigned integer);" => Valid::NO,
         "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode= cast(pow(2,28) as unsigned integer);" => Valid::NO,
         "-- error ER_UNSUPPORTED_SQL_MODE\nSET @@session.sql_mode=1436549152;" => Valid::NO,
-
-        // encoding
-        "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create=_latin1 x'5452DC45';" => Valid::NO,
-        "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create= _utf8 x'5452C39C45';" => Valid::NO,
-        "-- error ER_WRONG_VALUE_FOR_VAR\nSET sql_quote_show_create= _binary x'5452C39C45';" => Valid::NO,
 
         // sometimes fails, depending on context ---------------------------------------------------------------------------------------------------------------------------------------
 

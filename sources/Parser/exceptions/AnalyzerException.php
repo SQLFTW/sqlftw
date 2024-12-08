@@ -14,6 +14,9 @@ use SqlFtw\Sql\Command;
 use Throwable;
 use function count;
 
+/**
+ * @deprecated
+ */
 class AnalyzerException extends ParsingException
 {
 

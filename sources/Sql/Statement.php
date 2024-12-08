@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql;
 
+use SqlFtw\Error\Error;
 use SqlFtw\Parser\TokenList;
 
 interface Statement extends SqlSerializable
@@ -31,5 +32,10 @@ interface Statement extends SqlSerializable
      * @return list<string>
      */
     public function getCommentsBefore(): array;
+
+    /**
+     * @return list<Error>
+     */
+    public function getErrors(): array;
 
 }

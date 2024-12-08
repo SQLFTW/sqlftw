@@ -43,8 +43,6 @@ more versions will be added later (5.7...)
 
 see `/tests/Mysql`
 
-run `php tests/Mysql/test.php` for Mysql tests
+run `php vendor/dogma/dogma-debug/server.php`
 
-requirements:
-- you will need `https://github.com/mysql/mysql-server` cloned to adjacent directory
-- you will need `https://github.com/paranoiq/dogma-debug` wired in for now
+run `php tests/Mysql/test.php` for Mysql tests

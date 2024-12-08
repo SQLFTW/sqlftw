@@ -16,6 +16,9 @@ use function implode;
 use function is_array;
 use function sprintf;
 
+/**
+ * @deprecated
+ */
 class InvalidTokenException extends ParserException
 {
 

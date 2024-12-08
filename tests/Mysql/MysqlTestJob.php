@@ -8,15 +8,13 @@ namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Debug\Callstack;
 use Dogma\Re;
+use SqlFtw\Analyzer\Rules\Charset\CharsetAndCollationCompatibilityRule;
+use SqlFtw\Analyzer\Rules\Variables\SystemVariablesTypeRule;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\EmptyCommand;
-use SqlFtw\Parser\InvalidCommand;
-use SqlFtw\Parser\Parser;
-use SqlFtw\Parser\ParserConfig;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
-use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Command;
@@ -25,6 +23,7 @@ use SqlFtw\Tests\Mysql\Data\KnownFailures;
 use SqlFtw\Tests\Mysql\Data\SerialisationAliases;
 use SqlFtw\Tests\Mysql\Data\SerialisationExceptions;
 use SqlFtw\Tests\Mysql\Data\TestReplacements;
+use SqlFtw\Tests\ParserSuiteFactory;
 use SqlFtw\Tests\ResultRenderer;
 use SqlFtw\Util\Str;
 use function array_diff;
@@ -94,18 +93,13 @@ class MysqlTestJob
         $filter = new MysqlTestFilter();
         $sql = $filter->filter($sql);
 
-        // phpcs:disable SlevomatCodingStandard.Functions.RequireSingleLineCall.RequiredSingleLineCall
-        $platform = Platform::get(Platform::MYSQL, $version);
-        $config = new ParserConfig(
-            $platform,
-            ClientSideExtension::ALLOW_DELIMITER_DEFINITION,
-            true,
-            true,
-            true
-        );
-        $session = new Session($platform);
-        $parser = new Parser($config, $session);
-        $formatter = new Formatter($platform, $session);
+        $rules = [
+            new SystemVariablesTypeRule(),
+            new CharsetAndCollationCompatibilityRule(),
+        ];
+        $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, $version, null, null, $rules);
+
+        $suite->normalizer->quoteAllNames(false);
 
         $start = microtime(true);
         $statements = 0;
@@ -114,7 +108,8 @@ class MysqlTestJob
         $falsePositives = [];
         $serialisationErrors = [];
 
-        foreach ($parser->parse($sql) as $command) {
+        foreach ($suite->analyzer->analyze($sql) as $result) {
+            $command = $result->command;
             $tokenList = $command->getTokenList();
             $tokensSerialized = trim($tokenList->serialize());
             $tokensSerializedWithoutGarbage = trim($tokenList->filter(static function (Token $token): bool {
@@ -143,12 +138,14 @@ class MysqlTestJob
             } elseif ($valid === Valid::NO) {
                 $shouldFail = false;
             } elseif ($valid === Valid::SOMETIMES) {
-                continue;
+                continue; // todo: depends on Severity
             }
 
             $sqlMode = $tokenList->getSession()->getMode();
 
-            if ($command instanceof InvalidCommand && !$shouldFail) {
+            $failed = $command->getErrors() !== [] || $result->errors !== [];
+
+            if ($failed && !$shouldFail) {
                 // exceptions
                 if ($tokensSerialized[0] === '}' || Str::endsWith($tokensSerialized, '}')) {
                     // could not be filtered from mysql-server tests
@@ -156,9 +153,9 @@ class MysqlTestJob
                 }
                 $falseNegatives[] = [$command, $sqlMode];
                 if ($singleThread) {
-                    $renderer->renderFalseNegative($command, $sqlMode);
+                    $renderer->renderFalseNegative($command, $sqlMode, $result->errors);
                 }
-            } elseif (!$command instanceof InvalidCommand && $shouldFail) {
+            } elseif (!$failed && $shouldFail) {
                 if (Str::containsAny($tokensSerialized, self::$partiallyParsedErrors)) {
                     continue;
                 }
@@ -175,10 +172,10 @@ class MysqlTestJob
             ) {
                 $match = true;
             } else {
-                $match = $this->checkSerialisation($command, $formatter, $session);
+                $match = $this->checkSerialisation($command, $suite->formatter, $suite->session, $failed);
             }
             if (!$match) {
-                $serialisationErrors[] = [$command, $sqlMode];
+                //$serialisationErrors[] = [$command, $sqlMode];
                 if ($singleThread) {
                     $renderer->renderSerialisationError($command, $sqlMode, $this);
                 }
@@ -216,9 +213,9 @@ class MysqlTestJob
         );
     }
 
-    private function checkSerialisation(Command $command, Formatter $formatter, Session $session): bool
+    private function checkSerialisation(Command $command, Formatter $formatter, Session $session, bool $failed): bool
     {
-        if ($command instanceof EmptyCommand || $command instanceof InvalidCommand) {
+        if ($failed || $command instanceof EmptyCommand) {
             return true;
         }
 

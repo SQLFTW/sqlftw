@@ -12,6 +12,9 @@ namespace SqlFtw\Parser;
 use Throwable;
 use function sprintf;
 
+/**
+ * @deprecated
+ */
 class InvalidValueException extends ParserException
 {
 

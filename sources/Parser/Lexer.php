@@ -16,6 +16,7 @@
 namespace SqlFtw\Parser;
 
 use Generator;
+use SqlFtw\Error\Error;
 use SqlFtw\Parser\TokenType as T;
 use SqlFtw\Platform\ClientSideExtension;
 use SqlFtw\Platform\Features\Feature;
@@ -367,16 +368,16 @@ class Lexer
                         }
                     }
                     if ($position < $length && ctype_alnum($source[$position])) {
-                        $exception = new LexerException("Invalid character after placeholder $source[$position].", $position, $source);
+                        $error = Error::lexer("lexer.invalidCharAfterPlaceholder", "Invalid character after placeholder {$source[$position]}.", $position);
 
-                        $tokens[] = $t = new Token; $t->type = T::PLACEHOLDER | T::QUESTION_MARK_PLACEHOLDER | T::INVALID; $t->start = $start; $t->value = '?'; $t->exception = $exception;
+                        $tokens[] = $t = new Token; $t->type = T::PLACEHOLDER | T::QUESTION_MARK_PLACEHOLDER | T::INVALID; $t->start = $start; $t->value = '?'; $t->error = $error;
                         $invalid = true;
                         break;
                     }
                     if ($position > 1 && ctype_alnum($source[$position - 2])) {
-                        $exception = new LexerException("Invalid character before placeholder {$source[$position - 2]}.", $position, $source);
+                        $error = Error::lexer("lexer.invalidCharBeforePlaceholder", "Invalid character before placeholder {$source[$position - 2]}.", $position);
 
-                        $tokens[] = $t = new Token; $t->type = T::PLACEHOLDER | T::QUESTION_MARK_PLACEHOLDER | T::INVALID; $t->start = $start; $t->value = '?'; $t->exception = $exception;
+                        $tokens[] = $t = new Token; $t->type = T::PLACEHOLDER | T::QUESTION_MARK_PLACEHOLDER | T::INVALID; $t->start = $start; $t->value = '?'; $t->error = $error;
                         $invalid = true;
                         break;
                     }
@@ -414,9 +415,9 @@ class Lexer
                         }
                         if (strcasecmp(substr($var, 2), 'DEFAULT') === 0) {
                             // todo: probably all magic functions?
-                            $exception = new LexerException("Invalid variable name $var.", $position, $source);
+                            $error = Error::lexer("lexer.invalidVariableName", "Invalid variable name {$var}.", $position);
 
-                            $tokens[] = $t = new Token; $t->type = T::AT_VARIABLE | T::INVALID; $t->start = $start; $t->value = $var; $t->exception = $exception;
+                            $tokens[] = $t = new Token; $t->type = T::AT_VARIABLE | T::INVALID; $t->start = $start; $t->value = $var; $t->error = $error;
                             $invalid = true;
                             break;
                         }
@@ -458,9 +459,9 @@ class Lexer
                         }
                         if (strcasecmp(substr($var, 1), 'DEFAULT') === 0) {
                             // todo: probably all magic functions?
-                            $exception = new LexerException("Invalid variable name $var.", $position, $source);
+                            $error = Error::lexer("lexer.invalidVariableName", "Invalid variable name {$var}.", $position);
 
-                            $tokens[] = $t = new Token; $t->type = T::AT_VARIABLE | T::INVALID; $t->start = $start; $t->value = $var; $t->exception = $exception;
+                            $tokens[] = $t = new Token; $t->type = T::AT_VARIABLE | T::INVALID; $t->start = $start; $t->value = $var; $t->error = $error;
                             $invalid = true;
                             break;
                         }
@@ -580,16 +581,16 @@ class Lexer
                             }
                         }
                         if (!$terminated) {
-                            $exception = new LexerException('End of comment not found.', $position, $source);
+                            $error = Error::lexer("lexer.unterminatedComment", "End of comment not found.", $position);
 
-                            $tokens[] = $t = new Token; $t->type = T::BLOCK_COMMENT | T::INVALID; $t->start = $start; $t->value = $comment; $t->exception = $exception;
+                            $tokens[] = $t = new Token; $t->type = T::BLOCK_COMMENT | T::INVALID; $t->start = $start; $t->value = $comment; $t->error = $error;
                             $invalid = true;
                             break;
                         } elseif (!$validOptional) {
                             $condition = null;
-                            $exception = new LexerException('Invalid optional comment: ' . $comment, $position, $source);
+                            $error = Error::lexer("lexer.invalidOptionalComment", "Invalid optional comment: {$comment}", $position);
 
-                            $tokens[] = $t = new Token; $t->type = T::BLOCK_COMMENT | T::OPTIONAL_COMMENT | T::INVALID; $t->start = $start; $t->value = $comment; $t->exception = $exception;
+                            $tokens[] = $t = new Token; $t->type = T::BLOCK_COMMENT | T::OPTIONAL_COMMENT | T::INVALID; $t->start = $start; $t->value = $comment; $t->error = $error;
                             $invalid = true;
                             break;
                         }
@@ -834,10 +835,10 @@ class Lexer
                         if (ltrim($bits, '01') === '') {
                             $tokens[] = $previous = $t = new Token; $t->type = T::BINARY_LITERAL; $t->start = $start; $t->value = $bits;
                         } else {
-                            $exception = new LexerException('Invalid binary literal', $position, $source);
+                            $error = Error::lexer("lexer.invalidBinaryLiteral", "Invalid binary literal", $position);
                             $value = $char . '\'' . $bits . $next14;
 
-                            $tokens[] = $previous = $t = new Token; $t->type = T::BINARY_LITERAL | T::INVALID; $t->start = $start; $t->value = $value; $t->exception = $exception; // todo why orig?
+                            $tokens[] = $previous = $t = new Token; $t->type = T::BINARY_LITERAL | T::INVALID; $t->start = $start; $t->value = $value; $t->error = $error;
                             $invalid = true;
                             break;
                         }
@@ -881,10 +882,10 @@ class Lexer
                         if (ltrim($bits, '0123456789abcdef') === '') {
                             $tokens[] = $previous = $t = new Token; $t->type = T::BIT_STRING | T::HEXADECIMAL; $t->start = $start; $t->value = $bits;
                         } else {
-                            $exception = new LexerException('Invalid hexadecimal literal', $position, $source);
+                            $error = Error::lexer("lexer.invalidHexadecimalLiteral", "Invalid hexadecimal literal", $position);
                             $value = $char . '\'' . $bits . $next15;
 
-                            $tokens[] = $previous = $t = new Token; $t->type = T::BIT_STRING | T::HEXADECIMAL | T::INVALID; $t->start = $start; $t->value = $value; $t->exception = $exception; // todo why orig?
+                            $tokens[] = $previous = $t = new Token; $t->type = T::BIT_STRING | T::HEXADECIMAL | T::INVALID; $t->start = $start; $t->value = $value; $t->error = $error;
                             $invalid = true;
                             break;
                         }
@@ -994,16 +995,16 @@ class Lexer
                             }
                         }
                         if ($del === '') {
-                            $exception = new LexerException('Delimiter not found', $position, $source);
+                            $error = Error::lexer("lexer.invalidDelimiter", "Delimiter not found", $position);
 
-                            $tokens[] = $previous = $t = new Token; $t->type = T::INVALID; $t->start = $start; $t->value = $del; $t->exception = $exception;
+                            $tokens[] = $previous = $t = new Token; $t->type = T::INVALID; $t->start = $start; $t->value = $del; $t->error = $error;
                             $invalid = true;
                             break;
                         }
                         if (isset($this->platform->reserved[strtoupper($del)])) {
-                            $exception = new LexerException('Delimiter can not be a reserved word', $position, $source);
+                            $error = Error::lexer("lexer.invalidDelimiter", "Delimiter can not be a reserved word", $position);
 
-                            $tokens[] = $previous = $t = new Token; $t->type = T::DELIMITER_DEFINITION | T::INVALID; $t->start = $start; $t->value = $del; $t->exception = $exception;
+                            $tokens[] = $previous = $t = new Token; $t->type = T::DELIMITER_DEFINITION | T::INVALID; $t->start = $start; $t->value = $del; $t->error = $error;
                             $invalid = true;
                             break;
                         }
@@ -1048,15 +1049,15 @@ class Lexer
             if ($condition !== null) {
                 $lastToken = end($tokens);
                 $condition = null;
-                $exception = new LexerException("End of optional comment not found.", $lastToken->start, '');
-                $tokens[] = $t = new Token; $t->type = T::END + T::INVALID; $t->start = 0; $t->value = ''; $t->exception = $exception;
+                $error = Error::lexer("lexer.unterminatedOptionalComment", "End of optional comment not found.", $lastToken->start);
+                $tokens[] = $t = new Token; $t->type = T::END + T::INVALID; $t->start = 0; $t->value = ''; $t->error = $error;
                 $invalid = true;
             }
             if ($hint) {
                 $lastToken = end($tokens);
                 $hint = false;
-                $exception = new LexerException("End of optimizer hint not found.", $lastToken->start, '');
-                $tokens[] = $t = new Token; $t->type = T::END + T::INVALID; $t->start = 0; $t->value = ''; $t->exception = $exception;
+                $error = Error::lexer("lexer.unterminatedOptimizerHint", "End of optimizer hint not found.", $lastToken->start);
+                $tokens[] = $t = new Token; $t->type = T::END + T::INVALID; $t->start = 0; $t->value = ''; $t->error = $error;
                 $invalid = true;
             }
 
@@ -1135,9 +1136,9 @@ class Lexer
         $orig = implode('', $orig);
 
         if (!$finished) {
-            $exception = new LexerException("End of string not found. Starts with " . substr($source, $startAt - 1, 100), $position, $source);
+            $error = Error::lexer("lexer.unterminatedStringLiteral", "End of string not found. Starts with " . substr($source, $startAt - 1, 100), $position);
 
-            $t = new Token; $t->type = $tokenType | T::INVALID; $t->start = $startAt; $t->value = $prefix . $orig; $t->exception = $exception;
+            $t = new Token; $t->type = $tokenType | T::INVALID; $t->start = $startAt; $t->value = $prefix . $orig; $t->error = $error;
 
             return $t;
         }
@@ -1183,9 +1184,9 @@ class Lexer
         $position += $len;
 
         if ($e !== null && $exponent === '') {
-            $exception = new LexerException('Invalid number exponent ' . $value, $position, $source);
+            $error = Error::lexer("lexer.invalidNumericLiteral", "Invalid number exponent in '{$value}'", $position);
 
-            $t = new Token; $t->type = $type | T::INVALID; $t->start = $startAt; $t->value = $value; $t->exception = $exception;
+            $t = new Token; $t->type = $type | T::INVALID; $t->start = $startAt; $t->value = $value; $t->error = $error;
 
             return $t;
         }

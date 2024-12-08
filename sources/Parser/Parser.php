@@ -12,14 +12,8 @@
 namespace SqlFtw\Parser;
 
 use Generator;
-use SqlFtw\Analyzer\Rules\Charset\CharsetAndCollationCompatibilityRule;
-use SqlFtw\Analyzer\Rules\Variables\SystemVariablesTypeRule;
-use SqlFtw\Analyzer\SimpleAnalyzer;
-use SqlFtw\Analyzer\SimpleContext;
-use SqlFtw\Platform\Platform;
-use SqlFtw\Resolver\ExpressionResolver;
+use SqlFtw\Error\Error;
 use SqlFtw\Session\Session;
-use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
 use Throwable;
@@ -34,7 +28,7 @@ use function strtoupper;
 class Parser
 {
 
-    private const STARTING_KEYWORDS = [
+    public const STARTING_KEYWORDS = [
         Keyword::ALTER, Keyword::ANALYZE, Keyword::BEGIN, Keyword::BINLOG, Keyword::CACHE, Keyword::CALL, Keyword::CHANGE,
         Keyword::CHECK, Keyword::CHECKSUM, Keyword::COMMIT, Keyword::CREATE, Keyword::DEALLOCATE, Keyword::DELETE,
         Keyword::DELIMITER, Keyword::DESC, Keyword::DESCRIBE, Keyword::DO, Keyword::DROP, Keyword::EXECUTE, Keyword::EXPLAIN,
@@ -48,50 +42,21 @@ class Parser
 
     private ParserConfig $config;
 
-    private Session $session;
-
-    private SessionUpdater $sessionUpdater;
-
-    private SimpleAnalyzer $analyzer;
-
     private Lexer $lexer;
 
     private ParserFactory $factory;
 
     private Generator $tokenListGenerator; // @phpstan-ignore-line "uninitialized property" may only fail in @internal getNextTokenList()
 
-    public function __construct(ParserConfig $config, Session $session)
-    {
-        $platform = $config->getPlatform();
-        $resolver = new ExpressionResolver($platform, $session);
-
+    public function __construct(
+        ParserConfig $config,
+        Session $session,
+        ?Lexer $lexer = null,
+        ?ParserFactory $parserFactory = null
+    ) {
         $this->config = $config;
-        $this->session = $session;
-        $this->sessionUpdater = new SessionUpdater($platform, $session, $resolver);
-        $this->lexer = new Lexer($config, $session);
-        $this->factory = new ParserFactory($this, $config, $session, $this->sessionUpdater);
-
-        $context = new SimpleContext($platform, $session, $resolver);
-        // always executed rules (errors not as obvious as syntax error, but preventing command execution anyway)
-        $this->analyzer = new SimpleAnalyzer($context, [
-            new SystemVariablesTypeRule(),
-            new CharsetAndCollationCompatibilityRule(),
-        ]);
-    }
-
-    public function getPlatform(): Platform
-    {
-        return $this->config->getPlatform();
-    }
-
-    public function getSession(): Session
-    {
-        return $this->session;
-    }
-
-    public function getParserFactory(): ParserFactory
-    {
-        return $this->factory;
+        $this->lexer = $lexer ?? new Lexer($config, $session);
+        $this->factory = $parserFactory ?? new ParserFactory($this, $config, $session);
     }
 
     /**
@@ -141,7 +106,7 @@ class Parser
      */
     public function parse(string $sql, bool $prepared = false): Generator
     {
-        $provideTokenLists = $this->config->provideTokenLists();
+        //$provideTokenLists = $this->config->provideTokenLists();
         $this->tokenListGenerator = $this->lexer->tokenize($sql);
         $first = true;
 
@@ -164,39 +129,13 @@ class Parser
                 continue;
             }
 
-            $results = $this->analyzer->process($command);
-            if (count($results) > 0) {
-                $exception = new AnalyzerException($results, $command, $tokenList);
-                $command = new InvalidCommand($command->getCommentsBefore(), $exception, $command);
-
-                if ($provideTokenLists) {
-                    $command->setTokenList($tokenList->slice($start, $end));
-                }
-
-                yield $command;
-
-                continue;
-            }
-
             if ($tokenList->inRoutine() === null && !$tokenList->inPrepared()) {
-                try {
-                    $this->sessionUpdater->processCommand($command, $tokenList);
-                } catch (ParsingException $e) {
-                    $command = new InvalidCommand($command->getCommentsBefore(), $e, $command);
 
-                    if ($provideTokenLists) {
-                        $command->setTokenList($tokenList->slice($start, $end));
-                    }
-
-                    yield $command;
-
-                    continue;
-                }
             }
 
-            if ($provideTokenLists) {
+            //if ($provideTokenLists) {
                 $command->setTokenList($tokenList->slice($start, $end));
-            }
+            //}
 
             yield $command;
         }
@@ -228,12 +167,12 @@ class Parser
                 $exception = InvalidTokenException::tokens(TokenType::KEYWORD, 0, self::STARTING_KEYWORDS, $first, $tokenList);
                 $tokenList->finish();
 
-                return new InvalidCommand($comments, $exception);
+                return new InvalidCommand($comments, [$exception->toError()]);
             } else {
                 $exception = InvalidTokenException::tokens(TokenType::KEYWORD, 0, self::STARTING_KEYWORDS, $first, $tokenList);
                 $tokenList->finish();
 
-                return new InvalidCommand($comments, $exception);
+                return new InvalidCommand($comments, [$exception->toError()]);
             }
             $first = $tokenList->get();
         } while ($first === null || ($first->type & (TokenType::COMMENT | TokenType::DELIMITER)) !== 0);
@@ -241,19 +180,16 @@ class Parser
 
         // list with invalid tokens
         if ($tokenList->invalid()) {
-            $exception = null;
+            $errors = [];
             foreach ($tokenList->getTokens() as $token) {
                 if (($token->type & TokenType::INVALID) !== 0) {
-                    $exception = $token->exception;
-                    break;
+                    $errors[] = $token->error;
                 }
             }
 
-            /** @var LexerException $exception PHPStan */
-            $exception = $exception;
             $tokenList->finish();
 
-            return new InvalidCommand($comments, $exception);
+            return new InvalidCommand($comments, $errors);
         }
 
         // parse!
@@ -286,12 +222,15 @@ class Parser
             }
 
             return $command;
-        } catch (ParsingException | Throwable $e) { // @phpstan-ignore catch.neverThrown
-            // todo: remove Throwable
-            // Throwable should not be here
+        } catch (ParserException $e) { // @phpstan-ignore catch.neverThrown
             $tokenList->finish();
 
-            return new InvalidCommand($comments, $e);
+            return new InvalidCommand($comments, [$e->toError()]);
+        } catch (Throwable $e) {
+            // todo: remove Throwable
+            $tokenList->finish();
+            re($e);
+            return new InvalidCommand($comments, [Error::critical('error.unknown', $e->getMessage(), 0)]);
         }
     }
 

@@ -7,12 +7,12 @@ use Dogma\Application\Colors;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use SqlFtw\Formatter\Formatter;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Session\Session;
+use SqlFtw\Tests\CurrenVersion;
 use SqlFtw\Tests\Mysql\Data\TestSkips;
 use SqlFtw\Tests\Mysql\Data\TestSuites;
 use SqlFtw\Tests\Mysql\Data\VersionTags;
+use SqlFtw\Tests\ParserSuiteFactory;
 use SqlFtw\Tests\ResultRenderer;
 use SqlFtw\Util\Str;
 use function Amp\ParallelFunctions\parallelMap;
@@ -42,7 +42,7 @@ class MysqlTest
     use TestSuites;
 
     private const MYSQL_REPOSITORY_LINK = 'git@github.com:mysql/mysql-server.git';
-    private const DEFAULT_TAG = 'mysql-8.0.39';
+    private const DEFAULT_TAG = 'mysql-' . CurrenVersion::MYSQL;
 
     public string $tempDir;
 
@@ -91,25 +91,24 @@ class MysqlTest
 
         [$paths, $fullRun] = $this->getPaths($tests);
 
-        $platform = Platform::fromTag(Platform::MYSQL, $tag);
-        $version = $platform->getVersion()->format();
-        $session = new Session($platform);
-        $formatter = new Formatter($platform, $session);
-        $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun, $formatter);
+        $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL);
+        $suite->normalizer->quoteAllNames(false);
+
+        $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun, $suite->formatter);
 
         if ($singleThread) {
             // renders errors immediately
             $results = [];
             foreach ($paths as $path) {
-                $results[] = (new MysqlTestJob())->run($path, $version, true, $fullRun, $renderer);
+                $results[] = (new MysqlTestJob())->run($path, CurrenVersion::MYSQL, true, $fullRun, $renderer);
             }
         } else {
             // collects errors and renders them at the end
-            $parallelRunner = static function (string $path) use ($version, $fullRun, $renderer): Result {
+            $parallelRunner = static function (string $path) use ($fullRun, $renderer): Result {
                 ini_set('memory_limit', '3G');
                 set_time_limit(25);
 
-                return (new MysqlTestJob())->run($path, $version, false, $fullRun, $renderer);
+                return (new MysqlTestJob())->run($path, CurrenVersion::MYSQL, false, $fullRun, $renderer);
             };
 
             /** @var list<Result> $results */
@@ -138,28 +137,24 @@ class MysqlTest
 
         [$paths, $fullRun] = $this->getPaths($tests, true);
 
-        $platform = Platform::fromTag(Platform::MYSQL, $tag);
-        $version = $platform->getVersion()->format();
-        $session = new Session($platform);
-        $formatter = new Formatter($platform, $session);
-        $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun, $formatter);
+        $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun);
 
         if ($singleThread) {
             // renders errors immediately
             $results = [];
             foreach ($paths as $i => $path) {
-                $results[] = (new MysqlParseJob())->run($path, $version, true, $fullRun, $renderer);
+                $results[] = (new MysqlParseJob())->run($path, CurrenVersion::MYSQL, true, $fullRun, $renderer);
                 if ($i > 1000) {
                     break;
                 }
             }
         } else {
             // collects errors and renders them at the end
-            $parallelRunner = static function (string $path) use ($version, $fullRun, $renderer): Result {
+            $parallelRunner = static function (string $path) use ($fullRun, $renderer): Result {
                 ini_set('memory_limit', '3G');
                 set_time_limit(25);
 
-                return (new MysqlParseJob())->run($path, $version, false, $fullRun, $renderer);
+                return (new MysqlParseJob())->run($path, CurrenVersion::MYSQL, false, $fullRun, $renderer);
             };
 
             try {

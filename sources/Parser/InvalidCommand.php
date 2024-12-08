@@ -9,45 +9,36 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Error\Error;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\StatementImpl;
-use Throwable;
 
 /**
  * Returned when encountered a syntax error
+ *
+ * @deprecated being replaced with Statement::getErrors()
  */
 class InvalidCommand extends StatementImpl implements Command
 {
 
-    private Throwable $exception;
-
-    private ?Command $command;
-
     /**
      * @param list<string> $commentsBefore
+     * @param list<Error> $errors
      */
-    public function __construct(array $commentsBefore, Throwable $exception, ?Command $command = null)
+    public function __construct(array $commentsBefore, array $errors)
     {
         $this->commentsBefore = $commentsBefore;
-        $this->exception = $exception;
-        $this->command = $command;
-    }
 
-    public function getException(): Throwable
-    {
-        return $this->exception;
-    }
-
-    public function getCommand(): ?Command
-    {
-        return $this->command;
+        foreach ($errors as $error) {
+            $this->addError($error);
+        }
     }
 
     public function serialize(Formatter $formatter): string
     {
-        if ($this->command !== null) {
-            return 'InvalidCommand: ' . $this->command->serialize($formatter);
+        if ($this->tokenList !== null) {
+            return 'Invalid command: ' . $this->tokenList->serialize();
         } else {
             return 'Invalid command';
         }

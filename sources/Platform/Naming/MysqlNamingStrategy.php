@@ -12,7 +12,7 @@ namespace SqlFtw\Platform\Naming;
 use SqlFtw\Sql\Expression\QualifiedName;
 use function in_array;
 
-class NamingStrategyMysql implements NamingStrategy
+class MysqlNamingStrategy implements NamingStrategy
 {
 
     /**

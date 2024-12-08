@@ -7,16 +7,14 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Analyzer;
+namespace SqlFtw\Error;
 
-use SqlFtw\Sql\Statement;
-
-interface SimpleRule extends AnalyzerRule
+final class Repair
 {
 
-    /**
-     * @return list<AnalyzerResult>
-     */
-    public function process(Statement $statement, SimpleContext $context, int $flags): array;
+    public const YES = 1; // do repair / repaired
+    public const NO = 2; // do not repair / cannot repair
+    public const POSSIBLE = 3; // -- / can repair
+    public const PARTIAL = 4; // -- / repaired partially (some rules)
 
 }

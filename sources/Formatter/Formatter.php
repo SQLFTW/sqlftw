@@ -16,90 +16,50 @@ use Dogma\Time\DateTime;
 use Dogma\Time\Time;
 use LogicException;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Platform\Normalizer\Normalizer;
 use SqlFtw\Session\Session;
 use SqlFtw\Sql\Dml\Utility\DelimiterCommand;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlMode;
 use SqlFtw\Sql\SqlSerializable;
 use SqlFtw\Sql\Statement;
-use function array_keys;
 use function array_map;
-use function array_values;
 use function get_class;
 use function gettype;
 use function implode;
+use function is_bool;
 use function is_numeric;
 use function is_object;
 use function is_string;
-use function ltrim;
-use function preg_match;
 use function str_replace;
-use function strpos;
-use function strtoupper;
 
 class Formatter
 {
-
-    private const MYSQL_ESCAPES = [
-        '\\' => '\\\\',
-        "\x00" => '\0',
-        "\x08" => '\b',
-        "\n" => '\n', // 0a
-        "\r" => '\r', // 0d
-        "\t" => '\t', // 09
-        "\x1a" => '\Z', // 1a (legacy Win EOF)
-    ];
 
     private Platform $platform;
 
     private Session $session;
 
+    private Normalizer $normalizer;
+
     public string $indent;
 
     public bool $comments;
 
-    public bool $quoteAllNames;
-
-    public bool $escapeWhitespace;
-
-    /** @var list<string> */
-    private array $escapeKeys;
-
-    /** @var list<string> */
-    private array $escapeValues;
-
-    /** @var list<string> */
-    private array $escapeWsKeys;
-
-    /** @var list<string> */
-    private array $escapeWsValues;
-
     public function __construct(
         Platform $platform,
         Session $session,
+        Normalizer $normalizer,
         string $indent = '  ',
-        bool $comments = false,
-        bool $quoteAllNames = false,
-        bool $escapeWhitespace = true
+        bool $comments = false
     ) {
         $this->platform = $platform;
         $this->session = $session;
+        $this->normalizer = $normalizer;
         $this->indent = $indent;
         $this->comments = $comments;
-        $this->quoteAllNames = $quoteAllNames;
-        $this->escapeWhitespace = $escapeWhitespace;
-
-        $escapes = self::MYSQL_ESCAPES;
-        $this->escapeWsKeys = array_keys($escapes);
-        $this->escapeWsValues = array_values($escapes);
-        if (!$this->escapeWhitespace) {
-            unset($escapes["\n"], $escapes["\r"], $escapes["\t"]);
-        }
-        $this->escapeKeys = array_keys($escapes);
-        $this->escapeValues = array_values($escapes);
     }
 
     public function getPlatform(): Platform
@@ -119,25 +79,7 @@ class Formatter
 
     public function formatName(string $name): string
     {
-        if ($name === '*') {
-            return '*';
-        }
-        $sqlMode = $this->session->getMode();
-        $quote = ($sqlMode->fullValue & SqlMode::ANSI_QUOTES) !== 0 ? '"' : '`';
-        $name = str_replace($quote, $quote . $quote, $name);
-        $upper = strtoupper($name);
-
-        $needsQuoting = $this->quoteAllNames
-            || isset($this->platform->reserved[$upper])
-            || strpos($name, $quote) !== false // contains quote
-            || preg_match('~[\pL_]~u', $name) === 0 // does not contain letters
-            || preg_match('~[\pC\pM\pS\pZ\p{Pd}\p{Pe}\p{Pf}\p{Pi}\p{Po}\p{Ps}]~u', ltrim($name, '@')) !== 0; // contains control, mark, symbols, whitespace, punctuation except _
-
-        if ($needsQuoting && ($sqlMode->fullValue & SqlMode::NO_BACKSLASH_ESCAPES) === 0) {
-            $name = str_replace($this->escapeKeys, $this->escapeValues, $name);
-        }
-
-        return $needsQuoting ? $quote . $name . $quote : $name;
+        return $this->normalizer->formatName($name);
     }
 
     /**
@@ -157,12 +99,10 @@ class Formatter
     {
         if ($value === null) {
             return Keyword::NULL;
-        } elseif ($value === true) {
-            return '1';
-        } elseif ($value === false) {
-            return '0';
+        } elseif (is_bool($value)) {
+            return $this->normalizer->formatBool($value);
         } elseif (is_string($value)) {
-            return $this->formatString($value);
+            return $this->normalizer->formatString($value);
         } elseif (is_numeric($value)) {
             return (string) $value;
         } elseif ($value instanceof SqlSerializable) {
@@ -190,20 +130,15 @@ class Formatter
 
     public function formatString(string $string): string
     {
-        if (($this->session->getMode()->fullValue & SqlMode::NO_BACKSLASH_ESCAPES) === 0) {
-            $string = str_replace($this->escapeKeys, $this->escapeValues, $string);
-        }
-
-        return "'" . str_replace("'", "''", $string) . "'";
+        return $this->normalizer->formatString($string);
     }
 
     public function formatStringForceEscapeWhitespace(string $string): string
     {
-        if (($this->session->getMode()->fullValue & SqlMode::NO_BACKSLASH_ESCAPES) === 0) {
-            $string = str_replace($this->escapeWsKeys, $this->escapeWsValues, $string);
-        }
+        $normalizer = clone $this->normalizer;
+        $normalizer->escapeWhitespace(true);
 
-        return "'" . str_replace("'", "''", $string) . "'";
+        return $normalizer->formatString($string);
     }
 
     /**

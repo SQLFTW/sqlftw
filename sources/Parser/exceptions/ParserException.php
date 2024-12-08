@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Error\Error;
 use Throwable;
 use function array_map;
 use function array_slice;
@@ -16,6 +17,9 @@ use function implode;
 use function max;
 use function min;
 
+/**
+ * @deprecated
+ */
 class ParserException extends ParsingException
 {
 
@@ -26,6 +30,11 @@ class ParserException extends ParsingException
         parent::__construct($message, $previous);
 
         $this->tokenList = $tokenList;
+    }
+
+    public function toError(): Error
+    {
+        return Error::parser('parser.uncategorizedError', $this->message, $this->tokenList->getFirstSignificantToken()->start);
     }
 
     public function getTokenList(): TokenList

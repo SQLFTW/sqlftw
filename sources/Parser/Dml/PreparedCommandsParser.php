@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Parser\Dml;
 
-use SqlFtw\Parser\InvalidCommand;
+use SqlFtw\Error\Error;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\TokenList;
@@ -91,8 +91,8 @@ class PreparedCommandsParser
                 throw new ParserException('Multiple statements in PREPARE.', $tokenList);
             }
             $statement = $statements[0];
-            if ($statement instanceof InvalidCommand) {
-                throw new ParserException('Invalid statement in PREPARE.', $tokenList, $statement->getException());
+            if ($statement->getErrors() !== []) {
+                throw new ParserException('Invalid statement in PREPARE: ' . Error::summarize($statement->getErrors()), $tokenList);
             }
             $class = get_class($statement);
             if ($statement instanceof StoredProcedureCommand && $tokenList->inRoutine() === RoutineType::PROCEDURE) {

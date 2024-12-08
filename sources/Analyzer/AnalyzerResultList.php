@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Analyzer;
 
+use SqlFtw\Error\Severity;
 use SqlFtw\Sql\Statement;
 use function count;
 use function get_class;
@@ -56,15 +57,15 @@ class AnalyzerResultList
 
             if ($result->isAutoRepaired()) {
                 $this->repairedCount++;
-            } elseif ($severity === AnalyzerResultSeverity::PARSER_ERROR) {
+            } elseif ($severity === Severity::PARSER_ERROR) {
                 $this->parserErrorsCount++;
-            } elseif ($severity === AnalyzerResultSeverity::ERROR) {
+            } elseif ($severity === Severity::ERROR) {
                 $this->errorsCount++;
-            } elseif ($severity === AnalyzerResultSeverity::WARNING) {
+            } elseif ($severity === Severity::WARNING) {
                 $this->warningsCount++;
-            } elseif ($severity === AnalyzerResultSeverity::PARSER_WARNING) {
+            } elseif ($severity === Severity::PARSER_WARNING) {
                 $this->parserWarningsCount++;
-            } elseif ($severity === AnalyzerResultSeverity::NOTICE) {
+            } elseif ($severity === Severity::NOTICE) {
                 $this->noticesCount++;
             } else {
                 $this->errorsCount++;
@@ -112,7 +113,7 @@ class AnalyzerResultList
     public function getParserErrors(): array
     {
         return $this->getResults(static function (AnalyzerResult $result) {
-            return $result->getSeverity() === AnalyzerResultSeverity::PARSER_ERROR;
+            return $result->getSeverity() === Severity::PARSER_ERROR;
         });
     }
 
@@ -132,7 +133,7 @@ class AnalyzerResultList
     public function getErrors(): array
     {
         return $this->getResults(static function (AnalyzerResult $result) {
-            return $result->getSeverity() === AnalyzerResultSeverity::ERROR && !$result->isAutoRepaired();
+            return $result->getSeverity() === Severity::ERROR && !$result->isAutoRepaired();
         });
     }
 
@@ -152,7 +153,7 @@ class AnalyzerResultList
     public function getWarnings(): array
     {
         return $this->getResults(static function (AnalyzerResult $result) {
-            return $result->getSeverity() === AnalyzerResultSeverity::WARNING;
+            return $result->getSeverity() === Severity::WARNING;
         });
     }
 
@@ -172,7 +173,7 @@ class AnalyzerResultList
     public function getParserWarnings(): array
     {
         return $this->getResults(static function (AnalyzerResult $result) {
-            return $result->getSeverity() === AnalyzerResultSeverity::PARSER_WARNING;
+            return $result->getSeverity() === Severity::PARSER_WARNING;
         });
     }
 

@@ -11,10 +11,10 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Error\Error;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Dml\QueryParser;
 use SqlFtw\Platform\Platform;
-use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\Flush\FlushCommand;
 use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
@@ -83,20 +83,16 @@ class RoutineBodyParser
 
     private QueryParser $queryParser;
 
-    private SessionUpdater $sessionUpdater;
-
     public function __construct(
         Platform $platform,
         Parser $parser,
         ExpressionParser $expressionParser,
-        QueryParser $queryParser,
-        SessionUpdater $sessionUpdater
+        QueryParser $queryParser
     ) {
         $this->platform = $platform;
         $this->parser = $parser;
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
-        $this->sessionUpdater = $sessionUpdater;
     }
 
     /**
@@ -230,10 +226,6 @@ class RoutineBodyParser
                 break;
         }
 
-        if (!$statement instanceof Command) {
-            $this->sessionUpdater->processStatement($statement);
-        }
-
         // ensures that the statement was parsed completely
         if (!$tokenList->inEmbedded() && !$tokenList->isFinished()) {
             if ($statement instanceof CompoundStatement
@@ -267,8 +259,9 @@ class RoutineBodyParser
         $in = $tokenList->inRoutine();
         $statement = $this->parser->parseTokenList($tokenList);
 
-        if ($statement instanceof InvalidCommand) {
-            throw $statement->getException();
+        $errors = $statement->getErrors();
+        if ($errors !== []) {
+            throw new ParserException(Error::summarize($errors), $tokenList);
         } elseif ($statement instanceof ExplainForConnectionCommand) {
             throw new ParserException('Cannot use EXPLAIN FOR CONNECTION inside a routine.', $tokenList);
         } elseif ($statement instanceof LockTablesCommand || $statement instanceof UnlockTablesCommand) {
@@ -448,7 +441,11 @@ class RoutineBodyParser
             $condition = $this->expressionParser->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::WHEN);
         }
-        $formatter = new Formatter($this->platform, $tokenList->getSession());
+        $session = $tokenList->getSession();
+        $normalizer = $this->platform->getNormalizer($session);
+        $normalizer->quoteAllNames(false);
+        $formatter = new Formatter($this->platform, $session, $normalizer);
+
         $values = [];
         /** @var non-empty-list<list<Statement>> $statementLists */
         $statementLists = [];

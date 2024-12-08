@@ -9,11 +9,9 @@
 
 namespace SqlFtw\Analyzer\Rules\Variables;
 
-use SqlFtw\Analyzer\AnalyzerResult;
-use SqlFtw\Analyzer\AnalyzerResultSeverity;
-use SqlFtw\Analyzer\SimpleContext;
-use SqlFtw\Analyzer\SimpleRule;
-use SqlFtw\Formatter\Formatter;
+use SqlFtw\Analyzer\AnalyzerContext;
+use SqlFtw\Analyzer\AnalyzerRule;
+use SqlFtw\Error\Error;
 use SqlFtw\Sql\Dal\Set\SetVariablesCommand;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\DefaultLiteral;
@@ -37,13 +35,18 @@ use function is_numeric;
 use function is_object;
 use function str_replace;
 
-class SystemVariablesTypeRule implements SimpleRule
+class SystemVariablesTypeRule implements AnalyzerRule
 {
 
+    public function getNodes(): array
+    {
+        return [SetVariablesCommand::class]; // todo SetNamesCommand, SetCharacterSetCommand
+    }
+
     /**
-     * @return list<AnalyzerResult>
+     * @return list<Error>
      */
-    public function process(Statement $statement, SimpleContext $context, int $flags): array
+    public function process(Statement $statement, AnalyzerContext $context, int $flags): array
     {
         if ($statement instanceof SetVariablesCommand) {
             return $this->processSet($statement, $context);
@@ -53,14 +56,14 @@ class SystemVariablesTypeRule implements SimpleRule
     }
 
     /**
-     * @return list<AnalyzerResult>
+     * @return list<Error>
      */
-    private function processSet(SetVariablesCommand $command, SimpleContext $context): array
+    private function processSet(SetVariablesCommand $command, AnalyzerContext $context): array
     {
-        $mode = $context->getSession()->getMode();
+        $mode = $context->session->getMode();
         $strict = ($mode->fullValue & SqlMode::STRICT_ALL_TABLES) !== 0;
 
-        $results = [];
+        $errors = [];
         foreach ($command->getAssignments() as $assignment) {
             $variable = $assignment->getVariable();
             if (!$variable instanceof SystemVariable) {
@@ -74,26 +77,26 @@ class SystemVariablesTypeRule implements SimpleRule
                 $type = BaseType::SIGNED;
             }
             $expression = $assignment->getExpression();
-            $value = $context->getResolver()->resolve($expression);
+            $value = $context->resolver->resolve($expression);
 
             if (is_array($value)) {
                 if (count($value) === 1) {
                     /** @var scalar|ExpressionNode|null $value */
                     $value = $value[0];
                 } else {
-                    $results[] = new AnalyzerResult("System variable {$name} can not be set to non-scalar value.");
+                    $errors[] = Error::critical("variable.wrongType", "System variable {$name} can not be set to non-scalar value.", 0);
                     continue;
                 }
             }
             if ($value instanceof DefaultLiteral) {
                 if (!MysqlVariable::hasDefault($name)) {
-                    $results[] = new AnalyzerResult("System variable {$name} can not be set to default value.");
+                    $errors[] = Error::critical("variable.noDefault", "System variable {$name} can not be set to default value.", 0);
                 }
                 continue;
             }
             if ($value === null) {
                 if (!$var->nullable) {
-                    $results[] = new AnalyzerResult("System variable {$name} is not nullable.");
+                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} is not nullable.", 0);
                 }
                 continue;
             }
@@ -111,24 +114,23 @@ class SystemVariablesTypeRule implements SimpleRule
             if ($value instanceof ExpressionNode && !$value instanceof Value) {
                 // not resolved
                 // todo: insert real static type analysis here : ]
-                $formatter = new Formatter($context->getPlatform(), $context->getSession());
-                $expressionString = str_replace("\n", "", $expression->serialize($formatter));
+                $expressionString = str_replace("\n", "", $expression->serialize($context->formatter));
                 $expressionType = get_class($expression);
                 $message = "System variable {$name} assignment with expression \"{$expressionString}\" ({$expressionType}) was not checked.";
-                $results[] = new AnalyzerResult($message, AnalyzerResultSeverity::SKIP_NOTICE);
+                $errors[] = Error::skipNotice("variable.notChecked", $message, 0);
             } else {
                 if ($var->nonEmpty && $value === '') {
-                    $results[] = new AnalyzerResult("System variable {$name} can not be set to an empty value.");
+                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} can not be set to an empty value.", 0);
                 }
                 if ($var->nonZero && $value === 0) {
-                    $results[] = new AnalyzerResult("System variable {$name} can not be set to zero.");
+                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} can not be set to zero.", 0);
                 }
-                if (!$context->getTypeChecker()->canBeCastedTo($value, $type, $var->values, $context->getResolver()->cast())) {
+                if (!$context->typeChecker->canBeCastedTo($value, $type, $var->values, $context->resolver->cast())) {
                     if ($var->values !== null) {
                         $type .= '(' . implode(',', $var->values) . ')';
                     }
                     $realType = is_object($value) ? get_class($value) : gettype($value);
-                    $results[] = new AnalyzerResult("System variable {$name} only accepts {$type}, but {$realType} given.");
+                    $errors[] = Error::critical("variable.wongType", "System variable {$name} only accepts {$type}, but {$realType} given.", 0);
                     continue;
                 }
 
@@ -139,19 +141,19 @@ class SystemVariablesTypeRule implements SimpleRule
                 if ($var->min === null || $var->max === null) {
                     continue;
                 } elseif ($value < $var->min && ($strict || (!$var->clamp && !$var->clampMin))) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$var->min} and {$var->max}.");
+                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} value must be between {$var->min} and {$var->max}.", 0);
                 } elseif ($value > $var->max && ($strict || !$var->clamp)) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be between {$var->min} and {$var->max}.");
+                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} value must be between {$var->min} and {$var->max}.", 0);
                 }
                 if ($var->increment === null) {
                     continue;
                 } elseif (($strict || !$var->clamp) && (!is_int($value) || ($value % $var->increment) !== 0)) {
-                    $results[] = new AnalyzerResult("System variable {$name} value must be multiple of {$var->increment}.");
+                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} value must be multiple of {$var->increment}.", 0);
                 }
             }
         }
 
-        return $results;
+        return $errors;
     }
 
 }

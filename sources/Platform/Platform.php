@@ -12,7 +12,11 @@ namespace SqlFtw\Platform;
 use LogicException;
 use SqlFtw\Platform\Features\Feature;
 use SqlFtw\Platform\Features\MysqlFeatures;
+use SqlFtw\Platform\Naming\MysqlNamingStrategy;
 use SqlFtw\Platform\Naming\NamingStrategy;
+use SqlFtw\Platform\Normalizer\MysqlNormalizer;
+use SqlFtw\Platform\Normalizer\Normalizer;
+use SqlFtw\Session\Session;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\EntityType;
@@ -27,7 +31,6 @@ use function end;
 use function explode;
 use function in_array;
 use function ltrim;
-use function ucfirst;
 
 class Platform
 {
@@ -39,7 +42,7 @@ class Platform
     /** @var array<string, non-empty-list<string>> ($platform => $versions) */
     private static array $versions = [
         self::SQL => [
-            '92', '99', '2003', '2008', '2011', '2016', '2019'
+            '86', '89', '92', '99', '2003', '2008', '2011', '2016', '2019'
         ],
         self::MYSQL => [
             '5.1', '5.5', '5.6', '5.7',
@@ -65,7 +68,7 @@ class Platform
         'mysql-5.5' => Charset::LATIN1,
         'mysql-5.6' => Charset::LATIN1,
         'mysql-5.7' => Charset::LATIN1,
-        'mysql-8.0' => Charset::UTF8MB4,
+        'mysql-8.0' => Charset::UTF8MB4, // onwards
 
         'maria-5.1' => Charset::LATIN1,
         'maria-5.2' => Charset::LATIN1,
@@ -74,7 +77,7 @@ class Platform
         'maria-10.0' => Charset::LATIN1,
         'maria-10.1' => Charset::LATIN1,
         'maria-10.2' => Charset::LATIN1,
-        'maria-10.3' => Charset::UTF8MB4,
+        'maria-10.3' => Charset::UTF8MB4, // onwards
     ];
 
     /** @var array<string, int> ($version => $mode) */
@@ -89,7 +92,7 @@ class Platform
             | SqlMode::NO_ZERO_IN_DATE
             | SqlMode::NO_ZERO_DATE
             | SqlMode::NO_AUTO_CREATE_USER,
-        'mysql-8.0' => SqlMode::NO_ENGINE_SUBSTITUTION
+        'mysql-8.0' => SqlMode::NO_ENGINE_SUBSTITUTION // onwards
             | SqlMode::ERROR_FOR_DIVISION_BY_ZERO
             | SqlMode::STRICT_TRANS_TABLES
             | SqlMode::ONLY_FULL_GROUP_BY
@@ -98,7 +101,7 @@ class Platform
 
         'maria-10.1' => SqlMode::NO_ENGINE_SUBSTITUTION
             | SqlMode::NO_AUTO_CREATE_USER,
-        'maria-10.2' => SqlMode::NO_ENGINE_SUBSTITUTION
+        'maria-10.2' => SqlMode::NO_ENGINE_SUBSTITUTION // onwards
             | SqlMode::ERROR_FOR_DIVISION_BY_ZERO
             | SqlMode::STRICT_TRANS_TABLES
             | SqlMode::NO_AUTO_CREATE_USER,
@@ -241,16 +244,6 @@ class Platform
     }
 
     /**
-     * @param self::* $name
-     */
-    public static function fromTag(string $name, string $tag): self
-    {
-        $parts = explode('-', $tag);
-
-        return self::get($name, end($parts));
-    }
-
-    /**
      * @return self::*
      */
     public function getName(): string
@@ -363,10 +356,22 @@ class Platform
 
     public function getNamingStrategy(): NamingStrategy
     {
-        /** @var class-string<NamingStrategy> $class */
-        $class = 'SqlFtw\\Platform\\Naming\\NamingStrategy' . ucfirst($this->name);
+        switch($this->name) {
+            case self::MYSQL:
+                return new MysqlNamingStrategy();
+            default:
+                throw new LogicException("Naming strategy for platform {$this->name} is not implemented.");
+        }
+    }
 
-        return new $class();
+    public function getNormalizer(Session $session): Normalizer
+    {
+        switch($this->name) {
+            case self::MYSQL:
+                return new MysqlNormalizer($this, $session);
+            default:
+                throw new LogicException("Normalizer for platform {$this->name} is not implemented.");
+        }
     }
 
     /**

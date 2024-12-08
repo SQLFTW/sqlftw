@@ -58,7 +58,6 @@ use SqlFtw\Parser\Dml\UseCommandParser;
 use SqlFtw\Parser\Dml\XaTransactionCommandsParser;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Session\Session;
-use SqlFtw\Session\SessionUpdater;
 
 /**
  * Factory for all specialized parsers
@@ -82,7 +81,7 @@ class ParserFactory
 
     private OptimizerHintParser $optimizerHintParser;
 
-    public function __construct(Parser $parser, ParserConfig $config, Session $session, SessionUpdater $sessionUpdater)
+    public function __construct(Parser $parser, ParserConfig $config, Session $session)
     {
         $this->parser = $parser;
         $this->platform = $config->getPlatform();
@@ -95,7 +94,7 @@ class ParserFactory
         $this->optimizerHintParser = new OptimizerHintParser($this->expressionParser);
         $this->tableReferenceParser = new TableReferenceParser($this->expressionParser, $queryParserProxy);
         $this->queryParser = new QueryParser($this->platform, $this, $this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
-        $this->routineBodyParser = new RoutineBodyParser($this->platform, $this->parser, $this->expressionParser, $this->queryParser, $sessionUpdater);
+        $this->routineBodyParser = new RoutineBodyParser($this->platform, $this->parser, $this->expressionParser, $this->queryParser);
     }
 
     public function getParser(): Parser

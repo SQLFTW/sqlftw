@@ -17,6 +17,8 @@ use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BaseType;
+use SqlFtw\Sql\Expression\BinaryLiteral;
+use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\OnOffLiteral;
 use SqlFtw\Sql\Expression\Value;
 use SqlFtw\Sql\InvalidDefinitionException;
@@ -92,6 +94,9 @@ class CastingTypeChecker
                         $upper = strtoupper($value);
 
                         return $upper === 'TRUE' || $upper === 'FALSE' || $upper === 'ON' || $upper === 'OFF';/* || $upper === 'YES' || $upper === 'NO'*/
+                    } elseif ($value instanceof HexadecimalLiteral || $value instanceof BinaryLiteral) {
+                        $int = $value->asInt();
+                        return $int === 0 || $int === 1;
                     }
                     $value = $cast->toBool($value);
 
