@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php
 
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\Php74\Rector\Property\TypedPropertyRector;

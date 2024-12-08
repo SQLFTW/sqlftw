@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php
 
 // spell-check-ignore: DBACCESS TABLENAME abc abcdefghijklmnopqrstuvwxyz condname1 ctx dat dblwr ddse endswithspace fil haha hehe hoho lsn pri testrole testuser wp xyzzy 0every BQAAAA DRAUGR DUP FIL TRG VÐƷWİ aaa aaaaaa abcd asd attr4 azundris badvar bbbbbb fvar idx ivar loaddata5 maste mv mvi nosuchvar º Æ Ö Γåô Γê Γò Γòí ツ
 // spell-check-ignore: switc acces é ü тест

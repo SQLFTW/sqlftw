@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php
 
 // phpcs:disable Squiz.PHP.Heredoc.NotAllowed
 // phpcs:disable SlevomatCodingStandard.PHP.RequireNowdoc.RequiredNowdoc

@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php
 
 // spell-check-ignore: DET FC charbinary crc doesn storedproc usexxx xplugin
 

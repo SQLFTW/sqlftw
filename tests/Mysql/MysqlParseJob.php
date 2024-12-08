@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php
 
 // phpcs:disable SlevomatCodingStandard.ControlStructures.NewWithParentheses.MissingParentheses
 // phpcs:disable Generic.Formatting.DisallowMultipleStatements.SameLine
