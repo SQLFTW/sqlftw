@@ -17,15 +17,15 @@ use SqlFtw\Sql\StatementImpl;
 class AlterLogfileGroupCommand extends StatementImpl implements LogfileGroupCommand
 {
 
-    private string $logFilegroup;
+    public string $logFilegroup;
 
-    private ?StorageEngine $engine;
+    public ?StorageEngine $engine;
 
-    private string $undoFile;
+    public string $undoFile;
 
-    private ?SizeLiteral $initialSize;
+    public ?SizeLiteral $initialSize;
 
-    private ?bool $wait;
+    public ?bool $wait;
 
     public function __construct(
         string $logFilegroup,
@@ -39,31 +39,6 @@ class AlterLogfileGroupCommand extends StatementImpl implements LogfileGroupComm
         $this->undoFile = $undoFile;
         $this->initialSize = $initialSize;
         $this->wait = $wait;
-    }
-
-    public function getLogFilegroup(): string
-    {
-        return $this->logFilegroup;
-    }
-
-    public function getEngine(): ?StorageEngine
-    {
-        return $this->engine;
-    }
-
-    public function getUndoFile(): string
-    {
-        return $this->undoFile;
-    }
-
-    public function getInitialSize(): ?SizeLiteral
-    {
-        return $this->initialSize;
-    }
-
-    public function wait(): ?bool
-    {
-        return $this->wait;
     }
 
     public function serialize(Formatter $formatter): string

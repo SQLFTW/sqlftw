@@ -21,13 +21,13 @@ use SqlFtw\Sql\StatementImpl;
 class DropIndexCommand extends StatementImpl implements IndexCommand, DdlTableCommand
 {
 
-    private string $index;
+    public string $index;
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private ?AlterTableAlgorithm $algorithm;
+    public ?AlterTableAlgorithm $algorithm;
 
-    private ?AlterTableLock $lock;
+    public ?AlterTableLock $lock;
 
     public function __construct(
         string $index,
@@ -43,24 +43,9 @@ class DropIndexCommand extends StatementImpl implements IndexCommand, DdlTableCo
 
     public function getIndex(): ObjectIdentifier
     {
-        $schema = $this->table instanceof QualifiedName ? $this->table->getSchema() : null;
+        $schema = $this->table instanceof QualifiedName ? $this->table->schema : null;
 
         return $schema !== null ? new QualifiedName($this->index, $schema) : new SimpleName($this->index);
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getAlgorithm(): ?AlterTableAlgorithm
-    {
-        return $this->algorithm;
-    }
-
-    public function getLock(): ?AlterTableLock
-    {
-        return $this->lock;
     }
 
     public function serialize(Formatter $formatter): string

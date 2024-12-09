@@ -17,16 +17,11 @@ use SqlFtw\Formatter\Formatter;
 class ExistsExpression implements RootNode
 {
 
-    private Subquery $subquery;
+    public Subquery $subquery;
 
     public function __construct(Subquery $subquery)
     {
         $this->subquery = $subquery;
-    }
-
-    public function getSubquery(): Subquery
-    {
-        return $this->subquery;
     }
 
     public function serialize(Formatter $formatter): string

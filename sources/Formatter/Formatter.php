@@ -195,9 +195,9 @@ class Formatter
     public function serialize(SqlSerializable $serializable, bool $comments = true, string $delimiter = ';'): string
     {
         if ($serializable instanceof Statement) {
-            $result = ($comments ? implode('', $serializable->getCommentsBefore()) : '') . $serializable->serialize($this);
+            $result = ($comments ? implode('', $serializable->commentsBefore) : '') . $serializable->serialize($this);
             if (!$serializable instanceof DelimiterCommand) {
-                $result .= $serializable->getDelimiter() ?? $delimiter;
+                $result .= $serializable->delimiter ?? $delimiter;
             }
         } else {
             $result = $serializable->serialize($this);

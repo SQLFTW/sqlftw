@@ -19,12 +19,12 @@ class JoinOrderHint implements OptimizerHint
 {
 
     /** @var JoinOrderHintType&string */
-    private string $type;
+    public string $type;
 
-    private ?string $queryBlock;
+    public ?string $queryBlock;
 
     /** @var non-empty-list<HintTableIdentifier> */
-    private array $tables;
+    public array $tables;
 
     /**
      * @param JoinOrderHintType&string $type
@@ -51,19 +51,6 @@ class JoinOrderHint implements OptimizerHint
     public function getType(): string
     {
         return $this->type;
-    }
-
-    public function getQueryBlock(): ?string
-    {
-        return $this->queryBlock;
-    }
-
-    /**
-     * @return non-empty-list<HintTableIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->tables;
     }
 
     public function serialize(Formatter $formatter): string

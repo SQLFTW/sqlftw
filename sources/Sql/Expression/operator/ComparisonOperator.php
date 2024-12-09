@@ -25,14 +25,14 @@ use SqlFtw\Formatter\Formatter;
 class ComparisonOperator implements OperatorExpression
 {
 
-    private RootNode $left;
+    public RootNode $left;
 
-    private Operator $operator;
+    public Operator $operator;
 
     /** @var 'ALL'|'ANY'|'SOME'|null */
-    private ?string $quantifier;
+    public ?string $quantifier;
 
-    private RootNode $right;
+    public RootNode $right;
 
     /**
      * @param 'ALL'|'ANY'|'SOME'|null $quantifier
@@ -45,26 +45,6 @@ class ComparisonOperator implements OperatorExpression
         $this->operator = $operator;
         $this->quantifier = $quantifier;
         $this->right = $right;
-    }
-
-    public function getLeft(): RootNode
-    {
-        return $this->left;
-    }
-
-    public function getOperator(): Operator
-    {
-        return $this->operator;
-    }
-
-    public function getQuantifier(): ?string
-    {
-        return $this->quantifier;
-    }
-
-    public function getRight(): RootNode
-    {
-        return $this->right;
     }
 
     public function serialize(Formatter $formatter): string

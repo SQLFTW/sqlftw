@@ -17,10 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class DefaultLiteral implements KeywordLiteral
 {
 
-    public function getValue(): string
-    {
-        return 'DEFAULT';
-    }
+    public $value = 'DEFAULT';
 
     public function serialize(Formatter $formatter): string
     {

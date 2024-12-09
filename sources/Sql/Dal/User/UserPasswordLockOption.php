@@ -16,10 +16,10 @@ use function is_int;
 class UserPasswordLockOption implements SqlSerializable
 {
 
-    private UserPasswordLockOptionType $type;
+    public UserPasswordLockOptionType $type;
 
     /** @var int|string|null */
-    private $value;
+    public $value;
 
     /**
      * @param string|int|null $value
@@ -30,19 +30,6 @@ class UserPasswordLockOption implements SqlSerializable
 
         $this->type = $type;
         $this->value = $value;
-    }
-
-    public function getType(): UserPasswordLockOptionType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return int|string|null
-     */
-    public function getValue()
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

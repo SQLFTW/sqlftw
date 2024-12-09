@@ -19,7 +19,7 @@ class LoadIndexIntoCacheCommand extends StatementImpl implements CacheCommand
 {
 
     /** @var non-empty-list<TableIndexList> */
-    private array $tableIndexLists;
+    public array $tableIndexLists;
 
     /**
      * @param non-empty-list<TableIndexList> $tableIndexLists
@@ -27,14 +27,6 @@ class LoadIndexIntoCacheCommand extends StatementImpl implements CacheCommand
     public function __construct(array $tableIndexLists)
     {
         $this->tableIndexLists = $tableIndexLists;
-    }
-
-    /**
-     * @return non-empty-list<TableIndexList>
-     */
-    public function getTableIndexLists(): array
-    {
-        return $this->tableIndexLists;
     }
 
     public function serialize(Formatter $formatter): string

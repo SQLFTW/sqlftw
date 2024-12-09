@@ -17,15 +17,15 @@ use SqlFtw\Sql\StatementImpl;
 class ShowColumnsCommand extends StatementImpl implements ShowCommand
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private ?string $like;
+    public ?string $like;
 
-    private ?RootNode $where;
+    public ?RootNode $where;
 
-    private bool $full;
+    public bool $full;
 
-    private bool $extended;
+    public bool $extended;
 
     public function __construct(
         ObjectIdentifier $table,
@@ -40,31 +40,6 @@ class ShowColumnsCommand extends StatementImpl implements ShowCommand
         $this->where = $where;
         $this->full = $full;
         $this->extended = $extended;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getLike(): ?string
-    {
-        return $this->like;
-    }
-
-    public function getWhere(): ?RootNode
-    {
-        return $this->where;
-    }
-
-    public function full(): bool
-    {
-        return $this->full;
-    }
-
-    public function extended(): bool
-    {
-        return $this->extended;
     }
 
     public function serialize(Formatter $formatter): string

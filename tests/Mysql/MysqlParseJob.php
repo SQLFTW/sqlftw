@@ -72,10 +72,8 @@ class MysqlParseJob
 
         try {
             foreach ($parser->parse($sql) as $command) {
-                $tokenList = $command->getTokenList();
-
                 $statements++;
-                $tokens += count($tokenList->getTokens());
+                $tokens += count($command->tokenList->getTokens());
             }
         } catch (Throwable $e) {
             var_dump($e->getMessage());

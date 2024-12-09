@@ -17,10 +17,10 @@ class ResignalCommand extends StatementImpl implements ErrorHandlingCommand
 {
 
     /** @var SqlState|string|null */
-    private $condition;
+    public $condition;
 
     /** @var array<ConditionInformationItem::*, RootNode> */
-    private array $items;
+    public array $items;
 
     /**
      * @param SqlState|string|null $condition
@@ -33,22 +33,6 @@ class ResignalCommand extends StatementImpl implements ErrorHandlingCommand
         }
         $this->condition = $condition;
         $this->items = $items;
-    }
-
-    /**
-     * @return SqlState|string|null
-     */
-    public function getCondition()
-    {
-        return $this->condition;
-    }
-
-    /**
-     * @return array<ConditionInformationItem::*, RootNode>
-     */
-    public function getItems(): array
-    {
-        return $this->items;
     }
 
     public function serialize(Formatter $formatter): string

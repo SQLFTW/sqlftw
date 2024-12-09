@@ -17,10 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class MaxValueLiteral implements KeywordLiteral
 {
 
-    public function getValue(): string
-    {
-        return 'MAXVALUE';
-    }
+    public string $value = 'MAXVALUE';
 
     public function serialize(Formatter $formatter): string
     {

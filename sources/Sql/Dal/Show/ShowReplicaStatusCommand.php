@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class ShowReplicaStatusCommand extends StatementImpl implements ShowCommand
 {
 
-    private ?string $channel;
+    public ?string $channel;
 
     public function __construct(?string $channel)
     {
         $this->channel = $channel;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string

@@ -14,16 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class DropConstraintAction implements ConstraintAction
 {
 
-    private string $constraint;
+    public string $constraint;
 
     public function __construct(string $constraint)
     {
         $this->constraint = $constraint;
-    }
-
-    public function getConstraint(): string
-    {
-        return $this->constraint;
     }
 
     public function serialize(Formatter $formatter): string

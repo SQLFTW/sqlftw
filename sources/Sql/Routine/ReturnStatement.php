@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class ReturnStatement extends StatementImpl
 {
 
-    private RootNode $expression;
+    public RootNode $expression;
 
     public function __construct(RootNode $expression)
     {
         $this->expression = $expression;
-    }
-
-    public function getExpression(): RootNode
-    {
-        return $this->expression;
     }
 
     public function serialize(Formatter $formatter): string

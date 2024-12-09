@@ -18,16 +18,11 @@ use SqlFtw\Sql\Dml\OptimizerHint\HintTableIdentifier;
 class SimpleName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier, HintTableIdentifier
 {
 
-    private string $name;
+    public string $name;
 
     public function __construct(string $name)
     {
         $this->name = $name;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getFullName(): string

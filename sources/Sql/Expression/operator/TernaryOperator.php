@@ -18,15 +18,15 @@ use SqlFtw\Formatter\Formatter;
 class TernaryOperator implements OperatorExpression
 {
 
-    private ExpressionNode $left;
+    public ExpressionNode $left;
 
-    private Operator $leftOperator;
+    public Operator $leftOperator;
 
-    private ExpressionNode $middle;
+    public ExpressionNode $middle;
 
-    private Operator $rightOperator;
+    public Operator $rightOperator;
 
-    private ExpressionNode $right;
+    public ExpressionNode $right;
 
     public function __construct(
         ExpressionNode $left,
@@ -42,31 +42,6 @@ class TernaryOperator implements OperatorExpression
         $this->middle = $middle;
         $this->rightOperator = $rightOperator;
         $this->right = $right;
-    }
-
-    public function getLeft(): ExpressionNode
-    {
-        return $this->left;
-    }
-
-    public function getLeftOperator(): Operator
-    {
-        return $this->leftOperator;
-    }
-
-    public function getMiddle(): ExpressionNode
-    {
-        return $this->middle;
-    }
-
-    public function getRightOperator(): Operator
-    {
-        return $this->rightOperator;
-    }
-
-    public function getRight(): ExpressionNode
-    {
-        return $this->right;
     }
 
     public function serialize(Formatter $formatter): string

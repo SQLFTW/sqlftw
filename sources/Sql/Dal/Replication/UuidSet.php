@@ -21,35 +21,18 @@ use function strtolower;
 class UuidSet implements SqlSerializable
 {
 
-    private string $uuid;
+    public string $uuid;
 
     /** @var array<array<int, int|null>> */
-    private array $intervals;
+    public array $intervals;
 
     /**
      * @param array<array<int, int|null>> $intervals
      */
     public function __construct(string $uuid, array $intervals)
     {
-        $uuid = strtolower($uuid);
-        if (preg_match(Lexer::UUID_REGEXP, $uuid) === 0) {
-            throw new InvalidDefinitionException("Invalid UUID value '$uuid'.");
-        }
         $this->uuid = $uuid;
         $this->intervals = $intervals;
-    }
-
-    public function getUuid(): string
-    {
-        return $this->uuid;
-    }
-
-    /**
-     * @return array<array<int, int|null>>
-     */
-    public function getIntervals(): array
-    {
-        return $this->intervals;
     }
 
     public function serialize(Formatter $formatter): string

@@ -12,12 +12,10 @@ namespace SqlFtw\Sql\Dal\Set;
 use SqlFtw\Sql\Assignment;
 use SqlFtw\Sql\Dal\DalCommand;
 
+/**
+ * @property list<Assignment> $assignments
+ */
 interface SetCommand extends DalCommand
 {
-
-    /**
-     * @return list<Assignment>
-     */
-    public function getAssignments(): array;
 
 }

@@ -18,24 +18,14 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class NameWithQueryBlock implements HintTableIdentifier
 {
 
-    private ObjectIdentifier $name;
+    public ObjectIdentifier $name;
 
-    private string $queryBlock;
+    public string $queryBlock;
 
     public function __construct(ObjectIdentifier $name, string $queryBlock)
     {
         $this->name = $name;
         $this->queryBlock = $queryBlock;
-    }
-
-    public function getQueryBlock(): string
-    {
-        return $this->queryBlock;
-    }
-
-    public function getName(): ObjectIdentifier
-    {
-        return $this->name;
     }
 
     public function getFullName(): string

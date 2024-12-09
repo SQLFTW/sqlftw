@@ -23,21 +23,21 @@ use SqlFtw\Sql\StatementImpl;
 class CreateIndexCommand extends StatementImpl implements IndexCommand, DdlTableCommand
 {
 
-    private IndexDefinition $definition;
+    public IndexDefinition $definition;
 
-    private ?AlterTableAlgorithm $algorithm;
+    public ?AlterTableAlgorithm $algorithm;
 
-    private ?AlterTableLock $lock;
+    public ?AlterTableLock $lock;
 
     public function __construct(
         IndexDefinition $definition,
         ?AlterTableAlgorithm $algorithm = null,
         ?AlterTableLock $lock = null
     ) {
-        if ($definition->getTable() === null) {
+        if ($definition->table === null) {
             throw new InvalidDefinitionException('Index must have a table.');
         }
-        if ($definition->getName() === null) {
+        if ($definition->name === null) {
             throw new InvalidDefinitionException('Index must have a name.');
         }
 
@@ -49,9 +49,9 @@ class CreateIndexCommand extends StatementImpl implements IndexCommand, DdlTable
     public function getIndex(): ObjectIdentifier
     {
         /** @var string $name */
-        $name = $this->definition->getName();
+        $name = $this->definition->name;
         $table = $this->getTable();
-        $schema = $table instanceof QualifiedName ? $table->getSchema() : null;
+        $schema = $table instanceof QualifiedName ? $table->schema : null;
 
         return $schema !== null ? new QualifiedName($name, $schema) : new SimpleName($name);
     }
@@ -59,24 +59,9 @@ class CreateIndexCommand extends StatementImpl implements IndexCommand, DdlTable
     public function getTable(): ObjectIdentifier
     {
         /** @var ObjectIdentifier $table */
-        $table = $this->definition->getTable();
+        $table = $this->definition->table;
 
         return $table;
-    }
-
-    public function getIndexDefinition(): IndexDefinition
-    {
-        return $this->definition;
-    }
-
-    public function getAlgorithm(): ?AlterTableAlgorithm
-    {
-        return $this->algorithm;
-    }
-
-    public function getLock(): ?AlterTableLock
-    {
-        return $this->lock;
     }
 
     public function serialize(Formatter $formatter): string

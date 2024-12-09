@@ -21,24 +21,14 @@ use function strtoupper;
 class SystemVariable implements Identifier
 {
 
-    private string $name;
+    public string $name;
 
-    private ?Scope $scope;
+    public ?Scope $scope;
 
     public function __construct(string $name, ?Scope $scope = null)
     {
         $this->name = $name;
         $this->scope = $scope;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getScope(): ?Scope
-    {
-        return $this->scope;
     }
 
     public function getFullName(): string

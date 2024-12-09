@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Keyword;
 
 /**
  * TRUE, FALSE
@@ -17,26 +18,24 @@ use SqlFtw\Formatter\Formatter;
 class BoolLiteral implements BoolValue, KeywordLiteral
 {
 
-    private bool $value;
+    private string $value;
 
-    public function __construct(bool $value)
+    /**
+     * @param 'TRUE'|'FALSE' $value
+     */
+    public function __construct(string $value)
     {
         $this->value = $value;
     }
 
-    public function getValue(): string
-    {
-        return $this->value ? 'TRUE' : 'FALSE';
-    }
-
     public function asBool(): bool
     {
-        return $this->value;
+        return $this->value === Keyword::TRUE;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->value ? 'TRUE' : 'FALSE';
+        return $this->value;
     }
 
 }

@@ -21,7 +21,7 @@ class JsonErrorCondition implements ArgumentNode
     public const ERROR = false;
 
     /** @var Literal|bool */
-    private $value;
+    public $value;
 
     /**
      * @param Literal|bool $value

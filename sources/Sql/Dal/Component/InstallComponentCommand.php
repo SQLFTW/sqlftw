@@ -17,10 +17,10 @@ class InstallComponentCommand extends StatementImpl implements ComponentCommand
 {
 
     /** @var non-empty-list<string> */
-    private array $components;
+    public array $components;
 
     /** @var non-empty-list<Assignment> */
-    private array $assignments;
+    public array $assignments;
 
     /**
      * @param non-empty-list<string> $components
@@ -30,14 +30,6 @@ class InstallComponentCommand extends StatementImpl implements ComponentCommand
     {
         $this->components = $components;
         $this->assignments = $assignments;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getComponents(): array
-    {
-        return $this->components;
     }
 
     public function serialize(Formatter $formatter): string

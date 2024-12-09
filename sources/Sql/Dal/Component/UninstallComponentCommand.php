@@ -16,7 +16,7 @@ class UninstallComponentCommand extends StatementImpl implements ComponentComman
 {
 
     /** @var non-empty-list<string> */
-    private array $components;
+    public array $components;
 
     /**
      * @param non-empty-list<string> $components
@@ -24,14 +24,6 @@ class UninstallComponentCommand extends StatementImpl implements ComponentComman
     public function __construct(array $components)
     {
         $this->components = $components;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getComponents(): array
-    {
-        return $this->components;
     }
 
     public function serialize(Formatter $formatter): string

@@ -91,8 +91,8 @@ class PreparedCommandsParser
                 throw new ParserException('Multiple statements in PREPARE.', $tokenList);
             }
             $statement = $statements[0];
-            if ($statement->getErrors() !== []) {
-                throw new ParserException('Invalid statement in PREPARE: ' . Error::summarize($statement->getErrors()), $tokenList);
+            if ($statement->errors !== []) {
+                throw new ParserException('Invalid statement in PREPARE: ' . Error::summarize($statement->errors), $tokenList);
             }
             $class = get_class($statement);
             if ($statement instanceof StoredProcedureCommand && $tokenList->inRoutine() === RoutineType::PROCEDURE) {

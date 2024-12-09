@@ -17,16 +17,11 @@ use SqlFtw\Formatter\Formatter;
 class NumberedQuestionMarkPlaceholder implements Placeholder
 {
 
-    private string $name;
+    public string $name;
 
     public function __construct(string $name)
     {
         $this->name = $name;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getFullName(): string

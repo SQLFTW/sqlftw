@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class BinlogCommand extends StatementImpl implements DalCommand
 {
 
-    private string $value;
+    public string $value;
 
     public function __construct(string $value)
     {
         $this->value = $value;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

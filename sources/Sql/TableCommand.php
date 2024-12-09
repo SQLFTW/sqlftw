@@ -11,9 +11,10 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
+/**
+ * @property ObjectIdentifier $table
+ */
 interface TableCommand extends Command
 {
-
-    public function getTable(): ObjectIdentifier;
 
 }

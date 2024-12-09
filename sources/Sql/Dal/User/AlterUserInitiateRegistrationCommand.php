@@ -19,11 +19,11 @@ class AlterUserInitiateRegistrationCommand extends StatementImpl implements Alte
 {
 
     /** @var UserName|FunctionCall */
-    private SqlSerializable $user;
+    public SqlSerializable $user;
 
-    private int $factor;
+    public int $factor;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     /**
      * @param UserName|FunctionCall $user
@@ -33,24 +33,6 @@ class AlterUserInitiateRegistrationCommand extends StatementImpl implements Alte
         $this->user = $user;
         $this->factor = $factor;
         $this->ifExists = $ifExists;
-    }
-
-    /**
-     * @return UserName|FunctionCall
-     */
-    public function getUser(): SqlSerializable
-    {
-        return $this->user;
-    }
-
-    public function getFactor(): int
-    {
-        return $this->factor;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

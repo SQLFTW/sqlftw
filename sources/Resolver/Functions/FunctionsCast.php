@@ -34,11 +34,11 @@ trait FunctionsCast
     public function cast($value, CastType $type)
     {
         $value = $this->cast->toIntOrString($value);
-        if (is_int($value) && $value < 0 && $type->getSign() === false) {
+        if (is_int($value) && $value < 0 && $type->sign === false) {
             throw new UnresolvableException('Cannot represent integers over 63 bits.');
         }
 
-        $baseType = $type->getBaseType();
+        $baseType = $type->baseType;
         if ($baseType === null) {
             throw new UnresolvableException('Cannot cast.');
         }
@@ -64,7 +64,7 @@ trait FunctionsCast
                 if ($string === null) {
                     return null;
                 }
-                $length = $type->getSize();
+                $length = $type->size;
                 if ($length !== null) {
                     $string = Str::substring($string, 0, $length[0]);
                 }
@@ -75,7 +75,7 @@ trait FunctionsCast
                 if ($string === null) {
                     return null;
                 }
-                $length = $type->getSize();
+                $length = $type->size;
                 if ($length !== null) {
                     $string = substr($string, 0, $length[0]);
                     $string = str_pad($string, $length[0], "\0");

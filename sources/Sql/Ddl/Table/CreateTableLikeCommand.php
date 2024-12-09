@@ -16,13 +16,13 @@ use SqlFtw\Sql\StatementImpl;
 class CreateTableLikeCommand extends StatementImpl implements AnyCreateTableCommand
 {
 
-    private ObjectIdentifier $name;
+    public ObjectIdentifier $name;
 
-    private ObjectIdentifier $templateTable;
+    public ObjectIdentifier $templateTable;
 
-    private bool $temporary;
+    public bool $temporary;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
     public function __construct(
         ObjectIdentifier $name,
@@ -34,26 +34,6 @@ class CreateTableLikeCommand extends StatementImpl implements AnyCreateTableComm
         $this->templateTable = $templateTable;
         $this->temporary = $temporary;
         $this->ifNotExists = $ifNotExists;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->name;
-    }
-
-    public function getTemplateTable(): ObjectIdentifier
-    {
-        return $this->templateTable;
-    }
-
-    public function isTemporary(): bool
-    {
-        return $this->temporary;
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
     }
 
     public function serialize(Formatter $formatter): string

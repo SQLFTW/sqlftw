@@ -15,24 +15,14 @@ use SqlFtw\Sql\SqlSerializable;
 class TriggerPosition implements SqlSerializable
 {
 
-    private TriggerOrder $order;
+    public TriggerOrder $order;
 
-    private string $otherTrigger;
+    public string $otherTrigger;
 
     public function __construct(TriggerOrder $order, string $otherTrigger)
     {
         $this->order = $order;
         $this->otherTrigger = $otherTrigger;
-    }
-
-    public function getOrder(): TriggerOrder
-    {
-        return $this->order;
-    }
-
-    public function getOtherTrigger(): string
-    {
-        return $this->otherTrigger;
     }
 
     public function serialize(Formatter $formatter): string

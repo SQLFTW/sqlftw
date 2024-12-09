@@ -19,14 +19,14 @@ class RevokeProxyCommand extends StatementImpl implements UserCommand
 {
 
     /** @var UserName|FunctionCall */
-    private SqlSerializable $proxy;
+    public SqlSerializable $proxy;
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private array $users;
+    public array $users;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
-    private bool $ignoreUnknownUser;
+    public bool $ignoreUnknownUser;
 
     /**
      * @param UserName|FunctionCall $proxy
@@ -42,32 +42,6 @@ class RevokeProxyCommand extends StatementImpl implements UserCommand
         $this->users = $users;
         $this->ifExists = $ifExists;
         $this->ignoreUnknownUser = $ignoreUnknownUser;
-    }
-
-    /**
-     * @return UserName|FunctionCall
-     */
-    public function getProxy(): SqlSerializable
-    {
-        return $this->proxy;
-    }
-
-    /**
-     * @return non-empty-list<UserName|FunctionCall>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
-    }
-
-    public function ignoreUnknownUser(): bool
-    {
-        return $this->ignoreUnknownUser;
     }
 
     public function serialize(Formatter $formatter): string

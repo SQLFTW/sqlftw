@@ -18,13 +18,13 @@ class FlushTablesCommand extends StatementImpl implements DalCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier>|null */
-    private ?array $tables;
+    public ?array $tables;
 
-    private bool $withReadLock;
+    public bool $withReadLock;
 
-    private bool $forExport;
+    public bool $forExport;
 
-    private bool $local;
+    public bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier>|null $tables
@@ -41,33 +41,10 @@ class FlushTablesCommand extends StatementImpl implements DalCommand
         $this->local = $local;
     }
 
-    /**
-     * @return non-empty-list<ObjectIdentifier>|null
-     */
-    public function getTables(): ?array
-    {
-        return $this->tables;
-    }
-
-    public function withReadLock(): bool
-    {
-        return $this->withReadLock;
-    }
-
-    public function forExport(): bool
-    {
-        return $this->forExport;
-    }
-
-    public function isLocal(): bool
-    {
-        return $this->local;
-    }
-
     public function serialize(Formatter $formatter): string
     {
         $result = 'FLUSH ';
-        if ($this->isLocal()) {
+        if ($this->local) {
             $result .= 'LOCAL ';
         }
         $result .= 'TABLES';

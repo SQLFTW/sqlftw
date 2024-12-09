@@ -17,24 +17,14 @@ use SqlFtw\Formatter\Formatter;
 class AliasExpression implements ArgumentNode
 {
 
-    private ExpressionNode $expression;
+    public ExpressionNode $expression;
 
-    private string $alias;
+    public string $alias;
 
     public function __construct(ExpressionNode $expression, string $alias)
     {
         $this->expression = $expression;
         $this->alias = $alias;
-    }
-
-    public function getExpression(): ExpressionNode
-    {
-        return $this->expression;
-    }
-
-    public function getAlias(): string
-    {
-        return $this->alias;
     }
 
     public function serialize(Formatter $formatter): string

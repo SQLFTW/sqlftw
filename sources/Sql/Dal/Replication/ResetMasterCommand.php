@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class ResetMasterCommand extends StatementImpl implements ReplicationCommand
 {
 
-    private ?ExpressionNode $binlogPosition;
+    public ?ExpressionNode $binlogPosition;
 
     public function __construct(?ExpressionNode $binlogPosition)
     {
         $this->binlogPosition = $binlogPosition;
-    }
-
-    public function getBinlogPosition(): ?ExpressionNode
-    {
-        return $this->binlogPosition;
     }
 
     public function serialize(Formatter $formatter): string

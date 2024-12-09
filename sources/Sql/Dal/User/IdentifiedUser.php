@@ -18,13 +18,13 @@ class IdentifiedUser implements SqlSerializable
 {
 
     /** @var UserName|FunctionCall */
-    private SqlSerializable $user;
+    public SqlSerializable $user;
 
-    private ?AuthOption $option1;
+    public ?AuthOption $option1;
 
-    private ?AuthOption $option2;
+    public ?AuthOption $option2;
 
-    private ?AuthOption $option3;
+    public ?AuthOption $option3;
 
     /**
      * @param UserName|FunctionCall $user
@@ -39,29 +39,6 @@ class IdentifiedUser implements SqlSerializable
         $this->option1 = $option1;
         $this->option2 = $option2;
         $this->option3 = $option3;
-    }
-
-    /**
-     * @return UserName|FunctionCall
-     */
-    public function getUser(): SqlSerializable
-    {
-        return $this->user;
-    }
-
-    public function getOption1(): ?AuthOption
-    {
-        return $this->option1;
-    }
-
-    public function getOption2(): ?AuthOption
-    {
-        return $this->option2;
-    }
-
-    public function getOption3(): ?AuthOption
-    {
-        return $this->option3;
     }
 
     public function serialize(Formatter $formatter): string

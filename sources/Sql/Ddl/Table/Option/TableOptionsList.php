@@ -29,15 +29,13 @@ class TableOptionsList
 {
 
     /** @var array<TableOption::*, TableOptionValue|null> */
-    private array $options = [];
+    public array $options = [];
 
     /**
      * @param array<string|TableOption::*, TableOptionValue> $options
      */
     public function __construct(array $options)
     {
-        $types = TableOption::getTypes();
-
         foreach ($options as $option => $value) {
             if (is_int($option)) {
                 switch (true) {
@@ -70,21 +68,13 @@ class TableOptionsList
                 if (!TableOption::isValidValue($option)) {
                     throw new InvalidDefinitionException("Invalid table option '$option'.");
                 }
-                TypeChecker::check($value, $types[$option]);
+                TypeChecker::check($value, TableOption::$types[$option]);
 
                 // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
                 /** @var TableOption::* $option */
                 $this->options[$option] = $value;
             }
         }
-    }
-
-    /**
-     * @return array<TableOption::*, TableOptionValue|null>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
     }
 
     /**
@@ -109,7 +99,7 @@ class TableOptionsList
         if (!TableOption::isValidValue($option)) {
             throw new InvalidDefinitionException("Invalid table option '$option'.");
         }
-        TypeChecker::check($value, TableOption::getTypes()[$option], $option);
+        TypeChecker::check($value, TableOption::$types[$option], $option);
 
         $this->options[$option] = $value;
     }
@@ -123,9 +113,8 @@ class TableOptionsList
         if (!TableOption::isValidValue($option)) {
             throw new InvalidDefinitionException("Invalid table option '$option'.");
         }
-        $types = TableOption::getTypes();
         if (!isset($this->options[$option])) {
-            TypeChecker::check($value, $types[$option], $option);
+            TypeChecker::check($value, TableOption::$types[$option], $option);
             $this->options[$option] = $value;
         }
     }

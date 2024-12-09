@@ -23,24 +23,24 @@ class QueryExpression extends StatementImpl implements Query
 {
 
     /** @var non-empty-list<Query> */
-    private array $queries;
+    public array $queries;
 
     /** @var non-empty-list<QueryOperator> */
-    private array $operators;
+    public array $operators;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private ?array $orderBy;
+    public ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $limit;
+    public $limit;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $offset;
+    public $offset;
 
-    private ?SelectInto $into;
+    public ?SelectInto $into;
 
     /** @var non-empty-list<SelectLocking>|null */
-    private ?array $locking;
+    public ?array $locking;
 
     /**
      * @param non-empty-list<Query> $queries
@@ -70,100 +70,6 @@ class QueryExpression extends StatementImpl implements Query
         $this->offset = $offset;
         $this->into = $into;
         $this->locking = $locking;
-    }
-
-    /**
-     * @return non-empty-list<Query>
-     */
-    public function getQueries(): array
-    {
-        return $this->queries;
-    }
-
-    /**
-     * @return non-empty-list<QueryOperator>
-     */
-    public function getOperators(): array
-    {
-        return $this->operators;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>|null
-     */
-    public function getOrderBy(): ?array
-    {
-        return $this->orderBy;
-    }
-
-    /**
-     * @return static
-     */
-    public function removeOrderBy(): Query
-    {
-        $that = clone $this;
-        $that->orderBy = null;
-
-        return $that;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    /**
-     * @return static
-     */
-    public function removeLimit(): Query
-    {
-        $that = clone $this;
-        $that->limit = null;
-
-        return $that;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @return static
-     */
-    public function removeOffset(): Query
-    {
-        $that = clone $this;
-        $that->offset = null;
-
-        return $that;
-    }
-
-    public function getInto(): ?SelectInto
-    {
-        return $this->into;
-    }
-
-    public function removeInto(): Query
-    {
-        $that = clone $this;
-        $that->into = null;
-
-        return $that;
-    }
-
-    /**
-     * @return non-empty-list<SelectLocking>|null
-     */
-    public function getLocking(): ?array
-    {
-        return $this->locking;
     }
 
     public function serialize(Formatter $formatter): string

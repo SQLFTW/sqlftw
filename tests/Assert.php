@@ -118,10 +118,10 @@ class Assert extends DogmaAssert
         foreach ($results as $command) {
             if ($command instanceof InvalidCommand) {
                 if (class_exists(Debugger::class)) {
-                    Debugger::dump($command->getTokenList());
+                    Debugger::dump($command->tokenList);
                 }
 
-                $message = Error::summarize($command->getErrors());
+                $message = Error::summarize($command->errors);
 
                 self::fail($message);
                 break;
@@ -161,7 +161,7 @@ class Assert extends DogmaAssert
                 Debugger::dump($results);
                 foreach ($results as $command) {
                     if ($command instanceof InvalidCommand) {
-                        Debugger::dump($command->getErrors());
+                        Debugger::dump($command->errors);
                     }
                 }
             }
@@ -171,13 +171,11 @@ class Assert extends DogmaAssert
 
         if ($command instanceof InvalidCommand) {
             if (class_exists(Debugger::class)) {
-                Debugger::dump($command->getTokenList());
+                Debugger::dump($command->tokenList);
             }
-            $errors = $command->getErrors();
-            $message = '';
-            foreach ($errors as $error) {
-                $message .= "\n - " . $error->message;
-            }
+
+            $message = Error::summarize($command->errors);
+
             self::fail($message);
         }
 
@@ -249,10 +247,9 @@ class Assert extends DogmaAssert
             /** @var Command $command */
             foreach ($suite->parser->parse($sql) as $command) {
                 $commands[] = $command;
-                $errors = $command->getErrors();
 
-                if ($errors !== []) {
-                    $message = Error::summarize($errors);
+                if ($command->errors !== []) {
+                    $message = Error::summarize($command->errors);
                     self::fail($message);
                 }
 

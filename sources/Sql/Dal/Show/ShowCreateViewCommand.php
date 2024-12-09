@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class ShowCreateViewCommand extends StatementImpl implements ShowCommand
 {
 
-    private ObjectIdentifier $view;
+    public ObjectIdentifier $view;
 
     public function __construct(ObjectIdentifier $view)
     {
         $this->view = $view;
-    }
-
-    public function getView(): ObjectIdentifier
-    {
-        return $this->view;
     }
 
     public function serialize(Formatter $formatter): string

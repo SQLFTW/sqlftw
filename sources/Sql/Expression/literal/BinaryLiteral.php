@@ -23,24 +23,14 @@ use function substr;
 class BinaryLiteral implements BoolValue, UintValue, StringValue
 {
 
-    private string $value;
+    public string $value;
 
-    private ?Charset $charset;
+    public ?Charset $charset;
 
     public function __construct(string $value, ?Charset $charset = null)
     {
         $this->value = $value;
         $this->charset = $charset;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    public function getCharset(): ?Charset
-    {
-        return $this->charset;
     }
 
     public function asString(): string

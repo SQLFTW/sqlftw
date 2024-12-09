@@ -17,9 +17,9 @@ use function is_string;
 class UserTlsOption implements SqlSerializable
 {
 
-    private UserTlsOptionType $type;
+    public UserTlsOptionType $type;
 
-    private ?string $value;
+    public ?string $value;
 
     public function __construct(UserTlsOptionType $type, ?string $value = null)
     {
@@ -30,16 +30,6 @@ class UserTlsOption implements SqlSerializable
         }
         $this->type = $type;
         $this->value = $value;
-    }
-
-    public function getType(): UserTlsOptionType
-    {
-        return $this->type;
-    }
-
-    public function getValue(): ?string
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

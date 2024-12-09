@@ -15,32 +15,17 @@ use SqlFtw\Sql\StatementImpl;
 class StopSlaveCommand extends StatementImpl implements ReplicationCommand
 {
 
-    private bool $ioThread;
+    public bool $ioThread;
 
-    private bool $sqlThread;
+    public bool $sqlThread;
 
-    private ?string $channel;
+    public ?string $channel;
 
     public function __construct(bool $ioThread = false, bool $sqlThread = false, ?string $channel = null)
     {
         $this->ioThread = $ioThread;
         $this->sqlThread = $sqlThread;
         $this->channel = $channel;
-    }
-
-    public function getIoThread(): bool
-    {
-        return $this->ioThread;
-    }
-
-    public function getSqlThread(): bool
-    {
-        return $this->sqlThread;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string

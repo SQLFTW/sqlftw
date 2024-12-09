@@ -19,25 +19,25 @@ class GrantCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<UserPrivilege> */
-    private array $privileges;
+    public array $privileges;
 
-    private UserPrivilegeResource $resource;
+    public UserPrivilegeResource $resource;
 
     /** @var non-empty-list<IdentifiedUser> */
-    private array $users;
+    public array $users;
 
     /** @var UserName|FunctionCall|null */
-    private ?SqlSerializable $asUser;
+    public ?SqlSerializable $asUser;
 
-    private ?RolesSpecification $withRole;
+    public ?RolesSpecification $withRole;
 
     /** @var list<UserTlsOption>|null */
-    private ?array $tlsOptions;
+    public ?array $tlsOptions;
 
     /** @var non-empty-list<UserResourceOption>|null */
-    private ?array $resourceOptions;
+    public ?array $resourceOptions;
 
-    private bool $withGrantOption;
+    public bool $withGrantOption;
 
     /**
      * @param non-empty-list<UserPrivilege> $privileges
@@ -64,61 +64,6 @@ class GrantCommand extends StatementImpl implements UserCommand
         $this->tlsOptions = $tlsOptions;
         $this->resourceOptions = $resourceOptions;
         $this->withGrantOption = $withGrantOption;
-    }
-
-    /**
-     * @return non-empty-list<UserPrivilege>
-     */
-    public function getPrivileges(): array
-    {
-        return $this->privileges;
-    }
-
-    public function getResource(): UserPrivilegeResource
-    {
-        return $this->resource;
-    }
-
-    /**
-     * @return non-empty-list<IdentifiedUser>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    /**
-     * @return UserName|FunctionCall|null
-     */
-    public function getAsUser(): ?SqlSerializable
-    {
-        return $this->asUser;
-    }
-
-    public function getWithRole(): ?RolesSpecification
-    {
-        return $this->withRole;
-    }
-
-    /**
-     * @return list<UserTlsOption>|null
-     */
-    public function getTlsOptions(): ?array
-    {
-        return $this->tlsOptions;
-    }
-
-    /**
-     * @return non-empty-list<UserResourceOption>|null
-     */
-    public function getResourceOptions(): ?array
-    {
-        return $this->resourceOptions;
-    }
-
-    public function withGrantOption(): bool
-    {
-        return $this->withGrantOption;
     }
 
     public function serialize(Formatter $formatter): string

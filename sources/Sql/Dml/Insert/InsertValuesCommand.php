@@ -21,14 +21,14 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
 {
 
     /** @var non-empty-list<list<ExpressionNode>> */
-    private array $rows;
+    public array $rows;
 
-    private ?string $alias;
+    public ?string $alias;
 
     /** @var non-empty-list<string>|null */
-    private ?array $columnAliases;
+    public ?array $columnAliases;
 
-    private ?OnDuplicateKeyActions $onDuplicateKeyActions;
+    public ?OnDuplicateKeyActions $onDuplicateKeyActions;
 
     /**
      * @param non-empty-list<list<ExpressionNode>> $rows
@@ -55,32 +55,6 @@ class InsertValuesCommand extends InsertOrReplaceCommand implements InsertComman
         $this->alias = $alias;
         $this->columnAliases = $columnAliases;
         $this->onDuplicateKeyActions = $onDuplicateKeyActions;
-    }
-
-    /**
-     * @return non-empty-list<list<ExpressionNode>>
-     */
-    public function getRows(): array
-    {
-        return $this->rows;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getColumnAliases(): ?array
-    {
-        return $this->columnAliases;
-    }
-
-    public function getOnDuplicateKeyAction(): ?OnDuplicateKeyActions
-    {
-        return $this->onDuplicateKeyActions;
     }
 
     public function serialize(Formatter $formatter): string

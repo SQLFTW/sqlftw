@@ -110,13 +110,13 @@ class MysqlTestJob
 
         foreach ($suite->analyzer->analyze($sql) as $result) {
             $command = $result->command;
-            $tokenList = $command->getTokenList();
+            $tokenList = $command->tokenList;
             $tokensSerialized = trim($tokenList->serialize());
             $tokensSerializedWithoutGarbage = trim($tokenList->filter(static function (Token $token): bool {
                 return ($token->type & TokenType::COMMENT) !== 0
                     && (Str::startsWith($token->value, '-- XB') || Str::startsWith($token->value, '#'));
             })->serialize());
-            $comments = Re::filter($command->getCommentsBefore(), '~^[^#]~');
+            $comments = Re::filter($command->commentsBefore, '~^[^#]~');
             $lastComment = end($comments);
 
             $shouldFail = false;
@@ -143,7 +143,7 @@ class MysqlTestJob
 
             $sqlMode = $tokenList->getSession()->getMode();
 
-            $failed = $command->getErrors() !== [] || $result->errors !== [];
+            $failed = $command->errors !== [] || $result->errors !== [];
 
             if ($failed && !$shouldFail) {
                 // exceptions
@@ -219,7 +219,7 @@ class MysqlTestJob
             return true;
         }
 
-        $tokenList = $command->getTokenList();
+        $tokenList = $command->tokenList;
         [, $before] = $this->normalizeOriginalSql($tokenList);
         [, $after] = $this->normalizeParsedSql($command, $formatter, $session);
 

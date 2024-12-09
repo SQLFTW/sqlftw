@@ -21,12 +21,12 @@ class SetNamesCommand extends StatementImpl implements SetCommand
 {
 
     /** @var Charset|DefaultLiteral */
-    private SqlSerializable $charset;
+    public SqlSerializable $charset;
 
-    private ?Collation $collation;
+    public ?Collation $collation;
 
     /** @var list<Assignment> */
-    private array $assignments;
+    public array $assignments;
 
     /**
      * @param Charset|DefaultLiteral $charset
@@ -37,27 +37,6 @@ class SetNamesCommand extends StatementImpl implements SetCommand
         $this->charset = $charset;
         $this->collation = $collation;
         $this->assignments = $assignments;
-    }
-
-    /**
-     * @return Charset|DefaultLiteral
-     */
-    public function getCharset(): SqlSerializable
-    {
-        return $this->charset;
-    }
-
-    public function getCollation(): ?Collation
-    {
-        return $this->collation;
-    }
-
-    /**
-     * @return list<Assignment>
-     */
-    public function getAssignments(): array
-    {
-        return $this->assignments;
     }
 
     public function serialize(Formatter $formatter): string

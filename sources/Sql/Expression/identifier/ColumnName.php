@@ -17,11 +17,11 @@ use SqlFtw\Formatter\Formatter;
 class ColumnName implements ColumnIdentifier
 {
 
-    private string $name;
+    public string $name;
 
-    private string $table;
+    public string $table;
 
-    private string $schema;
+    public string $schema;
 
     public function __construct(string $name, string $table, string $schema)
     {
@@ -33,21 +33,6 @@ class ColumnName implements ColumnIdentifier
     public function getTableName(): ?ObjectIdentifier
     {
         return new QualifiedName($this->table, $this->schema);
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getTable(): string
-    {
-        return $this->table;
-    }
-
-    public function getSchema(): string
-    {
-        return $this->schema;
     }
 
     public function getFullName(): string

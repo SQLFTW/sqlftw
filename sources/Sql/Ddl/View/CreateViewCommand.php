@@ -20,22 +20,22 @@ use SqlFtw\Sql\StatementImpl;
 class CreateViewCommand extends StatementImpl implements ViewCommand, SchemaObjectCommand
 {
 
-    private ObjectIdentifier $view;
+    public ObjectIdentifier $view;
 
-    private Query $query;
+    public Query $query;
 
     /** @var non-empty-list<string>|null */
-    private ?array $columns;
+    public ?array $columns;
 
-    private ?UserExpression $definer;
+    public ?UserExpression $definer;
 
-    private ?SqlSecurity $security;
+    public ?SqlSecurity $security;
 
-    private ?ViewAlgorithm $algorithm;
+    public ?ViewAlgorithm $algorithm;
 
-    private ?ViewCheckOption $checkOption;
+    public ?ViewCheckOption $checkOption;
 
-    private bool $orReplace;
+    public bool $orReplace;
 
     /**
      * @param non-empty-list<string>|null $columns
@@ -58,49 +58,6 @@ class CreateViewCommand extends StatementImpl implements ViewCommand, SchemaObje
         $this->algorithm = $algorithm;
         $this->checkOption = $checkOption;
         $this->orReplace = $orReplace;
-    }
-
-    public function getView(): ObjectIdentifier
-    {
-        return $this->view;
-    }
-
-    public function getQuery(): Query
-    {
-        return $this->query;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getColumns(): ?array
-    {
-        return $this->columns;
-    }
-
-    public function getDefiner(): ?UserExpression
-    {
-        return $this->definer;
-    }
-
-    public function getSqlSecurity(): ?SqlSecurity
-    {
-        return $this->security;
-    }
-
-    public function getAlgorithm(): ?ViewAlgorithm
-    {
-        return $this->algorithm;
-    }
-
-    public function getCheckOption(): ?ViewCheckOption
-    {
-        return $this->checkOption;
-    }
-
-    public function orReplace(): bool
-    {
-        return $this->orReplace;
     }
 
     public function serialize(Formatter $formatter): string

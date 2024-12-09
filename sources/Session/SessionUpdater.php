@@ -75,7 +75,7 @@ class SessionUpdater
     {
         if ($command instanceof SetCommand) {
             $this->processSet($command, $tokenList);
-        } elseif ($command instanceof SelectCommand && $this->resolver->isSimpleSelect($command) && $command->getInto() instanceof SelectIntoVariables) {
+        } elseif ($command instanceof SelectCommand && $this->resolver->isSimpleSelect($command) && $command->into instanceof SelectIntoVariables) {
             $this->processSelect($command, $tokenList);
         } elseif ($command instanceof CreateRoutineCommand || $command instanceof CreateEventCommand) {
             $this->session->resetLocalVariables();
@@ -85,7 +85,7 @@ class SessionUpdater
     public function processStatement(Statement $statement): void
     {
         if ($statement instanceof DeclareVariablesStatement) {
-            foreach ($statement->getVariables() as $name) {
+            foreach ($statement->variables as $name) {
                 $this->session->setLocalVariable($name, null);
             }
         }
@@ -104,10 +104,10 @@ class SessionUpdater
             // todo: SET CHARSET
         }
 
-        foreach ($command->getAssignments() as $assignment) {
-            $expression = $assignment->getExpression();
-            $variable = $assignment->getVariable();
-            $name = $variable->getName();
+        foreach ($command->assignments as $assignment) {
+            $expression = $assignment->expression;
+            $variable = $assignment->variable;
+            $name = $variable->name;
             $value = $this->resolver->resolve($expression);
 
             // array to scalar
@@ -116,7 +116,7 @@ class SessionUpdater
             }
             // special values to scalar
             if ($value instanceof SimpleName) {
-                $value = $value->getName();
+                $value = $value->name;
             } elseif ($value instanceof NoneLiteral) {
                 $value = 'NONE';
             } elseif ($value instanceof DefaultLiteral) {
@@ -132,7 +132,7 @@ class SessionUpdater
             }
 
             if ($variable instanceof SystemVariable) {
-                $scope = $variable->getScope();
+                $scope = $variable->scope;
                 switch ($name) {
                     case MysqlVariable::SQL_MODE:
                         $value = $this->processSqlMode($value, $tokenList);
@@ -191,21 +191,21 @@ class SessionUpdater
     private function processSelect(SelectCommand $command, TokenList $tokenList): void
     {
         /** @var SelectIntoVariables $into */
-        $into = $command->getInto();
+        $into = $command->into;
 
         $values = $this->resolver->processSelect($command, true);
         if ($values instanceof SelectCommand) {
             return;
         }
 
-        $variables = $into->getVariables();
+        $variables = $into->variables;
         if (count($variables) !== count($values)) {
             throw new ParserException('Count of values does not match count of variables.', $tokenList);
         }
 
         foreach ($variables as $i => $variable) {
             if ($variable instanceof UserVariable) {
-                $this->session->setUserVariable($variable->getName(), $values[$i]);
+                $this->session->setUserVariable($variable->name, $values[$i]);
             }
         }
     }

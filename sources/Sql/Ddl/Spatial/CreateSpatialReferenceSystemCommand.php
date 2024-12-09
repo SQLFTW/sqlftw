@@ -16,21 +16,21 @@ use SqlFtw\Sql\StatementImpl;
 class CreateSpatialReferenceSystemCommand extends StatementImpl implements SpatialReferenceSystemCommand
 {
 
-    private int $srid;
+    public int $srid;
 
-    private string $name;
+    public string $name;
 
-    private string $definition;
+    public string $definition;
 
-    private ?string $organization;
+    public ?string $organization;
 
-    private ?int $identifiedBy;
+    public ?int $identifiedBy;
 
-    private ?string $description;
+    public ?string $description;
 
-    private bool $orReplace;
+    public bool $orReplace;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
     public function __construct(
         int $srid,
@@ -57,46 +57,6 @@ class CreateSpatialReferenceSystemCommand extends StatementImpl implements Spati
         $this->description = $description;
         $this->orReplace = $orReplace;
         $this->ifNotExists = $ifNotExists;
-    }
-
-    public function getSrid(): int
-    {
-        return $this->srid;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getDefinition(): string
-    {
-        return $this->definition;
-    }
-
-    public function getOrganization(): ?string
-    {
-        return $this->organization;
-    }
-
-    public function getIdentifiedBy(): ?int
-    {
-        return $this->identifiedBy;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function orReplace(): bool
-    {
-        return $this->orReplace;
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
     }
 
     public function serialize(Formatter $formatter): string

@@ -21,10 +21,10 @@ use function is_string;
 class Condition implements SqlSerializable
 {
 
-    private ConditionType $type;
+    public ConditionType $type;
 
     /** @var int|string|SqlState|null */
-    private $value;
+    public $value;
 
     /**
      * @param int|string|SqlState|null $value
@@ -43,19 +43,6 @@ class Condition implements SqlSerializable
 
         $this->type = $type;
         $this->value = $value;
-    }
-
-    public function getType(): ConditionType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return int|string|SqlState|null
-     */
-    public function getValue()
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

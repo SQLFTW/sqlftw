@@ -20,26 +20,26 @@ use function array_values;
 class CreateProcedureCommand extends StatementImpl implements StoredProcedureCommand, CreateRoutineCommand
 {
 
-    private ObjectIdentifier $procedure;
+    public ObjectIdentifier $procedure;
 
-    private Statement $body;
+    public Statement $body;
 
     /** @var array<string, ProcedureParam> */
-    private array $params;
+    public array $params;
 
-    private ?UserExpression $definer;
+    public ?UserExpression $definer;
 
-    private ?bool $deterministic;
+    public ?bool $deterministic;
 
-    private ?SqlSecurity $security;
+    public ?SqlSecurity $security;
 
-    private ?RoutineSideEffects $sideEffects;
+    public ?RoutineSideEffects $sideEffects;
 
-    private ?string $comment;
+    public ?string $comment;
 
-    private ?string $language;
+    public ?string $language;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
     /**
      * @param array<string, ProcedureParam> $params
@@ -66,59 +66,6 @@ class CreateProcedureCommand extends StatementImpl implements StoredProcedureCom
         $this->comment = $comment;
         $this->language = $language;
         $this->ifNotExists = $ifNotExists;
-    }
-
-    public function getProcedure(): ObjectIdentifier
-    {
-        return $this->procedure;
-    }
-
-    public function getBody(): Statement
-    {
-        return $this->body;
-    }
-
-    /**
-     * @return array<string, ProcedureParam>
-     */
-    public function getParams(): array
-    {
-        return $this->params;
-    }
-
-    public function getDefiner(): ?UserExpression
-    {
-        return $this->definer;
-    }
-
-    public function isDeterministic(): ?bool
-    {
-        return $this->deterministic;
-    }
-
-    public function getSecurity(): ?SqlSecurity
-    {
-        return $this->security;
-    }
-
-    public function getSideEffects(): ?RoutineSideEffects
-    {
-        return $this->sideEffects;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function getLanguage(): ?string
-    {
-        return $this->language;
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
     }
 
     public function serialize(Formatter $formatter): string

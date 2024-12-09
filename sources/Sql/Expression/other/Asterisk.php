@@ -17,10 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class Asterisk implements ArgumentNode, ArgumentValue
 {
 
-    public function getValue(): string
-    {
-        return '*';
-    }
+    public string $value = '*';
 
     public function serialize(Formatter $formatter): string
     {

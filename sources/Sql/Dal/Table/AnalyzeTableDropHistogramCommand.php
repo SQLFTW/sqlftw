@@ -17,12 +17,12 @@ class AnalyzeTableDropHistogramCommand extends StatementImpl implements DalTable
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $tables;
+    public array $tables;
 
     /** @var non-empty-list<string> */
-    private array $columns;
+    public array $columns;
 
-    private bool $local;
+    public bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $tables
@@ -33,27 +33,6 @@ class AnalyzeTableDropHistogramCommand extends StatementImpl implements DalTable
         $this->tables = $tables;
         $this->columns = $columns;
         $this->local = $local;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->tables;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
-
-    public function isLocal(): bool
-    {
-        return $this->local;
     }
 
     public function serialize(Formatter $formatter): string

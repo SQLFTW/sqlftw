@@ -19,11 +19,11 @@ class FlushCommand extends StatementImpl implements DalCommand
 {
 
     /** @var non-empty-list<FlushOption> */
-    private array $options;
+    public array $options;
 
-    private ?string $channel;
+    public ?string $channel;
 
-    private bool $local;
+    public bool $local;
 
     /**
      * @param non-empty-list<FlushOption> $options
@@ -35,28 +35,10 @@ class FlushCommand extends StatementImpl implements DalCommand
         $this->local = $local;
     }
 
-    /**
-     * @return non-empty-list<FlushOption>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
-    }
-
-    public function isLocal(): bool
-    {
-        return $this->local;
-    }
-
     public function serialize(Formatter $formatter): string
     {
         $result = 'FLUSH ';
-        if ($this->isLocal()) {
+        if ($this->local) {
             $result .= 'LOCAL ';
         }
         $result .= implode(', ', array_map(function (FlushOption $option) use ($formatter) {

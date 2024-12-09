@@ -18,24 +18,14 @@ use SqlFtw\Sql\Collation;
 class CollateExpression implements RootNode
 {
 
-    private RootNode $expression;
+    public RootNode $expression;
 
-    private Collation $collation;
+    public Collation $collation;
 
     public function __construct(RootNode $expression, Collation $collation)
     {
         $this->expression = $expression;
         $this->collation = $collation;
-    }
-
-    public function getExpression(): RootNode
-    {
-        return $this->expression;
-    }
-
-    public function getCollation(): Collation
-    {
-        return $this->collation;
     }
 
     public function serialize(Formatter $formatter): string

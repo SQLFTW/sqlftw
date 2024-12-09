@@ -20,28 +20,28 @@ use SqlFtw\Sql\StatementImpl;
 abstract class LoadCommand extends StatementImpl implements DmlCommand
 {
 
-    private string $file;
+    public string $file;
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private ?Charset $charset;
+    public ?Charset $charset;
 
     /** @var non-empty-list<string>|null */
-    private ?array $fields;
+    public ?array $fields;
 
     /** @var non-empty-list<Assignment>|null */
-    private ?array $assignments;
+    public ?array $assignments;
 
-    private ?int $ignoreRows;
+    public ?int $ignoreRows;
 
-    private ?LoadPriority $priority;
+    public ?LoadPriority $priority;
 
-    private bool $local;
+    public bool $local;
 
-    private ?DuplicateOption $duplicateOption;
+    public ?DuplicateOption $duplicateOption;
 
     /** @var non-empty-list<string>|null */
-    private ?array $partitions;
+    public ?array $partitions;
 
     /**
      * @param non-empty-list<string>|null $fields
@@ -75,65 +75,6 @@ abstract class LoadCommand extends StatementImpl implements DmlCommand
     abstract protected function getWhat(): string;
 
     abstract protected function serializeFormat(Formatter $formatter): string;
-
-    public function getFile(): string
-    {
-        return $this->file;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getCharset(): ?Charset
-    {
-        return $this->charset;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getFields(): ?array
-    {
-        return $this->fields;
-    }
-
-    /**
-     * @return non-empty-list<Assignment>|null
-     */
-    public function getAssignments(): ?array
-    {
-        return $this->assignments;
-    }
-
-    public function getIgnoreRows(): ?int
-    {
-        return $this->ignoreRows;
-    }
-
-    public function getPriority(): ?LoadPriority
-    {
-        return $this->priority;
-    }
-
-    public function local(): bool
-    {
-        return $this->local;
-    }
-
-    public function getDuplicateOption(): ?DuplicateOption
-    {
-        return $this->duplicateOption;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getPartitions(): ?array
-    {
-        return $this->partitions;
-    }
 
     public function serialize(Formatter $formatter): string
     {

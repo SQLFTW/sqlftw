@@ -31,7 +31,7 @@ class InvalidCommand extends StatementImpl implements Command
         $this->commentsBefore = $commentsBefore;
 
         foreach ($errors as $error) {
-            $this->addError($error);
+            $this->errors[] = $error;
         }
     }
 

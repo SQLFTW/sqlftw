@@ -16,9 +16,9 @@ use SqlFtw\Sql\StatementImpl;
 class CommitCommand extends StatementImpl implements TransactionCommand
 {
 
-    private ?bool $chain;
+    public ?bool $chain;
 
-    private ?bool $release;
+    public ?bool $release;
 
     public function __construct(?bool $chain, ?bool $release)
     {
@@ -28,16 +28,6 @@ class CommitCommand extends StatementImpl implements TransactionCommand
 
         $this->chain = $chain;
         $this->release = $release;
-    }
-
-    public function chain(): ?bool
-    {
-        return $this->chain;
-    }
-
-    public function release(): ?bool
-    {
-        return $this->release;
     }
 
     public function serialize(Formatter $formatter): string

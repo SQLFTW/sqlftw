@@ -18,12 +18,12 @@ class SetDefaultRoleCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private array $users;
+    public array $users;
 
-    private ?UserDefaultRolesSpecification $roles;
+    public ?UserDefaultRolesSpecification $roles;
 
     /** @var non-empty-list<UserName>|null */
-    private $rolesList;
+    public $rolesList;
 
     /**
      * @param non-empty-list<UserName|FunctionCall> $users
@@ -34,27 +34,6 @@ class SetDefaultRoleCommand extends StatementImpl implements UserCommand
         $this->users = $users;
         $this->roles = $roles;
         $this->rolesList = $rolesList;
-    }
-
-    /**
-     * @return non-empty-list<UserName|FunctionCall>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    public function getRoles(): ?UserDefaultRolesSpecification
-    {
-        return $this->roles;
-    }
-
-    /**
-     * @return non-empty-list<UserName>|null
-     */
-    public function getRolesList(): ?array
-    {
-        return $this->rolesList;
     }
 
     public function serialize(Formatter $formatter): string

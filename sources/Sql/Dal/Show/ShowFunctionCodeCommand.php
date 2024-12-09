@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class ShowFunctionCodeCommand extends StatementImpl implements ShowCommand
 {
 
-    private ObjectIdentifier $function;
+    public ObjectIdentifier $function;
 
     public function __construct(ObjectIdentifier $function)
     {
         $this->function = $function;
-    }
-
-    public function getFunction(): ObjectIdentifier
-    {
-        return $this->function;
     }
 
     public function serialize(Formatter $formatter): string

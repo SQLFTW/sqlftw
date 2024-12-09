@@ -17,9 +17,9 @@ class AnalyzeTableCommand extends StatementImpl implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $tables;
+    public array $tables;
 
-    private bool $local;
+    public bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $tables
@@ -28,19 +28,6 @@ class AnalyzeTableCommand extends StatementImpl implements DalTablesCommand
     {
         $this->tables = $tables;
         $this->local = $local;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->tables;
-    }
-
-    public function isLocal(): bool
-    {
-        return $this->local;
     }
 
     public function serialize(Formatter $formatter): string

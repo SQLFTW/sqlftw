@@ -15,15 +15,15 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class TableReferenceTable implements TableReferenceNode
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private ?string $alias;
+    public ?string $alias;
 
     /** @var non-empty-list<string>|null */
-    private ?array $partitions;
+    public ?array $partitions;
 
     /** @var non-empty-list<IndexHint>|null */
-    private ?array $indexHints;
+    public ?array $indexHints;
 
     /**
      * @param non-empty-list<string>|null $partitions
@@ -35,32 +35,6 @@ class TableReferenceTable implements TableReferenceNode
         $this->alias = $alias;
         $this->partitions = $partitions;
         $this->indexHints = $indexHints;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getPartitions(): ?array
-    {
-        return $this->partitions;
-    }
-
-    /**
-     * @return non-empty-list<IndexHint>|null
-     */
-    public function getIndexHints(): ?array
-    {
-        return $this->indexHints;
     }
 
     public function serialize(Formatter $formatter): string

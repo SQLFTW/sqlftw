@@ -14,16 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class DropColumnAction implements ColumnAction
 {
 
-    private string $column;
+    public string $column;
 
     public function __construct(string $column)
     {
         $this->column = $column;
-    }
-
-    public function getColumn(): string
-    {
-        return $this->column;
     }
 
     public function serialize(Formatter $formatter): string

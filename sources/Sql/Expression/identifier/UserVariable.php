@@ -18,7 +18,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 class UserVariable implements Identifier
 {
 
-    private string $name;
+    public string $name;
 
     public function __construct(string $name)
     {
@@ -26,11 +26,6 @@ class UserVariable implements Identifier
             throw new InvalidDefinitionException('User variable name must start with "@".');
         }
         $this->name = $name;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getFullName(): string

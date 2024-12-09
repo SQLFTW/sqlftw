@@ -18,24 +18,14 @@ use SqlFtw\Sql\Dml\OptimizerHint\HintTableIdentifier;
 class QualifiedName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier, HintTableIdentifier
 {
 
-    private string $name;
+    public string $name;
 
-    private string $schema;
+    public string $schema;
 
     public function __construct(string $name, string $schema)
     {
         $this->name = $name;
         $this->schema = $schema;
-    }
-
-    public function getSchema(): string
-    {
-        return $this->schema;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getFullName(): string

@@ -16,12 +16,12 @@ use SqlFtw\Sql\SqlSerializable;
 class SelectLocking implements SqlSerializable
 {
 
-    private SelectLockOption $for;
+    public SelectLockOption $for;
 
-    private ?SelectLockWaitOption $wait;
+    public ?SelectLockWaitOption $wait;
 
     /** @var non-empty-list<ObjectIdentifier>|null */
-    private ?array $tables;
+    public ?array $tables;
 
     /**
      * @param non-empty-list<ObjectIdentifier>|null $tables
@@ -31,24 +31,6 @@ class SelectLocking implements SqlSerializable
         $this->for = $for;
         $this->wait = $wait;
         $this->tables = $tables;
-    }
-
-    public function getFor(): SelectLockOption
-    {
-        return $this->for;
-    }
-
-    public function getWaitOption(): ?SelectLockWaitOption
-    {
-        return $this->wait;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>|null
-     */
-    public function getTables(): ?array
-    {
-        return $this->tables;
     }
 
     public function serialize(Formatter $formatter): string

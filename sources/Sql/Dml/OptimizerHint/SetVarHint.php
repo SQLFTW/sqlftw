@@ -17,10 +17,10 @@ use SqlFtw\Sql\Expression\SystemVariable;
 class SetVarHint implements OptimizerHint
 {
 
-    private SystemVariable $variable;
+    public SystemVariable $variable;
 
     /** @var Literal|StorageEngine */
-    private $value;
+    public $value;
 
     /**
      * @param Literal|StorageEngine $value
@@ -36,22 +36,9 @@ class SetVarHint implements OptimizerHint
         return OptimizerHintType::SET_VAR;
     }
 
-    public function getVariable(): SystemVariable
-    {
-        return $this->variable;
-    }
-
-    /**
-     * @return Literal|StorageEngine
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
     public function serialize(Formatter $formatter): string
     {
-        return 'SET_VAR(' . $this->variable->getName() . ' = ' . $this->value->serialize($formatter) . ')';
+        return 'SET_VAR(' . $this->variable->name . ' = ' . $this->value->serialize($formatter) . ')';
     }
 
 }

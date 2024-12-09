@@ -20,7 +20,7 @@ class AlterActionsList implements SqlSerializable
 {
 
     /** @var list<AlterTableAction> */
-    private array $actions;
+    public array $actions;
 
     /**
      * @param list<AlterTableAction> $actions
@@ -28,14 +28,6 @@ class AlterActionsList implements SqlSerializable
     public function __construct(array $actions)
     {
         $this->actions = $actions;
-    }
-
-    /**
-     * @return list<AlterTableAction>
-     */
-    public function getActions(): array
-    {
-        return $this->actions;
     }
 
     /**

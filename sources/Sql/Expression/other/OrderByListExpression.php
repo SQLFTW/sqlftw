@@ -18,7 +18,7 @@ class OrderByListExpression implements ArgumentNode
 {
 
     /** @var non-empty-list<OrderByExpression> */
-    private array $items;
+    public array $items;
 
     /**
      * @param non-empty-list<OrderByExpression> $items
@@ -26,14 +26,6 @@ class OrderByListExpression implements ArgumentNode
     public function __construct(array $items)
     {
         $this->items = $items;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>
-     */
-    public function getItems(): array
-    {
-        return $this->items;
     }
 
     public function serialize(Formatter $formatter): string

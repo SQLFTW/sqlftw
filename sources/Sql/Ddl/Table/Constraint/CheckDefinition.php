@@ -16,32 +16,14 @@ use SqlFtw\Sql\Expression\RootNode;
 class CheckDefinition implements TableItem, ConstraintBody
 {
 
-    private RootNode $expression;
+    public RootNode $expression;
 
-    private ?bool $enforced;
+    public ?bool $enforced;
 
     public function __construct(RootNode $expression, ?bool $enforced = null)
     {
         $this->expression = $expression;
         $this->enforced = $enforced;
-    }
-
-    public function duplicateWithEnforced(bool $enforced): self
-    {
-        $that = clone $this;
-        $that->enforced = $enforced;
-
-        return $that;
-    }
-
-    public function getExpression(): RootNode
-    {
-        return $this->expression;
-    }
-
-    public function isEnforced(): ?bool
-    {
-        return $this->enforced;
     }
 
     public function serialize(Formatter $formatter): string

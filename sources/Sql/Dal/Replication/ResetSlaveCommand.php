@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class ResetSlaveCommand extends StatementImpl implements ReplicationCommand
 {
 
-    private bool $all;
+    public bool $all;
 
-    private ?string $channel;
+    public ?string $channel;
 
     public function __construct(bool $all, ?string $channel = null)
     {
         $this->all = $all;
         $this->channel = $channel;
-    }
-
-    public function all(): bool
-    {
-        return $this->all;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string

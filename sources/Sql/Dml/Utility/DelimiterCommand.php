@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class DelimiterCommand extends StatementImpl implements DmlCommand
 {
 
-    private string $newDelimiter;
+    public string $newDelimiter;
 
     public function __construct(string $newDelimiter)
     {
         $this->newDelimiter = $newDelimiter;
-    }
-
-    public function getNewDelimiter(): string
-    {
-        return $this->newDelimiter;
     }
 
     public function serialize(Formatter $formatter): string

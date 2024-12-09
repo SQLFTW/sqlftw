@@ -16,27 +16,17 @@ use SqlFtw\Sql\StatementImpl;
 class DropTablespaceCommand extends StatementImpl implements TablespaceCommand
 {
 
-    private string $tablespace;
+    public string $tablespace;
 
-    private ?StorageEngine $engine;
+    public ?StorageEngine $engine;
 
-    private bool $undo;
+    public bool $undo;
 
     public function __construct(string $tablespace, ?StorageEngine $engine = null, bool $undo = false)
     {
         $this->tablespace = $tablespace;
         $this->engine = $engine;
         $this->undo = $undo;
-    }
-
-    public function getTablespace(): string
-    {
-        return $this->tablespace;
-    }
-
-    public function getEngine(): ?StorageEngine
-    {
-        return $this->engine;
     }
 
     public function serialize(Formatter $formatter): string

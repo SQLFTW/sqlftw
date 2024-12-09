@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class DropProcedureCommand extends StatementImpl implements StoredProcedureCommand, DropRoutineCommand
 {
 
-    private ObjectIdentifier $procedure;
+    public ObjectIdentifier $procedure;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     public function __construct(ObjectIdentifier $procedure, bool $ifExists = false)
     {
         $this->procedure = $procedure;
         $this->ifExists = $ifExists;
-    }
-
-    public function getFunction(): ObjectIdentifier
-    {
-        return $this->procedure;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

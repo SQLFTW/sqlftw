@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class ShowProcessListCommand extends StatementImpl implements ShowCommand
 {
 
-    private bool $full;
+    public bool $full;
 
     public function __construct(bool $full = false)
     {
         $this->full = $full;
-    }
-
-    public function isFull(): bool
-    {
-        return $this->full;
     }
 
     public function serialize(Formatter $formatter): string

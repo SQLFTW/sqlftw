@@ -19,7 +19,7 @@ class AddColumnsAction implements ColumnAction
     public const FIRST = true;
 
     /** @var non-empty-list<ColumnDefinition|IndexDefinition> */
-    private array $columns;
+    public array $columns;
 
     /**
      * @param non-empty-list<ColumnDefinition|IndexDefinition> $columns
@@ -27,14 +27,6 @@ class AddColumnsAction implements ColumnAction
     public function __construct(array $columns)
     {
         $this->columns = $columns;
-    }
-
-    /**
-     * @return non-empty-list<ColumnDefinition|IndexDefinition>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
     }
 
     public function serialize(Formatter $formatter): string

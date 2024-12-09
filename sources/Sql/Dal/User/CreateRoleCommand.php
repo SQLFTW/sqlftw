@@ -17,9 +17,9 @@ class CreateRoleCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<UserName> */
-    private array $roles;
+    public array $roles;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
     /**
      * @param non-empty-list<UserName> $roles
@@ -28,19 +28,6 @@ class CreateRoleCommand extends StatementImpl implements UserCommand
     {
         $this->roles = $roles;
         $this->ifNotExists = $ifNotExists;
-    }
-
-    /**
-     * @return non-empty-list<UserName>
-     */
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
     }
 
     public function serialize(Formatter $formatter): string

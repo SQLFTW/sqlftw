@@ -20,18 +20,18 @@ use SqlFtw\Sql\StatementImpl;
 class TableCommand extends StatementImpl implements SimpleQuery
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private ?array $orderBy;
+    public ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $limit;
+    public $limit;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $offset;
+    public $offset;
 
-    private ?SelectInto $into;
+    public ?SelectInto $into;
 
     /**
      * @param non-empty-list<OrderByExpression>|null $orderBy
@@ -50,75 +50,6 @@ class TableCommand extends StatementImpl implements SimpleQuery
         $this->limit = $limit;
         $this->offset = $offset;
         $this->into = $into;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>|null
-     */
-    public function getOrderBy(): ?array
-    {
-        return $this->orderBy;
-    }
-
-    public function removeOrderBy(): Query
-    {
-        $that = clone $this;
-        $that->orderBy = null;
-
-        return $that;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    public function removeLimit(): Query
-    {
-        $that = clone $this;
-        $that->limit = null;
-
-        return $that;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @return static
-     */
-    public function removeOffset(): Query
-    {
-        $that = clone $this;
-        $that->offset = null;
-
-        return $that;
-    }
-
-    public function getInto(): ?SelectInto
-    {
-        return $this->into;
-    }
-
-    public function removeInto(): Query
-    {
-        $that = clone $this;
-        $that->into = null;
-
-        return $that;
     }
 
     public function serialize(Formatter $formatter): string

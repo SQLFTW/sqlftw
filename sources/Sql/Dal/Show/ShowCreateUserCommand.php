@@ -16,16 +16,11 @@ use SqlFtw\Sql\UserName;
 class ShowCreateUserCommand extends StatementImpl implements ShowCommand
 {
 
-    private UserName $user;
+    public UserName $user;
 
     public function __construct(UserName $user)
     {
         $this->user = $user;
-    }
-
-    public function getUser(): UserName
-    {
-        return $this->user;
     }
 
     public function serialize(Formatter $formatter): string

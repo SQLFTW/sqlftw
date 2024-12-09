@@ -15,32 +15,17 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class ExchangePartitionAction implements PartitioningAction
 {
 
-    private string $partition;
+    public string $partition;
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private ?bool $validation;
+    public ?bool $validation;
 
     public function __construct(string $partition, ObjectIdentifier $table, ?bool $validation)
     {
         $this->partition = $partition;
         $this->table = $table;
         $this->validation = $validation;
-    }
-
-    public function getPartition(): string
-    {
-        return $this->partition;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getValidation(): ?bool
-    {
-        return $this->validation;
     }
 
     public function serialize(Formatter $formatter): string

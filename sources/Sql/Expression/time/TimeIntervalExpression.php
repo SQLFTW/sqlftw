@@ -17,24 +17,14 @@ use SqlFtw\Formatter\Formatter;
 class TimeIntervalExpression implements TimeInterval
 {
 
-    private RootNode $expression;
+    public RootNode $expression;
 
-    private TimeIntervalUnit $unit;
+    public TimeIntervalUnit $unit;
 
     public function __construct(RootNode $expression, TimeIntervalUnit $unit)
     {
         $this->expression = $expression;
         $this->unit = $unit;
-    }
-
-    public function getExpression(): RootNode
-    {
-        return $this->expression;
-    }
-
-    public function getUnit(): TimeIntervalUnit
-    {
-        return $this->unit;
     }
 
     public function serialize(Formatter $formatter): string

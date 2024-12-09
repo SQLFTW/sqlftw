@@ -17,9 +17,9 @@ class CheckTableCommand extends StatementImpl implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $names;
+    public array $names;
 
-    private ?CheckTableOption $option;
+    public ?CheckTableOption $option;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names
@@ -28,19 +28,6 @@ class CheckTableCommand extends StatementImpl implements DalTablesCommand
     {
         $this->names = $names;
         $this->option = $option;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->names;
-    }
-
-    public function getOption(): ?CheckTableOption
-    {
-        return $this->option;
     }
 
     public function serialize(Formatter $formatter): string

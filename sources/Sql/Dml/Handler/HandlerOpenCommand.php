@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class HandlerOpenCommand extends StatementImpl implements HandlerCommand
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private ?string $alias;
+    public ?string $alias;
 
     public function __construct(ObjectIdentifier $table, ?string $alias = null)
     {
         $this->table = $table;
         $this->alias = $alias;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
     }
 
     public function serialize(Formatter $formatter): string

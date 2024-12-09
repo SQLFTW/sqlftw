@@ -16,7 +16,7 @@ class OrderByAction implements TableAction
 {
 
     /** @var non-empty-list<OrderByExpression> */
-    private array $columns;
+    public array $columns;
 
     /**
      * @param non-empty-list<OrderByExpression> $columns
@@ -24,14 +24,6 @@ class OrderByAction implements TableAction
     public function __construct(array $columns)
     {
         $this->columns = $columns;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
     }
 
     public function serialize(Formatter $formatter): string

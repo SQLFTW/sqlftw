@@ -15,24 +15,14 @@ use SqlFtw\Sql\SqlSerializable;
 class QueryOperator implements SqlSerializable
 {
 
-    private QueryOperatorType $type;
+    public QueryOperatorType $type;
 
-    private QueryOperatorOption $option;
+    public QueryOperatorOption $option;
 
     public function __construct(QueryOperatorType $type, QueryOperatorOption $option)
     {
         $this->type = $type;
         $this->option = $option;
-    }
-
-    public function getType(): QueryOperatorType
-    {
-        return $this->type;
-    }
-
-    public function getOption(): QueryOperatorOption
-    {
-        return $this->option;
     }
 
     public function serialize(Formatter $formatter): string

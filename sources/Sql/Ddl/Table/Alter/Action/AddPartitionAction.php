@@ -16,7 +16,7 @@ class AddPartitionAction implements PartitioningAction
 {
 
     /** @var non-empty-list<PartitionDefinition> */
-    private array $partitions;
+    public array $partitions;
 
     /**
      * @param non-empty-list<PartitionDefinition> $partition
@@ -24,14 +24,6 @@ class AddPartitionAction implements PartitioningAction
     public function __construct(array $partition)
     {
         $this->partitions = $partition;
-    }
-
-    /**
-     * @return non-empty-list<PartitionDefinition>
-     */
-    public function getPartitions(): array
-    {
-        return $this->partitions;
     }
 
     public function serialize(Formatter $formatter): string

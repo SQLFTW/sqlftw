@@ -22,12 +22,12 @@ use function is_int;
 class AlterTablespaceCommand extends StatementImpl implements TablespaceCommand
 {
 
-    private string $tablespace;
+    public string $tablespace;
 
     /** @var array<TablespaceOption::*, TablespaceOptionValue> */
-    private $options;
+    public $options;
 
-    private bool $undo;
+    public bool $undo;
 
     /**
      * @param array<TablespaceOption::*, TablespaceOptionValue> $options
@@ -39,24 +39,6 @@ class AlterTablespaceCommand extends StatementImpl implements TablespaceCommand
         $this->tablespace = $tablespace;
         $this->options = $options;
         $this->undo = $undo;
-    }
-
-    public function getTablespace(): string
-    {
-        return $this->tablespace;
-    }
-
-    /**
-     * @return array<TablespaceOption::*, TablespaceOptionValue>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    public function getUndo(): bool
-    {
-        return $this->undo;
     }
 
     public function serialize(Formatter $formatter): string

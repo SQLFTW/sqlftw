@@ -17,11 +17,11 @@ class ChecksumTableCommand extends StatementImpl implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $names;
+    public array $names;
 
-    private bool $quick;
+    public bool $quick;
 
-    private bool $extended;
+    public bool $extended;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names
@@ -31,24 +31,6 @@ class ChecksumTableCommand extends StatementImpl implements DalTablesCommand
         $this->names = $names;
         $this->quick = $quick;
         $this->extended = $extended;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->names;
-    }
-
-    public function isQuick(): bool
-    {
-        return $this->quick;
-    }
-
-    public function isExtended(): bool
-    {
-        return $this->extended;
     }
 
     public function serialize(Formatter $formatter): string

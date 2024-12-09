@@ -29,31 +29,31 @@ class DeleteCommand extends StatementImpl implements DmlCommand
 {
 
     /** @var non-empty-list<array{ObjectIdentifier, string|null}> */
-    private array $tables;
+    public array $tables;
 
-    private ?TableReferenceNode $references;
+    public ?TableReferenceNode $references;
 
     /** @var non-empty-list<string>|null */
-    private ?array $partitions;
+    public ?array $partitions;
 
-    private ?ExpressionNode $where;
+    public ?ExpressionNode $where;
 
-    private ?WithClause $with;
+    public ?WithClause $with;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private ?array $orderBy;
+    public ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $limit;
+    public $limit;
 
-    private bool $lowPriority;
+    public bool $lowPriority;
 
-    private bool $quick;
+    public bool $quick;
 
-    private bool $ignore;
+    public bool $ignore;
 
     /** @var non-empty-list<OptimizerHint>|null */
-    private ?array $optimizerHints;
+    public ?array $optimizerHints;
 
     /**
      * @param non-empty-list<array{ObjectIdentifier, string|null}> $tables
@@ -94,76 +94,6 @@ class DeleteCommand extends StatementImpl implements DmlCommand
         $this->quick = $quick;
         $this->ignore = $ignore;
         $this->optimizerHints = $optimizerHints;
-    }
-
-    /**
-     * @return non-empty-list<array{ObjectIdentifier, string|null}>
-     */
-    public function getTables(): array
-    {
-        return $this->tables;
-    }
-
-    public function getReferences(): ?TableReferenceNode
-    {
-        return $this->references;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getPartitions(): ?array
-    {
-        return $this->partitions;
-    }
-
-    public function getWhere(): ?ExpressionNode
-    {
-        return $this->where;
-    }
-
-    public function getWith(): ?WithClause
-    {
-        return $this->with;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>|null
-     */
-    public function getOrderBy(): ?array
-    {
-        return $this->orderBy;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    public function lowPriority(): bool
-    {
-        return $this->lowPriority;
-    }
-
-    public function quick(): bool
-    {
-        return $this->quick;
-    }
-
-    public function ignore(): bool
-    {
-        return $this->ignore;
-    }
-
-    /**
-     * @return non-empty-list<OptimizerHint>|null
-     */
-    public function getOptimizerHints(): ?array
-    {
-        return $this->optimizerHints;
     }
 
     public function serialize(Formatter $formatter): string

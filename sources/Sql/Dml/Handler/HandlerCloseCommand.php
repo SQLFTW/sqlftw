@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class HandlerCloseCommand extends StatementImpl implements HandlerCommand
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
     public function __construct(ObjectIdentifier $table)
     {
         $this->table = $table;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
     }
 
     public function serialize(Formatter $formatter): string

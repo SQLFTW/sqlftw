@@ -14,10 +14,10 @@ use SqlFtw\Formatter\Formatter;
 class SubqueryHint implements OptimizerHint
 {
 
-    private ?string $queryBlock;
+    public ?string $queryBlock;
 
     /** @var SubqueryHintStrategy::* */
-    private string $strategy;
+    public string $strategy;
 
     /**
      * @param SubqueryHintStrategy::* $strategy
@@ -31,19 +31,6 @@ class SubqueryHint implements OptimizerHint
     public function getType(): string
     {
         return OptimizerHintType::SUBQUERY;
-    }
-
-    public function getQueryBlock(): ?string
-    {
-        return $this->queryBlock;
-    }
-
-    /**
-     * @return SubqueryHintStrategy::*
-     */
-    public function getStrategy(): string
-    {
-        return $this->strategy;
     }
 
     public function serialize(Formatter $formatter): string

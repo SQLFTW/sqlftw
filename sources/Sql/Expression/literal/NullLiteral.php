@@ -17,10 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class NullLiteral implements BoolValue, KeywordLiteral
 {
 
-    public function getValue(): string
-    {
-        return 'NULL';
-    }
+    public string $value = 'NULL';
 
     public function asBool(): ?bool
     {

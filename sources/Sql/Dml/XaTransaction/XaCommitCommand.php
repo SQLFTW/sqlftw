@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class XaCommitCommand extends StatementImpl implements XaTransactionCommand
 {
 
-    private Xid $xid;
+    public Xid $xid;
 
-    private bool $onePhase;
+    public bool $onePhase;
 
     public function __construct(Xid $xid, bool $onePhase = false)
     {
         $this->xid = $xid;
         $this->onePhase = $onePhase;
-    }
-
-    public function getXid(): Xid
-    {
-        return $this->xid;
-    }
-
-    public function isOnePhase(): bool
-    {
-        return $this->onePhase;
     }
 
     public function serialize(Formatter $formatter): string

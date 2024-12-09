@@ -9,9 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
+/**
+ * @property TimeIntervalUnit $unit
+ */
 interface TimeInterval extends RootNode
 {
-
-    public function getUnit(): TimeIntervalUnit;
 
 }

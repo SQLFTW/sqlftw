@@ -13,25 +13,24 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintBody;
 use SqlFtw\Sql\Ddl\Table\TableItem;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use function count;
 
 class IndexDefinition implements TableItem, ConstraintBody
 {
 
     public const PRIMARY_KEY_NAME = null;
 
-    private ?string $name;
+    public ?string $name;
 
-    private IndexType $type;
+    public IndexType $type;
 
     /** @var non-empty-list<IndexPart> */
-    private array $parts;
+    public array $parts;
 
-    private ?IndexAlgorithm $algorithm;
+    public ?IndexAlgorithm $algorithm;
 
-    private ?IndexOptions $options;
+    public ?IndexOptions $options;
 
-    private ?ObjectIdentifier $table;
+    public ?ObjectIdentifier $table;
 
     /**
      * @param non-empty-list<IndexPart> $parts
@@ -50,68 +49,6 @@ class IndexDefinition implements TableItem, ConstraintBody
         $this->algorithm = $algorithm;
         $this->options = $options;
         $this->table = $table;
-    }
-
-    public function duplicateAsPrimary(): self
-    {
-        $self = clone $this;
-        $self->type = new IndexType(IndexType::PRIMARY);
-        $self->name = self::PRIMARY_KEY_NAME;
-
-        return $self;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    public function getType(): IndexType
-    {
-        return $this->type;
-    }
-
-    public function isPrimary(): bool
-    {
-        return $this->type->getValue() === IndexType::PRIMARY;
-    }
-
-    public function isUnique(): bool
-    {
-        return $this->type->getValue() === IndexType::UNIQUE;
-    }
-
-    public function isMultiColumn(): bool
-    {
-        return count($this->parts) > 1;
-    }
-
-    public function getAlgorithm(): ?IndexAlgorithm
-    {
-        return $this->algorithm;
-    }
-
-    public function getOptions(): ?IndexOptions
-    {
-        return $this->options;
-    }
-
-    public function getTable(): ?ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    /**
-     * @return non-empty-list<IndexPart>
-     */
-    public function getParts(): array
-    {
-        return $this->parts;
     }
 
     public function serialize(Formatter $formatter): string

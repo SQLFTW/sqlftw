@@ -14,10 +14,10 @@ use SqlFtw\Formatter\Formatter;
 class SelectIntoDumpfile implements SelectInto
 {
 
-    private string $fileName;
+    public string $fileName;
 
     /** @var self::POSITION_* */
-    protected int $position;
+    public int $position;
 
     /**
      * @param SelectInto::POSITION_* $position
@@ -26,19 +26,6 @@ class SelectIntoDumpfile implements SelectInto
     {
         $this->fileName = $fileName;
         $this->position = $position;
-    }
-
-    public function getFileName(): string
-    {
-        return $this->fileName;
-    }
-
-    /**
-     * @return self::POSITION_*
-     */
-    public function getPosition(): int
-    {
-        return $this->position;
     }
 
     public function serialize(Formatter $formatter): string

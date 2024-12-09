@@ -155,7 +155,7 @@ class CastingTypeChecker
     public function validateEnum($value, array $values, Cast $cast): bool
     {
         if ($value instanceof OnOffLiteral) {
-            $value = $value->getValue();
+            $value = $value->value;
         }
         if (is_bool($value) || $value === null) {
             $value = (int) $value;

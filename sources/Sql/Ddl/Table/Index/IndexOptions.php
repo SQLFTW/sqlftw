@@ -16,19 +16,19 @@ use function ltrim;
 class IndexOptions implements SqlSerializable
 {
 
-    private ?int $keyBlockSize;
+    public ?int $keyBlockSize;
 
-    private ?string $withParser;
+    public ?string $withParser;
 
-    private ?int $mergeThreshold;
+    public ?int $mergeThreshold;
 
-    private ?string $comment;
+    public ?string $comment;
 
-    private ?bool $visible;
+    public ?bool $visible;
 
-    private ?string $engineAttribute;
+    public ?string $engineAttribute;
 
-    private ?string $secondaryEngineAttribute;
+    public ?string $secondaryEngineAttribute;
 
     public function __construct(
         ?int $keyBlockSize,
@@ -47,41 +47,6 @@ class IndexOptions implements SqlSerializable
         $this->visible = $visible;
         $this->engineAttribute = $engineAttribute;
         $this->secondaryEngineAttribute = $secondaryEngineAttribute;
-    }
-
-    public function getKeyBlockSize(): ?int
-    {
-        return $this->keyBlockSize;
-    }
-
-    public function getParser(): ?string
-    {
-        return $this->withParser;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function getMergeThreshold(): ?int
-    {
-        return $this->mergeThreshold;
-    }
-
-    public function getVisible(): ?bool
-    {
-        return $this->visible;
-    }
-
-    public function getEngineAttribute(): ?string
-    {
-        return $this->engineAttribute;
-    }
-
-    public function getSecondaryEngineAttribute(): ?string
-    {
-        return $this->secondaryEngineAttribute;
     }
 
     public function serialize(Formatter $formatter): string

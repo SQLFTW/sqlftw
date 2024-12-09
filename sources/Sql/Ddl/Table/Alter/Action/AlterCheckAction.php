@@ -14,24 +14,14 @@ use SqlFtw\Formatter\Formatter;
 class AlterCheckAction implements CheckAction
 {
 
-    private string $check;
+    public string $check;
 
-    private bool $enforced;
+    public bool $enforced;
 
     public function __construct(string $check, bool $enforced)
     {
         $this->check = $check;
         $this->enforced = $enforced;
-    }
-
-    public function getCheck(): string
-    {
-        return $this->check;
-    }
-
-    public function isEnforced(): bool
-    {
-        return $this->enforced;
     }
 
     public function serialize(Formatter $formatter): string

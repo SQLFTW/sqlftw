@@ -16,11 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class AlterInstanceCommand extends StatementImpl implements DdlCommand
 {
 
-    private AlterInstanceAction $action;
+    public AlterInstanceAction $action;
 
-    private ?string $forChannel;
+    public ?string $forChannel;
 
-    private bool $noRollbackOnError;
+    public bool $noRollbackOnError;
 
     public function __construct(
         AlterInstanceAction $action,
@@ -31,21 +31,6 @@ class AlterInstanceCommand extends StatementImpl implements DdlCommand
         $this->action = $action;
         $this->forChannel = $forChannel;
         $this->noRollbackOnError = $noRollbackOnError;
-    }
-
-    public function getAction(): AlterInstanceAction
-    {
-        return $this->action;
-    }
-
-    public function getForChannel(): ?string
-    {
-        return $this->forChannel;
-    }
-
-    public function noRollbackOnError(): bool
-    {
-        return $this->noRollbackOnError;
     }
 
     public function serialize(Formatter $formatter): string

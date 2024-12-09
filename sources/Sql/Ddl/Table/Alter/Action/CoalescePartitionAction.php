@@ -15,16 +15,11 @@ use function strval;
 class CoalescePartitionAction implements PartitioningAction
 {
 
-    private int $value;
+    public int $value;
 
     public function __construct(int $value)
     {
         $this->value = $value;
-    }
-
-    public function getValue(): int
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

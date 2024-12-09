@@ -16,19 +16,19 @@ use SqlFtw\Sql\Statement;
 class EventDefinition
 {
 
-    private ObjectIdentifier $event;
+    public ObjectIdentifier $event;
 
-    private EventSchedule $schedule;
+    public EventSchedule $schedule;
 
-    private Statement $body;
+    public Statement $body;
 
-    private ?UserExpression $definer;
+    public ?UserExpression $definer;
 
-    private ?EventState $state;
+    public ?EventState $state;
 
-    private ?bool $preserve;
+    public ?bool $preserve;
 
-    private ?string $comment;
+    public ?string $comment;
 
     public function __construct(
         ObjectIdentifier $event,
@@ -52,50 +52,15 @@ class EventDefinition
     {
         $that = clone $this;
 
-        $that->schedule = $alter->getSchedule() ?? $that->schedule;
-        $that->body = $alter->getBody() ?? $that->body;
-        $that->definer = $alter->getDefiner() ?? $that->definer;
-        $that->state = $alter->getState() ?? $that->state;
-        $that->preserve = $alter->preserve() ?? $that->preserve;
-        $that->comment = $alter->getComment() ?? $that->comment;
-        $that->event = $alter->getNewName() ?? $that->event;
+        $that->schedule = $alter->schedule ?? $that->schedule;
+        $that->body = $alter->body ?? $that->body;
+        $that->definer = $alter->definer ?? $that->definer;
+        $that->state = $alter->state ?? $that->state;
+        $that->preserve = $alter->preserve ?? $that->preserve;
+        $that->comment = $alter->comment ?? $that->comment;
+        $that->event = $alter->newName ?? $that->event;
 
         return $that;
-    }
-
-    public function getEvent(): ObjectIdentifier
-    {
-        return $this->event;
-    }
-
-    public function getSchedule(): EventSchedule
-    {
-        return $this->schedule;
-    }
-
-    public function getBody(): Statement
-    {
-        return $this->body;
-    }
-
-    public function getDefiner(): ?UserExpression
-    {
-        return $this->definer;
-    }
-
-    public function getState(): ?EventState
-    {
-        return $this->state;
-    }
-
-    public function preserve(): ?bool
-    {
-        return $this->preserve;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
     }
 
 }

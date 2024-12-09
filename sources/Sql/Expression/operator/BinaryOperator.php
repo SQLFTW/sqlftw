@@ -40,11 +40,11 @@ use SqlFtw\Formatter\Formatter;
 class BinaryOperator implements OperatorExpression
 {
 
-    private RootNode $left;
+    public RootNode $left;
 
-    private Operator $operator;
+    public Operator $operator;
 
-    private RootNode $right;
+    public RootNode $right;
 
     public function __construct(RootNode $left, Operator $operator, RootNode $right)
     {
@@ -53,21 +53,6 @@ class BinaryOperator implements OperatorExpression
         $this->left = $left;
         $this->operator = $operator;
         $this->right = $right;
-    }
-
-    public function getLeft(): RootNode
-    {
-        return $this->left;
-    }
-
-    public function getOperator(): Operator
-    {
-        return $this->operator;
-    }
-
-    public function getRight(): RootNode
-    {
-        return $this->right;
     }
 
     public function serialize(Formatter $formatter): string

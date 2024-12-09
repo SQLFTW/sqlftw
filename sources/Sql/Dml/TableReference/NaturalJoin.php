@@ -14,18 +14,13 @@ use SqlFtw\Formatter\Formatter;
 class NaturalJoin extends Join
 {
 
-    private ?JoinSide $joinSide;
+    public ?JoinSide $joinSide;
 
     public function __construct(TableReferenceNode $left, TableReferenceNode $right, ?JoinSide $joinSide)
     {
         parent::__construct($left, $right);
 
         $this->joinSide = $joinSide;
-    }
-
-    public function getJoinSide(): ?JoinSide
-    {
-        return $this->joinSide;
     }
 
     public function serialize(Formatter $formatter): string

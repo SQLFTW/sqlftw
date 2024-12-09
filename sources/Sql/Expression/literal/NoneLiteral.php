@@ -17,10 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class NoneLiteral implements KeywordLiteral
 {
 
-    public function getValue(): string
-    {
-        return 'NONE';
-    }
+    public string $value = 'NONE';
 
     public function serialize(Formatter $formatter): string
     {

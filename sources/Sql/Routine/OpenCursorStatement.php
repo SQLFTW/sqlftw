@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class OpenCursorStatement extends StatementImpl
 {
 
-    private string $cursor;
+    public string $cursor;
 
     public function __construct(string $cursor)
     {
         $this->cursor = $cursor;
-    }
-
-    public function getCursor(): string
-    {
-        return $this->cursor;
     }
 
     public function serialize(Formatter $formatter): string

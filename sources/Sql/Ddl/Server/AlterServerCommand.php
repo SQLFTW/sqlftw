@@ -16,21 +16,21 @@ use function rtrim;
 class AlterServerCommand extends StatementImpl implements ServerCommand
 {
 
-    private string $server;
+    public string $server;
 
-    private ?string $host;
+    public ?string $host;
 
-    private ?string $schema;
+    public ?string $schema;
 
-    private ?string $user;
+    public ?string $user;
 
-    private ?string $password;
+    public ?string $password;
 
-    private ?string $socket;
+    public ?string $socket;
 
-    private ?string $owner;
+    public ?string $owner;
 
-    private ?int $port;
+    public ?int $port;
 
     public function __construct(
         string $server,
@@ -50,46 +50,6 @@ class AlterServerCommand extends StatementImpl implements ServerCommand
         $this->socket = $socket;
         $this->owner = $owner;
         $this->port = $port;
-    }
-
-    public function getServer(): string
-    {
-        return $this->server;
-    }
-
-    public function getHost(): ?string
-    {
-        return $this->host;
-    }
-
-    public function getSchema(): ?string
-    {
-        return $this->schema;
-    }
-
-    public function getUser(): ?string
-    {
-        return $this->user;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function getSocket(): ?string
-    {
-        return $this->socket;
-    }
-
-    public function getOwner(): ?string
-    {
-        return $this->owner;
-    }
-
-    public function getPort(): ?int
-    {
-        return $this->port;
     }
 
     public function serialize(Formatter $formatter): string

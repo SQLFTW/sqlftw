@@ -15,32 +15,17 @@ use SqlFtw\Sql\StatementImpl;
 class ShowBinlogEventsCommand extends StatementImpl implements ShowCommand
 {
 
-    private ?string $logName;
+    public ?string $logName;
 
-    private ?int $limit;
+    public ?int $limit;
 
-    private ?int $offset;
+    public ?int $offset;
 
     public function __construct(?string $logName, ?int $limit, ?int $offset)
     {
         $this->logName = $logName;
         $this->limit = $limit;
         $this->offset = $offset;
-    }
-
-    public function getLogName(): ?string
-    {
-        return $this->logName;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function getOffset(): ?int
-    {
-        return $this->offset;
     }
 
     public function serialize(Formatter $formatter): string

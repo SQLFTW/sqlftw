@@ -16,14 +16,14 @@ use SqlFtw\Sql\Dml\Query\Query;
 class TableReferenceSubquery implements TableReferenceNode, Countable
 {
 
-    private Query $query;
+    public Query $query;
 
-    private ?string $alias;
+    public ?string $alias;
 
     /** @var non-empty-list<string>|null */
-    private ?array $columnList;
+    public ?array $columnList;
 
-    private bool $lateral;
+    public bool $lateral;
 
     /**
      * @param non-empty-list<string>|null $columnList
@@ -43,24 +43,6 @@ class TableReferenceSubquery implements TableReferenceNode, Countable
     public function count(): int
     {
         return $this->query instanceof Countable ? $this->query->count() : 1;
-    }
-
-    public function getQuery(): Query
-    {
-        return $this->query;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getColumnList(): ?array
-    {
-        return $this->columnList;
     }
 
     public function serialize(Formatter $formatter): string

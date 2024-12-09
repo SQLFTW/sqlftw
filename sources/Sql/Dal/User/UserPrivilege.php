@@ -15,10 +15,10 @@ use SqlFtw\Sql\SqlSerializable;
 class UserPrivilege implements SqlSerializable
 {
 
-    private UserPrivilegeType $type;
+    public UserPrivilegeType $type;
 
     /** @var non-empty-list<string>|null */
-    private ?array $columns;
+    public ?array $columns;
 
     /**
      * @param non-empty-list<string>|null $columns
@@ -27,19 +27,6 @@ class UserPrivilege implements SqlSerializable
     {
         $this->type = $type;
         $this->columns = $columns;
-    }
-
-    public function getType(): UserPrivilegeType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getColumns(): ?array
-    {
-        return $this->columns;
     }
 
     public function serialize(Formatter $formatter): string

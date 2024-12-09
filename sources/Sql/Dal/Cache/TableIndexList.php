@@ -17,15 +17,15 @@ use function is_array;
 class TableIndexList implements SqlSerializable
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
     /** @var non-empty-list<string>|null */
-    private ?array $indexes;
+    public ?array $indexes;
 
     /** @var non-empty-list<string>|bool|null */
-    private $partitions;
+    public $partitions;
 
-    private bool $ignoreLeaves;
+    public bool $ignoreLeaves;
 
     /**
      * @param non-empty-list<string>|null $indexes
@@ -41,32 +41,6 @@ class TableIndexList implements SqlSerializable
         $this->indexes = $indexes;
         $this->partitions = $partitions;
         $this->ignoreLeaves = $ignoreLeaves;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getIndexes(): ?array
-    {
-        return $this->indexes;
-    }
-
-    /**
-     * @return non-empty-list<string>|bool|null
-     */
-    public function getPartitions()
-    {
-        return $this->partitions;
-    }
-
-    public function ignoreLeafs(): bool
-    {
-        return $this->ignoreLeaves;
     }
 
     public function serialize(Formatter $formatter): string

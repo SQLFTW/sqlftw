@@ -7,7 +7,9 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Expression;
+namespace SqlFtw\Parser;
+
+use SqlFtw\Sql\Expression\RootNode;
 
 class OperatorPrioritySolver
 {

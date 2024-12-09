@@ -15,16 +15,11 @@ use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 class AddConstraintAction implements ConstraintAction
 {
 
-    private ConstraintDefinition $constraint;
+    public ConstraintDefinition $constraint;
 
     public function __construct(ConstraintDefinition $constraint)
     {
         $this->constraint = $constraint;
-    }
-
-    public function getConstraint(): ConstraintDefinition
-    {
-        return $this->constraint;
     }
 
     public function serialize(Formatter $formatter): string

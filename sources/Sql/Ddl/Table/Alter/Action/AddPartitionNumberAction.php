@@ -14,16 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class AddPartitionNumberAction implements PartitioningAction
 {
 
-    private int $partitions;
+    public int $partitions;
 
     public function __construct(int $partition)
     {
         $this->partitions = $partition;
-    }
-
-    public function getPartitions(): int
-    {
-        return $this->partitions;
     }
 
     public function serialize(Formatter $formatter): string

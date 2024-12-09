@@ -34,7 +34,7 @@ class StorageEngine implements SqlSerializable
         $this->value = self::$map[$lower];
     }
 
-    // standard
+    // MySQL default
     public const INNODB = 'InnoDB';
     public const MYISAM = 'MyISAM';
     public const MEMORY = 'Memory';
@@ -112,8 +112,11 @@ class StorageEngine implements SqlSerializable
         'xtradb' => self::XTRADB,
     ];
 
-    /** @var list<string> */
-    private static array $transactional = [
+    /**
+     * @readonly
+     * @var list<string>
+     */
+    public static array $transactional = [
         self::BERKELEYDB,
         self::FALCON,
         self::FEDERATED_X,

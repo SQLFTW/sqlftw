@@ -15,13 +15,13 @@ class IndexList
 {
 
     /** @var array<string|int, IndexDefinition> ($name => $index) */
-    private array $indexes = [];
+    public array $indexes = [];
 
     /** @var array<string|int, IndexDefinition> ($name => $index) */
-    private array $renamedIndexes = [];
+    public array $renamedIndexes = [];
 
     /** @var array<string|int, IndexDefinition> ($name => $index) */
-    private array $droppedIndexes = [];
+    public array $droppedIndexes = [];
 
     /**
      * @param array<string|int, IndexDefinition> $indexes
@@ -35,8 +35,8 @@ class IndexList
 
     private function addIndex(IndexDefinition $index): void
     {
-        if ($index->getName() !== null) {
-            $this->indexes[$index->getName()] = $index;
+        if ($index->name !== null) {
+            $this->indexes[$index->name] = $index;
         } else {
             $this->indexes[] = $index;
         }
@@ -56,14 +56,6 @@ class IndexList
         }
     }
 
-    /**
-     * @return array<string|int, IndexDefinition>
-     */
-    public function getIndexes(): array
-    {
-        return $this->indexes;
-    }
-
     public function containsIndex(IndexDefinition $searchedIndex): bool
     {
         foreach ($this->indexes as $index) {
@@ -78,7 +70,7 @@ class IndexList
     public function getPrimaryKey(): ?IndexDefinition
     {
         foreach ($this->indexes as $index) {
-            if ($index->isPrimary()) {
+            if ($index->type === IndexType::PRIMARY) {
                 return $index;
             }
         }
@@ -93,9 +85,9 @@ class IndexList
     {
         $keys = [];
         foreach ($this->indexes as $name => $index) {
-            if ($index->isUnique()) {
+            if ($index->type === IndexType::UNIQUE) {
                 if (is_string($name)) {
-                    $keys[$index->getName()] = $index;
+                    $keys[$index->name] = $index;
                 } else {
                     $keys[] = $index;
                 }
@@ -103,22 +95,6 @@ class IndexList
         }
 
         return $keys;
-    }
-
-    /**
-     * @return array<string|int, IndexDefinition>
-     */
-    public function getRenamedIndexes(): array
-    {
-        return $this->renamedIndexes;
-    }
-
-    /**
-     * @return array<string|int, IndexDefinition>
-     */
-    public function getDroppedIndexes(): array
-    {
-        return $this->droppedIndexes;
     }
 
 }

@@ -25,45 +25,45 @@ class SelectCommand extends StatementImpl implements SimpleQuery
 {
 
     /** @var non-empty-list<SelectExpression> */
-    private array $columns;
+    public array $columns;
 
-    private ?TableReferenceNode $from;
+    public ?TableReferenceNode $from;
 
-    private ?ExpressionNode $where;
+    public ?ExpressionNode $where;
 
     /** @var non-empty-list<GroupByExpression>|null */
-    private ?array $groupBy;
+    public ?array $groupBy;
 
-    private ?ExpressionNode $having;
+    public ?ExpressionNode $having;
 
-    private ?WithClause $with;
+    public ?WithClause $with;
 
     /** @var non-empty-array<string, WindowSpecification>|null */
-    private ?array $windows;
+    public ?array $windows;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private ?array $orderBy;
+    public ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $limit;
+    public $limit;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $offset;
+    public $offset;
 
-    private ?SelectDistinctOption $distinct;
+    public ?SelectDistinctOption $distinct;
 
     /** @var array<SelectOption::*, bool> */
-    private array $options;
+    public array $options;
 
-    private ?SelectInto $into;
+    public ?SelectInto $into;
 
     /** @var non-empty-list<SelectLocking>|null */
-    private ?array $locking;
+    public ?array $locking;
 
-    private bool $withRollup;
+    public bool $withRollup;
 
     /** @var non-empty-list<OptimizerHint>|null */
-    private ?array $optimizerHints;
+    public ?array $optimizerHints;
 
     /**
      * @param non-empty-list<SelectExpression> $columns
@@ -119,156 +119,6 @@ class SelectCommand extends StatementImpl implements SimpleQuery
         $this->optimizerHints = $optimizerHints;
     }
 
-    /**
-     * @return non-empty-list<SelectExpression>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
-
-    public function getFrom(): ?TableReferenceNode
-    {
-        return $this->from;
-    }
-
-    public function getWhere(): ?ExpressionNode
-    {
-        return $this->where;
-    }
-
-    /**
-     * @return non-empty-list<GroupByExpression>|null
-     */
-    public function getGroupBy(): ?array
-    {
-        return $this->groupBy;
-    }
-
-    public function withRollup(): bool
-    {
-        return $this->withRollup;
-    }
-
-    public function getHaving(): ?ExpressionNode
-    {
-        return $this->having;
-    }
-
-    public function getWith(): ?WithClause
-    {
-        return $this->with;
-    }
-
-    /**
-     * @return non-empty-array<string, WindowSpecification>|null
-     */
-    public function getWindows(): ?array
-    {
-        return $this->windows;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>|null
-     */
-    public function getOrderBy(): ?array
-    {
-        return $this->orderBy;
-    }
-
-    public function removeOrderBy(): Query
-    {
-        $that = clone $this;
-        $that->orderBy = null;
-
-        return $that;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    public function removeLimit(): Query
-    {
-        $that = clone $this;
-        $that->limit = null;
-
-        return $that;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @return static
-     */
-    public function removeOffset(): Query
-    {
-        $that = clone $this;
-        $that->offset = null;
-
-        return $that;
-    }
-
-    public function getDistinct(): ?SelectDistinctOption
-    {
-        return $this->distinct;
-    }
-
-    /**
-     * @return array<SelectOption::*, bool>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    public function getInto(): ?SelectInto
-    {
-        return $this->into;
-    }
-
-    public function removeInto(): Query
-    {
-        $that = clone $this;
-        $that->into = null;
-
-        return $that;
-    }
-
-    /**
-     * @return non-empty-list<SelectLocking>|null
-     */
-    public function getLocking(): ?array
-    {
-        return $this->locking;
-    }
-
-    public function removeLocking(): self
-    {
-        $that = clone $this;
-        $that->locking = null;
-
-        return $that;
-    }
-
-    /**
-     * @return non-empty-list<OptimizerHint>|null
-     */
-    public function getOptimizerHints(): ?array
-    {
-        return $this->optimizerHints;
-    }
-
     public function serialize(Formatter $formatter): string
     {
         $result = '';
@@ -293,7 +143,7 @@ class SelectCommand extends StatementImpl implements SimpleQuery
 
         $result .= ' ' . $formatter->formatSerializablesList($this->columns);
 
-        if ($this->into !== null && $this->into->getPosition() === SelectInto::POSITION_BEFORE_FROM) {
+        if ($this->into !== null && $this->into->position === SelectInto::POSITION_BEFORE_FROM) {
             $result .= "\n" . $this->into->serialize($formatter);
         }
         if ($this->from !== null) {
@@ -331,7 +181,7 @@ class SelectCommand extends StatementImpl implements SimpleQuery
                 $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
-        if ($this->into !== null && $this->into->getPosition() === SelectInto::POSITION_BEFORE_LOCKING) {
+        if ($this->into !== null && $this->into->position === SelectInto::POSITION_BEFORE_LOCKING) {
             $result .= "\n" . $this->into->serialize($formatter);
         }
         if ($this->locking !== null) {
@@ -339,7 +189,7 @@ class SelectCommand extends StatementImpl implements SimpleQuery
                 $result .= "\n" . $locking->serialize($formatter);
             }
         }
-        if ($this->into !== null && $this->into->getPosition() === SelectInto::POSITION_AFTER_LOCKING) {
+        if ($this->into !== null && $this->into->position === SelectInto::POSITION_AFTER_LOCKING) {
             $result .= "\n" . $this->into->serialize($formatter);
         }
 

@@ -15,16 +15,11 @@ use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
 class AddForeignKeyAction implements ForeignKeyAction
 {
 
-    private ForeignKeyDefinition $foreignKey;
+    public ForeignKeyDefinition $foreignKey;
 
     public function __construct(ForeignKeyDefinition $foreignKey)
     {
         $this->foreignKey = $foreignKey;
-    }
-
-    public function getForeignKey(): ForeignKeyDefinition
-    {
-        return $this->foreignKey;
     }
 
     public function serialize(Formatter $formatter): string

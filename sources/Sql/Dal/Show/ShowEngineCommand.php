@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class ShowEngineCommand extends StatementImpl implements ShowCommand
 {
 
-    private StorageEngine $engine;
+    public StorageEngine $engine;
 
-    private ShowEngineOption $option;
+    public ShowEngineOption $option;
 
     public function __construct(StorageEngine $engine, ShowEngineOption $option)
     {
         $this->engine = $engine;
         $this->option = $option;
-    }
-
-    public function getEngine(): StorageEngine
-    {
-        return $this->engine;
-    }
-
-    public function getOption(): ShowEngineOption
-    {
-        return $this->option;
     }
 
     public function serialize(Formatter $formatter): string

@@ -18,7 +18,7 @@ class TimeTypeLiteral implements KeywordLiteral
 {
 
     /** @var 'DATE'|'TIME'|'DATETIME' */
-    private string $value;
+    public string $value;
 
     /**
      * @param 'DATE'|'TIME'|'DATETIME' $value
@@ -26,14 +26,6 @@ class TimeTypeLiteral implements KeywordLiteral
     public function __construct(string $value)
     {
         $this->value = $value;
-    }
-
-    /**
-     * @return 'DATE'|'TIME'|'DATETIME'
-     */
-    public function getValue(): string
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class ShowCreateProcedureCommand extends StatementImpl implements ShowCommand
 {
 
-    private ObjectIdentifier $procedure;
+    public ObjectIdentifier $procedure;
 
     public function __construct(ObjectIdentifier $procedure)
     {
         $this->procedure = $procedure;
-    }
-
-    public function getProcedure(): ObjectIdentifier
-    {
-        return $this->procedure;
     }
 
     public function serialize(Formatter $formatter): string

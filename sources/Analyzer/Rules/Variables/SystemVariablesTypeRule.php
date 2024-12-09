@@ -65,18 +65,18 @@ class SystemVariablesTypeRule implements AnalyzerRule
 
         $errors = [];
         foreach ($command->getAssignments() as $assignment) {
-            $variable = $assignment->getVariable();
+            $variable = $assignment->variable;
             if (!$variable instanceof SystemVariable) {
                 continue;
             }
 
-            $name = $variable->getName();
+            $name = $variable->name;
             $var = MysqlVariable::getInfo($name);
             $type = $var->type;
             if ($type === BaseType::UNSIGNED && !$strict && ($var->clamp || $var->clampMin)) {
                 $type = BaseType::SIGNED;
             }
-            $expression = $assignment->getExpression();
+            $expression = $assignment->expression;
             $value = $context->resolver->resolve($expression);
 
             if (is_array($value)) {
@@ -106,9 +106,9 @@ class SystemVariablesTypeRule implements AnalyzerRule
             }
 
             if ($value instanceof SimpleName) {
-                $value = $value->getName();
+                $value = $value->name;
             } elseif ($value instanceof KeywordLiteral && !$value instanceof OnOffLiteral) {
-                $value = $value->getValue();
+                $value = $value->value;
             }
 
             if ($value instanceof ExpressionNode && !$value instanceof Value) {

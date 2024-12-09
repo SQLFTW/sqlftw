@@ -15,15 +15,15 @@ use SqlFtw\Sql\StatementImpl;
 class AlterCurrentUserCommand extends StatementImpl implements UserCommand
 {
 
-    private ?AuthOption $option;
+    public ?AuthOption $option;
 
-    private ?string $replace;
+    public ?string $replace;
 
-    private bool $retainCurrentPassword;
+    public bool $retainCurrentPassword;
 
-    private bool $discardOldPassword;
+    public bool $discardOldPassword;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     public function __construct(
         ?AuthOption $option,
@@ -37,31 +37,6 @@ class AlterCurrentUserCommand extends StatementImpl implements UserCommand
         $this->retainCurrentPassword = $retainCurrentPassword;
         $this->discardOldPassword = $discardOldPassword;
         $this->ifExists = $ifExists;
-    }
-
-    public function getOption(): ?AuthOption
-    {
-        return $this->option;
-    }
-
-    public function getReplace(): ?string
-    {
-        return $this->replace;
-    }
-
-    public function retainCurrentPassword(): bool
-    {
-        return $this->retainCurrentPassword;
-    }
-
-    public function discardOldPassword(): bool
-    {
-        return $this->discardOldPassword;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

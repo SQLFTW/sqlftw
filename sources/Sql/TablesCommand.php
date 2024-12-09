@@ -11,12 +11,10 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
+/**
+ * @property non-empty-list<ObjectIdentifier> $tables
+ */
 interface TablesCommand extends Command
 {
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array;
 
 }

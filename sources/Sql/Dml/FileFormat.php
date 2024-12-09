@@ -15,17 +15,17 @@ use SqlFtw\Sql\SqlSerializable;
 class FileFormat implements SqlSerializable
 {
 
-    private ?string $fieldsTerminatedBy;
+    public ?string $fieldsTerminatedBy;
 
-    private ?string $fieldsEnclosedBy;
+    public ?string $fieldsEnclosedBy;
 
-    private ?string $fieldsEscapedBy;
+    public ?string $fieldsEscapedBy;
 
-    private bool $optionallyEnclosed;
+    public bool $optionallyEnclosed;
 
-    private ?string $linesStaringBy;
+    public ?string $linesStaringBy;
 
-    private ?string $linesTerminatedBy;
+    public ?string $linesTerminatedBy;
 
     public function __construct(
         ?string $fieldsTerminatedBy = null,
@@ -41,36 +41,6 @@ class FileFormat implements SqlSerializable
         $this->optionallyEnclosed = $optionallyEnclosed;
         $this->linesStaringBy = $linesStaringBy;
         $this->linesTerminatedBy = $linesTerminatedBy;
-    }
-
-    public function getFieldsTerminatedBy(): ?string
-    {
-        return $this->fieldsTerminatedBy;
-    }
-
-    public function getFieldsEnclosedBy(): ?string
-    {
-        return $this->fieldsEnclosedBy;
-    }
-
-    public function getFieldsEscapedBy(): ?string
-    {
-        return $this->fieldsEscapedBy;
-    }
-
-    public function getOptionallyEnclosed(): bool
-    {
-        return $this->optionallyEnclosed;
-    }
-
-    public function getLinesStartingBy(): ?string
-    {
-        return $this->linesStaringBy;
-    }
-
-    public function getLinesTerminatedBy(): ?string
-    {
-        return $this->linesTerminatedBy;
     }
 
     public function serialize(Formatter $formatter): string

@@ -16,12 +16,12 @@ use SqlFtw\Sql\InvalidDefinitionException;
 class OuterJoin extends Join
 {
 
-    private JoinSide $joinSide;
+    public JoinSide $joinSide;
 
-    private ?RootNode $condition;
+    public ?RootNode $condition;
 
     /** @var non-empty-list<string>|null */
-    private ?array $using;
+    public ?array $using;
 
     /**
      * @param non-empty-list<string>|null $using
@@ -42,24 +42,6 @@ class OuterJoin extends Join
         $this->joinSide = $joinSide;
         $this->condition = $condition;
         $this->using = $using;
-    }
-
-    public function getJoinSide(): JoinSide
-    {
-        return $this->joinSide;
-    }
-
-    public function getCondition(): ?RootNode
-    {
-        return $this->condition;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getUsing(): ?array
-    {
-        return $this->using;
     }
 
     public function serialize(Formatter $formatter): string

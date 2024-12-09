@@ -19,20 +19,20 @@ use SqlFtw\Sql\StatementImpl;
 abstract class InsertOrReplaceCommand extends StatementImpl implements DmlCommand
 {
 
-    protected ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
     /** @var list<ColumnIdentifier>|null */
-    protected ?array $columns;
+    public ?array $columns;
 
     /** @var non-empty-list<string>|null */
-    protected ?array $partitions;
+    public ?array $partitions;
 
-    protected ?InsertPriority $priority;
+    public ?InsertPriority $priority;
 
-    protected bool $ignore;
+    public bool $ignore;
 
     /** @var non-empty-list<OptimizerHint>|null */
-    protected ?array $optimizerHints;
+    public ?array $optimizerHints;
 
     /**
      * @param list<ColumnIdentifier>|null $columns
@@ -54,45 +54,6 @@ abstract class InsertOrReplaceCommand extends StatementImpl implements DmlComman
         $this->priority = $priority;
         $this->ignore = $ignore;
         $this->optimizerHints = $optimizerHints;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    /**
-     * @return list<ColumnIdentifier>|null
-     */
-    public function getColumns(): ?array
-    {
-        return $this->columns;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getPartitions(): ?array
-    {
-        return $this->partitions;
-    }
-
-    public function getPriority(): ?InsertPriority
-    {
-        return $this->priority;
-    }
-
-    public function getIgnore(): bool
-    {
-        return $this->ignore;
-    }
-
-    /**
-     * @return non-empty-list<OptimizerHint>|null
-     */
-    public function getOptimizerHints(): ?array
-    {
-        return $this->optimizerHints;
     }
 
     protected function serializeBody(Formatter $formatter): string

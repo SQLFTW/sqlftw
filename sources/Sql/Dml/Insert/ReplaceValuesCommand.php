@@ -21,7 +21,7 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
 {
 
     /** @var non-empty-list<list<ExpressionNode>> */
-    private array $rows;
+    public array $rows;
 
     /**
      * @param non-empty-list<list<ExpressionNode>> $rows
@@ -41,14 +41,6 @@ class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceComm
         parent::__construct($table, $columns, $partitions, $priority, $ignore, $optimizerHints);
 
         $this->rows = $rows;
-    }
-
-    /**
-     * @return non-empty-list<list<ExpressionNode>>
-     */
-    public function getRows(): array
-    {
-        return $this->rows;
     }
 
     public function serialize(Formatter $formatter): string

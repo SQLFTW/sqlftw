@@ -16,13 +16,13 @@ class ShowProfileCommand extends StatementImpl implements ShowCommand
 {
 
     /** @var list<ShowProfileType> */
-    private array $types;
+    public array $types;
 
-    private ?int $queryId;
+    public ?int $queryId;
 
-    private ?int $limit;
+    public ?int $limit;
 
-    private ?int $offset;
+    public ?int $offset;
 
     /**
      * @param list<ShowProfileType> $types
@@ -33,29 +33,6 @@ class ShowProfileCommand extends StatementImpl implements ShowCommand
         $this->queryId = $queryId;
         $this->limit = $limit;
         $this->offset = $offset;
-    }
-
-    /**
-     * @return list<ShowProfileType>
-     */
-    public function getTypes(): array
-    {
-        return $this->types;
-    }
-
-    public function getQueryId(): ?int
-    {
-        return $this->queryId;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function getOffset(): ?int
-    {
-        return $this->offset;
     }
 
     public function serialize(Formatter $formatter): string

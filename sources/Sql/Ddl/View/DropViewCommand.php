@@ -18,11 +18,11 @@ class DropViewCommand extends StatementImpl implements ViewCommand, SchemaObject
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $views;
+    public array $views;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
-    private ?DropViewOption $option;
+    public ?DropViewOption $option;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $views
@@ -32,24 +32,6 @@ class DropViewCommand extends StatementImpl implements ViewCommand, SchemaObject
         $this->views = $views;
         $this->ifExists = $ifExists;
         $this->option = $option;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getViews(): array
-    {
-        return $this->views;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
-    }
-
-    public function getOption(): ?DropViewOption
-    {
-        return $this->option;
     }
 
     public function serialize(Formatter $formatter): string

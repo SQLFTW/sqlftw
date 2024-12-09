@@ -21,9 +21,9 @@ class ReplicationGtidAssignOption implements SqlSerializable
     public const LOCAL = Keyword::LOCAL;
     public const UUID = 'UUID';
 
-    private string $type;
+    public string $type;
 
-    private ?string $uuid;
+    public ?string $uuid;
 
     public function __construct(string $type, ?string $uuid = null)
     {
@@ -35,16 +35,6 @@ class ReplicationGtidAssignOption implements SqlSerializable
 
         $this->type = $type;
         $this->uuid = $uuid;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
     }
 
     public function serialize(Formatter $formatter): string

@@ -18,12 +18,12 @@ class GrantRoleCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<UserName> */
-    private array $roles;
+    public array $roles;
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private array $users;
+    public array $users;
 
-    private bool $withAdminOption;
+    public bool $withAdminOption;
 
     /**
      * @param non-empty-list<UserName> $roles
@@ -34,27 +34,6 @@ class GrantRoleCommand extends StatementImpl implements UserCommand
         $this->roles = $roles;
         $this->users = $users;
         $this->withAdminOption = $withAdminOption;
-    }
-
-    /**
-     * @return non-empty-list<UserName>
-     */
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
-
-    /**
-     * @return non-empty-list<UserName|FunctionCall>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    public function withAdminOption(): bool
-    {
-        return $this->withAdminOption;
     }
 
     public function serialize(Formatter $formatter): string

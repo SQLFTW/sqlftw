@@ -17,7 +17,7 @@ class TableReferenceList implements TableReferenceNode, Countable
 {
 
     /** @var non-empty-list<TableReferenceNode> */
-    private array $references;
+    public array $references;
 
     /**
      * @param non-empty-list<TableReferenceNode> $references
@@ -30,14 +30,6 @@ class TableReferenceList implements TableReferenceNode, Countable
     public function count(): int
     {
         return count($this->references);
-    }
-
-    /**
-     * @return non-empty-list<TableReferenceNode>
-     */
-    public function getReferences(): array
-    {
-        return $this->references;
     }
 
     public function serialize(Formatter $formatter): string

@@ -14,15 +14,15 @@ use SqlFtw\Formatter\Formatter;
 class JsonTablePathColumn implements JsonTableColumn
 {
 
-    private string $name;
+    public string $name;
 
-    private ColumnType $type;
+    public ColumnType $type;
 
-    private StringValue $path;
+    public StringValue $path;
 
-    private ?JsonErrorCondition $onEmpty;
+    public ?JsonErrorCondition $onEmpty;
 
-    private ?JsonErrorCondition $onError;
+    public ?JsonErrorCondition $onError;
 
     public function __construct(
         string $name,
@@ -36,31 +36,6 @@ class JsonTablePathColumn implements JsonTableColumn
         $this->path = $path;
         $this->onEmpty = $onEmpty;
         $this->onError = $onError;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getType(): ColumnType
-    {
-        return $this->type;
-    }
-
-    public function getPath(): StringValue
-    {
-        return $this->path;
-    }
-
-    public function getOnEmpty(): ?JsonErrorCondition
-    {
-        return $this->onEmpty;
-    }
-
-    public function getOnError(): ?JsonErrorCondition
-    {
-        return $this->onError;
     }
 
     public function serialize(Formatter $formatter): string

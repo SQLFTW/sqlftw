@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class ExplainForConnectionCommand extends StatementImpl implements DmlCommand
 {
 
-    private int $connectionId;
+    public int $connectionId;
 
-    private ?ExplainType $type;
+    public ?ExplainType $type;
 
     public function __construct(int $connectionId, ?ExplainType $type = null)
     {
         $this->connectionId = $connectionId;
         $this->type = $type;
-    }
-
-    public function getConnectionId(): int
-    {
-        return $this->connectionId;
-    }
-
-    public function getType(): ?ExplainType
-    {
-        return $this->type;
     }
 
     public function serialize(Formatter $formatter): string

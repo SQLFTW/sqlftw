@@ -17,16 +17,16 @@ use SqlFtw\Sql\SqlSerializable;
 class AuthOption implements SqlSerializable
 {
 
-    private ?string $authPlugin;
+    public ?string $authPlugin;
 
     /** @var StringValue|false|null */
-    private $password;
+    public $password;
 
-    private ?StringValue $as;
+    public ?StringValue $as;
 
-    private ?AuthOption $initial;
+    public ?AuthOption $initial;
 
-    private bool $oldHashedPassword;
+    public bool $oldHashedPassword;
 
     /**
      * @param StringValue|false|null $password
@@ -53,34 +53,6 @@ class AuthOption implements SqlSerializable
         $this->as = $as;
         $this->initial = $initial;
         $this->oldHashedPassword = $oldHashedPassword;
-    }
-
-    public function getAuthPlugin(): ?string
-    {
-        return $this->authPlugin;
-    }
-
-    /**
-     * @return StringValue|false|null
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    public function getAs(): ?StringValue
-    {
-        return $this->as;
-    }
-
-    public function getInitial(): ?AuthOption
-    {
-        return $this->initial;
-    }
-
-    public function oldHashedPassword(): bool
-    {
-        return $this->oldHashedPassword;
     }
 
     public function serialize(Formatter $formatter): string

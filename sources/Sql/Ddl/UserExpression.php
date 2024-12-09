@@ -19,7 +19,7 @@ class UserExpression implements SqlSerializable
 {
 
     /** @var UserName|BuiltInFunction */
-    private SqlSerializable $user;
+    public SqlSerializable $user;
 
     /**
      * @param UserName|BuiltInFunction $user
@@ -31,14 +31,6 @@ class UserExpression implements SqlSerializable
         }
 
         $this->user = $user;
-    }
-
-    /**
-     * @return UserName|BuiltInFunction
-     */
-    public function getUser(): SqlSerializable
-    {
-        return $this->user;
     }
 
     public function serialize(Formatter $formatter): string

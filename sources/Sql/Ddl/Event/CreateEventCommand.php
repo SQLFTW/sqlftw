@@ -16,9 +16,9 @@ use SqlFtw\Sql\StatementImpl;
 class CreateEventCommand extends StatementImpl implements EventCommand
 {
 
-    private EventDefinition $event;
+    public EventDefinition $event;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
     public function __construct(EventDefinition $event, bool $ifNotExists = false)
     {
@@ -26,25 +26,10 @@ class CreateEventCommand extends StatementImpl implements EventCommand
         $this->ifNotExists = $ifNotExists;
     }
 
-    public function getEvent(): ObjectIdentifier
-    {
-        return $this->event->getEvent();
-    }
-
-    public function getDefinition(): EventDefinition
-    {
-        return $this->event;
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
-    }
-
     public function serialize(Formatter $formatter): string
     {
         $result = 'CREATE';
-        $definer = $this->event->getDefiner();
+        $definer = $this->event->definer;
         if ($definer !== null) {
             $result .= ' DEFINER = ' . $definer->serialize($formatter);
         }
@@ -52,26 +37,24 @@ class CreateEventCommand extends StatementImpl implements EventCommand
         if ($this->ifNotExists) {
             $result .= ' IF NOT EXISTS';
         }
-        $result .= ' ' . $this->event->getEvent()->serialize($formatter);
+        $result .= ' ' . $this->event->event->serialize($formatter);
 
-        $result .= ' ON SCHEDULE ' . $this->event->getSchedule()->serialize($formatter);
+        $result .= ' ON SCHEDULE ' . $this->event->schedule->serialize($formatter);
 
-        $preserve = $this->event->preserve();
+        $preserve = $this->event->preserve;
         if ($preserve !== null) {
             $result .= $preserve ? ' ON COMPLETION PRESERVE' : ' ON COMPLETION NOT PRESERVE';
         }
-        $state = $this->event->getState();
+        $state = $this->event->state;
         if ($state !== null) {
             $result .= ' ' . $state->serialize($formatter);
         }
-        $comment = $this->event->getComment();
+        $comment = $this->event->comment;
         if ($comment !== null) {
             $result .= ' COMMENT ' . $formatter->formatString($comment);
         }
 
-        $body = $this->event->getBody();
-
-        return $result . ' DO ' . $body->serialize($formatter);
+        return $result . ' DO ' . $this->event->body->serialize($formatter);
     }
 
 }

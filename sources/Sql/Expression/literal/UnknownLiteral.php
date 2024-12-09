@@ -17,10 +17,7 @@ use SqlFtw\Formatter\Formatter;
 class UnknownLiteral implements KeywordLiteral
 {
 
-    public function getValue(): string
-    {
-        return 'UNKNOWN';
-    }
+    public string $value = 'UNKNOWN';
 
     public function serialize(Formatter $formatter): string
     {

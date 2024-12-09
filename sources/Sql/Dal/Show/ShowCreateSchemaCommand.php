@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class ShowCreateSchemaCommand extends StatementImpl implements ShowCommand
 {
 
-    private string $schema;
+    public string $schema;
 
     public function __construct(string $schema)
     {
         $this->schema = $schema;
-    }
-
-    public function getSchema(): string
-    {
-        return $this->schema;
     }
 
     public function serialize(Formatter $formatter): string

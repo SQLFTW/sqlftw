@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class MaxExecutionTimeHint implements OptimizerHint
 {
 
-    private int $limit;
+    public int $limit;
 
     public function __construct(int $limit)
     {
@@ -24,11 +24,6 @@ class MaxExecutionTimeHint implements OptimizerHint
     public function getType(): string
     {
         return OptimizerHintType::MAX_EXECUTION_TIME;
-    }
-
-    public function getLimit(): int
-    {
-        return $this->limit;
     }
 
     public function serialize(Formatter $formatter): string

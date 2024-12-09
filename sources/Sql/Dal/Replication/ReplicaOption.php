@@ -59,8 +59,11 @@ class ReplicaOption extends SqlEnum
     public const IGNORE_SERVER_IDS = Keyword::IGNORE_SERVER_IDS;
     public const GTID_ONLY = Keyword::GTID_ONLY;
 
-    /** @var array<self::*, string|list<int>> */
-    private static array $types = [
+    /**
+     * @readonly
+     * @var array<self::*, string|list<int>>
+     */
+    public static array $types = [
         self::SOURCE_BIND => BaseType::CHAR,
         self::SOURCE_HOST => BaseType::CHAR,
         self::SOURCE_USER => BaseType::CHAR,
@@ -99,13 +102,5 @@ class ReplicaOption extends SqlEnum
         self::IGNORE_SERVER_IDS => BaseType::UNSIGNED . '[]',
         self::GTID_ONLY => [0, 1],
     ];
-
-    /**
-     * @return array<self::*, string|list<int>>
-     */
-    public static function getTypes(): array
-    {
-        return self::$types;
-    }
 
 }

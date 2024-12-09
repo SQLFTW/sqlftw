@@ -14,24 +14,14 @@ use SqlFtw\Formatter\Formatter;
 class UserName implements SqlSerializable
 {
 
-    protected string $user;
+    public string $user;
 
-    protected ?string $host;
+    public ?string $host;
 
     public function __construct(string $user, ?string $host)
     {
         $this->user = $user;
         $this->host = $host;
-    }
-
-    public function getUser(): string
-    {
-        return $this->user;
-    }
-
-    public function getHost(): ?string
-    {
-        return $this->host;
     }
 
     public function serialize(Formatter $formatter): string

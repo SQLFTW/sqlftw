@@ -17,32 +17,17 @@ use SqlFtw\Sql\Ddl\Table\TableItem;
 class ConstraintDefinition implements TableItem
 {
 
-    private ConstraintType $type;
+    public ConstraintType $type;
 
-    private ?string $name;
+    public ?string $name;
 
-    private ConstraintBody $body;
+    public ConstraintBody $body;
 
     public function __construct(ConstraintType $type, ?string $name, ConstraintBody $body)
     {
         $this->type = $type;
         $this->name = $name;
         $this->body = $body;
-    }
-
-    public function getType(): ConstraintType
-    {
-        return $this->type;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function getBody(): ConstraintBody
-    {
-        return $this->body;
     }
 
     public function getIndexDefinition(): IndexDefinition

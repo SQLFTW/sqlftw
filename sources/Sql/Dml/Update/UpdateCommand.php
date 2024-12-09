@@ -28,27 +28,27 @@ use function count;
 class UpdateCommand extends StatementImpl implements DmlCommand
 {
 
-    private TableReferenceNode $tableReferences;
+    public TableReferenceNode $tableReferences;
 
     /** @var non-empty-list<Assignment> */
-    private array $values;
+    public array $values;
 
-    private ?RootNode $where;
+    public ?RootNode $where;
 
-    private ?WithClause $with;
+    public ?WithClause $with;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private ?array $orderBy;
+    public ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $limit;
+    public $limit;
 
-    private bool $ignore;
+    public bool $ignore;
 
-    private bool $lowPriority;
+    public bool $lowPriority;
 
     /** @var non-empty-list<OptimizerHint>|null */
-    private ?array $optimizerHints;
+    public ?array $optimizerHints;
 
     /**
      * @param non-empty-list<Assignment> $values
@@ -80,63 +80,6 @@ class UpdateCommand extends StatementImpl implements DmlCommand
         $this->ignore = $ignore;
         $this->lowPriority = $lowPriority;
         $this->optimizerHints = $optimizerHints;
-    }
-
-    public function getTableReferences(): TableReferenceNode
-    {
-        return $this->tableReferences;
-    }
-
-    /**
-     * @return non-empty-list<Assignment>
-     */
-    public function getValues(): array
-    {
-        return $this->values;
-    }
-
-    public function getWhere(): ?RootNode
-    {
-        return $this->where;
-    }
-
-    public function getWith(): ?WithClause
-    {
-        return $this->with;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>|null
-     */
-    public function getOrderBy(): ?array
-    {
-        return $this->orderBy;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    public function ignore(): bool
-    {
-        return $this->ignore;
-    }
-
-    public function lowPriority(): bool
-    {
-        return $this->lowPriority;
-    }
-
-    /**
-     * @return non-empty-list<OptimizerHint>|null
-     */
-    public function getOptimizerHints(): ?array
-    {
-        return $this->optimizerHints;
     }
 
     public function serialize(Formatter $formatter): string

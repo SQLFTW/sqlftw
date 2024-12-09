@@ -15,10 +15,10 @@ use SqlFtw\Sql\StatementImpl;
 class FetchStatement extends StatementImpl
 {
 
-    private string $cursor;
+    public string $cursor;
 
     /** @var non-empty-list<string> */
-    private array $variables;
+    public array $variables;
 
     /**
      * @param non-empty-list<string> $variables
@@ -27,19 +27,6 @@ class FetchStatement extends StatementImpl
     {
         $this->cursor = $cursor;
         $this->variables = $variables;
-    }
-
-    public function getCursor(): string
-    {
-        return $this->cursor;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getVariables(): array
-    {
-        return $this->variables;
     }
 
     public function serialize(Formatter $formatter): string

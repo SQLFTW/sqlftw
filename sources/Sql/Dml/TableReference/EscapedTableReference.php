@@ -14,16 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class EscapedTableReference implements TableReferenceNode
 {
 
-    private TableReferenceNode $node;
+    public TableReferenceNode $node;
 
     public function __construct(TableReferenceNode $node)
     {
         $this->node = $node;
-    }
-
-    public function getNode(): TableReferenceNode
-    {
-        return $this->node;
     }
 
     public function serialize(Formatter $formatter): string

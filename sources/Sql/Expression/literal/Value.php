@@ -15,6 +15,4 @@ namespace SqlFtw\Sql\Expression;
 interface Value extends Literal
 {
 
-    public function getValue(): string;
-
 }

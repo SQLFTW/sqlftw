@@ -17,16 +17,11 @@ use SqlFtw\Sql\StatementImpl;
 class KillCommand extends StatementImpl implements DalCommand
 {
 
-    private RootNode $processId;
+    public RootNode $processId;
 
     public function __construct(RootNode $processId)
     {
         $this->processId = $processId;
-    }
-
-    public function getProcessId(): RootNode
-    {
-        return $this->processId;
     }
 
     public function serialize(Formatter $formatter): string

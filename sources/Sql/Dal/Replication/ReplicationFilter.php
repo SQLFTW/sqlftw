@@ -23,10 +23,10 @@ class ReplicationFilter implements SqlSerializable
 {
 
     /** @var ReplicationFilterType::* */
-    private string $type;
+    public string $type;
 
     /** @var array<string, string>|list<string|ObjectIdentifier> */
-    private array $items;
+    public array $items;
 
     /**
      * @param ReplicationFilterType::* $type
@@ -34,26 +34,10 @@ class ReplicationFilter implements SqlSerializable
      */
     public function __construct(string $type, array $items)
     {
-        TypeChecker::check($items, ReplicationFilterType::getItemType($type));
+        TypeChecker::check($items, ReplicationFilterType::$itemTypes($type));
 
         $this->type = $type;
         $this->items = $items;
-    }
-
-    /**
-     * @return ReplicationFilterType::*
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return array<string, string>|list<string|ObjectIdentifier>
-     */
-    public function getItems(): array
-    {
-        return $this->items;
     }
 
     public function serialize(Formatter $formatter): string

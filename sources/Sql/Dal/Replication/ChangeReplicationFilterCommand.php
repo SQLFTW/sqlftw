@@ -16,9 +16,9 @@ class ChangeReplicationFilterCommand extends StatementImpl implements Replicatio
 {
 
     /** @var non-empty-list<ReplicationFilter> */
-    private array $filters;
+    public array $filters;
 
-    private ?string $channel;
+    public ?string $channel;
 
     /**
      * @param non-empty-list<ReplicationFilter> $filters
@@ -27,19 +27,6 @@ class ChangeReplicationFilterCommand extends StatementImpl implements Replicatio
     {
         $this->filters = $filters;
         $this->channel = $channel;
-    }
-
-    /**
-     * @return non-empty-list<ReplicationFilter>
-     */
-    public function getFilters(): array
-    {
-        return $this->filters;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string

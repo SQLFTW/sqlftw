@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class DropSpatialReferenceSystemCommand extends StatementImpl implements SpatialReferenceSystemCommand
 {
 
-    private int $srid;
+    public int $srid;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     public function __construct(int $srid, bool $ifExists = false)
     {
         $this->srid = $srid;
         $this->ifExists = $ifExists;
-    }
-
-    public function getSrid(): int
-    {
-        return $this->srid;
-    }
-
-    public function getIfExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

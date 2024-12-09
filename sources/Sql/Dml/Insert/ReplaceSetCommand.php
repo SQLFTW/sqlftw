@@ -19,7 +19,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
 
     /** @var non-empty-list<Assignment> */
-    private array $assignments;
+    public array $assignments;
 
     /**
      * @param non-empty-list<Assignment> $assignments
@@ -39,14 +39,6 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
         parent::__construct($table, $columns, $partitions, $priority, $ignore, $optimizerHints);
 
         $this->assignments = $assignments;
-    }
-
-    /**
-     * @return non-empty-list<Assignment>
-     */
-    public function getAssignments(): array
-    {
-        return $this->assignments;
     }
 
     public function serialize(Formatter $formatter): string

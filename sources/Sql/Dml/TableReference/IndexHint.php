@@ -17,12 +17,12 @@ use SqlFtw\Sql\SqlSerializable;
 class IndexHint implements SqlSerializable
 {
 
-    private IndexHintAction $action;
+    public IndexHintAction $action;
 
-    private ?IndexHintTarget $target;
+    public ?IndexHintTarget $target;
 
     /** @var list<string|PrimaryLiteral> */
-    private array $indexes;
+    public array $indexes;
 
     /**
      * @param list<string|PrimaryLiteral> $indexes
@@ -35,24 +35,6 @@ class IndexHint implements SqlSerializable
         $this->action = $action;
         $this->target = $target;
         $this->indexes = $indexes;
-    }
-
-    public function getAction(): IndexHintAction
-    {
-        return $this->action;
-    }
-
-    public function getTarget(): ?IndexHintTarget
-    {
-        return $this->target;
-    }
-
-    /**
-     * @return list<string|PrimaryLiteral>
-     */
-    public function getIndexes(): array
-    {
-        return $this->indexes;
     }
 
     public function serialize(Formatter $formatter): string

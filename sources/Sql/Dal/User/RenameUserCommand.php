@@ -23,10 +23,10 @@ class RenameUserCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    protected $users;
+    public $users;
 
     /** @var non-empty-list<UserName> */
-    private $newUsers;
+    public $newUsers;
 
     /**
      * @param non-empty-list<UserName|FunctionCall> $users
@@ -40,22 +40,6 @@ class RenameUserCommand extends StatementImpl implements UserCommand
 
         $this->users = array_values($users);
         $this->newUsers = array_values($newUsers);
-    }
-
-    /**
-     * @return non-empty-list<UserName|FunctionCall>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    /**
-     * @return non-empty-list<UserName>
-     */
-    public function getNewUsers(): array
-    {
-        return $this->newUsers;
     }
 
     public function getIterator(): CombineIterator

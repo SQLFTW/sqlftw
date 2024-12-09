@@ -15,7 +15,7 @@ class ImportPartitionTablespaceAction implements PartitioningAction, TablespaceA
 {
 
     /** @var non-empty-list<string>|null */
-    private ?array $partitions;
+    public ?array $partitions;
 
     /**
      * @param non-empty-list<string>|null $partitions
@@ -23,14 +23,6 @@ class ImportPartitionTablespaceAction implements PartitioningAction, TablespaceA
     public function __construct(?array $partitions = null)
     {
         $this->partitions = $partitions;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getPartitions(): ?array
-    {
-        return $this->partitions;
     }
 
     public function serialize(Formatter $formatter): string

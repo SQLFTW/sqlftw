@@ -17,16 +17,16 @@ class AnalyzeTableUpdateHistogramCommand extends StatementImpl implements DalTab
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $tables;
+    public array $tables;
 
     /** @var non-empty-list<string> */
-    private array $columns;
+    public array $columns;
 
-    private ?int $buckets;
+    public ?int $buckets;
 
-    private ?string $data;
+    public ?string $data;
 
-    private bool $local;
+    public bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $tables
@@ -39,37 +39,6 @@ class AnalyzeTableUpdateHistogramCommand extends StatementImpl implements DalTab
         $this->buckets = $buckets;
         $this->data = $data;
         $this->local = $local;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->tables;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
-
-    public function getBuckets(): ?int
-    {
-        return $this->buckets;
-    }
-
-    public function getData(): ?string
-    {
-        return $this->data;
-    }
-
-    public function isLocal(): bool
-    {
-        return $this->local;
     }
 
     public function serialize(Formatter $formatter): string

@@ -17,10 +17,10 @@ use SqlFtw\Sql\StatementImpl;
 class SetCharacterSetCommand extends StatementImpl implements SetCommand
 {
 
-    private ?Charset $charset;
+    public ?Charset $charset;
 
     /** @var list<Assignment> */
-    private array $assignments;
+    public array $assignments;
 
     /**
      * @param list<Assignment> $assignments
@@ -29,19 +29,6 @@ class SetCharacterSetCommand extends StatementImpl implements SetCommand
     {
         $this->charset = $charset;
         $this->assignments = $assignments;
-    }
-
-    public function getCharset(): ?Charset
-    {
-        return $this->charset;
-    }
-
-    /**
-     * @return list<Assignment>
-     */
-    public function getAssignments(): array
-    {
-        return $this->assignments;
     }
 
     public function serialize(Formatter $formatter): string

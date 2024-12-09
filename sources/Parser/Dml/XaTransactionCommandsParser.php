@@ -95,7 +95,7 @@ class XaTransactionCommandsParser
     private function parseXid(TokenList $tokenList): Xid
     {
         $transactionId = $tokenList->expectStringValue();
-        $tokenList->validateName(EntityType::XA_TRANSACTION, $transactionId->getValue());
+        $tokenList->validateName(EntityType::XA_TRANSACTION, $transactionId->value);
 
         $branch = $format = null;
         if ($tokenList->hasSymbol(',')) {
@@ -105,7 +105,7 @@ class XaTransactionCommandsParser
                 if (!$format instanceof UintLiteral && !$format instanceof HexadecimalLiteral) {
                     throw new ParserException('Transaction format id must be unsigned int or hexadecimal literal.', $tokenList);
                 }
-                if ($format instanceof UintLiteral && (float) $format->getValue() >= (float) PHP_INT_MAX) {
+                if ($format instanceof UintLiteral && (float) $format->value >= (float) PHP_INT_MAX) {
                     throw new ParserException('Transaction format id is too big.', $tokenList);
                 }
             }

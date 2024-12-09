@@ -18,18 +18,18 @@ use function implode;
 class CreateResourceGroupCommand extends StatementImpl implements ResourceGroupCommand
 {
 
-    private string $name;
+    public string $name;
 
-    private ResourceGroupType $type;
+    public ResourceGroupType $type;
 
     /** @var non-empty-list<array{0: int, 1?: int}>|null */
-    private ?array $vcpus;
+    public ?array $vcpus;
 
-    private ?int $threadPriority;
+    public ?int $threadPriority;
 
-    private ?bool $enable;
+    public ?bool $enable;
 
-    private bool $force;
+    public bool $force;
 
     /**
      * @param non-empty-list<array{0: int, 1?: int}>|null $vcpus
@@ -42,39 +42,6 @@ class CreateResourceGroupCommand extends StatementImpl implements ResourceGroupC
         $this->threadPriority = $threadPriority;
         $this->enable = $enable;
         $this->force = $force;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getType(): ResourceGroupType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return non-empty-list<array{0: int, 1?: int}>|null
-     */
-    public function getVcpus(): ?array
-    {
-        return $this->vcpus;
-    }
-
-    public function getThreadPriority(): ?int
-    {
-        return $this->threadPriority;
-    }
-
-    public function enable(): ?bool
-    {
-        return $this->enable;
-    }
-
-    public function force(): bool
-    {
-        return $this->force;
     }
 
     public function serialize(Formatter $formatter): string

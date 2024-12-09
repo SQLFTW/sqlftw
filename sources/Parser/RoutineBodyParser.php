@@ -21,6 +21,8 @@ use SqlFtw\Sql\Dal\Flush\FlushTablesCommand;
 use SqlFtw\Sql\Dal\Replication\ReplicationCommand;
 use SqlFtw\Sql\Dal\Replication\ResetMasterCommand;
 use SqlFtw\Sql\Dal\Replication\ResetSlaveCommand;
+use SqlFtw\Sql\Dal\Show\ShowCountErrorsCommand;
+use SqlFtw\Sql\Dal\Show\ShowCountWarningsCommand;
 use SqlFtw\Sql\Dal\Show\ShowErrorsCommand;
 use SqlFtw\Sql\Dal\Show\ShowWarningsCommand;
 use SqlFtw\Sql\Ddl\Event\AlterEventCommand;
@@ -229,7 +231,7 @@ class RoutineBodyParser
         // ensures that the statement was parsed completely
         if (!$tokenList->inEmbedded() && !$tokenList->isFinished()) {
             if ($statement instanceof CompoundStatement
-                || ($statement instanceof DeclareHandlerStatement && $statement->getStatement() instanceof CompoundStatement)
+                || ($statement instanceof DeclareHandlerStatement && $statement->statement instanceof CompoundStatement)
             ) {
                 // ; not mandatory after `end`
                 $delimiter = $tokenList->get(TokenType::DELIMITER);
@@ -259,7 +261,7 @@ class RoutineBodyParser
         $in = $tokenList->inRoutine();
         $statement = $this->parser->parseTokenList($tokenList);
 
-        $errors = $statement->getErrors();
+        $errors = $statement->errors;
         if ($errors !== []) {
             throw new ParserException(Error::summarize($errors), $tokenList);
         } elseif ($statement instanceof ExplainForConnectionCommand) {
@@ -281,13 +283,22 @@ class RoutineBodyParser
         } elseif ($in !== RoutineType::PROCEDURE && ($statement instanceof FlushCommand || $statement instanceof FlushTablesCommand)) {
             throw new ParserException('Cannot use FLUSH inside a function, trigger or event.', $tokenList);
         } elseif ($statement instanceof Query
-            || $statement instanceof SignalCommand || $statement instanceof ResignalCommand
-            || $statement instanceof GetDiagnosticsCommand || $statement instanceof ShowWarningsCommand
-            || $statement instanceof ShowErrorsCommand || $statement instanceof PreparedStatementCommand
-            || $statement instanceof TransactionCommand || $statement instanceof EventCommand
-            || $statement instanceof DropTriggerCommand || $statement instanceof SchemaCommand
-            || $statement instanceof TablespaceCommand || $statement instanceof ServerCommand
-            || $statement instanceof ReplicationCommand || $statement instanceof AlterInstanceCommand
+            || $statement instanceof SignalCommand
+            || $statement instanceof ResignalCommand
+            || $statement instanceof GetDiagnosticsCommand
+            || $statement instanceof ShowCountErrorsCommand
+            || $statement instanceof ShowCountWarningsCommand
+            || $statement instanceof ShowErrorsCommand
+            || $statement instanceof ShowWarningsCommand
+            || $statement instanceof PreparedStatementCommand
+            || $statement instanceof TransactionCommand
+            || $statement instanceof EventCommand
+            || $statement instanceof DropTriggerCommand
+            || $statement instanceof SchemaCommand
+            || $statement instanceof TablespaceCommand
+            || $statement instanceof ServerCommand
+            || $statement instanceof ReplicationCommand
+            || $statement instanceof AlterInstanceCommand
             || $statement instanceof LogfileGroupCommand
         ) {
             // ok
@@ -611,9 +622,7 @@ class RoutineBodyParser
             $names[] = $tokenList->expectNonReservedName(EntityType::LOCAL_VARIABLE, TokenType::AT_VARIABLE);
         }
         $type = $this->expressionParser->parseColumnType($tokenList);
-        $charset = $type->getCharset();
-        $collation = $type->getCollation();
-        if ($charset === null && $collation !== null) {
+        if ($type->charset === null && $type->collation !== null) {
             throw new ParserException('Character set is required for variable with collation.', $tokenList);
         }
         $default = null;

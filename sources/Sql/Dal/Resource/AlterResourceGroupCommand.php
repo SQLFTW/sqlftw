@@ -18,16 +18,16 @@ use function implode;
 class AlterResourceGroupCommand extends StatementImpl implements ResourceGroupCommand
 {
 
-    private string $name;
+    public string $name;
 
     /** @var non-empty-list<array{0: int, 1?: int}>|null */
-    private ?array $vcpus;
+    public ?array $vcpus;
 
-    private ?int $threadPriority;
+    public ?int $threadPriority;
 
-    private ?bool $enable;
+    public ?bool $enable;
 
-    private bool $force;
+    public bool $force;
 
     /**
      * @param non-empty-list<array{0: int, 1?: int}>|null $vcpus

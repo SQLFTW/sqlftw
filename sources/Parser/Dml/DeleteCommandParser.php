@@ -121,8 +121,8 @@ class DeleteCommandParser
             if ($tokenList->hasSymbol('.')) {
                 $tokenList->expectOperator(Operator::MULTIPLY);
             }
-            if ($table instanceof QualifiedName && $table->getName() === '*') {
-                $table = new SimpleName($table->getSchema());
+            if ($table instanceof QualifiedName && $table->name === '*') {
+                $table = new SimpleName($table->schema);
             }
             $alias = $this->expressionParser->parseAlias($tokenList);
 

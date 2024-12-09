@@ -19,12 +19,12 @@ class GrantProxyCommand extends StatementImpl implements UserCommand
 {
 
     /** @var UserName|FunctionCall */
-    private SqlSerializable $proxy;
+    public SqlSerializable $proxy;
 
     /** @var non-empty-list<IdentifiedUser|FunctionCall> */
-    private array $users;
+    public array $users;
 
-    private bool $withGrantOption;
+    public bool $withGrantOption;
 
     /**
      * @param UserName|FunctionCall $proxy
@@ -35,27 +35,6 @@ class GrantProxyCommand extends StatementImpl implements UserCommand
         $this->proxy = $proxy;
         $this->users = $users;
         $this->withGrantOption = $withGrantOption;
-    }
-
-    /**
-     * @return UserName|FunctionCall
-     */
-    public function getProxy(): SqlSerializable
-    {
-        return $this->proxy;
-    }
-
-    /**
-     * @return non-empty-list<IdentifiedUser|FunctionCall>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    public function withGrantOption(): bool
-    {
-        return $this->withGrantOption;
     }
 
     public function serialize(Formatter $formatter): string

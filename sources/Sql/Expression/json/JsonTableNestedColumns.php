@@ -14,32 +14,14 @@ use SqlFtw\Formatter\Formatter;
 class JsonTableNestedColumns implements JsonTableColumn
 {
 
-    private StringValue $path;
+    public StringValue $path;
 
-    private JsonTableColumnsList $columns;
+    public JsonTableColumnsList $columns;
 
     public function __construct(StringValue $path, JsonTableColumnsList $columns)
     {
         $this->path = $path;
         $this->columns = $columns;
-    }
-
-    public function getPath(): StringValue
-    {
-        return $this->path;
-    }
-
-    /**
-     * @return non-empty-list<JsonTableColumn>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns->getColumns();
-    }
-
-    public function getColumnsList(): JsonTableColumnsList
-    {
-        return $this->columns;
     }
 
     public function serialize(Formatter $formatter): string

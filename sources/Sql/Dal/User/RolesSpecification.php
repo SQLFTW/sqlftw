@@ -16,10 +16,10 @@ use SqlFtw\Sql\UserName;
 class RolesSpecification implements SqlSerializable
 {
 
-    private RolesSpecificationType $type;
+    public RolesSpecificationType $type;
 
     /** @var non-empty-list<UserName>|null */
-    private ?array $roles;
+    public ?array $roles;
 
     /**
      * @param non-empty-list<UserName>|null $roles
@@ -28,19 +28,6 @@ class RolesSpecification implements SqlSerializable
     {
         $this->type = $type;
         $this->roles = $roles;
-    }
-
-    public function getType(): RolesSpecificationType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return non-empty-list<UserName>|null
-     */
-    public function getRoles(): ?array
-    {
-        return $this->roles;
     }
 
     public function serialize(Formatter $formatter): string

@@ -17,24 +17,14 @@ use SqlFtw\Formatter\Formatter;
 class AssignOperator implements OperatorExpression
 {
 
-    private UserVariable $variable;
+    public UserVariable $variable;
 
-    private RootNode $expression;
+    public RootNode $expression;
 
     public function __construct(UserVariable $variable, RootNode $expression)
     {
         $this->variable = $variable;
         $this->expression = $expression;
-    }
-
-    public function getVariable(): UserVariable
-    {
-        return $this->variable;
-    }
-
-    public function getExpression(): RootNode
-    {
-        return $this->expression;
     }
 
     public function serialize(Formatter $formatter): string

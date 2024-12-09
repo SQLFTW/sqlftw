@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class ResourceGroupHint implements OptimizerHint
 {
 
-    private string $resourceGroup;
+    public string $resourceGroup;
 
     public function __construct(string $resourceGroup)
     {
@@ -24,11 +24,6 @@ class ResourceGroupHint implements OptimizerHint
     public function getType(): string
     {
         return OptimizerHintType::RESOURCE_GROUP;
-    }
-
-    public function getResourceGroup(): string
-    {
-        return $this->resourceGroup;
     }
 
     public function serialize(Formatter $formatter): string

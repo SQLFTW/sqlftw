@@ -1050,14 +1050,14 @@ class TableCommandsParser
         }
 
         $hasDefaultValue = $default !== null && !$default instanceof NullLiteral && !$default instanceof Parentheses;
-        if ($hasDefaultValue && $type->getBaseType()->isSpatial()) {
+        if ($hasDefaultValue && $type->baseType->isSpatial()) {
             throw new ParserException('GEOMETRY columns cannot have a default value.', $tokenList);
         }
 
         // default '' is allowed in non-strict mode
-        $isEmptyStringAndNonStrict = $default instanceof StringLiteral && $default->getValue() === ''
+        $isEmptyStringAndNonStrict = $default instanceof StringLiteral && $default->value === ''
             && ($tokenList->getSession()->getMode()->fullValue & SqlMode::STRICT_TRANS_TABLES) === 0;
-        if ($hasDefaultValue && $type->getBaseType()->isBlob() && !$isEmptyStringAndNonStrict) {
+        if ($hasDefaultValue && $type->baseType->isBlob() && !$isEmptyStringAndNonStrict) {
             throw new ParserException('BLOB columns cannot have a default value.', $tokenList);
         }
 
@@ -1160,7 +1160,7 @@ class TableCommandsParser
                     $type = $type->addCharset($tokenList->expectCharsetName());
                     break;
                 case Keyword::COLLATE:
-                    if ($type->getCollation() !== null) {
+                    if ($type->collation !== null) {
                         throw new ParserException('Duplicit collation definition on column.', $tokenList);
                     }
                     $type = $type->addCollation($tokenList->expectCollationName());
@@ -1208,8 +1208,9 @@ class TableCommandsParser
     {
         if ($primary) {
             $index = $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
+            $index->type = new IndexType(IndexType::PRIMARY);
 
-            return $index->duplicateAsPrimary();
+            return $index;
         } else {
             return $this->indexCommandsParser->parseIndexDefinition($tokenList, true);
         }
@@ -1595,10 +1596,10 @@ class TableCommandsParser
 
                 // every partition has the same number of subpartitions
                 if ($subCount === false) {
-                    $sub = $partition->getSubpartitions();
+                    $sub = $partition->subpartitions;
                     $subCount = $count = $sub === null ? 0 : count($sub);
                 } else {
-                    $sub = $partition->getSubpartitions();
+                    $sub = $partition->subpartitions;
                     $count = $sub === null ? 0 : count($sub);
                     if ($subCount !== $count) {
                         throw new ParserException('Uneven number of subpartitions.', $tokenList);
@@ -1615,7 +1616,7 @@ class TableCommandsParser
             }
             if ($subpartitionsNumber !== null) {
                 foreach ($partitions as $part) {
-                    $subpartitions = $part->getSubpartitions();
+                    $subpartitions = $part->subpartitions;
                     if ($subpartitions !== null && count($subpartitions) !== $subpartitionsNumber) {
                         throw new ParserException('Wrong number of subpartitions.', $tokenList);
                     }
@@ -1721,15 +1722,15 @@ class TableCommandsParser
 
         $columns = $type = null;
         if ($condition !== null) {
-            $columns = $condition->getColumns() ?? $condition->getExpression();
+            $columns = $condition->columns ?? $condition->expression;
             if ($columns instanceof ListExpression) {
-                $columns = $columns->getItems();
+                $columns = $columns->items;
             } elseif ($columns instanceof RootNode) {
                 $columns = [$columns];
             }
             $columns = $columns !== null ? count($columns) : null;
 
-            $type = $condition->getType()->getValue();
+            $type = $condition->type->getValue();
         }
 
         $lessThan = $values = null;
@@ -1768,7 +1769,7 @@ class TableCommandsParser
                 do {
                     $values[] = $value = $this->expressionParser->parseExpression($tokenList);
 
-                    if ($value instanceof SimpleName && strcasecmp($value->getName(), Keyword::MAXVALUE) === 0) {
+                    if ($value instanceof SimpleName && strcasecmp($value->name, Keyword::MAXVALUE) === 0) {
                         // check MAXVALUE
                         throw new ParserException('MAXVALUE is not allowed in values list.', $tokenList);
                     } elseif ($value instanceof Parentheses) {
@@ -1776,12 +1777,12 @@ class TableCommandsParser
                         if ($columns === 1) {
                             throw new ParserException('Row expressions in VALUES IN only allowed for multi-field column partitioning.', $tokenList);
                         }
-                        $list = $value->getContents();
+                        $list = $value->contents;
                         if ($list instanceof ListExpression) {
-                            $items = $list->getItems();
+                            $items = $list->items;
                             // check MAXVALUE
                             foreach ($items as $item) {
-                                if ($item instanceof SimpleName && strcasecmp($item->getName(), Keyword::MAXVALUE) === 0) {
+                                if ($item instanceof SimpleName && strcasecmp($item->name, Keyword::MAXVALUE) === 0) {
                                     throw new ParserException('MAXVALUE is not allowed in values list.', $tokenList);
                                 }
                             }
@@ -1958,10 +1959,9 @@ class TableCommandsParser
         } while ($tokenList->hasSymbol(','));
 
         // ignored in MySQL 5.7, 8.0
-        $cascadeRestrict = $tokenList->getAnyKeyword(Keyword::CASCADE, Keyword::RESTRICT);
-        $cascadeRestrict = $cascadeRestrict === Keyword::CASCADE ? true : ($cascadeRestrict === Keyword::RESTRICT ? false : null);
+        $action = $tokenList->getAnyKeyword(Keyword::CASCADE, Keyword::RESTRICT);
 
-        return new DropTableCommand($tables, $temporary, $ifExists, $cascadeRestrict);
+        return new DropTableCommand($tables, $temporary, $ifExists, $action);
     }
 
     /**

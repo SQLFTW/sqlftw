@@ -21,16 +21,16 @@ use function is_string;
 class OrderByExpression implements ArgumentNode, ArgumentValue
 {
 
-    private ?Order $order;
+    public ?Order $order;
 
     /** @var string|ColumnIdentifier|null */
-    private $column;
+    public $column;
 
-    private ?RootNode $expression;
+    public ?RootNode $expression;
 
-    private ?int $position;
+    public ?int $position;
 
-    private ?Collation $collation;
+    public ?Collation $collation;
 
     /**
      * @param string|ColumnIdentifier|null $column
@@ -52,34 +52,6 @@ class OrderByExpression implements ArgumentNode, ArgumentValue
         $this->expression = $expression;
         $this->position = $position;
         $this->collation = $collation;
-    }
-
-    public function getOrder(): ?Order
-    {
-        return $this->order;
-    }
-
-    /**
-     * @return string|ColumnIdentifier|null
-     */
-    public function getColumn()
-    {
-        return $this->column;
-    }
-
-    public function getExpression(): ?RootNode
-    {
-        return $this->expression;
-    }
-
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function getCollation(): ?Collation
-    {
-        return $this->collation;
     }
 
     public function serialize(Formatter $formatter): string

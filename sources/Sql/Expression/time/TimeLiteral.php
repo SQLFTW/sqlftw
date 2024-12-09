@@ -23,9 +23,11 @@ use const STR_PAD_LEFT;
 class TimeLiteral implements TimeValue
 {
 
-    private string $value;
+    /** @readonly */
+    public string $value;
 
-    private string $normalized;
+    /** @readonly */
+    public string $normalized;
 
     public function __construct(string $value)
     {
@@ -78,16 +80,6 @@ class TimeLiteral implements TimeValue
             . ':' . str_pad($minutes, 2, '0', STR_PAD_LEFT)
             . ':' . str_pad($seconds, 2, '0', STR_PAD_LEFT)
             . ($microseconds !== 0 ? '.' . $microseconds : '');
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    public function getNormalizedValue(): string
-    {
-        return $this->normalized;
     }
 
     public function serialize(Formatter $formatter): string

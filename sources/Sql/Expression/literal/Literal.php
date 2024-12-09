@@ -13,10 +13,10 @@ namespace SqlFtw\Sql\Expression;
  * Literals representing a concrete value or acting in place of value known at compile time (e.g. DEFAULT)
  *
  * e.g. 1, 'x', TRUE, NULL, DEFAULT, MAXVALUE...
+ *
+ * @property string $value
  */
 interface Literal extends RootNode
 {
-
-    public function getValue(): string;
 
 }

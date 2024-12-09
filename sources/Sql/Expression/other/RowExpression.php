@@ -20,7 +20,7 @@ class RowExpression implements RootNode
 {
 
     /** @var non-empty-list<RootNode> */
-    private array $contents;
+    public array $contents;
 
     /**
      * @param non-empty-list<RootNode> $contents
@@ -28,14 +28,6 @@ class RowExpression implements RootNode
     public function __construct(array $contents)
     {
         $this->contents = $contents;
-    }
-
-    /**
-     * @return non-empty-list<RootNode>
-     */
-    public function getContents(): array
-    {
-        return $this->contents;
     }
 
     public function serialize(Formatter $formatter): string

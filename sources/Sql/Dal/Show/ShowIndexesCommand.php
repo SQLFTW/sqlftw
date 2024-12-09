@@ -17,32 +17,17 @@ use SqlFtw\Sql\StatementImpl;
 class ShowIndexesCommand extends StatementImpl implements ShowCommand
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private ?RootNode $where;
+    public ?RootNode $where;
 
-    private bool $extended;
+    public bool $extended;
 
     public function __construct(ObjectIdentifier $table, ?RootNode $where = null, bool $extended = false)
     {
         $this->table = $table;
         $this->where = $where;
         $this->extended = $extended;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getWhere(): ?RootNode
-    {
-        return $this->where;
-    }
-
-    public function extended(): bool
-    {
-        return $this->extended;
     }
 
     public function serialize(Formatter $formatter): string

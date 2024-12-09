@@ -238,7 +238,7 @@ class OptimizerHintParser
                 case OptimizerHintType::SET_VAR:
                     $variableName = $tokenList->expectNonReservedName(EntityType::SYSTEM_VARIABLE);
                     $variable = $this->expressionParser->createSystemVariable($tokenList, $variableName);
-                    if (!MysqlVariable::supportsSetVar($variable->getName())) {
+                    if (!MysqlVariable::supportsSetVar($variable->name)) {
                         throw new ParserException("Variable {$variableName} cannot be used in SET_VAR optimizer hint.", $tokenList);
                     }
                     $tokenList->expectOperator(Operator::EQUAL);

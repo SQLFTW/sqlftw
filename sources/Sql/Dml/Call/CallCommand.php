@@ -18,10 +18,10 @@ use SqlFtw\Sql\StatementImpl;
 class CallCommand extends StatementImpl implements DmlCommand
 {
 
-    private ObjectIdentifier $procedure;
+    public ObjectIdentifier $procedure;
 
     /** @var list<RootNode>|null */
-    private ?array $params;
+    public ?array $params;
 
     /**
      * @param list<RootNode>|null $params
@@ -30,19 +30,6 @@ class CallCommand extends StatementImpl implements DmlCommand
     {
         $this->procedure = $procedure;
         $this->params = $params;
-    }
-
-    public function getProcedure(): ObjectIdentifier
-    {
-        return $this->procedure;
-    }
-
-    /**
-     * @return list<RootNode>|null
-     */
-    public function getParams(): ?array
-    {
-        return $this->params;
     }
 
     public function serialize(Formatter $formatter): string

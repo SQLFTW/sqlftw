@@ -15,15 +15,15 @@ use SqlFtw\Sql\StatementImpl;
 class ShowRelaylogEventsCommand extends StatementImpl implements ShowCommand
 {
 
-    private ?string $logName;
+    public ?string $logName;
 
-    private ?int $from;
+    public ?int $from;
 
-    private ?int $limit;
+    public ?int $limit;
 
-    private ?int $offset;
+    public ?int $offset;
 
-    private ?string $channel;
+    public ?string $channel;
 
     public function __construct(?string $logName, ?int $from, ?int $limit, ?int $offset, ?string $channel)
     {
@@ -32,31 +32,6 @@ class ShowRelaylogEventsCommand extends StatementImpl implements ShowCommand
         $this->limit = $limit;
         $this->offset = $offset;
         $this->channel = $channel;
-    }
-
-    public function getLogName(): ?string
-    {
-        return $this->logName;
-    }
-
-    public function getFrom(): ?int
-    {
-        return $this->from;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function getOffset(): ?int
-    {
-        return $this->offset;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string

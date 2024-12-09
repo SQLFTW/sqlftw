@@ -18,11 +18,11 @@ class DeclareVariablesStatement extends StatementImpl
 {
 
     /** @var non-empty-list<string> */
-    private array $variables;
+    public array $variables;
 
-    private ColumnType $type;
+    public ColumnType $type;
 
-    private ?RootNode $default;
+    public ?RootNode $default;
 
     /**
      * @param non-empty-list<string> $variables
@@ -32,24 +32,6 @@ class DeclareVariablesStatement extends StatementImpl
         $this->variables = $variables;
         $this->type = $type;
         $this->default = $default;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getVariables(): array
-    {
-        return $this->variables;
-    }
-
-    public function getType(): ColumnType
-    {
-        return $this->type;
-    }
-
-    public function getDefault(): ?RootNode
-    {
-        return $this->default;
     }
 
     public function serialize(Formatter $formatter): string

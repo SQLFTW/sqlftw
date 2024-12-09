@@ -11,11 +11,11 @@ namespace SqlFtw\Sql\Expression;
 
 /**
  * e.g. `name`, @name, *
+ *
+ * @property string $name
  */
 interface Identifier extends RootNode
 {
-
-    public function getName(): string;
 
     public function getFullName(): string;
 

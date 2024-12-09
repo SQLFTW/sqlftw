@@ -15,7 +15,7 @@ class JsonTableColumnsList implements ArgumentNode, ArgumentValue
 {
 
     /** @var non-empty-list<JsonTableColumn> */
-    private array $columns;
+    public array $columns;
 
     /**
      * @param non-empty-list<JsonTableColumn> $columns
@@ -23,14 +23,6 @@ class JsonTableColumnsList implements ArgumentNode, ArgumentValue
     public function __construct(array $columns)
     {
         $this->columns = $columns;
-    }
-
-    /**
-     * @return non-empty-list<JsonTableColumn>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
     }
 
     public function serialize(Formatter $formatter): string

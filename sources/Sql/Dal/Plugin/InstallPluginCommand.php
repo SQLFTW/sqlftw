@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class InstallPluginCommand extends StatementImpl implements PluginCommand
 {
 
-    private string $pluginName;
+    public string $pluginName;
 
-    private string $libName;
+    public string $libName;
 
     public function __construct(string $pluginName, string $libName)
     {
         $this->pluginName = $pluginName;
         $this->libName = $libName;
-    }
-
-    public function getPluginName(): string
-    {
-        return $this->pluginName;
-    }
-
-    public function getLibName(): string
-    {
-        return $this->libName;
     }
 
     public function serialize(Formatter $formatter): string

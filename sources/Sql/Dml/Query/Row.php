@@ -18,7 +18,7 @@ class Row implements SqlSerializable
 {
 
     /** @var list<RootNode> */
-    private array $values;
+    public array $values;
 
     /**
      * @param list<RootNode> $values
@@ -26,14 +26,6 @@ class Row implements SqlSerializable
     public function __construct(array $values)
     {
         $this->values = array_values($values);
-    }
-
-    /**
-     * @return list<RootNode>
-     */
-    public function getValues(): array
-    {
-        return $this->values;
     }
 
     public function serialize(Formatter $formatter): string

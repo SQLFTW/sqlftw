@@ -9,74 +9,20 @@
 
 namespace SqlFtw\Sql;
 
-use LogicException;
 use SqlFtw\Error\Error;
 use SqlFtw\Parser\TokenList;
 
 abstract class StatementImpl implements Statement
 {
 
-    protected ?TokenList $tokenList = null;
+    public ?TokenList $tokenList = null;
 
-    protected ?string $delimiter = null;
+    public ?string $delimiter = null;
 
     /** @var list<string> */
-    protected array $commentsBefore = [];
+    public array $commentsBefore = [];
 
     /** @var list<Error> */
-    protected array $errors = [];
-
-    public function setTokenList(TokenList $tokenList): void
-    {
-        $this->tokenList = $tokenList;
-    }
-
-    public function getTokenList(): TokenList
-    {
-        if ($this->tokenList === null) {
-            throw new LogicException('Command was not generated with token list. Use ParserConfig with $provideTokenLists set to true.');
-        }
-
-        return $this->tokenList;
-    }
-
-    public function setDelimiter(string $delimiter): void
-    {
-        $this->delimiter = $delimiter;
-    }
-
-    public function getDelimiter(): ?string
-    {
-        return $this->delimiter;
-    }
-
-    /**
-     * @param list<string> $comments
-     */
-    public function setCommentsBefore(array $comments): void
-    {
-        $this->commentsBefore = $comments;
-    }
-
-    /**
-     * @return list<string>
-     */
-    public function getCommentsBefore(): array
-    {
-        return $this->commentsBefore;
-    }
-
-    public function addError(Error $error): void
-    {
-        $this->errors[] = $error;
-    }
-
-    /**
-     * @return list<Error>
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
+    public array $errors = [];
 
 }

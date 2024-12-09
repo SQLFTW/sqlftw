@@ -17,23 +17,23 @@ use SqlFtw\Sql\StatementImpl;
 class CreateLogfileGroupCommand extends StatementImpl implements LogfileGroupCommand
 {
 
-    private string $logFileGroup;
+    public string $logFileGroup;
 
-    private ?StorageEngine $engine;
+    public ?StorageEngine $engine;
 
-    private string $undoFile;
+    public string $undoFile;
 
-    private ?SizeLiteral $initialSize;
+    public ?SizeLiteral $initialSize;
 
-    private ?SizeLiteral $undoBufferSize;
+    public ?SizeLiteral $undoBufferSize;
 
-    private ?SizeLiteral $redoBufferSize;
+    public ?SizeLiteral $redoBufferSize;
 
-    private ?int $nodeGroup;
+    public ?int $nodeGroup;
 
-    private bool $wait;
+    public bool $wait;
 
-    private ?string $comment;
+    public ?string $comment;
 
     public function __construct(
         string $logFileGroup,
@@ -56,51 +56,6 @@ class CreateLogfileGroupCommand extends StatementImpl implements LogfileGroupCom
         $this->nodeGroup = $nodeGroup;
         $this->wait = $wait;
         $this->comment = $comment;
-    }
-
-    public function getLogFileGroup(): string
-    {
-        return $this->logFileGroup;
-    }
-
-    public function getEngine(): ?StorageEngine
-    {
-        return $this->engine;
-    }
-
-    public function getUndoFile(): string
-    {
-        return $this->undoFile;
-    }
-
-    public function getInitialSize(): ?SizeLiteral
-    {
-        return $this->initialSize;
-    }
-
-    public function getUndoBufferSize(): ?SizeLiteral
-    {
-        return $this->undoBufferSize;
-    }
-
-    public function getRedoBufferSize(): ?SizeLiteral
-    {
-        return $this->redoBufferSize;
-    }
-
-    public function getNodeGroup(): ?int
-    {
-        return $this->nodeGroup;
-    }
-
-    public function wait(): bool
-    {
-        return $this->wait;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
     }
 
     public function serialize(Formatter $formatter): string

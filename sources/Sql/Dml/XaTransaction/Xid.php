@@ -19,12 +19,12 @@ use SqlFtw\Sql\SqlSerializable;
 class Xid implements SqlSerializable
 {
 
-    private StringValue $transactionId;
+    public StringValue $transactionId;
 
-    private ?StringValue $branchQualifier;
+    public ?StringValue $branchQualifier;
 
     /** @var IntLiteral|HexadecimalLiteral|null */
-    private ?IntValue $formatId;
+    public ?IntValue $formatId;
 
     /**
      * @param IntLiteral|HexadecimalLiteral|null $formatId
@@ -34,24 +34,6 @@ class Xid implements SqlSerializable
         $this->transactionId = $transactionId;
         $this->branchQualifier = $branchQualifier;
         $this->formatId = $formatId;
-    }
-
-    public function getTransactionId(): StringValue
-    {
-        return $this->transactionId;
-    }
-
-    public function getBranchQualifier(): ?StringValue
-    {
-        return $this->branchQualifier;
-    }
-
-    /**
-     * @return IntLiteral|HexadecimalLiteral|null
-     */
-    public function getFormatId(): ?IntValue
-    {
-        return $this->formatId;
     }
 
     public function serialize(Formatter $formatter): string

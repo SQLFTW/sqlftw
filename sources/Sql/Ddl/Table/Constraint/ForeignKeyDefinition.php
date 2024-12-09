@@ -18,11 +18,11 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
 {
 
     /** @var non-empty-list<string> */
-    private array $columns;
+    public array $columns;
 
-    private ReferenceDefinition $reference;
+    public ReferenceDefinition $reference;
 
-    private ?string $indexName;
+    public ?string $indexName;
 
     /**
      * @param non-empty-list<string> $columns
@@ -32,31 +32,13 @@ class ForeignKeyDefinition implements TableItem, ConstraintBody
         ReferenceDefinition $reference,
         ?string $indexName = null
     ) {
-        if (count($columns) !== count($reference->getSourceColumns())) {
+        if (count($columns) !== count($reference->sourceColumns)) {
             throw new InvalidDefinitionException('Number of foreign key columns and source columns does not match.');
         }
 
         $this->columns = $columns;
         $this->reference = $reference;
         $this->indexName = $indexName;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
-
-    public function getReference(): ReferenceDefinition
-    {
-        return $this->reference;
-    }
-
-    public function getIndexName(): ?string
-    {
-        return $this->indexName;
     }
 
     public function serialize(Formatter $formatter): string

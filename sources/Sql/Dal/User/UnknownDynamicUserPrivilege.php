@@ -14,16 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class UnknownDynamicUserPrivilege implements UserPrivilegeType
 {
 
-    private string $value;
+    public string $value;
 
     public function __construct(string $value)
     {
         $this->value = $value;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

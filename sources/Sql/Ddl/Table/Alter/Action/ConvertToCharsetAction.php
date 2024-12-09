@@ -19,9 +19,9 @@ class ConvertToCharsetAction implements TableAction
 {
 
     /** @var Charset|DefaultLiteral */
-    private SqlSerializable $charset;
+    public SqlSerializable $charset;
 
-    private ?Collation $collation;
+    public ?Collation $collation;
 
     /**
      * @param Charset|DefaultLiteral $charset
@@ -30,19 +30,6 @@ class ConvertToCharsetAction implements TableAction
     {
         $this->charset = $charset;
         $this->collation = $collation;
-    }
-
-    /**
-     * @return Charset|DefaultLiteral
-     */
-    public function getCharset()
-    {
-        return $this->charset;
-    }
-
-    public function getCollation(): ?Collation
-    {
-        return $this->collation;
     }
 
     public function serialize(Formatter $formatter): string

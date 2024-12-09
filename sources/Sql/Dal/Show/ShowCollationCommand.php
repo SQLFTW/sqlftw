@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class ShowCollationCommand extends StatementImpl implements ShowCommand
 {
 
-    private ?string $like;
+    public ?string $like;
 
-    private ?RootNode $where;
+    public ?RootNode $where;
 
     public function __construct(?string $like = null, ?RootNode $where = null)
     {
         $this->like = $like;
         $this->where = $where;
-    }
-
-    public function getLike(): ?string
-    {
-        return $this->like;
-    }
-
-    public function getWhere(): ?RootNode
-    {
-        return $this->where;
     }
 
     public function serialize(Formatter $formatter): string

@@ -18,7 +18,7 @@ class ListExpression implements ArgumentNode
 {
 
     /** @var non-empty-list<RootNode> */
-    private array $items;
+    public array $items;
 
     /**
      * @param non-empty-list<RootNode> $items
@@ -26,14 +26,6 @@ class ListExpression implements ArgumentNode
     public function __construct(array $items)
     {
         $this->items = $items;
-    }
-
-    /**
-     * @return non-empty-list<RootNode>
-     */
-    public function getItems(): array
-    {
-        return $this->items;
     }
 
     public function serialize(Formatter $formatter): string

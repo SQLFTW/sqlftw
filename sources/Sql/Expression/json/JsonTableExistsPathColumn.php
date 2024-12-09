@@ -14,32 +14,17 @@ use SqlFtw\Formatter\Formatter;
 class JsonTableExistsPathColumn implements JsonTableColumn
 {
 
-    private string $name;
+    public string $name;
 
-    private ColumnType $type;
+    public ColumnType $type;
 
-    private StringValue $path;
+    public StringValue $path;
 
     public function __construct(string $name, ColumnType $type, StringValue $path)
     {
         $this->name = $name;
         $this->type = $type;
         $this->path = $path;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getType(): ColumnType
-    {
-        return $this->type;
-    }
-
-    public function getPath(): StringValue
-    {
-        return $this->path;
     }
 
     public function serialize(Formatter $formatter): string

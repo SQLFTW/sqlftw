@@ -20,14 +20,14 @@ class SelectExpression implements SqlSerializable
 {
 
     /** @var RootNode|Asterisk */
-    private ArgumentNode $expression;
+    public ArgumentNode $expression;
 
-    private ?string $alias;
+    public ?string $alias;
 
     /** @var WindowSpecification|string|null */
-    private $window;
+    public $window;
 
-    private ?string $rawExpression;
+    public ?string $rawExpression;
 
     /**
      * @param RootNode|Asterisk $expression
@@ -43,32 +43,6 @@ class SelectExpression implements SqlSerializable
         $this->alias = $alias;
         $this->window = $window;
         $this->rawExpression = $rawExpression;
-    }
-
-    /**
-     * @return RootNode|Asterisk
-     */
-    public function getExpression(): ArgumentNode
-    {
-        return $this->expression;
-    }
-
-    public function getRawExpression(): ?string
-    {
-        return $this->rawExpression;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
-    }
-
-    /**
-     * @return WindowSpecification|string|null
-     */
-    public function getWindow()
-    {
-        return $this->window;
     }
 
     public function serialize(Formatter $formatter): string

@@ -19,12 +19,12 @@ class SemijoinHint implements OptimizerHint
 {
 
     /** @var SemijoinHintType&string */
-    private string $type;
+    public string $type;
 
-    private ?string $queryBlock;
+    public ?string $queryBlock;
 
     /** @var non-empty-list<SemijoinHintStrategy::*>|null */
-    private ?array $strategies;
+    public ?array $strategies;
 
     /**
      * @param SemijoinHintType&string $type
@@ -43,19 +43,6 @@ class SemijoinHint implements OptimizerHint
     public function getType(): string
     {
         return $this->type;
-    }
-
-    public function getQueryBlock(): ?string
-    {
-        return $this->queryBlock;
-    }
-
-    /**
-     * @return non-empty-list<SemijoinHintStrategy::*>|null
-     */
-    public function getStrategies(): ?array
-    {
-        return $this->strategies;
     }
 
     public function serialize(Formatter $formatter): string

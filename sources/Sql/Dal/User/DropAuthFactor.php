@@ -14,24 +14,14 @@ use SqlFtw\Formatter\Formatter;
 class DropAuthFactor implements AlterUserAction
 {
 
-    private int $factor1;
+    public int $factor1;
 
-    private ?int $factor2;
+    public ?int $factor2;
 
     public function __construct(int $factor1, ?int $factor2 = null)
     {
         $this->factor1 = $factor1;
         $this->factor2 = $factor2;
-    }
-
-    public function getFactor1(): int
-    {
-        return $this->factor1;
-    }
-
-    public function getFactor2(): ?int
-    {
-        return $this->factor2;
     }
 
     public function serialize(Formatter $formatter): string

@@ -15,32 +15,17 @@ use SqlFtw\Sql\StatementImpl;
 class CreateSchemaCommand extends StatementImpl implements SchemaCommand
 {
 
-    private string $schema;
+    public string $schema;
 
-    private ?SchemaOptions $options;
+    public ?SchemaOptions $options;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
     public function __construct(string $schema, ?SchemaOptions $options, bool $ifNotExists = false)
     {
         $this->schema = $schema;
         $this->options = $options;
         $this->ifNotExists = $ifNotExists;
-    }
-
-    public function getSchema(): string
-    {
-        return $this->schema;
-    }
-
-    public function getOptions(): SchemaOptions
-    {
-        return $this->options ?? new SchemaOptions();
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
     }
 
     public function serialize(Formatter $formatter): string

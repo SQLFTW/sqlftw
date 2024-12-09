@@ -15,16 +15,16 @@ use SqlFtw\Sql\SqlSerializable;
 class PartitioningDefinition implements SqlSerializable
 {
 
-    private PartitioningCondition $condition;
+    public PartitioningCondition $condition;
 
     /** @var non-empty-list<PartitionDefinition>|null */
-    private ?array $partitions;
+    public ?array $partitions;
 
-    private ?int $partitionsNumber;
+    public ?int $partitionsNumber;
 
-    private ?PartitioningCondition $subpartitionsCondition;
+    public ?PartitioningCondition $subpartitionsCondition;
 
-    private ?int $subpartitionsNumber;
+    public ?int $subpartitionsNumber;
 
     /**
      * @param non-empty-list<PartitionDefinition>|null $partitions
@@ -41,34 +41,6 @@ class PartitioningDefinition implements SqlSerializable
         $this->partitionsNumber = $partitionsNumber;
         $this->subpartitionsCondition = $subpartitionsCondition;
         $this->subpartitionsNumber = $subpartitionsNumber;
-    }
-
-    public function getCondition(): PartitioningCondition
-    {
-        return $this->condition;
-    }
-
-    /**
-     * @return non-empty-list<PartitionDefinition>|null
-     */
-    public function getPartitions(): ?array
-    {
-        return $this->partitions;
-    }
-
-    public function getPartitionsNumber(): ?int
-    {
-        return $this->partitionsNumber;
-    }
-
-    public function getSubpartitionsCondition(): ?PartitioningCondition
-    {
-        return $this->subpartitionsCondition;
-    }
-
-    public function getSubpartitionsNumber(): ?int
-    {
-        return $this->subpartitionsNumber;
     }
 
     public function serialize(Formatter $formatter): string

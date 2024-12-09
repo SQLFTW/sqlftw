@@ -16,16 +16,16 @@ use SqlFtw\Sql\SqlSerializable;
 class ReferenceDefinition implements SqlSerializable
 {
 
-    private ObjectIdentifier $sourceTable;
+    public ObjectIdentifier $sourceTable;
 
     /** @var non-empty-list<string> */
-    private array $sourceColumns;
+    public array $sourceColumns;
 
-    private ?ForeignKeyAction $onUpdate;
+    public ?ForeignKeyAction $onUpdate;
 
-    private ?ForeignKeyAction $onDelete;
+    public ?ForeignKeyAction $onDelete;
 
-    private ?ForeignKeyMatchType $matchType;
+    public ?ForeignKeyMatchType $matchType;
 
     /**
      * @param non-empty-list<string> $sourceColumns
@@ -42,44 +42,6 @@ class ReferenceDefinition implements SqlSerializable
         $this->onDelete = $onDelete;
         $this->onUpdate = $onUpdate;
         $this->matchType = $matchType;
-    }
-
-    public function getSourceTable(): ObjectIdentifier
-    {
-        return $this->sourceTable;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getSourceColumns(): array
-    {
-        return $this->sourceColumns;
-    }
-
-    public function getOnDelete(): ?ForeignKeyAction
-    {
-        return $this->onDelete;
-    }
-
-    public function setOnDelete(ForeignKeyAction $action): void
-    {
-        $this->onDelete = $action;
-    }
-
-    public function getOnUpdate(): ?ForeignKeyAction
-    {
-        return $this->onUpdate;
-    }
-
-    public function setOnUpdate(ForeignKeyAction $action): void
-    {
-        $this->onUpdate = $action;
-    }
-
-    public function getMatchType(): ?ForeignKeyMatchType
-    {
-        return $this->matchType;
     }
 
     public function serialize(Formatter $formatter): string

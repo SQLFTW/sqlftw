@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class DeclareCursorStatement extends StatementImpl
 {
 
-    private string $cursor;
+    public string $cursor;
 
-    private Query $query;
+    public Query $query;
 
     public function __construct(string $cursor, Query $query)
     {
         $this->cursor = $cursor;
         $this->query = $query;
-    }
-
-    public function getCursor(): string
-    {
-        return $this->cursor;
-    }
-
-    public function getQuery(): Query
-    {
-        return $this->query;
     }
 
     public function serialize(Formatter $formatter): string

@@ -16,10 +16,10 @@ use SqlFtw\Sql\StatementImpl;
 class DeclareConditionStatement extends StatementImpl
 {
 
-    private string $condition;
+    public string $condition;
 
     /** @var int|SqlState */
-    private $value;
+    public $value;
 
     /**
      * @param int|SqlState $value
@@ -28,19 +28,6 @@ class DeclareConditionStatement extends StatementImpl
     {
         $this->condition = $condition;
         $this->value = $value;
-    }
-
-    public function getCondition(): string
-    {
-        return $this->condition;
-    }
-
-    /**
-     * @return int|SqlState
-     */
-    public function getValue()
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

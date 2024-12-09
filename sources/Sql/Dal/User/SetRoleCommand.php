@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class SetRoleCommand extends StatementImpl implements UserCommand
 {
 
-    private RolesSpecification $role;
+    public RolesSpecification $role;
 
     public function __construct(RolesSpecification $role)
     {
         $this->role = $role;
-    }
-
-    public function getRole(): RolesSpecification
-    {
-        return $this->role;
     }
 
     public function serialize(Formatter $formatter): string

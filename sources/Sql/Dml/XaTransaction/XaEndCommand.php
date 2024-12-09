@@ -15,32 +15,17 @@ use SqlFtw\Sql\StatementImpl;
 class XaEndCommand extends StatementImpl implements XaTransactionCommand
 {
 
-    private Xid $xid;
+    public Xid $xid;
 
-    private bool $suspend;
+    public bool $suspend;
 
-    private bool $forMigrate;
+    public bool $forMigrate;
 
     public function __construct(Xid $xid, bool $suspend = false, bool $forMigrate = false)
     {
         $this->xid = $xid;
         $this->suspend = $suspend;
         $this->forMigrate = $forMigrate;
-    }
-
-    public function getXid(): Xid
-    {
-        return $this->xid;
-    }
-
-    public function suspend(): bool
-    {
-        return $this->suspend;
-    }
-
-    public function forMigrate(): bool
-    {
-        return $this->forMigrate;
     }
 
     public function serialize(Formatter $formatter): string

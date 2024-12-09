@@ -14,24 +14,14 @@ use SqlFtw\Formatter\Formatter;
 class AlterIndexAction implements IndexAction
 {
 
-    private string $index;
+    public string $index;
 
-    private bool $visible;
+    public bool $visible;
 
     public function __construct(string $index, bool $visible)
     {
         $this->index = $index;
         $this->visible = $visible;
-    }
-
-    public function getIndex(): string
-    {
-        return $this->index;
-    }
-
-    public function visible(): bool
-    {
-        return $this->visible;
     }
 
     public function serialize(Formatter $formatter): string

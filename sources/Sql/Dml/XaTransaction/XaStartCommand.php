@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class XaStartCommand extends StatementImpl implements XaTransactionCommand
 {
 
-    private Xid $xid;
+    public Xid $xid;
 
-    private ?XaStartOption $option;
+    public ?XaStartOption $option;
 
     public function __construct(Xid $xid, ?XaStartOption $option = null)
     {
         $this->xid = $xid;
         $this->option = $option;
-    }
-
-    public function getXid(): Xid
-    {
-        return $this->xid;
-    }
-
-    public function getOption(): ?XaStartOption
-    {
-        return $this->option;
     }
 
     public function serialize(Formatter $formatter): string

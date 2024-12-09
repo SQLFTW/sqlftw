@@ -12,8 +12,11 @@ namespace SqlFtw\Sql\Ddl\Table\Column;
 class ColumnList
 {
 
-    /** @var array<string, ColumnDefinition> ($name => $column) */
-    private array $columns = [];
+    /**
+     * @readonly
+     * @var array<string, ColumnDefinition> ($name => $column)
+     */
+    public array $columns = [];
 
     /**
      * @param array<string, ColumnDefinition> $columns
@@ -27,26 +30,12 @@ class ColumnList
 
     private function addColumn(ColumnDefinition $column): void
     {
-        $this->columns[$column->getName()] = $column;
-    }
-
-    /**
-     * All column actions except DROP
-     * @return array<string, ColumnDefinition>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
-
-    public function getColumn(string $name): ?ColumnDefinition
-    {
-        return $this->columns[$name] ?? null;
+        $this->columns[$column->name] = $column;
     }
 
     public function containsColumn(ColumnDefinition $searchedColumn): bool
     {
-        return $this->getColumn($searchedColumn->getName()) === $searchedColumn;
+        return $this->columns[$searchedColumn->name] === $searchedColumn;
     }
 
 }

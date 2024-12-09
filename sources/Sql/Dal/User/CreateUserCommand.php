@@ -18,25 +18,25 @@ class CreateUserCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<IdentifiedUser> */
-    private array $users;
+    public array $users;
 
     /** @var non-empty-list<UserName>|null */
-    private ?array $defaultRoles;
+    public ?array $defaultRoles;
 
     /** @var list<UserTlsOption>|null */
-    private ?array $tlsOptions;
+    public ?array $tlsOptions;
 
     /** @var non-empty-list<UserResourceOption>|null */
-    private ?array $resourceOptions;
+    public ?array $resourceOptions;
 
     /** @var non-empty-list<UserPasswordLockOption>|null */
-    private ?array $passwordLockOptions;
+    public ?array $passwordLockOptions;
 
-    private ?string $comment;
+    public ?string $comment;
 
-    private ?string $attribute;
+    public ?string $attribute;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
     /**
      * @param non-empty-list<IdentifiedUser> $users
@@ -68,61 +68,6 @@ class CreateUserCommand extends StatementImpl implements UserCommand
         $this->comment = $comment;
         $this->attribute = $attribute;
         $this->ifNotExists = $ifNotExists;
-    }
-
-    /**
-     * @return non-empty-list<IdentifiedUser>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    /**
-     * @return non-empty-list<UserName>|null
-     */
-    public function getDefaultRoles(): ?array
-    {
-        return $this->defaultRoles;
-    }
-
-    /**
-     * @return list<UserTlsOption>|null
-     */
-    public function getTlsOptions(): ?array
-    {
-        return $this->tlsOptions;
-    }
-
-    /**
-     * @return non-empty-list<UserResourceOption>|null
-     */
-    public function getResourceOptions(): ?array
-    {
-        return $this->resourceOptions;
-    }
-
-    /**
-     * @return non-empty-list<UserPasswordLockOption>|null
-     */
-    public function getPasswordLockOptions(): ?array
-    {
-        return $this->passwordLockOptions;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function getAttribute(): ?string
-    {
-        return $this->attribute;
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
     }
 
     public function serialize(Formatter $formatter): string

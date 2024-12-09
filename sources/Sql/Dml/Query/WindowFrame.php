@@ -50,31 +50,6 @@ class WindowFrame implements SqlSerializable
         $this->endExpression = $endExpression;
     }
 
-    public function getUnits(): WindowFrameUnits
-    {
-        return $this->units;
-    }
-
-    public function getStartType(): WindowFrameType
-    {
-        return $this->startType;
-    }
-
-    public function getEndType(): ?WindowFrameType
-    {
-        return $this->endType;
-    }
-
-    public function getStartExpression(): ?RootNode
-    {
-        return $this->startExpression;
-    }
-
-    public function getEndExpression(): ?RootNode
-    {
-        return $this->endExpression;
-    }
-
     public function serialize(Formatter $formatter): string
     {
         $units = $this->units->serialize($formatter) . ' ';

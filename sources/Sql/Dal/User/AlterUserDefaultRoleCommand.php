@@ -24,42 +24,24 @@ class AlterUserDefaultRoleCommand extends StatementImpl implements UserCommand
     public const LIST_ROLES = null;
 
     /** @var UserName|FunctionCall */
-    private SqlSerializable $user;
+    public SqlSerializable $user;
 
-    private RolesSpecification $role;
+    public RolesSpecification $role;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     /**
      * @param UserName|FunctionCall $user
      */
     public function __construct(SqlSerializable $user, RolesSpecification $role, bool $ifExists = false)
     {
-        if ($role->getType()->equalsAnyValue(RolesSpecificationType::DEFAULT, RolesSpecificationType::ALL_EXCEPT)) {
+        if ($role->type->equalsAnyValue(RolesSpecificationType::DEFAULT, RolesSpecificationType::ALL_EXCEPT)) {
             throw new InvalidDefinitionException('Role specification for ALTER USER DEFAULT ROLE cannot be DEFAULT or ALL EXCEPT.');
         }
 
         $this->user = $user;
         $this->role = $role;
         $this->ifExists = $ifExists;
-    }
-
-    /**
-     * @return UserName|FunctionCall
-     */
-    public function getUser(): SqlSerializable
-    {
-        return $this->user;
-    }
-
-    public function getRole(): RolesSpecification
-    {
-        return $this->role;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

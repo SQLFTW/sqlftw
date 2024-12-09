@@ -17,9 +17,9 @@ use SqlFtw\Sql\StatementImpl;
 class PurgeBinaryLogsCommand extends StatementImpl implements ReplicationCommand
 {
 
-    private ?string $toLog;
+    public ?string $toLog;
 
-    private ?RootNode $before;
+    public ?RootNode $before;
 
     public function __construct(?string $toLog, ?RootNode $before)
     {
@@ -29,16 +29,6 @@ class PurgeBinaryLogsCommand extends StatementImpl implements ReplicationCommand
 
         $this->toLog = $toLog;
         $this->before = $before;
-    }
-
-    public function getToLog(): ?string
-    {
-        return $this->toLog;
-    }
-
-    public function getBefore(): ?RootNode
-    {
-        return $this->before;
     }
 
     public function serialize(Formatter $formatter): string

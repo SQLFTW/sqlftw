@@ -15,7 +15,7 @@ class UnresolvedExpression
 {
 
     /** @var ExpressionNode|Asterisk|SelectCommand|mixed[]|null */
-    private $expression;
+    public $expression;
 
     /**
      * @param ExpressionNode|Asterisk|SelectCommand|mixed[]|null $expression
@@ -23,14 +23,6 @@ class UnresolvedExpression
     public function __construct($expression)
     {
         $this->expression = $expression;
-    }
-
-    /**
-     * @return ExpressionNode|Asterisk|SelectCommand|mixed[]|null
-     */
-    public function getExpression()
-    {
-        return $this->expression;
     }
 
 }

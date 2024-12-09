@@ -15,24 +15,14 @@ use SqlFtw\Sql\Expression\FunctionCall;
 class TableReferenceJsonTable implements TableReferenceNode
 {
 
-    private FunctionCall $table;
+    public FunctionCall $table;
 
-    private ?string $alias;
+    public ?string $alias;
 
     public function __construct(FunctionCall $table, ?string $alias)
     {
         $this->table = $table;
         $this->alias = $alias;
-    }
-
-    public function getTable(): FunctionCall
-    {
-        return $this->table;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
     }
 
     public function serialize(Formatter $formatter): string

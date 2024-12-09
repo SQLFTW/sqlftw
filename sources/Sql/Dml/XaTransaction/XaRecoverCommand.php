@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class XaRecoverCommand extends StatementImpl implements XaTransactionCommand
 {
 
-    private bool $convertXid;
+    public bool $convertXid;
 
     public function __construct(bool $convertXid = false)
     {
         $this->convertXid = $convertXid;
-    }
-
-    public function convertXid(): bool
-    {
-        return $this->convertXid;
     }
 
     public function serialize(Formatter $formatter): string

@@ -19,12 +19,12 @@ class ChangeColumnAction implements ColumnAction
 
     public const FIRST = true;
 
-    private string $oldName;
+    public string $oldName;
 
-    private ColumnDefinition $column;
+    public ColumnDefinition $column;
 
     /** @var string|bool|null */
-    private $after;
+    public $after;
 
     /**
      * @param string|bool|null $after
@@ -34,26 +34,6 @@ class ChangeColumnAction implements ColumnAction
         $this->oldName = $oldName;
         $this->column = $column;
         $this->after = $after;
-    }
-
-    public function getOldName(): string
-    {
-        return $this->oldName;
-    }
-
-    public function getColumn(): ColumnDefinition
-    {
-        return $this->column;
-    }
-
-    public function isFirst(): bool
-    {
-        return $this->after === self::FIRST;
-    }
-
-    public function getAfter(): ?string
-    {
-        return is_bool($this->after) ? null : $this->after;
     }
 
     public function serialize(Formatter $formatter): string

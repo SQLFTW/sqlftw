@@ -20,20 +20,20 @@ use SqlFtw\Sql\StatementImpl;
 class ParenthesizedQueryExpression extends StatementImpl implements Query
 {
 
-    private Query $query;
+    public Query $query;
 
-    private ?WithClause $with;
+    public ?WithClause $with;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private ?array $orderBy;
+    public ?array $orderBy;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $limit;
+    public $limit;
 
     /** @var int|SimpleName|Placeholder|null */
-    private $offset;
+    public $offset;
 
-    private ?SelectInto $into;
+    public ?SelectInto $into;
 
     /**
      * @param non-empty-list<OrderByExpression>|null $orderBy
@@ -57,92 +57,17 @@ class ParenthesizedQueryExpression extends StatementImpl implements Query
         $this->into = $into;
     }
 
-    public function getQuery(): Query
-    {
-        return $this->query;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>|null
-     */
-    public function getOrderBy(): ?array
-    {
-        return $this->orderBy;
-    }
-
-    /**
-     * @return static
-     */
-    public function removeOrderBy(): Query
-    {
-        $that = clone $this;
-        $that->orderBy = null;
-
-        return $that;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    /**
-     * @return static
-     */
-    public function removeLimit(): Query
-    {
-        $that = clone $this;
-        $that->limit = null;
-
-        return $that;
-    }
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @return static
-     */
-    public function removeOffset(): Query
-    {
-        $that = clone $this;
-        $that->offset = null;
-
-        return $that;
-    }
-
-    public function getInto(): ?SelectInto
-    {
-        return $this->into;
-    }
-
     public function containsInto(): bool
     {
         if ($this->into !== null) {
             return true;
         } elseif ($this->query instanceof self && $this->query->containsInto()) {
             return true;
-        } elseif (!$this->query instanceof self && $this->query->getInto() !== null) {
+        } elseif (!$this->query instanceof self && $this->query->into !== null) {
             return true;
         } else {
             return false;
         }
-    }
-
-    public function removeInto(): Query
-    {
-        $that = clone $this;
-        $that->into = null;
-
-        return $that;
     }
 
     public function serialize(Formatter $formatter): string

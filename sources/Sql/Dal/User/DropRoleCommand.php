@@ -17,9 +17,9 @@ class DropRoleCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<UserName> */
-    private array $roles;
+    public array $roles;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     /**
      * @param non-empty-list<UserName> $roles
@@ -28,19 +28,6 @@ class DropRoleCommand extends StatementImpl implements UserCommand
     {
         $this->roles = $roles;
         $this->ifExists = $ifExists;
-    }
-
-    /**
-     * @return non-empty-list<UserName>
-     */
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

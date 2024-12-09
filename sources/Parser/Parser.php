@@ -125,7 +125,7 @@ class Parser
                 $end = $start + 1;
             }
 
-            if ($command instanceof EmptyCommand && $command->getCommentsBefore() === []) {
+            if ($command instanceof EmptyCommand && $command->commentsBefore === []) {
                 continue;
             }
 
@@ -134,7 +134,7 @@ class Parser
             }
 
             //if ($provideTokenLists) {
-                $command->setTokenList($tokenList->slice($start, $end));
+                $command->tokenList = $tokenList->slice($start, $end);
             //}
 
             yield $command;
@@ -197,7 +197,7 @@ class Parser
             $command = $this->parseCommand($tokenList, $first);
 
             if ($comments !== []) {
-                $command->setCommentsBefore($comments);
+                $command->commentsBefore = $comments;
             }
 
             // ensures that the command was parsed completely
@@ -208,16 +208,16 @@ class Parser
                 } else {
                     $delimiter = $tokenList->get(TokenType::DELIMITER);
                     if ($delimiter !== null) {
-                        $command->setDelimiter($trailingDelimiter . $delimiter->value);
+                        $command->delimiter = $trailingDelimiter . $delimiter->value;
                     } {
                         $delimiter = $tokenList->expectSymbol(';');
-                        $command->setDelimiter($trailingDelimiter . $delimiter->value);
+                        $command->delimiter = $trailingDelimiter . $delimiter->value;
                     }
                 }
             } else {
                 $trailingDelimiter = $tokenList->getTrailingDelimiter();
                 if ($trailingDelimiter !== '') {
-                    $command->setDelimiter($trailingDelimiter);
+                    $command->delimiter = $trailingDelimiter;
                 }
             }
 

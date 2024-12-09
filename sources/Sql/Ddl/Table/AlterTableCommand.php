@@ -33,16 +33,16 @@ use function trim;
 class AlterTableCommand extends StatementImpl implements DdlTableCommand
 {
 
-    private ObjectIdentifier $name;
+    public ObjectIdentifier $name;
 
-    private AlterActionsList $actions;
+    public AlterActionsList $actions;
 
     /** @var array<AlterTableOption::*, bool|AlterTableLock|AlterTableAlgorithm> */
-    private array $alterOptions;
+    public array $alterOptions;
 
-    private ?TableOptionsList $tableOptions;
+    public ?TableOptionsList $tableOptions;
 
-    private ?PartitioningDefinition $partitioning;
+    public ?PartitioningDefinition $partitioning;
 
     /**
      * @param AlterActionsList|list<AlterTableAction> $actions
@@ -72,56 +72,12 @@ class AlterTableCommand extends StatementImpl implements DdlTableCommand
         $this->partitioning = $partitioning;
     }
 
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->name;
-    }
-
-    public function getActionsList(): AlterActionsList
-    {
-        return $this->actions;
-    }
-
-    /**
-     * @return list<AlterTableAction>
-     */
-    public function getActions(): array
-    {
-        return $this->actions->getActions();
-    }
-
-    /**
-     * @return array<AlterTableOption::*, bool|AlterTableLock|AlterTableAlgorithm>
-     */
-    public function getAlterOptions(): array
-    {
-        return $this->alterOptions;
-    }
-
-    /**
-     * @return array<TableOption::*, TableOptionValue|null>
-     */
-    public function getOptions(): array
-    {
-        return $this->tableOptions !== null ? $this->tableOptions->getOptions() : [];
-    }
-
-    public function getOptionsList(): TableOptionsList
-    {
-        return $this->tableOptions ?? new TableOptionsList([]);
-    }
-
     public function getRenameAction(): ?RenameToAction
     {
         /** @var RenameToAction|null $rename */
         $rename = $this->actions->filter(RenameToAction::class)[0] ?? null;
 
         return $rename;
-    }
-
-    public function getPartitioning(): ?PartitioningDefinition
-    {
-        return $this->partitioning;
     }
 
     public function serialize(Formatter $formatter): string

@@ -18,21 +18,21 @@ use SqlFtw\Sql\StatementImpl;
 class AlterEventCommand extends StatementImpl implements EventCommand
 {
 
-    private ObjectIdentifier $event;
+    public ObjectIdentifier $event;
 
-    private ?EventSchedule $schedule;
+    public ?EventSchedule $schedule;
 
-    private ?Statement $body;
+    public ?Statement $body;
 
-    private ?UserExpression $definer;
+    public ?UserExpression $definer;
 
-    private ?EventState $state;
+    public ?EventState $state;
 
-    private ?bool $preserve;
+    public ?bool $preserve;
 
-    private ?string $comment;
+    public ?string $comment;
 
-    private ?ObjectIdentifier $newName;
+    public ?ObjectIdentifier $newName;
 
     public function __construct(
         ObjectIdentifier $event,
@@ -52,46 +52,6 @@ class AlterEventCommand extends StatementImpl implements EventCommand
         $this->preserve = $preserve;
         $this->comment = $comment;
         $this->newName = $newName;
-    }
-
-    public function getEvent(): ObjectIdentifier
-    {
-        return $this->event;
-    }
-
-    public function getSchedule(): ?EventSchedule
-    {
-        return $this->schedule;
-    }
-
-    public function getBody(): ?Statement
-    {
-        return $this->body;
-    }
-
-    public function getDefiner(): ?UserExpression
-    {
-        return $this->definer;
-    }
-
-    public function getState(): ?EventState
-    {
-        return $this->state;
-    }
-
-    public function preserve(): ?bool
-    {
-        return $this->preserve;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function getNewName(): ?ObjectIdentifier
-    {
-        return $this->newName;
     }
 
     public function serialize(Formatter $formatter): string

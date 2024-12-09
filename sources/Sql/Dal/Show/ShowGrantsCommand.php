@@ -17,10 +17,10 @@ use SqlFtw\Sql\UserName;
 class ShowGrantsCommand extends StatementImpl implements ShowCommand
 {
 
-    private ?UserExpression $user;
+    public ?UserExpression $user;
 
     /** @var non-empty-list<UserName>|null */
-    private ?array $roles;
+    public ?array $roles;
 
     /**
      * @param non-empty-list<UserName> $roles
@@ -29,19 +29,6 @@ class ShowGrantsCommand extends StatementImpl implements ShowCommand
     {
         $this->user = $user;
         $this->roles = $roles;
-    }
-
-    public function getUser(): ?UserExpression
-    {
-        return $this->user;
-    }
-
-    /**
-     * @return non-empty-list<UserName>|null
-     */
-    public function getRoles(): ?array
-    {
-        return $this->roles;
     }
 
     public function serialize(Formatter $formatter): string

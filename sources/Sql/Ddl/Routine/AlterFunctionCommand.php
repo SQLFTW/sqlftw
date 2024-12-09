@@ -17,15 +17,15 @@ use SqlFtw\Sql\StatementImpl;
 class AlterFunctionCommand extends StatementImpl implements StoredFunctionCommand, AlterRoutineCommand
 {
 
-    private ObjectIdentifier $function;
+    public ObjectIdentifier $function;
 
-    private ?SqlSecurity $security;
+    public ?SqlSecurity $security;
 
-    private ?RoutineSideEffects $sideEffects;
+    public ?RoutineSideEffects $sideEffects;
 
-    private ?string $comment;
+    public ?string $comment;
 
-    private ?string $language;
+    public ?string $language;
 
     public function __construct(
         ObjectIdentifier $function,
@@ -39,31 +39,6 @@ class AlterFunctionCommand extends StatementImpl implements StoredFunctionComman
         $this->sideEffects = $sideEffects;
         $this->comment = $comment;
         $this->language = $language;
-    }
-
-    public function getFunction(): ObjectIdentifier
-    {
-        return $this->function;
-    }
-
-    public function getSecurity(): ?SqlSecurity
-    {
-        return $this->security;
-    }
-
-    public function getSideEffects(): ?RoutineSideEffects
-    {
-        return $this->sideEffects;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function getLanguage(): ?string
-    {
-        return $this->language;
     }
 
     public function serialize(Formatter $formatter): string

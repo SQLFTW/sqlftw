@@ -17,24 +17,14 @@ use SqlFtw\Sql\SqlSerializable;
 class GroupByExpression implements SqlSerializable
 {
 
-    private ExpressionNode $expression;
+    public ExpressionNode $expression;
 
-    private ?Order $order;
+    public ?Order $order;
 
     public function __construct(ExpressionNode $expression, ?Order $order = null)
     {
         $this->expression = $expression;
         $this->order = $order;
-    }
-
-    public function getExpression(): ExpressionNode
-    {
-        return $this->expression;
-    }
-
-    public function getOrder(): ?Order
-    {
-        return $this->order;
     }
 
     public function serialize(Formatter $formatter): string

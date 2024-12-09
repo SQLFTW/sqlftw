@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class HelpCommand extends StatementImpl implements DmlCommand
 {
 
-    private string $term;
+    public string $term;
 
     public function __construct(string $term)
     {
         $this->term = $term;
-    }
-
-    public function getTerm(): string
-    {
-        return $this->term;
     }
 
     public function serialize(Formatter $formatter): string

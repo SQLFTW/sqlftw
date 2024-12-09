@@ -19,15 +19,15 @@ use SqlFtw\Util\TypeChecker;
 class GetDiagnosticsCommand extends StatementImpl implements ErrorHandlingCommand
 {
 
-    private ?DiagnosticsArea $area;
+    public ?DiagnosticsArea $area;
 
     /** @var non-empty-list<DiagnosticsItem>|null */
-    private ?array $statementItems;
+    public ?array $statementItems;
 
-    private ?RootNode $conditionNumber;
+    public ?RootNode $conditionNumber;
 
     /** @var non-empty-list<DiagnosticsItem>|null */
-    private ?array $conditionItems;
+    public ?array $conditionItems;
 
     /**
      * @param non-empty-list<DiagnosticsItem>|null $statementItems
@@ -48,13 +48,11 @@ class GetDiagnosticsCommand extends StatementImpl implements ErrorHandlingComman
 
         if ($conditionItems !== null) {
             foreach ($conditionItems as $item) {
-                $item = $item->getItem();
-                TypeChecker::check($item, ConditionInformationItem::class);
+                TypeChecker::check($item->item, ConditionInformationItem::class);
             }
         } elseif ($statementItems !== null) {
             foreach ($statementItems as $item) {
-                $item = $item->getItem();
-                TypeChecker::check($item, StatementInformationItem::class);
+                TypeChecker::check($item->item, StatementInformationItem::class);
             }
         }
 
@@ -62,32 +60,6 @@ class GetDiagnosticsCommand extends StatementImpl implements ErrorHandlingComman
         $this->statementItems = $statementItems;
         $this->conditionNumber = $conditionNumber;
         $this->conditionItems = $conditionItems;
-    }
-
-    public function getArea(): ?DiagnosticsArea
-    {
-        return $this->area;
-    }
-
-    /**
-     * @return non-empty-list<DiagnosticsItem>
-     */
-    public function getStatementItems(): ?array
-    {
-        return $this->conditionItems;
-    }
-
-    public function getConditionNumber(): ?RootNode
-    {
-        return $this->conditionNumber;
-    }
-
-    /**
-     * @return non-empty-list<DiagnosticsItem>
-     */
-    public function getConditionItems(): ?array
-    {
-        return $this->conditionItems;
     }
 
     public function serialize(Formatter $formatter): string

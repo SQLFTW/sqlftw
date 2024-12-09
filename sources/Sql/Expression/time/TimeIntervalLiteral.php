@@ -27,14 +27,14 @@ use function substr;
 class TimeIntervalLiteral implements TimeInterval, Value
 {
 
-    private string $value;
+    public string $value;
 
     /** @var non-empty-list<int> */
-    private array $quantity;
+    public array $quantity;
 
-    private TimeIntervalUnit $unit;
+    public TimeIntervalUnit $unit;
 
-    private bool $negative;
+    public bool $negative;
 
     public function __construct(string $value, TimeIntervalUnit $unit)
     {
@@ -75,27 +75,9 @@ class TimeIntervalLiteral implements TimeInterval, Value
         $this->negative = $negative;
     }
 
-    /**
-     * @return non-empty-list<int>
-     */
-    public function getQuantity(): array
-    {
-        return $this->quantity;
-    }
-
-    public function getUnit(): TimeIntervalUnit
-    {
-        return $this->unit;
-    }
-
     public function isZero(): bool
     {
         return array_sum($this->quantity) === 0;
-    }
-
-    public function isNegative(): bool
-    {
-        return $this->negative;
     }
 
     public function getValue(): string

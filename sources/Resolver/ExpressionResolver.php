@@ -117,8 +117,8 @@ class ExpressionResolver
         if ($expression instanceof CaseExpression) {
             // todo
         } elseif ($expression instanceof CollateExpression) {
-            $this->session->startCollation($expression->getCollation());
-            $result = $this->process($expression->getExpression());
+            $this->session->startCollation($expression->collation);
+            $result = $this->process($expression->expression);
             $this->session->endCollation();
 
             return $result;
@@ -133,7 +133,7 @@ class ExpressionResolver
         } elseif ($expression instanceof MatchExpression) {
             // todo
         } elseif ($expression instanceof Parentheses) {
-            return $this->process($expression->getContents());
+            return $this->process($expression->contents);
         } elseif ($expression instanceof RowExpression) {
             // todo
         } elseif ($expression instanceof Identifier) {
@@ -158,7 +158,7 @@ class ExpressionResolver
      */
     private function processFunctionCall(FunctionCall $expression)
     {
-        $function = $expression->getFunction();
+        $function = $expression->function;
         if ($function instanceof BuiltInFunction && !$function->isSimple()) {
             return $expression;
         }
@@ -166,17 +166,17 @@ class ExpressionResolver
         if ($function instanceof BuiltInFunction) {
             $method = $function->getValue();
         } elseif ($function instanceof QualifiedName) {
-            $method = $function->getSchema() . '__' . $function->getName();
+            $method = $function->schema . '__' . $function->name;
         } else {
             $schema = $this->session->getSchema();
-            $method = $schema !== null ? ($schema . '__' . $function->getName()) : $function->getName();
+            $method = $schema !== null ? ($schema . '__' . $function->name) : $function->name;
         }
 
         if (!method_exists($this->functions, $method)) {
             return $expression;
         }
 
-        $arguments = $expression->getArguments();
+        $arguments = $expression->arguments;
         $args = [];
         foreach ($arguments as $argument) {
             $argument = $this->process($argument);
@@ -204,7 +204,7 @@ class ExpressionResolver
     private function processIdentifier(Identifier $expression)
     {
         if ($expression instanceof UserVariable) {
-            $value = $this->session->getUserVariable($expression->getName());
+            $value = $this->session->getUserVariable($expression->name);
             ///rl('read ' . $expression->getName());
             ///rd($value);
             if ($value instanceof UnresolvedExpression) {
@@ -213,11 +213,11 @@ class ExpressionResolver
                 return $value;
             }
         } elseif ($expression instanceof SystemVariable) {
-            $scope = $expression->getScope();
+            $scope = $expression->scope;
             if ($scope === null || $scope->equalsValue(Scope::SESSION)) {
-                $value = $this->session->getSessionVariable($expression->getName());
+                $value = $this->session->getSessionVariable($expression->name);
             } elseif ($scope->equalsValue(Scope::GLOBAL)) {
-                $value = $this->session->getGlobalVariable($expression->getName());
+                $value = $this->session->getGlobalVariable($expression->name);
             } else {
                 throw new ResolveException('Cannot read variables with PERSIST or PERSIST_ONLY scope.');
             }
@@ -239,7 +239,7 @@ class ExpressionResolver
     private function processLiteral(Literal $expression)
     {
         if ($expression instanceof StringLiteral || $expression instanceof EnumValueLiteral) {
-            return $expression->getValue();
+            return $expression->value;
         } elseif ($expression instanceof NumericLiteral) {
             return $expression->asNumber();
         } elseif ($expression instanceof BoolLiteral || $expression instanceof NullLiteral) {
@@ -255,8 +255,8 @@ class ExpressionResolver
             return $expression;
         }
 
-        $value = $this->process($expression->getExpression());
-        $unit = $expression->getUnit();
+        $value = $this->process($expression->expression);
+        $unit = $expression->unit;
         if (is_int($value)) {
             return new TimeIntervalLiteral((string) $value, $unit);
         } elseif (is_string($value)) {
@@ -276,7 +276,7 @@ class ExpressionResolver
     private function processOperator(OperatorExpression $expression)
     {
         if ($expression instanceof AssignOperator) {
-            $value = $this->process($expression->getExpression());
+            $value = $this->process($expression->expression);
             //$variable = $expression->getVariable();
 
             if (!ExpressionHelper::isValue($value)) {
@@ -292,14 +292,14 @@ class ExpressionResolver
             }
         } elseif ($expression instanceof BinaryOperator) {
             /** @var scalar|Value|null $left */
-            $left = $this->process($expression->getLeft());
+            $left = $this->process($expression->left);
             /** @var scalar|Value|null $right */
-            $right = $this->process($expression->getRight());
+            $right = $this->process($expression->right);
             if (!ExpressionHelper::isValue($left) || !ExpressionHelper::isValue($right)) {
                 return $expression;
             }
 
-            $operator = $expression->getOperator();
+            $operator = $expression->operator;
             switch ($operator->getValue()) {
                 case Operator::AMPERSANDS:
                 case Operator::AND:
@@ -365,21 +365,21 @@ class ExpressionResolver
                     throw new LogicException("Unknown operator: {$operator->getValue()}.");
             }
         } elseif ($expression instanceof ComparisonOperator) {
-            $quantifier = $expression->getQuantifier();
+            $quantifier = $expression->quantifier;
             if ($quantifier !== null) {
                 // not supported
                 return $expression;
             }
 
             /** @var scalar|Value|null $left */
-            $left = $this->process($expression->getLeft());
+            $left = $this->process($expression->left);
             /** @var scalar|Value|list<scalar|Value|null>|null $right */
-            $right = $this->process($expression->getRight());
+            $right = $this->process($expression->right);
             if (!ExpressionHelper::isValueOrArray($left) || !ExpressionHelper::isValueOrArray($right)) {
                 return $expression;
             }
 
-            $operator = $expression->getOperator();
+            $operator = $expression->operator;
             switch ($operator->getValue()) {
                 case Operator::EQUAL:
                     return $this->functions->_equal($left, $right);
@@ -409,16 +409,16 @@ class ExpressionResolver
             }
         } elseif ($expression instanceof TernaryOperator) {
             /** @var scalar|Value|null $left */
-            $left = $this->process($expression->getLeft());
+            $left = $this->process($expression->left);
             /** @var scalar|Value|null $middle */
-            $middle = $this->process($expression->getMiddle());
+            $middle = $this->process($expression->middle);
             /** @var scalar|Value|null $right */
-            $right = $this->process($expression->getRight());
+            $right = $this->process($expression->right);
             if (!ExpressionHelper::isValue($left) || !ExpressionHelper::isValue($middle) || !ExpressionHelper::isValue($right)) {
                 return $expression;
             }
 
-            $operator = $expression->getLeftOperator();
+            $operator = $expression->leftOperator;
             switch ($operator->getValue()) {
                 case Operator::BETWEEN:
                     return $this->functions->_between($left, $middle, $right);
@@ -433,12 +433,12 @@ class ExpressionResolver
             }
         } elseif ($expression instanceof UnaryOperator) {
             /** @var scalar|Value|null $right */
-            $right = $this->process($expression->getRight());
+            $right = $this->process($expression->right);
             if (!ExpressionHelper::isValue($right)) {
                 return $expression;
             }
 
-            $operator = $expression->getOperator();
+            $operator = $expression->operator;
             switch ($operator->getValue()) {
                 case Operator::NOT:
                 case Operator::EXCLAMATION:
@@ -462,11 +462,11 @@ class ExpressionResolver
      */
     private function processSubquery(Subquery $expression)
     {
-        $query = $expression->getQuery();
+        $query = $expression->query;
         if ($query instanceof TableCommand) {
             return $expression;
         } elseif ($query instanceof ValuesCommand) {
-            if (count($query->getRows()) === 1) {
+            if (count($query->rows) === 1) {
                 $result = $this->processValues($query);
                 if (is_array($result)) {
                     return $result;
@@ -496,10 +496,10 @@ class ExpressionResolver
      */
     public function isSimpleSelect(SelectCommand $select): bool
     {
-        $from = $select->getFrom();
+        $from = $select->from;
         while ($from !== null) {
             // FROM DUAL allowed
-            if ($from instanceof TableReferenceTable && strcasecmp($from->getTable()->getFullName(), Keyword::DUAL) === 0) {
+            if ($from instanceof TableReferenceTable && strcasecmp($from->table->getFullName(), Keyword::DUAL) === 0) {
                 break;
             }
             // todo: check other allowed states (simple subselect...)
@@ -507,11 +507,11 @@ class ExpressionResolver
         }
 
         // might prevent returning result
-        if ($select->getWhere() !== null || $select->getHaving() !== null) {
+        if ($select->where !== null || $select->having !== null) {
             return false;
         }
 
-        return $select->getLimit() !== 0;
+        return $select->limit !== 0;
     }
 
     // lists -----------------------------------------------------------------------------------------------------------
@@ -522,8 +522,8 @@ class ExpressionResolver
     public function processSelect(SelectCommand $query, bool $allowUnresolved = false)
     {
         $expressions = [];
-        foreach ($query->getColumns() as $column) {
-            $expressions[] = $column->getExpression();
+        foreach ($query->columns as $column) {
+            $expressions[] = $column->expression;
         }
         $values = $this->processExpressions($expressions, $allowUnresolved);
 
@@ -535,8 +535,8 @@ class ExpressionResolver
      */
     private function processValues(ValuesCommand $query)
     {
-        $rows = $query->getRows();
-        $expressions = $rows[0]->getValues();
+        $rows = $query->rows;
+        $expressions = $rows[0]->values;
         $values = $this->processExpressions($expressions);
 
         return $values ?? $query;
@@ -547,7 +547,7 @@ class ExpressionResolver
      */
     private function processList(ListExpression $list)
     {
-        $values = $this->processExpressions($list->getItems());
+        $values = $this->processExpressions($list->items);
 
         return $values ?? $list;
     }

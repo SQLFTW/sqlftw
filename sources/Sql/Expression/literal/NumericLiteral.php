@@ -17,16 +17,11 @@ use SqlFtw\Formatter\Formatter;
 class NumericLiteral implements NumericValue
 {
 
-    protected string $value;
+    public string $value;
 
     public function __construct(string $value)
     {
         $this->value = $value;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
     }
 
     /**

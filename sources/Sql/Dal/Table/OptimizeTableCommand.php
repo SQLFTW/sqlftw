@@ -17,9 +17,9 @@ class OptimizeTableCommand extends StatementImpl implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $names;
+    public array $names;
 
-    private bool $local;
+    public bool $local;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names
@@ -28,19 +28,6 @@ class OptimizeTableCommand extends StatementImpl implements DalTablesCommand
     {
         $this->names = $names;
         $this->local = $local;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->names;
-    }
-
-    public function isLocal(): bool
-    {
-        return $this->local;
     }
 
     public function serialize(Formatter $formatter): string

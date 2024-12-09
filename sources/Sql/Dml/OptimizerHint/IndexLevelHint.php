@@ -19,14 +19,14 @@ class IndexLevelHint implements OptimizerHint
 {
 
     /** @var IndexLevelHintType&string */
-    private string $type;
+    public string $type;
 
-    private ?string $queryBlock;
+    public ?string $queryBlock;
 
-    private ?HintTableIdentifier $table;
+    public ?HintTableIdentifier $table;
 
     /** @var non-empty-list<string>|null */
-    private ?array $indexes;
+    public ?array $indexes;
 
     /**
      * @param IndexLevelHintType&string $type
@@ -44,32 +44,6 @@ class IndexLevelHint implements OptimizerHint
         $this->queryBlock = $queryBlock;
         $this->table = $table;
         $this->indexes = $indexes;
-    }
-
-    /**
-     * @return IndexLevelHintType&string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function getQueryBlock(): ?string
-    {
-        return $this->queryBlock;
-    }
-
-    public function getTable(): ?HintTableIdentifier
-    {
-        return $this->table;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getIndexes(): ?array
-    {
-        return $this->indexes;
     }
 
     public function serialize(Formatter $formatter): string

@@ -15,13 +15,13 @@ use SqlFtw\Sql\InvalidDefinitionException;
 class AddAuthFactor implements AlterUserAction
 {
 
-    private int $factor1;
+    public int $factor1;
 
-    private AuthOption $option1;
+    public AuthOption $option1;
 
-    private ?int $factor2;
+    public ?int $factor2;
 
-    private ?AuthOption $option2;
+    public ?AuthOption $option2;
 
     public function __construct(
         int $factor1,
@@ -37,26 +37,6 @@ class AddAuthFactor implements AlterUserAction
         $this->option1 = $option1;
         $this->factor2 = $factor2;
         $this->option2 = $option2;
-    }
-
-    public function getFactor1(): int
-    {
-        return $this->factor1;
-    }
-
-    public function getOption1(): ?AuthOption
-    {
-        return $this->option1;
-    }
-
-    public function getFactor2(): ?int
-    {
-        return $this->factor2;
-    }
-
-    public function getOption2(): ?AuthOption
-    {
-        return $this->option2;
     }
 
     public function serialize(Formatter $formatter): string

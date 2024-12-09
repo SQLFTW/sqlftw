@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class QueryBlockNameHint implements OptimizerHint
 {
 
-    private string $queryBlock;
+    public string $queryBlock;
 
     public function __construct(string $queryBlock)
     {
@@ -24,11 +24,6 @@ class QueryBlockNameHint implements OptimizerHint
     public function getType(): string
     {
         return OptimizerHintType::RESOURCE_GROUP;
-    }
-
-    public function getQueryBlock(): string
-    {
-        return $this->queryBlock;
     }
 
     public function serialize(Formatter $formatter): string

@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class StartTransactionCommand extends StatementImpl implements TransactionCommand
 {
 
-    private ?bool $consistent;
+    public ?bool $consistent;
 
-    private ?bool $write;
+    public ?bool $write;
 
     public function __construct(?bool $consistent = null, ?bool $write = null)
     {
         $this->consistent = $consistent;
         $this->write = $write;
-    }
-
-    public function getConsistent(): ?bool
-    {
-        return $this->consistent;
-    }
-
-    public function getWrite(): ?bool
-    {
-        return $this->write;
     }
 
     public function serialize(Formatter $formatter): string

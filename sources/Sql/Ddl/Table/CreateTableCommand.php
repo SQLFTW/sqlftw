@@ -27,24 +27,24 @@ use function is_array;
 class CreateTableCommand extends StatementImpl implements AnyCreateTableCommand
 {
 
-    private ObjectIdentifier $name;
+    public ObjectIdentifier $name;
 
     /** @var non-empty-list<TableItem>|null */
-    private ?array $items;
+    public ?array $items;
 
-    private ?TableOptionsList $options;
+    public ?TableOptionsList $options;
 
-    private ?PartitioningDefinition $partitioning;
+    public ?PartitioningDefinition $partitioning;
 
-    private bool $temporary;
+    public bool $temporary;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
-    private ?DuplicateOption $duplicateOption;
+    public ?DuplicateOption $duplicateOption;
 
-    private ?Query $query;
+    public ?Query $query;
 
-    private bool $startTransaction;
+    public bool $startTransaction;
 
     /**
      * @param non-empty-list<TableItem>|null $items
@@ -76,19 +76,6 @@ class CreateTableCommand extends StatementImpl implements AnyCreateTableCommand
         $this->startTransaction = $startTransaction;
     }
 
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return non-empty-list<TableItem>|null
-     */
-    public function getItems(): ?array
-    {
-        return $this->items;
-    }
-
     /**
      * @return list<ColumnDefinition>
      */
@@ -112,37 +99,7 @@ class CreateTableCommand extends StatementImpl implements AnyCreateTableCommand
      */
     public function getOptions(): array
     {
-        return $this->options !== null ? $this->options->getOptions() : [];
-    }
-
-    public function getOptionsList(): TableOptionsList
-    {
-        return $this->options ?? new TableOptionsList([]);
-    }
-
-    public function getPartitioning(): ?PartitioningDefinition
-    {
-        return $this->partitioning;
-    }
-
-    public function isTemporary(): bool
-    {
-        return $this->temporary;
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
-    }
-
-    public function getDuplicateOption(): ?DuplicateOption
-    {
-        return $this->duplicateOption;
-    }
-
-    public function getQuery(): ?Query
-    {
-        return $this->query;
+        return $this->options !== null ? $this->options->options : [];
     }
 
     public function serialize(Formatter $formatter): string

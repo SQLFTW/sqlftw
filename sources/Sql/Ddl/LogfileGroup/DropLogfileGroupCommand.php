@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class DropLogfileGroupCommand extends StatementImpl implements LogfileGroupCommand
 {
 
-    private string $logFileGroup;
+    public string $logFileGroup;
 
-    private ?StorageEngine $engine;
+    public ?StorageEngine $engine;
 
     public function __construct(string $logFileGroup, ?StorageEngine $engine)
     {
         $this->logFileGroup = $logFileGroup;
         $this->engine = $engine;
-    }
-
-    public function getLogFileGroup(): string
-    {
-        return $this->logFileGroup;
-    }
-
-    public function getEngine(): ?StorageEngine
-    {
-        return $this->engine;
     }
 
     public function serialize(Formatter $formatter): string

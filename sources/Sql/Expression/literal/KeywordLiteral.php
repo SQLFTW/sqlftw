@@ -11,10 +11,10 @@ namespace SqlFtw\Sql\Expression;
 
 /**
  * e.g. DEFAULT, UNKNOWN, ON, OFF...
+ *
+ * @param string $value
  */
 interface KeywordLiteral extends Literal
 {
-
-    public function getValue(): string;
 
 }

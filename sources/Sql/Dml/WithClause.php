@@ -16,9 +16,9 @@ class WithClause implements SqlSerializable
 {
 
     /** @var non-empty-list<WithExpression> */
-    private array $expressions;
+    public array $expressions;
 
-    private bool $recursive;
+    public bool $recursive;
 
     /**
      * @param non-empty-list<WithExpression> $expressions
@@ -27,19 +27,6 @@ class WithClause implements SqlSerializable
     {
         $this->expressions = $expressions;
         $this->recursive = $recursive;
-    }
-
-    /**
-     * @return non-empty-list<WithExpression>
-     */
-    public function getExpressions(): array
-    {
-        return $this->expressions;
-    }
-
-    public function isRecursive(): bool
-    {
-        return $this->recursive;
     }
 
     public function serialize(Formatter $formatter): string

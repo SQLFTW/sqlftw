@@ -33,42 +33,42 @@ class ColumnDefinition implements TableItem
 
     public const FIRST = false;
 
-    private string $name;
+    public string $name;
 
-    private ColumnType $type;
+    public ColumnType $type;
 
-    private ?bool $nullable;
+    public ?bool $nullable;
 
-    private ?bool $visible;
+    public ?bool $visible;
 
     /** @var scalar|RootNode|null */
-    private $defaultValue;
+    public $defaultValue;
 
-    private bool $autoincrement;
+    public bool $autoincrement;
 
     /** @var Identifier|FunctionCall|null */
-    private ?RootNode $onUpdate;
+    public ?RootNode $onUpdate;
 
-    private ?GeneratedColumnType $generatedColumnType = null;
+    public ?GeneratedColumnType $generatedColumnType = null;
 
-    private ?RootNode $expression = null;
+    public ?RootNode $expression = null;
 
-    private ?string $comment;
+    public ?string $comment;
 
-    private ?IndexType $indexType;
+    public ?IndexType $indexType;
 
-    private ?ColumnFormat $columnFormat;
+    public ?ColumnFormat $columnFormat;
 
-    private ?string $engineAttribute;
+    public ?string $engineAttribute;
 
-    private ?string $secondaryEngineAttribute;
+    public ?string $secondaryEngineAttribute;
 
-    private ?StorageType $storage;
+    public ?StorageType $storage;
 
-    private ?ReferenceDefinition $reference;
+    public ?ReferenceDefinition $reference;
 
     /** @var non-empty-list<CheckDefinition|ConstraintDefinition>|null */
-    private ?array $checks;
+    public ?array $checks;
 
     /**
      * @param scalar|RootNode|null $defaultValue
@@ -132,126 +132,6 @@ class ColumnDefinition implements TableItem
         $instance->expression = $expression;
 
         return $instance;
-    }
-
-    /**
-     * @param scalar|RootNode|null $defaultValue
-     */
-    public function duplicateWithDefaultValue($defaultValue): self
-    {
-        $self = clone $this;
-        $self->defaultValue = $defaultValue;
-
-        return $self;
-    }
-
-    public function duplicateWithNewName(string $newName): self
-    {
-        $self = clone $this;
-        $self->name = $newName;
-
-        return $self;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getType(): ColumnType
-    {
-        return $this->type;
-    }
-
-    public function getNullable(): ?bool
-    {
-        return $this->nullable;
-    }
-
-    public function getVisible(): ?bool
-    {
-        return $this->visible;
-    }
-
-    public function hasAutoincrement(): bool
-    {
-        return $this->autoincrement;
-    }
-
-    /**
-     * @return Identifier|FunctionCall|null
-     */
-    public function getOnUpdate(): ?RootNode
-    {
-        return $this->onUpdate;
-    }
-
-    /**
-     * NullLiteral means default value is NULL. PHP null means there is no default value
-     *
-     * @return scalar|RootNode|null
-     */
-    public function getDefaultValue()
-    {
-        return $this->defaultValue;
-    }
-
-    public function isGenerated(): bool
-    {
-        return $this->expression !== null;
-    }
-
-    public function getGeneratedColumnType(): ?GeneratedColumnType
-    {
-        return $this->generatedColumnType;
-    }
-
-    public function getExpression(): ?RootNode
-    {
-        return $this->expression;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function getIndexType(): ?IndexType
-    {
-        return $this->indexType;
-    }
-
-    public function getColumnFormat(): ?ColumnFormat
-    {
-        return $this->columnFormat;
-    }
-
-    public function getEngineAttribute(): ?string
-    {
-        return $this->engineAttribute;
-    }
-
-    public function getSecondaryEngineAttribute(): ?string
-    {
-        return $this->secondaryEngineAttribute;
-    }
-
-    public function getStorage(): ?StorageType
-    {
-        return $this->storage;
-    }
-
-    public function getReference(): ?ReferenceDefinition
-    {
-        return $this->reference;
-    }
-
-    /**
-     * @return non-empty-list<CheckDefinition|ConstraintDefinition>|null
-     */
-    public function getChecks(): ?array
-    {
-        return $this->checks;
     }
 
     public function serialize(Formatter $formatter): string

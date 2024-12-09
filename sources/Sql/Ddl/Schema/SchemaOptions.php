@@ -19,13 +19,13 @@ use function implode;
 class SchemaOptions implements SqlSerializable
 {
 
-    private ?Charset $charset;
+    public ?Charset $charset;
 
-    private ?Collation $collation;
+    public ?Collation $collation;
 
-    private ?bool $encryption;
+    public ?bool $encryption;
 
-    private ?ThreeStateValue $readOnly;
+    public ?ThreeStateValue $readOnly;
 
     public function __construct(
         ?Charset $charset = null,
@@ -38,26 +38,6 @@ class SchemaOptions implements SqlSerializable
         $this->collation = $collation;
         $this->encryption = $encryption;
         $this->readOnly = $readOnly;
-    }
-
-    public function getCharset(): ?Charset
-    {
-        return $this->charset;
-    }
-
-    public function getCollation(): ?Collation
-    {
-        return $this->collation;
-    }
-
-    public function getEncryption(): ?bool
-    {
-        return $this->encryption;
-    }
-
-    public function getReadOnly(): ?ThreeStateValue
-    {
-        return $this->readOnly;
     }
 
     public function serialize(Formatter $formatter): string

@@ -26,23 +26,32 @@ class ColumnType implements SqlSerializable
 
     public const UNSIGNED = true;
 
-    private BaseType $type;
+    public BaseType $baseType;
 
-    /** @var non-empty-list<int>|null */
-    private ?array $size;
+    /**
+     * @readonly
+     * @var non-empty-list<int>|null
+     */
+    public ?array $size;
 
-    /** @var non-empty-list<StringValue>|null */
-    private ?array $values;
+    /**
+     * @readonly
+     * @var non-empty-list<StringValue>|null
+     */
+    public ?array $values;
 
-    private bool $unsigned;
+    public bool $unsigned;
 
-    private ?Charset $charset;
+    /** @readonly */
+    public ?Charset $charset;
 
-    private ?Collation $collation;
+    /** @readonly */
+    public ?Collation $collation;
 
-    private ?int $srid;
+    /** @readonly */
+    public ?int $srid;
 
-    private bool $zerofill;
+    public bool $zerofill;
 
     /**
      * @param non-empty-list<int>|null $size
@@ -80,7 +89,7 @@ class ColumnType implements SqlSerializable
         }
         $this->checkSize($type, $size);
 
-        $this->type = $type;
+        $this->baseType = $type;
         $this->size = $size;
         $this->values = $values;
         $this->unsigned = $unsigned;
@@ -125,44 +134,13 @@ class ColumnType implements SqlSerializable
         }
     }
 
-    public function getBaseType(): BaseType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return non-empty-list<int>|null
-     */
-    public function getSize(): ?array
-    {
-        return $this->size;
-    }
-
     /**
      * @param non-empty-list<int>|null $size
      */
     public function setSize(?array $size): void
     {
-        $this->checkSize($this->type, $size);
+        $this->checkSize($this->baseType, $size);
         $this->size = $size;
-    }
-
-    /**
-     * @return non-empty-list<StringValue>|null
-     */
-    public function getValues(): ?array
-    {
-        return $this->values;
-    }
-
-    public function setUnsigned(bool $unsigned): void
-    {
-        $this->unsigned = $unsigned;
-    }
-
-    public function isUnsigned(): bool
-    {
-        return $this->unsigned;
     }
 
     public function addCharset(Charset $charset): self
@@ -175,11 +153,6 @@ class ColumnType implements SqlSerializable
         $that->charset = $charset;
 
         return $that;
-    }
-
-    public function getCharset(): ?Charset
-    {
-        return $this->charset;
     }
 
     public function addCollation(Collation $collation): self
@@ -197,11 +170,6 @@ class ColumnType implements SqlSerializable
         return $that;
     }
 
-    public function getCollation(): ?Collation
-    {
-        return $this->collation;
-    }
-
     public function addSrid(int $srid): self
     {
         if ($this->srid !== null) {
@@ -214,19 +182,9 @@ class ColumnType implements SqlSerializable
         return $that;
     }
 
-    public function getSrid(): ?int
-    {
-        return $this->srid;
-    }
-
-    public function zerofill(): bool
-    {
-        return $this->zerofill;
-    }
-
     public function serialize(Formatter $formatter): string
     {
-        $result = $this->type->serialize($formatter);
+        $result = $this->baseType->serialize($formatter);
 
         if ($this->size !== null) {
             $result .= '(' . implode(', ', $this->size) . ')';

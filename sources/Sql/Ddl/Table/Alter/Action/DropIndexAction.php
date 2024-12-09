@@ -14,16 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class DropIndexAction implements IndexAction
 {
 
-    private string $index;
+    public string $index;
 
     public function __construct(string $index)
     {
         $this->index = $index;
-    }
-
-    public function getIndex(): string
-    {
-        return $this->index;
     }
 
     public function serialize(Formatter $formatter): string

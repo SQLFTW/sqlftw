@@ -21,19 +21,19 @@ use function is_array;
 class PartitionDefinition implements SqlSerializable
 {
 
-    private string $name;
+    public string $name;
 
     /** @var non-empty-list<RootNode>|MaxValueLiteral|null */
-    private $lessThan;
+    public $lessThan;
 
     /** @var non-empty-list<RootNode>|null */
-    private ?array $values;
+    public ?array $values;
 
     /** @var non-empty-array<PartitionOption::*, int|string|StorageEngine>|null */
-    private ?array $options;
+    public ?array $options;
 
     /** @var non-empty-array<string, non-empty-array<PartitionOption::*, int|string|StorageEngine>|null>|null */
-    private ?array $subpartitions;
+    public ?array $subpartitions;
 
     /**
      * @param non-empty-list<RootNode>|MaxValueLiteral|null $lessThan
@@ -68,38 +68,6 @@ class PartitionDefinition implements SqlSerializable
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @return non-empty-list<RootNode>|MaxValueLiteral|null
-     */
-    public function getLessThan()
-    {
-        return $this->lessThan;
-    }
-
-    /**
-     * @return non-empty-list<RootNode>|null
-     */
-    public function getValues(): ?array
-    {
-        return $this->values;
-    }
-
-    /**
-     * @return non-empty-array<PartitionOption::*, int|string|StorageEngine>|null
-     */
-    public function getOptions(): ?array
-    {
-        return $this->options;
-    }
-
-    /**
-     * @return non-empty-array<string, non-empty-array<PartitionOption::*, int|string|StorageEngine>|null>|null
-     */
-    public function getSubpartitions(): ?array
-    {
-        return $this->subpartitions;
     }
 
     public function serialize(Formatter $formatter): string

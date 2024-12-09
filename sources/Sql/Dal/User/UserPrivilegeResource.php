@@ -17,32 +17,17 @@ class UserPrivilegeResource implements SqlSerializable
 
     public const ALL = '*';
 
-    private ?string $schema;
+    public ?string $schema;
 
-    private ?string $objectName;
+    public ?string $objectName;
 
-    private ?UserPrivilegeResourceType $objectType;
+    public ?UserPrivilegeResourceType $objectType;
 
     public function __construct(?string $schema, ?string $objectName, ?UserPrivilegeResourceType $objectType)
     {
         $this->schema = $schema;
         $this->objectName = $objectName;
         $this->objectType = $objectType;
-    }
-
-    public function getSchema(): ?string
-    {
-        return $this->schema;
-    }
-
-    public function getObjectName(): ?string
-    {
-        return $this->objectName;
-    }
-
-    public function getObjectType(): ?UserPrivilegeResourceType
-    {
-        return $this->objectType;
     }
 
     public function serialize(Formatter $formatter): string

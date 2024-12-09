@@ -16,32 +16,17 @@ use SqlFtw\Sql\SqlSerializable;
 class LockTablesItem implements SqlSerializable
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private LockTableType $lock;
+    public LockTableType $lock;
 
-    private ?string $alias;
+    public ?string $alias;
 
     public function __construct(ObjectIdentifier $table, LockTableType $lock, ?string $alias)
     {
         $this->table = $table;
         $this->lock = $lock;
         $this->alias = $alias;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getLock(): LockTableType
-    {
-        return $this->lock;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
     }
 
     public function serialize(Formatter $formatter): string

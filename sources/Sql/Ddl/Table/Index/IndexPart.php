@@ -20,11 +20,11 @@ class IndexPart implements SqlSerializable
 {
 
     /** @var string|RootNode */
-    private $expression;
+    public $expression;
 
-    private ?int $length;
+    public ?int $length;
 
-    private ?Order $order;
+    public ?Order $order;
 
     /**
      * @param string|RootNode $expression
@@ -38,29 +38,6 @@ class IndexPart implements SqlSerializable
         $this->expression = $expression;
         $this->length = $length;
         $this->order = $order;
-    }
-
-    public static function getDefaultOrder(): Order
-    {
-        return new Order(Order::ASC);
-    }
-
-    /**
-     * @return string|RootNode
-     */
-    public function getExpression()
-    {
-        return $this->expression;
-    }
-
-    public function getLength(): ?int
-    {
-        return $this->length;
-    }
-
-    public function getOrder(): ?Order
-    {
-        return $this->order;
     }
 
     public function serialize(Formatter $formatter): string

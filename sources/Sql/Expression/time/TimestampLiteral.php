@@ -21,9 +21,11 @@ use const PREG_UNMATCHED_AS_NULL;
 class TimestampLiteral implements TimeValue
 {
 
-    private string $value;
+    /** @readonly */
+    public string $value;
 
-    private string $normalized;
+    /** @readonly */
+    public string $normalized;
 
     public function __construct(string $value)
     {
@@ -49,16 +51,6 @@ class TimestampLiteral implements TimeValue
     public function hasZeroInDate(): bool
     {
         return substr($this->value, 5, 2) === '00' || substr($this->value, 8, 2) === '00';
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    public function getNormalizedValue(): string
-    {
-        return $this->normalized;
     }
 
     public function serialize(Formatter $formatter): string

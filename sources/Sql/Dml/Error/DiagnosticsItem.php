@@ -16,24 +16,14 @@ use SqlFtw\Sql\SqlSerializable;
 class DiagnosticsItem implements SqlSerializable
 {
 
-    private Identifier $target;
+    public Identifier $target;
 
-    private InformationItem $item;
+    public InformationItem $item;
 
     public function __construct(Identifier $target, InformationItem $item)
     {
         $this->target = $target;
         $this->item = $item;
-    }
-
-    public function getTarget(): Identifier
-    {
-        return $this->target;
-    }
-
-    public function getItem(): InformationItem
-    {
-        return $this->item;
     }
 
     public function serialize(Formatter $formatter): string

@@ -17,24 +17,14 @@ use SqlFtw\Sql\StatementImpl;
 class ResetPersistCommand extends StatementImpl implements DalCommand
 {
 
-    private ?MysqlVariable $variable;
+    public ?MysqlVariable $variable;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     public function __construct(?MysqlVariable $variable, bool $ifExists = false)
     {
         $this->variable = $variable;
         $this->ifExists = $ifExists;
-    }
-
-    public function getVariable(): ?MysqlVariable
-    {
-        return $this->variable;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

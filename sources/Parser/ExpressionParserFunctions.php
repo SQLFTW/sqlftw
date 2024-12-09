@@ -108,7 +108,7 @@ trait ExpressionParserFunctions
                         // todo: move to cast rule
                         if ($name1 === BuiltInFunction::CAST) {
                             if ($arguments[0] instanceof TimeValue) {
-                                $baseType = $type->getBaseType();
+                                $baseType = $type->baseType;
                                 if ($baseType !== null && !$baseType->isTime() && !$baseType->equalsAnyValue(BaseType::YEAR, BaseType::JSON, BaseType::FLOAT, BaseType::DOUBLE, BaseType::BINARY)) {
                                     throw new ParserException("Cannot cast from temporal type to {$baseType->getValue()}.", $tokenList);
                                 }
@@ -185,7 +185,7 @@ trait ExpressionParserFunctions
         if ($function instanceof BuiltInFunction && $function->getFullName() === BuiltInFunction::CAST) {
             /** @var CastType $type */
             $type = $arguments['AS'];
-            $type = $type->getBaseType();
+            $type = $type->baseType;
             $name = $type !== null ? $type->getValue() : null;
             if ($arguments[0] instanceof DatetimeLiteral && isset($arguments['AT TIME ZONE']) && $name !== Keyword::DATETIME && $name !== Keyword::TIMESTAMP) {
                 throw new ParserException('Cannot cast datetime with a timezone to this type.', $tokenList);
@@ -313,7 +313,7 @@ trait ExpressionParserFunctions
 
         if ($tokenList->hasKeyword(Keyword::RETURNING)) {
             $type = $this->parseCastType($tokenList);
-            if ($type->isArray()) {
+            if ($type->array) {
                 throw new ParserException('Array is not allowed as return type of JSON_VALUE.', $tokenList);
             }
             $params[Keyword::RETURNING] = $type;

@@ -14,24 +14,14 @@ use SqlFtw\Formatter\Formatter;
 class AlterConstraintAction implements ConstraintAction
 {
 
-    private string $constraint;
+    public string $constraint;
 
-    private bool $enforced;
+    public bool $enforced;
 
     public function __construct(string $constraint, bool $enforced)
     {
         $this->constraint = $constraint;
         $this->enforced = $enforced;
-    }
-
-    public function getConstraint(): string
-    {
-        return $this->constraint;
-    }
-
-    public function isEnforced(): bool
-    {
-        return $this->enforced;
     }
 
     public function serialize(Formatter $formatter): string

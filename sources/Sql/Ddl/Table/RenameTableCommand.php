@@ -24,10 +24,10 @@ class RenameTableCommand extends StatementImpl implements DdlTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    protected array $names;
+    public array $names;
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $newNames;
+    public array $newNames;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names
@@ -43,22 +43,6 @@ class RenameTableCommand extends StatementImpl implements DdlTablesCommand
         $this->newNames = array_values($newNames);
     }
 
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->names;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getNewNames(): array
-    {
-        return $this->newNames;
-    }
-
     public function getNewNameForTable(ObjectIdentifier $table): ?ObjectIdentifier
     {
         /**
@@ -66,13 +50,13 @@ class RenameTableCommand extends StatementImpl implements DdlTablesCommand
          * @var ObjectIdentifier $new
          */
         foreach ($this->getIterator() as $old => $new) {
-            if ($old->getName() !== $table->getName()) {
+            if ($old->name !== $table->name) {
                 continue;
             }
-            $oldSchema = $old instanceof QualifiedName ? $old->getSchema() : null;
-            $targetSchema = $new instanceof QualifiedName ? $new->getSchema() : null;
+            $oldSchema = $old instanceof QualifiedName ? $old->schema : null;
+            $targetSchema = $new instanceof QualifiedName ? $new->schema : null;
             if ($oldSchema === null || $oldSchema === $targetSchema) {
-                return $targetSchema === null ? new SimpleName($new->getName()) : $new;
+                return $targetSchema === null ? new SimpleName($new->name) : $new;
             }
         }
 

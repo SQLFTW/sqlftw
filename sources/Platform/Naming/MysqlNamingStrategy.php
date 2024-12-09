@@ -41,7 +41,7 @@ class MysqlNamingStrategy implements NamingStrategy
      */
     public function createForeignKeyName(QualifiedName $table, array $columns, array $existingKeys = []): string
     {
-        $name = $table->getName() . '_ibfk_';
+        $name = $table->name . '_ibfk_';
         $n = 1;
         while (in_array($name . $n, $existingKeys, true)) {
             $n++;
@@ -56,7 +56,7 @@ class MysqlNamingStrategy implements NamingStrategy
      */
     public function createCheckName(QualifiedName $table, array $columns, array $existingChecks = []): string
     {
-        $name = $table->getName() . '_chk_';
+        $name = $table->name . '_chk_';
         $n = 1;
         while (in_array($name . $n, $existingChecks, true)) {
             $n++;

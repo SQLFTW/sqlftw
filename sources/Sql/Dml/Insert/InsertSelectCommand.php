@@ -18,9 +18,9 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class InsertSelectCommand extends InsertOrReplaceCommand implements InsertCommand
 {
 
-    private Query $query;
+    public Query $query;
 
-    private ?OnDuplicateKeyActions $onDuplicateKeyActions;
+    public ?OnDuplicateKeyActions $onDuplicateKeyActions;
 
     /**
      * @param list<ColumnIdentifier>|null $columns
@@ -41,16 +41,6 @@ class InsertSelectCommand extends InsertOrReplaceCommand implements InsertComman
 
         $this->query = $query;
         $this->onDuplicateKeyActions = $onDuplicateKeyActions;
-    }
-
-    public function getQuery(): Query
-    {
-        return $this->query;
-    }
-
-    public function getOnDuplicateKeyAction(): ?OnDuplicateKeyActions
-    {
-        return $this->onDuplicateKeyActions;
     }
 
     public function serialize(Formatter $formatter): string

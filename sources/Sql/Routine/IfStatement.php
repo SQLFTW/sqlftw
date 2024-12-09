@@ -20,10 +20,10 @@ class IfStatement extends StatementImpl
 {
 
     /** @var non-empty-list<RootNode> */
-    private array $conditions;
+    public array $conditions;
 
     /** @var non-empty-list<list<Statement>> */
-    private array $statementLists;
+    public array $statementLists;
 
     /**
      * @param non-empty-list<RootNode> $conditions
@@ -37,22 +37,6 @@ class IfStatement extends StatementImpl
 
         $this->conditions = $conditions;
         $this->statementLists = $statementLists;
-    }
-
-    /**
-     * @return non-empty-list<RootNode>
-     */
-    public function getConditions(): array
-    {
-        return $this->conditions;
-    }
-
-    /**
-     * @return non-empty-list<list<Statement>>
-     */
-    public function getStatementLists(): array
-    {
-        return $this->statementLists;
     }
 
     public function serialize(Formatter $formatter): string

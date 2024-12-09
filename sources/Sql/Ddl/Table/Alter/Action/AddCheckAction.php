@@ -15,16 +15,11 @@ use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 class AddCheckAction implements CheckAction
 {
 
-    private CheckDefinition $check;
+    public CheckDefinition $check;
 
     public function __construct(CheckDefinition $check)
     {
         $this->check = $check;
-    }
-
-    public function getCheck(): CheckDefinition
-    {
-        return $this->check;
     }
 
     public function serialize(Formatter $formatter): string

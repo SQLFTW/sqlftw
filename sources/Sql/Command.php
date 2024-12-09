@@ -9,6 +9,15 @@
 
 namespace SqlFtw\Sql;
 
+use SqlFtw\Error\Error;
+use SqlFtw\Parser\TokenList;
+
+/**
+ * @property TokenList|null $tokenList
+ * @property string|null $delimiter
+ * @property list<string> $commentsBefore
+ * @property list<Error> $errors
+ */
 interface Command extends Statement
 {
 

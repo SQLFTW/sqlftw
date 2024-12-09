@@ -15,10 +15,10 @@ use SqlFtw\Sql\Expression\RootNode;
 class StraightJoin extends Join
 {
 
-    private ?RootNode $condition;
+    public ?RootNode $condition;
 
     /** @var non-empty-list<string>|null */
-    private ?array $using;
+    public ?array $using;
 
     /**
      * @param non-empty-list<string>|null $using
@@ -33,19 +33,6 @@ class StraightJoin extends Join
 
         $this->condition = $condition;
         $this->using = $using;
-    }
-
-    public function getCondition(): ?RootNode
-    {
-        return $this->condition;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getUsing(): ?array
-    {
-        return $this->using;
     }
 
     public function serialize(Formatter $formatter): string

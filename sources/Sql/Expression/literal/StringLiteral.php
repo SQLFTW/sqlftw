@@ -30,36 +30,22 @@ use function implode;
 class StringLiteral implements StringValue, BoolValue
 {
 
-    /** @var non-empty-list<string> */
-    private array $parts;
+    /** @readonly */
+    public string $value;
 
-    private ?Charset $charset;
+    /** @var non-empty-list<string> */
+    public array $parts;
+
+    public ?Charset $charset;
 
     /**
      * @param non-empty-list<string> $parts
      */
     public function __construct(array $parts, ?Charset $charset = null)
     {
+        $this->value = implode('', $parts);
         $this->parts = $parts;
         $this->charset = $charset;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getParts(): array
-    {
-        return $this->parts;
-    }
-
-    public function getCharset(): ?Charset
-    {
-        return $this->charset;
-    }
-
-    public function getValue(): string
-    {
-        return implode('', $this->parts);
     }
 
     public function asString(): string

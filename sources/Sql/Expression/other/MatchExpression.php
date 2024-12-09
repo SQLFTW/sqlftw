@@ -18,13 +18,13 @@ class MatchExpression implements RootNode
 {
 
     /** @var non-empty-list<ColumnIdentifier> */
-    private array $columns;
+    public array $columns;
 
-    private RootNode $query;
+    public RootNode $query;
 
-    private ?MatchMode $mode;
+    public ?MatchMode $mode;
 
-    private bool $queryExpansion;
+    public bool $queryExpansion;
 
     /**
      * @param non-empty-list<ColumnIdentifier> $columns
@@ -35,29 +35,6 @@ class MatchExpression implements RootNode
         $this->query = $query;
         $this->mode = $mode;
         $this->queryExpansion = $queryExpansion;
-    }
-
-    /**
-     * @return non-empty-list<ColumnIdentifier>
-     */
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
-
-    public function getQuery(): RootNode
-    {
-        return $this->query;
-    }
-
-    public function getMode(): ?MatchMode
-    {
-        return $this->mode;
-    }
-
-    public function queryExpansion(): bool
-    {
-        return $this->queryExpansion;
     }
 
     public function serialize(Formatter $formatter): string

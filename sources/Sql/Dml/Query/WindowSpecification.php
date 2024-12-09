@@ -19,15 +19,15 @@ use function implode;
 class WindowSpecification implements SqlSerializable
 {
 
-    private ?string $name;
+    public ?string $name;
 
     /** @var non-empty-list<RootNode>|null */
-    private ?array $partitionBy;
+    public ?array $partitionBy;
 
     /** @var non-empty-list<OrderByExpression>|null */
-    private ?array $orderBy;
+    public ?array $orderBy;
 
-    private ?WindowFrame $frame;
+    public ?WindowFrame $frame;
 
     /**
      * @param non-empty-list<RootNode>|null $partitionBy
@@ -39,32 +39,6 @@ class WindowSpecification implements SqlSerializable
         $this->partitionBy = $partitionBy;
         $this->orderBy = $orderBy;
         $this->frame = $frame;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return non-empty-list<RootNode>|null
-     */
-    public function getPartitionBy(): ?array
-    {
-        return $this->partitionBy;
-    }
-
-    /**
-     * @return non-empty-list<OrderByExpression>|null
-     */
-    public function getOrderBy(): ?array
-    {
-        return $this->orderBy;
-    }
-
-    public function getFrame(): ?WindowFrame
-    {
-        return $this->frame;
     }
 
     public function serialize(Formatter $formatter): string

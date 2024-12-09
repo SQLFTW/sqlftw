@@ -19,15 +19,15 @@ class SetPasswordCommand extends StatementImpl implements UserCommand
 {
 
     /** @var UserName|FunctionCall|null */
-    private ?SqlSerializable $user;
+    public ?SqlSerializable $user;
 
-    private ?string $passwordFunction;
+    public ?string $passwordFunction;
 
-    private ?string $password;
+    public ?string $password;
 
-    private ?string $replace;
+    public ?string $replace;
 
-    private bool $retainCurrent;
+    public bool $retainCurrent;
 
     /**
      * @param UserName|FunctionCall|null $user
@@ -45,34 +45,6 @@ class SetPasswordCommand extends StatementImpl implements UserCommand
         $this->password = $password;
         $this->replace = $replace;
         $this->retainCurrent = $retainCurrent;
-    }
-
-    /**
-     * @return UserName|FunctionCall|null
-     */
-    public function getUser(): ?SqlSerializable
-    {
-        return $this->user;
-    }
-
-    public function passwordFunction(): ?string
-    {
-        return $this->passwordFunction;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function getReplace(): ?string
-    {
-        return $this->replace;
-    }
-
-    public function retainCurrent(): bool
-    {
-        return $this->retainCurrent;
     }
 
     public function serialize(Formatter $formatter): string

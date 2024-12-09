@@ -15,11 +15,9 @@ use SqlFtw\Sql\StatementImpl;
 class ShowWarningsCommand extends StatementImpl implements ShowCommand
 {
 
-    private ?int $limit;
+    public ?int $limit;
 
-    private ?int $offset;
-
-    private bool $count = false;
+    public ?int $offset;
 
     public function __construct(?int $limit = null, ?int $offset = null)
     {
@@ -27,35 +25,8 @@ class ShowWarningsCommand extends StatementImpl implements ShowCommand
         $this->offset = $offset;
     }
 
-    public static function createCount(): self
-    {
-        $self = new self();
-        $self->count = true;
-
-        return $self;
-    }
-
-    public function isCount(): bool
-    {
-        return $this->count;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function getOffset(): ?int
-    {
-        return $this->offset;
-    }
-
     public function serialize(Formatter $formatter): string
     {
-        if ($this->count) {
-            return 'SHOW COUNT(*) WARNINGS';
-        }
-
         $result = 'SHOW WARNINGS';
         if ($this->limit !== null) {
             $result .= ' LIMIT ' . $this->limit;

@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class DeallocatePrepareCommand extends StatementImpl implements PreparedStatementCommand
 {
 
-    private string $name;
+    public string $name;
 
     public function __construct(string $name)
     {
         $this->name = $name;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function serialize(Formatter $formatter): string

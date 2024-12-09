@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class DropEventCommand extends StatementImpl implements EventCommand
 {
 
-    private ObjectIdentifier $event;
+    public ObjectIdentifier $event;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     public function __construct(ObjectIdentifier $event, bool $ifExists = false)
     {
         $this->event = $event;
         $this->ifExists = $ifExists;
-    }
-
-    public function getEvent(): ObjectIdentifier
-    {
-        return $this->event;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

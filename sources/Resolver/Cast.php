@@ -73,9 +73,9 @@ class Cast
         } elseif ($value instanceof IntValue) {
             return (string) $value->asInt();
         } elseif ($value instanceof NumericValue) {
-            return rtrim($value->getValue(), '.');
+            return rtrim($value->value, '.');
         } elseif ($value instanceof OnOffLiteral) {
-            return $value->getValue();
+            return $value->value;
         } elseif ($value instanceof BoolValue) {
             $value = $value->asBool();
 

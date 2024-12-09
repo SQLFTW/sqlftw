@@ -14,16 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class DropCheckAction implements CheckAction
 {
 
-    private string $check;
+    public string $check;
 
     public function __construct(string $check)
     {
         $this->check = $check;
-    }
-
-    public function getCheck(): string
-    {
-        return $this->check;
     }
 
     public function serialize(Formatter $formatter): string

@@ -18,10 +18,10 @@ use SqlFtw\Sql\StatementImpl;
 class PrepareCommand extends StatementImpl implements PreparedStatementCommand
 {
 
-    private string $name;
+    public string $name;
 
     /** @var UserVariable|Statement */
-    private SqlSerializable $statement;
+    public SqlSerializable $statement;
 
     /**
      * @param UserVariable|Statement $statement
@@ -32,26 +32,13 @@ class PrepareCommand extends StatementImpl implements PreparedStatementCommand
         $this->statement = $statement;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return UserVariable|Statement
-     */
-    public function getStatement()
-    {
-        return $this->statement;
-    }
-
     public function serialize(Formatter $formatter): string
     {
         $statement = $this->statement->serialize($formatter);
 
         return 'PREPARE ' . $formatter->formatName($this->name) . ' FROM '
             . ($this->statement instanceof UserVariable ? $statement : $formatter->formatString($statement))
-            . ($this->statement instanceof Statement ? $this->statement->getDelimiter() : '');
+            . ($this->statement instanceof Statement ? $this->statement->delimiter : '');
     }
 
 }

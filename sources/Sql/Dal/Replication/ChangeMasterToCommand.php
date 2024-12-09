@@ -24,10 +24,13 @@ use function implode;
 class ChangeMasterToCommand extends StatementImpl implements ReplicationCommand
 {
 
-    /** @var non-empty-array<SlaveOption::*, SlaveOptionValue|null> */
-    private array $options;
+    /**
+     * @readonly
+     * @var non-empty-array<SlaveOption::*, SlaveOptionValue|null>
+     */
+    public array $options;
 
-    private ?string $channel;
+    public ?string $channel;
 
     /**
      * @param non-empty-array<SlaveOption::*, SlaveOptionValue> $options
@@ -38,7 +41,7 @@ class ChangeMasterToCommand extends StatementImpl implements ReplicationCommand
             if (!SlaveOption::isValidValue($option)) {
                 throw new InvalidDefinitionException("Unknown option '$option' for CHANGE MASTER TO.");
             }
-            TypeChecker::check($value, SlaveOption::getTypes()[$option], $option);
+            TypeChecker::check($value, SlaveOption::$types[$option], $option);
 
             // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment
             /** @var non-empty-array<SlaveOption::*, SlaveOptionValue> $options */
@@ -50,36 +53,14 @@ class ChangeMasterToCommand extends StatementImpl implements ReplicationCommand
     }
 
     /**
-     * @return non-empty-array<SlaveOption::*, SlaveOptionValue|null>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param SlaveOption::* $option
-     * @return SlaveOptionValue|null $option
-     */
-    public function getOption(string $option)
-    {
-        return $this->options[$option] ?? null;
-    }
-
-    /**
      * @param SlaveOption::* $option
      * @param SlaveOptionValue|null $value
      */
     public function setOption(string $option, $value): void
     {
-        TypeChecker::check($value, SlaveOption::getTypes()[$option], $option);
+        TypeChecker::check($value, SlaveOption::$types[$option], $option);
 
         $this->options[$option] = $value;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string

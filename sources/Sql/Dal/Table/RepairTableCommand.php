@@ -17,15 +17,15 @@ class RepairTableCommand extends StatementImpl implements DalTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
-    private array $names;
+    public array $names;
 
-    private bool $local;
+    public bool $local;
 
-    private bool $quick;
+    public bool $quick;
 
-    private bool $extended;
+    public bool $extended;
 
-    private bool $useFrm;
+    public bool $useFrm;
 
     /**
      * @param non-empty-list<ObjectIdentifier> $names
@@ -42,34 +42,6 @@ class RepairTableCommand extends StatementImpl implements DalTablesCommand
         $this->quick = $quick;
         $this->extended = $extended;
         $this->useFrm = $useFrm;
-    }
-
-    /**
-     * @return non-empty-list<ObjectIdentifier>
-     */
-    public function getTables(): array
-    {
-        return $this->names;
-    }
-
-    public function isLocal(): bool
-    {
-        return $this->local;
-    }
-
-    public function isQuick(): bool
-    {
-        return $this->quick;
-    }
-
-    public function isExtended(): bool
-    {
-        return $this->extended;
-    }
-
-    public function useFrm(): bool
-    {
-        return $this->useFrm;
     }
 
     public function serialize(Formatter $formatter): string

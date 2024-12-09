@@ -17,16 +17,11 @@ use SqlFtw\Formatter\Formatter;
 class Parentheses implements RootNode
 {
 
-    private ExpressionNode $contents;
+    public ExpressionNode $contents;
 
     public function __construct(ExpressionNode $contents)
     {
         $this->contents = $contents;
-    }
-
-    public function getContents(): ExpressionNode
-    {
-        return $this->contents;
     }
 
     public function serialize(Formatter $formatter): string

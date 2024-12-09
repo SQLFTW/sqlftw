@@ -18,7 +18,7 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceCommand
 {
 
-    private Query $query;
+    public Query $query;
 
     /**
      * @param list<ColumnIdentifier>|null $columns
@@ -37,11 +37,6 @@ class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceComm
         parent::__construct($table, $columns, $partitions, $priority, $ignore, $optimizerHints);
 
         $this->query = $query;
-    }
-
-    public function getQuery(): Query
-    {
-        return $this->query;
     }
 
     public function serialize(Formatter $formatter): string

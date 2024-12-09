@@ -15,32 +15,17 @@ use SqlFtw\Sql\StatementImpl;
 class StartGroupReplicationCommand extends StatementImpl implements GroupReplicationCommand
 {
 
-    private ?string $user;
+    public ?string $user;
 
-    private ?string $password;
+    public ?string $password;
 
-    private ?string $defaultAuth;
+    public ?string $defaultAuth;
 
     public function __construct(?string $user = null, ?string $password = null, ?string $defaultAuth = null)
     {
         $this->user = $user;
         $this->password = $password;
         $this->defaultAuth = $defaultAuth;
-    }
-
-    public function getUser(): ?string
-    {
-        return $this->user;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function getDefaultAuth(): ?string
-    {
-        return $this->defaultAuth;
     }
 
     public function serialize(Formatter $formatter): string

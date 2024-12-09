@@ -15,16 +15,11 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 class RenameToAction implements TableAction
 {
 
-    private ObjectIdentifier $newName;
+    public ObjectIdentifier $newName;
 
     public function __construct(ObjectIdentifier $newName)
     {
         $this->newName = $newName;
-    }
-
-    public function getNewName(): ObjectIdentifier
-    {
-        return $this->newName;
     }
 
     public function serialize(Formatter $formatter): string

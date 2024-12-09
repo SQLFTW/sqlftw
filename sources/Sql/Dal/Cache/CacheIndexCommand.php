@@ -19,7 +19,7 @@ use function is_array;
 class CacheIndexCommand extends StatementImpl implements CacheCommand
 {
 
-    private string $keyCache;
+    public string $keyCache;
 
     /** @var non-empty-list<TableIndexList> */
     private array $tableIndexLists;
@@ -36,27 +36,6 @@ class CacheIndexCommand extends StatementImpl implements CacheCommand
         $this->keyCache = $keyCache;
         $this->tableIndexLists = $tableIndexLists;
         $this->partitions = $partitions;
-    }
-
-    public function getKeyCache(): string
-    {
-        return $this->keyCache;
-    }
-
-    /**
-     * @return non-empty-list<TableIndexList>
-     */
-    public function getTableIndexLists(): array
-    {
-        return $this->tableIndexLists;
-    }
-
-    /**
-     * @return non-empty-list<string>|bool|null
-     */
-    public function getPartitions()
-    {
-        return $this->partitions;
     }
 
     public function serialize(Formatter $formatter): string

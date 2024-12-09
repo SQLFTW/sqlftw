@@ -12,30 +12,13 @@ namespace SqlFtw\Sql;
 use SqlFtw\Error\Error;
 use SqlFtw\Parser\TokenList;
 
+/**
+ * @property TokenList|null $tokenList
+ * @property string|null $delimiter
+ * @property list<string> $commentsBefore
+ * @property list<Error> $errors
+ */
 interface Statement extends SqlSerializable
 {
-
-    public function setTokenList(TokenList $tokenList): void;
-
-    public function getTokenList(): TokenList;
-
-    public function setDelimiter(string $delimiter): void;
-
-    public function getDelimiter(): ?string;
-
-    /**
-     * @param list<string> $comments
-     */
-    public function setCommentsBefore(array $comments): void;
-
-    /**
-     * @return list<string>
-     */
-    public function getCommentsBefore(): array;
-
-    /**
-     * @return list<Error>
-     */
-    public function getErrors(): array;
 
 }

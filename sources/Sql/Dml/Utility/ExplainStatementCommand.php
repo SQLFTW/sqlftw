@@ -17,24 +17,14 @@ use SqlFtw\Sql\StatementImpl;
 class ExplainStatementCommand extends StatementImpl implements DmlCommand
 {
 
-    private Command $statement;
+    public Command $statement;
 
-    private ?ExplainType $type;
+    public ?ExplainType $type;
 
     public function __construct(Command $statement, ?ExplainType $type = null)
     {
         $this->statement = $statement;
         $this->type = $type;
-    }
-
-    public function getStatement(): Command
-    {
-        return $this->statement;
-    }
-
-    public function getType(): ?ExplainType
-    {
-        return $this->type;
     }
 
     public function serialize(Formatter $formatter): string

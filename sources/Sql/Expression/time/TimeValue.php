@@ -9,9 +9,10 @@
 
 namespace SqlFtw\Sql\Expression;
 
+/**
+ * @param string $normalized
+ */
 interface TimeValue extends Value
 {
-
-    public function getNormalizedValue(): string;
 
 }

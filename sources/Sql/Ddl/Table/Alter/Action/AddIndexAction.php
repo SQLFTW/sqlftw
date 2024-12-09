@@ -15,16 +15,11 @@ use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 class AddIndexAction implements IndexAction
 {
 
-    private IndexDefinition $index;
+    public IndexDefinition $index;
 
     public function __construct(IndexDefinition $index)
     {
         $this->index = $index;
-    }
-
-    public function getIndex(): IndexDefinition
-    {
-        return $this->index;
     }
 
     public function serialize(Formatter $formatter): string

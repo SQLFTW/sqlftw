@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class UninstallPluginCommand extends StatementImpl implements PluginCommand
 {
 
-    private string $pluginName;
+    public string $pluginName;
 
     public function __construct(string $pluginName)
     {
         $this->pluginName = $pluginName;
-    }
-
-    public function getPluginName(): string
-    {
-        return $this->pluginName;
     }
 
     public function serialize(Formatter $formatter): string

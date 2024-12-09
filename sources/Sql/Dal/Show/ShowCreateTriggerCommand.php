@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class ShowCreateTriggerCommand extends StatementImpl implements ShowCommand
 {
 
-    private ObjectIdentifier $trigger;
+    public ObjectIdentifier $trigger;
 
     public function __construct(ObjectIdentifier $trigger)
     {
         $this->trigger = $trigger;
-    }
-
-    public function getTrigger(): ObjectIdentifier
-    {
-        return $this->trigger;
     }
 
     public function serialize(Formatter $formatter): string

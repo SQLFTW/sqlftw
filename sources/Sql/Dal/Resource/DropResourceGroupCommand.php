@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class DropResourceGroupCommand extends StatementImpl implements ResourceGroupCommand
 {
 
-    private string $name;
+    public string $name;
 
-    private bool $force;
+    public bool $force;
 
     public function __construct(string $name, bool $force = false)
     {
         $this->name = $name;
         $this->force = $force;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function force(): bool
-    {
-        return $this->force;
     }
 
     public function serialize(Formatter $formatter): string

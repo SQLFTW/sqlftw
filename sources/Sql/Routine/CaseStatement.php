@@ -19,13 +19,13 @@ use function count;
 class CaseStatement extends StatementImpl
 {
 
-    private ?RootNode $condition;
+    public ?RootNode $condition;
 
     /** @var non-empty-list<RootNode> */
-    private array $values;
+    public array $values;
 
     /** @var non-empty-list<list<Statement>> */
-    private array $statementLists;
+    public array $statementLists;
 
     /**
      * @param non-empty-list<RootNode> $values
@@ -40,27 +40,6 @@ class CaseStatement extends StatementImpl
         $this->condition = $condition;
         $this->values = $values;
         $this->statementLists = $statementLists;
-    }
-
-    public function getCondition(): ?RootNode
-    {
-        return $this->condition;
-    }
-
-    /**
-     * @return non-empty-list<RootNode>
-     */
-    public function getValues(): array
-    {
-        return $this->values;
-    }
-
-    /**
-     * @return non-empty-list<list<Statement>>
-     */
-    public function getStatementLists(): array
-    {
-        return $this->statementLists;
     }
 
     public function serialize(Formatter $formatter): string

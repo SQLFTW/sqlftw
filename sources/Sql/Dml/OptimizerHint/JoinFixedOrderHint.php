@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 class JoinFixedOrderHint implements OptimizerHint
 {
 
-    private ?string $queryBlock;
+    public ?string $queryBlock;
 
     public function __construct(?string $queryBlock = null)
     {
@@ -24,11 +24,6 @@ class JoinFixedOrderHint implements OptimizerHint
     public function getType(): string
     {
         return OptimizerHintType::JOIN_FIXED_ORDER;
-    }
-
-    public function getQueryBlock(): ?string
-    {
-        return $this->queryBlock;
     }
 
     public function serialize(Formatter $formatter): string

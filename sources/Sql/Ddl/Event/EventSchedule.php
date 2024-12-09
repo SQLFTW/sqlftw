@@ -20,13 +20,13 @@ use function substr;
 class EventSchedule implements SqlSerializable
 {
 
-    private ?RootNode $time;
+    public ?RootNode $time;
 
-    private ?TimeInterval $interval;
+    public ?TimeInterval $interval;
 
-    private ?RootNode $startTime;
+    public ?RootNode $startTime;
 
-    private ?RootNode $endTime;
+    public ?RootNode $endTime;
 
     public function __construct(
         ?RootNode $time,
@@ -42,26 +42,6 @@ class EventSchedule implements SqlSerializable
         $this->time = $time;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
-    }
-
-    public function getTime(): ?RootNode
-    {
-        return $this->time;
-    }
-
-    public function getInterval(): ?TimeInterval
-    {
-        return $this->interval;
-    }
-
-    public function getStartTime(): ?RootNode
-    {
-        return $this->startTime;
-    }
-
-    public function getEndTime(): ?RootNode
-    {
-        return $this->endTime;
     }
 
     public function serialize(Formatter $formatter): string

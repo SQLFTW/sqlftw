@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class ShowCreateEventCommand extends StatementImpl implements ShowCommand
 {
 
-    private ObjectIdentifier $event;
+    public ObjectIdentifier $event;
 
     public function __construct(ObjectIdentifier $event)
     {
         $this->event = $event;
-    }
-
-    public function getEvent(): ObjectIdentifier
-    {
-        return $this->event;
     }
 
     public function serialize(Formatter $formatter): string

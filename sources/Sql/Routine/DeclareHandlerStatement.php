@@ -16,12 +16,12 @@ use SqlFtw\Sql\StatementImpl;
 class DeclareHandlerStatement extends StatementImpl
 {
 
-    private HandlerAction $action;
+    public HandlerAction $action;
 
     /** @var non-empty-list<Condition> */
-    private array $conditions;
+    public array $conditions;
 
-    private Statement $statement;
+    public Statement $statement;
 
     /**
      * @param non-empty-list<Condition> $conditions
@@ -31,24 +31,6 @@ class DeclareHandlerStatement extends StatementImpl
         $this->action = $action;
         $this->conditions = $conditions;
         $this->statement = $statement;
-    }
-
-    public function getAction(): HandlerAction
-    {
-        return $this->action;
-    }
-
-    /**
-     * @return non-empty-list<Condition>
-     */
-    public function getConditions(): array
-    {
-        return $this->conditions;
-    }
-
-    public function getStatement(): Statement
-    {
-        return $this->statement;
     }
 
     public function serialize(Formatter $formatter): string

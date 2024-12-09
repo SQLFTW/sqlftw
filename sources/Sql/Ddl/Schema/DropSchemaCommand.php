@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class DropSchemaCommand extends StatementImpl implements SchemaCommand
 {
 
-    private string $schema;
+    public string $schema;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     public function __construct(string $schema, bool $ifExists = false)
     {
         $this->schema = $schema;
         $this->ifExists = $ifExists;
-    }
-
-    public function getSchema(): string
-    {
-        return $this->schema;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

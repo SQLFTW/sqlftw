@@ -832,14 +832,14 @@ class UserCommandsParser
      */
     private function checkPrivilegeAndResource(TokenList $tokenList, UserPrivilegeResource $resource, array $privileges): void
     {
-        $type = $resource->getObjectType();
+        $type = $resource->objectType;
         if ($type === null) {
             return;
         }
         $name = $type->getValue();
         if (isset(self::RESOURCE_PRIVILEGES[$name])) {
             foreach ($privileges as $privilege) {
-                $privilegeType = $privilege->getType();
+                $privilegeType = $privilege->type;
                 if ($privilegeType instanceof StaticUserPrivilege && !in_array($privilegeType->getValue(), self::RESOURCE_PRIVILEGES[$name], true)) {
                     throw new ParserException('Invalid combination of resource and privilege.', $tokenList);
                 }

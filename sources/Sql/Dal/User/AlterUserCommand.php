@@ -17,22 +17,22 @@ class AlterUserCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<AlteredUser> */
-    private $users;
+    public $users;
 
     /** @var list<UserTlsOption>|null */
-    private ?array $tlsOptions;
+    public ?array $tlsOptions;
 
     /** @var non-empty-list<UserResourceOption>|null */
-    private ?array $resourceOptions;
+    public ?array $resourceOptions;
 
     /** @var non-empty-list<UserPasswordLockOption>|null */
-    private ?array $passwordLockOptions;
+    public ?array $passwordLockOptions;
 
-    private ?string $comment;
+    public ?string $comment;
 
-    private ?string $attribute;
+    public ?string $attribute;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     /**
      * @param non-empty-list<AlteredUser> $users
@@ -61,53 +61,6 @@ class AlterUserCommand extends StatementImpl implements UserCommand
         $this->comment = $comment;
         $this->attribute = $attribute;
         $this->ifExists = $ifExists;
-    }
-
-    /**
-     * @return non-empty-list<AlteredUser>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    /**
-     * @return list<UserTlsOption>|null
-     */
-    public function getTlsOptions(): ?array
-    {
-        return $this->tlsOptions;
-    }
-
-    /**
-     * @return non-empty-list<UserResourceOption>|null
-     */
-    public function getResourceOptions(): ?array
-    {
-        return $this->resourceOptions;
-    }
-
-    /**
-     * @return non-empty-list<UserPasswordLockOption>|null
-     */
-    public function getPasswordLockOptions(): ?array
-    {
-        return $this->passwordLockOptions;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function getAttribute(): ?string
-    {
-        return $this->attribute;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

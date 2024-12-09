@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class DropServerCommand extends StatementImpl implements ServerCommand
 {
 
-    private string $server;
+    public string $server;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     public function __construct(string $server, bool $ifExists = false)
     {
         $this->server = $server;
         $this->ifExists = $ifExists;
-    }
-
-    public function getServer(): string
-    {
-        return $this->server;
-    }
-
-    public function getIfExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

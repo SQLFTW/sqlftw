@@ -16,12 +16,12 @@ use SqlFtw\Sql\InvalidDefinitionException;
 class InnerJoin extends Join
 {
 
-    private bool $crossJoin;
+    public bool $crossJoin;
 
-    private ?RootNode $condition;
+    public ?RootNode $condition;
 
     /** @var non-empty-list<string>|null */
-    private ?array $using;
+    public ?array $using;
 
     /**
      * @param non-empty-list<string>|null $using
@@ -42,24 +42,6 @@ class InnerJoin extends Join
         $this->crossJoin = $crossJoin;
         $this->condition = $condition;
         $this->using = $using;
-    }
-
-    public function isCrossJoin(): bool
-    {
-        return $this->crossJoin;
-    }
-
-    public function getCondition(): ?RootNode
-    {
-        return $this->condition;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getUsing(): ?array
-    {
-        return $this->using;
     }
 
     public function serialize(Formatter $formatter): string

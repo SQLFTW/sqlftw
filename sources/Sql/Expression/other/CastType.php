@@ -25,20 +25,20 @@ class CastType implements ArgumentNode, ArgumentValue
 
     public const UNSIGNED = true;
 
-    private ?BaseType $type;
+    public ?BaseType $baseType;
 
     /** @var non-empty-list<int>|null */
-    private ?array $size;
+    public ?array $size;
 
-    private ?bool $sign;
+    public ?bool $sign;
 
-    private bool $array;
+    public bool $array;
 
-    private ?Charset $charset;
+    public ?Charset $charset;
 
-    private ?Collation $collation;
+    public ?Collation $collation;
 
-    private ?int $srid;
+    public ?int $srid;
 
     /**
      * @param non-empty-list<int>|null $size
@@ -76,7 +76,7 @@ class CastType implements ArgumentNode, ArgumentValue
             throw new InvalidDefinitionException('Geometry array is not supported.');
         }
 
-        $this->type = $type;
+        $this->baseType = $type;
         $this->size = $size;
         $this->sign = $sign;
         $this->array = $array;
@@ -120,56 +120,18 @@ class CastType implements ArgumentNode, ArgumentValue
         }
     }
 
-    public function getBaseType(): ?BaseType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return non-empty-list<int>|null
-     */
-    public function getSize(): ?array
-    {
-        return $this->size;
-    }
-
-    public function getSign(): ?bool
-    {
-        return $this->sign;
-    }
-
-    public function isArray(): bool
-    {
-        return $this->array;
-    }
-
-    public function getCharset(): ?Charset
-    {
-        return $this->charset;
-    }
-
-    public function getCollation(): ?Collation
-    {
-        return $this->collation;
-    }
-
-    public function getSrid(): ?int
-    {
-        return $this->srid;
-    }
-
     public function serialize(Formatter $formatter): string
     {
         $result = '';
-        $printSign = $this->sign !== null && $this->type !== null && !$this->type->equalsAnyValue(BaseType::SIGNED, BaseType::UNSIGNED);
+        $printSign = $this->sign !== null && $this->baseType !== null && !$this->baseType->equalsAnyValue(BaseType::SIGNED, BaseType::UNSIGNED);
         if ($printSign) {
             $result .= $this->sign === true ? 'SIGNED' : 'UNSIGNED';
         }
-        if ($printSign && $this->type !== null) {
+        if ($printSign && $this->baseType !== null) {
             $result .= ' ';
         }
-        if ($this->type !== null) {
-            $result .= $this->type->serialize($formatter);
+        if ($this->baseType !== null) {
+            $result .= $this->baseType->serialize($formatter);
         }
 
         if ($this->size !== null) {

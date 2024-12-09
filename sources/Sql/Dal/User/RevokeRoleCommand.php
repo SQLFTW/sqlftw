@@ -18,14 +18,14 @@ class RevokeRoleCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<UserName> */
-    private array $roles;
+    public array $roles;
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private array $users;
+    public array $users;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
-    private bool $ignoreUnknownUser;
+    public bool $ignoreUnknownUser;
 
     /**
      * @param non-empty-list<UserName> $roles
@@ -41,32 +41,6 @@ class RevokeRoleCommand extends StatementImpl implements UserCommand
         $this->users = $users;
         $this->ifExists = $ifExists;
         $this->ignoreUnknownUser = $ignoreUnknownUser;
-    }
-
-    /**
-     * @return non-empty-list<UserName>
-     */
-    public function getRoles(): array
-    {
-        return $this->roles;
-    }
-
-    /**
-     * @return non-empty-list<UserName|FunctionCall>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
-    }
-
-    public function ignoreUnknownUser(): bool
-    {
-        return $this->ignoreUnknownUser;
     }
 
     public function serialize(Formatter $formatter): string

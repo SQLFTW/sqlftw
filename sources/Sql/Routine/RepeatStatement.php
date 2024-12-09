@@ -11,13 +11,13 @@ class RepeatStatement extends StatementImpl
 {
 
     /** @var list<Statement> */
-    private array $statements;
+    public array $statements;
 
-    private RootNode $condition;
+    public RootNode $condition;
 
-    private ?string $label;
+    public ?string $label;
 
-    private bool $endLabel;
+    public bool $endLabel;
 
     /**
      * @param list<Statement> $statements
@@ -28,29 +28,6 @@ class RepeatStatement extends StatementImpl
         $this->condition = $condition;
         $this->label = $label;
         $this->endLabel = $endLabel;
-    }
-
-    /**
-     * @return list<Statement>
-     */
-    public function getStatements(): array
-    {
-        return $this->statements;
-    }
-
-    public function getCondition(): RootNode
-    {
-        return $this->condition;
-    }
-
-    public function getLabel(): ?string
-    {
-        return $this->label;
-    }
-
-    public function endLabel(): bool
-    {
-        return $this->endLabel;
     }
 
     public function serialize(Formatter $formatter): string

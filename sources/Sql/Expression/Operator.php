@@ -26,7 +26,7 @@ class Operator extends SqlEnum
     public const XOR = Keyword::XOR;
     public const NOT = Keyword::NOT;
     public const AMPERSANDS = '&&';
-    public const PIPES = '||'; // OR or CONCAT
+    public const PIPES = '||'; // 'OR' or 'CONCAT'
     public const EXCLAMATION = '!';
 
     // comparison

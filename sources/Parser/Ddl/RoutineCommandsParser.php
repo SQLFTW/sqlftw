@@ -180,9 +180,7 @@ class RoutineCommandsParser
                     throw new ParserException('Duplicate parameter name.', $tokenList);
                 }
                 $type = $this->expressionParser->parseColumnType($tokenList);
-                $charset = $type->getCharset();
-                $collation = $type->getCollation();
-                if ($charset === null && ($collation !== null && !$collation->equalsValue(Collation::BINARY))) {
+                if ($type->charset === null && ($type->collation !== null && !$type->collation->equalsValue(Collation::BINARY))) {
                     throw new ParserException('Character set is required for IN parameter with collation.', $tokenList);
                 }
                 $params[$param] = $type;
@@ -192,9 +190,7 @@ class RoutineCommandsParser
 
         $tokenList->expectKeyword(Keyword::RETURNS);
         $returnType = $this->expressionParser->parseColumnType($tokenList);
-        $charset = $returnType->getCharset();
-        $collation = $returnType->getCollation();
-        if ($charset === null && $collation !== null) {
+        if ($returnType->charset === null && $returnType->collation !== null) {
             throw new ParserException('Character set is required for return type with collation.', $tokenList);
         }
 
@@ -254,9 +250,7 @@ class RoutineCommandsParser
                     throw new ParserException('Duplicate parameter name.', $tokenList);
                 }
                 $type = $this->expressionParser->parseColumnType($tokenList);
-                $charset = $type->getCharset();
-                $collation = $type->getCollation();
-                if ($inOut !== null && $inOut->equalsAnyValue(InOutParamFlag::IN, InOutParamFlag::INOUT) && $charset === null && $collation !== null) {
+                if ($inOut !== null && $inOut->equalsAnyValue(InOutParamFlag::IN, InOutParamFlag::INOUT) && $type->charset === null && $type->collation !== null) {
                     throw new ParserException('Character set is required for IN parameter with collation.', $tokenList);
                 }
                 $params[$param] = new ProcedureParam($param, $type, $inOut);

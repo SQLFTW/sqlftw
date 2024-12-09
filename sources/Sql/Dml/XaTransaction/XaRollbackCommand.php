@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class XaRollbackCommand extends StatementImpl implements XaTransactionCommand
 {
 
-    private Xid $xid;
+    public Xid $xid;
 
     public function __construct(Xid $xid)
     {
         $this->xid = $xid;
-    }
-
-    public function getXid(): Xid
-    {
-        return $this->xid;
     }
 
     public function serialize(Formatter $formatter): string

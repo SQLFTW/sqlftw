@@ -17,24 +17,14 @@ use SqlFtw\Formatter\Formatter;
 class CurlyExpression implements RootNode
 {
 
-    private string $type;
+    public string $type;
 
-    private RootNode $expression;
+    public RootNode $expression;
 
     public function __construct(string $type, RootNode $expression)
     {
         $this->type = $type;
         $this->expression = $expression;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function getExpression(): RootNode
-    {
-        return $this->expression;
     }
 
     public function serialize(Formatter $formatter): string

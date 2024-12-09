@@ -15,10 +15,10 @@ use SqlFtw\Sql\StatementImpl;
 class SetResourceGroupCommand extends StatementImpl implements ResourceGroupCommand
 {
 
-    private string $name;
+    public string $name;
 
     /** @var non-empty-list<int>|null */
-    private ?array $threadIds;
+    public ?array $threadIds;
 
     /**
      * @param non-empty-list<int>|null $threadIds
@@ -27,19 +27,6 @@ class SetResourceGroupCommand extends StatementImpl implements ResourceGroupComm
     {
         $this->name = $name;
         $this->threadIds = $threadIds;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return non-empty-list<int>|null
-     */
-    public function getThreadIds(): ?array
-    {
-        return $this->threadIds;
     }
 
     public function serialize(Formatter $formatter): string

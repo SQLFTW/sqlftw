@@ -208,7 +208,7 @@ class ArgumentResolver
                 if (is_string($value)) {
                     // ok
                 } elseif ($value instanceof SimpleName) {
-                    $value = $value->getName();
+                    $value = $value->name;
                 } else {
                     throw new InvalidArgumentException("Query argument {$argument} must be a string value or SimpleName.");
                 }
@@ -217,7 +217,7 @@ class ArgumentResolver
                 if (is_string($value)) {
                     // ok
                 } elseif ($value instanceof SimpleName) {
-                    $value = $value->getName();
+                    $value = $value->name;
                 } elseif ($value instanceof QualifiedName) {
                     $value = $value->getFullName();
                 } else {
@@ -312,7 +312,7 @@ class ArgumentResolver
                     // ok
                     $value = strval($value);
                 } elseif ($value instanceof NumericLiteral) {
-                    $value = $value->getValue();
+                    $value = $value->value;
                 } elseif (is_float($value)) {
                     throw new InvalidArgumentException("Query argument {$argument} must be a string, int or NumericLiteral. Float is not allowed due to possible precision loss.");
                 } else {

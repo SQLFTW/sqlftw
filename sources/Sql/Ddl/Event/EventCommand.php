@@ -12,9 +12,10 @@ namespace SqlFtw\Sql\Ddl\Event;
 use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
+/**
+ * @property ObjectIdentifier $event
+ */
 interface EventCommand extends SchemaObjectCommand
 {
-
-    public function getEvent(): ObjectIdentifier;
 
 }

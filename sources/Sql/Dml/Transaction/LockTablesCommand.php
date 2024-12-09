@@ -16,7 +16,7 @@ class LockTablesCommand extends StatementImpl implements TransactionCommand
 {
 
     /** @var non-empty-list<LockTablesItem> */
-    private array $items;
+    public array $items;
 
     /**
      * @param non-empty-list<LockTablesItem> $items
@@ -24,14 +24,6 @@ class LockTablesCommand extends StatementImpl implements TransactionCommand
     public function __construct(array $items)
     {
         $this->items = $items;
-    }
-
-    /**
-     * @return non-empty-list<LockTablesItem>
-     */
-    public function getItems(): array
-    {
-        return $this->items;
     }
 
     public function serialize(Formatter $formatter): string

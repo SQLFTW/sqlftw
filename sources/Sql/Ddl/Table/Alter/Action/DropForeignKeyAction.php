@@ -14,16 +14,11 @@ use SqlFtw\Formatter\Formatter;
 class DropForeignKeyAction implements ForeignKeyAction
 {
 
-    private string $foreignKey;
+    public string $foreignKey;
 
     public function __construct(string $foreignKey)
     {
         $this->foreignKey = $foreignKey;
-    }
-
-    public function getForeignKey(): string
-    {
-        return $this->foreignKey;
     }
 
     public function serialize(Formatter $formatter): string

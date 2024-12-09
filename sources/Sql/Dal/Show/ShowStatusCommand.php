@@ -17,32 +17,17 @@ use SqlFtw\Sql\StatementImpl;
 class ShowStatusCommand extends StatementImpl implements ShowCommand
 {
 
-    private ?Scope $scope;
+    public ?Scope $scope;
 
-    private ?string $like;
+    public ?string $like;
 
-    private ?RootNode $where;
+    public ?RootNode $where;
 
     public function __construct(?Scope $scope = null, ?string $like = null, ?RootNode $where = null)
     {
         $this->scope = $scope;
         $this->like = $like;
         $this->where = $where;
-    }
-
-    public function getScope(): ?Scope
-    {
-        return $this->scope;
-    }
-
-    public function getLike(): ?string
-    {
-        return $this->like;
-    }
-
-    public function getWhere(): ?RootNode
-    {
-        return $this->where;
     }
 
     public function serialize(Formatter $formatter): string

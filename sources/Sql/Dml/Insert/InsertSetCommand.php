@@ -18,11 +18,11 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
 {
 
     /** @var non-empty-list<Assignment> */
-    private array $assignments;
+    public array $assignments;
 
-    private ?string $alias;
+    public ?string $alias;
 
-    private ?OnDuplicateKeyActions $onDuplicateKeyActions;
+    public ?OnDuplicateKeyActions $onDuplicateKeyActions;
 
     /**
      * @param non-empty-list<Assignment> $assignments
@@ -44,24 +44,6 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
         $this->assignments = $assignments;
         $this->alias = $alias;
         $this->onDuplicateKeyActions = $onDuplicateKeyActions;
-    }
-
-    /**
-     * @return non-empty-list<Assignment>
-     */
-    public function getAssignments(): array
-    {
-        return $this->assignments;
-    }
-
-    public function getAlias(): ?string
-    {
-        return $this->alias;
-    }
-
-    public function getOnDuplicateKeyAction(): ?OnDuplicateKeyActions
-    {
-        return $this->onDuplicateKeyActions;
     }
 
     public function serialize(Formatter $formatter): string

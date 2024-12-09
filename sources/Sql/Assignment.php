@@ -17,11 +17,11 @@ use SqlFtw\Sql\Expression\RootNode;
 class Assignment implements SqlSerializable
 {
 
-    private Identifier $variable;
+    public Identifier $variable;
 
-    private RootNode $expression;
+    public RootNode $expression;
 
-    private string $operator;
+    public string $operator;
 
     public function __construct(Identifier $variable, RootNode $expression, string $operator)
     {
@@ -32,21 +32,6 @@ class Assignment implements SqlSerializable
         $this->variable = $variable;
         $this->expression = $expression;
         $this->operator = $operator;
-    }
-
-    public function getVariable(): Identifier
-    {
-        return $this->variable;
-    }
-
-    public function getExpression(): RootNode
-    {
-        return $this->expression;
-    }
-
-    public function getOperator(): string
-    {
-        return $this->operator;
     }
 
     public function serialize(Formatter $formatter): string

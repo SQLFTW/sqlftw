@@ -15,7 +15,7 @@ use SqlFtw\Formatter\Formatter;
 class TableReferenceParentheses implements TableReferenceNode, Countable
 {
 
-    private TableReferenceNode $content;
+    public TableReferenceNode $content;
 
     public function __construct(TableReferenceNode $content)
     {
@@ -25,11 +25,6 @@ class TableReferenceParentheses implements TableReferenceNode, Countable
     public function count(): int
     {
         return $this->content instanceof Countable ? $this->content->count() : 1;
-    }
-
-    public function getContent(): TableReferenceNode
-    {
-        return $this->content;
     }
 
     public function serialize(Formatter $formatter): string

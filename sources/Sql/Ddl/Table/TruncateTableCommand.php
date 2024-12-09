@@ -16,16 +16,11 @@ use SqlFtw\Sql\StatementImpl;
 class TruncateTableCommand extends StatementImpl implements DdlTableCommand
 {
 
-    private ObjectIdentifier $name;
+    public ObjectIdentifier $name;
 
     public function __construct(ObjectIdentifier $name)
     {
         $this->name = $name;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->name;
     }
 
     public function serialize(Formatter $formatter): string

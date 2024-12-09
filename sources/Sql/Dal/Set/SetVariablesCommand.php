@@ -17,7 +17,7 @@ class SetVariablesCommand extends StatementImpl implements SetCommand
 {
 
     /** @var non-empty-list<Assignment> */
-    private array $assignments;
+    public array $assignments;
 
     /**
      * @param non-empty-list<Assignment> $assignments

@@ -19,19 +19,19 @@ use SqlFtw\Sql\StatementImpl;
 class CreateTriggerCommand extends StatementImpl implements TriggerCommand
 {
 
-    private ObjectIdentifier $trigger;
+    public ObjectIdentifier $trigger;
 
-    private TriggerEvent $event;
+    public TriggerEvent $event;
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private Statement $body;
+    public Statement $body;
 
-    private ?UserExpression $definer;
+    public ?UserExpression $definer;
 
-    private ?TriggerPosition $position;
+    public ?TriggerPosition $position;
 
-    private bool $ifNotExists;
+    public bool $ifNotExists;
 
     public function __construct(
         ObjectIdentifier $trigger,
@@ -53,39 +53,9 @@ class CreateTriggerCommand extends StatementImpl implements TriggerCommand
 
     public function getTrigger(): ObjectIdentifier
     {
-        $schema = $this->table instanceof QualifiedName ? $this->table->getSchema() : null;
+        $schema = $this->table instanceof QualifiedName ? $this->table->schema : null;
 
-        return $schema !== null ? new QualifiedName($this->trigger->getName(), $schema) : $this->trigger;
-    }
-
-    public function getEvent(): TriggerEvent
-    {
-        return $this->event;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getBody(): Statement
-    {
-        return $this->body;
-    }
-
-    public function getDefiner(): ?UserExpression
-    {
-        return $this->definer;
-    }
-
-    public function getPosition(): ?TriggerPosition
-    {
-        return $this->position;
-    }
-
-    public function ifNotExists(): bool
-    {
-        return $this->ifNotExists;
+        return $schema !== null ? new QualifiedName($this->trigger->name, $schema) : $this->trigger;
     }
 
     public function serialize(Formatter $formatter): string

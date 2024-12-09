@@ -16,32 +16,17 @@ use SqlFtw\Sql\StatementImpl;
 class ShowOpenTablesCommand extends StatementImpl implements ShowCommand
 {
 
-    private ?string $schema;
+    public ?string $schema;
 
-    private ?string $like;
+    public ?string $like;
 
-    private ?RootNode $where;
+    public ?RootNode $where;
 
     public function __construct(?string $schema = null, ?string $like = null, ?RootNode $where = null)
     {
         $this->schema = $schema;
         $this->like = $like;
         $this->where = $where;
-    }
-
-    public function getSchema(): ?string
-    {
-        return $this->schema;
-    }
-
-    public function getLike(): ?string
-    {
-        return $this->like;
-    }
-
-    public function getWhere(): ?RootNode
-    {
-        return $this->where;
     }
 
     public function serialize(Formatter $formatter): string

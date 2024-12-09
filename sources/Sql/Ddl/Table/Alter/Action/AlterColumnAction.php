@@ -16,12 +16,12 @@ use SqlFtw\Sql\Expression\RootNode;
 class AlterColumnAction implements ColumnAction
 {
 
-    private string $column;
+    public string $column;
 
     /** @var RootNode|false|null */
-    private $setDefault;
+    public $setDefault;
 
-    private ?bool $setVisible;
+    public ?bool $setVisible;
 
     /**
      * @param RootNode|false|null $setDefault
@@ -31,24 +31,6 @@ class AlterColumnAction implements ColumnAction
         $this->column = $column;
         $this->setDefault = $setDefault;
         $this->setVisible = $setVisible;
-    }
-
-    public function getColumn(): string
-    {
-        return $this->column;
-    }
-
-    /**
-     * @return RootNode|false|null
-     */
-    public function getSetDefault()
-    {
-        return $this->setDefault;
-    }
-
-    public function getSetVisible(): ?bool
-    {
-        return $this->setVisible;
     }
 
     public function serialize(Formatter $formatter): string

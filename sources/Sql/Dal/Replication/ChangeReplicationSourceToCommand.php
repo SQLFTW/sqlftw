@@ -23,17 +23,20 @@ use function implode;
 class ChangeReplicationSourceToCommand extends StatementImpl implements ReplicationCommand
 {
 
-    /** @var non-empty-array<ReplicaOption::*, ReplicaOptionValue|null> */
-    private array $options;
+    /**
+     * @readonly
+     * @var non-empty-array<ReplicaOption::*, ReplicaOptionValue|null>
+     */
+    public array $options;
 
-    private ?string $channel;
+    public ?string $channel;
 
     /**
      * @param non-empty-array<ReplicaOption::*, ReplicaOptionValue|null> $options
      */
     public function __construct(array $options, ?string $channel = null)
     {
-        $types = ReplicaOption::getTypes();
+        $types = ReplicaOption::$types;
 
         foreach ($options as $option => $value) {
             TypeChecker::check($value, $types[$option], $option);
@@ -44,36 +47,14 @@ class ChangeReplicationSourceToCommand extends StatementImpl implements Replicat
     }
 
     /**
-     * @return non-empty-array<ReplicaOption::*, ReplicaOptionValue|null>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param ReplicaOption::* $option
-     * @return ReplicaOptionValue|null $option
-     */
-    public function getOption(string $option)
-    {
-        return $this->options[$option] ?? null;
-    }
-
-    /**
      * @param ReplicaOption::* $option
      * @param ReplicaOptionValue|null $value
      */
     public function setOption(string $option, $value): void
     {
-        TypeChecker::check($value, ReplicaOption::getTypes()[$option], $option);
+        TypeChecker::check($value, ReplicaOption::$types[$option], $option);
 
         $this->options[$option] = $value;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string

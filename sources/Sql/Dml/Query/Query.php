@@ -16,45 +16,13 @@ use SqlFtw\Sql\Expression\SimpleName;
 
 /**
  * Interface for SELECT, TABLE and VALUES commands, QueryExpression (UNION|EXCEPT|INTERSECT) and ParenthesizedQueryExpression
+ *
+ * @property non-empty-list<OrderByExpression>|null $orderBy
+ * @property int|SimpleName|Placeholder|null $limit
+ * @property int|SimpleName|Placeholder|null $offset
+ * @property ?SelectInto $into
  */
 interface Query extends DmlCommand
 {
-
-    /**
-     * @return non-empty-list<OrderByExpression>|null
-     */
-    public function getOrderBy(): ?array;
-
-    /**
-     * @return static
-     */
-    public function removeOrderBy(): self;
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getLimit();
-
-    /**
-     * @return static
-     */
-    public function removeLimit(): self;
-
-    /**
-     * @return int|SimpleName|Placeholder|null
-     */
-    public function getOffset();
-
-    /**
-     * @return static
-     */
-    public function removeOffset(): self;
-
-    public function getInto(): ?SelectInto;
-
-    /**
-     * @return static
-     */
-    public function removeInto(): self;
 
 }

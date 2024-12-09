@@ -17,7 +17,7 @@ class OnDuplicateKeyActions implements SqlSerializable
 {
 
     /** @var non-empty-list<Assignment> */
-    private array $assignments;
+    public array $assignments;
 
     /**
      * @param non-empty-list<Assignment> $assignments
@@ -25,14 +25,6 @@ class OnDuplicateKeyActions implements SqlSerializable
     public function __construct(array $assignments)
     {
         $this->assignments = $assignments;
-    }
-
-    /**
-     * @return non-empty-list<Assignment>
-     */
-    public function getAssignments(): array
-    {
-        return $this->assignments;
     }
 
     public function serialize(Formatter $formatter): string

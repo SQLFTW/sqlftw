@@ -18,24 +18,14 @@ use function strtr;
 class DescribeTableCommand extends StatementImpl implements DmlCommand
 {
 
-    private ObjectIdentifier $table;
+    public ObjectIdentifier $table;
 
-    private ?string $column;
+    public ?string $column;
 
     public function __construct(ObjectIdentifier $table, ?string $column)
     {
         $this->table = $table;
         $this->column = $column;
-    }
-
-    public function getTable(): ObjectIdentifier
-    {
-        return $this->table;
-    }
-
-    public function getColumn(): ?string
-    {
-        return $this->column;
     }
 
     public function serialize(Formatter $formatter): string

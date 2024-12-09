@@ -16,32 +16,17 @@ use SqlFtw\Sql\StatementImpl;
 class SetTransactionCommand extends StatementImpl implements TransactionCommand
 {
 
-    private ?Scope $scope;
+    public ?Scope $scope;
 
-    private ?TransactionIsolationLevel $isolationLevel;
+    public ?TransactionIsolationLevel $isolationLevel;
 
-    private ?bool $write;
+    public ?bool $write;
 
     public function __construct(?Scope $scope, ?TransactionIsolationLevel $isolationLevel, ?bool $write = null)
     {
         $this->scope = $scope;
         $this->isolationLevel = $isolationLevel;
         $this->write = $write;
-    }
-
-    public function getScope(): ?Scope
-    {
-        return $this->scope;
-    }
-
-    public function getIsolationLevel(): ?TransactionIsolationLevel
-    {
-        return $this->isolationLevel;
-    }
-
-    public function write(): ?bool
-    {
-        return $this->write;
     }
 
     public function serialize(Formatter $formatter): string

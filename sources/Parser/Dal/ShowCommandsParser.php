@@ -20,6 +20,8 @@ use SqlFtw\Sql\Dal\Show\ShowCharacterSetCommand;
 use SqlFtw\Sql\Dal\Show\ShowCollationCommand;
 use SqlFtw\Sql\Dal\Show\ShowColumnsCommand;
 use SqlFtw\Sql\Dal\Show\ShowCommand;
+use SqlFtw\Sql\Dal\Show\ShowCountErrorsCommand;
+use SqlFtw\Sql\Dal\Show\ShowCountWarningsCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateEventCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateFunctionCommand;
 use SqlFtw\Sql\Dal\Show\ShowCreateProcedureCommand;
@@ -89,10 +91,10 @@ class ShowCommandsParser
             $third = $tokenList->expectAnyKeyword(Keyword::ERRORS, Keyword::WARNINGS);
             if ($third === Keyword::ERRORS) {
                 // SHOW COUNT(*) ERRORS
-                return ShowErrorsCommand::createCount();
+                return new ShowCountErrorsCommand();
             } else {
                 // SHOW COUNT(*) WARNINGS
-                return ShowWarningsCommand::createCount();
+                return new ShowCountWarningsCommand();
             }
         }
 
@@ -350,7 +352,7 @@ class ShowCommandsParser
         $table = $tokenList->expectObjectIdentifier();
         if ($table instanceof SimpleName && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
             $schema = $tokenList->expectName(EntityType::SCHEMA);
-            $table = new QualifiedName($table->getName(), $schema);
+            $table = new QualifiedName($table->name, $schema);
         }
 
         $like = $where = null;
@@ -513,7 +515,7 @@ class ShowCommandsParser
         $table = $tokenList->expectObjectIdentifier();
         if ($table instanceof SimpleName && $tokenList->hasAnyKeyword(Keyword::FROM, Keyword::IN)) {
             $schema = $tokenList->expectName(EntityType::SCHEMA);
-            $table = new QualifiedName($table->getName(), $schema);
+            $table = new QualifiedName($table->name, $schema);
         }
         $where = null;
         if ($tokenList->hasKeyword(Keyword::WHERE)) {

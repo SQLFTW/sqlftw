@@ -18,7 +18,7 @@ class DoCommand extends StatementImpl implements DmlCommand
 {
 
     /** @var non-empty-list<ExpressionNode> */
-    private array $expressions;
+    public array $expressions;
 
     /**
      * @param non-empty-list<ExpressionNode> $expressions
@@ -26,14 +26,6 @@ class DoCommand extends StatementImpl implements DmlCommand
     public function __construct(array $expressions)
     {
         $this->expressions = $expressions;
-    }
-
-    /**
-     * @return non-empty-list<ExpressionNode>
-     */
-    public function getExpressions(): array
-    {
-        return $this->expressions;
     }
 
     public function serialize(Formatter $formatter): string

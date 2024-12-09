@@ -19,7 +19,7 @@ use function preg_match;
 class TimeZoneOffset implements TimeZone
 {
 
-    private string $value;
+    public string $value;
 
     public function __construct(string $value)
     {
@@ -28,11 +28,6 @@ class TimeZoneOffset implements TimeZone
         }
 
         $this->value = $value;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
     }
 
     public function serialize(Formatter $formatter): string

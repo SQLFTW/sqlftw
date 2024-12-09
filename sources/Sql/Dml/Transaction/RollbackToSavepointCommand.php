@@ -15,16 +15,11 @@ use SqlFtw\Sql\StatementImpl;
 class RollbackToSavepointCommand extends StatementImpl implements TransactionCommand
 {
 
-    private string $savepoint;
+    public string $savepoint;
 
     public function __construct(string $savepoint)
     {
         $this->savepoint = $savepoint;
-    }
-
-    public function getSavepoint(): string
-    {
-        return $this->savepoint;
     }
 
     public function serialize(Formatter $formatter): string

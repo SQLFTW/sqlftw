@@ -15,9 +15,9 @@ use SqlFtw\Sql\Expression\StringValue;
 class AlterAuthOption extends AuthOption implements AlterUserAction
 {
 
-    private ?string $replace;
+    public ?string $replace;
 
-    private bool $retainCurrentPassword;
+    public bool $retainCurrentPassword;
 
     /**
      * @param StringValue|false|null $password
@@ -34,16 +34,6 @@ class AlterAuthOption extends AuthOption implements AlterUserAction
 
         $this->replace = $replace;
         $this->retainCurrentPassword = $retainCurrentPassword;
-    }
-
-    public function getReplace(): ?string
-    {
-        return $this->replace;
-    }
-
-    public function retainCurrentPassword(): bool
-    {
-        return $this->retainCurrentPassword;
     }
 
     public function serialize(Formatter $formatter): string

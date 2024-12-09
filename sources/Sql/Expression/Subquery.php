@@ -18,16 +18,11 @@ use SqlFtw\Sql\Dml\Query\Query;
 class Subquery implements RootNode
 {
 
-    private Query $query;
+    public Query $query;
 
     public function __construct(Query $query)
     {
         $this->query = $query;
-    }
-
-    public function getQuery(): Query
-    {
-        return $this->query;
     }
 
     public function serialize(Formatter $formatter): string

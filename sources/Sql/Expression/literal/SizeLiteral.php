@@ -23,16 +23,11 @@ class SizeLiteral implements UintValue
 
     public const REGEXP = '~[1-9][0-9]*(kmg)?~i';
 
-    private string $value;
+    public string $value;
 
     public function __construct(string $value)
     {
         $this->value = $value;
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
     }
 
     public function asInt(): int

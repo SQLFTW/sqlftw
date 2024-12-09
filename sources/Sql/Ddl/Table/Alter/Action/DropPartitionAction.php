@@ -15,7 +15,7 @@ class DropPartitionAction implements PartitioningAction
 {
 
     /** @var non-empty-list<string> */
-    private array $partitions;
+    public array $partitions;
 
     /**
      * @param non-empty-list<string> $partitions
@@ -23,14 +23,6 @@ class DropPartitionAction implements PartitioningAction
     public function __construct(array $partitions)
     {
         $this->partitions = $partitions;
-    }
-
-    /**
-     * @return non-empty-list<string>
-     */
-    public function getPartitions(): array
-    {
-        return $this->partitions;
     }
 
     public function serialize(Formatter $formatter): string

@@ -232,54 +232,54 @@ class QueryParser
         $lastQuery = array_pop($queries);
 
         if ($lastQuery instanceof SelectCommand) {
-            $queryLocking = $lastQuery->getLocking();
+            $queryLocking = $lastQuery->locking;
             if ($queryLocking !== null) {
                 if ($locking !== null) {
                     throw new ParserException("Duplicate INTO clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
                 } else {
                     $locking = $queryLocking;
-                    $lastQuery = $lastQuery->removeLocking();
+                    $lastQuery->locking = null;
                 }
             }
         }
 
-        $queryOrderBy = $lastQuery->getOrderBy();
+        $queryOrderBy = $lastQuery->orderBy;
         if ($queryOrderBy !== null) {
             if ($orderBy !== null) {
                 throw new ParserException("Duplicate ORDER BY clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
             } else {
                 $orderBy = $queryOrderBy;
-                $lastQuery = $lastQuery->removeOrderBy();
+                $lastQuery->orderBy = null;
             }
         }
 
-        $queryLimit = $lastQuery->getLimit();
+        $queryLimit = $lastQuery->limit;
         if ($queryLimit !== null) {
             if ($limit !== null) {
                 throw new ParserException("Duplicate LIMIT clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
             } else {
                 $limit = $queryLimit;
-                $lastQuery = $lastQuery->removeLimit();
+                $lastQuery->limit = null;
             }
         }
 
-        $queryOffset = $lastQuery instanceof ValuesCommand ? null : $lastQuery->getOffset();
+        $queryOffset = $lastQuery instanceof ValuesCommand ? null : $lastQuery->offset;
         if ($queryOffset !== null) {
             if ($offset !== null) {
                 throw new ParserException("Duplicate LIMIT clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
             } else {
                 $offset = $queryOffset;
-                $lastQuery = $lastQuery->removeOffset();
+                $lastQuery->offset = null;
             }
         }
 
-        $queryInto = $lastQuery->getInto();
+        $queryInto = $lastQuery->into;
         if ($queryInto !== null) {
             if ($into !== null) {
                 throw new ParserException("Duplicate INTO clause in last query and in UNION|EXCEPT|INTERSECT.", $tokenList);
             } else {
                 $into = $queryInto;
-                $lastQuery = $lastQuery->removeInto();
+                $lastQuery->into = null;
             }
         }
 
@@ -287,21 +287,21 @@ class QueryParser
 
         foreach ($queries as $i => $query) {
             if ($query instanceof SelectCommand) {
-                if ($query->getLocking() !== null) {
+                if ($query->locking !== null) {
                     throw new ParserException("Locking options are not allowed in UNION|EXCEPT|INTERSECT without parentheses around query.", $tokenList);
                 }
             }
-            if ($query->getLimit() !== null) {
+            if ($query->limit !== null) {
                 throw new ParserException("LIMIT not allowed in UNION|EXCEPT|INTERSECT without parentheses around query.", $tokenList);
             }
-            if ($query->getOrderBy() !== null) {
+            if ($query->orderBy !== null) {
                 throw new ParserException("ORDER BY not allowed in UNION|EXCEPT|INTERSECT without parentheses around query.", $tokenList);
             }
-            if ($query->getInto() !== null) {
+            if ($query->into !== null) {
                 throw new ParserException("INTO not allowed in UNION|EXCEPT|INTERSECT or subquery.", $tokenList);
             }
             if ($query instanceof ParenthesizedQueryExpression) {
-                if ($i !== 0 && $query->getQuery() instanceof QueryExpression) {
+                if ($i !== 0 && $query->query instanceof QueryExpression) {
                     // todo: seems like a pre 8.0.31 limitation
                     //throw new ParserException("Nested UNIONs are only allowed on left side.", $tokenList);
                 }
@@ -351,20 +351,20 @@ class QueryParser
 
         if ($orderBy !== null) {
             foreach ($orderBy as $order) {
-                $column = $order->getColumn();
+                $column = $order->column;
                 if ($column !== null && !$column instanceof SimpleName) {
                     //throw new ParserException('Qualified name in ORDER BY is not allowed in parenthesized query expression.', $tokenList);
                 }
             }
         }
 
-        $queryInto = $query->getInto();
+        $queryInto = $query->into;
         if ($queryInto !== null) {
             if ($into !== null) {
                 throw new ParserException("Duplicate INTO clause in query and in parenthesized query expression.", $tokenList);
             } else {
                 $into = $queryInto;
-                $query = $query->removeInto();
+                $query->into = null;
             }
         }
 
@@ -481,7 +481,7 @@ class QueryParser
                 }
             }
             $alias = $this->expressionParser->parseAlias($tokenList);
-            if ($alias !== null && $expression instanceof QualifiedName && $expression->getName() === '*') {
+            if ($alias !== null && $expression instanceof QualifiedName && $expression->name === '*') {
                 throw new ParserException('Cannot use alias after *.', $tokenList);
             }
 
@@ -841,10 +841,10 @@ class QueryParser
 
             if ($expression instanceof NumericValue && $expression->isNegative()) {
                 throw new ParserException("Window frame extent cannot be a negative number.", $tokenList);
-            } elseif ($expression instanceof TimeIntervalLiteral && $expression->isNegative()) {
+            } elseif ($expression instanceof TimeIntervalLiteral && $expression->negative) {
                 throw new ParserException("Window frame extent cannot be a negative interval.", $tokenList);
             } elseif ($expression instanceof TimeIntervalExpression) {
-                if ($expression->getExpression() instanceof NullLiteral) {
+                if ($expression->expression instanceof NullLiteral) {
                     throw new ParserException("Window frame extent cannot be a null interval.", $tokenList);
                 }
                 // todo: should resolve and check for negative

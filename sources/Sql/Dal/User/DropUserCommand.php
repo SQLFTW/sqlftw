@@ -18,9 +18,9 @@ class DropUserCommand extends StatementImpl implements UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
-    private array $users;
+    public array $users;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     /**
      * @param non-empty-list<UserName|FunctionCall> $users
@@ -29,19 +29,6 @@ class DropUserCommand extends StatementImpl implements UserCommand
     {
         $this->users = $users;
         $this->ifExists = $ifExists;
-    }
-
-    /**
-     * @return non-empty-list<UserName|FunctionCall>
-     */
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

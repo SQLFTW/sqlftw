@@ -185,10 +185,10 @@ class ExpressionParser
                     $right = new NullLiteral();
                     break;
                 case Keyword::TRUE:
-                    $right = new BoolLiteral(true);
+                    $right = new BoolLiteral(Keyword::TRUE);
                     break;
                 case Keyword::FALSE:
-                    $right = new BoolLiteral(false);
+                    $right = new BoolLiteral(Keyword::FALSE);
                     break;
                 case Keyword::UNKNOWN:
                     $right = new UnknownLiteral();
@@ -276,10 +276,10 @@ class ExpressionParser
                     $right = new NullLiteral();
                     break;
                 case Keyword::TRUE:
-                    $right = new BoolLiteral(true);
+                    $right = new BoolLiteral(Keyword::TRUE);
                     break;
                 case Keyword::FALSE:
-                    $right = new BoolLiteral(false);
+                    $right = new BoolLiteral(Keyword::FALSE);
                     break;
                 case Keyword::UNKNOWN:
                     $right = new UnknownLiteral();
@@ -547,13 +547,13 @@ class ExpressionParser
                 } elseif ($operator === Operator::MINUS && $right instanceof NumericLiteral) {
                     // normalize "-<positive_number>" to "<negative_number>" and vice versa
                     if ($right instanceof UintLiteral) {
-                        return new IntLiteral('-' . $right->getValue());
+                        return new IntLiteral('-' . $right->value);
                     } elseif ($right instanceof IntLiteral) {
-                        return new UintLiteral(substr($right->getValue(), 1));
+                        return new UintLiteral(substr($right->value, 1));
                     } elseif ($right->isNegative()) {
-                        return new NumericLiteral(substr($right->getValue(), 1));
+                        return new NumericLiteral(substr($right->value, 1));
                     } else {
-                        return new NumericLiteral('-' . $right->getValue());
+                        return new NumericLiteral('-' . $right->value);
                     }
                 } else {
                     return new UnaryOperator(new Operator($operator), $right);
@@ -663,11 +663,13 @@ class ExpressionParser
             if ($upper === Keyword::NULL) {
                 return new NullLiteral();
             } elseif ($upper === Keyword::TRUE) {
-                return new BoolLiteral(true);
+                return new BoolLiteral(Keyword::TRUE);
             } elseif ($upper === Keyword::FALSE) {
-                return new BoolLiteral(false);
-            } elseif ($upper === Keyword::ON || $upper === Keyword::OFF) {
-                return new OnOffLiteral($upper === Keyword::ON);
+                return new BoolLiteral(Keyword::FALSE);
+            } elseif ($upper === Keyword::ON) {
+                return new OnOffLiteral(Keyword::ON);
+            } elseif ($upper === Keyword::OFF) {
+                return new OnOffLiteral(Keyword::OFF);
             } elseif ($upper === Keyword::ALL) {
                 return new AllLiteral();
             } elseif ($upper === Keyword::NONE) {
@@ -836,7 +838,7 @@ class ExpressionParser
             $operator = $tokenList->expectAnyOperator(Operator::EQUAL, Operator::ASSIGN);
 
             if ($variable instanceof SystemVariable) {
-                $variableName = $variable->getName();
+                $variableName = $variable->name;
                 $type = MysqlVariable::getType($variableName);
                 if ($type === BaseType::ENUM || $type === BaseType::SET) {
                     $value = $tokenList->getVariableEnumValue(...MysqlVariable::getValues($variableName));
@@ -1050,13 +1052,15 @@ class ExpressionParser
             if ($upper === Keyword::NULL) {
                 return new NullLiteral();
             } elseif ($upper === Keyword::TRUE) {
-                return new BoolLiteral(true);
+                return new BoolLiteral(Keyword::TRUE);
             } elseif ($upper === Keyword::FALSE) {
-                return new BoolLiteral(false);
+                return new BoolLiteral(Keyword::FALSE);
             } elseif ($upper === Keyword::DEFAULT) {
                 return new DefaultLiteral();
-            } elseif ($upper === Keyword::ON || $upper === Keyword::OFF) {
-                return new OnOffLiteral($upper === Keyword::ON);
+            } elseif ($upper === Keyword::ON) {
+                return new OnOffLiteral(Keyword::ON);
+            } elseif ($upper === Keyword::OFF) {
+                return new OnOffLiteral(Keyword::OFF);
             } elseif ($upper === Keyword::ALL) {
                 return new AllLiteral();
             } elseif ($upper === Keyword::NONE) {
@@ -1168,12 +1172,12 @@ class ExpressionParser
 
             // transform to more detailed shape
             if ($expression instanceof CollateExpression) {
-                $collation = $expression->getCollation();
-                $expression = $expression->getExpression();
+                $collation = $expression->collation;
+                $expression = $expression->expression;
             }
             // extract column name or position
             if ($expression instanceof Literal) {
-                $value = $expression->getValue();
+                $value = $expression->value;
                 if ($value === (string) (int) $value) {
                     $position = (int) $value;
                     $expression = null;
@@ -1318,9 +1322,9 @@ class ExpressionParser
         } elseif ($value instanceof IntLiteral) {
             return new TimeIntervalLiteral((string) $value->asInt(), $unit);
         } elseif ($value instanceof NumericLiteral) {
-            return new TimeIntervalLiteral($value->getValue(), $unit); // "INTERVAL 1.5 MINUTE_SECOND" parsed ad 1 minute, 5 seconds!
+            return new TimeIntervalLiteral($value->value, $unit); // "INTERVAL 1.5 MINUTE_SECOND" parsed ad 1 minute, 5 seconds!
         } elseif ($value instanceof StringLiteral) {
-            return new TimeIntervalLiteral($value->getValue(), $unit);
+            return new TimeIntervalLiteral($value->value, $unit);
         } else {
             return new TimeIntervalExpression($value, $unit);
         }
@@ -1506,10 +1510,10 @@ class ExpressionParser
                 $value = $tokenList->expectStringValue();
                 $limit = $this->config->getPlatform()->maxLengths[EntityType::ENUM_VALUE];
                 if (strlen($value->asString()) > $limit) {
-                    throw new ParserException("Enum value '{$value->getValue()}' exceeds limit of {$limit} bytes.", $tokenList);
+                    throw new ParserException("Enum value '{$value->value}' exceeds limit of {$limit} bytes.", $tokenList);
                 }
                 // todo: collations?
-                $values[strtolower($value->getValue())] = $value;
+                $values[strtolower($value->value)] = $value;
             } while ($tokenList->hasSymbol(','));
             if (count($values) > 64 && $type->equalsValue(BaseType::SET)) {
                 throw new ParserException('Too many SET values.', $tokenList);

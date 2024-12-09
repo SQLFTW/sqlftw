@@ -15,24 +15,14 @@ use SqlFtw\Sql\StatementImpl;
 class AlterSchemaCommand extends StatementImpl implements SchemaCommand
 {
 
-    private ?string $schema;
+    public ?string $schema;
 
-    private SchemaOptions $options;
+    public SchemaOptions $options;
 
     public function __construct(?string $schema, SchemaOptions $options)
     {
         $this->schema = $schema;
         $this->options = $options;
-    }
-
-    public function getSchema(): ?string
-    {
-        return $this->schema;
-    }
-
-    public function getOptions(): SchemaOptions
-    {
-        return $this->options;
     }
 
     public function serialize(Formatter $formatter): string

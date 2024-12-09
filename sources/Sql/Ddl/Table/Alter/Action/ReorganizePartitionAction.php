@@ -17,10 +17,10 @@ class ReorganizePartitionAction implements PartitioningAction
 {
 
     /** @var non-empty-list<string>|null */
-    private ?array $partitions;
+    public ?array $partitions;
 
     /** @var non-empty-list<PartitionDefinition>|null */
-    private ?array $newPartitions;
+    public ?array $newPartitions;
 
     /**
      * @param non-empty-list<string>|null $partitions
@@ -34,22 +34,6 @@ class ReorganizePartitionAction implements PartitioningAction
 
         $this->partitions = $partitions;
         $this->newPartitions = $newPartitions;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getPartitions(): ?array
-    {
-        return $this->partitions;
-    }
-
-    /**
-     * @return non-empty-list<PartitionDefinition>|null
-     */
-    public function getNewPartitions(): ?array
-    {
-        return $this->newPartitions;
     }
 
     public function serialize(Formatter $formatter): string

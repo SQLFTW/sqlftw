@@ -19,13 +19,13 @@ class AlterUserFinishRegistrationCommand extends StatementImpl implements AlterU
 {
 
     /** @var UserName|FunctionCall */
-    private SqlSerializable $user;
+    public SqlSerializable $user;
 
-    private int $factor;
+    public int $factor;
 
-    private string $authString;
+    public string $authString;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     /**
      * @param UserName|FunctionCall $user
@@ -36,29 +36,6 @@ class AlterUserFinishRegistrationCommand extends StatementImpl implements AlterU
         $this->factor = $factor;
         $this->authString = $authString;
         $this->ifExists = $ifExists;
-    }
-
-    /**
-     * @return UserName|FunctionCall
-     */
-    public function getUser(): SqlSerializable
-    {
-        return $this->user;
-    }
-
-    public function getFactor(): int
-    {
-        return $this->factor;
-    }
-
-    public function getAuthString(): string
-    {
-        return $this->authString;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string

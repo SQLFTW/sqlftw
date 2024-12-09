@@ -119,7 +119,7 @@ class ReplicationCommandsParser
     public function parseChangeMasterTo(TokenList $tokenList): ChangeMasterToCommand
     {
         $tokenList->expectKeywords(Keyword::CHANGE, Keyword::MASTER, Keyword::TO);
-        $types = SlaveOption::getTypes();
+        $types = SlaveOption::$types;
         $options = [];
         do {
             /** @var SlaveOption::* $option */
@@ -254,7 +254,7 @@ class ReplicationCommandsParser
     public function parseChangeReplicationSourceTo(TokenList $tokenList): ChangeReplicationSourceToCommand
     {
         $tokenList->expectKeywords(Keyword::CHANGE, Keyword::REPLICATION, Keyword::SOURCE, Keyword::TO);
-        $types = ReplicaOption::getTypes();
+        $types = ReplicaOption::$types;
         $options = [];
         do {
             /** @var ReplicaOption::* $option */
@@ -369,7 +369,7 @@ class ReplicationCommandsParser
     {
         $tokenList->expectKeywords(Keyword::CHANGE, Keyword::REPLICATION, Keyword::FILTER);
 
-        $types = ReplicationFilterType::getItemTypes();
+        $types = ReplicationFilterType::$itemTypes;
         $filters = [];
         do {
             /** @var ReplicationFilterType::* $filter */
@@ -457,7 +457,7 @@ class ReplicationCommandsParser
         $position = null;
         if ($tokenList->hasKeyword(Keyword::TO)) {
             $position = $tokenList->expectIntLike();
-            if ((int) $position->getValue() === PHP_INT_MAX) {
+            if ((int) $position->value === PHP_INT_MAX) {
                 throw new ParserException('Log file index number is too large.', $tokenList);
             }
         }

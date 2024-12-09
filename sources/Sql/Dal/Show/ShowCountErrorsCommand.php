@@ -7,25 +7,17 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Dml\Utility;
+namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\StatementImpl;
 
-class UseCommand extends StatementImpl implements DmlCommand
+class ShowCountErrorsCommand extends StatementImpl implements ShowCommand
 {
-
-    public string $schema;
-
-    public function __construct(string $schema)
-    {
-        $this->schema = $schema;
-    }
 
     public function serialize(Formatter $formatter): string
     {
-        return 'USE ' . $formatter->formatName($this->schema);
+        return 'SHOW COUNT(*) ERRORS';
     }
 
 }

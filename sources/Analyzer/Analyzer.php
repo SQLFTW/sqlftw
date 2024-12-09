@@ -81,7 +81,7 @@ class Analyzer
             $sqlMode = $this->context->session->getMode();
             $result = $this->process($command, $sqlMode);
 
-            $failed = $command->getErrors() !== [];
+            $failed = $command->errors !== [];
             foreach ($result->errors as $error) {
                 if ($error->severity >= Severity::CRITICAL) {
                     $failed = true;
@@ -89,12 +89,12 @@ class Analyzer
             }
             try {
                 if (!$failed) {
-                    $this->sessionUpdater->processCommand($command, $command->getTokenList());
+                    $this->sessionUpdater->processCommand($command, $command->tokenList);
                 }
             } catch (InvalidEnumValueException $e) {
-                $command->addError(Error::critical("enum.invalidValue", $e->getMessage(), 0));
+                $command->errors[] = Error::critical("enum.invalidValue", $e->getMessage(), 0);
             } catch (ParserException $e) {
-                $command->addError($e->toError());
+                $command->errors[] = $e->toError();
             }
 
             yield $result;

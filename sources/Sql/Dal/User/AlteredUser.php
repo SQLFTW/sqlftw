@@ -18,9 +18,9 @@ class AlteredUser implements SqlSerializable
 {
 
     /** @var UserName|FunctionCall */
-    private SqlSerializable $user;
+    public SqlSerializable $user;
 
-    private ?AlterUserAction $action;
+    public ?AlterUserAction $action;
 
     /**
      * @param UserName|FunctionCall $user
@@ -29,19 +29,6 @@ class AlteredUser implements SqlSerializable
     {
         $this->user = $user;
         $this->action = $action;
-    }
-
-    /**
-     * @return UserName|FunctionCall
-     */
-    public function getUser(): SqlSerializable
-    {
-        return $this->user;
-    }
-
-    public function getAction(): ?AlterUserAction
-    {
-        return $this->action;
     }
 
     public function serialize(Formatter $formatter): string

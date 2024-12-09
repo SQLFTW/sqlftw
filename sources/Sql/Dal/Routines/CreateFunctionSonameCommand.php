@@ -18,13 +18,13 @@ use SqlFtw\Sql\StatementImpl;
 class CreateFunctionSonameCommand extends StatementImpl implements DalCommand
 {
 
-    private ObjectIdentifier $function;
+    public ObjectIdentifier $function;
 
-    private string $libName;
+    public string $libName;
 
-    private UdfReturnDataType $returnType;
+    public UdfReturnDataType $returnType;
 
-    private bool $aggregate;
+    public bool $aggregate;
 
     public function __construct(ObjectIdentifier $function, string $libName, UdfReturnDataType $returnType, bool $aggregate)
     {
@@ -32,26 +32,6 @@ class CreateFunctionSonameCommand extends StatementImpl implements DalCommand
         $this->libName = $libName;
         $this->returnType = $returnType;
         $this->aggregate = $aggregate;
-    }
-
-    public function getFunction(): ObjectIdentifier
-    {
-        return $this->function;
-    }
-
-    public function getLibName(): string
-    {
-        return $this->libName;
-    }
-
-    public function getReturnType(): UdfReturnDataType
-    {
-        return $this->returnType;
-    }
-
-    public function isAggregate(): bool
-    {
-        return $this->aggregate;
     }
 
     public function serialize(Formatter $formatter): string

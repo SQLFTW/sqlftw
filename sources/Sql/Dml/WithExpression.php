@@ -16,12 +16,12 @@ use SqlFtw\Sql\SqlSerializable;
 class WithExpression implements SqlSerializable
 {
 
-    private Query $query;
+    public Query $query;
 
-    private string $name;
+    public string $name;
 
     /** @var non-empty-list<string>|null */
-    private ?array $columns;
+    public ?array $columns;
 
     /**
      * @param non-empty-list<string>|null $columns
@@ -31,24 +31,6 @@ class WithExpression implements SqlSerializable
         $this->query = $query;
         $this->name = $name;
         $this->columns = $columns;
-    }
-
-    public function getQuery(): Query
-    {
-        return $this->query;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return non-empty-list<string>|null
-     */
-    public function getColumns(): ?array
-    {
-        return $this->columns;
     }
 
     public function serialize(Formatter $formatter): string

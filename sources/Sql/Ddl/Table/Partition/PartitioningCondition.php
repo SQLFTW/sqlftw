@@ -16,14 +16,14 @@ use SqlFtw\Sql\SqlSerializable;
 class PartitioningCondition implements SqlSerializable
 {
 
-    private PartitioningConditionType $type;
+    public PartitioningConditionType $type;
 
-    private ?RootNode $expression;
+    public ?RootNode $expression;
 
     /** @var list<string>|null */
-    private ?array $columns;
+    public ?array $columns;
 
-    private ?int $algorithm;
+    public ?int $algorithm;
 
     /**
      * @param list<string>|null $columns
@@ -38,29 +38,6 @@ class PartitioningCondition implements SqlSerializable
         $this->expression = $expression;
         $this->columns = $columns;
         $this->algorithm = $algorithm;
-    }
-
-    public function getType(): PartitioningConditionType
-    {
-        return $this->type;
-    }
-
-    public function getExpression(): ?RootNode
-    {
-        return $this->expression;
-    }
-
-    /**
-     * @return list<string>|null
-     */
-    public function getColumns(): ?array
-    {
-        return $this->columns;
-    }
-
-    public function getAlgorithm(): ?int
-    {
-        return $this->algorithm;
     }
 
     public function serialize(Formatter $formatter): string

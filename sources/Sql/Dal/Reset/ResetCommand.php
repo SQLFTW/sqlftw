@@ -17,7 +17,7 @@ class ResetCommand extends StatementImpl implements DalCommand
 {
 
     /** @var non-empty-list<ResetOption> */
-    private array $options;
+    public array $options;
 
     /**
      * @param non-empty-list<ResetOption> $options
@@ -25,14 +25,6 @@ class ResetCommand extends StatementImpl implements DalCommand
     public function __construct(array $options)
     {
         $this->options = $options;
-    }
-
-    /**
-     * @return non-empty-list<ResetOption>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
     }
 
     public function serialize(Formatter $formatter): string

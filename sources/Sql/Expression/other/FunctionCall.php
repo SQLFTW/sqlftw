@@ -21,17 +21,17 @@ use function is_int;
 class FunctionCall implements RootNode
 {
 
-    private FunctionIdentifier $function;
+    public FunctionIdentifier $function;
 
     /** @var array<int|string, ArgumentNode> */
-    private array $arguments;
+    public array $arguments;
 
     /** @var WindowSpecification|string|null */
-    private $over;
+    public $over;
 
-    private ?bool $respectNulls;
+    public ?bool $respectNulls;
 
-    private ?bool $fromFirst;
+    public ?bool $fromFirst;
 
     /**
      * @param array<int|string, ArgumentNode> $arguments
@@ -60,37 +60,6 @@ class FunctionCall implements RootNode
         $this->over = $over;
         $this->respectNulls = $respectNulls;
         $this->fromFirst = $fromFirst;
-    }
-
-    public function getFunction(): FunctionIdentifier
-    {
-        return $this->function;
-    }
-
-    /**
-     * @return array<int|string, ArgumentNode>
-     */
-    public function getArguments(): array
-    {
-        return $this->arguments;
-    }
-
-    /**
-     * @return WindowSpecification|string|null
-     */
-    public function getOver()
-    {
-        return $this->over;
-    }
-
-    public function respectNulls(): ?bool
-    {
-        return $this->respectNulls;
-    }
-
-    public function fromFirst(): ?bool
-    {
-        return $this->fromFirst;
     }
 
     public function serialize(Formatter $formatter): string

@@ -21,21 +21,21 @@ use function is_array;
 class StartReplicaCommand extends StatementImpl implements ReplicationCommand
 {
 
-    private ?string $user;
+    public ?string $user;
 
-    private ?string $password;
+    public ?string $password;
 
-    private ?string $defaultAuth;
+    public ?string $defaultAuth;
 
-    private ?string $pluginDir;
+    public ?string $pluginDir;
 
     /** @var non-empty-array<UntilKeyword, string|int|bool|non-empty-list<UuidSet>>|null */
-    private ?array $until;
+    public ?array $until;
 
     /** @var non-empty-list<ReplicationThreadType>|null */
-    private ?array $threadTypes;
+    public ?array $threadTypes;
 
-    private ?string $channel;
+    public ?string $channel;
 
     /**
      * @param non-empty-array<UntilKeyword, string|int|bool|non-empty-list<UuidSet>>|null $until
@@ -57,47 +57,6 @@ class StartReplicaCommand extends StatementImpl implements ReplicationCommand
         $this->until = $until;
         $this->threadTypes = $threadTypes;
         $this->channel = $channel;
-    }
-
-    public function getUser(): ?string
-    {
-        return $this->user;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function getDefaultAuth(): ?string
-    {
-        return $this->defaultAuth;
-    }
-
-    public function getPluginDir(): ?string
-    {
-        return $this->pluginDir;
-    }
-
-    /**
-     * @return non-empty-array<UntilKeyword, string|int|bool|non-empty-list<UuidSet>>|null
-     */
-    public function getUntil(): ?array
-    {
-        return $this->until;
-    }
-
-    /**
-     * @return non-empty-list<ReplicationThreadType>|null
-     */
-    public function getThreadTypes(): ?array
-    {
-        return $this->threadTypes;
-    }
-
-    public function getChannel(): ?string
-    {
-        return $this->channel;
     }
 
     public function serialize(Formatter $formatter): string

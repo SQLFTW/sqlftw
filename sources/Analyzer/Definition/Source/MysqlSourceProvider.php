@@ -58,9 +58,9 @@ class MysqlSourceProvider implements SourceProvider
     public function getTableSource(ObjectIdentifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
-            $quotedName = $this->quoteName($name->getSchema()) . '.' . $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
         } else {
-            $quotedName = $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->name);
         }
 
         try {
@@ -82,9 +82,9 @@ class MysqlSourceProvider implements SourceProvider
     public function getViewSource(ObjectIdentifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
-            $quotedName = $this->quoteName($name->getSchema()) . '.' . $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
         } else {
-            $quotedName = $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->name);
         }
 
         try {
@@ -106,9 +106,9 @@ class MysqlSourceProvider implements SourceProvider
     public function getEventSource(ObjectIdentifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
-            $quotedName = $this->quoteName($name->getSchema()) . '.' . $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
         } else {
-            $quotedName = $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->name);
         }
 
         try {
@@ -130,9 +130,9 @@ class MysqlSourceProvider implements SourceProvider
     public function getFunctionSource(ObjectIdentifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
-            $quotedName = $this->quoteName($name->getSchema()) . '.' . $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
         } else {
-            $quotedName = $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->name);
         }
 
         try {
@@ -154,9 +154,9 @@ class MysqlSourceProvider implements SourceProvider
     public function getProcedureSource(ObjectIdentifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
-            $quotedName = $this->quoteName($name->getSchema()) . '.' . $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
         } else {
-            $quotedName = $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->name);
         }
 
         try {
@@ -178,9 +178,9 @@ class MysqlSourceProvider implements SourceProvider
     public function getTriggerSource(ObjectIdentifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
-            $quotedName = $this->quoteName($name->getSchema()) . '.' . $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
         } else {
-            $quotedName = $this->quoteName($name->getName());
+            $quotedName = $this->quoteName($name->name);
         }
 
         try {
@@ -201,11 +201,11 @@ class MysqlSourceProvider implements SourceProvider
 
     public function getUserSource(UserName $name): ?string
     {
-        $host = $name->getHost();
+        $host = $name->host;
         if ($host !== null) {
-            $quotedName = $this->quoteString($name->getUser()) . '@' . $this->quoteString($name->getHost());
+            $quotedName = $this->quoteString($name->user) . '@' . $this->quoteString($name->host);
         } else {
-            $quotedName = $this->quoteString($name->getUser());
+            $quotedName = $this->quoteString($name->user);
         }
 
         try {

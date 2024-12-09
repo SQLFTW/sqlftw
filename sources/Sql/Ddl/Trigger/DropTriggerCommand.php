@@ -16,24 +16,14 @@ use SqlFtw\Sql\StatementImpl;
 class DropTriggerCommand extends StatementImpl implements TriggerCommand
 {
 
-    private ObjectIdentifier $trigger;
+    public ObjectIdentifier $trigger;
 
-    private bool $ifExists;
+    public bool $ifExists;
 
     public function __construct(ObjectIdentifier $trigger, bool $ifExists = false)
     {
         $this->trigger = $trigger;
         $this->ifExists = $ifExists;
-    }
-
-    public function getTrigger(): ObjectIdentifier
-    {
-        return $this->trigger;
-    }
-
-    public function ifExists(): bool
-    {
-        return $this->ifExists;
     }
 
     public function serialize(Formatter $formatter): string
