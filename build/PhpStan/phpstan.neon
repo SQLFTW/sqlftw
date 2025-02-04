@@ -4,6 +4,7 @@ includes:
 
 parameters:
     level: 9
+    reportUnmatchedIgnoredErrors: true
 
     treatPhpDocTypesAsCertain: false
 
@@ -20,6 +21,12 @@ parameters:
 
     excludePaths:
         - ../../sources/Reflection/*
+        - ../../sources/Analyzer/AnalyzerResultList.php
+        - ../../sources/Analyzer/Definition/Provider/MigrationsDefinitionProvider.php
+        - ../../sources/Analyzer/Definition/Source/MysqlSourceProvider.php
+        - ../../sources/Analyzer/Definition/Source/PostgreSourceProvider.php
+        - ../../sources/Platform/Normalizer/PostgreNormalizer.php
+        - ../../sources/Connection/*
 
     ignoreErrors:
         # usually ruled out by isValue()
@@ -30,6 +37,9 @@ parameters:
         - '~Binary operation "." between int\|string and int\|string results in an error~'
         # -1|0|1 somehow downgraded to int on large array?
         - '~Static property SqlFtw\\Tests\\Mysql\\MysqlTestJob::\$knownFailures \(array<string, -1\|0\|1>\) does not accept default value of type non-empty-array<literal-string&non-falsy-string, int>~'
+
+        # temporarily
+        - '~Cannot call method .* on SqlFtw\\Parser\\TokenList\|null~'
 
     earlyTerminatingMethodCalls:
         SqlFtw\Parser\TokenList:

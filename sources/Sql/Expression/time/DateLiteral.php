@@ -21,7 +21,7 @@ use const STR_PAD_LEFT;
 /**
  * e.g. date '2020-01-01'
  */
-class DateLiteral implements TimeValue
+class DateLiteral extends Literal implements TimeValue
 {
 
     /** @readonly */

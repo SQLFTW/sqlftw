@@ -14,11 +14,11 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\MaxValueLiteral;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function implode;
 use function is_array;
 
-class PartitionDefinition implements SqlSerializable
+class PartitionDefinition extends Node
 {
 
     public string $name;
@@ -82,11 +82,11 @@ class PartitionDefinition implements SqlSerializable
                 $result .= $this->lessThan->serialize($formatter);
             }
         } elseif ($this->values !== null) {
-            $result .= ' VALUES IN (' . $formatter->formatSerializablesList($this->values) . ')';
+            $result .= ' VALUES IN (' . $formatter->formatNodesList($this->values) . ')';
         }
         if ($this->options !== null) {
             foreach ($this->options as $option => $value) {
-                if ($value instanceof SqlSerializable) {
+                if ($value instanceof Node) {
                     $result .= ' ' . $option . ' ' . $value->serialize($formatter);
                 } elseif ($option === PartitionOption::TABLESPACE) {
                     $result .= ' ' . $option . ' ' . $formatter->formatName((string) $value);

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 use Countable;
 use SqlFtw\Formatter\Formatter;
 
-class TableReferenceParentheses implements TableReferenceNode, Countable
+class TableReferenceParentheses extends TableReferenceNode implements Countable
 {
 
     public TableReferenceNode $content;

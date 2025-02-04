@@ -12,9 +12,9 @@ namespace SqlFtw\Sql\Dml\TableReference;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class IndexHint implements SqlSerializable
+class IndexHint extends Node
 {
 
     public IndexHintAction $action;

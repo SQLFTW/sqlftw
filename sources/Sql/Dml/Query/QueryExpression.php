@@ -14,12 +14,11 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\NodeInterface;
 use function array_values;
 use function count;
 
-class QueryExpression extends StatementImpl implements Query
+class QueryExpression extends Query
 {
 
     /** @var non-empty-list<Query> */
@@ -27,17 +26,6 @@ class QueryExpression extends StatementImpl implements Query
 
     /** @var non-empty-list<QueryOperator> */
     public array $operators;
-
-    /** @var non-empty-list<OrderByExpression>|null */
-    public ?array $orderBy;
-
-    /** @var int|SimpleName|Placeholder|null */
-    public $limit;
-
-    /** @var int|SimpleName|Placeholder|null */
-    public $offset;
-
-    public ?SelectInto $into;
 
     /** @var non-empty-list<SelectLocking>|null */
     public ?array $locking;
@@ -81,16 +69,16 @@ class QueryExpression extends StatementImpl implements Query
         }
 
         if ($this->orderBy !== null) {
-            $result .= "\n\tORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
+            $result .= "\n\tORDER BY " . $formatter->formatNodesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\n\tLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\n\tLIMIT " . ($this->limit instanceof NodeInterface ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
+                $result .= "\nOFFSET " . ($this->offset instanceof NodeInterface ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
         if ($this->locking !== null) {
-            $result .= "\n\t" . $formatter->formatSerializablesList($this->locking);
+            $result .= "\n\t" . $formatter->formatNodesList($this->locking);
         }
         if ($this->into !== null) {
             $result .= "\n\t" . $formatter->indent($this->into->serialize($formatter));

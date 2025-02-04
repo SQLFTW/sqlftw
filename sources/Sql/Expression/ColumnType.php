@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function count;
 use function implode;
 use function is_null;
@@ -21,7 +21,7 @@ use function is_null;
 /**
  * Column type used in CREATE TABLE definition and in routine arguments definitions
  */
-class ColumnType implements SqlSerializable
+class ColumnType extends Node
 {
 
     public const UNSIGNED = true;
@@ -29,26 +29,21 @@ class ColumnType implements SqlSerializable
     public BaseType $baseType;
 
     /**
-     * @readonly
      * @var non-empty-list<int>|null
      */
     public ?array $size;
 
     /**
-     * @readonly
      * @var non-empty-list<StringValue>|null
      */
     public ?array $values;
 
     public bool $unsigned;
 
-    /** @readonly */
     public ?Charset $charset;
 
-    /** @readonly */
     public ?Collation $collation;
 
-    /** @readonly */
     public ?int $srid;
 
     public bool $zerofill;
@@ -134,20 +129,11 @@ class ColumnType implements SqlSerializable
         }
     }
 
-    /**
-     * @param non-empty-list<int>|null $size
-     */
-    public function setSize(?array $size): void
-    {
-        $this->checkSize($this->baseType, $size);
-        $this->size = $size;
-    }
-
     public function addCharset(Charset $charset): self
     {
         $that = clone $this;
         // todo: in fact it was collation all the time :E
-        if ($this->charset !== null && $this->charset->equalsValue(Charset::BINARY)) {
+        if ($this->charset !== null && $this->charset->value === Charset::BINARY) {
             $that->collation = new Collation(Collation::BINARY);
         }
         $that->charset = $charset;
@@ -158,7 +144,7 @@ class ColumnType implements SqlSerializable
     public function addCollation(Collation $collation): self
     {
         if ($this->collation !== null) {
-            if ($this->collation->equals($collation) && $this->collation->equalsValue(Collation::BINARY)) {
+            if ($this->collation->value === $collation->value && $this->collation->value === Collation::BINARY) {
                 return $this;
             }
             throw new InvalidDefinitionException('Type already has a collation.');
@@ -189,7 +175,7 @@ class ColumnType implements SqlSerializable
         if ($this->size !== null) {
             $result .= '(' . implode(', ', $this->size) . ')';
         } elseif ($this->values !== null) {
-            $result .= '(' . $formatter->formatSerializablesList($this->values) . ')';
+            $result .= '(' . $formatter->formatNodesList($this->values) . ')';
         }
 
         if ($this->unsigned === true) {

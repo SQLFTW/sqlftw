@@ -118,7 +118,7 @@ class MysqlNormalizer implements Normalizer
 
     public function formatBool(bool $value): string
     {
-        return $value ? 'TRUE' : 'FALSE';
+        return $value ? '1' : '0';
     }
 
     public function formatString(string $value): string

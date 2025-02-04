@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\CheckDefinition;
 
-class AddCheckAction implements CheckAction
+class AddCheckAction extends CheckAction
 {
 
     public CheckDefinition $check;

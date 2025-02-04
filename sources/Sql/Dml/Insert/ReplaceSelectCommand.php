@@ -15,7 +15,7 @@ use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
-class ReplaceSelectCommand extends InsertOrReplaceCommand implements ReplaceCommand
+class ReplaceSelectCommand extends ReplaceCommand
 {
 
     public Query $query;

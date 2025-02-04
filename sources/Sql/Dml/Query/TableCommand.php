@@ -14,10 +14,9 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\NodeInterface;
 
-class TableCommand extends StatementImpl implements SimpleQuery
+class TableCommand extends SimpleQuery
 {
 
     public ObjectIdentifier $table;
@@ -57,13 +56,13 @@ class TableCommand extends StatementImpl implements SimpleQuery
         $result = "TABLE " . $this->table->serialize($formatter);
 
         if ($this->orderBy !== null) {
-            $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
+            $result .= "\nORDER BY " . $formatter->formatNodesList($this->orderBy, ",\n\t");
         }
 
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\nLIMIT " . ($this->limit instanceof NodeInterface ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
+                $result .= "\nOFFSET " . ($this->offset instanceof NodeInterface ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
 

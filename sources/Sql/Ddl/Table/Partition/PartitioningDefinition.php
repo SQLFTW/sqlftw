@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class PartitioningDefinition implements SqlSerializable
+class PartitioningDefinition extends Node
 {
 
     public PartitioningCondition $condition;
@@ -56,7 +56,7 @@ class PartitioningDefinition implements SqlSerializable
             }
         }
         if ($this->partitions !== null) {
-            $result .= '(' . $formatter->formatSerializablesList($this->partitions) . ')';
+            $result .= '(' . $formatter->formatNodesList($this->partitions) . ')';
         }
 
         return $result;

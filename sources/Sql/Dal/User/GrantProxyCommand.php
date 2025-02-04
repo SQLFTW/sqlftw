@@ -11,15 +11,14 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class GrantProxyCommand extends StatementImpl implements UserCommand
+class GrantProxyCommand extends UserCommand
 {
 
     /** @var UserName|FunctionCall */
-    public SqlSerializable $proxy;
+    public Node $proxy;
 
     /** @var non-empty-list<IdentifiedUser|FunctionCall> */
     public array $users;
@@ -30,7 +29,7 @@ class GrantProxyCommand extends StatementImpl implements UserCommand
      * @param UserName|FunctionCall $proxy
      * @param non-empty-list<IdentifiedUser|FunctionCall> $users
      */
-    public function __construct(SqlSerializable $proxy, array $users, bool $withGrantOption = false)
+    public function __construct(Node $proxy, array $users, bool $withGrantOption = false)
     {
         $this->proxy = $proxy;
         $this->users = $users;
@@ -40,7 +39,7 @@ class GrantProxyCommand extends StatementImpl implements UserCommand
     public function serialize(Formatter $formatter): string
     {
         return 'GRANT PROXY ON ' . $this->proxy->serialize($formatter)
-            . ' TO ' . $formatter->formatSerializablesList($this->users)
+            . ' TO ' . $formatter->formatNodesList($this->users)
             . ($this->withGrantOption ? ' WITH GRANT OPTION' : '');
     }
 

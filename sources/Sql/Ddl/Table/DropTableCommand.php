@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class DropTableCommand extends StatementImpl implements DdlTablesCommand
+class DropTableCommand extends Command implements DdlTablesCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
@@ -53,7 +53,7 @@ class DropTableCommand extends StatementImpl implements DdlTablesCommand
             $result .= 'IF EXISTS ';
         }
 
-        $result .= $formatter->formatSerializablesList($this->names);
+        $result .= $formatter->formatNodesList($this->names);
 
         if ($this->action !== null) {
             $result .= ' ' . $this->action;

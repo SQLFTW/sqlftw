@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Ddl\Trigger;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 
-class CreateTriggerCommand extends StatementImpl implements TriggerCommand
+class CreateTriggerCommand extends Command implements TriggerCommand
 {
 
     public ObjectIdentifier $trigger;
@@ -49,13 +49,6 @@ class CreateTriggerCommand extends StatementImpl implements TriggerCommand
         $this->definer = $definer;
         $this->position = $position;
         $this->ifNotExists = $ifNotExists;
-    }
-
-    public function getTrigger(): ObjectIdentifier
-    {
-        $schema = $this->table instanceof QualifiedName ? $this->table->schema : null;
-
-        return $schema !== null ? new QualifiedName($this->trigger->name, $schema) : $this->trigger;
     }
 
     public function serialize(Formatter $formatter): string

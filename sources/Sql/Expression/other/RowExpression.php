@@ -16,7 +16,7 @@ use SqlFtw\Formatter\Formatter;
  *
  * @see https://dev.mysql.com/doc/refman/8.0/en/row-subqueries.html
  */
-class RowExpression implements RootNode
+class RowExpression extends RootNode
 {
 
     /** @var non-empty-list<RootNode> */
@@ -32,7 +32,7 @@ class RowExpression implements RootNode
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ROW (' . $formatter->formatSerializablesList($this->contents) . ')';
+        return 'ROW (' . $formatter->formatNodesList($this->contents) . ')';
     }
 
 }

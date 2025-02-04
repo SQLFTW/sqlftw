@@ -14,9 +14,9 @@ use SqlFtw\Sql\Expression\HexadecimalLiteral;
 use SqlFtw\Sql\Expression\IntLiteral;
 use SqlFtw\Sql\Expression\IntValue;
 use SqlFtw\Sql\Expression\StringValue;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class Xid implements SqlSerializable
+class Xid extends Node
 {
 
     public StringValue $transactionId;

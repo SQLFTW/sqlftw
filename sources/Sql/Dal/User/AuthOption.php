@@ -12,9 +12,9 @@ namespace SqlFtw\Sql\Dal\User;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class AuthOption implements SqlSerializable
+class AuthOption extends Node
 {
 
     public ?string $authPlugin;

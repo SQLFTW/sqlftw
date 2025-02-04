@@ -16,7 +16,7 @@ use function array_keys;
 use function get_class;
 use function is_string;
 
-abstract class StringEnum implements SqlSerializable
+abstract class StringEnum extends Node
 {
 
     /** @var array<class-string, array<string, string>> ($class => ($value => $constName)) */

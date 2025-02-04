@@ -11,9 +11,8 @@ namespace SqlFtw\Sql\Routine;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 
-class DeclareHandlerStatement extends StatementImpl
+class DeclareHandlerStatement extends Statement
 {
 
     public HandlerAction $action;
@@ -36,7 +35,7 @@ class DeclareHandlerStatement extends StatementImpl
     public function serialize(Formatter $formatter): string
     {
         return 'DECLARE ' . $this->action->serialize($formatter) . ' HANDLER FOR '
-            . $formatter->formatSerializablesList($this->conditions) . "\n" . $this->statement->serialize($formatter);
+            . $formatter->formatNodesList($this->conditions) . "\n" . $this->statement->serialize($formatter);
     }
 
 }

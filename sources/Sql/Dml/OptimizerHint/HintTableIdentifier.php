@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\OptimizerHint;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Expression\IdentifierInterface;
 
-interface HintTableIdentifier extends SqlSerializable
+interface HintTableIdentifier extends IdentifierInterface
 {
 
 }

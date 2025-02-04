@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Ddl\Table\Partition;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class PartitioningCondition implements SqlSerializable
+class PartitioningCondition extends Node
 {
 
     public PartitioningConditionType $type;

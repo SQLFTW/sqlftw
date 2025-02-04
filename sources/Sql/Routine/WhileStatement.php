@@ -5,9 +5,8 @@ namespace SqlFtw\Sql\Routine;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 
-class WhileStatement extends StatementImpl
+class WhileStatement extends Statement
 {
 
     /** @var list<Statement> */
@@ -38,7 +37,7 @@ class WhileStatement extends StatementImpl
         }
         $result .= 'WHILE ' . $this->condition->serialize($formatter) . " DO\n";
         if ($this->statements !== []) {
-            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+            $result .= $formatter->formatNodesList($this->statements, ";\n") . ";\n";
         }
         $result .= "END WHILE";
         if ($this->label !== null && $this->endLabel) {

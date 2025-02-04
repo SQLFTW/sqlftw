@@ -2,6 +2,7 @@
 
 namespace SqlFtw\Error;
 
+use Dogma\Debug\Callstack;
 use SqlFtw\Analyzer\AnalyzerRule;
 
 class Error
@@ -19,8 +20,11 @@ class Error
     /** @var Repair::* */
     public int $repair;
 
-    /** @var class-string{AnalyzerRule}|null */
+    /** @var class-string<AnalyzerRule>|null */
     public ?string $rule = null; // filled by Analyzer
+
+    /** @internal */
+    public ?Callstack $callstack = null;
 
     /**
      * @param Severity::* $severity
@@ -39,6 +43,7 @@ class Error
         $this->message = $message;
         $this->position = $position;
         $this->repair = $repair;
+        $this->callstack = Callstack::get(['~SqlFtw\\\\Error\\\\Error~']);
     }
 
     public static function lexer(string $identifier, string $message, int $position): self
@@ -61,6 +66,9 @@ class Error
         return new self(Severity::CRITICAL, $identifier, $message, $position);
     }
 
+    /**
+     * @param Repair::* $repair
+     */
     public static function error(string $identifier, string $message, int $position, int $repair = Repair::NO): self
     {
         return new self(Severity::ERROR, $identifier, $message, $position, $repair);

@@ -10,9 +10,8 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowCreateSchemaCommand extends StatementImpl implements ShowCommand
+class ShowCreateSchemaCommand extends ShowCommand
 {
 
     public string $schema;

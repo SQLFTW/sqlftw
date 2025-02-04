@@ -6,6 +6,9 @@ use Dogma\Application\Colors;
 use Dogma\Debug\Debugger;
 use Dogma\Debug\Dumper;
 use Dogma\Debug\Units;
+use LogicException;
+use SqlFtw\Error\Error;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Tests\Mysql\MysqlTestJob;
@@ -27,11 +30,16 @@ class ResultRenderer
 
     private bool $fullRun;
 
-    public function __construct(string $baseDir, bool $singleThread, bool $fullRun)
+    private Formatter $formatter;
+
+    public bool $renderSerializationErrors = false;
+
+    public function __construct(string $baseDir, bool $singleThread, bool $fullRun, Formatter $formatter)
     {
         $this->baseDir = $baseDir;
         $this->singleThread = $singleThread;
         $this->fullRun = $fullRun;
+        $this->formatter = $formatter;
     }
 
     /**
@@ -127,20 +135,22 @@ class ResultRenderer
         }
     }
 
+    /**
+     * @param list<Error> $errors
+     */
     public function renderFalseNegative(Command $command, SqlMode $mode, array $errors = []): void
     {
         rl('False negative (should not fail):', null, 'r');
         rl("'{$mode->asString()}'", 'sql_mode', 'C');
 
-        $tokenList = $command->getTokenList();
-        $tokensSerialized = trim($tokenList->serialize());
+        $tokensSerialized = trim($command->tokenList->serialize());
         rl($tokensSerialized, null, 'y');
 
         //$commandSerialized = $formatter->serialize($command);
         //$commandSerialized = preg_replace('~\s+~', ' ', $commandSerialized);
         //rl($commandSerialized);
 
-        $errors = array_merge($command->getErrors(), $errors);
+        $errors = array_merge($command->errors, $errors);
         rd($errors);
         rd($command);
         //rd($tokenList);
@@ -164,8 +174,7 @@ class ResultRenderer
         rl('False positive (should fail):', null, 'r');
         rl($mode->asString(), 'mode', 'C');
 
-        $tokenList = $command->getTokenList();
-        $tokensSerialized = trim($tokenList->serialize());
+        $tokensSerialized = trim($command->tokenList->serialize());
         rl($tokensSerialized, null, 'y');
 
         //$commandSerialized = $formatter->serialize($command);
@@ -191,10 +200,16 @@ class ResultRenderer
     }
 
     public function renderSerialisationError(Command $command, SqlMode $mode, MysqlTestJob $job): void
-    {return;
+    {
+        if (!$this->renderSerializationErrors) {
+            return;
+        }
         rl('Serialisation error:', null, 'r');
 
-        $tokenList = $command->getTokenList();
+        $tokenList = $command->tokenList;
+        if ($tokenList === null) {
+            throw new LogicException("Token list should be provided.");
+        }
         [$origin, $originNorm] = $job->normalizeOriginalSql($tokenList, true);
         [$parsed, $parsedNorm] = $job->normalizeParsedSql($command, $this->formatter, $tokenList->getSession(), true);
 

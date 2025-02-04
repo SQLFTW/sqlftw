@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Dal\Component;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Assignment;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class InstallComponentCommand extends StatementImpl implements ComponentCommand
+class InstallComponentCommand extends Command implements ComponentCommand
 {
 
     /** @var non-empty-list<string> */
@@ -36,7 +36,7 @@ class InstallComponentCommand extends StatementImpl implements ComponentCommand
     {
         $result = 'INSTALL COMPONENT ' . $formatter->formatNamesList($this->components);
         if ($this->assignments !== []) {
-            $result .= ' SET ' . $formatter->formatSerializablesList($this->assignments);
+            $result .= ' SET ' . $formatter->formatNodesList($this->assignments);
         }
 
         return $result;

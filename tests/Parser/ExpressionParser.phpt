@@ -35,45 +35,45 @@ Assert::parseSerialize("SELECT ( d2 = c2 % ASIN( d1 ) > i2 )");
 // raw expressions
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT * FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), '*');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, '*');
 
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT 1 + 1 as foo FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), '1 + 1');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, '1 + 1');
 
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT 1  +  1 FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), '1  +  1');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, '1  +  1');
 
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT 1+1 FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), '1+1');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, '1+1');
 
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT /* before */ 1 /* inside */ + /* inside */ 1 /* after */ FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), '1 /* inside */ + /* inside */ 1');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, '1 /* inside */ + /* inside */ 1');
 
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT /*before*//*before*/1/*inside*/+/*inside*/1/*after*//*after*/ FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), '1/*inside*/+/*inside*/1');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, '1/*inside*/+/*inside*/1');
 
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT (x + y) - 2*z FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), '(x + y) - 2*z');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, '(x + y) - 2*z');
 
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT someFunc(0x1234EF) FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), 'someFunc(0x1234EF)');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, 'someFunc(0x1234EF)');
 
 /** @var SelectCommand $command */
 $command = Assert::validCommand("SELECT someFunc(0x1234ef) FROM tbl1");
-$expression = $command->getColumns()[0];
-Assert::same($expression->getRawExpression(), 'someFunc(0x1234ef)');
+$expression = $command->columns[0];
+Assert::same($expression->rawExpression, 'someFunc(0x1234ef)');

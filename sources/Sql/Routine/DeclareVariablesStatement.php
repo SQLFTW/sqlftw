@@ -12,9 +12,9 @@ namespace SqlFtw\Sql\Routine;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Statement;
 
-class DeclareVariablesStatement extends StatementImpl
+class DeclareVariablesStatement extends Statement
 {
 
     /** @var non-empty-list<string> */

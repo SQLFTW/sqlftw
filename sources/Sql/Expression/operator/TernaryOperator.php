@@ -15,7 +15,7 @@ use SqlFtw\Formatter\Formatter;
  * left BETWEEN middle AND right
  * left LIKE middle ESCAPE right
  */
-class TernaryOperator implements OperatorExpression
+class TernaryOperator extends OperatorExpression
 {
 
     public ExpressionNode $left;

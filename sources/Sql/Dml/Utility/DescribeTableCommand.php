@@ -10,12 +10,12 @@
 namespace SqlFtw\Sql\Dml\Utility;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 use function strtr;
 
-class DescribeTableCommand extends StatementImpl implements DmlCommand
+class DescribeTableCommand extends Command implements DmlCommand
 {
 
     public ObjectIdentifier $table;

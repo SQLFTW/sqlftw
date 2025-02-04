@@ -14,11 +14,11 @@ use SqlFtw\Formatter\Formatter;
 /**
  * used in: GET_FORMAT({DATE|TIME|DATETIME}, {'EUR'|'USA'|'JIS'|'ISO'|'INTERNAL'})
  */
-class TimeTypeLiteral implements KeywordLiteral
+class TimeTypeLiteral extends KeywordLiteral
 {
 
     /** @var 'DATE'|'TIME'|'DATETIME' */
-    public string $value;
+    public string $value; // @phpstan-ignore property.phpDocType
 
     /**
      * @param 'DATE'|'TIME'|'DATETIME' $value

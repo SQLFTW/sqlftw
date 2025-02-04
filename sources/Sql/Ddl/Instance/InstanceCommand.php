@@ -7,13 +7,11 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql;
+namespace SqlFtw\Sql\Ddl\Instance;
 
-use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 
-interface SqlSerializable
+interface InstanceCommand extends DalCommand
 {
-
-    public function serialize(Formatter $formatter): string;
 
 }

@@ -15,7 +15,7 @@ use SqlFtw\Sql\Dml\Query\Query;
 /**
  * (SELECT ...)
  */
-class Subquery implements RootNode
+class Subquery extends RootNode
 {
 
     public Query $query;

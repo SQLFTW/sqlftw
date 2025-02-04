@@ -17,7 +17,7 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 use function array_map;
 use function implode;
 
-class ReplaceValuesCommand extends InsertOrReplaceCommand implements ReplaceCommand
+class ReplaceValuesCommand extends ReplaceCommand
 {
 
     /** @var non-empty-list<list<ExpressionNode>> */

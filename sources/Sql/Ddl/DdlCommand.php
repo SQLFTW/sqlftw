@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl;
 
-use SqlFtw\Sql\Command;
+use SqlFtw\Sql\NodeInterface;
 
-interface DdlCommand extends Command
+interface DdlCommand extends NodeInterface
 {
 
 }

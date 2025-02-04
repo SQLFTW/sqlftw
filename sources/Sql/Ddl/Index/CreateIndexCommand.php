@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Ddl\Index;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableAlgorithm;
 use SqlFtw\Sql\Ddl\Table\Alter\AlterTableLock;
 use SqlFtw\Sql\Ddl\Table\DdlTableCommand;
@@ -18,9 +19,8 @@ use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\StatementImpl;
 
-class CreateIndexCommand extends StatementImpl implements IndexCommand, DdlTableCommand
+class CreateIndexCommand extends Command implements IndexCommand, DdlTableCommand
 {
 
     public IndexDefinition $definition;

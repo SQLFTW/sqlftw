@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser;
 
+use Dogma\Debug\Callstack;
 use SqlFtw\Error\Error;
 use Throwable;
 use function array_map;
@@ -34,7 +35,10 @@ class ParserException extends ParsingException
 
     public function toError(): Error
     {
-        return Error::parser('parser.uncategorizedError', $this->message, $this->tokenList->getFirstSignificantToken()->start);
+        $error = Error::parser('parser.uncategorizedError', $this->message, $this->tokenList->getFirstSignificantToken()->start);
+        $error->callstack = CallStack::fromThrowable($this, ['~Exception~']);
+
+        return $error;
     }
 
     public function getTokenList(): TokenList
@@ -56,12 +60,12 @@ class ParserException extends ParsingException
         }, array_slice($tokens, 0, $prefix)));
 
         if (isset($tokens[$prefix])) {
-            $context .= '»' . ($tokens[$prefix]->value) . '«'; // todo: should fetch source value
+            $context .= '«' . ($tokens[$prefix]->value) . '»'; // todo: should fetch source value
             $context .= implode($separator, array_map(static function (Token $token) {
                 return $token->value; // todo: should fetch source value
             }, array_slice($tokens, $prefix + 1))) . '…"';
         } else {
-            $context .= '»«"';
+            $context .= '«»"';
         }
 
         return $context;

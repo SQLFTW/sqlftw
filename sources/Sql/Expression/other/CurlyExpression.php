@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * {type expr}
  */
-class CurlyExpression implements RootNode
+class CurlyExpression extends RootNode
 {
 
     public string $type;

@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\NodeInterface;
 
-interface TableItem extends SqlSerializable
+interface TableItem extends NodeInterface
 {
 
 }

@@ -10,14 +10,14 @@
 namespace SqlFtw\Sql\Ddl\Routine;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 use function array_values;
 
-class CreateProcedureCommand extends StatementImpl implements StoredProcedureCommand, CreateRoutineCommand
+class CreateProcedureCommand extends Command implements StoredProcedureCommand, CreateRoutineCommand
 {
 
     public ObjectIdentifier $procedure;
@@ -82,7 +82,7 @@ class CreateProcedureCommand extends StatementImpl implements StoredProcedureCom
 
         $result .= '(';
         if ($this->params !== []) {
-             $result .= $formatter->formatSerializablesList(array_values($this->params));
+             $result .= $formatter->formatNodesList(array_values($this->params));
         }
         $result .= ')';
 

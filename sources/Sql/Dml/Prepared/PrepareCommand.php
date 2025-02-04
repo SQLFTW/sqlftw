@@ -10,18 +10,18 @@
 namespace SqlFtw\Sql\Dml\Prepared;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\UserVariable;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 
-class PrepareCommand extends StatementImpl implements PreparedStatementCommand
+class PrepareCommand extends Command implements PreparedStatementCommand
 {
 
     public string $name;
 
     /** @var UserVariable|Statement */
-    public SqlSerializable $statement;
+    public Node $statement;
 
     /**
      * @param UserVariable|Statement $statement

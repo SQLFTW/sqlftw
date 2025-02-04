@@ -13,7 +13,6 @@ class ColumnList
 {
 
     /**
-     * @readonly
      * @var array<string, ColumnDefinition> ($name => $column)
      */
     public array $columns = [];

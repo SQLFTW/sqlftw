@@ -11,10 +11,9 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 
-class GrantRoleCommand extends StatementImpl implements UserCommand
+class GrantRoleCommand extends UserCommand
 {
 
     /** @var non-empty-list<UserName> */
@@ -38,8 +37,8 @@ class GrantRoleCommand extends StatementImpl implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'GRANT ' . $formatter->formatSerializablesList($this->roles)
-            . ' TO ' . $formatter->formatSerializablesList($this->users);
+        $result = 'GRANT ' . $formatter->formatNodesList($this->roles)
+            . ' TO ' . $formatter->formatNodesList($this->users);
 
         if ($this->withAdminOption) {
             $result .= ' WITH ADMIN OPTION';

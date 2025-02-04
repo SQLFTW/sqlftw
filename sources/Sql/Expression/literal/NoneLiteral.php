@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * NONE
  */
-class NoneLiteral implements KeywordLiteral
+class NoneLiteral extends KeywordLiteral
 {
 
     public string $value = 'NONE';

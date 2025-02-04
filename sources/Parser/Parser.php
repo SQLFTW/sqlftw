@@ -40,8 +40,6 @@ class Parser
         Keyword::UPDATE, Keyword::USE, Keyword::WITH, Keyword::XA,
     ];
 
-    private ParserConfig $config;
-
     private Lexer $lexer;
 
     private ParserFactory $factory;
@@ -54,9 +52,8 @@ class Parser
         ?Lexer $lexer = null,
         ?ParserFactory $parserFactory = null
     ) {
-        $this->config = $config;
         $this->lexer = $lexer ?? new Lexer($config, $session);
-        $this->factory = $parserFactory ?? new ParserFactory($this, $config, $session);
+        $this->factory = $parserFactory ?? new ParserFactory($this, $config, new ParserState(), $session);
     }
 
     /**

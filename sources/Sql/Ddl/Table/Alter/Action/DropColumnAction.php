@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropColumnAction implements ColumnAction
+class DropColumnAction extends ColumnAction
 {
 
     public string $column;

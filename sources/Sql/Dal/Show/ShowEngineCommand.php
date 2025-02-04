@@ -11,9 +11,8 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowEngineCommand extends StatementImpl implements ShowCommand
+class ShowEngineCommand extends ShowCommand
 {
 
     public StorageEngine $engine;

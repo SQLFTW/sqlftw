@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\Error;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\NodeInterface;
 
-interface InformationItem extends SqlSerializable
+interface InformationItem extends NodeInterface
 {
 
 }

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
-class JsonTableColumnsList implements ArgumentNode, ArgumentValue
+class JsonTableColumnsList extends ArgumentValue
 {
 
     /** @var non-empty-list<JsonTableColumn> */
@@ -27,7 +27,7 @@ class JsonTableColumnsList implements ArgumentNode, ArgumentValue
 
     public function serialize(Formatter $formatter): string
     {
-        return '(' . $formatter->formatSerializablesList($this->columns) . ')';
+        return '(' . $formatter->formatNodesList($this->columns) . ')';
     }
 
 }

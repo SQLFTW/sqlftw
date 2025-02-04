@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\NodeInterface;
 use function assert;
 use function is_bool;
 use function is_string;
@@ -21,7 +21,7 @@ use function is_string;
 /**
  * @phpstan-import-type TablespaceOptionValue from TablespaceOption
  */
-class CreateTablespaceCommand extends StatementImpl implements TablespaceCommand
+class CreateTablespaceCommand extends Command implements TablespaceCommand
 {
 
     public string $tablespace;
@@ -60,7 +60,7 @@ class CreateTablespaceCommand extends StatementImpl implements TablespaceCommand
                 }
             } elseif ($name === TablespaceOption::FILE_BLOCK_SIZE && $value instanceof SizeLiteral) {
                 $result .= ' ' . $name . ' = ' . $value->serialize($formatter);
-            } elseif ($value instanceof SqlSerializable) {
+            } elseif ($value instanceof NodeInterface) {
                 $result .= ' ' . $name . ' ' . $value->serialize($formatter);
             } elseif ($name === TablespaceOption::USE_LOGFILE_GROUP) {
                 assert(is_string($value));

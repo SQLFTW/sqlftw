@@ -11,12 +11,12 @@ namespace SqlFtw\Sql\Ddl\Table\Alter;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Alter\Action\AlterTableAction;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function array_filter;
 use function array_values;
 use function rtrim;
 
-class AlterActionsList implements SqlSerializable
+class AlterActionsList extends Node
 {
 
     /** @var list<AlterTableAction> */

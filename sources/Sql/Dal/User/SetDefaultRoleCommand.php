@@ -11,10 +11,9 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 
-class SetDefaultRoleCommand extends StatementImpl implements UserCommand
+class SetDefaultRoleCommand extends UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
@@ -43,9 +42,9 @@ class SetDefaultRoleCommand extends StatementImpl implements UserCommand
             $result .= $this->roles->serialize($formatter);
         }
         if ($this->rolesList !== null) {
-            $result .= $formatter->formatSerializablesList($this->rolesList);
+            $result .= $formatter->formatNodesList($this->rolesList);
         }
-        $result .= ' TO ' . $formatter->formatSerializablesList($this->users);
+        $result .= ' TO ' . $formatter->formatNodesList($this->users);
 
         return $result;
     }

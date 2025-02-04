@@ -22,8 +22,10 @@ use SqlFtw\Sql\Dml\Utility\DelimiterCommand;
 use SqlFtw\Sql\Expression\AllLiteral;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\PrimaryLiteral;
+use SqlFtw\Sql\Expression\SizeLiteral;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
+use SqlFtw\Sql\NodeInterface;
 use SqlFtw\Sql\Statement;
 use function array_map;
 use function get_class;
@@ -88,12 +90,12 @@ class Formatter
     public function formatNamesList(array $names, string $separator = ', '): string
     {
         return implode($separator, array_map(function ($name): string {
-            return $name instanceof Literal ? $name->getValue() : $this->formatName($name);
+            return $name instanceof Literal ? $name->value : $this->formatName($name);
         }, $names));
     }
 
     /**
-     * @param scalar|Date|Time|DateTimeInterface|SqlSerializable|null $value
+     * @param scalar|Date|Time|DateTimeInterface|Node|null $value
      */
     public function formatValue($value): string
     {
@@ -105,7 +107,7 @@ class Formatter
             return $this->normalizer->formatString($value);
         } elseif (is_numeric($value)) {
             return (string) $value;
-        } elseif ($value instanceof SqlSerializable) {
+        } elseif ($value instanceof Node) {
             return $value->serialize($this);
         } elseif ($value instanceof Date) {
             return $this->formatDate($value);
@@ -113,13 +115,15 @@ class Formatter
             return $this->formatTime($value);
         } elseif ($value instanceof DateTimeInterface) {
             return $this->formatDateTime($value);
+        } elseif ($value instanceof SizeLiteral) {
+            return $value->value;
         }
 
         throw new LogicException('Unknown type: ' . (is_object($value) ? get_class($value) : gettype($value)));
     }
 
     /**
-     * @param non-empty-list<scalar|Date|Time|DateTimeInterface|SqlSerializable|null> $values
+     * @param non-empty-list<scalar|Date|Time|DateTimeInterface|Node|null> $values
      */
     public function formatValuesList(array $values, string $separator = ', '): string
     {
@@ -152,21 +156,21 @@ class Formatter
     }
 
     /**
-     * @param non-empty-list<SqlSerializable> $serializables
+     * @param non-empty-list<NodeInterface> $nodes
      */
-    public function formatSerializablesList(array $serializables, string $separator = ', '): string
+    public function formatNodesList(array $nodes, string $separator = ', '): string
     {
-        return implode($separator, array_map(function (SqlSerializable $serializable): string {
-            return $serializable->serialize($this);
-        }, $serializables));
+        return implode($separator, array_map(function (NodeInterface $node): string {
+            return $node->serialize($this);
+        }, $nodes));
     }
 
     /**
-     * @param non-empty-array<string, SqlSerializable> $serializables
+     * @param non-empty-array<string, NodeInterface> $nodes
      */
-    public function formatSerializablesMap(array $serializables, string $separator = ', ', string $keyValueSeparator = ' = '): string
+    public function formatNodesMap(array $nodes, string $separator = ', ', string $keyValueSeparator = ' = '): string
     {
-        return implode($separator, Arr::mapPairs($serializables, function (string $key, SqlSerializable $value) use ($keyValueSeparator): string {
+        return implode($separator, Arr::mapPairs($nodes, function (string $key, NodeInterface $value) use ($keyValueSeparator): string {
             return $key . $keyValueSeparator . $value->serialize($this);
         }));
     }
@@ -192,15 +196,15 @@ class Formatter
         return "'" . $dateTime->format(DateTime::DEFAULT_FORMAT) . "'";
     }
 
-    public function serialize(SqlSerializable $serializable, bool $comments = true, string $delimiter = ';'): string
+    public function serialize(NodeInterface $node, bool $comments = true, string $delimiter = ';'): string
     {
-        if ($serializable instanceof Statement) {
-            $result = ($comments ? implode('', $serializable->commentsBefore) : '') . $serializable->serialize($this);
-            if (!$serializable instanceof DelimiterCommand) {
-                $result .= $serializable->delimiter ?? $delimiter;
+        if ($node instanceof Statement) {
+            $result = ($comments ? implode('', $node->commentsBefore) : '') . $node->serialize($this);
+            if (!$node instanceof DelimiterCommand) {
+                $result .= $node->delimiter ?? $delimiter;
             }
         } else {
-            $result = $serializable->serialize($this);
+            $result = $node->serialize($this);
         }
 
         return $result;

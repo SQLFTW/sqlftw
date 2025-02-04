@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class AlterIndexAction implements IndexAction
+class AlterIndexAction extends IndexAction
 {
 
     public string $index;

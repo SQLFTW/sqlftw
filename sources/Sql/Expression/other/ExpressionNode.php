@@ -9,14 +9,14 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
 /**
  * - If you can't change anything, because it's already happened, you may as well smell the flowers.
  * - What flowers?
  * - That's an expression.
  */
-interface ExpressionNode extends SqlSerializable
+abstract class ExpressionNode extends Node
 {
 
 }

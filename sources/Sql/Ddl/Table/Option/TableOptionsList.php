@@ -16,7 +16,7 @@ use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Ddl\StorageType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use SqlFtw\Util\TypeChecker;
 use function array_filter;
 use function implode;
@@ -135,12 +135,12 @@ class TableOptionsList
             static function (string $option, $value) use ($formatter, $valueSeparator): ?string {
                 if ($value === null) {
                     return null;
-                } elseif ($value instanceof SqlSerializable) {
+                } elseif ($value instanceof Node) {
                     return $option . $valueSeparator . $value->serialize($formatter);
                 } elseif ($option === TableOption::ENCRYPTION) {
                     return $option . $valueSeparator . ($value ? "'Y'" : "'N'");
                 } elseif ($option === TableOption::UNION) {
-                    return $option . $valueSeparator . '(' . $formatter->formatSerializablesList($value) . ')';
+                    return $option . $valueSeparator . '(' . $formatter->formatNodesList($value) . ')';
                 } elseif ($option === TableOption::AUTO_INCREMENT) {
                     return $option . $valueSeparator . $value;
                 } elseif ($option === TableOption::TABLESPACE) {

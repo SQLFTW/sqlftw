@@ -9,7 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table;
 
-interface AnyCreateTableCommand extends DdlTableCommand
+use SqlFtw\Sql\TableCommand;
+
+abstract class AnyCreateTableCommand extends TableCommand implements DdlTableCommand
 {
 
 }

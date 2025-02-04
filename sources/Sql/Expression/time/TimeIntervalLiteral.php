@@ -24,7 +24,7 @@ use function substr;
 /**
  * e.g. INTERVAL '2:30' HOUR_MINUTE
  */
-class TimeIntervalLiteral implements TimeInterval, Value
+class TimeIntervalLiteral extends TimeInterval implements Value
 {
 
     public string $value;

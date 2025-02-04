@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dml\Utility;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
-use SqlFtw\Sql\StatementImpl;
 
-class DelimiterCommand extends StatementImpl implements DmlCommand
+class DelimiterCommand extends Command implements DmlCommand
 {
 
     public string $newDelimiter;

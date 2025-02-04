@@ -14,7 +14,7 @@ use SqlFtw\Sql\Assignment;
 use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
-class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
+class InsertSetCommand extends InsertCommand
 {
 
     /** @var non-empty-list<Assignment> */
@@ -50,7 +50,7 @@ class InsertSetCommand extends InsertOrReplaceCommand implements InsertCommand
     {
         $result = 'INSERT' . $this->serializeBody($formatter);
 
-        $result .= ' SET ' . $formatter->formatSerializablesList($this->assignments);
+        $result .= ' SET ' . $formatter->formatNodesList($this->assignments);
 
         if ($this->alias !== null) {
             $result .= ' AS ' . $formatter->formatName($this->alias);

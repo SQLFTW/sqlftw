@@ -15,11 +15,11 @@ use SqlFtw\Sql\InvalidDefinitionException;
 /**
  * @phpstan-import-type JoinOrderHintType from OptimizerHintType
  */
-class JoinOrderHint implements OptimizerHint
+class JoinOrderHint extends OptimizerHint
 {
 
     /** @var JoinOrderHintType&string */
-    public string $type;
+    public string $type; // @phpstan-ignore property.phpDocType
 
     public ?string $queryBlock;
 
@@ -57,7 +57,7 @@ class JoinOrderHint implements OptimizerHint
     {
         return $this->type . '('
             . ($this->queryBlock !== null ? '@' . $formatter->formatName($this->queryBlock) . ' ' : '')
-            . $formatter->formatSerializablesList($this->tables) . ')';
+            . $formatter->formatNodesList($this->tables) . ')';
     }
 
 }

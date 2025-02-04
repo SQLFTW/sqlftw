@@ -38,6 +38,21 @@ use function str_replace;
 class SystemVariablesTypeRule implements AnalyzerRule
 {
 
+    public const WRONG_TYPE = "variable.wrongType";
+    public const NO_DEFAULT = "variable.noDefault";
+    public const INVALID_VALUE = "variable.invalidValue";
+    public const NOT_CHECKED = "variable.notChecked"; // notice
+
+    public static function getIds(): array
+    {
+        return [
+            self::WRONG_TYPE,
+            self::NO_DEFAULT,
+            self::INVALID_VALUE,
+            self::NOT_CHECKED,
+        ];
+    }
+
     public function getNodes(): array
     {
         return [SetVariablesCommand::class]; // todo SetNamesCommand, SetCharacterSetCommand
@@ -64,7 +79,7 @@ class SystemVariablesTypeRule implements AnalyzerRule
         $strict = ($mode->fullValue & SqlMode::STRICT_ALL_TABLES) !== 0;
 
         $errors = [];
-        foreach ($command->getAssignments() as $assignment) {
+        foreach ($command->assignments as $assignment) {
             $variable = $assignment->variable;
             if (!$variable instanceof SystemVariable) {
                 continue;
@@ -84,19 +99,19 @@ class SystemVariablesTypeRule implements AnalyzerRule
                     /** @var scalar|ExpressionNode|null $value */
                     $value = $value[0];
                 } else {
-                    $errors[] = Error::critical("variable.wrongType", "System variable {$name} can not be set to non-scalar value.", 0);
+                    $errors[] = Error::critical(self::WRONG_TYPE, "System variable {$name} can not be set to non-scalar value.", 0);
                     continue;
                 }
             }
             if ($value instanceof DefaultLiteral) {
                 if (!MysqlVariable::hasDefault($name)) {
-                    $errors[] = Error::critical("variable.noDefault", "System variable {$name} can not be set to default value.", 0);
+                    $errors[] = Error::critical(self::NO_DEFAULT, "System variable {$name} can not be set to default value.", 0);
                 }
                 continue;
             }
             if ($value === null) {
                 if (!$var->nullable) {
-                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} is not nullable.", 0);
+                    $errors[] = Error::critical(self::INVALID_VALUE, "System variable {$name} is not nullable.", 0);
                 }
                 continue;
             }
@@ -117,20 +132,21 @@ class SystemVariablesTypeRule implements AnalyzerRule
                 $expressionString = str_replace("\n", "", $expression->serialize($context->formatter));
                 $expressionType = get_class($expression);
                 $message = "System variable {$name} assignment with expression \"{$expressionString}\" ({$expressionType}) was not checked.";
-                $errors[] = Error::skipNotice("variable.notChecked", $message, 0);
+                $errors[] = Error::skipNotice(self::NOT_CHECKED, $message, 0);
             } else {
                 if ($var->nonEmpty && $value === '') {
-                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} can not be set to an empty value.", 0);
+                    $errors[] = Error::critical(self::INVALID_VALUE, "System variable {$name} can not be set to an empty value.", 0);
                 }
                 if ($var->nonZero && $value === 0) {
-                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} can not be set to zero.", 0);
+                    $errors[] = Error::critical(self::INVALID_VALUE, "System variable {$name} can not be set to zero.", 0);
                 }
                 if (!$context->typeChecker->canBeCastedTo($value, $type, $var->values, $context->resolver->cast())) {
                     if ($var->values !== null) {
                         $type .= '(' . implode(',', $var->values) . ')';
                     }
                     $realType = is_object($value) ? get_class($value) : gettype($value);
-                    $errors[] = Error::critical("variable.wongType", "System variable {$name} only accepts {$type}, but {$realType} given.", 0);
+                    $val = is_string($value) ? " '{$value}'" : null;
+                    $errors[] = Error::critical(self::WRONG_TYPE, "System variable {$name} only accepts {$type}, but {$realType}{$val} given.", 0);
                     continue;
                 }
 
@@ -141,14 +157,14 @@ class SystemVariablesTypeRule implements AnalyzerRule
                 if ($var->min === null || $var->max === null) {
                     continue;
                 } elseif ($value < $var->min && ($strict || (!$var->clamp && !$var->clampMin))) {
-                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} value must be between {$var->min} and {$var->max}.", 0);
+                    $errors[] = Error::critical(self::INVALID_VALUE, "System variable {$name} value must be between {$var->min} and {$var->max}.", 0);
                 } elseif ($value > $var->max && ($strict || !$var->clamp)) {
-                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} value must be between {$var->min} and {$var->max}.", 0);
+                    $errors[] = Error::critical(self::INVALID_VALUE, "System variable {$name} value must be between {$var->min} and {$var->max}.", 0);
                 }
                 if ($var->increment === null) {
                     continue;
                 } elseif (($strict || !$var->clamp) && (!is_int($value) || ($value % $var->increment) !== 0)) {
-                    $errors[] = Error::critical("variable.invalidValue", "System variable {$name} value must be multiple of {$var->increment}.", 0);
+                    $errors[] = Error::critical(self::INVALID_VALUE, "System variable {$name} value must be multiple of {$var->increment}.", 0);
                 }
             }
         }

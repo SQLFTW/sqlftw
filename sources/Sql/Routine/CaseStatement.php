@@ -13,10 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 use function count;
 
-class CaseStatement extends StatementImpl
+class CaseStatement extends Statement
 {
 
     public ?RootNode $condition;
@@ -52,14 +51,14 @@ class CaseStatement extends StatementImpl
             $result .= 'WHEN ' . $this->values[$i]->serialize($formatter) . " THEN \n";
             $statements = $this->statementLists[$i];
             if ($statements !== []) {
-                $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";
+                $result .= $formatter->formatNodesList($statements, ";\n") . ";\n";
             }
         }
         if (count($this->values) < count($this->statementLists)) {
             $result .= "ELSE\n";
             $statements = $this->statementLists[count($this->values)];
             if ($statements !== []) {
-                $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";
+                $result .= $formatter->formatNodesList($statements, ";\n") . ";\n";
             }
         }
 

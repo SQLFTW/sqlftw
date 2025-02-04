@@ -11,9 +11,8 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowFunctionStatusCommand extends StatementImpl implements ShowCommand
+class ShowFunctionStatusCommand extends ShowCommand
 {
 
     public ?string $like;

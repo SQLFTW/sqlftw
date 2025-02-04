@@ -134,8 +134,7 @@ class ArgumentResolver
     public function resolve(string $query, array $arguments): string
     {
         $counter = 0;
-        $remaining = [];
-        $cb = function (array $match) use ($arguments, &$remaining, &$counter): string {
+        $cb = function (array $match) use ($arguments, &$counter): string {
             rd($match);
             [$all, $nullable, $type, $size, $fraction, $array, $from, $extent, $to, $name] = $match;
             if (!array_key_exists($type, self::$types)) {

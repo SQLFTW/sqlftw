@@ -7,12 +7,13 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Dal\Table;
+namespace SqlFtw\Sql;
 
-use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\TableCommand;
+use SqlFtw\Formatter\Formatter;
 
-interface DalTableCommand extends DalCommand, TableCommand
+interface NodeInterface
 {
+
+    public function serialize(Formatter $formatter): string;
 
 }

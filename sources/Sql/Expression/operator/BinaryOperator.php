@@ -37,7 +37,7 @@ use SqlFtw\Formatter\Formatter;
  * left -> right
  * left ->> right
  */
-class BinaryOperator implements OperatorExpression
+class BinaryOperator extends OperatorExpression
 {
 
     public RootNode $left;

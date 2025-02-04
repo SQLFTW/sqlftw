@@ -1382,7 +1382,7 @@ class TableCommandsParser
                     // todo: parser warning
                     /** @var Charset $previousCharset */
                     $previousCharset = $options[TableOption::CHARACTER_SET];
-                    if (!$previousCharset->equals($charset)) {
+                    if ($previousCharset->value !== $charset->value) {
                         throw new ParserException('Charset declaration conflict.', $tokenList);
                     }
                 }
@@ -1723,9 +1723,10 @@ class TableCommandsParser
         $columns = $type = null;
         if ($condition !== null) {
             $columns = $condition->columns ?? $condition->expression;
-            if ($columns instanceof ListExpression) {
+            /*if ($columns instanceof ListExpression) {
                 $columns = $columns->items;
-            } elseif ($columns instanceof RootNode) {
+            } else*/
+            if ($columns instanceof RootNode) {
                 $columns = [$columns];
             }
             $columns = $columns !== null ? count($columns) : null;

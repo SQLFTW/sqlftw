@@ -10,11 +10,11 @@
 namespace SqlFtw\Sql\Dml\DoCommand;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\StatementImpl;
 
-class DoCommand extends StatementImpl implements DmlCommand
+class DoCommand extends Command implements DmlCommand
 {
 
     /** @var non-empty-list<ExpressionNode> */
@@ -30,7 +30,7 @@ class DoCommand extends StatementImpl implements DmlCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'DO ' . $formatter->formatSerializablesList($this->expressions);
+        return 'DO ' . $formatter->formatNodesList($this->expressions);
     }
 
 }

@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class LockInstanceCommand extends StatementImpl implements TransactionCommand
+class LockInstanceCommand extends Command implements TransactionCommand
 {
 
     public function serialize(Formatter $formatter): string

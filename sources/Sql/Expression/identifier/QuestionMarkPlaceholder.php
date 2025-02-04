@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * ?
  */
-class QuestionMarkPlaceholder implements Placeholder
+class QuestionMarkPlaceholder extends Placeholder
 {
 
     public function getName(): string

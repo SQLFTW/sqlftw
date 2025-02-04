@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * variable := expr
  */
-class AssignOperator implements OperatorExpression
+class AssignOperator extends OperatorExpression
 {
 
     public UserVariable $variable;

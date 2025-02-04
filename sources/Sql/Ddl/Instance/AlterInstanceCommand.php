@@ -10,10 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Instance;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Ddl\DdlCommand;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class AlterInstanceCommand extends StatementImpl implements DdlCommand
+class AlterInstanceCommand extends Command implements InstanceCommand
 {
 
     public AlterInstanceAction $action;

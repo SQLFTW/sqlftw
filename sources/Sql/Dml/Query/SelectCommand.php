@@ -18,10 +18,9 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\NodeInterface;
 
-class SelectCommand extends StatementImpl implements SimpleQuery
+class SelectCommand extends SimpleQuery
 {
 
     /** @var non-empty-list<SelectExpression> */
@@ -41,21 +40,10 @@ class SelectCommand extends StatementImpl implements SimpleQuery
     /** @var non-empty-array<string, WindowSpecification>|null */
     public ?array $windows;
 
-    /** @var non-empty-list<OrderByExpression>|null */
-    public ?array $orderBy;
-
-    /** @var int|SimpleName|Placeholder|null */
-    public $limit;
-
-    /** @var int|SimpleName|Placeholder|null */
-    public $offset;
-
     public ?SelectDistinctOption $distinct;
 
     /** @var array<SelectOption::*, bool> */
     public array $options;
-
-    public ?SelectInto $into;
 
     /** @var non-empty-list<SelectLocking>|null */
     public ?array $locking;
@@ -129,7 +117,7 @@ class SelectCommand extends StatementImpl implements SimpleQuery
         $result .= 'SELECT';
 
         if ($this->optimizerHints !== null) {
-            $result .= ' /*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */';
+            $result .= ' /*+ ' . $formatter->formatNodesList($this->optimizerHints) . ' */';
         }
 
         if ($this->distinct !== null) {
@@ -141,7 +129,7 @@ class SelectCommand extends StatementImpl implements SimpleQuery
             }
         }
 
-        $result .= ' ' . $formatter->formatSerializablesList($this->columns);
+        $result .= ' ' . $formatter->formatNodesList($this->columns);
 
         if ($this->into !== null && $this->into->position === SelectInto::POSITION_BEFORE_FROM) {
             $result .= "\n" . $this->into->serialize($formatter);
@@ -153,7 +141,7 @@ class SelectCommand extends StatementImpl implements SimpleQuery
             $result .= "\nWHERE " . $this->where->serialize($formatter);
         }
         if ($this->groupBy !== null) {
-            $result .= "\nGROUP BY " . $formatter->formatSerializablesList($this->groupBy, ",\n\t");
+            $result .= "\nGROUP BY " . $formatter->formatNodesList($this->groupBy, ",\n\t");
             if ($this->withRollup) {
                 $result .= "\n\tWITH ROLLUP";
             }
@@ -173,12 +161,12 @@ class SelectCommand extends StatementImpl implements SimpleQuery
             }
         }
         if ($this->orderBy !== null) {
-            $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
+            $result .= "\nORDER BY " . $formatter->formatNodesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\nLIMIT " . ($this->limit instanceof NodeInterface ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= "\nOFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
+                $result .= "\nOFFSET " . ($this->offset instanceof NodeInterface ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
         if ($this->into !== null && $this->into->position === SelectInto::POSITION_BEFORE_LOCKING) {

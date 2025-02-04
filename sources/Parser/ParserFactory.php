@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Parser;
 
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Dal\BinlogCommandParser;
 use SqlFtw\Parser\Dal\CacheCommandsParser;
 use SqlFtw\Parser\Dal\ComponentCommandsParser;
@@ -81,7 +82,7 @@ class ParserFactory
 
     private OptimizerHintParser $optimizerHintParser;
 
-    public function __construct(Parser $parser, ParserConfig $config, Session $session)
+    public function __construct(Parser $parser, ParserConfig $config, ParserState $state, Session $session)
     {
         $this->parser = $parser;
         $this->platform = $config->getPlatform();
@@ -93,8 +94,14 @@ class ParserFactory
         $this->expressionParser = new ExpressionParser($config, $queryParserProxy);
         $this->optimizerHintParser = new OptimizerHintParser($this->expressionParser);
         $this->tableReferenceParser = new TableReferenceParser($this->expressionParser, $queryParserProxy);
-        $this->queryParser = new QueryParser($this->platform, $this, $this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
-        $this->routineBodyParser = new RoutineBodyParser($this->platform, $this->parser, $this->expressionParser, $this->queryParser);
+        $this->queryParser = new QueryParser($this->platform, $state, $this, $this->expressionParser, $this->tableReferenceParser, $this->optimizerHintParser);
+
+        // todo: remove dependency on Formatter
+        $platform = $config->getPlatform();
+        $normalizer = $platform->getNormalizer($session);
+        $normalizer->quoteAllNames(false);
+        $formatter = new Formatter($platform, $session, $normalizer);
+        $this->routineBodyParser = new RoutineBodyParser($this->platform, $this->parser, $this->expressionParser, $this->queryParser, $formatter);
     }
 
     public function getParser(): Parser

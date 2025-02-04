@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 
-class OrderByAction implements TableAction
+class OrderByAction extends TableAction
 {
 
     /** @var non-empty-list<OrderByExpression> */
@@ -28,7 +28,7 @@ class OrderByAction implements TableAction
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ORDER BY ' . $formatter->formatSerializablesList($this->columns);
+        return 'ORDER BY ' . $formatter->formatNodesList($this->columns);
     }
 
 }

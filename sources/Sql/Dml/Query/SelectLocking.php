@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class SelectLocking implements SqlSerializable
+class SelectLocking extends Node
 {
 
     public SelectLockOption $for;
@@ -37,7 +37,7 @@ class SelectLocking implements SqlSerializable
     {
         $result = $this->for->serialize($formatter);
         if ($this->tables !== null) {
-            $result .= ' OF ' . $formatter->formatSerializablesList($this->tables);
+            $result .= ' OF ' . $formatter->formatNodesList($this->tables);
         }
         if ($this->wait !== null) {
             $result .= ' ' . $this->wait->serialize($formatter);

@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 
 use SqlFtw\Formatter\Formatter;
 
-class EscapedTableReference implements TableReferenceNode
+class EscapedTableReference extends TableReferenceNode
 {
 
     public TableReferenceNode $node;

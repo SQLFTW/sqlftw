@@ -10,12 +10,12 @@
 namespace SqlFtw\Sql\Dal\Routine;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Ddl\Routine\UdfReturnDataType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class CreateFunctionSonameCommand extends StatementImpl implements DalCommand
+class CreateFunctionSonameCommand extends Command implements DalCommand
 {
 
     public ObjectIdentifier $function;

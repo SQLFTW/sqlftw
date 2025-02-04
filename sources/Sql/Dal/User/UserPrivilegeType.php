@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\NodeInterface;
 
-interface UserPrivilegeType extends SqlSerializable
+interface UserPrivilegeType extends NodeInterface
 {
 
 }

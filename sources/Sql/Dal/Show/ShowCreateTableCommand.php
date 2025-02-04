@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowCreateTableCommand extends StatementImpl implements ShowCommand
+class ShowCreateTableCommand extends ShowCommand
 {
 
     public ObjectIdentifier $table;

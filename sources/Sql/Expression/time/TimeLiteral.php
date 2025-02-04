@@ -20,7 +20,7 @@ use const STR_PAD_LEFT;
 /**
  * e.g. time '12:00:00'
  */
-class TimeLiteral implements TimeValue
+class TimeLiteral extends Literal implements TimeValue
 {
 
     /** @readonly */

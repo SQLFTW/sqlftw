@@ -27,7 +27,7 @@ use function implode;
  * with charset:
  * _utf8 'string'
  */
-class StringLiteral implements StringValue, BoolValue
+class StringLiteral extends Literal implements StringValue, BoolValue
 {
 
     /** @readonly */

@@ -12,9 +12,9 @@ namespace SqlFtw\Sql\Dal\Replication;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class ReplicationGtidAssignOption implements SqlSerializable
+class ReplicationGtidAssignOption extends Node
 {
 
     public const OFF = Keyword::OFF;

@@ -13,12 +13,12 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use SqlFtw\Util\TypeChecker;
 use function is_int;
 use function is_string;
 
-class Condition implements SqlSerializable
+class Condition extends Node
 {
 
     public ConditionType $type;

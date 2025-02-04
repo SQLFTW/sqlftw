@@ -11,10 +11,9 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\UserExpression;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 
-class ShowGrantsCommand extends StatementImpl implements ShowCommand
+class ShowGrantsCommand extends ShowCommand
 {
 
     public ?UserExpression $user;
@@ -37,7 +36,7 @@ class ShowGrantsCommand extends StatementImpl implements ShowCommand
         if ($this->user !== null) {
             $result .= ' FOR ' . $this->user->serialize($formatter);
             if ($this->roles !== null) {
-                $result .= ' USING ' . $formatter->formatSerializablesList($this->roles);
+                $result .= ' USING ' . $formatter->formatNodesList($this->roles);
             }
         }
 

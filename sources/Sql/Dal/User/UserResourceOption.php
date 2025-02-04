@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class UserResourceOption implements SqlSerializable
+class UserResourceOption extends Node
 {
 
     public UserResourceOptionType $type;

@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\Reset;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\StatementImpl;
 
-class ResetCommand extends StatementImpl implements DalCommand
+class ResetCommand extends Command implements DalCommand
 {
 
     /** @var non-empty-list<ResetOption> */
@@ -29,7 +29,7 @@ class ResetCommand extends StatementImpl implements DalCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'RESET ' . $formatter->formatSerializablesList($this->options);
+        return 'RESET ' . $formatter->formatNodesList($this->options);
     }
 
 }

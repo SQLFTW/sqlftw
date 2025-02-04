@@ -17,7 +17,7 @@ use SqlFtw\Formatter\Formatter;
  * e.g. value of "BOTH" in "TRIM(BOTH FROM foo)"  -> [BOTH => NoValue, FROM => foo]
  *   as compared to "TRIM(BOTH "\r\n" FROM foo)") -> [BOTH => "\r\n", FROM => foo]
  */
-class NoValue implements ArgumentNode
+class NoValue extends ArgumentNode
 {
 
     public function serialize(Formatter $formatter): string

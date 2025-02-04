@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Routine;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Error\SqlState;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Statement;
 
-class DeclareConditionStatement extends StatementImpl
+class DeclareConditionStatement extends Statement
 {
 
     public string $condition;

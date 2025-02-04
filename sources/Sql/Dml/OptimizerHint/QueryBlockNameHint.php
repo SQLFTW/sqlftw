@@ -11,19 +11,16 @@ namespace SqlFtw\Sql\Dml\OptimizerHint;
 
 use SqlFtw\Formatter\Formatter;
 
-class QueryBlockNameHint implements OptimizerHint
+class QueryBlockNameHint extends OptimizerHint
 {
+
+    public string $type = OptimizerHintType::RESOURCE_GROUP;
 
     public string $queryBlock;
 
     public function __construct(string $queryBlock)
     {
         $this->queryBlock = $queryBlock;
-    }
-
-    public function getType(): string
-    {
-        return OptimizerHintType::RESOURCE_GROUP;
     }
 
     public function serialize(Formatter $formatter): string

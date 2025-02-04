@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class CheckPartitionAction implements PartitioningAction
+class CheckPartitionAction extends PartitioningAction
 {
 
     /** @var non-empty-list<string>|null */

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-interface PartitioningAction extends AlterTableAction
+abstract class PartitioningAction extends AlterTableAction
 {
 
 }

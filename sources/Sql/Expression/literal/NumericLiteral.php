@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * e.g. -123.456
  */
-class NumericLiteral implements NumericValue
+class NumericLiteral extends Literal implements NumericValue
 {
 
     public string $value;

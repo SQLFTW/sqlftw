@@ -14,10 +14,8 @@ use SqlFtw\Formatter\Formatter;
 /**
  * :name
  */
-class DoubleColonPlaceholder implements Placeholder
+class DoubleColonPlaceholder extends Placeholder
 {
-
-    public string $name;
 
     public function __construct(string $name)
     {

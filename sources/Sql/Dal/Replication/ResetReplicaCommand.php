@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class ResetReplicaCommand extends StatementImpl implements ReplicationCommand
+class ResetReplicaCommand extends Command implements ReplicationCommand
 {
 
     public bool $all;

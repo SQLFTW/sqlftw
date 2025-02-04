@@ -13,10 +13,10 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Order;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function is_string;
 
-class IndexPart implements SqlSerializable
+class IndexPart extends Node
 {
 
     /** @var string|RootNode */

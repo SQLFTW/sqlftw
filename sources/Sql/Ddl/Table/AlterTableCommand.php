@@ -20,7 +20,7 @@ use SqlFtw\Sql\Ddl\Table\Option\TableOption;
 use SqlFtw\Sql\Ddl\Table\Option\TableOptionsList;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitioningDefinition;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\TableCommand;
 use function assert;
 use function is_array;
 use function is_bool;
@@ -30,7 +30,7 @@ use function trim;
 /**
  * @phpstan-import-type TableOptionValue from TableOption
  */
-class AlterTableCommand extends StatementImpl implements DdlTableCommand
+class AlterTableCommand extends TableCommand implements DdlTableCommand
 {
 
     public ObjectIdentifier $name;

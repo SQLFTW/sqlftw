@@ -23,7 +23,7 @@ use const STR_PAD_LEFT;
 /**
  * e.g. datetime '2020-01-01 12:00:'
  */
-class DatetimeLiteral implements TimeValue
+class DatetimeLiteral extends Literal implements TimeValue
 {
 
     /** @readonly */

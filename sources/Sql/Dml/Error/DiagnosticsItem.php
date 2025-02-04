@@ -10,17 +10,17 @@
 namespace SqlFtw\Sql\Dml\Error;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\Identifier;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Expression\IdentifierInterface;
+use SqlFtw\Sql\Node;
 
-class DiagnosticsItem implements SqlSerializable
+class DiagnosticsItem extends Node
 {
 
-    public Identifier $target;
+    public IdentifierInterface $target;
 
     public InformationItem $item;
 
-    public function __construct(Identifier $target, InformationItem $item)
+    public function __construct(IdentifierInterface $target, InformationItem $item)
     {
         $this->target = $target;
         $this->item = $item;

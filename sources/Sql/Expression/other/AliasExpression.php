@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * expression AS name
  */
-class AliasExpression implements ArgumentNode
+class AliasExpression extends ArgumentNode
 {
 
     public ExpressionNode $expression;

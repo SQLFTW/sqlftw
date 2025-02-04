@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Dal\Cache;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 use function is_array;
 
 /**
  * MySQL MyISAM tables only
  */
-class CacheIndexCommand extends StatementImpl implements CacheCommand
+class CacheIndexCommand extends Command implements CacheCommand
 {
 
     public string $keyCache;
@@ -40,7 +40,7 @@ class CacheIndexCommand extends StatementImpl implements CacheCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CACHE INDEX ' . $formatter->formatSerializablesList($this->tableIndexLists);
+        $result = 'CACHE INDEX ' . $formatter->formatNodesList($this->tableIndexLists);
 
         if ($this->partitions !== null) {
             $result .= ' PARTITION';

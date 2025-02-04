@@ -11,10 +11,9 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 
-class RevokeAllCommand extends StatementImpl implements UserCommand
+class RevokeAllCommand extends UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
@@ -40,7 +39,7 @@ class RevokeAllCommand extends StatementImpl implements UserCommand
     public function serialize(Formatter $formatter): string
     {
         return 'REVOKE ' . ($this->ifExists ? 'IF EXISTS ' : '')
-            . ' ALL, GRANT OPTION FROM ' . $formatter->formatSerializablesList($this->users)
+            . ' ALL, GRANT OPTION FROM ' . $formatter->formatNodesList($this->users)
             . ($this->ignoreUnknownUser ? ' IGNORE UNKNOWN USER' : '');
     }
 

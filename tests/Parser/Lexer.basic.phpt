@@ -64,6 +64,8 @@ Assert::token($tokens[3], T::WHITESPACE, "\n", 12);
 Assert::token($tokens[4], T::SYMBOL, ';', 13);
 
 $tokens = Assert::tokens('DELIMITER SELECT', 3);
+rd($tokens);
+rd($tokens[2]->error);
 Assert::invalidToken($tokens[2], T::DELIMITER_DEFINITION | T::INVALID, '~^Delimiter can not be a reserved word~', 10);
 
 // NULL

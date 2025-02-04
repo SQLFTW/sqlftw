@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dal\User;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
 
-class AddAuthFactor implements AlterUserAction
+class AddAuthFactor extends AlterUserAction
 {
 
     public int $factor1;

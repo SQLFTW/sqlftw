@@ -12,12 +12,11 @@
 namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlEnum;
 
 /**
  * e.g. Europe/Prague
  */
-class TimeZoneName extends SqlEnum implements TimeZone
+class TimeZoneName extends TimeZone
 {
 
     public const UTC = 'UTC';
@@ -786,9 +785,16 @@ class TimeZoneName extends SqlEnum implements TimeZone
     /** @deprecated */
     public const ZULU = 'Zulu';
 
+    public string $value;
+
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+
     public function serialize(Formatter $formatter): string
     {
-        return "'" . $this->getValue() . "'";
+        return "'" . $this->value . "'";
     }
 
 }

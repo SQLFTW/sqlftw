@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-interface AlterUserAction extends SqlSerializable
+abstract class AlterUserAction extends Node
 {
 
 }

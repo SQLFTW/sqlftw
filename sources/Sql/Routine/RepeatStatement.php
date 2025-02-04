@@ -5,9 +5,8 @@ namespace SqlFtw\Sql\Routine;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 
-class RepeatStatement extends StatementImpl
+class RepeatStatement extends Statement
 {
 
     /** @var list<Statement> */
@@ -38,7 +37,7 @@ class RepeatStatement extends StatementImpl
         }
         $result .= "REPEAT\n";
         if ($this->statements !== []) {
-            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+            $result .= $formatter->formatNodesList($this->statements, ";\n") . ";\n";
         }
         $result .= "UNTIL " . $this->condition->serialize($formatter) . "\nEND REPEAT";
         if ($this->label !== null && $this->endLabel) {

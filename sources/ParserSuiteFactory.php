@@ -11,6 +11,7 @@ namespace SqlFtw\Tests;
 
 use SqlFtw\Analyzer\Analyzer;
 use SqlFtw\Analyzer\AnalyzerContext;
+use SqlFtw\Analyzer\AnalyzerRule;
 use SqlFtw\Analyzer\Context\Provider\DummyDefinitionProvider;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Lexer;
@@ -18,7 +19,6 @@ use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\ParserConfig;
 use SqlFtw\ParserSuite;
 use SqlFtw\Platform\ClientSideExtension;
-use SqlFtw\Platform\Normalizer\MysqlNormalizer;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Resolver\ExpressionResolver;
 use SqlFtw\Session\Session;
@@ -27,6 +27,9 @@ use SqlFtw\Sql\SqlMode;
 class ParserSuiteFactory
 {
 
+    /**
+     * @param list<AnalyzerRule> $rules
+     */
     public static function fromConfig(
         ParserConfig $config,
         ?int $sqlMode = null,
@@ -42,7 +45,8 @@ class ParserSuiteFactory
 
         $lexer = new Lexer($config, $session);
         $parser = new Parser($config, $session);
-        $normalizer = new MysqlNormalizer($platform, $session);
+        $normalizer = $platform->getNormalizer($session);
+        $normalizer->quoteAllNames(false);
         $formatter = new Formatter($platform, $session, $normalizer);
 
         $definitionProvider ??= new DummyDefinitionProvider();
@@ -56,6 +60,7 @@ class ParserSuiteFactory
     /**
      * @param Platform::* $platform
      * @param int|string|null $version
+     * @param list<AnalyzerRule> $rules
      */
     public static function fromPlatform(
         string $platform,

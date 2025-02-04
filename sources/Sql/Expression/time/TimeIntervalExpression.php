@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * e.g. INTERVAL (n + 1) DAY
  */
-class TimeIntervalExpression implements TimeInterval
+class TimeIntervalExpression extends TimeInterval
 {
 
     public RootNode $expression;

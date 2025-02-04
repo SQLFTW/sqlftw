@@ -29,7 +29,7 @@ class ReplicationFilterType extends SqlEnum
      * @readonly
      * @var array<self::*, string>
      */
-    public static array $itemTypes = [
+    public static array $itemTypes = [ // @phpstan-ignore property.readOnlyByPhpDocDefaultValue
         self::REPLICATE_DO_DB => BaseType::CHAR . '[]',
         self::REPLICATE_IGNORE_DB => BaseType::CHAR . '[]',
         self::REPLICATE_DO_TABLE => ObjectIdentifier::class . '[]',

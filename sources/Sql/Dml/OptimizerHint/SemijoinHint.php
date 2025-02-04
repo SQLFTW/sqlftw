@@ -15,11 +15,11 @@ use function implode;
 /**
  * @phpstan-import-type SemijoinHintType from OptimizerHintType
  */
-class SemijoinHint implements OptimizerHint
+class SemijoinHint extends OptimizerHint
 {
 
     /** @var SemijoinHintType&string */
-    public string $type;
+    public string $type; // @phpstan-ignore property.phpDocType
 
     public ?string $queryBlock;
 

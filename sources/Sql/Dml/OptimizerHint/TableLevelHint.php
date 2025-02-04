@@ -15,11 +15,11 @@ use SqlFtw\Sql\InvalidDefinitionException;
 /**
  * @phpstan-import-type TableLevelHintType from OptimizerHintType
  */
-class TableLevelHint implements OptimizerHint
+class TableLevelHint extends OptimizerHint
 {
 
     /** @var TableLevelHintType&string */
-    public string $type;
+    public string $type; // @phpstan-ignore property.phpDocType
 
     public ?string $queryBlock;
 
@@ -58,7 +58,7 @@ class TableLevelHint implements OptimizerHint
         return $this->type . '('
             . ($this->queryBlock !== null ? '@' . $formatter->formatName($this->queryBlock) : '')
             . ($this->queryBlock !== null && $this->tables !== null ? ' ' : '')
-            . ($this->tables !== null ? $formatter->formatSerializablesList($this->tables) : '') . ')';
+            . ($this->tables !== null ? $formatter->formatNodesList($this->tables) : '') . ')';
     }
 
 }

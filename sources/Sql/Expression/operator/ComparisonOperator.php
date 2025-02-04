@@ -22,7 +22,7 @@ use SqlFtw\Formatter\Formatter;
  * left <=> right
  * left [NOT] IN right
  */
-class ComparisonOperator implements OperatorExpression
+class ComparisonOperator extends OperatorExpression
 {
 
     public RootNode $left;

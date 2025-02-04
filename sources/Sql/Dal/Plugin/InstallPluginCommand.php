@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\Plugin;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class InstallPluginCommand extends StatementImpl implements PluginCommand
+class InstallPluginCommand extends Command implements PluginCommand
 {
 
     public string $pluginName;

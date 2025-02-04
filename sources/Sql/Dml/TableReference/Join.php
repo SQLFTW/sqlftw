@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-abstract class Join implements TableReferenceNode
+abstract class Join extends TableReferenceNode
 {
 
     public TableReferenceNode $left;

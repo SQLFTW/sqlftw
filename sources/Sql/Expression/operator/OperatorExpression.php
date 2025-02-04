@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Expression;
 
-interface OperatorExpression extends RootNode
+abstract class OperatorExpression extends RootNode
 {
 
 }

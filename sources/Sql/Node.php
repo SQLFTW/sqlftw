@@ -7,12 +7,15 @@
  * For the full copyright and license information read the file 'license.md', distributed with this source code
  */
 
-namespace SqlFtw\Sql\Dal\Table;
+namespace SqlFtw\Sql;
 
-use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\TablesCommand;
+use SqlFtw\Formatter\Formatter;
 
-interface DalTablesCommand extends DalCommand, TablesCommand
+abstract class Node implements NodeInterface
 {
+
+    public int $startToken; // @phpstan-ignore property.uninitialized
+
+    abstract public function serialize(Formatter $formatter): string;
 
 }

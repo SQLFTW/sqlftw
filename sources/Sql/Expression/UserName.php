@@ -11,7 +11,7 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Formatter\Formatter;
 
-class UserName implements SqlSerializable
+class UserName extends Node
 {
 
     public string $user;

@@ -14,26 +14,14 @@ use SqlFtw\Sql\Dml\WithClause;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\NodeInterface;
 
-class ParenthesizedQueryExpression extends StatementImpl implements Query
+class ParenthesizedQueryExpression extends Query
 {
 
     public Query $query;
 
     public ?WithClause $with;
-
-    /** @var non-empty-list<OrderByExpression>|null */
-    public ?array $orderBy;
-
-    /** @var int|SimpleName|Placeholder|null */
-    public $limit;
-
-    /** @var int|SimpleName|Placeholder|null */
-    public $offset;
-
-    public ?SelectInto $into;
 
     /**
      * @param non-empty-list<OrderByExpression>|null $orderBy
@@ -80,12 +68,12 @@ class ParenthesizedQueryExpression extends StatementImpl implements Query
         $result .= '(' . $this->query->serialize($formatter) . ')';
 
         if ($this->orderBy !== null) {
-            $result .= "\nORDER BY " . $formatter->formatSerializablesList($this->orderBy, ",\n\t");
+            $result .= "\nORDER BY " . $formatter->formatNodesList($this->orderBy, ",\n\t");
         }
         if ($this->limit !== null) {
-            $result .= "\nLIMIT " . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= "\nLIMIT " . ($this->limit instanceof NodeInterface ? $this->limit->serialize($formatter) : $this->limit);
             if ($this->offset !== null) {
-                $result .= " OFFSET " . ($this->offset instanceof SqlSerializable ? $this->offset->serialize($formatter) : $this->offset);
+                $result .= " OFFSET " . ($this->offset instanceof NodeInterface ? $this->offset->serialize($formatter) : $this->offset);
             }
         }
         if ($this->into !== null) {

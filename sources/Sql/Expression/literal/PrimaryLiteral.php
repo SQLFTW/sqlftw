@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * PRIMARY
  */
-class PrimaryLiteral implements KeywordLiteral
+class PrimaryLiteral extends KeywordLiteral
 {
 
     public string $value = 'PRIMARY';

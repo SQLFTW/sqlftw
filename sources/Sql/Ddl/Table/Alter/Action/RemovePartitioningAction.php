@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class RemovePartitioningAction implements PartitioningAction
+class RemovePartitioningAction extends PartitioningAction
 {
 
     public function serialize(Formatter $formatter): string

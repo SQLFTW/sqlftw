@@ -14,7 +14,7 @@ use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\RootNode;
 
-class Assignment implements SqlSerializable
+class Assignment extends Node
 {
 
     public Identifier $variable;

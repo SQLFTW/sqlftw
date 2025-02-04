@@ -69,7 +69,7 @@ class IndexDefinition implements TableItem, ConstraintBody
 
     public function serializeTail(Formatter $formatter): string
     {
-        $result = '(' . $formatter->formatSerializablesList($this->parts) . ')';
+        $result = '(' . $formatter->formatNodesList($this->parts) . ')';
 
         if ($this->algorithm !== null) {
             $result .= ' USING ' . $this->algorithm->serialize($formatter);

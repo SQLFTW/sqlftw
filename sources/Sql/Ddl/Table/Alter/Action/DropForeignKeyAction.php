@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropForeignKeyAction implements ForeignKeyAction
+class DropForeignKeyAction extends ForeignKeyAction
 {
 
     public string $foreignKey;

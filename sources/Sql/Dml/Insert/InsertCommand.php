@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Sql\Dml\DmlCommand;
 
-interface InsertCommand extends DmlCommand
+abstract class InsertCommand extends InsertOrReplaceCommand implements DmlCommand
 {
 
 }

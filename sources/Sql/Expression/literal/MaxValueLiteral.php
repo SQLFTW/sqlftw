@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * MAXVALUE used in partitioning
  */
-class MaxValueLiteral implements KeywordLiteral
+class MaxValueLiteral extends KeywordLiteral
 {
 
     public string $value = 'MAXVALUE';

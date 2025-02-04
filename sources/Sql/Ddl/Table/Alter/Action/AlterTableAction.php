@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-interface AlterTableAction extends SqlSerializable
+abstract class AlterTableAction extends Node
 {
 
 }

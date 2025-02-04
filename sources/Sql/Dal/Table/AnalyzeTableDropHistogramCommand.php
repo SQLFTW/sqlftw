@@ -11,13 +11,10 @@ namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\TablesCommand;
 
-class AnalyzeTableDropHistogramCommand extends StatementImpl implements DalTablesCommand
+class AnalyzeTableDropHistogramCommand extends TablesCommand
 {
-
-    /** @var non-empty-list<ObjectIdentifier> */
-    public array $tables;
 
     /** @var non-empty-list<string> */
     public array $columns;
@@ -41,7 +38,7 @@ class AnalyzeTableDropHistogramCommand extends StatementImpl implements DalTable
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->tables)
+        $result .= ' TABLE ' . $formatter->formatNodesList($this->tables)
             . ' DROP HISTOGRAM ON ' . $formatter->formatNamesList($this->columns);
 
         return $result;

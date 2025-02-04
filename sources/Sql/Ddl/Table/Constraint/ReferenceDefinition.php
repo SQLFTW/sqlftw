@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class ReferenceDefinition implements SqlSerializable
+class ReferenceDefinition extends Node
 {
 
     public ObjectIdentifier $sourceTable;

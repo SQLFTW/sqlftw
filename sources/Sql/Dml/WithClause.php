@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dml;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class WithClause implements SqlSerializable
+class WithClause extends Node
 {
 
     /** @var non-empty-list<WithExpression> */
@@ -36,7 +36,7 @@ class WithClause implements SqlSerializable
             $result .= ' RECURSIVE';
         }
 
-        return $result . "\n    " . $formatter->formatSerializablesList($this->expressions, ",\n    ");
+        return $result . "\n    " . $formatter->formatNodesList($this->expressions, ",\n    ");
     }
 
 }

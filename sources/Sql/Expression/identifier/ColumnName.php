@@ -14,10 +14,8 @@ use SqlFtw\Formatter\Formatter;
 /**
  * Column name including table name and schema name, e.g. "foo.bar.baz"
  */
-class ColumnName implements ColumnIdentifier
+class ColumnName extends Identifier implements ColumnIdentifier
 {
-
-    public string $name;
 
     public string $table;
 

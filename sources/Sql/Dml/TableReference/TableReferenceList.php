@@ -13,7 +13,7 @@ use Countable;
 use SqlFtw\Formatter\Formatter;
 use function count;
 
-class TableReferenceList implements TableReferenceNode, Countable
+class TableReferenceList extends TableReferenceNode implements Countable
 {
 
     /** @var non-empty-list<TableReferenceNode> */
@@ -34,7 +34,7 @@ class TableReferenceList implements TableReferenceNode, Countable
 
     public function serialize(Formatter $formatter): string
     {
-        return $formatter->formatSerializablesList($this->references);
+        return $formatter->formatNodesList($this->references);
     }
 
 }

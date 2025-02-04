@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropPrimaryKeyAction implements IndexAction
+class DropPrimaryKeyAction extends IndexAction
 {
 
     public function serialize(Formatter $formatter): string

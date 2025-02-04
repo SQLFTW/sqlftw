@@ -11,10 +11,10 @@ namespace SqlFtw\Sql\Dal\Cache;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function is_array;
 
-class TableIndexList implements SqlSerializable
+class TableIndexList extends Node
 {
 
     public ObjectIdentifier $table;

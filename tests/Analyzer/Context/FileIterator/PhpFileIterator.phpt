@@ -34,8 +34,7 @@ $c = 0;
 foreach ($migrations as $statements) {
     foreach ($statements as $file => $statement) {
         foreach ($suite->parser->parseAll($statement) as $command) {
-            $errors = $command->getErrors();
-            if ($errors !== []) {
+            if ($command->errors !== []) {
                 //rl($errors);
                 //rd($statement);
             }

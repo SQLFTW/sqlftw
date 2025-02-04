@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class ImportTablespaceAction implements TablespaceAction
+class ImportTablespaceAction extends TablespaceAction
 {
 
     public function serialize(Formatter $formatter): string

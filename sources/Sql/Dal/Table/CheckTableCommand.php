@@ -10,10 +10,11 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\TableCommand;
 
-class CheckTableCommand extends StatementImpl implements DalTablesCommand
+class CheckTableCommand extends TableCommand implements DalCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
@@ -32,7 +33,7 @@ class CheckTableCommand extends StatementImpl implements DalTablesCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CHECK TABLE ' . $formatter->formatSerializablesList($this->names);
+        $result = 'CHECK TABLE ' . $formatter->formatNodesList($this->names);
 
         if ($this->option !== null) {
             $result .= ' ' . $this->option->serialize($formatter);

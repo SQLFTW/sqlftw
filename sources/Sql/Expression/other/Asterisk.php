@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * e.g. in COUNT(*)
  */
-class Asterisk implements ArgumentNode, ArgumentValue
+class Asterisk extends ArgumentValue
 {
 
     public string $value = '*';

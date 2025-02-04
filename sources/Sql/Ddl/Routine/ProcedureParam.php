@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Ddl\Routine;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ColumnType;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class ProcedureParam implements SqlSerializable
+class ProcedureParam extends Node
 {
 
     public string $name;

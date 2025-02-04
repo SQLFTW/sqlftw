@@ -13,14 +13,14 @@ namespace SqlFtw\Sql\Ddl\Table\Option;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function in_array;
 use function strtolower;
 
 /**
  * @see https://en.wikipedia.org/wiki/Comparison_of_MySQL_database_engines
  */
-class StorageEngine implements SqlSerializable
+class StorageEngine extends Node
 {
 
     private string $value;
@@ -116,7 +116,7 @@ class StorageEngine implements SqlSerializable
      * @readonly
      * @var list<string>
      */
-    public static array $transactional = [
+    public static array $transactional = [ // @phpstan-ignore property.readOnlyByPhpDocDefaultValue
         self::BERKELEYDB,
         self::FALCON,
         self::FEDERATED_X,
@@ -142,12 +142,7 @@ class StorageEngine implements SqlSerializable
         return $this->value === $normalized;
     }
 
-    public static function isValidValue(string $value): bool
-    {
-        return self::validateValue($value);
-    }
-
-    protected static function validateValue(string &$value): bool
+    public static function validateValue(string &$value): bool
     {
         $normalized = self::$map[strtolower($value)] ?? null;
 

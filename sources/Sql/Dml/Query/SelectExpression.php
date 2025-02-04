@@ -13,10 +13,10 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ArgumentNode;
 use SqlFtw\Sql\Expression\Asterisk;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function is_string;
 
-class SelectExpression implements SqlSerializable
+class SelectExpression extends Node
 {
 
     /** @var RootNode|Asterisk */

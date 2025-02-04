@@ -12,21 +12,21 @@ namespace SqlFtw\Sql\Ddl;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class UserExpression implements SqlSerializable
+class UserExpression extends Node
 {
 
     /** @var UserName|BuiltInFunction */
-    public SqlSerializable $user;
+    public Node $user;
 
     /**
      * @param UserName|BuiltInFunction $user
      */
-    public function __construct(SqlSerializable $user)
+    public function __construct(Node $user)
     {
-        if ($user instanceof BuiltInFunction && !$user->equalsValue(BuiltInFunction::CURRENT_USER)) {
+        if ($user instanceof BuiltInFunction && $user->name !== BuiltInFunction::CURRENT_USER) {
             throw new InvalidDefinitionException('Only CURRENT_USER function is accepted in place of user name.');
         }
 

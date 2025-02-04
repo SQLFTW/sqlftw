@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class RenameIndexAction implements IndexAction
+class RenameIndexAction extends IndexAction
 {
 
     public string $oldName;

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
-class ExchangePartitionAction implements PartitioningAction
+class ExchangePartitionAction extends PartitioningAction
 {
 
     public string $partition;

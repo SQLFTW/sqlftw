@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class RenameColumnAction implements ColumnAction
+class RenameColumnAction extends ColumnAction
 {
 
     public string $oldName;

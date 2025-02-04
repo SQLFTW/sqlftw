@@ -11,27 +11,28 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use Dogma\CombineIterator;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\StatementImpl;
 use function array_values;
 use function count;
 use function rtrim;
 
-class RenameTableCommand extends StatementImpl implements DdlTablesCommand
+class RenameTableCommand extends Command implements DdlTablesCommand
 {
 
-    /** @var non-empty-list<ObjectIdentifier> */
+    /** @var non-empty-list<Identifier&ObjectIdentifier> */
     public array $names;
 
-    /** @var non-empty-list<ObjectIdentifier> */
+    /** @var non-empty-list<Identifier&ObjectIdentifier> */
     public array $newNames;
 
     /**
-     * @param non-empty-list<ObjectIdentifier> $names
-     * @param non-empty-list<ObjectIdentifier> $newNames
+     * @param non-empty-list<Identifier&ObjectIdentifier> $names
+     * @param non-empty-list<Identifier&ObjectIdentifier> $newNames
      */
     public function __construct(array $names, array $newNames)
     {
@@ -43,11 +44,15 @@ class RenameTableCommand extends StatementImpl implements DdlTablesCommand
         $this->newNames = array_values($newNames);
     }
 
-    public function getNewNameForTable(ObjectIdentifier $table): ?ObjectIdentifier
+    /**
+     * @param Identifier&ObjectIdentifier $table
+     * @return (Identifier&ObjectIdentifier)|null
+     */
+    public function getNewNameForTable(Identifier $table): ?Identifier
     {
         /**
-         * @var ObjectIdentifier $old
-         * @var ObjectIdentifier $new
+         * @var Identifier&ObjectIdentifier $old
+         * @var Identifier&ObjectIdentifier $new
          */
         foreach ($this->getIterator() as $old => $new) {
             if ($old->name !== $table->name) {

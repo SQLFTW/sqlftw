@@ -11,12 +11,12 @@ namespace SqlFtw\Sql\Expression;
 
 /**
  * e.g. `name`, @name, *
- *
- * @property string $name
  */
-interface Identifier extends RootNode
+abstract class Identifier extends RootNode implements IdentifierInterface
 {
 
-    public function getFullName(): string;
+    public string $name; // @phpstan-ignore property.uninitialized
+
+    abstract public function getFullName(): string;
 
 }

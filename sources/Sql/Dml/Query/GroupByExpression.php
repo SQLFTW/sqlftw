@@ -12,9 +12,9 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ExpressionNode;
 use SqlFtw\Sql\Order;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class GroupByExpression implements SqlSerializable
+class GroupByExpression extends Node
 {
 
     public ExpressionNode $expression;

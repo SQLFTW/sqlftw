@@ -37,6 +37,7 @@ use SqlFtw\Sql\Dml\OptimizerHint\TableLevelHint;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\EnumValueLiteral;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\Expression\SimpleName;
@@ -324,7 +325,7 @@ class OptimizerHintParser
             $queryBlock = substr($queryBlock->value, 1);
             $tokenList->validateName(EntityType::QUERY_BLOCK, $queryBlock);
 
-            return new NameWithQueryBlock($table, $queryBlock);
+            return new NameWithQueryBlock($table->name, $table->schema, $queryBlock);
         } else {
             return $table;
         }

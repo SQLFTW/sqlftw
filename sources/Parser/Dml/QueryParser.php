@@ -13,6 +13,7 @@ use SqlFtw\Parser\ExpressionParser;
 use SqlFtw\Parser\InvalidVersionException;
 use SqlFtw\Parser\ParserException;
 use SqlFtw\Parser\ParserFactory;
+use SqlFtw\Parser\ParserState;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Features\Feature;
@@ -79,6 +80,8 @@ class QueryParser
 
     private Platform $platform;
 
+    private ParserState $parserState;
+
     private ParserFactory $parserFactory;
 
     private ExpressionParser $expressionParser;
@@ -89,12 +92,14 @@ class QueryParser
 
     public function __construct(
         Platform $platform,
+        ParserState $parserState,
         ParserFactory $parserFactory,
         ExpressionParser $expressionParser,
         TableReferenceParser $tableReferenceParser,
         OptimizerHintParser $optimizerHintParser
     ) {
         $this->platform = $platform;
+        $this->parserState = $parserState;
         $this->parserFactory = $parserFactory;
         $this->expressionParser = $expressionParser;
         $this->tableReferenceParser = $tableReferenceParser;
@@ -582,7 +587,7 @@ class QueryParser
             $locking = $this->parseLocking($tokenList);
         }
 
-        if ($from === null && count($what) === 1 && $what[0]->getExpression() instanceof Asterisk && $tokenList->inSubquery() !== SubqueryType::EXISTS) {
+        if ($from === null && count($what) === 1 && $what[0]->expression instanceof Asterisk && end($this->parserState->inSubquery) !== SubqueryType::EXISTS) {
             throw new ParserException('No tables used in query.', $tokenList);
         }
 

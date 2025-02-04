@@ -13,7 +13,7 @@ abstract class Info
 {
 
     /** @var TCreate|null */
-    public ?DdlCommand $current;
+    public ?DdlCommand $current; // @phpstan-ignore property.uninitialized
 
     /** @var list<TCreate|TAlter|TDrop> */
     public array $history = [];

@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class StartGroupReplicationCommand extends StatementImpl implements GroupReplicationCommand
+class StartGroupReplicationCommand extends Command implements GroupReplicationCommand
 {
 
     public ?string $user;

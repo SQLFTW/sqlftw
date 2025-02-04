@@ -36,7 +36,10 @@ class PhpFilesIterator extends FileIterator
         }
     }
 
-    public static function extractConstantStrings($code): array
+    /**
+     * @return list<string>
+     */
+    public static function extractConstantStrings(string $code): array
     {
         $tokens = token_get_all($code);
 

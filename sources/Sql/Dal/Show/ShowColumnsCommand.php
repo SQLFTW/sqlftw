@@ -12,9 +12,8 @@ namespace SqlFtw\Sql\Dal\Show;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowColumnsCommand extends StatementImpl implements ShowCommand
+class ShowColumnsCommand extends ShowCommand
 {
 
     public ObjectIdentifier $table;

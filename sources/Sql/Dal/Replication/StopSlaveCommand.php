@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class StopSlaveCommand extends StatementImpl implements ReplicationCommand
+class StopSlaveCommand extends Command implements ReplicationCommand
 {
 
     public bool $ioThread;

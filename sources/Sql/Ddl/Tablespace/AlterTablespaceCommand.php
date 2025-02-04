@@ -10,16 +10,16 @@
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\NodeInterface;
 use function is_bool;
 use function is_int;
 
 /**
  * @phpstan-import-type TablespaceOptionValue from TablespaceOption
  */
-class AlterTablespaceCommand extends StatementImpl implements TablespaceCommand
+class AlterTablespaceCommand extends Command implements TablespaceCommand
 {
 
     public string $tablespace;
@@ -58,7 +58,7 @@ class AlterTablespaceCommand extends StatementImpl implements TablespaceCommand
                 }
             } elseif (is_int($value)) {
                 $result .= ' ' . $name . ' ' . $value;
-            } elseif ($value instanceof SqlSerializable) {
+            } elseif ($value instanceof NodeInterface) {
                 $result .= ' ' . $name . ' ' . $value->serialize($formatter);
             } elseif ($name === TablespaceOption::RENAME_TO) {
                 $result .= ' ' . $name . ' ' . $formatter->formatName($value);

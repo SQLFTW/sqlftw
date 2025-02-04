@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Ddl\Server;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 use function rtrim;
 
-class AlterServerCommand extends StatementImpl implements ServerCommand
+class AlterServerCommand extends Command implements ServerCommand
 {
 
     public string $server;

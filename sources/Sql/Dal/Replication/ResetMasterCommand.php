@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ExpressionNode;
-use SqlFtw\Sql\StatementImpl;
 
-class ResetMasterCommand extends StatementImpl implements ReplicationCommand
+class ResetMasterCommand extends Command implements ReplicationCommand
 {
 
     public ?ExpressionNode $binlogPosition;

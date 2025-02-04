@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\Binlog;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\StatementImpl;
 
-class BinlogCommand extends StatementImpl implements DalCommand
+class BinlogCommand extends Command implements DalCommand
 {
 
     public string $value;

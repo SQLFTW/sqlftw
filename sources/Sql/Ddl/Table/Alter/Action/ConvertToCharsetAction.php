@@ -13,13 +13,13 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\DefaultLiteral;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class ConvertToCharsetAction implements TableAction
+class ConvertToCharsetAction extends TableAction
 {
 
     /** @var Charset|DefaultLiteral */
-    public SqlSerializable $charset;
+    public Node $charset;
 
     public ?Collation $collation;
 

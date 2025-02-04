@@ -14,10 +14,10 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\TimeInterval;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function substr;
 
-class EventSchedule implements SqlSerializable
+class EventSchedule extends Node
 {
 
     public ?RootNode $time;

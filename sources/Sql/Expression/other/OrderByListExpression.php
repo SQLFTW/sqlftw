@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * ..., ..., ...
  */
-class OrderByListExpression implements ArgumentNode
+class OrderByListExpression extends ArgumentNode
 {
 
     /** @var non-empty-list<OrderByExpression> */
@@ -30,7 +30,7 @@ class OrderByListExpression implements ArgumentNode
 
     public function serialize(Formatter $formatter): string
     {
-        return $formatter->formatSerializablesList($this->items);
+        return $formatter->formatNodesList($this->items);
     }
 
 }

@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Ddl\Table\Index;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function ltrim;
 
-class IndexOptions implements SqlSerializable
+class IndexOptions extends Node
 {
 
     public ?int $keyBlockSize;

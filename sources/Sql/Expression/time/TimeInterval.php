@@ -9,10 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-/**
- * @property TimeIntervalUnit $unit
- */
-interface TimeInterval extends RootNode
+abstract class TimeInterval extends RootNode
 {
+
+    public TimeIntervalUnit $unit; // @phpstan-ignore property.uninitialized
 
 }

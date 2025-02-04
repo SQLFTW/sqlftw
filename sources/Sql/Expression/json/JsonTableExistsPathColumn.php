@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
-class JsonTableExistsPathColumn implements JsonTableColumn
+class JsonTableExistsPathColumn extends JsonTableColumn
 {
 
     public string $name;

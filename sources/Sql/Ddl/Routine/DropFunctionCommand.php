@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Ddl\Routine;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class DropFunctionCommand extends StatementImpl implements StoredFunctionCommand, DropRoutineCommand
+class DropFunctionCommand extends Command implements StoredFunctionCommand, DropRoutineCommand
 {
 
     public ObjectIdentifier $function;

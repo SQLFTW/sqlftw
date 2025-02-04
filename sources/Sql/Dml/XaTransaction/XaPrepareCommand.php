@@ -10,9 +10,8 @@
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 
-class XaPrepareCommand extends StatementImpl implements XaTransactionCommand
+class XaPrepareCommand extends XaTransactionCommand
 {
 
     public Xid $xid;

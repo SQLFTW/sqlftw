@@ -15,7 +15,7 @@ use SqlFtw\Sql\InvalidDefinitionException;
 /**
  * e.g. @foo
  */
-class UserVariable implements Identifier
+class UserVariable extends Identifier
 {
 
     public string $name;

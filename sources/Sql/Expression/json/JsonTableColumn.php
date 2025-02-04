@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Expression;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-interface JsonTableColumn extends SqlSerializable
+abstract class JsonTableColumn extends Node
 {
 
 }

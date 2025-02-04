@@ -10,9 +10,8 @@
 namespace SqlFtw\Sql\Dml\XaTransaction;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 
-class XaRollbackCommand extends StatementImpl implements XaTransactionCommand
+class XaRollbackCommand extends XaTransactionCommand
 {
 
     public Xid $xid;

@@ -6,6 +6,9 @@ use IteratorAggregate;
 use RuntimeException;
 use function array_values;
 
+/**
+ * @implements IteratorAggregate<string, list<string>>
+ */
 abstract class FileIterator implements IteratorAggregate
 {
 
@@ -42,7 +45,7 @@ abstract class FileIterator implements IteratorAggregate
             throw new RuntimeException("Could not read file {$fileName}: " . $error['message']); // todo: own exceptions
         }
 
-        $version = $this->versionMapper ? ($this->versionMapper)($fileName) : $fileName;
+        $version = $this->versionMapper !== null ? ($this->versionMapper)($fileName) : $fileName;
 
         return [$version, $contents];
     }

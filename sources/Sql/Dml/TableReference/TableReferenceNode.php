@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dml\TableReference;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-interface TableReferenceNode extends SqlSerializable
+abstract class TableReferenceNode extends Node
 {
 
 }

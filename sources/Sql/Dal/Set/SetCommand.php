@@ -10,12 +10,13 @@
 namespace SqlFtw\Sql\Dal\Set;
 
 use SqlFtw\Sql\Assignment;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
 
-/**
- * @property list<Assignment> $assignments
- */
-interface SetCommand extends DalCommand
+abstract class SetCommand extends Command implements DalCommand
 {
+
+    /** @var list<Assignment> */
+    public array $assignments = [];
 
 }

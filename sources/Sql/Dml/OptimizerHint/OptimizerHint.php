@@ -9,11 +9,11 @@
 
 namespace SqlFtw\Sql\Dml\OptimizerHint;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-interface OptimizerHint extends SqlSerializable
+abstract class OptimizerHint extends Node
 {
 
-    public function getType(): string;
+    public string $type; // @phpstan-ignore property.uninitialized
 
 }

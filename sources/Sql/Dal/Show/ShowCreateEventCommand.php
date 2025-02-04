@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowCreateEventCommand extends StatementImpl implements ShowCommand
+class ShowCreateEventCommand extends ShowCommand
 {
 
     public ObjectIdentifier $event;

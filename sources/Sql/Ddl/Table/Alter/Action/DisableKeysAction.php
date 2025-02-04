@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class DisableKeysAction implements IndexAction
+class DisableKeysAction extends IndexAction
 {
 
     public function serialize(Formatter $formatter): string

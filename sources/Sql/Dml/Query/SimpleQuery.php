@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\Query;
 /**
  * Interface for SELECT, TABLE and VALUES commands
  */
-interface SimpleQuery extends Query
+abstract class SimpleQuery extends Query
 {
 
 }

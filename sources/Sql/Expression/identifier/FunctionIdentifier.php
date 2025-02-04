@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Expression;
 /**
  * e.g. COUNT, schema.user_function, local_function
  */
-interface FunctionIdentifier extends Identifier
+interface FunctionIdentifier extends IdentifierInterface
 {
 
 }

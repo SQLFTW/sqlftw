@@ -9,9 +9,10 @@
 
 namespace SqlFtw\Sql\Dal\Show;
 
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
 
-interface ShowCommand extends DalCommand
+abstract class ShowCommand extends Command implements DalCommand
 {
 
 }

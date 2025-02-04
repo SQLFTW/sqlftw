@@ -58,7 +58,7 @@ class TableOption extends SqlEnum
      * @readonly
      * @var array<self::*, string|class-string>
      */
-    public static array $types = [
+    public static array $types = [ // @phpstan-ignore property.readOnlyByPhpDocDefaultValue
         self::AUTOEXTEND_SIZE => SizeLiteral::class,
         self::AUTO_INCREMENT => BaseType::UNSIGNED,
         self::AVG_ROW_LENGTH => BaseType::UNSIGNED,

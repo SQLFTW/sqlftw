@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class LockTablesCommand extends StatementImpl implements TransactionCommand
+class LockTablesCommand extends Command implements TransactionCommand
 {
 
     /** @var non-empty-list<LockTablesItem> */
@@ -28,7 +28,7 @@ class LockTablesCommand extends StatementImpl implements TransactionCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'LOCK TABLES ' . $formatter->formatSerializablesList($this->items);
+        return 'LOCK TABLES ' . $formatter->formatNodesList($this->items);
     }
 
 }

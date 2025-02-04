@@ -85,16 +85,20 @@ class RoutineBodyParser
 
     private QueryParser $queryParser;
 
+    private Formatter $formatter;
+
     public function __construct(
         Platform $platform,
         Parser $parser,
         ExpressionParser $expressionParser,
-        QueryParser $queryParser
+        QueryParser $queryParser,
+        Formatter $formatter
     ) {
         $this->platform = $platform;
         $this->parser = $parser;
         $this->expressionParser = $expressionParser;
         $this->queryParser = $queryParser;
+        $this->formatter = $formatter;
     }
 
     /**
@@ -452,17 +456,13 @@ class RoutineBodyParser
             $condition = $this->expressionParser->parseExpression($tokenList);
             $tokenList->expectKeyword(Keyword::WHEN);
         }
-        $session = $tokenList->getSession();
-        $normalizer = $this->platform->getNormalizer($session);
-        $normalizer->quoteAllNames(false);
-        $formatter = new Formatter($this->platform, $session, $normalizer);
 
         $values = [];
         /** @var non-empty-list<list<Statement>> $statementLists */
         $statementLists = [];
         do {
             $expression = $this->expressionParser->parseExpression($tokenList);
-            $key = $expression->serialize($formatter);
+            $key = $expression->serialize($this->formatter);
             if (isset($values[$key])) {
                 throw new ParserException('Duplicate CASE value.', $tokenList);
             }

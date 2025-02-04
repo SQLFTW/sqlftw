@@ -11,10 +11,9 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
-use function is_bool;
 use function is_string;
 
-class AddColumnAction implements ColumnAction
+class AddColumnAction extends ColumnAction
 {
 
     public const FIRST = true;

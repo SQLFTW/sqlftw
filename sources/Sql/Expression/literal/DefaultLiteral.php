@@ -14,10 +14,10 @@ use SqlFtw\Formatter\Formatter;
 /**
  * DEFAULT
  */
-class DefaultLiteral implements KeywordLiteral
+class DefaultLiteral extends KeywordLiteral
 {
 
-    public $value = 'DEFAULT';
+    public string $value = 'DEFAULT';
 
     public function serialize(Formatter $formatter): string
     {

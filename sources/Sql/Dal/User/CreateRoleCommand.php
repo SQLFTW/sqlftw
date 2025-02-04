@@ -10,10 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 
-class CreateRoleCommand extends StatementImpl implements UserCommand
+class CreateRoleCommand extends UserCommand
 {
 
     /** @var non-empty-list<UserName> */
@@ -32,7 +31,7 @@ class CreateRoleCommand extends StatementImpl implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'CREATE ROLE ' . ($this->ifNotExists ? 'IF NOT EXISTS ' : '') . $formatter->formatSerializablesList($this->roles);
+        return 'CREATE ROLE ' . ($this->ifNotExists ? 'IF NOT EXISTS ' : '') . $formatter->formatNodesList($this->roles);
     }
 
 }

@@ -10,9 +10,8 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowBinlogEventsCommand extends StatementImpl implements ShowCommand
+class ShowBinlogEventsCommand extends ShowCommand
 {
 
     public ?string $logName;

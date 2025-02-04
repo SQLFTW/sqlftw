@@ -10,10 +10,11 @@
 namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\TablesCommand;
 
-class OptimizeTableCommand extends StatementImpl implements DalTablesCommand
+class OptimizeTableCommand extends TablesCommand implements DalCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
@@ -36,7 +37,7 @@ class OptimizeTableCommand extends StatementImpl implements DalTablesCommand
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->names);
+        $result .= ' TABLE ' . $formatter->formatNodesList($this->names);
 
         return $result;
     }

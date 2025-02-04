@@ -16,7 +16,12 @@ interface AnalyzerRule
 {
 
     /**
-     * @return class-string<Statement>
+     * @return list<string>
+     */
+    public static function getIds(): array;
+
+    /**
+     * @return list<class-string<Statement>>
      */
     public function getNodes(): array;
 

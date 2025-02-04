@@ -12,11 +12,11 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function array_map;
 use function implode;
 
-class WindowSpecification implements SqlSerializable
+class WindowSpecification extends Node
 {
 
     public ?string $name;

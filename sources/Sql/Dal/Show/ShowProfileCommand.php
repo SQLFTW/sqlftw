@@ -10,9 +10,8 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowProfileCommand extends StatementImpl implements ShowCommand
+class ShowProfileCommand extends ShowCommand
 {
 
     /** @var list<ShowProfileType> */
@@ -39,7 +38,7 @@ class ShowProfileCommand extends StatementImpl implements ShowCommand
     {
         $result = 'SHOW PROFILE';
         if ($this->types !== []) {
-            $result .= ' ' . $formatter->formatSerializablesList($this->types);
+            $result .= ' ' . $formatter->formatNodesList($this->types);
         }
 
         if ($this->queryId !== null) {

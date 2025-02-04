@@ -18,10 +18,11 @@ use function is_int;
 /**
  * e.g. AVG([DISTINCT] x) OVER ...
  */
-class FunctionCall implements RootNode
+class FunctionCall extends RootNode
 {
 
-    public FunctionIdentifier $function;
+    /** @var Identifier&FunctionIdentifier */
+    public Identifier $function;
 
     /** @var array<int|string, ArgumentNode> */
     public array $arguments;
@@ -34,11 +35,12 @@ class FunctionCall implements RootNode
     public ?bool $fromFirst;
 
     /**
+     * @param Identifier&FunctionIdentifier $function
      * @param array<int|string, ArgumentNode> $arguments
      * @param WindowSpecification|string $over
      */
     public function __construct(
-        FunctionIdentifier $function,
+        Identifier $function,
         array $arguments = [],
         $over = null,
         ?bool $respectNulls = null,
@@ -71,7 +73,7 @@ class FunctionCall implements RootNode
                 if (is_int($name)) {
                     // value, value...
                     $arguments .= ($first ? '' : ', ') . $argument->serialize($formatter);
-                } elseif ($this->function->equalsValue(BuiltInFunction::TRIM)) {
+                } elseif ($this->function->name === BuiltInFunction::TRIM) {
                     // TRIM([{BOTH | LEADING | TRAILING} [remstr] FROM] str), TRIM([remstr FROM] str)
                     if ($name === Keyword::BOTH || $name === Keyword::LEADING || $name === Keyword::TRAILING) {
                         if ($argument instanceof NoValue) {
@@ -82,7 +84,7 @@ class FunctionCall implements RootNode
                     } else {
                         $arguments .= ' FROM ' . $argument->serialize($formatter);
                     }
-                } elseif ($this->function->equalsValue(BuiltInFunction::JSON_VALUE)) {
+                } elseif ($this->function->name === BuiltInFunction::JSON_VALUE) {
                     // JSON_VALUE(json_doc, path [RETURNING type] [on_empty] [on_error])
                     static $onEmpty = Keyword::ON . ' ' . Keyword::EMPTY;
                     static $onError = Keyword::ON . ' ' . Keyword::ERROR;
@@ -102,10 +104,14 @@ class FunctionCall implements RootNode
         } elseif ($this->arguments !== []) {
             /** @var non-empty-list<ArgumentNode> $values */
             $values = $this->arguments;
-            $arguments = $formatter->formatSerializablesList($values);
+            $arguments = $formatter->formatNodesList($values);
         }
 
-        $result = $this->function->serialize($formatter) . '(' . $arguments . ')';
+        if ($this->function instanceof BuiltInFunction && $this->function->isBare()) {
+            $result = $this->function->serialize($formatter);
+        } else {
+            $result = $this->function->serialize($formatter) . '(' . $arguments . ')';
+        }
 
         if ($this->respectNulls === true) {
             $result .= ' ' . Keyword::RESPECT . ' ' . Keyword::NULLS;

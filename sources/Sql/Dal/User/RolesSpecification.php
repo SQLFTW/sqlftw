@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class RolesSpecification implements SqlSerializable
+class RolesSpecification extends Node
 {
 
     public RolesSpecificationType $type;
@@ -37,7 +37,7 @@ class RolesSpecification implements SqlSerializable
             $result .= ' ';
         }
         if ($this->roles !== null) {
-            $result .= $formatter->formatSerializablesList($this->roles);
+            $result .= $formatter->formatNodesList($this->roles);
         }
 
         return $result;

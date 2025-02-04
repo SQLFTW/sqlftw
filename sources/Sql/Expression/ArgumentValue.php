@@ -14,7 +14,7 @@ namespace SqlFtw\Sql\Expression;
  *
  * e.g. CastType, Collation etc.
  */
-interface ArgumentValue extends ExpressionNode
+abstract class ArgumentValue extends ArgumentNode
 {
 
 }

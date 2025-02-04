@@ -25,7 +25,9 @@ use SqlFtw\Sql\Dml\Error\SqlState;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BinaryLiteral;
 use SqlFtw\Sql\Expression\HexadecimalLiteral;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\IntLiteral;
+use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\QualifiedName;
@@ -855,7 +857,10 @@ class TokenList
         return $this->expect(T::INT)->value;
     }
 
-    public function expectIntLike(): Value
+    /**
+     * @return Literal&Value
+     */
+    public function expectIntLike(): Literal
     {
         $number = $this->expect(T::INT | T::STRING | T::BIT_STRING);
         $value = $number->value;
@@ -941,7 +946,10 @@ class TokenList
         return $token !== null ? $token->value : null;
     }
 
-    public function expectStringValue(): StringValue
+    /**
+     * @return Literal&StringValue
+     */
+    public function expectStringValue(): Literal
     {
         $position = $this->position;
         $token = $this->expect(T::STRING | T::BIT_STRING | T::UNQUOTED_NAME);
@@ -950,7 +958,7 @@ class TokenList
         $charset = null;
         if (($token->type & T::UNQUOTED_NAME) !== 0) {
             $charset = substr(strtolower($token->value), 1);
-            if ($token->value[0] === '_' && Charset::isValidValue($charset)) {
+            if ($token->value[0] === '_' && Charset::validateValue($charset)) {
                 $charset = new Charset($charset);
                 $token = $this->expect(T::STRING | T::BIT_STRING);
             } else {
@@ -977,7 +985,11 @@ class TokenList
     }
 
     // todo: move to ExpressionParser
-    public function getStringValue(): ?StringValue
+
+    /**
+     * @return (Literal&StringValue)|null
+     */
+    public function getStringValue(): ?Literal
     {
         $position = $this->position;
         $token = $this->get(T::STRING | T::BIT_STRING | T::UNQUOTED_NAME);
@@ -994,7 +1006,7 @@ class TokenList
                 $token = $this->get(T::STRING | T::BIT_STRING);
             } else {
                 $lower = substr($lower, 1);
-                if ($token->value[0] === '_' && Charset::isValidValue($lower)) {
+                if ($token->value[0] === '_' && Charset::validateValue($lower)) {
                     $charset = new Charset($lower);
                     $token = $this->get(T::STRING | T::BIT_STRING);
                 } else {
@@ -1114,6 +1126,7 @@ class TokenList
      * @template T of SqlEnum
      * @param class-string<T> $className
      * @return T
+     * @deprecated will be removed with better enums handling
      */
     public function expectNameOrStringEnum(string $className): SqlEnum
     {
@@ -1130,6 +1143,26 @@ class TokenList
 
             throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
         }
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     * @param list<string> $values
+     * @return T
+     * @deprecated will be removed with better enums handling
+     */
+    public function expectNameOrStringLowercasePseudoEnum(string $className, array $values): object
+    {
+        $value = $this->expectNonReservedNameOrString();
+
+        $lower = strtolower($value);
+        if (!in_array($lower, $values, true)) {
+            $this->position--;
+            throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
+        }
+
+        return new $className($lower);
     }
 
     /**
@@ -1347,7 +1380,7 @@ class TokenList
         if ($entity === EntityType::TABLE || $entity === EntityType::SCHEMA) {
             // might return an int collation id on unknown collations
             $collationName = $this->session->getSessionVariable(MysqlVariable::COLLATION_CONNECTION);
-            $collation = Collation::tryCreate(is_scalar($collationName) ? $collationName : null);
+            $collation = is_scalar($collationName) ? new Collation($collationName) : null;
             if ($collation !== null) {
                 $charset = $collation->getCharsetName();
                 if (Encoding::canCheck($charset) && !Encoding::check($name, $charset)) {
@@ -1639,7 +1672,10 @@ class TokenList
 
     // special values --------------------------------------------------------------------------------------------------
 
-    public function expectObjectIdentifier(): ObjectIdentifier
+    /**
+     * @return Identifier&ObjectIdentifier
+     */
+    public function expectObjectIdentifier(): Identifier
     {
         $first = $this->expectNonReservedName(EntityType::SCHEMA);
         if ($this->hasSymbol('.')) {
@@ -1655,7 +1691,10 @@ class TokenList
         return new SimpleName($first);
     }
 
-    public function getObjectIdentifier(): ?ObjectIdentifier
+    /**
+     * @return (Identifier&ObjectIdentifier)|null
+     */
+    public function getObjectIdentifier(): ?Identifier
     {
         $position = $this->position;
 
@@ -1720,10 +1759,8 @@ class TokenList
             if ($charset === null) {
                 $charset = $this->expectName(EntityType::CHARACTER_SET);
             }
-            if (!Charset::isValidValue($charset)) {
-                $values = Charset::getAllowedValues();
-
-                throw InvalidTokenException::tokens(T::STRING | T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
+            if (!Charset::validateValue($charset)) {
+                throw InvalidTokenException::tokens(T::STRING | T::NAME, 0, Charset::getValues(), $this->tokens[$this->position - 1], $this);
             }
 
             return new Charset($charset);
@@ -1735,7 +1772,7 @@ class TokenList
         if ($this->hasKeyword(Keyword::BINARY)) {
             return new Collation(Collation::BINARY);
         } else {
-            return $this->expectNameOrStringEnum(Collation::class);
+            return $this->expectNameOrStringLowercasePseudoEnum(Collation::class, Collation::getValidValues());
         }
     }
 
@@ -1750,7 +1787,7 @@ class TokenList
                 return null;
             }
 
-            if (!Collation::isValidValue($value)) {
+            if (!Collation::validateValue($value)) {
                 $this->position = $position;
 
                 return null;

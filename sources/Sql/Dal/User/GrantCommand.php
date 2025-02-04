@@ -11,11 +11,10 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class GrantCommand extends StatementImpl implements UserCommand
+class GrantCommand extends UserCommand
 {
 
     /** @var non-empty-list<UserPrivilege> */
@@ -27,7 +26,7 @@ class GrantCommand extends StatementImpl implements UserCommand
     public array $users;
 
     /** @var UserName|FunctionCall|null */
-    public ?SqlSerializable $asUser;
+    public ?Node $asUser;
 
     public ?RolesSpecification $withRole;
 
@@ -50,7 +49,7 @@ class GrantCommand extends StatementImpl implements UserCommand
         array $privileges,
         UserPrivilegeResource $resource,
         array $users,
-        ?SqlSerializable $asUser = null,
+        ?Node $asUser = null,
         ?RolesSpecification $withRole = null,
         ?array $tlsOptions = null,
         ?array $resourceOptions = null,
@@ -68,23 +67,23 @@ class GrantCommand extends StatementImpl implements UserCommand
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'GRANT ' . $formatter->formatSerializablesList($this->privileges)
+        $result = 'GRANT ' . $formatter->formatNodesList($this->privileges)
             . ' ON ' . $this->resource->serialize($formatter)
-            . ' TO ' . $formatter->formatSerializablesList($this->users);
+            . ' TO ' . $formatter->formatNodesList($this->users);
 
         if ($this->tlsOptions !== null) {
             $result .= ' REQUIRE';
             if ($this->tlsOptions === []) {
                 $result .= ' NONE';
             } else {
-                $result .= $formatter->formatSerializablesList($this->tlsOptions);
+                $result .= $formatter->formatNodesList($this->tlsOptions);
             }
         }
         if ($this->withGrantOption) {
             $result .= ' WITH GRANT OPTION';
         }
         if ($this->resourceOptions !== null) {
-            $result .= ' WITH ' . $formatter->formatSerializablesList($this->resourceOptions);
+            $result .= ' WITH ' . $formatter->formatNodesList($this->resourceOptions);
         }
         if ($this->asUser !== null) {
             $result .= ' AS ' . $this->asUser->serialize($formatter);

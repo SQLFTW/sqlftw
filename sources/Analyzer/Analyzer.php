@@ -18,6 +18,7 @@ use SqlFtw\Session\SessionUpdater;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\InvalidEnumValueException;
 use SqlFtw\Sql\SqlMode;
+use SqlFtw\Sql\Statement;
 use function array_values;
 use function get_class;
 use function iterator_to_array;
@@ -31,7 +32,7 @@ class Analyzer
 
     private SessionUpdater $sessionUpdater;
 
-    /** @var array<class-string<Command>, list<AnalyzerRule>> */
+    /** @var array<class-string<Statement>, list<AnalyzerRule>> */
     private array $ruleMap = [];
 
     /**

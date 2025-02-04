@@ -11,8 +11,10 @@ namespace SqlFtw\Sql\Dml\OptimizerHint;
 
 use SqlFtw\Formatter\Formatter;
 
-class SubqueryHint implements OptimizerHint
+class SubqueryHint extends OptimizerHint
 {
+
+    public string $type = OptimizerHintType::SUBQUERY;
 
     public ?string $queryBlock;
 
@@ -26,11 +28,6 @@ class SubqueryHint implements OptimizerHint
     {
         $this->queryBlock = $queryBlock;
         $this->strategy = $strategy;
-    }
-
-    public function getType(): string
-    {
-        return OptimizerHintType::SUBQUERY;
     }
 
     public function serialize(Formatter $formatter): string

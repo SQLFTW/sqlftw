@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
-class RenameToAction implements TableAction
+class RenameToAction extends TableAction
 {
 
     public ObjectIdentifier $newName;

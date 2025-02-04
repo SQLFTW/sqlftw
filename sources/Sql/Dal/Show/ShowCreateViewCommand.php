@@ -11,9 +11,8 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowCreateViewCommand extends StatementImpl implements ShowCommand
+class ShowCreateViewCommand extends ShowCommand
 {
 
     public ObjectIdentifier $view;

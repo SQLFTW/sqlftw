@@ -10,12 +10,12 @@
 namespace SqlFtw\Sql\Dml\Call;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\StatementImpl;
 
-class CallCommand extends StatementImpl implements DmlCommand
+class CallCommand extends Command implements DmlCommand
 {
 
     public ObjectIdentifier $procedure;
@@ -38,7 +38,7 @@ class CallCommand extends StatementImpl implements DmlCommand
         if ($this->params !== null) {
             $result .= '(';
             if ($this->params !== []) {
-                $result .= $formatter->formatSerializablesList($this->params);
+                $result .= $formatter->formatNodesList($this->params);
             }
             $result .= ')';
         }

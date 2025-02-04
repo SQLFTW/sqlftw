@@ -25,6 +25,7 @@ use SqlFtw\Sql\Dal\User\AlterUserFinishRegistrationCommand;
 use SqlFtw\Sql\Dal\User\AlterUserInitiateRegistrationCommand;
 use SqlFtw\Sql\Dal\User\AlterUserRegistrationCommand;
 use SqlFtw\Sql\Dal\User\AlterUserUnregisterCommand;
+use SqlFtw\Sql\Dal\User\AnyAlterUserCommand;
 use SqlFtw\Sql\Dal\User\AuthOption;
 use SqlFtw\Sql\Dal\User\CreateRoleCommand;
 use SqlFtw\Sql\Dal\User\CreateUserCommand;
@@ -64,6 +65,7 @@ use SqlFtw\Sql\Dal\User\UserTlsOptionType;
 use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Expression\BuiltInFunction;
 use SqlFtw\Sql\Expression\FunctionCall;
+use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\Operator;
 use SqlFtw\Sql\Expression\StringValue;
 use SqlFtw\Sql\Keyword;
@@ -149,7 +151,7 @@ class UserCommandsParser
      *   | factor UNREGISTER
      * }
      */
-    public function parseAlterUser(TokenList $tokenList): UserCommand
+    public function parseAlterUser(TokenList $tokenList): AnyAlterUserCommand
     {
         $tokenList->expectKeywords(Keyword::ALTER, Keyword::USER);
         $ifExists = $tokenList->hasKeywords(Keyword::IF, Keyword::EXISTS);
@@ -321,8 +323,9 @@ class UserCommandsParser
                 $replace = $tokenList->expectString();
             }
             $retainCurrentPassword = $tokenList->hasKeywords(Keyword::RETAIN, Keyword::CURRENT, Keyword::PASSWORD);
+            $authOption = new AuthOption($authPlugin, $password, $as, null, $oldHashedPassword);
 
-            return new AlterAuthOption($authPlugin, $password, $as, $replace, $retainCurrentPassword, $oldHashedPassword);
+            return new AlterAuthOption($authOption, $replace, $retainCurrentPassword);
         } elseif ($tokenList->hasKeyword(Keyword::ADD)) {
             $factor1 = (int) $tokenList->expectUnsignedInt();
             [$authPlugin, $password, $as] = $this->parseAuthOptionParts($tokenList);
@@ -363,7 +366,7 @@ class UserCommandsParser
     }
 
     /**
-     * @return array{string|null, StringValue|false|null, StringValue|null, bool}
+     * @return array{string|null, (Literal&StringValue)|false|null, (Literal&StringValue)|null, bool}
      */
     private function parseAuthOptionParts(TokenList $tokenList, bool $currentUser = false): array
     {

@@ -8,6 +8,7 @@ namespace SqlFtw\Tests\Mysql;
 
 use Dogma\Debug\Callstack;
 use Dogma\Re;
+use LogicException;
 use SqlFtw\Analyzer\Rules\Charset\CharsetAndCollationCompatibilityRule;
 use SqlFtw\Analyzer\Rules\Variables\SystemVariablesTypeRule;
 use SqlFtw\Formatter\Formatter;
@@ -220,6 +221,9 @@ class MysqlTestJob
         }
 
         $tokenList = $command->tokenList;
+        if ($tokenList === null) {
+            throw new LogicException("Token list should be provided.");
+        }
         [, $before] = $this->normalizeOriginalSql($tokenList);
         [, $after] = $this->normalizeParsedSql($command, $formatter, $session);
 

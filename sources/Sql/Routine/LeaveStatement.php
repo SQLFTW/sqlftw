@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Routine;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Statement;
 
-class LeaveStatement extends StatementImpl
+class LeaveStatement extends Statement
 {
 
     public string $label;

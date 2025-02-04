@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-interface CheckAction extends AlterTableAction
+abstract class CheckAction extends AlterTableAction
 {
 
 }

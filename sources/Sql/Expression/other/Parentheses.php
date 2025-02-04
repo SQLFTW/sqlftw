@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * (...)
  */
-class Parentheses implements RootNode
+class Parentheses extends RootNode
 {
 
     public ExpressionNode $contents;

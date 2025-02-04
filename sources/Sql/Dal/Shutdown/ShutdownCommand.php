@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\Shutdown;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
-use SqlFtw\Sql\StatementImpl;
 
-class ShutdownCommand extends StatementImpl implements DalCommand
+class ShutdownCommand extends Command implements DalCommand
 {
 
     public function serialize(Formatter $formatter): string

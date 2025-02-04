@@ -11,15 +11,14 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class AlterUserFinishRegistrationCommand extends StatementImpl implements AlterUserRegistrationCommand
+class AlterUserFinishRegistrationCommand extends AlterUserRegistrationCommand
 {
 
     /** @var UserName|FunctionCall */
-    public SqlSerializable $user;
+    public Node $user;
 
     public int $factor;
 
@@ -30,7 +29,7 @@ class AlterUserFinishRegistrationCommand extends StatementImpl implements AlterU
     /**
      * @param UserName|FunctionCall $user
      */
-    public function __construct(SqlSerializable $user, int $factor, string $authString, bool $ifExists = false)
+    public function __construct(Node $user, int $factor, string $authString, bool $ifExists = false)
     {
         $this->user = $user;
         $this->factor = $factor;

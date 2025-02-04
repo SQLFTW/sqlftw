@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function is_int;
 
-class UserPasswordLockOption implements SqlSerializable
+class UserPasswordLockOption extends Node
 {
 
     public UserPasswordLockOptionType $type;

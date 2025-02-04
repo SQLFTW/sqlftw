@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Assignment;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class OnDuplicateKeyActions implements SqlSerializable
+class OnDuplicateKeyActions extends Node
 {
 
     /** @var non-empty-list<Assignment> */
@@ -31,7 +31,7 @@ class OnDuplicateKeyActions implements SqlSerializable
     {
         $result = 'ON DUPLICATE KEY UPDATE ';
 
-        $result .= $formatter->formatSerializablesList($this->assignments);
+        $result .= $formatter->formatNodesList($this->assignments);
 
         return $result;
     }

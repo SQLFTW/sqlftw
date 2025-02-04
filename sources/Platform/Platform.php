@@ -27,8 +27,6 @@ use SqlFtw\Sql\Keyword;
 use SqlFtw\Sql\MysqlVariable;
 use SqlFtw\Sql\SqlMode;
 use function array_combine;
-use function end;
-use function explode;
 use function in_array;
 use function ltrim;
 

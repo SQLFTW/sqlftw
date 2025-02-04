@@ -14,7 +14,7 @@ namespace SqlFtw\Sql\Expression;
  *
  * e.g. `table`, `schema`.`table`
  */
-interface ObjectIdentifier extends Identifier
+interface ObjectIdentifier extends IdentifierInterface
 {
 
 }

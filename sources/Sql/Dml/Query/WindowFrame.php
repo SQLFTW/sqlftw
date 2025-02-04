@@ -12,9 +12,9 @@ namespace SqlFtw\Sql\Dml\Query;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class WindowFrame implements SqlSerializable
+class WindowFrame extends Node
 {
 
     public WindowFrameUnits $units;

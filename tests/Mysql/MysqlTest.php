@@ -4,6 +4,7 @@ namespace SqlFtw\Tests\Mysql;
 
 use Amp\MultiReasonException;
 use Dogma\Application\Colors;
+use Dogma\Debug\Ansi;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -137,7 +138,9 @@ class MysqlTest
 
         [$paths, $fullRun] = $this->getPaths($tests, true);
 
-        $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun);
+        $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL);
+
+        $renderer = new ResultRenderer($this->mysqlTestsDir, $singleThread, $fullRun, $suite->formatter);
 
         if ($singleThread) {
             // renders errors immediately
@@ -226,7 +229,7 @@ class MysqlTest
             if ($paths !== '' && $paths !== false) {
                 $paths = explode("\n", $paths);
                 $count = count($paths);
-                echo "Running only last time failed tests ({$count})\n\n";
+                echo Ansi::lyellow("Running only last time failed tests ({$count})") . "\n\n";
                 file_put_contents($this->lastFailPath, '');
 
                 return [$paths, false];

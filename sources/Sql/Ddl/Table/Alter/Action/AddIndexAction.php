@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 
-class AddIndexAction implements IndexAction
+class AddIndexAction extends IndexAction
 {
 
     public IndexDefinition $index;

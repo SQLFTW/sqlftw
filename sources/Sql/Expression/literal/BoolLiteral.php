@@ -15,10 +15,8 @@ use SqlFtw\Sql\Keyword;
 /**
  * TRUE, FALSE
  */
-class BoolLiteral implements BoolValue, KeywordLiteral
+class BoolLiteral extends KeywordLiteral implements BoolValue
 {
-
-    private string $value;
 
     /**
      * @param 'TRUE'|'FALSE' $value

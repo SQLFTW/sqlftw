@@ -10,11 +10,11 @@
 namespace SqlFtw\Sql\Dal\Kill;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\StatementImpl;
 
-class KillCommand extends StatementImpl implements DalCommand
+class KillCommand extends Command implements DalCommand
 {
 
     public RootNode $processId;

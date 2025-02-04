@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Routine;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Statement;
 
-class CloseCursorStatement extends StatementImpl
+class CloseCursorStatement extends Statement
 {
 
     public string $cursor;

@@ -6,12 +6,16 @@ use Dogma\Debug\Ansi;
 use Dogma\Debug\Dumper;
 use Dogma\Debug\FormattersDogma;
 use Dogma\Debug\Str;
+use SqlFtw\Error\Error;
+use SqlFtw\Error\Repair;
+use SqlFtw\Error\Severity;
 use SqlFtw\Parser\InvalidTokenException;
 use SqlFtw\Parser\Parser;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
 use SqlFtw\Platform\Platform;
+use SqlFtw\Session\Session;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceTable;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\FunctionCall;
@@ -21,6 +25,7 @@ use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\Expression\StringLiteral;
 use SqlFtw\Sql\Expression\UintLiteral;
 use SqlFtw\Sql\Expression\UserVariable;
+use SqlFtw\Sql\SqlMode;
 use SqlFtw\Tests\Assert;
 use Tracy\Debugger;
 use function count;
@@ -39,6 +44,8 @@ Dumper::$doNotTraverse[] = Platform::class . '::$nonReserved';
 Dumper::$doNotTraverse[] = Platform::class . '::$operators';
 Dumper::$doNotTraverse[] = Platform::class . '::$preparableCommands';
 Dumper::$doNotTraverse[] = Platform::class . '::$reserved';
+Dumper::$doNotTraverse[] = Session::class . '::$onDelimiterChange';
+Dumper::$doNotTraverse[] = Session::class . '::$onSqlModeChange';
 Dumper::$doNotTraverse[] = TokenList::class . '::$maxLengths';
 Dumper::$namespaceReplacements['~SqlFtw\\\\Parser\\\\(.*)~'] = '..\1';
 Dumper::$namespaceReplacements['~SqlFtw\\\\Formatter\\\\(.*)~'] = '..\1';
@@ -105,13 +112,13 @@ Dumper::$objectFormatters[Platform::class] = static function (Platform $platform
 // SimpleName
 Dumper::$objectFormatters[SimpleName::class] = static function (SimpleName $simpleName): string {
     return Dumper::class(get_class($simpleName)) . Dumper::bracket('(')
-        . Dumper::value($simpleName->getName())
+        . Dumper::value($simpleName->name)
         . Dumper::bracket(')');
 };
 
 // QualifiedName
 Dumper::$objectFormatters[QualifiedName::class] = static function (QualifiedName $qualifiedName): string {
-    $name = $qualifiedName->getSchema() . '.' . $qualifiedName->getName();
+    $name = $qualifiedName->schema . '.' . $qualifiedName->name;
     if (Str::isBinary($name) !== null) {
         $name = Dumper::string($name);
     } else {
@@ -124,62 +131,81 @@ Dumper::$objectFormatters[QualifiedName::class] = static function (QualifiedName
 // UserVariable
 Dumper::$objectFormatters[UserVariable::class] = static function (UserVariable $userVariable): string {
     return Dumper::class(get_class($userVariable)) . Dumper::bracket('(')
-        . Dumper::value($userVariable->getName())
+        . Dumper::value($userVariable->name)
         . Dumper::bracket(')');
 };
 
 // UintLiteral
 Dumper::$objectFormatters[UintLiteral::class] = static function (UintLiteral $uintLiteral): string {
     return Dumper::class(get_class($uintLiteral)) . Dumper::bracket('(')
-        . Dumper::value($uintLiteral->getValue())
+        . Dumper::value($uintLiteral->value)
         . Dumper::bracket(')');
 };
 
 // IntLiteral
 Dumper::$objectFormatters[IntLiteral::class] = static function (IntLiteral $intLiteral): string {
     return Dumper::class(get_class($intLiteral)) . Dumper::bracket('(')
-        . Dumper::value($intLiteral->getValue())
+        . Dumper::value($intLiteral->value)
         . Dumper::bracket(')');
 };
 
 // StringLiteral
 Dumper::$objectFormatters[StringLiteral::class] = static function (StringLiteral $stringLiteral): string {
-    if ($stringLiteral->getCharset() !== null || count($stringLiteral->getParts()) > 1) {
+    if ($stringLiteral->charset !== null || count($stringLiteral->parts) > 1) {
         return '';
     }
     return Dumper::class(get_class($stringLiteral)) . Dumper::bracket('(')
-        . Dumper::string($stringLiteral->getParts()[0])
+        . Dumper::string($stringLiteral->parts[0])
         . Dumper::bracket(')');
 };
 
 // ColumnType
 Dumper::$objectFormatters[ColumnType::class] = static function (ColumnType $columnType): string {
-    if ($columnType->isUnsigned() !== false || $columnType->zerofill() !== false || $columnType->getSize() !== null || $columnType->getValues() !== null
-        || $columnType->getCharset() !== null || $columnType->getCollation() !== null || $columnType->getSrid() !== null
+    if ($columnType->unsigned !== false || $columnType->zerofill !== false || $columnType->size !== null || $columnType->values !== null
+        || $columnType->charset !== null || $columnType->collation !== null || $columnType->srid !== null
     ) {
         return '';
     }
     return Dumper::class(get_class($columnType)) . Dumper::bracket('(')
-        . Dumper::value($columnType->getBaseType()->getValue())
+        . Dumper::value($columnType->baseType->getValue())
         . Dumper::bracket(')');
 };
 
 // FunctionCall
 Dumper::$shortObjectFormatters[FunctionCall::class] = static function (FunctionCall $functionCall): string {
     return Dumper::class(get_class($functionCall)) . Dumper::bracket('(') . ' '
-        . Dumper::value($functionCall->getFunction()->getFullName()) . ' ' . Dumper::exceptions('...') . ' '
+        . Dumper::value($functionCall->function->getFullName()) . ' ' . Dumper::exceptions('...') . ' '
         . Dumper::bracket(')') . Dumper::objectInfo($functionCall);
 };
 
 // TableReferenceTable
 Dumper::$shortObjectFormatters[TableReferenceTable::class] = static function (TableReferenceTable $reference): string {
-    if ($reference->getPartitions() !== null || $reference->getIndexHints() !== null) {
+    if ($reference->partitions !== null || $reference->indexHints !== null) {
         return '';
     }
-    $alias = $reference->getAlias();
 
     return Dumper::class(get_class($reference)) . Dumper::bracket('(')
-        . Dumper::value($reference->getTable()->getFullName())
-        . ($alias !== null ? ' AS ' . Dumper::value2($alias) : '')
+        . Dumper::value($reference->table->getFullName())
+        . ($reference->alias !== null ? ' AS ' . Dumper::value2($reference->alias) : '')
         . Dumper::bracket(')') . Dumper::objectInfo($reference);
+};
+
+// Error
+Dumper::$objectFormatters[Error::class] = static function (Error $error, int $depth): string {
+    return Dumper::class(get_class($error)) . Dumper::bracket('(')
+        . Dumper::value(Severity::$labels[$error->severity] . ':') . ' ' . Dumper::value($error->identifier) . ' '
+        . Dumper::value2(Repair::$labels[$error->repair])
+        . ":\n" . Dumper::value($error->message)
+        . Dumper::bracket(')') . Dumper::objectInfo($error)
+        . ($error->callstack !== null ? "\n" . Dumper::formatCallstack($error->callstack, 20, null, null, null, $depth + 1) : '');
+};
+
+// SqlMode::$value
+Dumper::$intFormatters['~SqlMode::value~'] = static function (int $int): string {
+    return Dumper::int((string) $int) . ' ' . Dumper::info('// ' . SqlMode::fromInt($int)->asString());
+};
+
+// SqlMode::$fullValue
+Dumper::$intFormatters['~SqlMode::fullValue~'] = static function (int $int): string {
+    return Dumper::int((string) $int) . ' ' . Dumper::info('// ' . SqlMode::fromInt($int)->asString());
 };

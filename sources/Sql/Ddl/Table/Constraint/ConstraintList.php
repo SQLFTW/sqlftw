@@ -17,7 +17,6 @@ class ConstraintList
 {
 
     /**
-     * @readonly
      * @var array<string|int, ConstraintDefinition> ($name => $constraint)
      */
     public array $constraints = [];

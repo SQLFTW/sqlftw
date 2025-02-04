@@ -47,6 +47,9 @@ final class Severity
      */
     public const NOTICE = 3;
 
+    /**
+     * @var array<int, string>
+     */
     public static array $labels = [
         self::LEXER_ERROR => 'Lexer error',
         self::PARSER_ERROR => 'Parser error',

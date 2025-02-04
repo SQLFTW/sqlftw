@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Column\ColumnDefinition;
 use SqlFtw\Sql\Ddl\Table\Index\IndexDefinition;
 
-class AddColumnsAction implements ColumnAction
+class AddColumnsAction extends ColumnAction
 {
 
     public const FIRST = true;
@@ -31,7 +31,7 @@ class AddColumnsAction implements ColumnAction
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ADD COLUMN (' . $formatter->formatSerializablesList($this->columns) . ')';
+        return 'ADD COLUMN (' . $formatter->formatNodesList($this->columns) . ')';
     }
 
 }

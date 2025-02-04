@@ -17,7 +17,7 @@ use function array_search;
 use function get_class;
 use function is_int;
 
-abstract class IntEnum implements SqlSerializable
+abstract class IntEnum extends Node
 {
 
     /** @var array<class-string, array<string, int>> ($class => ($constName => $value)) */

@@ -9,10 +9,12 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use SqlFtw\Sql\NodeInterface;
+
 /**
  * Literals with concrete value
  */
-interface Value extends Literal
+interface Value extends NodeInterface
 {
 
 }

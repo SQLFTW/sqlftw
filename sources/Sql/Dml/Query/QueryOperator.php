@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class QueryOperator implements SqlSerializable
+class QueryOperator extends Node
 {
 
     public QueryOperatorType $type;

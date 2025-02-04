@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ForeignKeyDefinition;
 
-class AddForeignKeyAction implements ForeignKeyAction
+class AddForeignKeyAction extends ForeignKeyAction
 {
 
     public ForeignKeyDefinition $foreignKey;

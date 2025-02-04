@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class UserPrivilege implements SqlSerializable
+class UserPrivilege extends Node
 {
 
     public UserPrivilegeType $type;

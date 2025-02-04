@@ -11,9 +11,8 @@ namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowProcedureCodeCommand extends StatementImpl implements ShowCommand
+class ShowProcedureCodeCommand extends ShowCommand
 {
 
     public ObjectIdentifier $procedure;

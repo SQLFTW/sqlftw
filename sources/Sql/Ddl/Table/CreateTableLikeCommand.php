@@ -11,9 +11,8 @@ namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class CreateTableLikeCommand extends StatementImpl implements AnyCreateTableCommand
+class CreateTableLikeCommand extends AnyCreateTableCommand
 {
 
     public ObjectIdentifier $name;

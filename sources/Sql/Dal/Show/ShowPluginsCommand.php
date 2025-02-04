@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class ShowPluginsCommand extends StatementImpl implements ShowCommand
+class ShowPluginsCommand extends ShowCommand
 {
 
     public function serialize(Formatter $formatter): string

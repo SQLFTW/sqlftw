@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Trigger;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class TriggerPosition implements SqlSerializable
+class TriggerPosition extends Node
 {
 
     public TriggerOrder $order;

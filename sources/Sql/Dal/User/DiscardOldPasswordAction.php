@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 
-class DiscardOldPasswordAction implements AlterUserAction
+class DiscardOldPasswordAction extends AlterUserAction
 {
 
     public function serialize(Formatter $formatter): string

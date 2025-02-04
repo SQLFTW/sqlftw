@@ -12,11 +12,10 @@ namespace SqlFtw\Sql\Dal\User;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class AlterUserDefaultRoleCommand extends StatementImpl implements UserCommand
+class AlterUserDefaultRoleCommand extends AnyAlterUserCommand
 {
 
     public const NO_ROLES = false;
@@ -24,7 +23,7 @@ class AlterUserDefaultRoleCommand extends StatementImpl implements UserCommand
     public const LIST_ROLES = null;
 
     /** @var UserName|FunctionCall */
-    public SqlSerializable $user;
+    public Node $user;
 
     public RolesSpecification $role;
 
@@ -33,7 +32,7 @@ class AlterUserDefaultRoleCommand extends StatementImpl implements UserCommand
     /**
      * @param UserName|FunctionCall $user
      */
-    public function __construct(SqlSerializable $user, RolesSpecification $role, bool $ifExists = false)
+    public function __construct(Node $user, RolesSpecification $role, bool $ifExists = false)
     {
         if ($role->type->equalsAnyValue(RolesSpecificationType::DEFAULT, RolesSpecificationType::ALL_EXCEPT)) {
             throw new InvalidDefinitionException('Role specification for ALTER USER DEFAULT ROLE cannot be DEFAULT or ALL EXCEPT.');

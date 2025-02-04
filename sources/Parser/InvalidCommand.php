@@ -12,14 +12,13 @@ namespace SqlFtw\Parser;
 use SqlFtw\Error\Error;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Command;
-use SqlFtw\Sql\StatementImpl;
 
 /**
  * Returned when encountered a syntax error
  *
  * @deprecated being replaced with Statement::getErrors()
  */
-class InvalidCommand extends StatementImpl implements Command
+class InvalidCommand extends Command
 {
 
     /**

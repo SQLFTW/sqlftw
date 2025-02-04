@@ -11,15 +11,14 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class SetPasswordCommand extends StatementImpl implements UserCommand
+class SetPasswordCommand extends UserCommand
 {
 
     /** @var UserName|FunctionCall|null */
-    public ?SqlSerializable $user;
+    public ?Node $user;
 
     public ?string $passwordFunction;
 
@@ -33,7 +32,7 @@ class SetPasswordCommand extends StatementImpl implements UserCommand
      * @param UserName|FunctionCall|null $user
      */
     public function __construct(
-        ?SqlSerializable $user,
+        ?Node $user,
         ?string $passwordFunction,
         ?string $password,
         ?string $replace,

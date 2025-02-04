@@ -11,13 +11,12 @@ namespace SqlFtw\Sql\Dal\Set;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Assignment;
-use SqlFtw\Sql\StatementImpl;
 
-class SetVariablesCommand extends StatementImpl implements SetCommand
+class SetVariablesCommand extends SetCommand
 {
 
     /** @var non-empty-list<Assignment> */
-    public array $assignments;
+    public array $assignments; // @phpstan-ignore property.phpDocType (breaking LSP on writes by narrowing from list to non-empty-list)
 
     /**
      * @param non-empty-list<Assignment> $assignments
@@ -27,17 +26,9 @@ class SetVariablesCommand extends StatementImpl implements SetCommand
         $this->assignments = $assignments;
     }
 
-    /**
-     * @return non-empty-list<Assignment>
-     */
-    public function getAssignments(): array
-    {
-        return $this->assignments;
-    }
-
     public function serialize(Formatter $formatter): string
     {
-        return 'SET ' . $formatter->formatSerializablesList($this->assignments);
+        return 'SET ' . $formatter->formatNodesList($this->assignments);
     }
 
 }

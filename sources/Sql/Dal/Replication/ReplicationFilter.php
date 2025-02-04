@@ -15,11 +15,11 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\BaseType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\QualifiedName;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use SqlFtw\Util\TypeChecker;
 use function implode;
 
-class ReplicationFilter implements SqlSerializable
+class ReplicationFilter extends Node
 {
 
     /** @var ReplicationFilterType::* */
@@ -34,7 +34,7 @@ class ReplicationFilter implements SqlSerializable
      */
     public function __construct(string $type, array $items)
     {
-        TypeChecker::check($items, ReplicationFilterType::$itemTypes($type));
+        TypeChecker::check($items, ReplicationFilterType::$itemTypes[$type]);
 
         $this->type = $type;
         $this->items = $items;
@@ -45,7 +45,7 @@ class ReplicationFilter implements SqlSerializable
         if ($this->items === []) {
             return $this->type . ' = ()';
         } else {
-            $itemsType = ReplicationFilterType::getItemType($this->type);
+            $itemsType = ReplicationFilterType::$itemTypes[$this->type];
             switch ($itemsType) {
                 case BaseType::CHAR . '[]':
                     /** @var non-empty-list<string> $items */
@@ -60,7 +60,7 @@ class ReplicationFilter implements SqlSerializable
                     /** @var non-empty-list<QualifiedName> $items2 */
                     $items2 = $this->items;
 
-                    return $this->type . ' = (' . $formatter->formatSerializablesList($items2) . ')';
+                    return $this->type . ' = (' . $formatter->formatNodesList($items2) . ')';
                 case BaseType::CHAR . '{}':
                     return $this->type . ' = (' . implode(', ', Arr::mapPairs($this->items, static function (string $key, string $value) use ($formatter) {
                         return '(' . $formatter->formatName($key) . ', ' . $formatter->formatName($value) . ')';

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Constraint\ConstraintDefinition;
 
-class AddConstraintAction implements ConstraintAction
+class AddConstraintAction extends ConstraintAction
 {
 
     public ConstraintDefinition $constraint;

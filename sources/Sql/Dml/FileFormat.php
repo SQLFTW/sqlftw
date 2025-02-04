@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dml;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class FileFormat implements SqlSerializable
+class FileFormat extends Node
 {
 
     public ?string $fieldsTerminatedBy;

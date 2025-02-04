@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class AlterCheckAction implements CheckAction
+class AlterCheckAction extends CheckAction
 {
 
     public string $check;

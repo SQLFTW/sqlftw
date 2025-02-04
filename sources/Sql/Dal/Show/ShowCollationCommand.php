@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowCollationCommand extends StatementImpl implements ShowCommand
+class ShowCollationCommand extends ShowCommand
 {
 
     public ?string $like;

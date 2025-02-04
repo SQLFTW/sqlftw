@@ -15,7 +15,7 @@ use SqlFtw\Sql\Collation;
 /**
  * expression COLLATE collation
  */
-class CollateExpression implements RootNode
+class CollateExpression extends RootNode
 {
 
     public RootNode $expression;

@@ -13,10 +13,9 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 use function count;
 
-class IfStatement extends StatementImpl
+class IfStatement extends Statement
 {
 
     /** @var non-empty-list<RootNode> */
@@ -46,14 +45,14 @@ class IfStatement extends StatementImpl
             $result .= ($i === 0 ? 'IF ' : 'ELSEIF ') . $condition->serialize($formatter) . " THEN \n";
             $statements = $this->statementLists[$i];
             if ($statements !== []) {
-                $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";
+                $result .= $formatter->formatNodesList($statements, ";\n") . ";\n";
             }
         }
         if (count($this->conditions) < count($this->statementLists)) {
             $result .= "ELSE\n";
             $statements = $this->statementLists[count($this->conditions)];
             if ($statements !== []) {
-                $result .= $formatter->formatSerializablesList($statements, ";\n") . ";\n";
+                $result .= $formatter->formatNodesList($statements, ";\n") . ";\n";
             }
         }
 

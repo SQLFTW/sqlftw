@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
 
-class AddPartitionAction implements PartitioningAction
+class AddPartitionAction extends PartitioningAction
 {
 
     /** @var non-empty-list<PartitionDefinition> */
@@ -28,7 +28,7 @@ class AddPartitionAction implements PartitioningAction
 
     public function serialize(Formatter $formatter): string
     {
-        return 'ADD PARTITION (' . $formatter->formatSerializablesList($this->partitions) . ')';
+        return 'ADD PARTITION (' . $formatter->formatNodesList($this->partitions) . ')';
     }
 
 }

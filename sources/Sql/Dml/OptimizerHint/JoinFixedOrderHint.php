@@ -11,19 +11,16 @@ namespace SqlFtw\Sql\Dml\OptimizerHint;
 
 use SqlFtw\Formatter\Formatter;
 
-class JoinFixedOrderHint implements OptimizerHint
+class JoinFixedOrderHint extends OptimizerHint
 {
+
+    public string $type = OptimizerHintType::JOIN_FIXED_ORDER;
 
     public ?string $queryBlock;
 
     public function __construct(?string $queryBlock = null)
     {
         $this->queryBlock = $queryBlock;
-    }
-
-    public function getType(): string
-    {
-        return OptimizerHintType::JOIN_FIXED_ORDER;
     }
 
     public function serialize(Formatter $formatter): string

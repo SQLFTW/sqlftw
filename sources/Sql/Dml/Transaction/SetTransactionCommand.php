@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\Scope;
-use SqlFtw\Sql\StatementImpl;
 
-class SetTransactionCommand extends StatementImpl implements TransactionCommand
+class SetTransactionCommand extends Command implements TransactionCommand
 {
 
     public ?Scope $scope;

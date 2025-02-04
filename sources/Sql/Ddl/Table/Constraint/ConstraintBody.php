@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Constraint;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\NodeInterface;
 
-interface ConstraintBody extends SqlSerializable
+interface ConstraintBody extends NodeInterface
 {
 
 }

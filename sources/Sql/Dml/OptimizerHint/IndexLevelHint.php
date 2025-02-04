@@ -15,11 +15,11 @@ use SqlFtw\Sql\InvalidDefinitionException;
 /**
  * @phpstan-import-type IndexLevelHintType from OptimizerHintType
  */
-class IndexLevelHint implements OptimizerHint
+class IndexLevelHint extends OptimizerHint
 {
 
     /** @var IndexLevelHintType&string */
-    public string $type;
+    public string $type; // @phpstan-ignore property.phpDocType
 
     public ?string $queryBlock;
 

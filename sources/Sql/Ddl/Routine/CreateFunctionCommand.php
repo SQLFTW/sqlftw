@@ -11,15 +11,15 @@ namespace SqlFtw\Sql\Ddl\Routine;
 
 use Dogma\Arr;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\ColumnType;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 use function implode;
 
-class CreateFunctionCommand extends StatementImpl implements StoredFunctionCommand, CreateRoutineCommand
+class CreateFunctionCommand extends Command implements StoredFunctionCommand, CreateRoutineCommand
 {
 
     public ObjectIdentifier $function;

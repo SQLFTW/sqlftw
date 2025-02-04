@@ -10,13 +10,13 @@
 namespace SqlFtw\Sql\Dml\Insert;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-abstract class InsertOrReplaceCommand extends StatementImpl implements DmlCommand
+abstract class InsertOrReplaceCommand extends Command implements DmlCommand
 {
 
     public ObjectIdentifier $table;
@@ -60,7 +60,7 @@ abstract class InsertOrReplaceCommand extends StatementImpl implements DmlComman
     {
         $result = '';
         if ($this->optimizerHints !== null) {
-            $result .= ' /*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */';
+            $result .= ' /*+ ' . $formatter->formatNodesList($this->optimizerHints) . ' */';
         }
 
         if ($this->priority !== null) {
@@ -78,7 +78,7 @@ abstract class InsertOrReplaceCommand extends StatementImpl implements DmlComman
         if ($this->columns !== null) {
             $result .= ' (';
             if ($this->columns !== []) {
-                $result .= $formatter->formatSerializablesList($this->columns);
+                $result .= $formatter->formatNodesList($this->columns);
             }
             $result .= ')';
         }

@@ -11,19 +11,16 @@ namespace SqlFtw\Sql\Dml\OptimizerHint;
 
 use SqlFtw\Formatter\Formatter;
 
-class ResourceGroupHint implements OptimizerHint
+class ResourceGroupHint extends OptimizerHint
 {
+
+    public string $type = OptimizerHintType::RESOURCE_GROUP;
 
     public string $resourceGroup;
 
     public function __construct(string $resourceGroup)
     {
         $this->resourceGroup = $resourceGroup;
-    }
-
-    public function getType(): string
-    {
-        return OptimizerHintType::RESOURCE_GROUP;
     }
 
     public function serialize(Formatter $formatter): string

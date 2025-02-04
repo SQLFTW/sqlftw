@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * ?123
  */
-class NumberedQuestionMarkPlaceholder implements Placeholder
+class NumberedQuestionMarkPlaceholder extends Placeholder
 {
 
     public string $name;

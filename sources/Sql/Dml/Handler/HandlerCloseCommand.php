@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class HandlerCloseCommand extends StatementImpl implements HandlerCommand
+class HandlerCloseCommand extends Command implements HandlerCommand
 {
 
     public ObjectIdentifier $table;

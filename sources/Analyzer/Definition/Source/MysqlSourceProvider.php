@@ -13,7 +13,7 @@ use SqlFtw\Analyzer\Context\Provider\SourceProvider;
 use SqlFtw\Connection\Connection;
 use SqlFtw\Connection\ConnectionException;
 use SqlFtw\Platform\Features\MysqlError;
-use SqlFtw\Sql\Expression\ObjectIdentifier;
+use SqlFtw\Sql\Expression\Identifier;
 use SqlFtw\Sql\Expression\QualifiedName;
 use SqlFtw\Sql\UserName;
 use function str_replace;
@@ -55,7 +55,7 @@ class MysqlSourceProvider implements SourceProvider
         return $result[0]['Create Database'];
     }
 
-    public function getTableSource(ObjectIdentifier $name): ?string
+    public function getTableSource(Identifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
             $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
@@ -79,7 +79,7 @@ class MysqlSourceProvider implements SourceProvider
         return $result[0]['Create Table'];
     }
 
-    public function getViewSource(ObjectIdentifier $name): ?string
+    public function getViewSource(Identifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
             $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
@@ -103,7 +103,7 @@ class MysqlSourceProvider implements SourceProvider
         return $result[0]['Create View'];
     }
 
-    public function getEventSource(ObjectIdentifier $name): ?string
+    public function getEventSource(Identifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
             $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
@@ -127,7 +127,7 @@ class MysqlSourceProvider implements SourceProvider
         return $result[0]['Create Event'];
     }
 
-    public function getFunctionSource(ObjectIdentifier $name): ?string
+    public function getFunctionSource(Identifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
             $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
@@ -151,7 +151,7 @@ class MysqlSourceProvider implements SourceProvider
         return $result[0]['Create Function'];
     }
 
-    public function getProcedureSource(ObjectIdentifier $name): ?string
+    public function getProcedureSource(Identifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
             $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);
@@ -175,7 +175,7 @@ class MysqlSourceProvider implements SourceProvider
         return $result[0]['Create Procedure'];
     }
 
-    public function getTriggerSource(ObjectIdentifier $name): ?string
+    public function getTriggerSource(Identifier $name): ?string
     {
         if ($name instanceof QualifiedName) {
             $quotedName = $this->quoteName($name->schema) . '.' . $this->quoteName($name->name);

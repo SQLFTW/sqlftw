@@ -11,10 +11,9 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 
-class CreateUserCommand extends StatementImpl implements UserCommand
+class CreateUserCommand extends UserCommand
 {
 
     /** @var non-empty-list<IdentifiedUser> */
@@ -76,10 +75,10 @@ class CreateUserCommand extends StatementImpl implements UserCommand
         if ($this->ifNotExists) {
             $result .= 'IF NOT EXISTS ';
         }
-        $result .= $formatter->formatSerializablesList($this->users);
+        $result .= $formatter->formatNodesList($this->users);
 
         if ($this->defaultRoles !== null) {
-            $result .= ' DEFAULT ROLE ' . $formatter->formatSerializablesList($this->defaultRoles);
+            $result .= ' DEFAULT ROLE ' . $formatter->formatNodesList($this->defaultRoles);
         }
 
         if ($this->tlsOptions !== null) {
@@ -87,14 +86,14 @@ class CreateUserCommand extends StatementImpl implements UserCommand
             if ($this->tlsOptions === []) {
                 $result .= ' NONE';
             } else {
-                $result .= ' ' . $formatter->formatSerializablesList($this->tlsOptions, ' AND ');
+                $result .= ' ' . $formatter->formatNodesList($this->tlsOptions, ' AND ');
             }
         }
         if ($this->resourceOptions !== null) {
-            $result .= ' WITH ' . $formatter->formatSerializablesList($this->resourceOptions, ' ');
+            $result .= ' WITH ' . $formatter->formatNodesList($this->resourceOptions, ' ');
         }
         if ($this->passwordLockOptions !== null) {
-            $result .= ' ' . $formatter->formatSerializablesList($this->passwordLockOptions, ' ');
+            $result .= ' ' . $formatter->formatNodesList($this->passwordLockOptions, ' ');
         }
         if ($this->comment !== null) {
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);

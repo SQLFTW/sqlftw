@@ -3,6 +3,8 @@
 namespace Test;
 
 use Dogma\Debug\Dumper;
+use SqlFtw\Analyzer\Rules\RuleFactory;
+use SqlFtw\Tests\Assert;
 use Tracy\Debugger;
 use function class_exists;
 use function dirname;
@@ -15,7 +17,6 @@ if (!class_exists(Dumper::class)) {
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../vendor/nette/tester/src/bootstrap.php';
-require_once __DIR__ . '/ParserHelper.php';
 require_once __DIR__ . '/Assert.php';
 require_once __DIR__ . '/debugger.php';
 
@@ -27,3 +28,8 @@ if (!empty($_SERVER['argv'])) { // @phpstan-ignore-line ❤ empty()
     // running from browser
     Debugger::enable(Debugger::DEVELOPMENT, dirname(__DIR__) . '/log/');
 }
+
+$ruleFactory = new RuleFactory();
+$ruleFactory->init();
+
+Assert::$ruleFactory = $ruleFactory;

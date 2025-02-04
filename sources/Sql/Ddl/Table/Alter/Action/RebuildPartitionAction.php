@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class RebuildPartitionAction implements PartitioningAction
+class RebuildPartitionAction extends PartitioningAction
 {
 
     /** @var non-empty-list<string>|null */

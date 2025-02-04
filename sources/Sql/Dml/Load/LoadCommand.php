@@ -12,12 +12,12 @@ namespace SqlFtw\Sql\Dml\Load;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Assignment;
 use SqlFtw\Sql\Charset;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-abstract class LoadCommand extends StatementImpl implements DmlCommand
+abstract class LoadCommand extends Command implements DmlCommand
 {
 
     public string $file;
@@ -107,7 +107,7 @@ abstract class LoadCommand extends StatementImpl implements DmlCommand
             $result .= ' (' . $formatter->formatNamesList($this->fields) . ')';
         }
         if ($this->assignments !== null) {
-            $result .= ' SET ' . $formatter->formatSerializablesList($this->assignments);
+            $result .= ' SET ' . $formatter->formatNodesList($this->assignments);
         }
 
         return $result;

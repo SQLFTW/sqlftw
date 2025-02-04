@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * EXISTS (SELECT ...)
  */
-class ExistsExpression implements RootNode
+class ExistsExpression extends RootNode
 {
 
     public Subquery $subquery;

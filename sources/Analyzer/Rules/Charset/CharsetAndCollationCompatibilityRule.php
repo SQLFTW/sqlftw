@@ -29,6 +29,17 @@ use function count;
 class CharsetAndCollationCompatibilityRule implements AnalyzerRule
 {
 
+    public const CHARSET_MISMATCH = "charset.charsetMismatch";
+    public const CHARSET_COLLATION_MISMATCH = "charset.charsetCollationMismatch";
+
+    public static function getIds(): array
+    {
+        return [
+            self::CHARSET_MISMATCH,
+            self::CHARSET_COLLATION_MISMATCH,
+        ];
+    }
+
     public function getNodes(): array
     {
         return [CreateSchemaCommand::class, AlterSchemaCommand::class, CreateTableCommand::class, AlterTableCommand::class];
@@ -56,10 +67,13 @@ class CharsetAndCollationCompatibilityRule implements AnalyzerRule
     {
         $results = [];
         $options = $command->options;
+        if ($options === null) {
+            return [];
+        }
         $charset = $options->charset;
         $collation = $options->collation;
         if ($charset !== null && $collation !== null && !$charset->supportsCollation($collation)) {
-            $results[] = Error::critical("charset.charsetCollationMismatch", "Mismatch between database charset ({$charset->getValue()}) and collation ({$collation->getValue()}).", 0);
+            $results[] = Error::critical(self::CHARSET_COLLATION_MISMATCH, "Mismatch between database charset ({$charset->value}) and collation ({$collation->value}).", 0);
         }
 
         return $results;
@@ -73,6 +87,9 @@ class CharsetAndCollationCompatibilityRule implements AnalyzerRule
     {
         $errors = [];
         $options = $command->options;
+        if ($options === null) {
+            return [];
+        }
         /** @var Charset|DefaultLiteral $charset */
         $charset = $options->get(TableOption::CHARACTER_SET);
         if ($charset instanceof DefaultLiteral) {
@@ -86,7 +103,7 @@ class CharsetAndCollationCompatibilityRule implements AnalyzerRule
             $collation = null;
         }
         if ($charset !== null && $collation !== null && !$charset->supportsCollation($collation)) {
-            $errors[] = Error::critical("charset.charsetCollationMismatch", "Mismatch between table charset ({$charset->getValue()}) and collation ({$collation->getValue()}).", 0);
+            $errors[] = Error::critical(self::CHARSET_COLLATION_MISMATCH, "Mismatch between table charset ({$charset->value}) and collation ({$collation->value}).", 0);
         }
 
         if ($command instanceof AlterTableCommand) {
@@ -100,16 +117,16 @@ class CharsetAndCollationCompatibilityRule implements AnalyzerRule
                     $convertCharset = null;
                 }
                 if ($convertCharset !== null) {
-                    if ($charset !== null && !$convertCharset->equals($charset)) {
-                        $errors[] = Error::critical("charset.charsetMismatch", "Conflict between conversion charset ({$convertCharset->getValue()}) and table charset ({$charset->getValue()}).", 0);
+                    if ($charset !== null && $convertCharset->value !== $charset->value) {
+                        $errors[] = Error::critical(self::CHARSET_MISMATCH, "Conflict between conversion charset ({$convertCharset->value}) and table charset ({$charset->value}).", 0);
                     }
                     if ($collation !== null && !$convertCharset->supportsCollation($collation)) {
-                        $errors[] = Error::critical("charset.charsetCollationMismatch", "Mismatch between conversion charset ({$convertCharset->getValue()}) and table collation ({$collation->getValue()}).", 0);
+                        $errors[] = Error::critical(self::CHARSET_COLLATION_MISMATCH, "Mismatch between conversion charset ({$convertCharset->value}) and table collation ({$collation->value}).", 0);
                     }
                     $convertCollation = $convertAction->collation;
                     //!$convertAction->getCharset() instanceof DefaultLiteral
                     if ($convertCollation !== null && !$convertCharset->supportsCollation($convertCollation)) {
-                        $errors[] = Error::critical("charset.charsetCollationMismatch", "Mismatch between conversion charset ({$convertCharset->getValue()}) and conversion collation ({$convertCollation->getValue()}).", 0);
+                        $errors[] = Error::critical(self::CHARSET_COLLATION_MISMATCH, "Mismatch between conversion charset ({$convertCharset->value}) and conversion collation ({$convertCollation->value}).", 0);
                     }
                     if (count($convertActions) > 1) {
                         foreach ($convertActions as $otherAction) {
@@ -118,8 +135,8 @@ class CharsetAndCollationCompatibilityRule implements AnalyzerRule
                                 // todo: should take from schema
                                 $otherConvertCharset = null;
                             }
-                            if ($otherConvertCharset !== null && !$convertCharset->equals($otherConvertCharset)) {
-                                $errors[] = Error::critical("charset.charsetMismatch", "Conflict between conversion charset ({$convertCharset->getValue()}) and other conversion charset ({$otherConvertCharset->getValue()}).", 0);
+                            if ($otherConvertCharset !== null && $convertCharset->value !== $otherConvertCharset->value) {
+                                $errors[] = Error::critical(self::CHARSET_MISMATCH, "Conflict between conversion charset ({$convertCharset->value}) and other conversion charset ({$otherConvertCharset->value}).", 0);
                             }
                         }
                     }
@@ -131,7 +148,7 @@ class CharsetAndCollationCompatibilityRule implements AnalyzerRule
                 $columnCharset = $type->charset;
                 $columnCollation = $type->collation;
                 if ($columnCharset !== null && $columnCollation !== null && !$columnCharset->supportsCollation($columnCollation)) {
-                    $errors[] = Error::critical("charset.charsetCollationMismatch", "Mismatch between charset ({$columnCharset->getValue()}) and collation ({$columnCollation->getValue()}) on column {$column->name}.", 0);
+                    $errors[] = Error::critical(self::CHARSET_COLLATION_MISMATCH, "Mismatch between charset ({$columnCharset->value}) and collation ({$columnCollation->value}) on column {$column->name}.", 0);
                 }
             }
         }

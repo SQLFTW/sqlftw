@@ -275,7 +275,7 @@ class SessionUpdater
                 }
             }
 
-            return $charset->getValue();
+            return $charset->value;
         } catch (InvalidDefinitionException $e) {
             return $value;
         }
@@ -314,7 +314,7 @@ class SessionUpdater
                 }
             }
 
-            return $collation->getValue();
+            return $collation->value;
         } catch (InvalidDefinitionException $e) {
             return $value;
         }

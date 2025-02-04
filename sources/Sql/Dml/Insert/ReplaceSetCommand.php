@@ -15,7 +15,7 @@ use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Expression\ColumnIdentifier;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
-class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
+class ReplaceSetCommand extends ReplaceCommand
 {
 
     /** @var non-empty-list<Assignment> */
@@ -45,7 +45,7 @@ class ReplaceSetCommand extends InsertOrReplaceCommand implements ReplaceCommand
     {
         $result = 'REPLACE' . $this->serializeBody($formatter);
 
-        $result .= ' SET ' . $formatter->formatSerializablesList($this->assignments);
+        $result .= ' SET ' . $formatter->formatNodesList($this->assignments);
 
         return $result;
     }

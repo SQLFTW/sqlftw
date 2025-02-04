@@ -9,6 +9,7 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
@@ -16,13 +17,19 @@ use SqlFtw\Sql\Expression\SimpleName;
 
 /**
  * Interface for SELECT, TABLE and VALUES commands, QueryExpression (UNION|EXCEPT|INTERSECT) and ParenthesizedQueryExpression
- *
- * @property non-empty-list<OrderByExpression>|null $orderBy
- * @property int|SimpleName|Placeholder|null $limit
- * @property int|SimpleName|Placeholder|null $offset
- * @property ?SelectInto $into
  */
-interface Query extends DmlCommand
+abstract class Query extends Command implements DmlCommand
 {
+
+    /** @var non-empty-list<OrderByExpression>|null */
+    public ?array $orderBy; // @phpstan-ignore property.uninitialized
+
+    /** @var int|SimpleName|Placeholder|null */
+    public $limit;
+
+    /** @var int|SimpleName|Placeholder|null */
+    public $offset;
+
+    public ?SelectInto $into; // @phpstan-ignore property.uninitialized
 
 }

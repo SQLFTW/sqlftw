@@ -11,21 +11,21 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class AlteredUser implements SqlSerializable
+class AlteredUser extends Node
 {
 
     /** @var UserName|FunctionCall */
-    public SqlSerializable $user;
+    public Node $user;
 
     public ?AlterUserAction $action;
 
     /**
      * @param UserName|FunctionCall $user
      */
-    public function __construct(SqlSerializable $user, ?AlterUserAction $action = null)
+    public function __construct(Node $user, ?AlterUserAction $action = null)
     {
         $this->user = $user;
         $this->action = $action;

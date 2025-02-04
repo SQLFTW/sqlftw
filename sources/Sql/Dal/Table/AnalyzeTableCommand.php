@@ -11,13 +11,10 @@ namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\TablesCommand;
 
-class AnalyzeTableCommand extends StatementImpl implements DalTablesCommand
+class AnalyzeTableCommand extends TablesCommand
 {
-
-    /** @var non-empty-list<ObjectIdentifier> */
-    public array $tables;
 
     public bool $local;
 
@@ -36,7 +33,7 @@ class AnalyzeTableCommand extends StatementImpl implements DalTablesCommand
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->tables);
+        $result .= ' TABLE ' . $formatter->formatNodesList($this->tables);
 
         return $result;
     }

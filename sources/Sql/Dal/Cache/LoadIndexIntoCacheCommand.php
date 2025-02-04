@@ -10,12 +10,12 @@
 namespace SqlFtw\Sql\Dal\Cache;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
 /**
  * MySQL MyISAM tables only
  */
-class LoadIndexIntoCacheCommand extends StatementImpl implements CacheCommand
+class LoadIndexIntoCacheCommand extends Command implements CacheCommand
 {
 
     /** @var non-empty-list<TableIndexList> */
@@ -31,7 +31,7 @@ class LoadIndexIntoCacheCommand extends StatementImpl implements CacheCommand
 
     public function serialize(Formatter $formatter): string
     {
-        return 'LOAD INDEX INTO CACHE ' . $formatter->formatSerializablesList($this->tableIndexLists);
+        return 'LOAD INDEX INTO CACHE ' . $formatter->formatNodesList($this->tableIndexLists);
     }
 
 }

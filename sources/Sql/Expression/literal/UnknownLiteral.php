@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * UNKNOWN
  */
-class UnknownLiteral implements KeywordLiteral
+class UnknownLiteral extends KeywordLiteral
 {
 
     public string $value = 'UNKNOWN';

@@ -9,11 +9,15 @@
 
 namespace SqlFtw\Sql;
 
+use SqlFtw\Formatter\Formatter;
+use SqlFtw\Util\CaseInsensitivePseudoEnumMixin;
 use SqlFtw\Util\Str;
 use function array_search;
+use function array_values;
 
-class Collation extends SqlEnum
+class Collation extends Node
 {
+    use CaseInsensitivePseudoEnumMixin;
 
     public const ARMSCII8_BIN = 'armscii8_bin';
     public const ARMSCII8_GENERAL_CI = 'armscii8_general_ci';
@@ -404,7 +408,7 @@ class Collation extends SqlEnum
     public const UTF8_5624_4 = 'utf8_5624_4';
     public const UTF8_5624_5 = 'utf8_5624_5';
 
-    /** @var array<string, int> */
+    /** @var array<self::*, int> */
     private static array $ids = [
         self::ARMSCII8_BIN => 64,
         self::ARMSCII8_GENERAL_CI => 32,
@@ -695,7 +699,7 @@ class Collation extends SqlEnum
         self::UTF8_VIETNAMESE_CI => 215,
     ];
 
-    /** @var array<string, string> */
+    /** @var array<self::*, Charset::*> */
     private static array $charsets = [
         self::ARMSCII8_BIN => Charset::ARMSCII8,
         self::ARMSCII8_GENERAL_CI => Charset::ARMSCII8,
@@ -991,16 +995,39 @@ class Collation extends SqlEnum
         self::UTF8_BENGALI_TRADITIONAL_CI => Charset::UTF8,
     ];
 
-    /**
-     * @param scalar|null $value
-     */
-    public static function tryCreate($value): ?self
+    public string $value;
+
+    public function __construct(string $value)
     {
-        try {
-            return new self((string) $value);
-        } catch (InvalidEnumValueException $e) {
-            return null;
+        $this->value = $value;
+    }
+
+    public static function validateValue(string &$value): bool
+    {
+        if (self::$lowerCaseIndex === []) {
+            self::init();
         }
+
+        $normalized = self::$charsets[strtolower($value)] ?? null;
+        if ($normalized !== null) {
+            $value = $normalized;
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function getValidValues(): array
+    {
+        if (self::$lowerCaseIndex === []) {
+            self::init();
+        }
+
+        return array_values(self::$lowerCaseIndex);
     }
 
     public static function getById(int $id): self
@@ -1022,14 +1049,17 @@ class Collation extends SqlEnum
 
     public function getId(): int
     {
-        return self::$ids[$this->getValue()] ?? 0;
+        return self::$ids[$this->value] ?? 0;
     }
 
     public function getCharsetName(): string
     {
-        $value = $this->getValue();
+        return self::$charsets[$this->value] ?? (string) Str::before($this->value, '_');
+    }
 
-        return self::$charsets[$value] ?? (string) Str::before($value, '_');
+    public function serialize(Formatter $formatter): string
+    {
+        return $this->value;
     }
 
 }

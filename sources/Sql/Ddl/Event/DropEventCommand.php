@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class DropEventCommand extends StatementImpl implements EventCommand
+class DropEventCommand extends Command implements EventCommand
 {
 
     public ObjectIdentifier $event;

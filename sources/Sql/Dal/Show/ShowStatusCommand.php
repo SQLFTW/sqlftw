@@ -12,9 +12,8 @@ namespace SqlFtw\Sql\Dal\Show;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\Expression\Scope;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowStatusCommand extends StatementImpl implements ShowCommand
+class ShowStatusCommand extends ShowCommand
 {
 
     public ?Scope $scope;

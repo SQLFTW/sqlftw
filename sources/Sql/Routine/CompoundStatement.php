@@ -4,9 +4,8 @@ namespace SqlFtw\Sql\Routine;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 
-class CompoundStatement extends StatementImpl
+class CompoundStatement extends Statement
 {
 
     /** @var list<Statement> */
@@ -34,7 +33,7 @@ class CompoundStatement extends StatementImpl
         }
         $result .= "BEGIN \n";
         if ($this->statements !== []) {
-            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+            $result .= $formatter->formatNodesList($this->statements, ";\n") . ";\n";
         }
         $result .= ' END';
         if ($this->label !== null && $this->endLabel) {

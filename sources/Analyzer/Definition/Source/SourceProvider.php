@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Analyzer\Context\Provider;
 
-use SqlFtw\Sql\Expression\ObjectIdentifier;
+use SqlFtw\Sql\Expression\Identifier;
 
 interface SourceProvider
 {
@@ -23,31 +23,31 @@ interface SourceProvider
     /**
      * Returns parsable CREATE TABLE command
      */
-    public function getTableSource(ObjectIdentifier $name): ?string;
+    public function getTableSource(Identifier $name): ?string;
 
     /**
      * Returns parsable CREATE VIEW command
      */
-    public function getViewSource(ObjectIdentifier $name): ?string;
+    public function getViewSource(Identifier $name): ?string;
 
     /**
      * Returns parsable CREATE EVENT command
      */
-    public function getEventSource(ObjectIdentifier $name): ?string;
+    public function getEventSource(Identifier $name): ?string;
 
     /**
      * Return parsable CREATE FUNCTION command
      */
-    public function getFunctionSource(ObjectIdentifier $name): ?string;
+    public function getFunctionSource(Identifier $name): ?string;
 
     /**
      * Return parsable CREATE PROCEDURE command
      */
-    public function getProcedureSource(ObjectIdentifier $name): ?string;
+    public function getProcedureSource(Identifier $name): ?string;
 
     /**
      * Returns parsable CREATE TRIGGER command
      */
-    public function getTriggerSource(ObjectIdentifier $name): ?string;
+    public function getTriggerSource(Identifier $name): ?string;
 
 }

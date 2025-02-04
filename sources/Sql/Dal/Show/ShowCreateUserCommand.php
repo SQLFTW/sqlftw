@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\UserName;
 
-class ShowCreateUserCommand extends StatementImpl implements ShowCommand
+class ShowCreateUserCommand extends ShowCommand
 {
 
     public UserName $user;

@@ -11,19 +11,16 @@ namespace SqlFtw\Sql\Dml\OptimizerHint;
 
 use SqlFtw\Formatter\Formatter;
 
-class MaxExecutionTimeHint implements OptimizerHint
+class MaxExecutionTimeHint extends OptimizerHint
 {
+
+    public string $type = OptimizerHintType::MAX_EXECUTION_TIME;
 
     public int $limit;
 
     public function __construct(int $limit)
     {
         $this->limit = $limit;
-    }
-
-    public function getType(): string
-    {
-        return OptimizerHintType::MAX_EXECUTION_TIME;
     }
 
     public function serialize(Formatter $formatter): string

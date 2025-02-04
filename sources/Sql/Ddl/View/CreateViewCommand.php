@@ -10,14 +10,14 @@
 namespace SqlFtw\Sql\Ddl\View;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\SchemaObjectCommand;
 use SqlFtw\Sql\Ddl\SqlSecurity;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class CreateViewCommand extends StatementImpl implements ViewCommand, SchemaObjectCommand
+class CreateViewCommand extends Command implements ViewCommand, SchemaObjectCommand
 {
 
     public ObjectIdentifier $view;

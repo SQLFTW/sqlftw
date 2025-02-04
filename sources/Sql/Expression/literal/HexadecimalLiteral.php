@@ -20,7 +20,7 @@ use function substr;
 /**
  * e.g. 0x001F
  */
-class HexadecimalLiteral implements BoolValue, StringValue, UintValue
+class HexadecimalLiteral extends Literal implements BoolValue, StringValue, UintValue
 {
 
     public string $value;

@@ -6,10 +6,10 @@ use Dogma\Debug\Callstack;
 use Dogma\Debug\Debugger;
 use Dogma\Re;
 use Dogma\Tester\Assert as DogmaAssert;
+use SqlFtw\Analyzer\Rules\RuleFactory;
 use SqlFtw\Error\Error;
 use SqlFtw\Error\Severity;
 use SqlFtw\Parser\InvalidCommand;
-use SqlFtw\Parser\LexerException;
 use SqlFtw\Parser\Token;
 use SqlFtw\Parser\TokenList;
 use SqlFtw\Parser\TokenType;
@@ -20,7 +20,6 @@ use function array_merge;
 use function class_exists;
 use function gettype;
 use function implode;
-use function iterator_to_array;
 use function preg_replace;
 use function sprintf;
 use function str_replace;
@@ -30,6 +29,18 @@ use function str_replace;
  */
 class Assert extends DogmaAssert
 {
+
+    public static RuleFactory $ruleFactory;
+
+    private ?Platform $platform = null;
+
+    private ?string $platformName = null;
+
+    private ?string $platformVersion = null;
+
+    private ?int $extensions = null;
+
+    private ?int $mode = null;
 
     /**
      * @return array<Token>
@@ -43,7 +54,7 @@ class Assert extends DogmaAssert
         $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL, $extensions, $mode);
 
         /** @var array<TokenList> $tokenLists */
-        $tokenLists = iterator_to_array($suite->lexer->tokenize($sql));
+        $tokenLists = $suite->lexer->tokenizeAll($sql);
         $tokens = [];
         foreach ($tokenLists as $tokenList) {
             $tokens = array_merge($tokens, $tokenList->getTokens());
@@ -76,7 +87,7 @@ class Assert extends DogmaAssert
             $typeDesc = implode('|', TokenType::getByValue($type)->getConstantNames());
             parent::fail(sprintf('Type of token "%s" is %s (%d) and should be %s (%d).', $token->value, $actualDesc, $token->type, $typeDesc, $type));
         }
-        if ($token->error === null || $token->error->severity === Severity::LEXER_ERROR) {
+        if ($token->error === null || $token->error->severity !== Severity::LEXER_ERROR) {
             parent::fail(sprintf('Token value is %s (%d) and should be a lexer error.', $token->value, gettype($token->value)));
         } else {
             $message = $token->error->message;
@@ -93,7 +104,7 @@ class Assert extends DogmaAssert
     {
         $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL);
 
-        return iterator_to_array($suite->lexer->tokenize($sql))[0];
+        return $suite->lexer->tokenizeAll($sql)[0];
     }
 
     public static function parseSerializeMany(string $query, ?string $expected = null): void
@@ -112,7 +123,7 @@ class Assert extends DogmaAssert
 
         $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL);
 
-        $results = iterator_to_array($suite->parser->parse($query));
+        $results = $suite->parser->parseAll($query);
 
         $serialized = [];
         foreach ($results as $command) {
@@ -137,7 +148,7 @@ class Assert extends DogmaAssert
         self::same($actual, $expected);
     }
 
-    public static function parseSerialize(string $query, ?string $expected = null): Command
+    public static function parseSerialize(string $query, ?string $expected = null, ?int $extensions = null): Command
     {
         /** @var string $query */
         $query = preg_replace('/\\s+/', ' ', $query);
@@ -151,11 +162,11 @@ class Assert extends DogmaAssert
             $expected = $query;
         }
 
-        $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL);
+        $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL, $extensions);
         $suite->normalizer->quoteAllNames(false);
 
 
-        $results = iterator_to_array($suite->parser->parse($query));
+        $results = $suite->parser->parseAll($query);
         if (count($results) > 1) {
             if (class_exists(Debugger::class)) {
                 Debugger::dump($results);
@@ -194,16 +205,15 @@ class Assert extends DogmaAssert
     {
         $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL);
 
-        $results = iterator_to_array($suite->parser->parse($query));
+        $results = $suite->parser->parseAll($query);
         if (count($results) > 1) {
             self::fail('More than one command found in given SQL code.');
         }
         $command = $results[0];
-        $errors = $command->getErrors();
 
-        if ($errors !== []) {
-            Debugger::dump($command->getTokenList());
-            $message = Error::summarize($errors);
+        if ($command->errors !== []) {
+            Debugger::dump($command->tokenList);
+            $message = Error::summarize($command->errors);
 
             self::fail($message);
         }
@@ -217,15 +227,15 @@ class Assert extends DogmaAssert
     {
         $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL);
 
-        $results = iterator_to_array($suite->parser->parse($query));
+        $results = $suite->parser->parseAll($query);
         if (count($results) > 1) {
             self::fail('More than one command found in given SQL code.');
         }
         $command = $results[0];
-        $errors = $command->getErrors();
 
-        if ($errors === []) {
-            Debugger::dump($command->getTokenList());
+        if ($command->errors === []) {
+            Debugger::dump($command->tokenList);
+            Debugger::dump($command);
 
             self::fail("Command should have failed to parse.");
         }
@@ -243,20 +253,16 @@ class Assert extends DogmaAssert
         $suite = ParserSuiteFactory::fromPlatform(Platform::MYSQL, CurrenVersion::MYSQL);
 
         $commands = [];
-        try {
-            /** @var Command $command */
-            foreach ($suite->parser->parse($sql) as $command) {
-                $commands[] = $command;
+        /** @var Command $command */
+        foreach ($suite->parser->parse($sql) as $command) {
+            $commands[] = $command;
 
-                if ($command->errors !== []) {
-                    $message = Error::summarize($command->errors);
-                    self::fail($message);
-                }
-
-                self::true(true);
+            if ($command->errors !== []) {
+                $message = Error::summarize($command->errors);
+                self::fail($message);
             }
-        } catch (LexerException $e) {
-            throw $e;
+
+            self::true(true);
         }
 
         self::true(true);

@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
-interface ForeignKeyAction extends AlterTableAction
+abstract class ForeignKeyAction extends AlterTableAction
 {
 
 }

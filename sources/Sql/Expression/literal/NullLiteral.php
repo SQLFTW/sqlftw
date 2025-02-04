@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * NULL
  */
-class NullLiteral implements BoolValue, KeywordLiteral
+class NullLiteral extends KeywordLiteral implements BoolValue
 {
 
     public string $value = 'NULL';

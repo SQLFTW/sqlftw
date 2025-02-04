@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class LockTablesItem implements SqlSerializable
+class LockTablesItem extends Node
 {
 
     public ObjectIdentifier $table;

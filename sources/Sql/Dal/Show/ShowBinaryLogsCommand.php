@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class ShowBinaryLogsCommand extends StatementImpl implements ShowCommand
+class ShowBinaryLogsCommand extends ShowCommand
 {
 
     public function serialize(Formatter $formatter): string

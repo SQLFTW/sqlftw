@@ -9,9 +9,7 @@
 
 namespace SqlFtw\Sql\Routine;
 
-use SqlFtw\Sql\SqlSerializable;
-
-interface CompoundStatementItem extends SqlSerializable
+interface CompoundStatementItem
 {
 
 }

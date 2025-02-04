@@ -180,7 +180,7 @@ class RoutineCommandsParser
                     throw new ParserException('Duplicate parameter name.', $tokenList);
                 }
                 $type = $this->expressionParser->parseColumnType($tokenList);
-                if ($type->charset === null && ($type->collation !== null && !$type->collation->equalsValue(Collation::BINARY))) {
+                if ($type->charset === null && ($type->collation !== null && $type->collation->value !== Collation::BINARY)) {
                     throw new ParserException('Character set is required for IN parameter with collation.', $tokenList);
                 }
                 $params[$param] = $type;

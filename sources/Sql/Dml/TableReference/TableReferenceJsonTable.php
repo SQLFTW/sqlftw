@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 
-class TableReferenceJsonTable implements TableReferenceNode
+class TableReferenceJsonTable extends TableReferenceNode
 {
 
     public FunctionCall $table;

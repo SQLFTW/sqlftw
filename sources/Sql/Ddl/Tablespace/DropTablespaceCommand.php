@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Ddl\Tablespace;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
-use SqlFtw\Sql\StatementImpl;
 
-class DropTablespaceCommand extends StatementImpl implements TablespaceCommand
+class DropTablespaceCommand extends Command implements TablespaceCommand
 {
 
     public string $tablespace;

@@ -11,14 +11,14 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class IdentifiedUser implements SqlSerializable
+class IdentifiedUser extends Node
 {
 
     /** @var UserName|FunctionCall */
-    public SqlSerializable $user;
+    public Node $user;
 
     public ?AuthOption $option1;
 
@@ -30,7 +30,7 @@ class IdentifiedUser implements SqlSerializable
      * @param UserName|FunctionCall $user
      */
     public function __construct(
-        SqlSerializable $user,
+        Node $user,
         ?AuthOption $option1 = null,
         ?AuthOption $option2 = null,
         ?AuthOption $option3 = null

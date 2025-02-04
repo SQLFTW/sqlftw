@@ -9,17 +9,20 @@
 
 namespace SqlFtw\Sql\Expression;
 
+use ReflectionClass;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Keyword;
-use SqlFtw\Sql\SqlEnum;
+use SqlFtw\Util\CaseInsensitivePseudoEnumMixin;
 use function in_array;
 use function strtoupper;
 
 /**
  * Function name, e.g. CURRENT_TIME
  */
-class BuiltInFunction extends SqlEnum implements FunctionIdentifier
+class BuiltInFunction extends Identifier implements FunctionIdentifier
 {
+    use CaseInsensitivePseudoEnumMixin;
 
     // comparison
     public const COALESCE = 'COALESCE';
@@ -707,19 +710,44 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
         self::WEIGHT_STRING => [Keyword::AS => CastType::class, Keyword::LEVEL => 'SKIP'],
     ];
 
+    /** @var self::* */
+    public string $name; // @phpstan-ignore property.uninitialized, property.phpDocType
+
+    public function __construct(string $name)
+    {
+        self::validateValue($name);
+        $this->name = $name;
+    }
+
+    public static function validateValue(string &$name): bool
+    {
+        if (self::$lowerCaseIndex === []) {
+            self::init();
+        }
+
+        $normalized = self::$lowerCaseIndex[strtolower($name)] ?? null;
+        if ($normalized !== null) {
+            $name = $normalized;
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function isSimple(): bool
     {
-        return !in_array($this->getValue(), self::$window, true) && !in_array($this->getValue(), self::$aggregate, true);
+        return !in_array($this->name, self::$window, true) && !in_array($this->name, self::$aggregate, true);
     }
 
     public function isAggregate(): bool
     {
-        return in_array($this->getValue(), self::$aggregate, true);
+        return in_array($this->name, self::$aggregate, true);
     }
 
     public function isWindow(): bool
     {
-        $name = $this->getValue();
+        $name = $this->name;
 
         return in_array($name, self::$window, true)
             || (in_array($name, self::$aggregate, true) && $name !== self::GROUP_CONCAT);
@@ -727,17 +755,17 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
 
     public function hasNullTreatment(): bool
     {
-        return in_array($this->getValue(), self::$nullTreatment, true);
+        return in_array($this->name, self::$nullTreatment, true);
     }
 
     public function hasFromFirstLast(): bool
     {
-        return $this->getValue() === self::NTH_VALUE;
+        return $this->name === self::NTH_VALUE;
     }
 
     public function isBare(): bool
     {
-        return in_array($this->getValue(), self::$bare, true);
+        return in_array($this->name, self::$bare, true);
     }
 
     public static function isBareName(string $name): bool
@@ -760,22 +788,27 @@ class BuiltInFunction extends SqlEnum implements FunctionIdentifier
      */
     public function getNamedParams(): array
     {
-        return self::$namedParams[$this->getValue()] ?? [];
+        return self::$namedParams[$this->name] ?? [];
     }
 
     public function hasNamedParams(): bool
     {
-        return isset(self::$namedParams[$this->getValue()]);
+        return isset(self::$namedParams[$this->name]);
     }
 
     public function getName(): string
     {
-        return $this->getValue();
+        return $this->name;
     }
 
     public function getFullName(): string
     {
-        return $this->getValue();
+        return $this->name;
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        return $this->name;
     }
 
 }

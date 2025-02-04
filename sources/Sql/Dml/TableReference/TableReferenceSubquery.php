@@ -13,7 +13,7 @@ use Countable;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
 
-class TableReferenceSubquery implements TableReferenceNode, Countable
+class TableReferenceSubquery extends TableReferenceNode implements Countable
 {
 
     public Query $query;

@@ -11,14 +11,14 @@ namespace SqlFtw\Sql\Dal\Replication;
 
 use Dogma\Arr;
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 use function implode;
 use function is_array;
 
 /**
  * @phpstan-type UntilKeyword 'SQL_AFTER_MTS_GAPS'|'SQL_BEFORE_GTIDS'|'SQL_AFTER_GTIDS'|'MASTER_LOG_FILE'|'MASTER_LOG_POS'|'SOURCE_LOG_FILE'|'SOURCE_LOG_POS'|'RELAY_LOG_FILE'|'RELAY_LOG_POS'
  */
-class StartSlaveCommand extends StatementImpl implements ReplicationCommand
+class StartSlaveCommand extends Command implements ReplicationCommand
 {
 
     public ?string $user;
@@ -64,7 +64,7 @@ class StartSlaveCommand extends StatementImpl implements ReplicationCommand
         $result = 'START SLAVE';
 
         if ($this->threadTypes !== null) {
-            $result .= ' ' . $formatter->formatSerializablesList($this->threadTypes);
+            $result .= ' ' . $formatter->formatNodesList($this->threadTypes);
         }
 
         if ($this->until !== null) {
@@ -74,7 +74,7 @@ class StartSlaveCommand extends StatementImpl implements ReplicationCommand
                 } elseif (is_array($value)) {
                     // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable
                     /** @var non-empty-list<UuidSet> $value */
-                    return $name . ' = ' . $formatter->formatSerializablesList($value);
+                    return $name . ' = ' . $formatter->formatNodesList($value);
                 } else {
                     return $name . ' = ' . $formatter->formatValue($value);
                 }

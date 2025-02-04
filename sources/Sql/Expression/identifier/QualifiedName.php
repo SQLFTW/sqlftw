@@ -15,7 +15,7 @@ use SqlFtw\Sql\Dml\OptimizerHint\HintTableIdentifier;
 /**
  * Name of an object including schema name, e.g. "foo.bar"
  */
-class QualifiedName implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier, HintTableIdentifier
+class QualifiedName extends Identifier implements ColumnIdentifier, FunctionIdentifier, ObjectIdentifier, HintTableIdentifier
 {
 
     public string $name;

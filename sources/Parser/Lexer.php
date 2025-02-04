@@ -145,6 +145,14 @@ class Lexer
     }
 
     /**
+     * @return list<TokenList>
+     */
+    public function tokenizeAll(string $source): array
+    {
+        return array_values(iterator_to_array($this->tokenize($source)));
+    }
+
+    /**
      * Tokenize SQL code and return a generator of TokenList objects (terminated by DELIMITER or DELIMITER_DEFINITION tokens)
      * @return Generator<TokenList>
      */
@@ -217,9 +225,9 @@ class Lexer
                 case "\x1E":
                 case "\x1F":
                 case "\x7F":
-                    $exception = new LexerException('Invalid ASCII control character', $position, $source);
+                    $error = Error::lexer('lexer.invalidAsciiCharacter', 'Invalid ASCII control character', $position);
 
-                    $tokens[] = $previous = $t = new Token; $t->type = T::INVALID; $t->start = $start; $t->value = $char; $t->exception = $exception;
+                    $tokens[] = $previous = $t = new Token; $t->type = T::INVALID; $t->start = $start; $t->value = $char; $t->error = $error;
                     $invalid = true;
                     break;
                 case "\t":

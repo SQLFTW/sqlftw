@@ -11,12 +11,12 @@ namespace SqlFtw\Sql\Dml\Error;
 
 use LogicException;
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Util\TypeChecker;
 
-class GetDiagnosticsCommand extends StatementImpl implements ErrorHandlingCommand
+class GetDiagnosticsCommand extends Command implements ErrorHandlingCommand
 {
 
     public ?DiagnosticsArea $area;
@@ -70,9 +70,9 @@ class GetDiagnosticsCommand extends StatementImpl implements ErrorHandlingComman
         }
         $result .= ' DIAGNOSTICS ';
         if ($this->statementItems !== null) {
-            $result .= $formatter->formatSerializablesList($this->statementItems);
+            $result .= $formatter->formatNodesList($this->statementItems);
         } elseif ($this->conditionNumber !== null && $this->conditionItems !== null) {
-            $result .= 'CONDITION ' . $this->conditionNumber->serialize($formatter) . ' ' . $formatter->formatSerializablesList($this->conditionItems);
+            $result .= 'CONDITION ' . $this->conditionNumber->serialize($formatter) . ' ' . $formatter->formatNodesList($this->conditionItems);
         } else {
             throw new LogicException('Either conditionItems or statementItems must be set.');
         }

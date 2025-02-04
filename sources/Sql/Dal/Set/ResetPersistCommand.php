@@ -10,11 +10,11 @@
 namespace SqlFtw\Sql\Dal\Set;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\MysqlVariable;
-use SqlFtw\Sql\StatementImpl;
 
-class ResetPersistCommand extends StatementImpl implements DalCommand
+class ResetPersistCommand extends Command implements DalCommand
 {
 
     public ?MysqlVariable $variable;

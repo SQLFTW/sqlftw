@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Dml\TableReference;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
-class TableReferenceTable implements TableReferenceNode
+class TableReferenceTable extends TableReferenceNode
 {
 
     public ObjectIdentifier $table;
@@ -47,7 +47,7 @@ class TableReferenceTable implements TableReferenceNode
             $result .= ' AS ' . $formatter->formatName($this->alias);
         }
         if ($this->indexHints !== null) {
-            $result .= ' ' . $formatter->formatSerializablesList($this->indexHints);
+            $result .= ' ' . $formatter->formatNodesList($this->indexHints);
         }
 
         return $result;

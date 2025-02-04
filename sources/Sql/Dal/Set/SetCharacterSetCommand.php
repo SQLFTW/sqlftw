@@ -12,15 +12,11 @@ namespace SqlFtw\Sql\Dal\Set;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Assignment;
 use SqlFtw\Sql\Charset;
-use SqlFtw\Sql\StatementImpl;
 
-class SetCharacterSetCommand extends StatementImpl implements SetCommand
+class SetCharacterSetCommand extends SetCommand
 {
 
     public ?Charset $charset;
-
-    /** @var list<Assignment> */
-    public array $assignments;
 
     /**
      * @param list<Assignment> $assignments
@@ -36,7 +32,7 @@ class SetCharacterSetCommand extends StatementImpl implements SetCommand
         $result = 'SET CHARACTER SET ' . ($this->charset !== null ? $this->charset->serialize($formatter) : 'DEFAULT');
 
         if ($this->assignments !== []) {
-            $result .= ', ' . $formatter->formatSerializablesList($this->assignments);
+            $result .= ', ' . $formatter->formatNodesList($this->assignments);
         }
 
         return $result;

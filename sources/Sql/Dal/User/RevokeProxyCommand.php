@@ -11,15 +11,14 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Node;
 use SqlFtw\Sql\UserName;
 
-class RevokeProxyCommand extends StatementImpl implements UserCommand
+class RevokeProxyCommand extends UserCommand
 {
 
     /** @var UserName|FunctionCall */
-    public SqlSerializable $proxy;
+    public Node $proxy;
 
     /** @var non-empty-list<UserName|FunctionCall> */
     public array $users;
@@ -33,7 +32,7 @@ class RevokeProxyCommand extends StatementImpl implements UserCommand
      * @param non-empty-list<UserName|FunctionCall> $users
      */
     public function __construct(
-        SqlSerializable $proxy,
+        Node $proxy,
         array $users,
         bool $ifExists = false,
         bool $ignoreUnknownUser = false
@@ -48,7 +47,7 @@ class RevokeProxyCommand extends StatementImpl implements UserCommand
     {
         return 'REVOKE ' . ($this->ifExists ? 'IF EXISTS' : '')
             . ' PROXY ON ' . $this->proxy->serialize($formatter)
-            . ' FROM ' . $formatter->formatSerializablesList($this->users)
+            . ' FROM ' . $formatter->formatNodesList($this->users)
             . ($this->ignoreUnknownUser ? ' IGNORE UNKNOWN USER' : '');
     }
 

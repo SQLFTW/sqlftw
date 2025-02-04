@@ -11,10 +11,10 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
-/**
- * @property non-empty-list<ObjectIdentifier> $tables
- */
-interface TablesCommand extends Command
+abstract class TablesCommand extends Command
 {
+
+    /** @var non-empty-list<ObjectIdentifier> */
+    public array $tables; // @phpstan-ignore property.uninitialized
 
 }

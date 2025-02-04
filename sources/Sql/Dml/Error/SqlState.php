@@ -11,11 +11,11 @@ namespace SqlFtw\Sql\Dml\Error;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function preg_match;
 use function substr;
 
-class SqlState implements SqlSerializable
+class SqlState extends Node
 {
 
     // as per SQL:2011 - https://en.wikipedia.org/wiki/SQLSTATE

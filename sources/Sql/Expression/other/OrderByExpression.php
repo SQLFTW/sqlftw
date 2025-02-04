@@ -18,7 +18,7 @@ use function is_string;
 /**
  * {col_name | expr | position} [ASC | DESC]
  */
-class OrderByExpression implements ArgumentNode, ArgumentValue
+class OrderByExpression extends ArgumentValue
 {
 
     public ?Order $order;

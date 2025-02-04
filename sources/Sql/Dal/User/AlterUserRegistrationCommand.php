@@ -9,7 +9,7 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
-interface AlterUserRegistrationCommand extends UserCommand
+abstract class AlterUserRegistrationCommand extends AnyAlterUserCommand
 {
 
 }

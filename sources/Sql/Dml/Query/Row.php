@@ -11,10 +11,10 @@ namespace SqlFtw\Sql\Dml\Query;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function array_values;
 
-class Row implements SqlSerializable
+class Row extends Node
 {
 
     /** @var list<RootNode> */
@@ -30,7 +30,7 @@ class Row implements SqlSerializable
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->values !== [] ? 'ROW(' . $formatter->formatSerializablesList($this->values) . ')' : 'ROW()';
+        return $this->values !== [] ? 'ROW(' . $formatter->formatNodesList($this->values) . ')' : 'ROW()';
     }
 
 }

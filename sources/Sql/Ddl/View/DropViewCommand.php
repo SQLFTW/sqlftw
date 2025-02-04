@@ -10,11 +10,11 @@
 namespace SqlFtw\Sql\Ddl\View;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\SchemaObjectsCommand;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class DropViewCommand extends StatementImpl implements ViewCommand, SchemaObjectsCommand
+class DropViewCommand extends Command implements ViewCommand, SchemaObjectsCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier> */
@@ -40,7 +40,7 @@ class DropViewCommand extends StatementImpl implements ViewCommand, SchemaObject
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $formatter->formatSerializablesList($this->views);
+        $result .= $formatter->formatNodesList($this->views);
         if ($this->option !== null) {
             $result .= ' ' . $this->option->serialize($formatter);
         }

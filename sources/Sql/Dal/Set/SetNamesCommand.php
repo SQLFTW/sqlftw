@@ -14,25 +14,21 @@ use SqlFtw\Sql\Assignment;
 use SqlFtw\Sql\Charset;
 use SqlFtw\Sql\Collation;
 use SqlFtw\Sql\Expression\DefaultLiteral;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Node;
 
-class SetNamesCommand extends StatementImpl implements SetCommand
+class SetNamesCommand extends SetCommand
 {
 
     /** @var Charset|DefaultLiteral */
-    public SqlSerializable $charset;
+    public Node $charset;
 
     public ?Collation $collation;
-
-    /** @var list<Assignment> */
-    public array $assignments;
 
     /**
      * @param Charset|DefaultLiteral $charset
      * @param list<Assignment> $assignments
      */
-    public function __construct(SqlSerializable $charset, ?Collation $collation, array $assignments = [])
+    public function __construct(Node $charset, ?Collation $collation, array $assignments = [])
     {
         $this->charset = $charset;
         $this->collation = $collation;
@@ -45,7 +41,7 @@ class SetNamesCommand extends StatementImpl implements SetCommand
             . ($this->collation !== null ? ' COLLATE ' . $this->collation->serialize($formatter) : '');
 
         if ($this->assignments !== []) {
-            $result .= ', ' . $formatter->formatSerializablesList($this->assignments);
+            $result .= ', ' . $formatter->formatNodesList($this->assignments);
         }
 
         return $result;

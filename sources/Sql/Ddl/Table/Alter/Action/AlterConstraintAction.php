@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class AlterConstraintAction implements ConstraintAction
+class AlterConstraintAction extends ConstraintAction
 {
 
     public string $constraint;

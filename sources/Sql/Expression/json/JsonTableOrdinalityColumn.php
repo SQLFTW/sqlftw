@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
-class JsonTableOrdinalityColumn implements JsonTableColumn
+class JsonTableOrdinalityColumn extends JsonTableColumn
 {
 
     public string $name;

@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Expression;
 /**
  * SQL or client side placeholder: ?, ?123, :var
  */
-interface Placeholder extends Identifier
+abstract class Placeholder extends Identifier
 {
 
 }

@@ -15,6 +15,7 @@ namespace SqlFtw\Sql;
 use Dogma\IntBounds as I;
 use Dogma\Math\PowersOfTwo;
 use Dogma\Time\Seconds;
+use SqlFtw\Platform\SystemVariableInfo;
 use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\BaseType as T;
 use SqlFtw\Sql\Expression\Scope as S;

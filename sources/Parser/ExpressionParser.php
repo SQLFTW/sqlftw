@@ -690,7 +690,7 @@ class ExpressionParser
         if ($tokenList->hasSymbol('(')) {
             // function()
             return $this->parseFunctionCall($tokenList, $token->value);
-        } elseif (BuiltInFunction::isValidValue($token->value) && BuiltInFunction::isBareName($token->value)) {
+        } elseif (BuiltInFunction::validateValue($token->value) && BuiltInFunction::isBareName($token->value)) {
             // function without parentheses
             return new FunctionCall(new BuiltInFunction($token->value));
         }
@@ -864,6 +864,9 @@ class ExpressionParser
         return $assignments;
     }
 
+    /**
+     * @return SystemVariable&Identifier
+     */
     public function createSystemVariable(
         TokenList $tokenList,
         string $name,
@@ -999,7 +1002,10 @@ class ExpressionParser
         return new MatchExpression($columns, $query, $mode, $expansion);
     }
 
-    public function parseColumnIdentifier(TokenList $tokenList): ColumnIdentifier
+    /**
+     * @return Identifier&ColumnIdentifier
+     */
+    public function parseColumnIdentifier(TokenList $tokenList): Identifier
     {
         $first = $tokenList->expectName(EntityType::SCHEMA);
         if ($tokenList->hasSymbol('.')) {
@@ -1083,7 +1089,10 @@ class ExpressionParser
         }
     }
 
-    private function parseTimeValue(TokenList $tokenList): ?TimeValue
+    /**
+     * @return (Literal&TimeValue)|null
+     */
+    private function parseTimeValue(TokenList $tokenList): ?Literal
     {
         $position = $tokenList->getPosition();
 
@@ -1435,7 +1444,7 @@ class ExpressionParser
     }
 
     /**
-     * @return array{non-empty-list<int>|null, non-empty-list<StringValue>|null, bool, bool, Charset|null, Collation|null, int|null}
+     * @return array{non-empty-list<int>|null, non-empty-list<Literal&StringValue>|null, bool, bool, Charset|null, Collation|null, int|null}
      */
     private function parseTypeOptions(BaseType $type, TokenList $tokenList, bool $forCast): array
     {

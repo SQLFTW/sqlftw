@@ -10,10 +10,9 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 
-class DropRoleCommand extends StatementImpl implements UserCommand
+class DropRoleCommand extends UserCommand
 {
 
     /** @var non-empty-list<UserName> */
@@ -37,7 +36,7 @@ class DropRoleCommand extends StatementImpl implements UserCommand
             $result .= 'IF EXISTS ';
         }
 
-        return $result . $formatter->formatSerializablesList($this->roles);
+        return $result . $formatter->formatNodesList($this->roles);
     }
 
 }

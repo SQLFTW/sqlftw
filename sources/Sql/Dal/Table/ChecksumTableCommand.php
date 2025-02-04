@@ -11,31 +11,28 @@ namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\TablesCommand;
 
-class ChecksumTableCommand extends StatementImpl implements DalTablesCommand
+class ChecksumTableCommand extends TablesCommand
 {
-
-    /** @var non-empty-list<ObjectIdentifier> */
-    public array $names;
 
     public bool $quick;
 
     public bool $extended;
 
     /**
-     * @param non-empty-list<ObjectIdentifier> $names
+     * @param non-empty-list<ObjectIdentifier> $tables
      */
-    public function __construct(array $names, bool $quick, bool $extended)
+    public function __construct(array $tables, bool $quick, bool $extended)
     {
-        $this->names = $names;
+        $this->tables = $tables;
         $this->quick = $quick;
         $this->extended = $extended;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'CHECKSUM TABLE ' . $formatter->formatSerializablesList($this->names);
+        $result = 'CHECKSUM TABLE ' . $formatter->formatNodesList($this->tables);
 
         if ($this->quick) {
             $result .= ' QUICK';

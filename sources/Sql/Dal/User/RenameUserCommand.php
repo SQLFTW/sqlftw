@@ -13,13 +13,12 @@ use Dogma\CombineIterator;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 use function array_values;
 use function count;
 use function rtrim;
 
-class RenameUserCommand extends StatementImpl implements UserCommand
+class RenameUserCommand extends UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */

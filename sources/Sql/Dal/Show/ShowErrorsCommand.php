@@ -10,9 +10,8 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowErrorsCommand extends StatementImpl implements ShowCommand
+class ShowErrorsCommand extends ShowCommand
 {
 
     public ?int $limit;

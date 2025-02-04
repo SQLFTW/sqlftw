@@ -11,9 +11,8 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\StatementImpl;
 
-class AlterUserCommand extends StatementImpl implements UserCommand
+class AlterUserCommand extends AnyAlterUserCommand
 {
 
     /** @var non-empty-list<AlteredUser> */
@@ -69,21 +68,21 @@ class AlterUserCommand extends StatementImpl implements UserCommand
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $formatter->formatSerializablesList($this->users);
+        $result .= $formatter->formatNodesList($this->users);
 
         if ($this->tlsOptions !== null) {
             $result .= ' REQUIRE';
             if ($this->tlsOptions === []) {
                 $result .= ' NONE';
             } else {
-                $result .= ' ' . $formatter->formatSerializablesList($this->tlsOptions, ' AND ');
+                $result .= ' ' . $formatter->formatNodesList($this->tlsOptions, ' AND ');
             }
         }
         if ($this->resourceOptions !== null) {
-            $result .= ' WITH ' . $formatter->formatSerializablesList($this->resourceOptions, ' ');
+            $result .= ' WITH ' . $formatter->formatNodesList($this->resourceOptions, ' ');
         }
         if ($this->passwordLockOptions !== null) {
-            $result .= ' ' . $formatter->formatSerializablesList($this->passwordLockOptions, ' ');
+            $result .= ' ' . $formatter->formatNodesList($this->passwordLockOptions, ' ');
         }
         if ($this->comment !== null) {
             $result .= ' COMMENT ' . $formatter->formatString($this->comment);

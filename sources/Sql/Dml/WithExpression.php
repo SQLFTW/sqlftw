@@ -11,9 +11,9 @@ namespace SqlFtw\Sql\Dml;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Dml\Query\Query;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-class WithExpression implements SqlSerializable
+class WithExpression extends Node
 {
 
     public Query $query;

@@ -12,13 +12,11 @@ namespace SqlFtw\Sql\Dal\Replication;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\Lexer;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function array_map;
 use function implode;
-use function preg_match;
-use function strtolower;
 
-class UuidSet implements SqlSerializable
+class UuidSet extends Node
 {
 
     public string $uuid;
@@ -31,6 +29,10 @@ class UuidSet implements SqlSerializable
      */
     public function __construct(string $uuid, array $intervals)
     {
+        $uuid = strtolower($uuid);
+        if (preg_match(Lexer::UUID_REGEXP, $uuid) === 0) {
+            throw new InvalidDefinitionException("Invalid UUID value '$uuid'.");
+        }
         $this->uuid = $uuid;
         $this->intervals = $intervals;
     }

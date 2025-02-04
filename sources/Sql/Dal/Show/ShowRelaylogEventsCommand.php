@@ -10,9 +10,8 @@
 namespace SqlFtw\Sql\Dal\Show;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
 
-class ShowRelaylogEventsCommand extends StatementImpl implements ShowCommand
+class ShowRelaylogEventsCommand extends ShowCommand
 {
 
     public ?string $logName;

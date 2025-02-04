@@ -10,32 +10,35 @@
 namespace SqlFtw\Sql\Dml\OptimizerHint;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\ObjectIdentifier;
+use SqlFtw\Sql\Expression\Identifier;
 
 /**
  * Name of a hint object including query block name, e.g. "foo@bar"
  */
-class NameWithQueryBlock implements HintTableIdentifier
+class NameWithQueryBlock extends Identifier implements HintTableIdentifier
 {
 
-    public ObjectIdentifier $name;
+    public ?string $schema;
 
     public string $queryBlock;
 
-    public function __construct(ObjectIdentifier $name, string $queryBlock)
+    public function __construct(string $name, ?string $schema, string $queryBlock)
     {
         $this->name = $name;
+        $this->schema = $schema;
         $this->queryBlock = $queryBlock;
     }
 
     public function getFullName(): string
     {
-        return $this->name->getFullName() . '@' . $this->queryBlock;
+        return $this->name . ($this->schema !== null ? $this->schema . '.' : '') . '@' . $this->queryBlock;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        return $this->name->serialize($formatter) . $formatter->formatName('@' . $this->queryBlock);
+        return $formatter->formatName($this->name)
+            . ($this->schema !== null ? $formatter->formatName($this->schema) . '.' : '')
+            . $formatter->formatName('@' . $this->queryBlock);
     }
 
 }

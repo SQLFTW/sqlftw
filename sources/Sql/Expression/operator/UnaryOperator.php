@@ -19,7 +19,7 @@ use SqlFtw\Formatter\Formatter;
  * NOT right
  * BINARY right
  */
-class UnaryOperator implements OperatorExpression
+class UnaryOperator extends OperatorExpression
 {
 
     public Operator $operator;

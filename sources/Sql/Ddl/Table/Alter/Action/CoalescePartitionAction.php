@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 use SqlFtw\Formatter\Formatter;
 use function strval;
 
-class CoalescePartitionAction implements PartitioningAction
+class CoalescePartitionAction extends PartitioningAction
 {
 
     public int $value;

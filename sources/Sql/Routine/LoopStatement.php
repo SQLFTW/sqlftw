@@ -4,9 +4,8 @@ namespace SqlFtw\Sql\Routine;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 
-class LoopStatement extends StatementImpl
+class LoopStatement extends Statement
 {
 
     /** @var list<Statement> */
@@ -35,7 +34,7 @@ class LoopStatement extends StatementImpl
 
         $result .= "LOOP \n";
         if ($this->statements !== []) {
-            $result .= $formatter->formatSerializablesList($this->statements, ";\n") . ";\n";
+            $result .= $formatter->formatNodesList($this->statements, ";\n") . ";\n";
         }
         $result .= 'END LOOP';
         if ($this->label !== null && $this->endLabel) {

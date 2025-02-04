@@ -18,7 +18,7 @@ use const PREG_UNMATCHED_AS_NULL;
 /**
  * e.g. timestamp '2020-01-01 12:00:'
  */
-class TimestampLiteral implements TimeValue
+class TimestampLiteral extends Literal implements TimeValue
 {
 
     /** @readonly */

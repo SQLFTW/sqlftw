@@ -15,7 +15,7 @@ use function preg_match;
 /**
  * Value of ENUM-typed system variables
  */
-class EnumValueLiteral implements Literal
+class EnumValueLiteral extends Literal
 {
 
     public string $value;

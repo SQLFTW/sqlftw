@@ -9,16 +9,16 @@
 
 namespace SqlFtw\Sql\Dml\Query;
 
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 
-/**
- * @property self::POSITION_* $position
- */
-interface SelectInto extends SqlSerializable
+abstract class SelectInto extends Node
 {
 
     public const POSITION_BEFORE_FROM = 1;
     public const POSITION_BEFORE_LOCKING = 2;
     public const POSITION_AFTER_LOCKING = 3;
+
+    /** @var self::POSITION_* */
+    public int $position; // @phpstan-ignore property.uninitialized
 
 }

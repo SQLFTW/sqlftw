@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Ddl\Table\Alter\Action;
 
 use SqlFtw\Formatter\Formatter;
 
-class AddPartitionNumberAction implements PartitioningAction
+class AddPartitionNumberAction extends PartitioningAction
 {
 
     public int $partitions;

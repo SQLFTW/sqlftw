@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class TruncateTableCommand extends StatementImpl implements DdlTableCommand
+class TruncateTableCommand extends Command implements DdlTableCommand
 {
 
     public ObjectIdentifier $name;

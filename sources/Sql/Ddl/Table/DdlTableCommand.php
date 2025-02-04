@@ -10,9 +10,8 @@
 namespace SqlFtw\Sql\Ddl\Table;
 
 use SqlFtw\Sql\Ddl\SchemaObjectCommand;
-use SqlFtw\Sql\TableCommand;
 
-interface DdlTableCommand extends SchemaObjectCommand, TableCommand
+interface DdlTableCommand extends SchemaObjectCommand
 {
 
 }

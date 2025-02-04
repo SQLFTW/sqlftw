@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\RootNode;
 
-class AlterColumnAction implements ColumnAction
+class AlterColumnAction extends ColumnAction
 {
 
     public string $column;

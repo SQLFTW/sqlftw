@@ -164,7 +164,7 @@ class ExpressionResolver
         }
 
         if ($function instanceof BuiltInFunction) {
-            $method = $function->getValue();
+            $method = $function->name;
         } elseif ($function instanceof QualifiedName) {
             $method = $function->schema . '__' . $function->name;
         } else {

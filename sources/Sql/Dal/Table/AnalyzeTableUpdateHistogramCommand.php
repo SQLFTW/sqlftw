@@ -11,13 +11,10 @@ namespace SqlFtw\Sql\Dal\Table;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\TablesCommand;
 
-class AnalyzeTableUpdateHistogramCommand extends StatementImpl implements DalTablesCommand
+class AnalyzeTableUpdateHistogramCommand extends TablesCommand
 {
-
-    /** @var non-empty-list<ObjectIdentifier> */
-    public array $tables;
 
     /** @var non-empty-list<string> */
     public array $columns;
@@ -47,7 +44,7 @@ class AnalyzeTableUpdateHistogramCommand extends StatementImpl implements DalTab
         if ($this->local) {
             $result .= ' LOCAL';
         }
-        $result .= ' TABLE ' . $formatter->formatSerializablesList($this->tables)
+        $result .= ' TABLE ' . $formatter->formatNodesList($this->tables)
             . ' UPDATE HISTOGRAM ON ' . $formatter->formatNamesList($this->columns);
         if ($this->buckets !== null) {
             $result .= ' WITH ' . $this->buckets . ' BUCKETS';

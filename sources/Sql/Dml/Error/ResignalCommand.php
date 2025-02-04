@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dml\Error;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\StatementImpl;
 
-class ResignalCommand extends StatementImpl implements ErrorHandlingCommand
+class ResignalCommand extends Command implements ErrorHandlingCommand
 {
 
     /** @var SqlState|string|null */
@@ -44,7 +44,7 @@ class ResignalCommand extends StatementImpl implements ErrorHandlingCommand
             $result .= ' ' . $this->condition;
         }
         if ($this->items !== []) {
-            $result .= ' SET ' . $formatter->formatSerializablesMap($this->items);
+            $result .= ' SET ' . $formatter->formatNodesMap($this->items);
         }
 
         return $result;

@@ -10,12 +10,12 @@
 namespace SqlFtw\Sql\Dml\Handler;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Expression\RootNode;
-use SqlFtw\Sql\StatementImpl;
 
-class HandlerReadCommand extends StatementImpl implements HandlerCommand
+class HandlerReadCommand extends Command implements HandlerCommand
 {
 
     public ObjectIdentifier $table;

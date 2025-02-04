@@ -12,7 +12,7 @@ namespace SqlFtw\Sql\Expression;
 /**
  * e.g. `column`, `table`.`column`, `schema`.`table`.`column`
  */
-interface ColumnIdentifier extends Identifier
+interface ColumnIdentifier extends IdentifierInterface
 {
 
 }

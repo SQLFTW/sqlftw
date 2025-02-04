@@ -10,35 +10,29 @@
 namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\Expression\StringValue;
 
-class AlterAuthOption extends AuthOption implements AlterUserAction
+class AlterAuthOption extends AlterUserAction
 {
+
+    public AuthOption $authOption;
 
     public ?string $replace;
 
     public bool $retainCurrentPassword;
 
-    /**
-     * @param StringValue|false|null $password
-     */
     public function __construct(
-        ?string $authPlugin,
-        $password = null,
-        ?StringValue $as = null,
+        AuthOption $authOption,
         ?string $replace = null,
-        bool $retainCurrentPassword = false,
-        bool $oldHashedPassword = false
+        bool $retainCurrentPassword = false
     ) {
-        parent::__construct($authPlugin, $password, $as, null, $oldHashedPassword);
-
+        $this->authOption = $authOption;
         $this->replace = $replace;
         $this->retainCurrentPassword = $retainCurrentPassword;
     }
 
     public function serialize(Formatter $formatter): string
     {
-        $result = parent::serialize($formatter);
+        $result = $this->authOption->serialize($formatter);
 
         if ($this->replace !== null) {
             $result .= ' REPLACE ' . $formatter->formatString($this->replace);

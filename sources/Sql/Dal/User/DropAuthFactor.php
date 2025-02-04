@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 
-class DropAuthFactor implements AlterUserAction
+class DropAuthFactor extends AlterUserAction
 {
 
     public int $factor1;

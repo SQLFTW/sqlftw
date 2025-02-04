@@ -16,7 +16,7 @@ use function preg_match;
 /**
  * e.g. +01:00
  */
-class TimeZoneOffset implements TimeZone
+class TimeZoneOffset extends TimeZone
 {
 
     public string $value;
@@ -24,7 +24,7 @@ class TimeZoneOffset implements TimeZone
     public function __construct(string $value)
     {
         if (preg_match('~[+-](?:[01]\d|2[0-3]):[0-5]\d~', $value) !== 1) {
-            throw new InvalidDefinitionException("Invalid time zone offset $value.");
+            throw new InvalidDefinitionException("Invalid time zone offset {$value}.");
         }
 
         $this->value = $value;

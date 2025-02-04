@@ -63,7 +63,7 @@ class ReplicaOption extends SqlEnum
      * @readonly
      * @var array<self::*, string|list<int>>
      */
-    public static array $types = [
+    public static array $types = [ // @phpstan-ignore property.readOnlyByPhpDocDefaultValue
         self::SOURCE_BIND => BaseType::CHAR,
         self::SOURCE_HOST => BaseType::CHAR,
         self::SOURCE_USER => BaseType::CHAR,

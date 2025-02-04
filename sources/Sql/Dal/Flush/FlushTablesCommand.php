@@ -10,11 +10,11 @@
 namespace SqlFtw\Sql\Dal\Flush;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
-use SqlFtw\Sql\StatementImpl;
 
-class FlushTablesCommand extends StatementImpl implements DalCommand
+class FlushTablesCommand extends Command implements DalCommand
 {
 
     /** @var non-empty-list<ObjectIdentifier>|null */
@@ -50,7 +50,7 @@ class FlushTablesCommand extends StatementImpl implements DalCommand
         $result .= 'TABLES';
 
         if ($this->tables !== null) {
-            $result .= ' ' . $formatter->formatSerializablesList($this->tables);
+            $result .= ' ' . $formatter->formatNodesList($this->tables);
         }
         if ($this->withReadLock) {
             $result .= ' WITH READ LOCK';

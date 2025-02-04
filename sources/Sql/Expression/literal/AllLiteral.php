@@ -14,13 +14,10 @@ use SqlFtw\Formatter\Formatter;
 /**
  * ALL
  */
-class AllLiteral implements KeywordLiteral
+class AllLiteral extends KeywordLiteral
 {
 
-    public function getValue(): string
-    {
-        return 'ALL';
-    }
+    public string $value = 'ALL';
 
     public function serialize(Formatter $formatter): string
     {

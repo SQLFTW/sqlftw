@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class ChangeReplicationFilterCommand extends StatementImpl implements ReplicationCommand
+class ChangeReplicationFilterCommand extends Command implements ReplicationCommand
 {
 
     /** @var non-empty-list<ReplicationFilter> */
@@ -31,7 +31,7 @@ class ChangeReplicationFilterCommand extends StatementImpl implements Replicatio
 
     public function serialize(Formatter $formatter): string
     {
-        $result = "CHANGE REPLICATION FILTER\n  " . $formatter->formatSerializablesList($this->filters);
+        $result = "CHANGE REPLICATION FILTER\n  " . $formatter->formatNodesList($this->filters);
 
         if ($this->channel !== null) {
             $result .= "\n  FOR CHANNEL " . $formatter->formatName($this->channel);

@@ -10,12 +10,12 @@
 namespace SqlFtw\Sql\Ddl\Event;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Ddl\UserExpression;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\Statement;
-use SqlFtw\Sql\StatementImpl;
 
-class AlterEventCommand extends StatementImpl implements EventCommand
+class AlterEventCommand extends Command implements EventCommand
 {
 
     public ObjectIdentifier $event;

@@ -9,9 +9,10 @@
 
 namespace SqlFtw\Sql\Dal\User;
 
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dal\DalCommand;
 
-interface UserCommand extends DalCommand
+abstract class UserCommand extends Command implements DalCommand
 {
 
 }

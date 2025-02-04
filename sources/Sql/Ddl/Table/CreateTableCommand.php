@@ -18,13 +18,12 @@ use SqlFtw\Sql\Dml\DuplicateOption;
 use SqlFtw\Sql\Dml\Query\Query;
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\StatementImpl;
 use function is_array;
 
 /**
  * @phpstan-import-type TableOptionValue from TableOption
  */
-class CreateTableCommand extends StatementImpl implements AnyCreateTableCommand
+class CreateTableCommand extends AnyCreateTableCommand
 {
 
     public ObjectIdentifier $name;
@@ -115,7 +114,7 @@ class CreateTableCommand extends StatementImpl implements AnyCreateTableCommand
         $result .= $this->name->serialize($formatter);
 
         if ($this->items !== null) {
-            $result .= " (\n" . $formatter->indent . $formatter->formatSerializablesList($this->items, ",\n" . $formatter->indent) . "\n)";
+            $result .= " (\n" . $formatter->indent . $formatter->formatNodesList($this->items, ",\n" . $formatter->indent) . "\n)";
         }
 
         if ($this->options !== null && !$this->options->isEmpty()) {

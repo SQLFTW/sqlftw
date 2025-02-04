@@ -11,10 +11,9 @@ namespace SqlFtw\Sql;
 
 use SqlFtw\Sql\Expression\ObjectIdentifier;
 
-/**
- * @property ObjectIdentifier $table
- */
-interface TableCommand extends Command
+abstract class TableCommand extends Command
 {
+
+    public ObjectIdentifier $table; // @phpstan-ignore property.uninitialized
 
 }

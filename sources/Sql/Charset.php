@@ -9,15 +9,18 @@
 
 namespace SqlFtw\Sql;
 
-use SqlFtw\Sql\Expression\ArgumentNode;
+use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\ArgumentValue;
+use SqlFtw\Util\CaseInsensitivePseudoEnumMixin;
+use function array_keys;
 use function array_search;
 use function explode;
 use function strpos;
 use function strtolower;
 
-class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
+class Charset extends ArgumentValue
 {
+    use CaseInsensitivePseudoEnumMixin;
 
     public const ARMSCII8 = 'armscii8';
     public const ASCII = 'ascii';
@@ -65,7 +68,7 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
     public const UTF8MB3 = 'utf8mb3';
     public const UTF8MB4 = 'utf8mb4';
 
-    /** @var array<string, int> */
+    /** @var array<self::*, int> */
     private static array $ids = [
         self::BIG5 => 1,
         self::DEC8 => 3,
@@ -112,7 +115,7 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
         self::UTF8MB4 => 255,
     ];
 
-    /** @var array<string, string> */
+    /** @var array<self::*, Collation::*> */
     private static array $defaultCollations = [
         self::ARMSCII8 => Collation::ARMSCII8_GENERAL_CI,
         self::ASCII => Collation::ASCII_GENERAL_CI,
@@ -157,12 +160,37 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
         self::UTF8MB4 => Collation::UTF8MB4_GENERAL_0900_AI_CI,
     ];
 
-    protected static function validateValue(string &$value): bool
+    public string $value;
+
+    public function __construct(string $value)
     {
+        self::validateValue($value);
+
+        $this->value = $value;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function getValues(): array
+    {
+        if (self::$lowerCaseIndex === []) {
+            self::init();
+        }
+
+        return array_values(self::$lowerCaseIndex);
+    }
+
+    public static function validateValue(string &$value): bool
+    {
+        if (self::$lowerCaseIndex === []) {
+            self::init();
+        }
+
         $value = strtolower($value);
 
         if ($value === 'mac_latin2') {
-            return parent::validateValue($value);
+            return true;
         } elseif (strpos($value, '_') !== false) {
             // things like 'cp1250_latin2' are valid
             // todo: ignoring the second part
@@ -172,15 +200,28 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
                 $value2 = 'koi8r';
             }
 
-            return parent::validateValue($value) && parent::validateValue($value2);
+            if (self::validateValue($value) && self::validateValue($value2)) {
+                $value = $value . '_' . $value2;
+
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return parent::validateValue($value);
+            $normalized = self::$lowerCaseIndex[$value] ?? null;
+            if ($normalized !== null) {
+                $value = $normalized;
+
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
     public function getId(): int
     {
-        return self::$ids[$this->getValue()];
+        return self::$ids[$this->value];
     }
 
     public static function getById(int $id): self
@@ -195,16 +236,21 @@ class Charset extends SqlEnum implements ArgumentNode, ArgumentValue
 
     public function getDefaultCollationName(): string
     {
-        return self::$defaultCollations[$this->getValue()];
+        return self::$defaultCollations[$this->value];
     }
 
     public function supportsCollation(Collation $collation): bool
     {
-        if ($collation->equalsValue(Collation::BINARY)) {
+        if ($collation->value === Collation::BINARY) {
             return true;
         } else {
-            return $this->equalsValue($collation->getCharsetName());
+            return $this->value === $collation->getCharsetName();
         }
+    }
+
+    public function serialize(Formatter $formatter): string
+    {
+        return $this->value;
     }
 
 }

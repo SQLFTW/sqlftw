@@ -20,7 +20,7 @@ use function substr;
 /**
  * e.g. 0b01101110
  */
-class BinaryLiteral implements BoolValue, UintValue, StringValue
+class BinaryLiteral extends Literal implements BoolValue, UintValue, StringValue
 {
 
     public string $value;

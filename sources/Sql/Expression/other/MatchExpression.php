@@ -14,7 +14,7 @@ use SqlFtw\Formatter\Formatter;
 /**
  * MATCH x AGAINST y
  */
-class MatchExpression implements RootNode
+class MatchExpression extends RootNode
 {
 
     /** @var non-empty-list<ColumnIdentifier> */
@@ -39,7 +39,7 @@ class MatchExpression implements RootNode
 
     public function serialize(Formatter $formatter): string
     {
-        $result = 'MATCH(' . $formatter->formatSerializablesList($this->columns)
+        $result = 'MATCH(' . $formatter->formatNodesList($this->columns)
             . ') AGAINST(' . $this->query->serialize($formatter);
 
         if ($this->mode !== null) {

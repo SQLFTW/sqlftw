@@ -17,4 +17,14 @@ final class Repair
     public const POSSIBLE = 3; // -- / can repair
     public const PARTIAL = 4; // -- / repaired partially (some rules)
 
+    /**
+     * @var array<int, string>
+     */
+    public static array $labels = [
+        self::YES => 'Repaired',
+        self::NO => 'Non-repairable',
+        self::POSSIBLE => 'Repair possible',
+        self::PARTIAL => 'Repair partial',
+    ];
+
 }

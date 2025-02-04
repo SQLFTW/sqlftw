@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Dal\Replication;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class StopGroupReplicationCommand extends StatementImpl implements GroupReplicationCommand
+class StopGroupReplicationCommand extends Command implements GroupReplicationCommand
 {
 
     public function serialize(Formatter $formatter): string

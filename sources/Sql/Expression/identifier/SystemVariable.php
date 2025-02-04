@@ -18,7 +18,7 @@ use function strtoupper;
 /**
  * Variable name, e.g. VERSION
  */
-class SystemVariable implements Identifier
+class SystemVariable extends Identifier
 {
 
     public string $name;

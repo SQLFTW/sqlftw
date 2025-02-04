@@ -10,10 +10,10 @@
 namespace SqlFtw\Sql\Dml\Transaction;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\StatementImpl;
 
-class CommitCommand extends StatementImpl implements TransactionCommand
+class CommitCommand extends Command implements TransactionCommand
 {
 
     public ?bool $chain;

@@ -11,10 +11,10 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
+use SqlFtw\Sql\Node;
 use function is_string;
 
-class UserTlsOption implements SqlSerializable
+class UserTlsOption extends Node
 {
 
     public UserTlsOptionType $type;

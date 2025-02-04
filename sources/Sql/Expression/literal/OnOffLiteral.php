@@ -15,10 +15,8 @@ use SqlFtw\Sql\Keyword;
 /**
  * ON, OFF
  */
-class OnOffLiteral implements BoolValue, KeywordLiteral
+class OnOffLiteral extends KeywordLiteral implements BoolValue
 {
-
-    public string $value;
 
     /**
      * @param 'ON'|'OFF' $value

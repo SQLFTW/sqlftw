@@ -10,6 +10,7 @@
 namespace SqlFtw\Sql\Dml\Delete;
 
 use SqlFtw\Formatter\Formatter;
+use SqlFtw\Sql\Command;
 use SqlFtw\Sql\Dml\DmlCommand;
 use SqlFtw\Sql\Dml\OptimizerHint\OptimizerHint;
 use SqlFtw\Sql\Dml\TableReference\TableReferenceNode;
@@ -20,12 +21,11 @@ use SqlFtw\Sql\Expression\OrderByExpression;
 use SqlFtw\Sql\Expression\Placeholder;
 use SqlFtw\Sql\Expression\SimpleName;
 use SqlFtw\Sql\InvalidDefinitionException;
-use SqlFtw\Sql\SqlSerializable;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\NodeInterface;
 use function array_map;
 use function implode;
 
-class DeleteCommand extends StatementImpl implements DmlCommand
+class DeleteCommand extends Command implements DmlCommand
 {
 
     /** @var non-empty-list<array{ObjectIdentifier, string|null}> */
@@ -106,7 +106,7 @@ class DeleteCommand extends StatementImpl implements DmlCommand
         $result .= 'DELETE ';
 
         if ($this->optimizerHints !== null) {
-            $result .= '/*+ ' . $formatter->formatSerializablesList($this->optimizerHints) . ' */ ';
+            $result .= '/*+ ' . $formatter->formatNodesList($this->optimizerHints) . ' */ ';
         }
 
         if ($this->lowPriority) {
@@ -132,10 +132,10 @@ class DeleteCommand extends StatementImpl implements DmlCommand
             $result .= ' WHERE ' . $this->where->serialize($formatter);
         }
         if ($this->orderBy !== null) {
-            $result .= ' ORDER BY ' . $formatter->formatSerializablesList($this->orderBy);
+            $result .= ' ORDER BY ' . $formatter->formatNodesList($this->orderBy);
         }
         if ($this->limit !== null) {
-            $result .= ' LIMIT ' . ($this->limit instanceof SqlSerializable ? $this->limit->serialize($formatter) : $this->limit);
+            $result .= ' LIMIT ' . ($this->limit instanceof NodeInterface ? $this->limit->serialize($formatter) : $this->limit);
         }
 
         return $result;

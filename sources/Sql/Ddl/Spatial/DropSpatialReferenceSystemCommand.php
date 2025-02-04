@@ -10,9 +10,9 @@
 namespace SqlFtw\Sql\Ddl\Spatial;
 
 use SqlFtw\Formatter\Formatter;
-use SqlFtw\Sql\StatementImpl;
+use SqlFtw\Sql\Command;
 
-class DropSpatialReferenceSystemCommand extends StatementImpl implements SpatialReferenceSystemCommand
+class DropSpatialReferenceSystemCommand extends Command implements SpatialReferenceSystemCommand
 {
 
     public int $srid;

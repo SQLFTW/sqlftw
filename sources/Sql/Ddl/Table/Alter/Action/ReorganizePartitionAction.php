@@ -13,7 +13,7 @@ use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Ddl\Table\Partition\PartitionDefinition;
 use SqlFtw\Sql\InvalidDefinitionException;
 
-class ReorganizePartitionAction implements PartitioningAction
+class ReorganizePartitionAction extends PartitioningAction
 {
 
     /** @var non-empty-list<string>|null */
@@ -41,7 +41,7 @@ class ReorganizePartitionAction implements PartitioningAction
         $result = 'REORGANIZE PARTITION';
         if ($this->partitions !== null && $this->newPartitions !== null) {
             $result .= ' ' . $formatter->formatNamesList($this->partitions)
-                . ' INTO (' . $formatter->formatSerializablesList($this->newPartitions) . ')';
+                . ' INTO (' . $formatter->formatNodesList($this->newPartitions) . ')';
         }
 
         return $result;

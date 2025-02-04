@@ -11,10 +11,9 @@ namespace SqlFtw\Sql\Dal\User;
 
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Sql\Expression\FunctionCall;
-use SqlFtw\Sql\StatementImpl;
 use SqlFtw\Sql\UserName;
 
-class DropUserCommand extends StatementImpl implements UserCommand
+class DropUserCommand extends UserCommand
 {
 
     /** @var non-empty-list<UserName|FunctionCall> */
@@ -37,7 +36,7 @@ class DropUserCommand extends StatementImpl implements UserCommand
         if ($this->ifExists) {
             $result .= 'IF EXISTS ';
         }
-        $result .= $formatter->formatSerializablesList($this->users);
+        $result .= $formatter->formatNodesList($this->users);
 
         return $result;
     }

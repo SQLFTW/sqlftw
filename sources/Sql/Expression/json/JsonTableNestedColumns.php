@@ -11,7 +11,7 @@ namespace SqlFtw\Sql\Expression;
 
 use SqlFtw\Formatter\Formatter;
 
-class JsonTableNestedColumns implements JsonTableColumn
+class JsonTableNestedColumns extends JsonTableColumn
 {
 
     public StringValue $path;

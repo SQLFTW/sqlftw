@@ -14,8 +14,10 @@ use SqlFtw\Sql\Ddl\Table\Option\StorageEngine;
 use SqlFtw\Sql\Expression\Literal;
 use SqlFtw\Sql\Expression\SystemVariable;
 
-class SetVarHint implements OptimizerHint
+class SetVarHint extends OptimizerHint
 {
+
+    public string $type = OptimizerHintType::SET_VAR;
 
     public SystemVariable $variable;
 
@@ -29,11 +31,6 @@ class SetVarHint implements OptimizerHint
     {
         $this->variable = $variable;
         $this->value = $value;
-    }
-
-    public function getType(): string
-    {
-        return OptimizerHintType::SET_VAR;
     }
 
     public function serialize(Formatter $formatter): string

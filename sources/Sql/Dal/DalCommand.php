@@ -9,9 +9,9 @@
 
 namespace SqlFtw\Sql\Dal;
 
-use SqlFtw\Sql\Command;
+use SqlFtw\Sql\NodeInterface;
 
-interface DalCommand extends Command
+interface DalCommand extends NodeInterface
 {
 
 }

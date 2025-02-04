@@ -63,7 +63,7 @@ class SlaveOption extends SqlEnum
      * @readonly
      * @var array<self::*, string|list<int>>
      */
-    public static array $types = [
+    public static array $types = [ // @phpstan-ignore property.readOnlyByPhpDocDefaultValue
         self::MASTER_BIND => BaseType::CHAR,
         self::MASTER_HOST => BaseType::CHAR,
         self::MASTER_USER => BaseType::CHAR,
