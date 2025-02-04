@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
-        "dogma/dogma": "0.2.17"
+        "dogma/dogma": "^0.2.17"
     },
     "require-dev": {
         "dogma/dogma-dev": "0.1.29",
