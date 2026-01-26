@@ -16,10 +16,10 @@
     },
     "require-dev": {
         "dogma/dogma-dev": "0.1.29",
-        "phpstan/phpstan": "1.9.15",
-        "phpstan/phpstan-strict-rules": "^1.0",
+        "phpstan/phpstan": "2.1.37",
+        "phpstan/phpstan-strict-rules": "^2.0",
         "amphp/parallel-functions": "1.1.0",
-        "rector/rector": "0.14.8",
+        "rector/rector": "2.3.4",
         "dogma/dogma-debug": "0.1"
     },
     "autoload": {
@@ -79,6 +79,7 @@
 
         "tests:run": "php vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
         "tests:all": [
+            "php85 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
             "php84 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
             "php83 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
             "php82 vendor/nette/tester/src/tester -C --colors 1 tests/Parser tests/Resolver",
@@ -92,6 +93,7 @@
 
         "phpstan:run": "php vendor/phpstan/phpstan/phpstan analyse -c build/PhpStan/phpstan.neon --memory-limit=512M",
         "phpstan:all": [
+            "php85 vendor/phpstan/phpstan/phpstan analyse -c build/PhpStan/phpstan.neon --memory-limit=512M",
             "php84 vendor/phpstan/phpstan/phpstan analyse -c build/PhpStan/phpstan.neon --memory-limit=512M",
             "php83 vendor/phpstan/phpstan/phpstan analyse -c build/PhpStan/phpstan.neon --memory-limit=512M",
             "php82 vendor/phpstan/phpstan/phpstan analyse -c build/PhpStan/phpstan.neon --memory-limit=512M",
@@ -112,6 +114,7 @@
 
         "lint:php": "php vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
         "lint:php-all": [
+            "php85 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
             "php84 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
             "php83 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
             "php82 vendor/php-parallel-lint/php-parallel-lint/parallel-lint sources tests",
