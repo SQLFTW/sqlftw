@@ -12,7 +12,7 @@
 namespace SqlFtw\Parser;
 
 use Generator;
-use SqlFtw\Analyzer\Rules\Charset\CharsetAndCollationCompatibilityRule;
+//use SqlFtw\Analyzer\Rules\Charset\CharsetAndCollationCompatibilityRule;
 use SqlFtw\Analyzer\Rules\Variables\SystemVariablesTypeRule;
 use SqlFtw\Analyzer\SimpleAnalyzer;
 use SqlFtw\Analyzer\SimpleContext;
@@ -220,11 +220,9 @@ class Parser
                 }
             }
 
-            /** @var LexerException $exception PHPStan */
-            $exception = $exception;
             $tokenList->finish();
 
-            return new InvalidCommand($comments, $exception);
+            return new InvalidCommand($comments, $exception); // @phpstan-ignore argument.type ($exception guaranteed to be not-null)
         }
 
         // parse!
@@ -257,7 +255,8 @@ class Parser
             }
 
             return $command;
-        } catch (ParsingException | Throwable $e) { // todo: remove Throwable
+        } catch (ParsingException | Throwable $e) { // @phpstan-ignore catch.neverThrown
+            // todo: remove Throwable
             // Throwable should not be here
             $tokenList->finish();
 

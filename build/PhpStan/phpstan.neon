@@ -24,12 +24,8 @@ parameters:
     ignoreErrors:
         # usually ruled out by isValue()
         - '~Parameter #1 \$expression of class SqlFtw\\Sql\\Expression\\UnresolvedExpression constructor expects~'
-        # incorrect type
-        - '~Parameter #1 \$items of static method Dogma\\Str::join\(\) expects array<string>, array<int, int\|string> given~'
         # PHPStan unable to distinguish between array{foo}|array{bar} and array{foo|bar}
         - '~Binary operation "." between int\|string and int\|string results in an error~'
-        # -1|0|1 somehow downgraded to int on large array?
-        - '~Static property SqlFtw\\Tests\\Mysql\\MysqlTestJob::\$knownFailures \(array<string, -1\|0\|1>\) does not accept default value of type non-empty-array<literal-string&non-falsy-string, int>~'
 
     earlyTerminatingMethodCalls:
         SqlFtw\Parser\TokenList:

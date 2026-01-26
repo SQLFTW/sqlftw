@@ -103,7 +103,6 @@ class TokenList
     private bool $invalid;
 
     // parser state ----------------------------------------------------------------------------------------------------
-
     private int $autoSkip;
 
     private int $position = 0;
@@ -758,7 +757,7 @@ class TokenList
         if (!in_array($upper, $operators, true)) {
             $this->position--;
 
-            throw InvalidTokenException::tokens(T::OPERATOR, 0, array_values($operators), $token, $this);
+            throw InvalidTokenException::tokens(T::OPERATOR, 0, $operators, $token, $this);
         }
 
         return $token->value;
@@ -894,16 +893,13 @@ class TokenList
         // charset introducer
         $charset = null;
         if (($token->type & T::UNQUOTED_NAME) !== 0) {
-            $charset = substr(strtolower($token->value), 1);
-            if ($token->value[0] === '_' && Charset::isValidValue($charset)) {
-                $charset = new Charset($charset);
-                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
+            $name = substr(strtolower($token->value), 1);
+            if ($token->value[0] === '_' && $name !== false && Charset::isValidValue($name)) {
+                $charset = new Charset($name);
             } else {
-                $charset = null;
                 $this->position = $position;
-
-                $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
             }
+            $token = $this->expect(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
         }
 
         if (($token->type & T::HEXADECIMAL_LITERAL) !== 0) {
@@ -937,9 +933,9 @@ class TokenList
                 // todo: keep?
                 $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
             } else {
-                $lower = substr($lower, 1);
-                if ($token->value[0] === '_' && Charset::isValidValue($lower)) {
-                    $charset = new Charset($lower);
+                $name = substr($lower, 1);
+                if ($token->value[0] === '_' && $name !== false && Charset::isValidValue($name)) {
+                    $charset = new Charset($name);
                     $token = $this->get(T::STRING | T::HEXADECIMAL_LITERAL | T::BINARY_LITERAL);
                 } else {
                     $this->position = $position;
@@ -1023,7 +1019,6 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            /** @var list<string> $values */
             $values = $className::getAllowedValues();
 
             throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
@@ -1049,7 +1044,6 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            /** @var list<string> $values */
             $values = $className::getAllowedValues();
 
             throw InvalidTokenException::tokens(T::NAME, 0, $values, $this->tokens[$this->position - 1], $this);
@@ -1072,7 +1066,6 @@ class TokenList
             return $enum;
         } catch (InvalidEnumValueException $e) {
             $this->position--;
-            /** @var list<string> $values */
             $values = $className::getAllowedValues();
 
             throw InvalidTokenException::tokens(T::NAME | T::STRING, 0, $values, $this->tokens[$this->position - 1], $this);
@@ -1090,7 +1083,6 @@ class TokenList
             $this->doAutoSkip();
         }
         $start = $this->position;
-        /** @var list<string> $values */
         $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
@@ -1119,7 +1111,6 @@ class TokenList
     public function getMultiNameEnum(string $className): ?SqlEnum
     {
         $start = $this->position;
-        /** @var array<string, string> $values */
         $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
@@ -1325,7 +1316,7 @@ class TokenList
     {
         $token = $this->get(T::KEYWORD);
 
-        throw InvalidTokenException::tokens(T::KEYWORD, 0, array_values($keywords), $token, $this);
+        throw InvalidTokenException::tokens(T::KEYWORD, 0, $keywords, $token, $this);
     }
 
     public function expectKeyword(?string $keyword = null): string
@@ -1470,7 +1461,6 @@ class TokenList
      */
     public function expectKeywordEnum(string $className): SqlEnum
     {
-        /** @var array<string, string> $values */
         $values = $className::getAllowedValues();
 
         /** @var T $enum */
@@ -1486,7 +1476,6 @@ class TokenList
      */
     public function getKeywordEnum(string $className): ?SqlEnum
     {
-        /** @var array<string, string> $values */
         $values = $className::getAllowedValues();
         $token = $this->getAnyKeyword(...array_values($values));
         if ($token === null) {
@@ -1510,7 +1499,6 @@ class TokenList
             $this->doAutoSkip();
         }
         $start = $this->position;
-        /** @var list<string> $values */
         $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;
@@ -1539,7 +1527,6 @@ class TokenList
     public function getMultiKeywordsEnum(string $className): ?SqlEnum
     {
         $start = $this->position;
-        /** @var array<string, string> $values */
         $values = $className::getAllowedValues();
         foreach ($values as $value) {
             $this->position = $start;

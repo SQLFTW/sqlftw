@@ -132,6 +132,7 @@ class OptimizerHintParser
                 $type = $tokenList->expectNameEnum(OptimizerHintType::class)->getValue();
             } catch (InvalidTokenException $e) {
                 // fallback to regular comment (ignored)
+                // @phpstan-ignore while.condNotBoolean
                 while ($token = $tokenList->get()) {
                     if ($token->type === TokenType::OPTIMIZER_HINT_END) {
                         // todo: parser warning

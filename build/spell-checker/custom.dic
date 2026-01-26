@@ -185,6 +185,7 @@ submatch
 subqueries
 timestamps
 tokenizes
+tokenizing
 transactional
 unbracketed
 unencrypted
@@ -229,6 +230,7 @@ bitvar
 bqual
 builtin
 calc
+callsite
 capath
 certifier
 chk
@@ -237,6 +239,7 @@ ciphersuite
 ciphersuites
 clob
 cmp
+columnstore
 compat
 cond
 covar
@@ -336,6 +339,7 @@ sxx
 sxy
 syseventlog
 sysid
+sysvar
 syy
 tablesample
 temporals

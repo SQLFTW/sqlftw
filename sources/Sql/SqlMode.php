@@ -186,9 +186,8 @@ class SqlMode extends StringSet
     public static function getFromString(string $string): self
     {
         $string = trim($string);
-        /** @var list<string> $parts */
         $parts = explode(',', strtoupper($string));
-        $parts = array_filter($parts);
+        $parts = array_filter($parts); // @phpstan-ignore arrayFilter.strict
         try {
             self::checkValues($parts);
         } catch (InvalidValueException $e) {

@@ -1088,7 +1088,7 @@ class ExpressionParser
             if ($alias !== null) {
                 return $alias;
             } else {
-                return $tokenList->expectNonReservedName(EntityType::ALIAS,  TokenType::AT_VARIABLE);
+                return $tokenList->expectNonReservedName(EntityType::ALIAS, TokenType::AT_VARIABLE);
             }
         } else {
             $alias = $tokenList->getNonReservedName(EntityType::ALIAS, TokenType::AT_VARIABLE);

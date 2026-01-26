@@ -117,7 +117,7 @@ class Uuid
         $bytes = '';
         $count = strlen($digits);
 
-        while ($count) {
+        while ($count !== 0) {
             $quotient = [];
             $remainder = 0;
 

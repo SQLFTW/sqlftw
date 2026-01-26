@@ -93,6 +93,7 @@ class RoutineCommandsParser
             $keywords[] = Keyword::DETERMINISTIC;
         }
 
+        // @phpstan-ignore while.condNotBoolean
         while ($keyword = $tokenList->getAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::COMMENT) {
                 $comment = $tokenList->expectString();

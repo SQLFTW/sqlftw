@@ -59,7 +59,8 @@ class TypeChecker
         if (is_array($types)) {
             if (!in_array($value, $types, true)) {
                 assert(is_scalar($value));
-                throw new InvalidDefinitionException("Value should be one of '" . Str::join($types, ', ', ' or ') . "', but '$value' received.");
+                // TODO: actual type error. Dogma\Str should allow list<int|float|string>
+                throw new InvalidDefinitionException("Value should be one of '" . Str::join($types, ', ', ' or ') . "', but '$value' received."); // @phpstan-ignore argument.type
             }
 
             return;

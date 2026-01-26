@@ -11,7 +11,7 @@ trait KnownFailures
 {
 
     /** @var array<string, Valid::*> */
-    private static array $knownFailures = [
+    private static array $knownFailures = [ // @phpstan-ignore property.defaultValue
         // false negatives -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         // expressions
@@ -85,7 +85,7 @@ trait KnownFailures
         "--echo the result rows with missed equal to NULL should count all rows (160000)\n--echo the other rows are the failed lookups and there should not be any such\nselect if(isnull(t1.a),t2.a,NULL) missed, count(*) rows from t2 left join t1 on t1.a=t2.a group by if(isnull(t1.a),t2.a,NULL)" => Valid::YES,
         "--echo the left join below should result in scanning t2 and do pk lookups in t1\n--replace_column 10 # 11 #\nexplain select if(isnull(t1.a),t2.a,NULL) missed, count(*) rows from t2 left join t1 on t1.a=t2.a group by if(isnull(t1.a),t2.a,NULL)" => Valid::YES,
         "-- error ER_NO_SYSTEM_TABLE_ACCESS\n  CREATE PROCEDURE ddse_access() DROP TABLE mysql.innodb_index_stats(i INTEGER);" => Valid::YES,
-        // behavior differs in plain sql and in procedure
+        // behavior differs in plain SQL and in procedure
         "create event e22830_1 on schedule every 1 hour do\nbegin\n  call p22830_wait();\n  alter event e22830_1 on schedule every (select 8 from dual) hour;\nend|" => Valid::YES,
         "create event e22830_2 on schedule every 1 hour do\nbegin\n  call p22830_wait();\n  alter event e22830_2 on schedule every (select 8 from t1) hour;\nend|" => Valid::YES,
         "create event e22830_3 on schedule every 1 hour do\nbegin\n  call p22830_wait();\n  alter event e22830_3 on schedule every f22830() hour;\nend|" => Valid::YES,
@@ -1139,7 +1139,7 @@ trait KnownFailures
         "SET PERSIST test_component.bool_sys_var = OFF;" => Valid::YES,
         "SELECT @@test_component.str_sys_var_default;" => Valid::YES,
         "SET GLOBAL test_component.str_sys_var_default=something;" => Valid::YES,
-        "SET GLOBAL test_component.str_sys_var_default=\"dictionary.txt\";",
+        "SET GLOBAL test_component.str_sys_var_default=\"dictionary.txt\";" => Valid::YES,
         "SET GLOBAL test_server_telemetry_traces.callsite_context_keys=';source_file;source_line;;';" => Valid::YES,
 
         "SET GLOBAL test_server_telemetry_traces.application_context_keys='client_id;root_id;parent_id;id';" => Valid::YES,

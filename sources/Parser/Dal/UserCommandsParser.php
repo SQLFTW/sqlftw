@@ -55,7 +55,6 @@ use SqlFtw\Sql\Dal\User\UserPasswordLockOptionType;
 use SqlFtw\Sql\Dal\User\UserPrivilege;
 use SqlFtw\Sql\Dal\User\UserPrivilegeResource;
 use SqlFtw\Sql\Dal\User\UserPrivilegeResourceType;
-use SqlFtw\Sql\Dal\User\UserPrivilegeType;
 use SqlFtw\Sql\Dal\User\UserResourceOption;
 use SqlFtw\Sql\Dal\User\UserResourceOptionType;
 use SqlFtw\Sql\Dal\User\UserTlsOption;
@@ -536,6 +535,7 @@ class UserCommandsParser
     private function parsePasswordLockOptions(TokenList $tokenList): ?array
     {
         $passwordLockOptions = [];
+        // @phpstan-ignore while.condNotBoolean
         while ($keyword = $tokenList->getAnyKeyword(Keyword::PASSWORD, Keyword::ACCOUNT, Keyword::FAILED_LOGIN_ATTEMPTS, Keyword::PASSWORD_LOCK_TIME)) {
             if ($keyword === Keyword::ACCOUNT) {
                 $keyword = $tokenList->expectAnyKeyword(Keyword::LOCK, Keyword::UNLOCK);
@@ -753,10 +753,10 @@ class UserCommandsParser
                     } else {
                         $tokenList->missingAnyKeyword(...array_values(StaticUserPrivilege::getAllowedValues()), ...array_values(DynamicUserPrivilege::getAllowedValues()));
                     }
+                } else {
+                    $tokenList->missingAnyKeyword(...array_values(StaticUserPrivilege::getAllowedValues()), ...array_values(DynamicUserPrivilege::getAllowedValues()));
                 }
             }
-            /** @var UserPrivilegeType $type */
-            $type = $type;
 
             $columns = null;
             if ($tokenList->hasSymbol('(')) {

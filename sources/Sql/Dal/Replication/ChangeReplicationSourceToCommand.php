@@ -78,7 +78,7 @@ class ChangeReplicationSourceToCommand extends StatementImpl implements Replicat
 
     public function serialize(Formatter $formatter): string
     {
-        $result = "CHANGE REPLICATION SOURCE TO \n  " . implode(",\n  ", array_filter(Arr::mapPairs(
+        $result = "CHANGE REPLICATION SOURCE TO \n  " . implode(",\n  ", array_filter(Arr::mapPairs( // @phpstan-ignore arrayFilter.strict
             $this->options,
             static function (string $option, $value) use ($formatter): ?string {
                 if ($value === null) {

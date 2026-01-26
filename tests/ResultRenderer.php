@@ -9,7 +9,6 @@ use Dogma\Debug\Units;
 use Dogma\Str;
 use SqlFtw\Formatter\Formatter;
 use SqlFtw\Parser\InvalidCommand;
-use SqlFtw\Parser\TokenList;
 use SqlFtw\Sql\Command;
 use SqlFtw\Sql\SqlMode;
 use SqlFtw\Tests\Mysql\MysqlTestJob;

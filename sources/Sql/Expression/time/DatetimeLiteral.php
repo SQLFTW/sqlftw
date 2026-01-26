@@ -43,7 +43,7 @@ class DatetimeLiteral implements TimeValue
             throw new InvalidDefinitionException("Invalid datetime literal format: '$value'.");
         }
 
-        $this->normalized = self::checkAndNormalize((string) $year, (string) $month, (string) $day, (string) $hours, $minutes, $seconds, $fraction, $offsetSign, $offsetHours, $offsetMinutes);
+        $this->normalized = self::checkAndNormalize($year, $month, $day, $hours, $minutes, $seconds, $fraction, $offsetSign, $offsetHours, $offsetMinutes);
         $this->value = $value;
     }
 

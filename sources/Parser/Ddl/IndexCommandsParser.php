@@ -82,6 +82,7 @@ class IndexCommandsParser
         $index = $this->parseIndexDefinition($tokenList);
 
         $alterAlgorithm = $alterLock = null;
+        // @phpstan-ignore while.condNotBoolean
         while ($keyword = $tokenList->getAnyKeyword(Keyword::ALGORITHM, Keyword::LOCK)) {
             if ($keyword === Keyword::ALGORITHM) {
                 $tokenList->passSymbol('=');
@@ -158,6 +159,7 @@ class IndexCommandsParser
             $keywords[] = Keyword::USING;
             $keywords[] = Keyword::TYPE;
         }
+        // @phpstan-ignore while.condNotBoolean
         while ($keyword = $tokenList->getAnyKeyword(...$keywords)) {
             if ($keyword === Keyword::USING || $keyword === Keyword::TYPE) {
                 $algorithm = $tokenList->expectKeywordEnum(IndexAlgorithm::class);

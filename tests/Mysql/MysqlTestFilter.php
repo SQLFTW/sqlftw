@@ -112,7 +112,7 @@ class MysqlTestFilter
                 $rows[$i] = '-- error ' . $this->translateErrorCodes($m[1]);
             } elseif (preg_match('~^--disable_abort_on_error~i', $row, $m) !== 0) {
                 // error code
-                $rows[$i] = '-- error DISABLED (from "' . $m[0] . '")';
+                $rows[$i] = '-- error DISABLED (from "' . $m[0] . '")'; // @phpstan-ignore offsetAccess.notFound
             } elseif (preg_match('~^--(query_vertical|send) (.*)~i', $row, $m) !== 0) {
                 // query
                 $rows[$i] = $m[2] . '; -- (from "--' . $m[1] . '")';

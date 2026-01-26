@@ -141,7 +141,7 @@ class TableOptionsList
             return '';
         }
 
-        return implode($itemSeparator, array_filter(Arr::mapPairs(
+        return implode($itemSeparator, array_filter(Arr::mapPairs( // @phpstan-ignore arrayFilter.strict
             $this->options,
             static function (string $option, $value) use ($formatter, $valueSeparator): ?string {
                 if ($value === null) {

@@ -88,7 +88,7 @@ class Assert extends DogmaAssert
             parent::fail(sprintf('Type of token "%s" is %s (%d) and should be %s (%d).', $token->value, $actualDesc, $token->type, $typeDesc, $type));
         }
         if (!$token->exception instanceof LexerException) {
-            parent::fail(sprintf('Token value is %s (%d) and should be a LexerException.', $token->value, gettype($token->value)));
+            parent::fail(sprintf('Token value is %s (%s) and should be a LexerException.', $token->value, gettype($token->value)));
         } else {
             $message = $token->exception->getMessage();
             if (Re::match($message, $messageRegexp) === null) {

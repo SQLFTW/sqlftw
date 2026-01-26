@@ -15,7 +15,6 @@ use SqlFtw\Parser\TokenList;
 use SqlFtw\Platform\Platform;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceAction;
 use SqlFtw\Sql\Ddl\Instance\AlterInstanceCommand;
-use SqlFtw\Sql\EntityType;
 use SqlFtw\Sql\Keyword;
 use function strtolower;
 
